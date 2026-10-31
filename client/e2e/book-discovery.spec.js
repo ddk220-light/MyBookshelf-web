@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { BOOK, LINKED_LIBRARY, chooseLinkedLibrary, installPublicV2Fixture } from './public-v2-fixture.js';
+import { BOOK, LINKED_LIBRARY, chooseLinkedLibrary, installPublicV2Fixture, goToTab } from './public-v2-fixture.js';
 import AxeBuilder from '@axe-core/playwright';
 
 test('spelling suggestions and numeric titles can be opened and saved without losing the query', async ({ page }, testInfo) => {
@@ -28,7 +28,7 @@ test('spelling suggestions and numeric titles can be opened and saved without lo
     await page.getByRole('link', { name: 'Back to search' }).click();
     await expect(page.getByLabel('Title, author or ISBN')).toHaveValue(query);
   }
-  await page.getByRole('navigation').getByRole('link', { name: 'Shelf', exact: true }).click();
+  await goToTab(page, 'Shelf');
   for (const { book } of cases) await expect(page.getByRole('region', { name: 'Saved books' })).toContainText(book.title);
 });
 

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { BOOK, LINKED_LIBRARY, UNLINKED_LIBRARY, chooseLinkedLibrary, installPublicV2Fixture, tab } from './public-v2-fixture.js';
+import { BOOK, LINKED_LIBRARY, UNLINKED_LIBRARY, chooseLinkedLibrary, installPublicV2Fixture, goToTab } from './public-v2-fixture.js';
 
 test('search, edition settings, library selection and reopen preserve identity and recheck', async ({ page }) => {
   const fixture = await installPublicV2Fixture(page);
@@ -21,7 +21,7 @@ test('search, edition settings, library selection and reopen preserve identity a
   await page.getByRole('link', { name: 'Back to search', exact: true }).click();
   await expect(page.getByLabel('Title, author or ISBN')).toHaveValue('Innovator');
   await expect(page.locator('.candidate-section .book-card')).toHaveCount(2);
-  await tab(page, 'Shelf').click();
+  await goToTab(page, 'Shelf');
   const before = fixture.calls.filter(call => call.endpoint === '/availability').length;
   await page.getByRole('region', { name: 'Saved books' }).getByRole('link', { name: BOOK.title, exact: true }).click();
   await expect.poll(() => fixture.calls.filter(call => call.endpoint === '/availability').length).toBe(before + 1);

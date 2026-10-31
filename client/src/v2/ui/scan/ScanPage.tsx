@@ -264,7 +264,6 @@ function CandidateResults({ id, candidates, catalog }: { id: string; candidates:
   }
   return <section className="candidate-section" aria-live="polite"><h2 ref={heading} tabIndex={-1}>{spellingMatches ? m.similarSearchResults : m.searchResults}</h2>
     {spellingMatches && <p className="form-hint">{m.spellingSearchHint}</p>}
-    <p className="results-source">{m.resultsFrom(source?.name || m.publicBookData)}</p>
     {source?.hasMore && page.nextOffset == null && <p className="form-hint">{m.moreMatches}</p>}
     {!items.length && !page.partial && <Notice>{m.noMatches(source?.name)}</Notice>}
     {items.length > 0 && <div className="catalog-drawer">
@@ -278,6 +277,7 @@ function CandidateResults({ id, candidates, catalog }: { id: string; candidates:
           }} /></li>)}
       </ul>
     </div>}
+    <p className="results-source">{m.resultsFrom(source?.name || m.publicBookData)}</p>
     {page.partial && <div className="partial-search"><p>{m.partialSearch}</p><button className="button-quiet" disabled={busy}
       onClick={() => void fetchPages(page.incompleteOffsets?.length ? page.incompleteOffsets : [0], false)}>{busy ? m.searching : m.retrySearch}</button></div>}
     {error && <Notice tone="error">{error}</Notice>}

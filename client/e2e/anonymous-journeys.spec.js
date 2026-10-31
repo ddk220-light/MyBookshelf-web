@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { AVAILABILITY, BOOK, CANDIDATE_BOOK, LINKED_LIBRARY, chooseLinkedLibrary, installPublicV2Fixture, tab } from './public-v2-fixture.js';
+import { AVAILABILITY, BOOK, CANDIDATE_BOOK, LINKED_LIBRARY, chooseLinkedLibrary, installPublicV2Fixture, goToTab } from './public-v2-fixture.js';
 const key = 'mybookshelf.anonymous-web.v1';
 
 test('library selection is optional and Settings selection persists', async ({ page }) => {
   await installPublicV2Fixture(page);
   await page.goto('/app/shelf');
   await expect(page.getByRole('heading', { name: 'Shelf', exact: true })).toBeVisible();
-  await tab(page, 'Settings').click();
+  await goToTab(page, 'Settings');
   await page.getByRole('link', { name: 'Choose a library', exact: true }).click();
   await page.getByLabel('Library, city or postcode').fill('Chennai');
   await page.getByRole('button', { name: 'Select ' + LINKED_LIBRARY.name, exact: true }).click();
@@ -27,7 +27,7 @@ test('manual ISBN, metadata and safe catalog handoffs work; reopening refreshes'
   await expect(page.getByRole('link', { name: 'Open library catalog', exact: true })).toHaveAttribute('href', /record\/123/);
   await expect(page.getByText(/Checked|Previously available|Availability may have changed/)).toHaveCount(0);
   await page.getByRole('button', { name: 'Save book', exact: true }).click();
-  await tab(page, 'Shelf').click();
+  await goToTab(page, 'Shelf');
   await page.getByRole('button', { name: 'List', exact: true }).click();
   await expect(page.locator('.shelf-book-status')).toHaveText('Last result: Available at the library');
   const stored = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), key);
@@ -139,7 +139,7 @@ test('themes default to device, explicit choice overrides it, and clearing only 
   await chooseLinkedLibrary(page);
   await page.goto('/app/books/' + encodeURIComponent(BOOK.bookKey));
   await page.getByRole('button', { name: 'Save book', exact: true }).click();
-  await tab(page, 'Settings').click();
+  await goToTab(page, 'Settings');
   await expect(page.getByRole('switch', { name: 'Match device' })).toHaveAttribute('aria-checked','true');
   await expect(page.locator('html')).toHaveAttribute('data-reading-light','lamplight');
   await page.getByRole('button', { name: 'Ink', exact: true }).click();

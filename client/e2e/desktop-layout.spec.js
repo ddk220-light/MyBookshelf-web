@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { BOOK, chooseLinkedLibrary, installPublicV2Fixture, tab } from './public-v2-fixture.js';
+import { BOOK, chooseLinkedLibrary, installPublicV2Fixture, goToTab } from './public-v2-fixture.js';
 
 for (const [width, height] of [[1024,768],[1280,800],[1366,768],[1440,900],[1920,1080]]) test('desktop layout and breakpoint preserve the reader at ' + width, async ({ page }) => {
   await page.setViewportSize({ width, height });
@@ -14,9 +14,9 @@ for (const [width, height] of [[1024,768],[1280,800],[1366,768],[1440,900],[1920
   const sidebar = await page.locator('.app-navigation').boundingBox();
   expect(sidebar.width).toBe(width >= 1440 ? 248 : 224);
   await page.getByRole('button', { name: 'Save book', exact: true }).click();
-  await tab(page, 'Shelf').click();
+  await goToTab(page, 'Shelf');
   await expect(page.getByRole('region', { name: 'Saved books' }).getByRole('link', { name: BOOK.title, exact: true })).toBeVisible();
-  await tab(page, 'Search').click();
+  await goToTab(page, 'Search');
   const field = page.getByLabel('Title, author or ISBN', { exact: true });
   await field.fill('a draft');
   for (const next of [1023, 1024, width]) {

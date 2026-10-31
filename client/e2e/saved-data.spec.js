@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { BOOK, LINKED_LIBRARY, installPublicV2Fixture, tab } from './public-v2-fixture.js';
+import { BOOK, LINKED_LIBRARY, installPublicV2Fixture, goToTab } from './public-v2-fixture.js';
 const key = 'mybookshelf.anonymous-web.v1';
 
 for (const count of [100, 104]) test('a shelf of ' + count + ' books survives and rejects a new addition', async ({ page }) => {
@@ -43,7 +43,7 @@ test('denied storage uses a working session shelf with feedback', async ({ page 
   await page.goto('/app/books/' + encodeURIComponent(BOOK.bookKey));
   await page.getByRole('button', { name: 'Save book', exact: true }).click();
   await expect(page.locator('.site-notice')).toContainText(/can’t be saved/);
-  await tab(page, 'Shelf').click();
+  await goToTab(page, 'Shelf');
   await expect(page.getByRole('region', { name: 'Saved books' }).getByRole('link', { name: BOOK.title, exact: true })).toBeVisible();
 });
 
@@ -85,12 +85,12 @@ test('restored storage access never overwrites a shelf that could not be read', 
   await expect(page.getByText('Your changes can’t be saved in this browser. They may be lost when you leave.')).toBeVisible();
   await page.evaluate(() => { window.allowShelfStorage = true; });
   const original = await page.evaluate(key => localStorage.getItem(key), key);
-  await tab(page, 'Search').click();
+  await goToTab(page, 'Search');
   await page.getByLabel('Title, author or ISBN', { exact: true }).fill(BOOK.isbn13);
   await page.getByRole('button', { name: 'Search books', exact: true }).click();
   await page.getByRole('button', { name: 'Save book', exact: true }).click();
   await expect(page.getByRole('button', { name: 'On your shelf', exact: true })).toBeVisible();
-  await tab(page, 'Shelf').click();
+  await goToTab(page, 'Shelf');
   await expect(page.getByRole('region', { name: 'Saved books' }).getByRole('link', { name: BOOK.title, exact: true })).toBeVisible();
   expect(await page.evaluate(key => localStorage.getItem(key), key)).toBe(original);
 });
