@@ -355,3 +355,6 @@ input[type='checkbox'] { width: 24px; height: 24px; accent-color: var(--reader-a
 .paste-library-link summary{min-height:44px;cursor:pointer}
 .cover .typeset-cover[data-title]::after{content:attr(data-title);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;font-family:var(--serif)}
 .shelf-controls select{width:auto;max-width:170px}.shelf-controls label{flex:0 1 auto}
+.shelf-controls{flex-wrap:wrap}.shelf-controls label{flex:0 1 170px;min-width:0;max-width:100%}.shelf-controls select{max-width:100%}
+/* Native WebKit selects otherwise contribute their intrinsic text overflow at 200%. */
+.shelf-controls label{flex:0 0 auto;max-width:100%}.shelf-controls select{width:auto;max-width:100%;overflow:hidden}

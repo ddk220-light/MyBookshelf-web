@@ -7,81 +7,75 @@
       "buildCommand": "npm run build",
       "outputDirectory": "dist",
       "ignoreCommand": "node ../tools/deployment/ignore-web-build.mjs",
-      "rewrites": [
+      "routes": [
         {
-          "source": "/app",
-          "destination": "/app/index.html"
+          "src": "/(.*)",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://books.google.com https://books.googleusercontent.com https://covers.openlibrary.org https://archive.org/download/ https://*.us.archive.org/view_archive.php https://tile.openstreetmap.org data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+          },
+          "continue": true
         },
         {
-          "source": "/app/(.*)",
-          "destination": "/app/index.html"
+          "src": "/assets/(.*)",
+          "headers": {
+            "Cache-Control": "public, max-age=31536000, immutable"
+          },
+          "continue": true
         },
         {
-          "source": "/select/(.*)",
-          "destination": "/app/index.html"
+          "src": "/textures/(.*)",
+          "headers": {
+            "Cache-Control": "public, max-age=604800"
+          },
+          "continue": true
+        },
+        {
+          "src": "/app(?:/.*)?",
+          "headers": {
+            "X-Robots-Tag": "noindex, follow"
+          },
+          "continue": true
+        },
+        {
+          "src": "/select(?:/.*)?",
+          "headers": {
+            "X-Robots-Tag": "noindex, follow"
+          },
+          "continue": true
+        },
+        {
+          "src": "/fonts/(.*)",
+          "headers": {
+            "Cache-Control": "public, max-age=604800"
+          },
+          "continue": true
+        },
+        {
+          "src": "/app(?:/.*)?",
+          "dest": "/app/index.html"
+        },
+        {
+          "src": "/select(?:/.*)?",
+          "dest": "/app/index.html"
+        },
+        {
+          "src": "/(about|how-it-works|open-source|privacy|support|libraries)",
+          "dest": "/$1.html"
+        },
+        {
+          "src": "/libraries/([^/]+)",
+          "dest": "/libraries/$1.html"
+        },
+        {
+          "handle": "filesystem"
+        },
+        {
+          "src": "/(.*)",
+          "dest": "/404.html",
+          "status": 404
         }
-      ],
-      "headers": [
-        {
-          "source": "/(.*)",
-          "headers": [
-            {
-              "key": "Cache-Control",
-              "value": "no-cache"
-            },
-            {
-              "key": "Content-Security-Policy",
-              "value": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://books.google.com https://books.googleusercontent.com https://covers.openlibrary.org https://archive.org/download/ https://*.us.archive.org/view_archive.php https://tile.openstreetmap.org data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
-            }
-          ]
-        },
-        {
-          "source": "/assets/(.*)",
-          "headers": [
-            {
-              "key": "Cache-Control",
-              "value": "public, max-age=31536000, immutable"
-            }
-          ]
-        },
-        {
-          "source": "/textures/(.*)",
-          "headers": [
-            {
-              "key": "Cache-Control",
-              "value": "public, max-age=604800"
-            }
-          ]
-        },
-        {
-          "source": "/app/:path*",
-          "headers": [
-            {
-              "key": "X-Robots-Tag",
-              "value": "noindex, follow"
-            }
-          ]
-        },
-        {
-          "source": "/select/:path*",
-          "headers": [
-            {
-              "key": "X-Robots-Tag",
-              "value": "noindex, follow"
-            }
-          ]
-        },
-        {
-          "source": "/fonts/(.*)",
-          "headers": [
-            {
-              "key": "Cache-Control",
-              "value": "public, max-age=604800"
-            }
-          ]
-        }
-      ],
-      "cleanUrls": true
+      ]
     },
     "api": {
       "root": "server",
