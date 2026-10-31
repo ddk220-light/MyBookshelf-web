@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({page}) => {
+  await page.route('https://covers.openlibrary.org/**', route => route.abort());
+});
+
 test('public pages work without JavaScript and publish exactly nine libraries', async ({browser,baseURL}) => {
   const context=await browser.newContext({javaScriptEnabled:false});
   const page=await context.newPage();

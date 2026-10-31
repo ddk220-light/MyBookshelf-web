@@ -88,6 +88,10 @@ function json(route, status, body) {
 }
 
 export async function installPublicV2Fixture(target, options = {}) {
+  // Keep fixture-based journeys independent of third-party cover hosts.
+  // Cover-specific tests register their own later route overrides.
+  await target.route('https://covers.openlibrary.org/**', route => route.abort());
+  await target.route('https://books.google.com/**', route => route.abort());
   const calls = [];
   const availability = options.availability || AVAILABILITY.available;
   await target.route('**/api/v2/**', async (route) => {
