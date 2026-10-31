@@ -7,8 +7,11 @@ const kalam = { bookKey: `v1:catalog:${library.id}:309106`, title: 'Wings of fir
 const otherCopy = { ...kalam, bookKey: `v1:catalog:${library.id}:497990`, authors: [...kalam.authors, 'Tiwari, Arun'], publishedDate: '2021' };
 const dragon = { bookKey: `v1:catalog:${library.id}:479740`, title: 'Wings of Fire: The Dark Secret', authors: ['Sutherland, Tui'] };
 
-async function setup(page) {
+async function setup(page, { loadedCovers = false } = {}) {
   const fixture = await installPublicV2Fixture(page);
+  // Install the loaded-cover response before the initial example cards request
+  // this same URL. WebKit retains decoded images within a document.
+  if (loadedCovers) await page.route('https://covers.openlibrary.org/**', route => route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="120"><rect width="80" height="120" fill="#345c48"/></svg>' }));
   await page.route('**/api/v2/libraries/*', route => route.fulfill({ json: route.request().url().endsWith('/areas') ? { countries: ['IN'], regions: ['Tamil Nadu'], districts: ['Chennai'] } : route.request().url().endsWith('/discover')
     ? { libraries: [library], total: 1, nextOffset: null } : { library } }));
   await chooseLinkedLibrary(page);
@@ -17,9 +20,8 @@ async function setup(page) {
 }
 
 test('catalog covers and optional book details load without delaying or replacing library availability', async ({ page }) => {
-  const fixture = await setup(page);
+  const fixture = await setup(page, { loadedCovers: true });
   const result = { ...kalam, isbn13: '9788173711466', coverUrl: 'https://covers.openlibrary.org/b/isbn/9788173711466-M.jpg?default=false' };
-  await page.route('https://covers.openlibrary.org/**', route => route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="120"><rect width="80" height="120" fill="#345c48"/></svg>' }));
   await page.route('**/api/v2/books/search', route => route.fulfill({ json: { kind: 'candidates', candidates: [result], catalog: { libraryId: library.id, name: library.name, hasMore: false } } }));
   await page.route('**/api/v2/books/resolve', route => route.fulfill({ json: { book: result } }));
   let release;
