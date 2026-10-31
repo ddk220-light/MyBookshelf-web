@@ -9,6 +9,17 @@ The full library directory is available inside the app; nine reviewed public
 library guides form the initial SEO launch. A failed catalog lookup means unknown,
 not that a library lacks a book. Membership and borrowing rules belong to libraries.
 
+## Continue development
+
+**This repository is the source of truth for MyBookshelf web.** Make all web
+changes here directly; a private repository or export step is not required.
+
+Start with [the handoff and next work](docs/STATUS.md), then the
+[documentation index](docs/README.md). These include the account architecture,
+book identity research, planned epics/stories, UI/SEO decisions, Claude reference
+boards and release evidence. Accounts and social features are planned work;
+they are not implemented in the running app.
+
 ## Run locally
 
 Use Node 22 and npm:
@@ -30,6 +41,7 @@ book search uses `/api/v2` and the React app under `/app/`.
 
 Optional server environment variables: `GOOGLE_BOOKS_API_KEY`, `CALIL_APP_KEY`.
 Keep these in local `.env` or hosting configuration, never in `VITE_` variables.
+See [.env.example](.env.example) and [credential setup](docs/development/credentials.md).
 
 ## Verify
 

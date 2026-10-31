@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<style>@font-face{font-family:Newsreader;src:url("../../../../client/public-app/fonts/Newsreader.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<meta charset="utf-8">
+<title>Desktop libraries list and detail</title>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+
+
+<style>
+body{margin:0}
+:root{--bg:#faf7f1;--surface:#fff;--fill:#efe9df;--ink:#1f1a17;--ink2:#4a423b;--ink3:#6b6259;--ink4:#8a8178;--line:#e7e0d5;--line2:#efe9df;--accent:#2f5340;--on:#fff;--bar:rgba(250,247,241,.96);--ok:#2f7a4b;--out:#b4532a;--chk:#9a6200;--ref:#6b4fa0;--none:#6b6259;--err:#b42318;--onstatus:#fff;--wood:#c19062;--woodhi:#d9a978;--woodlo:#9b6b40;--woodshadow:rgba(80,50,25,.25);--hero:#ece3d3;--page1:#f6f0e2;--page2:#ddd2bd;--coveredge:rgba(31,26,23,0);--covershadow:rgba(31,26,23,.28);--placeholder:#e9e1d3;--dash:#c9bda9;--toastbg:#2b2420;--toastink:#fbf8f1;--toastacc:#e9c58a;--dangerbg:#b42318;--dangerink:#fff;--prose:#2b2420;--mark:#f3e3b5}
+
+.ph{box-sizing:border-box;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+.lt{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:34px;line-height:40px}
+.fld{position:relative;display:flex;align-items:center}
+.fld input{box-sizing:border-box;width:100%;height:44px;padding:0 44px 0 38px;border:0;border-radius:12px;background:var(--fill);font:17px system-ui,-apple-system,sans-serif;color:var(--ink)}
+.fld input::placeholder{color:var(--ink3)}
+.chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 14px;border:0;border-radius:22px;background:var(--fill);color:var(--ink);font:500 14px system-ui,-apple-system,sans-serif}
+.chip.on{background:var(--accent);color:var(--on);font-weight:600}
+.cap{margin:0 8px 6px;font-size:13px;font-weight:500;color:var(--ink3)}
+.grp{margin:0;padding:0 16px;list-style:none;background:var(--surface);border-radius:14px;box-shadow:0 0 0 1px var(--line)}
+.row{display:flex;align-items:center;gap:12px;min-height:66px;border-bottom:1px solid var(--line2);color:inherit;text-decoration:none}
+.grp li:last-child .row{border-bottom:0}
+.rl{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;border-bottom:1px solid var(--line2);font-size:15px;color:var(--ink);text-decoration:none}
+.grp > :last-child.rl,.grp li:last-child .rl{border-bottom:0}
+.t1{font-size:16px;font-weight:600}
+.t2{font-size:14px;color:var(--ink3)}
+.km{flex:0 0 auto;font-size:14px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.note{margin:10px 8px 0;font-size:13px;line-height:1.45;color:var(--ink3)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 20px;border:0;border-radius:12px;background:var(--accent);color:var(--on);font:600 16px system-ui,-apple-system,sans-serif}
+.btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border:0;border-radius:12px;background:var(--fill);color:var(--ink);font:500 15px system-ui,-apple-system,sans-serif}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.tb{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px 22px;background:var(--bar);border-top:1px solid var(--line)}
+.tb a{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:48px;padding-top:4px;color:var(--ink3);font-size:12px;text-decoration:none}
+.tb a[aria-current]{color:var(--accent);font-weight:600}
+.seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:2px;border-radius:10px;background:var(--fill)}
+.seg button{height:44px;border:0;border-radius:8px;background:transparent;color:var(--ink2);font:500 14px system-ui,-apple-system,sans-serif}
+.seg button[aria-pressed='true']{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 0 0 1px var(--line),0 1px 3px var(--covershadow)}
+.board{height:12px;background:var(--wood);box-shadow:inset 0 2px 0 var(--woodhi),inset 0 -3px 0 var(--woodlo),0 6px 10px var(--woodshadow)}
+.bk{display:block;box-shadow:0 0 0 1px var(--coveredge),2px 4px 8px var(--covershadow);border-radius:2px 4px 4px 2px}
+.bk img{display:block;width:100%;height:100%;object-fit:cover;border-radius:2px 4px 4px 2px}
+.hbtn{display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 12px;border:0;border-radius:22px;background:var(--fill);color:var(--ink);font:500 14px system-ui,-apple-system,sans-serif}
+.ibtn{display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:22px;background:var(--fill);color:var(--ink)}
+.card{display:flex;gap:12px;padding:16px;background:var(--surface);border-radius:14px;box-shadow:0 0 0 1px var(--line)}
+.card h2{margin:0;font-size:17px;font-weight:600}
+.card p{margin:0;font-size:15px;line-height:1.45;color:var(--ink2)}
+</style>
+<style>
+.dk{box-sizing:border-box;display:grid;grid-template-columns:248px minmax(0,1fr);background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+.dside{display:flex;flex-direction:column;gap:6px;padding:36px 24px 24px;background:var(--surface);border-right:1px solid var(--line)}
+.dbrand{display:flex;align-items:center;gap:10px;min-height:44px;margin-bottom:34px;font:500 22px 'Newsreader',Georgia,serif;color:var(--ink);text-decoration:none}
+.dtab{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 14px;border-radius:10px;color:var(--ink2);font-size:15px;font-weight:500;text-decoration:none}
+.dtab[aria-current]{background:var(--fill);color:var(--accent);font-weight:700}
+.dmain{min-width:0;padding:44px 48px;overflow:hidden}
+.dwrap{max-width:1100px;margin:0 auto}
+.dh1{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:40px;line-height:48px}
+.kbd{display:inline-block;padding:1px 6px;border:1px solid var(--line);border-radius:5px;font-size:12px;color:var(--ink3)}
+.lsel{box-shadow:inset 3px 0 0 var(--accent);background:var(--fill)}
+</style>
+</helmet>
+<div class="dk" style="width: 1440px; height: 900px">
+<nav class="dside" aria-label="Main"><a href="#" class="dbrand">myBookshelf</a><a href="#" class="dtab"><svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 3.5h3v15h-3zM7.5 3.5h3v15h-3zM12 4.6l2.9-.8 3.9 14.5-2.9.8z"></path></svg>Shelf</a><a href="#" class="dtab"><svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="5.5"></circle><path d="M14 14l4 4"></path></svg>Search</a><a href="#" class="dtab" aria-current="page"><svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l8-4.5L19 8M4.5 8v8.5M8.5 8v8.5M13.5 8v8.5M17.5 8v8.5M3 18.5h16"></path></svg>Libraries</a><a href="#" class="dtab"><svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="3"></circle><path d="M11 2.5v2.2M11 17.3v2.2M2.5 11h2.2M17.3 11h2.2M5 5l1.6 1.6M15.4 15.4L17 17M5 17l1.6-1.6M15.4 6.6L17 5"></path></svg>Settings</a><a href="#" class="dtab" style="margin-top: auto; font-size: 14px; color: var(--ink3)">Help &amp; support ↗</a></nav>
+<main class="dmain"><div class="dwrap">
+
+<h1 class="dh1">Libraries</h1>
+<div style="display: flex; gap: 12px; margin: 20px 0 24px; max-width: 760px">
+  <label class="fld" style="flex: 1"><span class="sr">Library, city or postcode</span><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="position: absolute; left: 12px; color: var(--ink3)"><circle cx="8.5" cy="8.5" r="5.5"></circle><path d="M13 13l4 4"></path></svg><input type="search" placeholder="Library, city or postcode"></label>
+  <button type="button" class="btn2" aria-pressed="true" style="background: var(--accent); color: var(--on)"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" style="color: currentColor"><path d="M16 2L2 8l6 2 2 6z"></path></svg>Libraries near me</button>
+</div>
+<div style="display: grid; grid-template-columns: 420px minmax(0, 1fr); gap: 32px; align-items: start">
+  <section aria-labelledby="near">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin: 0 4px 8px"><h2 id="near" class="cap" style="margin: 0">Nearest to you</h2><span style="font-size: 13px; color: var(--ink3)">Within 15 mi ▾</span></div>
+    <ul class="grp" style="padding: 0; overflow: hidden">
+      <li><a href="#" class="row" style="padding: 0 14px; min-height: 64px"><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span class="t1" style="font-size: 15px">Alameda County Library<span style="display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; font-size: 13px; font-weight: 600; color: var(--accent)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"></path></svg>Yours</span></span><span class="t2" style="font-size: 13px">Fremont · 10 branches · checks availability</span></span><span class="km">about 1 mi</span></a></li>
+      <li><a href="#" class="row lsel" style="padding: 0 14px; min-height: 64px" aria-current="true"><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span class="t1" style="font-size: 15px">Hayward Public Library</span><span class="t2" style="font-size: 13px">Hayward · 2 branches · checks availability</span></span><span class="km">7.6 mi</span></a></li>
+      <li><a href="#" class="row" style="padding: 0 14px; min-height: 64px"><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span class="t1" style="font-size: 15px">San José Public Library</span><span class="t2" style="font-size: 13px">San José · 25 branches · checks availability</span></span><span class="km">8.6 mi</span></a></li>
+      <li><a href="#" class="row" style="padding: 0 14px; min-height: 64px"><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span class="t1" style="font-size: 15px">Santa Clara County Library</span><span class="t2" style="font-size: 13px">Milpitas · 10 branches · checks availability</span></span><span class="km">9.2 mi</span></a></li>
+      <li><a href="#" class="row" style="padding: 0 14px; min-height: 64px"><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span class="t1" style="font-size: 15px">Pleasanton Public Library</span><span class="t2" style="font-size: 13px">Pleasanton · checks availability</span></span><span class="km">9.6 mi</span></a></li>
+      <li><a href="#" class="row" style="padding: 0 14px; min-height: 64px"><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span class="t1" style="font-size: 15px">San Mateo County Libraries</span><span class="t2" style="font-size: 13px">San Mateo · 12 branches · checks availability</span></span><span class="km">9.8 mi</span></a></li>
+    </ul>
+    <p class="note">↑ ↓ to move, Enter to open. Sorted by the closest branch.</p>
+  </section>
+  <section aria-labelledby="det" style="display: flex; flex-direction: column; gap: 18px; max-width: 600px">
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 4px"><h2 id="det" style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 30px">Hayward Public Library</h2><span style="font-size: 15px; color: var(--ink2)">Hayward, California · 2 branches · 7.6 mi</span></div>
+      <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: var(--accent); text-decoration: none">Share</a>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center"><button type="button" class="btn">Choose Hayward Public Library</button><span style="font-size: 14px; color: var(--ink3)">Replaces Alameda County Library</span></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+      <div><h3 class="cap">What we can check here</h3><ul class="grp"><li class="rl" style="justify-content: flex-start;"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex: 0 0 20px"><circle cx="10" cy="10" r="9" style="fill: var(--ok)"></circle><path d="M6 10.2l2.7 2.6L14 7.5" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--onstatus)"></path></svg><span>Whether a copy can be borrowed</span></li><li class="rl" style="justify-content: flex-start;"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex: 0 0 20px"><circle cx="10" cy="10" r="9" style="fill: var(--ok)"></circle><path d="M6 10.2l2.7 2.6L14 7.5" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--onstatus)"></path></svg><span>Exact edition, by ISBN</span></li><li class="rl" style="justify-content: flex-start; color: var(--ink2);"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex: 0 0 20px"><circle cx="10" cy="10" r="8.2" fill="none" stroke-width="1.6" style="stroke: var(--ink3)"></circle><path d="M6.5 10h7" stroke-width="1.8" stroke-linecap="round" style="stroke: var(--ink3)"></path></svg><span>Search by title</span></li><li class="rl" style="justify-content: flex-start; color: var(--ink2);"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex: 0 0 20px"><circle cx="10" cy="10" r="8.2" fill="none" stroke-width="1.6" style="stroke: var(--ink3)"></circle><path d="M6.5 10h7" stroke-width="1.8" stroke-linecap="round" style="stroke: var(--ink3)"></path></svg><span>Call numbers</span></li></ul></div>
+      <div><h3 class="cap">2 branches</h3><ul class="grp"><li class="rl">Main Library</li><li class="rl">Weekes Branch</li></ul>
+        <div class="grp" style="margin-top: 14px"><a href="#" class="rl" style="color: var(--accent)">Open the catalog<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h7v7M13 3L4 12"></path></svg></a><a href="#" class="rl" style="color: var(--accent); border-bottom: 0">About this library<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h7v7M13 3L4 12"></path></svg></a></div></div>
+    </div>
+  </section>
+</div>
+
+</div></main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

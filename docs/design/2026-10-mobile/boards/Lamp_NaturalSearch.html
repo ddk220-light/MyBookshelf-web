@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<style>@font-face{font-family:Newsreader;src:url("../../../../client/public-app/fonts/Newsreader.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<meta charset="utf-8">
+<title>Natural search</title>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+
+
+<style>
+body{margin:0}
+:root{--bg:#15120f;--surface:#1f1b17;--fill:#2b2621;--ink:#f1e9dc;--ink2:#d3c8b8;--ink3:#a89d8c;--ink4:#8f8474;--line:#463d33;--line2:#2f2923;--accent:#9fd0ae;--on:#10261a;--bar:rgba(21,18,15,.96);--ok:#7fcf98;--out:#f0956b;--chk:#e8b45a;--ref:#c2aef0;--none:#a89d8c;--err:#f28b82;--onstatus:#15120f;--wood:#6e4a30;--woodhi:#8a5f3e;--woodlo:#4a301d;--woodshadow:rgba(0,0,0,.5);--hero:#231e19;--page1:#cbbfa9;--page2:#9e927d;--coveredge:rgba(255,255,255,.14);--covershadow:rgba(0,0,0,.6);--placeholder:#2b2621;--dash:#5c5145;--toastbg:#f1e9dc;--toastink:#1f1a17;--toastacc:#2f5340;--dangerbg:#f28b82;--dangerink:#2a0e0b;--prose:#e8dfd0;--mark:#5a4520}
+</style>
+</helmet>
+<div style="width: 390px; height: 1000px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <header style="display: flex; flex-direction: column; gap: 12px; padding: 44px 16px 10px">
+    <h1 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 40px">Search</h1>
+    <label style="position: relative; display: flex; align-items: center">
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Title, author or ISBN</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="stroke: var(--ink3); position: absolute; left: 12px"><circle cx="8.5" cy="8.5" r="5.5"></circle><path d="M13 13l4 4"></path></svg>
+      <input type="search" value="the hobbit" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 84px 0 38px; border: 0; border-radius: 12px; background: var(--fill); font: 17px system-ui, -apple-system, sans-serif; color: var(--ink)">
+      <button type="button" aria-label="Clear" style="position: absolute; right: 44px; display: grid; place-items: center; width: 36px; height: 44px; border: 0; background: transparent; color: var(--ink4)"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" style="fill: var(--ink4)"></circle><path d="M7 7l6 6M13 7l-6 6" stroke-width="1.8" stroke-linecap="round" style="stroke: var(--fill)"></path></svg></button>
+      <button type="button" aria-label="Scan a barcode" style="position: absolute; right: 4px; display: grid; place-items: center; width: 40px; height: 44px; border: 0; background: transparent; color: var(--accent)"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 7V4h3M16 4h3v3M19 15v3h-3M6 18H3v-3M7.5 8v6M10.5 8v6M13.5 8v6"></path></svg></button>
+    </label>
+    <div role="group" aria-label="Search in" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 2px; border-radius: 10px; background: var(--fill)">
+      <button type="button" aria-pressed="true" style="height: 44px; border: 0; border-radius: 8px; background: var(--surface); color: var(--ink); font: 600 14px system-ui, -apple-system, sans-serif; box-shadow: 0 0 0 1px var(--line), 0 1px 3px var(--covershadow)">All books</button>
+      <button type="button" aria-pressed="false" style="height: 44px; border: 0; border-radius: 8px; background: transparent; color: var(--ink2); font: 500 14px system-ui, -apple-system, sans-serif">Anna Centenary</button>
+    </div>
+  </header>
+
+  <section aria-labelledby="res" style="display: flex; flex-direction: column">
+    <h2 id="res" style="margin: 8px 16px 4px; font-size: 13px; font-weight: 500; color: var(--ink3)">From public book data</h2>
+    <ul style="margin: 0; padding: 0; list-style: none">
+      <li><a href="#" style="display: flex; gap: 14px; align-items: center; padding: 12px 16px; text-decoration: none; color: inherit">
+        <img src="../assets/reference-cover.svg" alt="" style="flex: 0 0 52px; width: 52px; height: 78px; object-fit: cover; border-radius: 2px 3px 3px 2px; box-shadow: 0 0 0 1px var(--coveredge), 1px 2px 4px var(--covershadow)">
+        <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding-bottom: 12px; margin-bottom: -12px; border-bottom: 1px solid var(--line); align-self: stretch; justify-content: center">
+          <span style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 19px; line-height: 24px">The Hobbit</span>
+          <span style="font-size: 15px; color: var(--ink2)">J.R.R. Tolkien</span>
+          <span style="font-size: 13px; color: var(--ink3)">1937 · 482 editions</span>
+        </span>
+      </a></li>
+      <li><a href="#" style="display: flex; gap: 14px; align-items: center; padding: 12px 16px; text-decoration: none; color: inherit">
+        <img src="../assets/reference-cover.svg" alt="" style="flex: 0 0 52px; width: 52px; height: 78px; object-fit: cover; border-radius: 2px 3px 3px 2px; box-shadow: 0 0 0 1px var(--coveredge), 1px 2px 4px var(--covershadow)">
+        <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding-bottom: 12px; margin-bottom: -12px; border-bottom: 1px solid var(--line); align-self: stretch; justify-content: center">
+          <span style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 19px; line-height: 24px">The Hobbit</span>
+          <span style="font-size: 15px; color: var(--ink2)">Charles Dixon, Sean Deming, J.R.R. Tolkien</span>
+          <span style="font-size: 13px; color: var(--ink3)">1990 · 10 editions</span>
+        </span>
+      </a></li>
+      <li><a href="#" style="display: flex; gap: 14px; align-items: center; padding: 12px 16px; text-decoration: none; color: inherit">
+        <span aria-hidden="true" style="flex: 0 0 52px; width: 52px; height: 78px; display: grid; place-items: center; border-radius: 2px 3px 3px 2px; background: var(--placeholder); color: var(--ink4)"><svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M11 6c-2-1.5-4.5-2-7-2v12c2.5 0 5 .5 7 2 2-1.5 4.5-2 7-2V4c-2.5 0-5 .5-7 2zM11 6v12"></path></svg></span>
+        <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding-bottom: 12px; margin-bottom: -12px; border-bottom: 1px solid var(--line); align-self: stretch; justify-content: center">
+          <span style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 19px; line-height: 24px">The Hobbit</span>
+          <span style="font-size: 15px; color: var(--ink3)">Author not listed</span>
+          <span style="font-size: 13px; color: var(--ink3)">1975</span>
+        </span>
+      </a></li>
+      <li><a href="#" style="display: flex; gap: 14px; align-items: center; padding: 12px 16px; text-decoration: none; color: inherit">
+        <img src="../assets/reference-cover.svg" alt="" style="flex: 0 0 52px; width: 52px; height: 78px; object-fit: cover; border-radius: 2px 3px 3px 2px; box-shadow: 0 0 0 1px var(--coveredge), 1px 2px 4px var(--covershadow)">
+        <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding-bottom: 12px; margin-bottom: -12px; border-bottom: 1px solid var(--line); align-self: stretch; justify-content: center">
+          <span style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 19px; line-height: 24px">The Hobbit</span>
+          <span style="font-size: 15px; color: var(--ink2)">Mary Elizabeth</span>
+          <span style="font-size: 13px; color: var(--ink3)">1998</span>
+        </span>
+      </a></li>
+      <li><a href="#" style="display: flex; gap: 14px; align-items: center; padding: 12px 16px; text-decoration: none; color: inherit">
+        <img src="../assets/reference-cover.svg" alt="" style="flex: 0 0 52px; width: 52px; height: 78px; object-fit: cover; border-radius: 2px 3px 3px 2px; box-shadow: 0 0 0 1px var(--coveredge), 1px 2px 4px var(--covershadow)">
+        <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding-bottom: 12px; margin-bottom: -12px; border-bottom: 1px solid var(--line); align-self: stretch; justify-content: center">
+          <span style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 19px; line-height: 24px">The hobbit</span>
+          <span style="font-size: 15px; color: var(--ink2)">Patty Kempshall</span>
+          <span style="font-size: 13px; color: var(--ink3)">2012</span>
+        </span>
+      </a></li>
+    </ul>
+    <div role="status" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 16px 0; font-size: 14px; color: var(--ink3)">
+      <span>One source didn't answer, so a few books may be missing.</span>
+      <button type="button" style="flex: 0 0 auto; height: 44px; padding: 0 4px; border: 0; background: transparent; color: var(--accent); font: 600 15px system-ui, -apple-system, sans-serif">Retry</button>
+    </div>
+    <button type="button" style="margin: 8px 16px 0; height: 44px; border: 0; border-radius: 12px; background: var(--fill); color: var(--ink); font: 500 15px system-ui, -apple-system, sans-serif">Show more</button>
+  </section>
+
+  <span style="flex: 1"></span>
+  <nav aria-label="Main" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 6px 8px 22px; background: var(--bar); border-top: 1px solid var(--line)">
+    <a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; padding-top: 4px; color: var(--ink3); font-size: 12px; text-decoration: none"><svg width="24" height="24" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 3.5h3v15h-3zM7.5 3.5h3v15h-3zM12 4.6l2.9-.8 3.9 14.5-2.9.8z"></path></svg>Shelf</a>
+    <a href="#" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; padding-top: 4px; color: var(--accent); font-size: 12px; font-weight: 600; text-decoration: none"><svg width="24" height="24" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"></circle><path d="M13 13l4 4"></path></svg>Search</a>
+    <a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; padding-top: 4px; color: var(--ink3); font-size: 12px; text-decoration: none"><svg width="24" height="24" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l8-4.5L19 8M4.5 8v8.5M8.5 8v8.5M13.5 8v8.5M17.5 8v8.5M3 18.5h16"></path></svg>Libraries</a>
+    <a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; padding-top: 4px; color: var(--ink3); font-size: 12px; text-decoration: none"><svg width="24" height="24" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="3"></circle><path d="M11 2.5v2.2M11 17.3v2.2M2.5 11h2.2M17.3 11h2.2M5 5l1.6 1.6M15.4 15.4L17 17M5 17l1.6-1.6M15.4 6.6L17 5"></path></svg>Settings</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

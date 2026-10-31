@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<style>@font-face{font-family:Newsreader;src:url("../../../../client/public-app/fonts/Newsreader.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<meta charset="utf-8">
+<title>Camera blocked</title>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+
+
+<style>
+body{margin:0}
+:root{--bg:#faf7f1;--surface:#fff;--fill:#efe9df;--ink:#1f1a17;--ink2:#4a423b;--ink3:#6b6259;--ink4:#8a8178;--line:#e7e0d5;--line2:#efe9df;--accent:#2f5340;--on:#fff;--bar:rgba(250,247,241,.96);--ok:#2f7a4b;--out:#b4532a;--chk:#9a6200;--ref:#6b4fa0;--none:#6b6259;--err:#b42318;--onstatus:#fff;--wood:#c19062;--woodhi:#d9a978;--woodlo:#9b6b40;--woodshadow:rgba(80,50,25,.25);--hero:#ece3d3;--page1:#f6f0e2;--page2:#ddd2bd;--coveredge:rgba(31,26,23,0);--covershadow:rgba(31,26,23,.28);--placeholder:#e9e1d3;--dash:#c9bda9;--toastbg:#2b2420;--toastink:#fbf8f1;--toastacc:#e9c58a;--dangerbg:#b42318;--dangerink:#fff;--prose:#2b2420;--mark:#f3e3b5}
+
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column}
+ol.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line2);font-size:15px;line-height:1.45}
+ol.steps li:last-child{border-bottom:0}
+ol.steps li::before{content:counter(s);flex:0 0 24px;height:24px;display:grid;place-items:center;border-radius:50%;background:var(--fill);font-size:13px;font-weight:600;color:var(--ink2)}
+</style>
+</helmet>
+<div style="width: 390px; height: 900px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 40px 8px 0">
+    <button type="button" style="height: 44px; padding: 0 12px; border: 0; background: transparent; color: var(--accent); font: 500 17px system-ui, -apple-system, sans-serif">Close</button>
+    <span style="font-size: 17px; font-weight: 600">Scan a barcode</span>
+    <span style="width: 64px"></span>
+  </div>
+
+  <section aria-labelledby="off" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 36px 32px 0; text-align: center">
+    <span aria-hidden="true" style="display: grid; place-items: center; width: 64px; height: 64px; border-radius: 20px; background: var(--fill); color: var(--ink2)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h3l2-2.5h8L18 7h3v12H3z"></path><circle cx="12" cy="13" r="3.5"></circle><path d="M3 3l18 18"></path></svg></span>
+    <h1 id="off" style="margin: 6px 0 0; font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 26px; line-height: 32px">Camera access is off</h1>
+    <p style="margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink2)">Your browser blocked the camera for this site. You can still type the ISBN below.</p>
+  </section>
+
+  <section aria-labelledby="isbn" style="display: flex; flex-direction: column; gap: 10px; padding: 26px 16px 0">
+    <h2 id="isbn" style="margin: 0 4px; font-size: 13px; font-weight: 500; color: var(--ink3)">ISBN from the back cover</h2>
+    <div style="display: flex; gap: 10px">
+      <label style="flex: 1; display: flex"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">ISBN</span><input inputmode="numeric" value="978026110221" style="box-sizing: border-box; width: 100%; height: 48px; padding: 0 14px; border: 0; border-radius: 12px; background: var(--fill); color: var(--ink); font: 17px ui-monospace, monospace; letter-spacing: .04em"></label>
+      <button type="button" style="height: 48px; padding: 0 20px; border: 0; border-radius: 12px; background: var(--accent); color: var(--on); font: 600 16px system-ui, -apple-system, sans-serif">Find</button>
+    </div>
+    <p style="margin: 0 4px; font-size: 13px; color: var(--ink3)">12 of 13 digits. Dashes and spaces are fine.</p>
+  </section>
+
+  <section aria-labelledby="turnon" style="padding: 26px 16px 0">
+    <h2 id="turnon" style="margin: 0 4px 6px; font-size: 13px; font-weight: 500; color: var(--ink3)">To use the camera</h2>
+    <div style="padding: 0 16px; background: var(--surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--line)">
+      <ol class="steps">
+        <li>Tap the site settings icon next to the address bar.</li>
+        <li>Set Camera to <b>Allow</b> for mybookshelf.cloud.</li>
+        <li>Come back here and try again.</li>
+      </ol>
+    </div>
+    <button type="button" style="width: 100%; margin-top: 12px; height: 44px; border: 0; border-radius: 12px; background: var(--fill); color: var(--ink); font: 500 15px system-ui, -apple-system, sans-serif">Try the camera again</button>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

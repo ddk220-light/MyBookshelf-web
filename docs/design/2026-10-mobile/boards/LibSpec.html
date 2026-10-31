@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<style>@font-face{font-family:Newsreader;src:url("../../../../client/public-app/fonts/Newsreader.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<meta charset="utf-8">
+<title>How library search works</title>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+
+
+<style>
+body{margin:0}
+:root{--bg:#faf7f1;--surface:#fff;--fill:#efe9df;--ink:#1f1a17;--ink2:#4a423b;--ink3:#6b6259;--ink4:#8a8178;--line:#e7e0d5;--line2:#efe9df;--accent:#2f5340;--on:#fff;--bar:rgba(250,247,241,.96);--ok:#2f7a4b;--out:#b4532a;--chk:#9a6200;--ref:#6b4fa0;--none:#6b6259;--err:#b42318;--onstatus:#fff;--wood:#c19062;--woodhi:#d9a978;--woodlo:#9b6b40;--woodshadow:rgba(80,50,25,.25);--hero:#ece3d3;--page1:#f6f0e2;--page2:#ddd2bd;--coveredge:rgba(31,26,23,0);--covershadow:rgba(31,26,23,.28);--placeholder:#e9e1d3;--dash:#c9bda9;--toastbg:#2b2420;--toastink:#fbf8f1;--toastacc:#e9c58a;--dangerbg:#b42318;--dangerink:#fff;--prose:#2b2420;--mark:#f3e3b5}
+.h2{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:28px}
+.card{display:flex;flex-direction:column;gap:8px;padding:18px 20px;background:var(--surface);border-radius:14px;box-shadow:0 0 0 1px var(--line)}
+.card b{font-size:16px}
+.card p{margin:0;font-size:14px;line-height:1.5;color:var(--ink2)}
+.card .ex{font-size:13px;color:var(--ink3)}
+.n{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700}
+.cl{display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.5;color:var(--ink2)}
+.cl b{color:var(--ink)}
+.edge{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px}
+.edge li{font-size:14px;line-height:1.5;color:var(--ink2)}
+.edge li b{color:var(--ink)}
+</style>
+</helmet>
+<div style="width: 1600px; height: 1480px; box-sizing: border-box; padding: 56px 64px; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; gap: 30px">
+  <header style="display: flex; flex-direction: column; gap: 10px; max-width: 1100px">
+    <h1 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 48px; line-height: 1.05">How library search works</h1>
+    <p style="margin: 0; font-size: 17px; line-height: 1.5; color: var(--ink2)">One search box understands library names, short names, branch names, cities and postcodes. One tap finds what's near you, anywhere. Browsing by area and shared links cover the rest. Every result says what we can check there, so nobody chooses a library and then finds out it can't tell them anything.</p>
+  </header>
+
+  <section style="display: flex; flex-direction: column; gap: 14px">
+    <h2 class="h2">Six ways in</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+      <div class="card"><span style="display: flex; align-items: center; gap: 10px"><span class="n">1</span><b>Type anything</b></span><p>Names first, then places. Matches library names, short names and aliases, and branch names. “Fremont” finds Alameda County Library through its Fremont branch.</p><span class="ex">“APCE”, “British Council”, “Fremont”, “600085”</span></div>
+      <div class="card"><span style="display: flex; align-items: center; gap: 10px"><span class="n">2</span><b>Near me</b></span><p>Works anywhere. Asks for location once, then sorts by the closest branch, not the head office. Distances use local units (miles in the US, km elsewhere), and approximate addresses read “about”.</p><span class="ex">Libraries nearby without a confirmed location follow the list, by city. Where we have no libraries, say so and offer browsing.</span></div>
+      <div class="card"><span style="display: flex; align-items: center; gap: 10px"><span class="n">3</span><b>A place</b></span><p>When a place is ambiguous, ask which one (Fremont, California or Fremont, Nebraska). Then show libraries within a radius. If there are none, widen it and say so.</p><span class="ex">“Nothing within 10 km. Showing the closest, 48 km away.”</span></div>
+      <div class="card"><span style="display: flex; align-items: center; gap: 10px"><span class="n">4</span><b>From a book</b></span><p>A book with no library yet has its own library search. Choosing one comes straight back to that book and checks it.</p><span class="ex">The book stays open the whole time.</span></div>
+      <div class="card"><span style="display: flex; align-items: center; gap: 10px"><span class="n">5</span><b>Browse by area</b></span><p>Country, then state, then district. For readers who know where they are but not the library's name.</p><span class="ex">7,071 libraries: India 6,686 · US 232 · Canada 132 · Japan 20 · New Zealand 1</span></div>
+      <div class="card"><span style="display: flex; align-items: center; gap: 10px"><span class="n">6</span><b>A shared link</b></span><p>mybookshelf.cloud/select/anna-centenary-library opens that library's card with one confirm button. It never switches silently, and keeps any book the reader was looking at.</p><span class="ex">Settings › Share your library makes the link.</span></div>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: 560px minmax(0, 1fr); gap: 40px">
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <h2 class="h2">What a result row says</h2>
+      <div style="padding: 0 16px; background: var(--surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--line)">
+        <div style="display: flex; align-items: center; gap: 12px; min-height: 72px">
+          <span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Alameda County Library</span><span style="font-size: 14px; color: var(--ink3)">Fremont, California · 10 locations · checks availability</span></span>
+          <span style="font-size: 14px; color: var(--ink3)">about 1 mi</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div class="cl"><span class="n" style="flex: 0 0 26px">a</span><span><b>Name</b> as the library uses it. When two share a name, add the region (Richmond Public Library · California vs · British Columbia).</span></div>
+        <div class="cl"><span class="n" style="flex: 0 0 26px">b</span><span><b>Where</b>: city and region. Use the district when there's no city.</span></div>
+        <div class="cl"><span class="n" style="flex: 0 0 26px">c</span><span><b>Size</b>: number of branches.</span></div>
+        <div class="cl"><span class="n" style="flex: 0 0 26px">d</span><span><b>What we can check</b>: always one of the four levels on the right.</span></div>
+        <div class="cl"><span class="n" style="flex: 0 0 26px">e</span><span><b>Distance</b>, only when the reader shared location or picked a place. To the closest branch, in local units.</span></div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <h2 class="h2">Four levels of “what we can check”</h2>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div class="card" style="flex-direction: row; align-items: flex-start; gap: 14px"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true" style="flex: 0 0 22px"><circle cx="10" cy="10" r="9" style="fill: var(--ok)"></circle><path d="M6 10.2l2.7 2.6L14 7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="display: flex; flex-direction: column; gap: 4px"><b>Checks availability</b><p>We can say whether a copy can be borrowed. Some catalogs add copy counts, shelf location and call number. Large US systems say “available” for the whole system, not by branch.</p></span></div>
+        <div class="card" style="flex-direction: row; align-items: flex-start; gap: 14px"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true" style="flex: 0 0 22px"><circle cx="10" cy="10" r="8" style="fill: none; stroke: var(--ink2)" stroke-width="2"></circle><circle cx="10" cy="10" r="3.2" style="fill: var(--ink2)"></circle></svg><span style="display: flex; flex-direction: column; gap: 4px"><b>Searches the catalog</b><p>We can find whether the library lists a book, but not whether it's on the shelf. Many college catalogs in India work this way.</p></span></div>
+        <div class="card" style="flex-direction: row; align-items: flex-start; gap: 14px"><svg width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="flex: 0 0 22px; color: var(--accent)"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.7"></circle><path d="M2 10h16M10 2c2.4 2.2 3.6 4.9 3.6 8s-1.2 5.8-3.6 8c-2.4-2.2-3.6-4.9-3.6-8S7.6 4.2 10 2z" stroke="currentColor" stroke-width="1.5"></path></svg><span style="display: flex; flex-direction: column; gap: 4px"><b>Search on their website</b><p>The connection isn't built yet, or the catalog can only be searched on its own site, so we link there instead. Examples include VIT Chennai, Arul Anandar College and Atlantic County.</p></span></div>
+        <div class="card" style="flex-direction: row; align-items: flex-start; gap: 14px"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true" style="flex: 0 0 22px"><circle cx="10" cy="10" r="9" style="fill: var(--fill)"></circle><path d="M6 9h8M6 12h5" style="stroke: var(--ink2)" stroke-width="1.8" stroke-linecap="round"></path></svg><span style="display: flex; flex-direction: column; gap: 4px"><b>Plus a membership note</b><p>Added to any level when the library says borrowing needs membership or campus access, for example: “Membership rules apply.”</p></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 14px">
+    <h2 class="h2">Edge cases to handle</h2>
+    <ul class="edge">
+      <li><b>Same name, different place.</b> Two Richmond Public Library entries, one in California and one in British Columbia. Neither has a city or a location, so show the region and country on every row.</li>
+      <li><b>Searching by branch.</b> When the match is a branch, show “Fremont branch of Alameda County Library”. Choosing it selects the system and remembers the branch to show first.</li>
+      <li><b>Nothing nearby.</b> Widen the radius and say so. If nothing is near at all, say we don't cover the area yet and offer browsing by country.</li>
+      <li><b>No match at all.</b> Suggest a shorter query, the town instead, or browsing by country.</li>
+      <li><b>Already chosen.</b> Your library is pinned at the top with a check. It also appears in results with a check instead of “Choose”.</li>
+      <li><b>Switching libraries mid-book.</b> Return to the same book and page, and re-check availability right away.</li>
+      <li><b>Names that aren't unique.</b> “Stratford Public Library” appears twice in Stratford, Ontario: the library itself (6 locations) and a 1-location catalog that seems to be a shared Perth County one. “Sitka Library” appears twice with no place at all. Fix the names in the directory data. Until then, rows show the location count and catalog source.</li>
+      <li><b>Saved library disappears.</b> If a saved library leaves the directory, keep the shelf, tell the reader once, and ask them to choose again.</li>
+    </ul>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":1480}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

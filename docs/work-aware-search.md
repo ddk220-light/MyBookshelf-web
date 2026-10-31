@@ -1,0 +1,67 @@
+# Work-aware book discovery and library search
+
+The anonymous web uses Open Library's work IDs for global discovery. It then searches the selected library's own catalog. No private item feed or copy counts are required.
+
+## Discovery
+
+- Free text combines Open Library text, title-specific, and title/author-field searches with Google Books. Open Library results retain durable `v1:openlibrary:OL…W` keys; Google results retain their ISBN/source identities. A successful source does not suppress the other source's results.
+- Each request reads up to 40 raw records per query/source and retains the relevant candidates (up to 160), rather than truncating to ten records before grouping. `nextOffset` continues upstream pagination. The UI initially shows five presentation groups; **Show more books** reveals loaded groups, then fetches the next page. Search text and paging state stay in bounded same-tab memory.
+- Identical displayed titles/authors can share an expandable card, including catalog records. Every version retains its own key and availability lookup. This is presentation grouping, not a claim of authoritative work equivalence. Series subtitles remain visible; generic edition aliases do not overwrite an already matching specific title.
+- Partial source failures retain successful results with a short notice. A failed next page leaves previous results and its retry action intact. Search results remain dependent on source indexing and availability; pagination is not a claim of exhaustive worldwide coverage.
+- An ISBN or barcode retains its exact `v1:isbn:…` key. Open Library's ISBN endpoint adds its work relationship and language when known. Existing metadata sources remain an ISBN fallback.
+- Different works are never merged using fuzzy title or author comparison. The same title can legitimately refer to unrelated books. Open Library can also have duplicate or incorrect work records; this feature does not silently repair those relationships.
+- Selecting a work resolves its details. Availability lazily reads at most 100 edition records from that work, preserving the language/format relationship of each ISBN. Unknown-language editions are not added as confirmed same-language alternatives. Audio, digital, and Braille editions are excluded from print expansion.
+- Identical ISBN-10/13 representations normalize to one edition. The original scanned ISBN remains available independently of metadata enrichment.
+
+## Selected library search
+
+`searchLibraryBook` uses the existing scoped provider adapters. It starts an ISBN lookup and a title + primary author search together, then tries other known ISBNs (including ISBN-10 representations), title alone, and a known alternate title. Budgets are six ISBN queries, three text queries, six unique record inspections, and a 20-second catalog-search deadline. Metadata expansion has its own bounded request deadline.
+
+Candidate records are reopened through their adapter when necessary. Stable record IDs deduplicate results. Branch and institution filtering remains inside each adapter. BiblioCommons supplies public candidate metadata directly, including titles, authors, languages, ISBNs, and a durable record URL. Koha detail parsing now retains author names for records without ISBNs.
+
+The selected-library text picker uses Koha's public search in pages of 40, retaining branch filters and computing the next offset from the number of records actually returned. Title/author matches are ordered ahead of broader catalog keywords without dropping returned records. Responsibility statements nested inside Koha title links are excluded from the title. The captured Anna Centenary **Wings of Fire** fixture includes 18 independent records, including the autobiography and distinct novels; grouped cards preserve each record's separate holdings.
+
+## Catalog covers and book information
+
+Koha search ISBNs are accepted only from a cover container with the same biblionumber and title as the result. Conflicting identifiers are rejected. The catalog key remains unchanged. ISBN cover URLs use Open Library's `default=false` behavior so missing images show the app's placeholder rather than a blank cover.
+
+Visible catalog cards and the book detail page request optional `/books/enrich` metadata after the catalog has rendered. Only server-resolved catalog keys are accepted. Open Library's ISBN edition and its linked work supply covers/descriptions; an exact-ISBN Google Books response fills gaps. Catalog title, authors, ISBN and publication data remain authoritative. Descriptive additions never supply an availability result or create a new work relationship. Missing ISBNs are not guessed from similar titles.
+
+Enrichment is cached and coalesced by ISBN, bounded to ten seconds, and excluded from availability requests. Failures leave the catalog result usable. Grouped cards can fall back to another member's cover while each individual record retains its own ISBN and metadata. Book details reuse the existing About page without adding text to the library availability view.
+
+The matcher tolerates punctuation, accents, author ordering, and initials for possible matches. It preserves meaningful title differences, volumes, adaptations, study guides, and revisions. An ISBN found through a keyword search must actually appear in the returned record before it counts as an exact match.
+
+## Results and controls
+
+- `exact_isbn`: the requested ISBN was verified by the adapter or candidate metadata.
+- `verified_work`: a compatible known edition ISBN was verified. The response includes the matched ISBN.
+- `possible_match`: title and author evidence without a known edition ISBN. The UI says **Check edition**; it never presents a confirmed availability claim or counts for this case.
+- `in_catalog` needs catalog evidence, not copy counts. **Available now** still requires an explicit public circulation observation.
+- `no_match` means this bounded search found no confirmed match. It does not claim that every edition is absent.
+- `unknown` means the check could not complete reliably. A positive earlier match survives subsequent failures. A prior confirmed observation may be returned as explicitly stale.
+
+The availability request accepts optional `editionScope: "work" | "exact"` and a three-letter `language`. Exact mode is only valid for ISBN keys. Scope and language are included in the stale-result cache key. The UI defaults to work search, offers **Only this ISBN** for scanned/typed ISBNs, and carries preferences through the library chooser using the book URL.
+
+Open Library requests are cached for six hours, coalesced, and paced to at most one uncached request per second per server process with an identifying User-Agent. This is intended for user-driven discovery, not bulk indexing. Large or multi-instance deployments need a shared provider budget/cache.
+
+Providers without a public text-search adapter still benefit from known-edition ISBN searches. Catalogs without a supported public lookup retain their existing external-catalog handoff. Provider errors, missing metadata, and catalog absence remain distinct.
+
+## Validation
+
+Run `npm test --workspace=server`, `npm run test:client`, `npm run typecheck:client`, and `npm run build` with Node 22. Tests cover grouped work keys, cold resolution, language and format filtering, ISBN variants, missing-ISBN recovery, reordered authors, conflicting titles, request budgets, deadlines, partial success, exact-mode isolation, UI controls, and grouped result limits.
+
+For a live check, start `PORT=4195 node server/index.js` after building, open `/app/search`, search **Wings of Fire**, choose Kalam's work, and select a supported library. Repeat with **Harry Potter** to verify individual novels remain separate. Live catalog observations are time-sensitive and are not test fixtures.
+
+References: [Open Library Search API](https://openlibrary.org/dev/docs/api/search), [Work and edition APIs](https://openlibrary.org/dev/docs/restful_api), [API usage guidelines](https://openlibrary.org/developers/api).
+
+## Historical verification (2026-10-26)
+
+This section records the original implementation. Its branch and commit belong to the earlier repository; do not check them out to continue current work. Use this repository's `main`, the commands in README.md, and `/app/search`. Current release evidence is in [seo/VALIDATION.md](seo/VALIDATION.md).
+
+Feature branch: `codex/work-aware-search`, based on the latest committed book-first web app (`3adb7b9`). Both server and web changes are included. This is a local implementation; production has not been deployed.
+
+
+
+Use Node 22. Open `http://localhost:4195/app/search`. No private environment file is included. Providers that already require credentials or lack a supported public interface retain those limitations.
+
+Verification on this implementation: the complete server suite passed (446 tests), client tests passed (66), and client type-check/build passed. Browser and live API checks confirmed grouped **Wings of Fire** and **Harry Potter** searches. At the time of checking, Kalam's work matched San Mateo's record `S76C3452801`; **Philosopher's Stone** matched the alternate-title **Sorcerer's Stone** record `S76C1612613` through known edition ISBN `9780590353403`. Circulation status is transient. Missing-ISBN recovery, conflicts, deadlines, and partial failures are covered with deterministic tests; these live samples do not establish every provider's coverage. Camera hardware was not exercised in this change.

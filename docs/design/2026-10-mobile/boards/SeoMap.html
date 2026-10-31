@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<style>@font-face{font-family:Newsreader;src:url("../../../../client/public-app/fonts/Newsreader.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<meta charset="utf-8">
+<title>Site structure and sitemap</title>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+
+
+<style>
+body{margin:0}
+:root{--bg:#faf7f1;--surface:#fff;--fill:#efe9df;--ink:#1f1a17;--ink2:#4a423b;--ink3:#6b6259;--ink4:#8a8178;--line:#e7e0d5;--line2:#efe9df;--accent:#2f5340;--on:#fff;--bar:rgba(250,247,241,.96);--ok:#2f7a4b;--out:#b4532a;--chk:#9a6200;--ref:#6b4fa0;--none:#6b6259;--err:#b42318;--onstatus:#fff;--wood:#c19062;--woodhi:#d9a978;--woodlo:#9b6b40;--woodshadow:rgba(80,50,25,.25);--hero:#ece3d3;--page1:#f6f0e2;--page2:#ddd2bd;--coveredge:rgba(31,26,23,0);--covershadow:rgba(31,26,23,.28);--placeholder:#e9e1d3;--dash:#c9bda9;--toastbg:#2b2420;--toastink:#fbf8f1;--toastacc:#e9c58a;--dangerbg:#b42318;--dangerink:#fff;--prose:#2b2420;--mark:#f3e3b5}
+.h2{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:28px}
+.t{width:100%;border-collapse:collapse;font-size:15px;line-height:1.45}
+.t th{text-align:left;padding:10px 12px;font-size:13px;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line)}
+.t td{vertical-align:top;padding:12px;border-bottom:1px solid var(--line2);color:var(--ink2)}
+.t td:first-child{color:var(--ink);font-weight:600;width:28px}
+.t b{color:var(--ink)}
+.box{padding:20px 22px;background:var(--surface);border-radius:14px;box-shadow:0 0 0 1px var(--line)}
+.mono{font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);white-space:pre;margin:0}
+.tag{display:inline-block;padding:1px 8px;border-radius:10px;background:var(--fill);font-size:12px;color:var(--ink2)}
+</style>
+</helmet>
+<div style="width: 1600px; height: 1090px; box-sizing: border-box; padding: 56px 64px; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; flex-direction: column; gap: 8px; max-width: 1150px">
+  <h1 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 46px; line-height: 1.1">Site structure, sitemap and trust</h1>
+  <p style="margin: 0; font-size: 17px; line-height: 1.5; color: var(--ink2)">Public pages are plain HTML built from the directory, readable without JavaScript. The app moves under /app and stays out of search. Every library is reachable in three clicks from the home page.</p>
+</header>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px">
+  <section class="box" style="display: flex; flex-direction: column; gap: 12px"><h2 class="h2">Addresses</h2><pre class="mono">mybookshelf.cloud
+├─ /                         landing (static)
+├─ /about  /how-it-works  /open-source  /privacy  /support
+├─ /libraries                directory home: countries
+│  ├─ /libraries/in                         country
+│  │  ├─ /libraries/in/tamil-nadu           state or province
+│  │  │  └─ /libraries/in/tamil-nadu/chennai   district or city (paged: ?page=2)
+│  │  └─ …
+│  └─ /libraries/anna-centenary-library     one library (flat slug, never nested)
+├─ /libraries/search?q=      results for the landing form   noindex
+├─ /app/…                    the app: shelf, search, book, libraries, settings   noindex
+├─ /select/<slug>?next=      deep link: choose a library, then open Search   noindex
+└─ /robots.txt  /sitemap.xml  /404</pre></section>
+  <section class="box" style="display: flex; flex-direction: column; gap: 12px"><h2 class="h2">Sitemap index</h2><pre class="mono">/sitemap.xml                    sitemap index
+├─ /sitemaps/pages.xml          landing, about, how it works, open source, privacy, support
+├─ /sitemaps/areas.xml          every country, state and district page
+├─ /sitemaps/libraries-in-1.xml   India, split every 10,000 URLs
+├─ /sitemaps/libraries-us.xml
+├─ /sitemaps/libraries-ca.xml
+├─ /sitemaps/libraries-jp.xml
+└─ /sitemaps/libraries-nz.xml</pre>
+    <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink2)">Only indexable pages are listed. <b>lastmod</b> is the date a library's details or catalog connection were last verified, never the build date. Each file stays under 50,000 URLs and 50 MB.</p></section>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px">
+  <section class="box" style="display: flex; flex-direction: column; gap: 10px"><h2 class="h2" style="font-size: 22px">Indexed or not</h2>
+    <table class="t"><tr><td style="width: auto">index</td><td>Landing, site pages, area pages, libraries with a working catalog connection, or a verified place plus one more real fact</td></tr><tr><td style="width: auto">noindex, follow</td><td>Thin library pages: published and linked, indexed once their data improves. Page 2+ of long areas stays indexable with its own canonical</td></tr><tr><td style="width: auto">noindex</td><td>/app, /select, /libraries/search, /api</td></tr></table></section>
+  <section class="box" style="display: flex; flex-direction: column; gap: 10px"><h2 class="h2" style="font-size: 22px">Every page has</h2>
+    <p style="margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink2)">A unique title and description · canonical URL on the apex domain · breadcrumb · JSON-LD (Library, BreadcrumbList, ItemList, Organization, WebSite) · Open Graph image · a real 404 for unknown paths · permanent redirects for renamed slugs.</p></section>
+  <section class="box" style="display: flex; flex-direction: column; gap: 10px"><h2 class="h2" style="font-size: 22px">Trust signals</h2>
+    <p style="margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink2)">Independence notice on every library page · GitHub link and licence in the footer · About with a real person and contact · source link for every address · “last checked” dates · no ratings, ads or invented stats · “Report a problem” opens a public GitHub issue · privacy page in plain words.</p></section>
+</div>
+<section class="box" style="display: flex; flex-direction: column; gap: 10px"><h2 class="h2" style="font-size: 22px">Search results we want</h2>
+  <p style="margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink2)"><b>Anna Centenary Library, Chennai — search the catalog for books | MyBookshelf</b><br>mybookshelf.cloud › libraries › anna-centenary-library<br>Search Anna Centenary Library's catalog in Chennai, Tamil Nadu, and see whether a copy is on the shelf. Free, no account. MyBookshelf is independent of the library.</p></section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":1090}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

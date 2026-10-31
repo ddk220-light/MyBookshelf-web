@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<style>@font-face{font-family:Newsreader;src:url("../../../../client/public-app/fonts/Newsreader.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<meta charset="utf-8">
+<title>Area page</title>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+
+
+<style>
+body{margin:0}
+:root{--bg:#faf7f1;--surface:#fff;--fill:#efe9df;--ink:#1f1a17;--ink2:#4a423b;--ink3:#6b6259;--ink4:#8a8178;--line:#e7e0d5;--line2:#efe9df;--accent:#2f5340;--on:#fff;--bar:rgba(250,247,241,.96);--ok:#2f7a4b;--out:#b4532a;--chk:#9a6200;--ref:#6b4fa0;--none:#6b6259;--err:#b42318;--onstatus:#fff;--wood:#c19062;--woodhi:#d9a978;--woodlo:#9b6b40;--woodshadow:rgba(80,50,25,.25);--hero:#ece3d3;--page1:#f6f0e2;--page2:#ddd2bd;--coveredge:rgba(31,26,23,0);--covershadow:rgba(31,26,23,.28);--placeholder:#e9e1d3;--dash:#c9bda9;--toastbg:#2b2420;--toastink:#fbf8f1;--toastacc:#e9c58a;--dangerbg:#b42318;--dangerink:#fff;--prose:#2b2420;--mark:#f3e3b5}
+
+.site{box-sizing:border-box;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+.top{display:flex;align-items:center;gap:28px;padding:0 48px;min-height:72px;border-bottom:1px solid var(--line);background:var(--surface)}
+.top.ph{padding:0 16px;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;min-height:44px;font:500 22px 'Newsreader',Georgia,serif;color:var(--ink);text-decoration:none}
+.nav{display:flex;gap:6px;margin-left:auto}
+.nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--ink2);font-size:15px;text-decoration:none}
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;background:var(--accent);color:var(--on);font-weight:600;font-size:15px;text-decoration:none}
+.cta.big{min-height:52px;padding:0 24px;font-size:17px}
+.ghost{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;background:var(--fill);color:var(--accent);font-weight:600;font-size:15px;text-decoration:none}
+.wrap{width:100%;max-width:1120px;margin:0 auto;padding:0 48px;box-sizing:border-box}
+.crumb{display:flex;flex-wrap:wrap;gap:6px;font-size:14px;color:var(--ink3)}
+.crumb a{color:var(--accent);text-decoration:none}
+.h1{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:46px;line-height:1.1}
+.h2{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:26px;line-height:1.25}
+.lede{margin:0;font-size:19px;line-height:1.55;color:var(--ink2)}
+.card{display:flex;flex-direction:column;gap:10px;padding:22px;background:var(--surface);border-radius:16px;box-shadow:0 0 0 1px var(--line)}
+.card p,.body p{margin:0;font-size:16px;line-height:1.6;color:var(--ink2)}
+.list{margin:0;padding:0;list-style:none}
+.list li{display:flex;align-items:center;gap:12px;min-height:48px;border-bottom:1px solid var(--line2);font-size:16px}
+.list li:last-child{border-bottom:0}
+.list li a{min-height:44px;align-items:center}
+.facts{display:grid;grid-template-columns:180px 1fr;gap:12px 20px;margin:0;font-size:15px}
+.facts dt{color:var(--ink3)}
+.facts dd{margin:0;color:var(--ink)}
+.lib{display:flex;align-items:center;gap:14px;min-height:64px;padding:0 4px;border-bottom:1px solid var(--line2);color:inherit;text-decoration:none}
+.lib b{font-size:16px}
+.lib span{font-size:14px;color:var(--ink3)}
+.foot{margin-top:auto;padding:32px 48px 40px;border-top:1px solid var(--line);background:var(--surface);font-size:14px;color:var(--ink3)}
+.foot a{display:inline-flex;align-items:center;min-height:44px;color:var(--ink2);text-decoration:none}
+.note{margin:0;font-size:14px;line-height:1.5;color:var(--ink3)}
+.ph-only .wrap{padding:0 16px}
+</style>
+</helmet>
+<div class="site" style="width: 1440px; height: 960px">
+<header class="top"><a href="#" class="logo"><svg width="26" height="26" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true" style="color: var(--accent)"><path d="M3.5 3.5h3v15h-3zM7.5 3.5h3v15h-3zM12 4.6l2.9-.8 3.9 14.5-2.9.8z"></path></svg>myBookshelf</a><nav class="nav" aria-label="Site"><a href="#">Libraries</a><a href="#">How it works</a><a href="#">About</a><a href="#"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.22.48-2.69-1.07-2.69-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.77-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0z"></path></svg>&nbsp;GitHub</a></nav><a href="#" class="cta">Open the app</a></header>
+<div class="wrap" style="padding-top: 36px; padding-bottom: 48px; display: flex; flex-direction: column; gap: 22px">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="#">Libraries</a>›<a href="#">India</a>›<a href="#">Tamil Nadu</a>›<span>Chennai</span></nav>
+  <h1 class="h1">Libraries in Chennai, Tamil Nadu</h1>
+  <p class="lede">45 libraries with a catalog you can search. Choose one to see what MyBookshelf can check there.</p>
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 40px; align-items: start">
+    <section class="card" style="gap: 0; padding: 8px 22px"><h2 class="sr" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Libraries</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px"><a href="#" class="lib"><span style="display: flex; flex-direction: column; gap: 2px"><b style="color: var(--ink)">Alliance Française — Madras</b><span>Nungambakkam · checks availability</span></span></a><a href="#" class="lib"><span style="display: flex; flex-direction: column; gap: 2px"><b style="color: var(--ink)">Anna Centenary Library</b><span>Kotturpuram · checks availability · membership</span></span></a><a href="#" class="lib"><span style="display: flex; flex-direction: column; gap: 2px"><b style="color: var(--ink)">Anna University, Chennai</b><span>Guindy · checks availability</span></span></a><a href="#" class="lib"><span style="display: flex; flex-direction: column; gap: 2px"><b style="color: var(--ink)">B S Abdur Rahman Crescent Institute</b><span>Vandalur · checks availability</span></span></a><a href="#" class="lib"><span style="display: flex; flex-direction: column; gap: 2px"><b style="color: var(--ink)">British Council India Libraries</b><span>Chennai · checks availability · membership</span></span></a><a href="#" class="lib"><span style="display: flex; flex-direction: column; gap: 2px"><b style="color: var(--ink)">CIBA Library</b><span>Santhome · checks availability</span></span></a><a href="#" class="lib"><span style="display: flex; flex-direction: column; gap: 2px"><b style="color: var(--ink)">GRT MV</b><span>Ashok Nagar · checks availability</span></span></a><a href="#" class="lib"><span style="display: flex; flex-direction: column; gap: 2px"><b style="color: var(--ink)">HITS Central Library</b><span>Padur · checks availability</span></span></a><a href="#" class="lib"><span style="display: flex; flex-direction: column; gap: 2px"><b style="color: var(--ink)">IHM Chennai Library</b><span>Taramani · checks availability</span></span></a><a href="#" class="lib"><span style="display: flex; flex-direction: column; gap: 2px"><b style="color: var(--ink)">VIT Chennai Central Library</b><span>Kelambakkam · search on their website</span></span></a></div>
+      <nav style="display: flex; gap: 8px; padding: 16px 0" aria-label="Pages"><span class="ghost" aria-current="page">1</span><a href="#" class="ghost" style="background: transparent">2</a><a href="#" class="ghost" style="background: transparent">3</a><a href="#" class="ghost" style="background: transparent">Next</a></nav>
+    </section>
+    <aside style="display: flex; flex-direction: column; gap: 20px">
+      <section class="card"><h2 class="h2" style="font-size: 20px">Elsewhere in Tamil Nadu</h2><ul class="list"><li><a href="#" style="display: flex; justify-content: space-between; width: 100%; color: var(--ink); text-decoration: none"><span>Coimbatore</span><span style="color: var(--ink3)"></span></a></li><li><a href="#" style="display: flex; justify-content: space-between; width: 100%; color: var(--ink); text-decoration: none"><span>Madurai</span><span style="color: var(--ink3)"></span></a></li><li><a href="#" style="display: flex; justify-content: space-between; width: 100%; color: var(--ink); text-decoration: none"><span>Tiruchirappalli</span><span style="color: var(--ink3)"></span></a></li><li><a href="#" style="display: flex; justify-content: space-between; width: 100%; color: var(--ink); text-decoration: none"><span>All districts</span><span style="color: var(--ink3)"></span></a></li></ul></section>
+      <a href="#" class="cta big">Search books in Chennai libraries</a>
+    </aside>
+  </div>
+</div>
+<footer class="foot"><div style="display: flex; justify-content: space-between; gap: 32px">
+  <div style="display: flex; flex-direction: column; gap: 6px; max-width: 420px"><b style="color: var(--ink); font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-weight: 500">myBookshelf</b><span>An independent, open-source project. Not affiliated with any library. Free, no account, no ads.</span></div>
+  <div style="display: flex; flex-wrap: wrap; gap: 8px 20px; align-content: flex-start"><a href="#">Libraries</a><a href="#">How it works</a><a href="#">About</a><a href="#">Open source</a><a href="#">Privacy</a><a href="#">Help &amp; support</a><a href="#">GitHub</a></div>
+</div><p style="margin: 18px 0 0">Place data © GeoNames (CC BY 4.0). Library details from each library's public website and catalog.</p></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<style>@font-face{font-family:Newsreader;src:url("../../../../client/public-app/fonts/Newsreader.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<meta charset="utf-8">
+<title>Implementation review fixes</title>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+
+
+<style>
+body{margin:0}
+:root{--bg:#faf7f1;--surface:#fff;--fill:#efe9df;--ink:#1f1a17;--ink2:#4a423b;--ink3:#6b6259;--ink4:#8a8178;--line:#e7e0d5;--line2:#efe9df;--accent:#2f5340;--on:#fff;--bar:rgba(250,247,241,.96);--ok:#2f7a4b;--out:#b4532a;--chk:#9a6200;--ref:#6b4fa0;--none:#6b6259;--err:#b42318;--onstatus:#fff;--wood:#c19062;--woodhi:#d9a978;--woodlo:#9b6b40;--woodshadow:rgba(80,50,25,.25);--hero:#ece3d3;--page1:#f6f0e2;--page2:#ddd2bd;--coveredge:rgba(31,26,23,0);--covershadow:rgba(31,26,23,.28);--placeholder:#e9e1d3;--dash:#c9bda9;--toastbg:#2b2420;--toastink:#fbf8f1;--toastacc:#e9c58a;--dangerbg:#b42318;--dangerink:#fff;--prose:#2b2420;--mark:#f3e3b5}
+.h2{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:28px}
+.t{width:100%;border-collapse:collapse;font-size:15px;line-height:1.45}
+.t th{text-align:left;padding:10px 12px;font-size:13px;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line)}
+.t td{vertical-align:top;padding:12px;border-bottom:1px solid var(--line2);color:var(--ink2)}
+.t td:first-child{color:var(--ink);font-weight:600;width:28px}
+.t b{color:var(--ink)}
+.box{padding:20px 22px;background:var(--surface);border-radius:14px;box-shadow:0 0 0 1px var(--line)}
+.mono{font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);white-space:pre;margin:0}
+.tag{display:inline-block;padding:1px 8px;border-radius:10px;background:var(--fill);font-size:12px;color:var(--ink2)}
+</style>
+</helmet>
+<div style="width: 1600px; height: 1060px; box-sizing: border-box; padding: 56px 64px; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; flex-direction: column; gap: 8px; max-width: 1150px">
+  <h1 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 46px; line-height: 1.1">Implementation review — what to fix</h1>
+  <p style="margin: 0; font-size: 17px; line-height: 1.5; color: var(--ink2)">Checked against mybookshelf.cloud (main d9d0af7) at 390 px and 1366 × 768 in all three reading lights. The structure, themes and laptop panes match the design; these are the gaps. Each row names the board that shows the fix.</p>
+</header>
+<table class="t"><thead><tr><th>#</th><th style="width: 440px">What's wrong now</th><th>Fix</th><th style="width: 250px">Board</th></tr></thead><tbody>
+<tr><td>1</td><td><b>Search scope stacks vertically on laptops (1024–1439 px)</b></td><td>Two options side by side at every width. Shorten long library names to the first words, with the full name on hover and for screen readers.</td><td><span class="tag">DeskSearch</span></td></tr><tr><td>2</td><td><b>“Search results” gets a focus box after each search</b></td><td>Keep moving focus there for screen readers, but give programmatic focus on headings no outline. Keyboard focus rings stay on controls.</td><td><span class="tag">DeskSearch</span></td></tr><tr><td>3</td><td><b>Near me shows no distances, says “Around Your location”, uses km in the US</b></td><td>“Nearest to you”, sorted by closest branch, distances in local units (mi in the US), “about” for approximate places. India without points keeps “In Chennai” grouping.</td><td><span class="tag">FixLibNearMeUS · DeskLibraries</span></td></tr><tr><td>4</td><td><b>Library detail is thin, has a “LIBRARY” label, and the current library still says “Use this library”</b></td><td>No label above the title. “What we can check here” list. Your library shows a “Your library · Change” bar; other libraries say “Choose &lt;library&gt;” with “Replaces …”.</td><td><span class="tag">FixLibDetail · DeskLibraries</span></td></tr><tr><td>5</td><td><b>Branch list repeats “Library” under every branch and runs long</b></td><td>Branch names only, first five, then “Show 5 more”. Lockers and mobile library in one line.</td><td><span class="tag">FixLibDetail</span></td></tr><tr><td>6</td><td><b>Libraries start shows Chennai, Madurai, Kochi, Bengaluru chips to everyone, and two “Libraries” headings</b></td><td>Remove city chips. One heading. Order: search, Libraries near me, Your library, Browse by country, Paste a link.</td><td><span class="tag">FixLibStart</span></td></tr><tr><td>7</td><td><b>Shelf list says “Saved” on every row</b></td><td>Show the last result for your library, or nothing. Never “Saved”.</td><td><span class="tag">FixShelfList</span></td></tr><tr><td>8</td><td><b>Loading covers look like missing covers; “Loading cover” is clipped in Recently viewed</b></td><td>Loading: a plain tinted block, no text, aria-busy. Missing: the typeset cover. No text inside small thumbnails.</td><td><span class="tag">FixShelfLoading · DeskShelf</span></td></tr><tr><td>9</td><td><b>Smaller items</b></td><td>“Check the edition” left-aligned with its icon. “2001?” shows as the work's first published year. A pressed “Libraries near me” is filled. The sort control sits inline with the count. The no-library card uses the search field and Near me (BookNoLibrary).</td><td><span class="tag">FixBookCard · FixShelfList</span></td></tr>
+</tbody></table>
+<div class="box" style="display: flex; gap: 40px; font-size: 15px; line-height: 1.5; color: var(--ink2)">
+  <div style="flex: 1"><b style="color: var(--ink)">Working well</b><br>Three reading lights with nothing hidden in Lamplight · face-out shelves with Add a book · laptop side column · two-column book with the answer above the fold · library list and detail panes · Near me in India · no map · no freshness copy.</div>
+  <div style="flex: 1"><b style="color: var(--ink)">Not checked live</b><br>Damaged saved data, full shelf, catalog timeout, storage blocked and shared links. Covered by the project's browser tests; compare against the Shelf and Book state boards.</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":1060}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
