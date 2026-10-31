@@ -1,0 +1,1 @@
+Recorded anonymous LIBMAN responses, 2026-10-22. Tenant 22 known ISBN 9780670082834; tenant 8 title Wings. Only bibliographic and public item fields are retained. Source evidence: catalog-expansion-2026-10-22/raw/libcloud-*.html.

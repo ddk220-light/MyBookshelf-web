@@ -1,0 +1,26 @@
+{
+  "name": "mybookshelf",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "npm run dev --workspace=client",
+    "dev:server": "npm run dev --workspace=server",
+    "build": "npm run build --workspace=client",
+    "typecheck:client": "npm run typecheck --workspace=client",
+    "test:client": "npm test --workspace=client",
+    "test:e2e": "npm run test:e2e --workspace=client",
+    "start": "node server/index.js",
+    "test:seo": "node --test tools/seo/*.test.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "license": "AGPL-3.0-only"
+}

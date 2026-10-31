@@ -1,0 +1,20 @@
+name: Web application
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck:client
+      - run: npm run test:client
+      - run: npm test --workspace=server
+      - run: npm run build
+      - run: npm run test:seo
+      - run: node --test tools/deployment/*.test.mjs
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
