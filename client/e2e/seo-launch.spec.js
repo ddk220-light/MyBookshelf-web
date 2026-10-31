@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({page}) => {
-  await page.route('https://covers.openlibrary.org/**', route => route.abort());
+  await page.route('https://covers.openlibrary.org/**', route => route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>'}));
 });
 
 test('public pages work without JavaScript and publish exactly nine libraries', async ({browser,baseURL}) => {
@@ -51,6 +51,7 @@ test('public headings and navigation fit at 320px with enlarged text', async ({p
   for (const path of ['/', '/libraries', '/libraries/central-library-iit-bhubaneswar', '/about']) {
     await page.goto(path);
     await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
+    await page.evaluate(() => document.fonts.ready);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), path).toBe(true);
     await expect(page.locator('h1')).toBeVisible();
   }

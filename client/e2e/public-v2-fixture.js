@@ -90,8 +90,9 @@ function json(route, status, body) {
 export async function installPublicV2Fixture(target, options = {}) {
   // Keep fixture-based journeys independent of third-party cover hosts.
   // Cover-specific tests register their own later route overrides.
-  await target.route('https://covers.openlibrary.org/**', route => route.abort());
-  await target.route('https://books.google.com/**', route => route.abort());
+  const missingCover = route => route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>' });
+  await target.route('https://covers.openlibrary.org/**', missingCover);
+  await target.route('https://books.google.com/**', missingCover);
   const calls = [];
   const availability = options.availability || AVAILABILITY.available;
   await target.route('**/api/v2/**', async (route) => {
@@ -135,6 +136,7 @@ export async function chooseLinkedLibrary(page) {
   await page.getByRole('button', { name: 'Select Anna Centenary Library', exact: true }).click();
   // Wait for the selection navigation before a caller reloads the document.
   await page.waitForURL('**/app/search', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('heading', { name: 'Search', exact: true }).waitFor();
 }
 
 export function tab(page, name) {

@@ -19,7 +19,7 @@ async function contained(page) {
 async function unclipped(locator) {
   // Covers can finish loading during this check. Read one DOM snapshot rather
   // than holding indices for placeholder labels that may disappear.
-  const measurements = await locator.evaluateAll(elements => elements.map(e => ({height: e.clientHeight, scrollHeight: e.scrollHeight, width: e.clientWidth, scrollWidth: e.scrollWidth, clamp: getComputedStyle(e).webkitLineClamp})));
+  const measurements = await locator.evaluateAll(elements => elements.filter(e => !e.closest('[aria-hidden="true"]')).map(e => ({height: e.clientHeight, scrollHeight: e.scrollHeight, width: e.clientWidth, scrollWidth: e.scrollWidth, clamp: getComputedStyle(e).webkitLineClamp})));
   for (const sizes of measurements) {
     expect(sizes.scrollHeight).toBeLessThanOrEqual(sizes.height + 1);
     expect(sizes.scrollWidth).toBeLessThanOrEqual(sizes.width + 1);

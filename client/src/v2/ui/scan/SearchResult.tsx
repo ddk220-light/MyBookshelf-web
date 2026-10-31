@@ -9,8 +9,8 @@ export function SearchResult({ group: { book: initialBook, versions }, open, onT
   const location = useLocation();
   const catalog = book.bookKey.startsWith('v1:catalog:');
   if (versions.length === 1) return <BookCard book={book} />;
-  return <details className="book-result-group" open={open} onToggle={event => onToggle?.(event.currentTarget.open)}>
-    <summary className="book-card">
+  return <details className="book-result-group" open={open}>
+    <summary className="book-card" onClick={onToggle ? event => { event.preventDefault(); onToggle(!open); } : undefined}>
       <Cover book={book} alternatives={versions} />
       <span><strong>{book.title}</strong>{book.authors.length > 0 && <small>{book.authors.join(', ')}</small>}
         {book.searchMatch === 'spelling' && <small>{m.similarSpelling}</small>}
