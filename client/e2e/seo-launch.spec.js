@@ -41,3 +41,13 @@ test('only returning homepage visitors are redirected; corrupt storage leaves th
   await page.goto('/');
   await expect(page.locator('h1')).toContainText('Your next read');
 });
+
+test('public headings and navigation fit at 320px with enlarged text', async ({page}) => {
+  await page.setViewportSize({width:320,height:740});
+  for (const path of ['/', '/libraries', '/libraries/central-library-iit-bhubaneswar', '/about']) {
+    await page.goto(path);
+    await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), path).toBe(true);
+    await expect(page.locator('h1')).toBeVisible();
+  }
+});

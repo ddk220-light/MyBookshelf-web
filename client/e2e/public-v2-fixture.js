@@ -129,6 +129,8 @@ export async function chooseLinkedLibrary(page) {
   await page.getByLabel('Library, city or postcode').fill('Chennai');
   await page.getByRole('button', { name: 'Search', exact: true }).click();
   await page.getByRole('button', { name: 'Select Anna Centenary Library', exact: true }).click();
+  // Wait for the selection navigation before a caller reloads the document.
+  await page.waitForURL('**/app/search');
 }
 
 export function tab(page, name) {
