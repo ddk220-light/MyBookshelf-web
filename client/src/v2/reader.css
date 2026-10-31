@@ -37,7 +37,7 @@
   --green-button-text: var(--reader-on); --green-pill-text: var(--reader-accent); --green-pill-bg: var(--reader-fill);
   --line: var(--reader-line); --field-border: var(--reader-line); --placeholder: var(--reader-muted);
   --status-green: var(--reader-ok); --status-red: var(--reader-error); --status-amber: var(--reader-out);
-  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Work Sans', sans-serif;
   color: var(--reader-ink); background: var(--reader-bg); font-family: var(--sans);
 }
 :root:not([data-reading-light='lamplight']) { color-scheme: light; }
@@ -358,3 +358,67 @@ input[type='checkbox'] { width: 24px; height: 24px; accent-color: var(--reader-a
 .shelf-controls{flex-wrap:wrap}.shelf-controls label{flex:0 1 170px;min-width:0;max-width:100%}.shelf-controls select{max-width:100%}
 /* Native WebKit selects otherwise contribute their intrinsic text overflow at 200%. */
 .shelf-controls label{flex:0 0 auto;max-width:100%}.shelf-controls select{width:auto;max-width:100%;overflow:hidden}
+
+/* The full book gets typography; tiny thumbnails stay quiet and text-free. */
+.cover .typeset-cover{font-style:normal}
+.book-card .cover .typeset-cover[data-title]::after,.example-book-card .cover .typeset-cover[data-title]::after{display:none}
+.book-card .cover .typeset-cover,.example-book-card .cover .typeset-cover{padding:0;align-items:center;justify-content:center}
+.book-card .cover .typeset-cover svg,.example-book-card .cover .typeset-cover svg{width:18px;height:18px}
+.faceout-book .typeset-cover{padding:16px;align-items:stretch;justify-content:space-between;text-align:left;background:var(--reader-fill);color:var(--reader-ink)}
+.faceout-book .typeset-cover strong{font-size:1.05rem;line-height:1.3;font-weight:450;-webkit-line-clamp:6}
+.faceout-book .typeset-cover small{font:400 .7rem/1.4 var(--sans);color:var(--reader-muted);max-height:4.2em}
+.reader-book-hero .typeset-cover{background:var(--reader-surface);font-style:normal}
+
+/* Phone review: use compact rows and a single, clear discovery start. */
+.search-submit-icon{display:none}
+.search-page .example-book-list{border:0;padding:0}
+.search-page .example-book-list .example-book-card{display:grid;grid-template-columns:50px minmax(0,1fr);align-items:center;min-height:108px;gap:16px;padding:16px;border:1px solid var(--reader-line);border-radius:12px;height:100%}
+.search-page .example-book-copy{display:flex;min-width:0;flex-direction:column;gap:4px}
+.search-page .example-book-copy strong{font-size:1.1rem;line-height:1.3}
+.search-page .example-book-card .cover{width:50px;height:75px}
+.section-heading[hidden]{display:none}
+.country-start{margin:16px 0}.country-options{display:grid;gap:8px;margin-top:12px}
+.country-option{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;text-align:left;border:1px solid var(--reader-line);background:var(--reader-surface);color:var(--reader-ink)}
+.country-option>span:first-child{flex:1}.country-option small{font-size:.75rem;font-weight:400;color:var(--reader-muted)}
+@media(max-width:1023px){
+  .reader-shelf-header .shelf-find{display:none}
+  .reader-shelf-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px}
+  .reader-shelf-header h1{grid-column:1}.reader-shelf-header .view-switch{grid-column:2;grid-row:1}
+  .reader-shelf-header .library-chip{grid-column:1/-1;grid-row:2;max-width:100%;width:fit-content}
+  .search-page .selected-library{order:0;border:0;padding:0 0 8px;justify-content:flex-start;gap:8px;font-size:.8rem}
+  .search-page .selected-library>span{margin-right:auto}
+  .book-search-input{flex-wrap:nowrap}.book-search-input .search-input-shell{flex:1 1 0;min-width:0}
+  .book-search-input>.search-submit{width:46px;min-width:46px;padding:10px;flex:0 0 46px}
+  .search-submit-label{display:none}.search-submit-icon{display:flex;align-items:center;justify-content:center}.search-submit-icon svg{width:22px;height:22px}
+  .search-page .search-recent>ul{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;overflow:visible}
+  .search-page .search-recent .book-card{flex-direction:row;align-items:center;padding:8px 0;gap:12px}
+  .search-page .search-recent .book-card>.cover{flex:0 0 38px;width:38px;height:57px}
+  .search-page .search-recent .book-card small{display:block;font-size:.75rem}
+  .reader-recent>ul>li{flex-basis:76px}
+  .reader-book-hero{padding:20px}.reader-book-hero .cover{width:min(174px,64%)}
+  .reader-book-hero .typeset-cover{padding:18px;align-items:stretch;justify-content:space-between;text-align:left}
+  .reader-book-hero .typeset-cover strong{font-size:1.2rem;line-height:1.25;font-weight:450}
+}
+
+.book-action-icon{display:none}.reader-book-about .story-text::first-letter{float:left;font-size:3.4rem;line-height:.85;padding:5px 7px 0 0;color:var(--reader-accent)}
+.availability-library-line{min-height:44px;border-bottom:1px solid var(--reader-line);padding-bottom:8px}
+.reader-availability .availability-heading{display:flex;align-items:baseline;gap:10px}
+.reader-availability .availability-status-symbol{font-size:.75rem;flex:0 0 auto;color:var(--reader-muted)}
+.reader-availability .availability-available .availability-status-symbol{color:var(--reader-ok);font-size:1rem}
+.reader-availability .availability-none_available .availability-status-symbol{color:var(--reader-out)}
+@media(max-width:1023px){
+  .app-frame .reader-book{padding-top:12px}
+  .book-back{position:relative;z-index:1;margin:0 -16px;background:var(--reader-hero);padding:0 12px}
+  .reader-book-cover-column{position:relative}
+  .reader-book-hero{border-radius:0;margin:0 -16px;padding:18px 0 30px}
+  .reader-book-hero .cover{width:180px;max-width:65%;aspect-ratio:180/290}
+  .reader-book-actions{position:absolute;top:-44px;right:0;display:flex;gap:4px;margin:0}
+  .reader-book-actions>button{width:44px;height:44px;min-width:44px;padding:10px;border:0;background:transparent;color:var(--reader-accent)}
+  .book-action-icon{display:flex;align-items:center;justify-content:center}.book-action-label{display:none}
+  .reader-book-actions button[aria-pressed="true"] .book-action-icon svg{fill:currentColor}
+  .reader-book-heading{margin-bottom:24px}.reader-book-heading h1{font-size:1.875rem;line-height:1.15}
+}
+@media(max-width:1023px){.reader-book-actions{z-index:2}}
+/* Availability uses the same plain reading type as the reference cards. */
+.reader-availability .slip-facts dd { font: 400 .9375rem/1.5 var(--sans); }
+.reader-availability .availability-heading { font-size: 1.125rem; }

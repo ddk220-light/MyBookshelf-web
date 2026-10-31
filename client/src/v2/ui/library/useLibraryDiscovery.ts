@@ -59,10 +59,9 @@ export function useLibraryDiscovery(initial: { country?: string; region?: string
     return () => { clearTimeout(timer); controller.abort(); };
   }, [query, center, areaOpen, country]);
   useEffect(() => {
-    if (!areaOpen) return;
     setAreaError(false);
     const controller = new AbortController();
-    publicApi.libraryAreas(country || undefined, region || undefined, controller.signal).then(result => { if (!controller.signal.aborted) setAreas(result); })
+    publicApi.libraryAreas(country || undefined, region || undefined, controller.signal).then(result => { if (controller.signal.aborted) return; if (!Array.isArray(result?.countries) || !Array.isArray(result?.regions) || !Array.isArray(result?.districts)) throw new Error('Invalid library areas'); setAreas(result); })
       .catch(() => { if (!controller.signal.aborted) setAreaError(true); });
     return () => controller.abort();
   }, [areaOpen, country, region, areaAttempt]);

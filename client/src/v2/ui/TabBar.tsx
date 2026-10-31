@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { LibraryIcon, OpenBookIcon, SearchIcon, SettingsIcon, ShelfIcon } from './icons';
+import { LibraryIcon, SearchIcon, SettingsIcon, ShelfIcon } from './icons';
 import { uiMessages as m } from '../uiMessages';
 import { libraryReturn } from '../bookNavigation';
 
@@ -17,7 +17,7 @@ export function TabBar() {
   const encodedBookKey = location.pathname.match(/^\/app\/books\/([^/]+)$/)?.[1];
   return <aside className="app-navigation" aria-label={m.appNavigation}>
     <Link className="desktop-brand" to="/app/shelf" aria-label={m.homeLabel}>
-      <OpenBookIcon /><span>myBookshelf</span>
+      <span>myBookshelf</span>
     </Link>
     <nav className="tab-bar" aria-label="Primary navigation">
       {TABS.map(({ to, label, icon: Icon }) => (

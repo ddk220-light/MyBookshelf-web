@@ -9,7 +9,7 @@ const dragon = { bookKey: `v1:catalog:${library.id}:479740`, title: 'Wings of Fi
 
 async function setup(page) {
   const fixture = await installPublicV2Fixture(page);
-  await page.route('**/api/v2/libraries/*', route => route.fulfill({ json: route.request().url().endsWith('/discover')
+  await page.route('**/api/v2/libraries/*', route => route.fulfill({ json: route.request().url().endsWith('/areas') ? { countries: ['IN'], regions: ['Tamil Nadu'], districts: ['Chennai'] } : route.request().url().endsWith('/discover')
     ? { libraries: [library], total: 1, nextOffset: null } : { library } }));
   await chooseLinkedLibrary(page);
   await page.goto('/app/search');

@@ -9,7 +9,7 @@ const mixed = { ...AVAILABILITY.available, lookupKind: 'catalog_record', matchKi
 
 async function installCatalogFixture(page, availability = mixed, selectedLibrary = library) {
   const fixture = await installPublicV2Fixture(page, { availability });
-  await page.route('**/api/v2/libraries/*', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify(route.request().url().endsWith('/discover') ? { libraries: [selectedLibrary], total: 1, nextOffset: null } : { library: selectedLibrary }) }));
+  await page.route('**/api/v2/libraries/*', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify(route.request().url().endsWith('/areas') ? { countries: ['IN'], regions: ['Tamil Nadu'], districts: ['Chennai'] } : route.request().url().endsWith('/discover') ? { libraries: [selectedLibrary], total: 1, nextOffset: null } : { library: selectedLibrary }) }));
   await page.route('**/api/v2/books/*', async route => {
     const body = route.request().postDataJSON();
     const searching = route.request().url().endsWith('/search');

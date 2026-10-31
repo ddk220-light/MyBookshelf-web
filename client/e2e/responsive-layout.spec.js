@@ -56,7 +56,7 @@ for (const width of [320, 390, 768, 1280]) {
 test('library selection and search results retain full copy at 200% text size', async ({page}) => {
   await page.setViewportSize({width:390,height:844});
   await installPublicV2Fixture(page);
-  await page.route('**/api/v2/libraries/*', r => r.fulfill({json:r.request().url().endsWith('/discover')?{libraries:[LONG_LIBRARY],total:1,nextOffset:null}:{library:LONG_LIBRARY}}));
+  await page.route('**/api/v2/libraries/*', r => r.fulfill({json:r.request().url().endsWith('/areas')?{countries:['NZ'],regions:['Canterbury'],districts:[]}:r.request().url().endsWith('/discover')?{libraries:[LONG_LIBRARY],total:1,nextOffset:null}:{library:LONG_LIBRARY}}));
   await page.route('**/api/v2/books/search', r => r.fulfill({json:{kind:'candidates',candidates:[LONG_BOOK]}}));
   await page.goto('/app/libraries');
   await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });

@@ -21,5 +21,11 @@ export function ScanIcon() {
 }
 
 export function SettingsIcon() {
-  return <svg {...iconProps}><g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /><circle cx="9" cy="7" r="2.2" fill="var(--surface, #fffaf0)" /><circle cx="15" cy="12" r="2.2" fill="var(--surface, #fffaf0)" /><circle cx="7" cy="17" r="2.2" fill="var(--surface, #fffaf0)" /></g></svg>;
+  return <svg {...iconProps} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" /></svg>;
+}
+export function BookmarkIcon() {
+  return <svg {...iconProps} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"><path d="M6 3h12v19l-6-4-6 4Z" /></svg>;
+}
+export function ShareIcon() {
+  return <svg {...iconProps} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m-4-8 4-4 4 4M6 12v9h12v-9" /></svg>;
 }

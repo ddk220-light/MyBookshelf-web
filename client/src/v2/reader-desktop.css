@@ -98,3 +98,50 @@
   .faceout-book .cover { transition: transform .15s ease, box-shadow .15s ease; }
   .faceout-book > a:hover .cover, .faceout-book > a:focus-visible .cover { transform: translateY(-2px); }
 }
+/* Desktop review: compact book cards and keep library context above the search. */
+@media(min-width:1024px){
+  .app-frame .page-heading h1,.reader-shelf-header h1{font-size:2.65rem}
+  .search-page .selected-library{order:0;border:0;padding:0 0 12px;justify-content:flex-start;column-gap:20px;row-gap:4px}
+  .search-page .selected-library>span{margin-right:auto}
+  .search-page .book-search-form{grid-template-columns:minmax(0,1fr) minmax(220px,300px);margin-bottom:28px;gap:16px;max-width:none}
+  .search-page .book-search-input{flex-wrap:nowrap}
+  .search-page .search-tools{align-self:flex-end}
+  .search-page .search-tools .keyboard-hint{font-size:.75rem;margin:4px 0}
+  .search-page .example-book-list{border:0;gap:16px;padding:0}
+  .search-page .example-book-list .example-book-card{display:grid;grid-template-columns:56px minmax(0,1fr);gap:16px;align-items:center;padding:20px;min-height:132px;height:100%;border:1px solid var(--reader-line);border-radius:12px}
+  .search-page .example-book-list .example-book-card .cover{width:56px;height:84px}
+  .search-page .example-book-copy{min-width:0;display:flex;flex-direction:column;gap:4px}
+  .search-page .example-book-copy strong{font-size:1.1rem;line-height:1.25}
+  .search-page .search-recent{margin-bottom:28px}
+  .search-page .search-recent>ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;gap:16px;padding:0}
+  .search-page .search-recent .book-card{display:flex;flex-direction:row;align-items:center;gap:12px;padding:12px 0}
+  .search-page .search-recent .book-card>.cover{flex:0 0 44px;width:44px;height:66px}
+  .search-page .search-recent .book-card strong{font-size:.9rem}
+  .search-page .search-recent .book-card small{display:block;font-size:.75rem}
+  .shelf-side-library .library-card-top strong{font-size:1rem;line-height:1.4}
+}
+@media(min-width:1024px) and (max-width:1199px){
+  .search-page .book-search-form{grid-template-columns:minmax(0,1fr)}
+  .search-page .search-scope{width:min(100%,400px)}
+  .search-page .example-book-list{grid-template-columns:minmax(0,1fr)}
+}
+/* Reference geometry: use the same sidebar, heading and card scale as Desk*. */
+@media (min-width: 1024px) {
+  .app-navigation { padding-top: 36px; }
+  .desktop-brand { font-size: 1.375rem; margin-bottom: 34px; }
+  .app-navigation .tab-bar { gap: 6px; }
+  .tab-item, .tab-item.active { min-height: 48px; padding: 0 14px; font-size: .9375rem; gap: 12px; }
+  .tab-icon svg { width: 20px; height: 20px; }
+  .app-frame .page-heading h1, .reader-shelf-header h1 { font-size: 2.5rem; line-height: 1.2; }
+  .shelf-find { padding: 10px 18px; border-radius: 12px; background: var(--reader-accent); color: var(--reader-on); font-size: .9375rem; font-weight: 600; }
+  .faceout-row { padding-inline: 20px; grid-template-columns: repeat(var(--shelf-columns), minmax(0, var(--cover-w))); justify-content: space-between; }
+  .shelf-side-library .reading-library-card .library-card-body { padding: 0; }
+  .shelf-side-library h2, .reader-recent .section-heading h2 { font: 500 .875rem/1.4 var(--sans); color: var(--reader-muted); }
+  .shelf-side-library .library-card-top strong { font-size: 1.0625rem; }
+  .shelf-side-library .library-card-top p { margin: 4px 0; }
+  .reader-recent .book-card strong { font-size: .875rem; font-weight: 600; }
+  .reader-recent .book-card small { font-size: .8125rem; }
+}
+@media (min-width: 1440px) {
+  .app-frame .page-section { padding-inline: 48px; }
+}

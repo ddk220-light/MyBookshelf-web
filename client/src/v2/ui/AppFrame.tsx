@@ -33,7 +33,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.dataset.light = light;
     document.documentElement.dataset.readingLight = light;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light === 'daylight' ? '#f6f2e9' : '#202622');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light === 'daylight' ? '#faf7f1' : light === 'ink' ? '#f6f7f9' : '#15120f');
   }, [light]);
   useEffect(() => {
     if (!location.hash) {

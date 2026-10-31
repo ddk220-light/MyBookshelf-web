@@ -19,7 +19,7 @@ test('homepage and library metadata are crawlable; app and unknown paths have co
   await page.addInitScript(()=>document.addEventListener('securitypolicyviolation',e=>console.error('CSP: '+e.violatedDirective)));
   page.on('console',msg=>{if(msg.type()==='error' && msg.text().includes('CSP:'))violations.push(msg.text());});
   await page.goto('/');
-  await expect(page.locator('h1')).toContainText('Your next read');
+  await expect(page.locator('h1')).toContainText('Find out if your library');
   expect(await page.locator('link[rel=canonical]').getAttribute('href')).toBe('https://mybookshelf.cloud/');
   const data=JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
   expect(data.some(item=>item['@type']==='WebSite')).toBe(true);
@@ -39,7 +39,7 @@ test('only returning homepage visitors are redirected; corrupt storage leaves th
   await expect(page.locator('h1')).toHaveText('About MyBookshelf');
   await page.evaluate(()=>localStorage.setItem('mybookshelf.anonymous-web.v1','not-json'));
   await page.goto('/');
-  await expect(page.locator('h1')).toContainText('Your next read');
+  await expect(page.locator('h1')).toContainText('Find out if your library');
 });
 
 test('public headings and navigation fit at 320px with enlarged text', async ({page}) => {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { goodreadsUrl } from '../../context';
+import { BookmarkIcon, ShareIcon } from '../icons';
 import { Cover } from '../BookCard';
 import { CatalogDetails, DueSlip } from '../journal/DueSlip';
 import { LibraryAttribution } from '../LibraryAttribution';
@@ -40,8 +41,8 @@ export function BookPage() {
       <div className="reader-book-cover-column">
         <div className="reader-book-hero"><Cover book={book} fallback={<span className="typeset-cover"><strong>{book.title}</strong><small>{book.authors.join(', ')}</small></span>} /></div>
         <div className="reader-book-actions">
-          <button className="save-book-button" aria-label={saved ? 'On your shelf' : 'Save book'} aria-pressed={saved} onClick={toggleSaved}>{saved ? '✓ On your shelf' : '+ Save book'}</button>
-          <button className="button-quiet" onClick={() => void share()}>Share</button>
+          <button className="save-book-button" aria-label={saved ? 'On your shelf' : 'Save book'} aria-pressed={saved} onClick={toggleSaved}><span className="book-action-icon" aria-hidden="true"><BookmarkIcon /></span><span className="book-action-label">{saved ? '✓ On your shelf' : '+ Save book'}</span></button>
+          <button className="button-quiet" aria-label="Share" onClick={() => void share()}><span className="book-action-icon" aria-hidden="true"><ShareIcon /></span><span className="book-action-label">Share</span></button>
         </div>
         {shareMessage && <p className="form-hint" role="status">{shareMessage}</p>}
         {shareUrl && <input className="share-url" aria-label="Book link" readOnly value={shareUrl} onFocus={event => event.target.select()} />}

@@ -11,7 +11,7 @@ import { groupSearchResults } from '../../searchGroups';
 import { SearchResult } from './SearchResult';
 import { Notice } from '../Notice';
 import { uiMessages as m } from '../../uiMessages';
-import { ScanIcon } from '../icons';
+import { ScanIcon, SearchIcon } from '../icons';
 import { Sheet } from '../Sheet';
 import { BookCard } from '../BookCard';
 
@@ -94,7 +94,7 @@ export function ScanPage() {
       <div className="book-search-input"><div className="search-input-shell"><input id="book-search" type="search" enterKeyHint="search" spellCheck={false} value={query} onChange={(event) => setQuery(event.target.value)} maxLength={160} autoComplete="off" placeholder={titleOnly ? m.titlePlaceholder : m.searchPlaceholder} />
         {query && <button type="button" className="icon-button" aria-label="Clear book search" onClick={() => { setQuery(''); navigate('/app/search', { replace: true }); document.getElementById('book-search')?.focus(); }}>×</button>}
         {!titleOnly && <CameraLookup compact onScanned={(isbn) => { setQuery(isbn); void submitSearch(isbn, 'camera'); }} />}</div>
-        <button disabled={busy}>{busy ? m.searching : m.searchButton}</button>{busy && <button type="button" className="button-quiet" onClick={() => request.current?.abort()}>{m.cancel}</button>}
+        <button className="search-submit" aria-label={busy ? m.searching : m.searchButton} disabled={busy}><span className="search-submit-label">{busy ? m.searching : m.searchButton}</span><span className="search-submit-icon" aria-hidden="true"><SearchIcon /></span></button>{busy && <button type="button" className="button-quiet" onClick={() => request.current?.abort()}>{m.cancel}</button>}
       </div>
       {library?.capabilities.titleSearch && <div className="search-scope segment-control" role="group" aria-label="Search in"><button type="button" aria-pressed={!searchLibrary} onClick={() => { setSearchLibrary(false); navigate('/app/search', { replace: true }); }} disabled={busy}>All books</button><button type="button" aria-pressed={searchLibrary} onClick={() => { setSearchLibrary(true); navigate('/app/search', { replace: true }); }} disabled={busy} aria-label={library.name}><span className="scope-library-name">{library.name}</span></button></div>}
     </form>

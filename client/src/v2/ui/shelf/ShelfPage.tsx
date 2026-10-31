@@ -9,7 +9,6 @@ import { catalogStatus } from '../journal/DueSlip';
 import { exampleBooks } from '../../exampleBooks';
 import { readBookLookup, readCachedAvailability, readReaderPreferences, writeReaderPreferences, type ReaderPreferences } from '../../readerState';
 import type { RecentBook } from '../../types';
-import { spinePalette } from './spineColors';
 
 export function ShelfPage() {
   const { library, loadingLibrary, libraryError, retryLibrary, state, clearRecentBooks, removeRecentBook, unsaveBook, recoveryMode, reportStorageFailure } = useLibrary();
@@ -82,7 +81,7 @@ function FaceoutShelf({ books, editing, onRemove, disabled }: { books: RecentBoo
   return <div className="faceout-bookcase" ref={ref} style={{ '--shelf-columns': columns } as CSSProperties} role="region" aria-label="Saved books">
     {rows.map((row, index) => <div className="faceout-row" key={index}>{row.map(book => book ? <div className="faceout-book" key={book.bookKey}>
       <Link to={'/app/books/' + encodeURIComponent(book.bookKey)} state={{ from: 'shelf', source: 'direct', book }} aria-label={book.title}>
-        <Cover book={book} fallback={<span className="typeset-cover" style={{ background: spinePalette(book.bookKey).top, color: spinePalette(book.bookKey).ink }}><strong>{book.title}</strong><small>{book.authors.join(', ')}</small></span>} />
+        <Cover book={book} fallback={<span className="typeset-cover"><strong>{book.title}</strong><small>{book.authors.join(', ')}</small></span>} />
       </Link>
       {editing && <button className="cover-remove" disabled={disabled} aria-label={'Remove ' + book.title + ' from saved books'} onClick={() => onRemove(book.bookKey)}>−</button>}
     </div> : <Link className="shelf-add-book" to="/app/search" key="add"><span aria-hidden="true">+</span>Add a book</Link>)}</div>)}

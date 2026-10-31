@@ -130,7 +130,7 @@ export async function chooseLinkedLibrary(page) {
   await page.getByRole('button', { name: 'Search', exact: true }).click();
   await page.getByRole('button', { name: 'Select Anna Centenary Library', exact: true }).click();
   // Wait for the selection navigation before a caller reloads the document.
-  await page.waitForURL('**/app/search');
+  await page.waitForURL('**/app/search', { waitUntil: 'domcontentloaded' });
 }
 
 export function tab(page, name) {

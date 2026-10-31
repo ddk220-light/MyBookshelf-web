@@ -10,7 +10,7 @@ vi.mock('./context', () => ({ useLibrary: () => ({ selectLibrary, state: { recen
   isbnSource: () => 'search', isValidIsbn13: () => true, messageFor: (_: unknown, fallback: string) => fallback }));
 vi.mock('./api', () => ({ publicApi: { searchBooks: vi.fn(), discoverLibraries: vi.fn(), libraryAreas: vi.fn(), searchPlaces: vi.fn(), resolveBook: vi.fn() } }));
 afterEach(() => { cleanup(); vi.clearAllMocks(); });
-beforeEach(resetLibrarySearchSession);
+beforeEach(() => { resetLibrarySearchSession(); vi.mocked(publicApi.libraryAreas).mockResolvedValue({ countries: [], regions: [], districts: [] }); });
 const book = { bookKey: 'v1:isbn:9788173711466', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] };
 const library = { id: 'koha:example', name: 'Example library', country: 'IN', region: 'Tamil Nadu', city: 'Chennai', health: 'operational' as const,
   capabilities: { publicAvailability: true, catalogLookup: true, copyCounts: false, locationAvailability: false, callNumber: false, catalogLink: true } };

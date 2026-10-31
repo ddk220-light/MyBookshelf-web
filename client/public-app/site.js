@@ -10,3 +10,9 @@ if (window.location.pathname === '/') {
     }
   } catch { /* Storage can be unavailable or damaged; keep the landing page readable. */ }
 }
+
+for (const cover of document.querySelectorAll('.bookshelf-preview img')) {
+  const failed = () => cover.remove();
+  cover.addEventListener('error', failed, {once:true});
+  if (cover.complete && !cover.naturalWidth) failed();
+}

@@ -113,7 +113,7 @@ export function DueSlip({ library, availability, error, loadingLibrary, libraryE
       {library && <p className="availability-library">{library.name}</p>}
     </>}
     {pending ? <div className="availability-progress" role="status"><span className="checking-dot" aria-hidden="true" /><span>{status.title}{slow && <small>{m.slowCatalog}</small>}</span></div>
-      : <h2 className={`availability-heading${library ? ` outcome-stamp outcome-stamp-${status.tone}` : ''}`} role={error || libraryError ? 'alert' : undefined}>{status.title}</h2>}
+      : <h2 className={`availability-heading${library ? ` outcome-stamp outcome-stamp-${status.tone}` : ''}`} role={error || libraryError ? 'alert' : undefined}><span className="availability-status-symbol" aria-hidden="true">{status.tone === 'available' ? '✓' : '●'}</span>{status.title}</h2>}
     {'note' in status && status.note && <p className="slip-explanation">{status.note}</p>}
     {availability?.matchedBook?.isbn13 && availability.matchKind === 'verified_work' && availability.freshness === 'fresh' && !availability.errorCode && <p className="slip-explanation">{m.matchingEdition(availability.matchedBook.isbn13)}</p>}
     {(error || availability?.errorCode || availability?.freshness === 'stale') && onRetry && <button className="button-quiet" onClick={onRetry}>Retry</button>}
