@@ -1,6 +1,6 @@
 # Account UI and integration specification
 
-Version 0.1, 2026-11-01. D04. **Pre-artifact specification for R01.** Final visual
+Version 0.2, 2026-11-01. D04. **Pre-artifact specification for R01.** Final visual
 decisions await Claude's S22 artifact and R02. [UX](UX_DESIGN.md) owns interaction
 meaning; [engineering](ENGINEERING_DESIGN.md) owns server contracts.
 
@@ -58,6 +58,10 @@ server session on visibility/focus even if broadcasts are unavailable. A small
 non-sensitive `localGuestOverride` flag suppresses automatic account hydration
 after failed sign-out; clear it only after confirmed revocation or explicit new
 sign-in. Retry pending sign-out online before restoring private state.
+Persist the flag in localStorage when available, with a sessionStorage fallback;
+it contains no user ID or reading data. Handle storage failures explicitly and
+revalidate on pageshow/bfcache restore. Never claim server revocation from a local
+flag or promise that a flag survives browser storage being cleared.
 
 `ReadingRepository` exposes asynchronous `loadSnapshot`, `selectLibrary`,
 `saveBook`, `removeBook`, `undoRemove`, `clearSaved`, `recordView`, `removeView`,
@@ -77,6 +81,7 @@ The shared provider owns pending state; pages never directly write localStorage.
 | `mybookshelf.lookup-preferences.v1` | Existing per-book choices | Account per-book lookup choices stay in memory; clear on transition. No new sync requirement. |
 | Reading-light and companion keys | Keep existing behavior | Preserve across identity changes; do not use blanket `localStorage.clear()`. |
 | Auth state, private query cache, undo, import preview | No auth secrets persisted | Memory scoped to user/epoch; dispose on change. Only non-sensitive cross-tab/guest-override flags persist. |
+| [`searchMemory.ts`](../../client/src/v2/searchMemory.ts) module caches and reader-state fallback memory | Existing session-local search/reader state | Include in the identity-reset inventory; add explicit reset hooks so prior queries/results and fallback reader data cannot reappear after account change. |
 
 Account-derived book keys can also survive in URL/history and public page assets.
 Sign-out replaces sensitive account routes with a guest destination and blanks
@@ -102,6 +107,12 @@ deduplicate repeated renders. Toggle/pause/clear results update generation befor
 future events. Import previews use a frozen guest snapshot and server capacities;
 after acknowledgement, remove only unchanged imported local entries if requested,
 preserving books another guest tab added during import.
+
+Deletion generates a receipt nonce before submitting the confirmed action and
+keeps it in memory. After immediate session revocation, use the status-only receipt
+contract to resolve a lost response; distinguish pending cleanup from completed
+erasure. Do not reauthenticate and resubmit a second deletion merely to check
+whether the first was accepted.
 
 ## Visual system and component acceptance
 

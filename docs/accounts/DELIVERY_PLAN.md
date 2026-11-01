@@ -1,6 +1,6 @@
 # Account delivery plan
 
-Version 0.1, 2026-11-01. D05. **Draft for R01 review.** Reuse the existing
+Version 0.2, 2026-11-01. D05. **Draft for R01 review.** Reuse the existing
 [project](https://github.com/users/ddk220-light/projects/3) and
 [numbered backlog](../plans/2026-10-31-accounts-delivery-backlog.md). This document
 decomposes work into reviewable tasks; IDs below are task specifications, not a
@@ -38,7 +38,8 @@ flowchart LR
     D5 --> R1[R01 document review]
     R1 --> C[S22 Claude artifact]
     C --> R2[R02 artifact and final design approval]
-    D5 --> R2
+    R1 --> Publish[D05 child-task publication]
+    Publish --> R2
     R2 --> P[P01-P04 prerequisites]
     P --> F[S01-S03 foundation]
     F --> A[S04-S10 and S21 auth]
@@ -85,7 +86,7 @@ assigned by role to Claude, not to a fabricated GitHub identity.
 | --- | --- | --- |
 | S01-A | S01 #21; R02 + P01 | Pin compatible auth/client/DB versions and demonstrate all six S01 spike items in ENGINEERING_DESIGN. Deliver compatibility report and generated schema diff; unsupported guarantee gets a reviewed decision, not a workaround hidden in code. |
 | S01-B | S01-A | Wire optional auth/private routers in both entry points before retired fallback; distinct cookies and config validation. Public app boots without auth DB; raw request reaches handler. AC-01,03,16. |
-| S01-V | S01-B | Local/Vercel integration checks for body/cookie/proxy/redirect behavior, unavailable DB and measured password-hash concurrency. Feed T01/T02/T05. |
+| S01-V | S01-B | Local/Vercel integration checks for body/cookie/proxy/redirect behavior, unavailable DB, reset transaction failure injection and measured password-hash concurrency. Feed T01/T02/T05. |
 | S02-A | S02 #22; S01 | Versioned auth/application schema, digest/full-key identities, constraints, migrations, auth/migration/runtime/worker grants and provisioning. Fresh DB and upgrade fixture yield expected schema without fuzzy book merges. AC-10,16. |
 | S02-V | S02-A | Check unique provider/owner/reference constraints, long catalog keys, runtime grants, transaction rollback, migration dry-run and schema-compatible rollback. Feed T02/T03/T06. |
 | S03-A | S03 #23; S02 | Verified-session guard, owner transactions/RLS, origin/CSRF policy, shared limiter, safe errors/no-store, idempotency and version helpers; bounded parser. AC-14,16. |
@@ -123,9 +124,9 @@ assigned by role to Claude, not to a fabricated GitHub identity.
 | S13-A | S13 #33; S03 + S05 | Opt-in history, server timestamps, generation-based pause/remove/clear, newest 50 / 30 days and cleanup. AC-11. |
 | S13-V | S13-A | Controlled delayed views across controls, default-off/expiry/51st-entry/tie-break and read-time expiry despite failed cleanup. T03. |
 | S14-A | S14 #34; S11 + S12 + S13 | Atomic bounded guest import, independent history consent/library policy, canonical hash/receipt and result counts. AC-12. |
-| S14-V | S14-A | Reordered/duplicate requests, partial DB failure, lost acknowledgement, overflow/corrupt/future timestamps; original snapshot retained. T03. |
+| S14-V | S14-A | Reordered/duplicate requests, partial DB failure, lost acknowledgement, maximum long-key payload, private snapshot isolation and overflow/corrupt/future timestamps; original snapshot retained. T02/T03. |
 | S15-A | S15 #35; S06 + S07 + S10–14 + S21 | Coherent versioned JSON export, deletion status transaction, provider cleanup jobs, suppression ledger and backup policy. AC-13. |
-| S15-V | S15-A | Compare export fixture, deletion-versus-write/provision races, job restart/retry and isolated restore suppression. T02/T06. |
+| S15-V | S15-A | Compare export fixture, deletion-versus-write/provision races, lost-response receipt recovery, external-ledger outage, job restart/retry and isolated restore suppression. T02/T06. |
 
 ### E04 — UI and reader integration (#14)
 

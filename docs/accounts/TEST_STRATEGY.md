@@ -1,6 +1,6 @@
 # Account test strategy and release evidence
 
-Version 0.1, 2026-11-01. D03. **Planned tests; none of the account checks below
+Version 0.2, 2026-11-01. D03. **Planned tests; none of the account checks below
 has run yet.** A documentation review is not runtime validation. Requirements:
 [PRD](PRD.md). Contracts: [ENGINEERING_DESIGN.md](ENGINEERING_DESIGN.md).
 
@@ -58,6 +58,8 @@ B → reset via actual mail → old-session rejection → new sign-in. Exercise 
 duplicate signup, changed address, expired/replayed links and mailbox-delivery
 failure. Assert scanners cannot consume verification. Check daily renewal and
 30-day absolute expiry with controlled clocks in integration tests.
+Inject a failure between token consumption, password update and session
+revocation; require rollback with no partially applied reset or false success.
 
 Exercise actual Google and Apple on stable staging, desktop and mobile Safari:
 first login, returning login, cancel, expired state, disallowed return, missing
@@ -75,6 +77,8 @@ might bypass application wrappers. RLS tests run as the real role: A transaction
 rollback, B transaction, missing context, pooled connection reuse and deliberately
 omitted owner predicate. Confirm application role neither owns tables nor bypasses
 RLS. Verify export and metadata joins cannot disclose another reader's records.
+Import different display snapshots for the same exact reference as users A and B;
+neither snapshot may replace shared provider facts or the other user's display.
 
 Test two API instances against the shared limiter, forged forwarding headers,
 CSRF missing/wrong token/origin, login CSRF, callback-state replay, open redirect
@@ -96,6 +100,7 @@ secrets. Verify unlink/email/delete races and recent-auth proof expiry/replay.
 | Two current views, expired rows, 51st distinct book | Server-time ordering, stable tie-break, newest 50 / last 30 days only. |
 | Duplicate import / failure halfway / lost response | Atomic rollback or one committed result; retry returns original counts. |
 | Import over 1,000 union capacity / corrupt/future timestamp | No partial change; readable explanation and preserved device data. |
+| Import 100 saves / 50 recent with maximum-length catalog keys | Check serialized UTF-8 size and the 2MiB bound; valid bounded fixtures import, oversized payloads fail without local data loss. |
 | Guest edits while import runs; then requests local cleanup | Remove only unchanged imported entries; preserve newly added/changed local data. |
 | History unchecked / checked while collection off | Unchecked imports none; checked imports eligible history once and leaves future collection off. |
 | Account A request completes after sign-out and B sign-in | No A data rendered/persisted; user+epoch mismatch discards it. |
@@ -105,6 +110,8 @@ secrets. Verify unlink/email/delete races and recent-auth proof expiry/replay.
 Also verify selected library conflict/removal, savedAt/viewedAt separation, exact
 edition/catalog keys, unknown reference handling, device-local appearance and
 no account data written to any guest or lookup cache key.
+Seed search-memory and reader fallback caches before switching identities and
+restoring a page from bfcache; prior-account state must not reappear.
 
 ### T04 / #45 — Accessibility and visual behavior
 
@@ -156,10 +163,16 @@ other users. Delete with two active devices and in-flight writes; access ends
 immediately. Kill/restart workers during each cleanup step and show idempotent
 progress, safe alerts and eventual live-data cleanup. Exercise Apple revocation
 failure without reenabling access or discarding retry credentials prematurely.
+Lose the deletion response after session revocation and recover status using the
+client's receipt nonce. Wrong/expired nonces expose no data; losing the nonce does
+not stop cleanup. Fail the external ledger write: access stays disabled, the
+durable job retries and no durable-acceptance/erasure success is reported early.
 
 Restore a pre-deletion snapshot into an isolated environment, replay the external
 suppression ledger, invalidate sessions/jobs, then prove deleted users remain
 absent. Verify actual backup-retention settings and job/ledger expiry. Rehearse
+ledger unavailability during restore: private traffic stays closed until deletion
+suppression can be reconciled. Also rehearse
 mail outage, Apple client-secret rotation, compromised-session response and
 schema-compatible rollback with public browsing operational. Evidence includes
 operator and dates; a written runbook without the drill does not pass T06.

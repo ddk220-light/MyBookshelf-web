@@ -83,7 +83,7 @@ privacy, moderation, work identity, deletion and acceptance criteria.
 2. Open the [Account Management project](https://github.com/users/ddk220-light/projects/3)
    and [planning index #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1).
    The native board and 55 child issues now exist. Reuse them.
-3. Review the [version 0.1 account packet](accounts/README.md): PRD, UX,
+3. Review the [version 0.2 account packet](accounts/README.md): PRD, UX,
    engineering design, test strategy, UI specification, delivery tasks and Claude
    handoff. [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7)
    now reviews all document drafts, as requested by the owner. DEC-01–10 are
@@ -104,25 +104,27 @@ integration-credential failure is historical; see the updated
 account services or implement features. Social discovery remains future scope.
 
 The working branch is `account-settings`, with worktree
-`/workspace/MyBookshelf-web-accounts` in this environment. The separate
-`research/free-content-discovery` worktree is untouched by account documentation.
+`/workspace/worktrees/MyBookshelf-web-account-settings` in this environment.
+Other checkouts may use a different local path; the branch and linked PR are the
+shared review references.
 
 ## Account project publication verification
 
 The original publication verified 56 unique project items, including the existing roadmap,
 with all items at Todo. D01–D04 document drafts are now ready for review;
 D05 has a delivery draft with native child-task publication remaining before R02.
-The 55 child issues retain kind/stage labels and native parents; 116 native
+The 55 child issues retain kind/stage labels and native parents; 117 native
 blocked-by links encode the revised plan. The revised document-first sequence removes
 D02/D03 dependence on R01 and D04 dependence on S22. R01 reviews D01–D05
 drafts; it consumes D05's draft without waiting for its later child publication.
+D05's remaining publication is explicitly blocked by R01.
 Owner-review, core-sync, final-validation and
 rollout dependency sets were read back and checked. The project has an All work
 table plus six focused views, with labels, parent issues and sub-issue progress
 visible. All account implementation paths reach R02; rollout reaches R03.
 
 Documentation links, dependency acyclicity and whitespace checks passed. This was
-documentation work only; application tests were not rerun. The version 0.1
+documentation work only; application tests were not rerun. The version 0.2 packet's
 designs are drafts ready for review, and no runtime feature is implemented.
 D05 child-issue publication and Claude artifact reconciliation remain before R02.
 

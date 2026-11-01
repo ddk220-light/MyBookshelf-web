@@ -1,6 +1,6 @@
 # Account engineering design
 
-Version 0.1, 2026-11-01. D03. **Proposed for R01; not an approved migration.**
+Version 0.2, 2026-11-01. D03. **Proposed for R01; not an approved migration.**
 Requirements: [PRD](PRD.md). Validation: [TEST_STRATEGY.md](TEST_STRATEGY.md).
 Product decisions take precedence over vendor defaults. S01 must demonstrate
 library support for the proposed controls before production implementation.
@@ -66,6 +66,16 @@ Framework documentation references for that investigation:
 [Apple](https://www.better-auth.com/docs/authentication/apple).
 These are investigation references, not evidence of a completed spike.
 
+Current upstream documentation identifies several defaults the spike must override
+or verify: password reset does not revoke sessions unless
+`revokeSessionsOnPasswordReset` is enabled; implicit linking needs
+`disableImplicitLinking`; cookie caching can delay revocation; provider tokens
+are not encrypted by default. If the selected adapter is Drizzle, transactions
+must be explicitly enabled. These option names come from the current docs, not
+an installed version. Match them to the pinned release and inject failures to
+prove token consumption, password update and session revocation are atomic.
+Retained provider tokens need a supported encryption strategy with rotation.
+
 ## Authentication and lifecycle contract
 
 - New host-only secure HttpOnly cookies use a distinct `mybookshelf_auth` prefix,
@@ -118,14 +128,20 @@ lock. Auth rows use the selected library's actual naming and supported migration
 | `app_users` | UUID PK; unique auth-user ID; status active/deleting; profile_revision; created_at | Idempotent provisioning on first verified access; private name/email canonical in auth user. Lock this row for account mutations. |
 | `user_settings` | user PK; revision; history_enabled=false; shelf_revision=0; history_generation=0 | One per app user. Revisions increment transactionally; settings/lifecycle changes conflict rather than silently overwrite. |
 | `user_libraries` | user+directory_id PK; selected flag; partial unique index on user where selected | Only selected library exposed in v1; no public membership. Validate stable ID via existing directory. |
-| `book_refs` | UUID PK; unique exact key digest plus exact canonical `bookKey`; optional validated ISBN/work/edition/catalog IDs; permitted bounded display snapshot | Shared reference metadata only; no owner, save/view counters or reading history. Exact-key comparison guards digest collisions. No fuzzy identity inference. |
-| `user_books` | user+book_ref PK; saved_at; source optional enum | Private saved relationship. At most 1,000 active rows/user. Import uses import time as saved_at, not legacy viewedAt. |
-| `recent_book_views` | user+book_ref PK; viewed_at; source enum | Private; newest 50 within 30 days; API filters expiry even if cleanup lags. |
+| `book_refs` | UUID PK; unique exact key digest plus exact canonical `bookKey`; optional validated ISBN/work/edition/catalog IDs; trusted provider metadata only | Shared reference metadata only; no owner, save/view counters or reading history. Exact-key comparison guards digest collisions. No fuzzy identity inference. |
+| `user_books` | user+book_ref PK; saved_at; source optional enum; bounded private display snapshot | Private saved relationship. At most 1,000 active rows/user. Import uses import time as saved_at, not legacy viewedAt. |
+| `recent_book_views` | user+book_ref PK; viewed_at; source enum; bounded private display snapshot | Private; newest 50 within 30 days; API filters expiry even if cleanup lags. |
 | `guest_imports` | user+import_id unique; canonical payload hash; resulting counts/revisions; acknowledged_at | Idempotency receipt, no retained raw snapshot. Retain 30 days; stale revisions prevent later accidental replay as a new operation. |
 | `account_operations` | user+operation_id unique; request hash; minimal result, created_at | 24-hour idempotency receipts, no credentials. Expired IDs require fresh preconditions; never blindly replay. |
 | `recent_auth_proofs` | opaque proof hash; user/session/action; expiry/consumed flag | Only if supported plugin primitives cannot provide equivalent semantics; validate in S01. Purge after expiry. |
 | Durable outbox / deletion jobs | random job ID; kind; attempt/state/next_at; minimal encrypted payload where necessary | Dedicated worker role. Mail payload containing token is encrypted and removed at send/expiry. Never accessible to application users. |
 | Deletion suppression ledger | immutable internal user/auth IDs; requested/cleaned_at; suppression_until; provider cleanup status | Restricted operations store outside restored application snapshot; no email/book content. Enforce restore suppression before serving traffic. |
+
+Client-supplied titles, authors and cover hints stay in owner-private snapshots;
+an import cannot overwrite shared catalog facts. Shared metadata comes only from
+validated provider lookups with provenance. Validate bounded strings and allowed
+cover URL schemes/origins without fetching arbitrary client URLs. Accepted exact
+references remain saveable during upstream catalog outages.
 
 Book keys follow current validation, including long VPL catalog keys up to 4,096
 characters where allowed. Do not impose a generic 512-character limit that breaks
@@ -157,8 +173,11 @@ Origin/Referer validation plus CSRF token tied to session; reject absent/invalid
 browser proof. OAuth callbacks use their protocol's state validation, not the
 custom JSON CSRF handler. Ordinary payload limit 32KiB; import 2MiB. The import
 preview checks serialized UTF-8 size as well as item counts; oversize snapshots
-produce a clear limit error without changing or discarding local data. Test the
-largest supported key/metadata fixtures against the actual platform request cap.
+produce a clear limit error without changing or discarding local data. Test 100
+saves and 50 history entries with the largest supported key/metadata fixtures
+against the actual platform request cap. Specify per-field snapshot bounds; a
+small ASCII-only fixture does not establish maximum-size import support.
+
 
 Errors: `{error:{code,message,requestId,retryAfterSeconds?}}`, with safe messages.
 Use 401 session missing/expired, 403 unverified/recent-auth/origin, 409 version or
@@ -183,6 +202,12 @@ look like empty shelves or successful writes.
 | POST `/imports` | importId, canonical frozen snapshot, includeHistory, explicit library policy, expected settings/shelf/history versions; one transaction or no changes. |
 | POST `/export` | recent-auth proof + operationId; streaming versioned JSON attachment, no persistent download URL. Snapshot isolation gives a coherent export. |
 | POST `/deletion` | recent-auth proof + operationId + explicit confirmation; durable deletion request receipt, immediate disabled status/session revocation. |
+| POST `/deletion/status` | operationId + client-generated receipt nonce; hash-verified status only, no profile/reading data. Resolves a lost response after revocation. |
+
+The status-only deletion route is the exception to the active-session requirement:
+its action-specific receipt nonce replaces session/CSRF proof, with exact-origin,
+content-type and abuse checks retained. Invalid receipts return a generic unavailable
+result. It cannot read any owner data or change deletion intent.
 
 Profile/email/password/provider/session operations use supported auth methods
 through policy-enforcing adapters. Do not leave weaker raw auth endpoints usable
@@ -277,6 +302,20 @@ older than the supported retention window; never serve it. Audit backup provider
 retention capability at P01; a plan unable to meet this policy blocks release
 until configuration or policy is reviewed. Legal indefinite retention is not
 assumed. Export/deletion copies downloaded by the user are outside app deletion.
+
+Commit the deleting status, revocation intent and durable job first. Persist the
+opaque suppression record in the independent ledger before acknowledging durable
+acceptance or purging application/auth rows. If that write fails, keep access
+disabled and retry the job; report pending cleanup rather than confirmed erasure.
+Do not permit restore to serve account traffic while the ledger is unavailable.
+At P01, verify the 35-day ledger lifetime outlasts every supported backup that
+could contain the account; an incompatible backup policy blocks release.
+
+The confirming browser generates a strong random receipt nonce before submission;
+the job stores only its hash. A rate-limited, expiring status endpoint checks this
+nonce so the browser can recover a lost deletion response even after session
+revocation. It cannot initiate deletion or expose private data. Keep the nonce in
+memory, never URLs/logs; losing it does not interrupt durable cleanup.
 
 P01 creates isolated development/staging/production databases and roles, budgets,
 backup policy and a stable staging origin. P02 establishes owned mail domain,

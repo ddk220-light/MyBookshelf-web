@@ -1,11 +1,17 @@
 # Account management: review packet
 
-Version **0.1 — ready for R01 review**, 2026-11-01. Product owner/reviewer:
+Packet version **0.2 — ready for R01 review**, 2026-11-01. Product owner/reviewer:
 Deepak Ravikumar. Draft author: Codex. All choices below are proposals pending
 review; no account services or application code have been implemented.
 
 Start with the PRD and the decisions below. The other documents specify how the
 experience, implementation and release would meet those requirements.
+
+This revision retains the ten product proposals below. Engineering/UI/test
+clarifications cover maximum-size imports, private metadata snapshots, reset
+atomicity, identity-cache clearing and recovery after a lost deletion response.
+Unchanged documents retain their own version 0.1; review the whole packet at its
+linked commit. No review approval has been recorded.
 
 | Document | Review purpose | Delivery issue |
 | --- | --- | --- |
@@ -61,8 +67,8 @@ review before implementation continues.
 
 The packet was designed against application baseline `9f5bb4bd30055483dfabdcd02541e3060ccfdaf5`
 and planning branch `account-settings` at `f648f20`. See the engineering inventory
-for inspected files. Checks passed for 87 local document links, all 17 PRD requirements mapped to
-final tests, task specifications for all 22 stories, and the 56-issue/116-edge
+for inspected files. Checks passed for local document links, all 17 PRD requirements mapped to
+final tests, task specifications for all 22 stories, and the 56-issue/117-edge
 native dependency graph (acyclic; implementation reaches R02 and rollout R03).
 Whitespace checks passed. Auth integration, vendor configuration, browser
 accessibility, visual fidelity, performance and operational drills are future
