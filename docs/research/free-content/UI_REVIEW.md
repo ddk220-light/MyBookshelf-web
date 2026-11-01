@@ -59,6 +59,13 @@ bookmark state, bounded client memory and absence of new dependencies.
   add necessary content beyond the original sample boards.
 - Recent query history is bounded and lost on reload. It is not written to
   local storage, an account, analytics or a server history store.
+- A fresh Europe PMC request on the current local API exceeded the five-second
+  source deadline. The actual UI rendered an unavailable alert and no empty-copy
+  claim. Earlier successful live-paper flows remain dated evidence, not a claim
+  that the external service answered this later probe.
+- The streamed-loading fixture uses the same local origin and `nosniff`/no-store
+  headers as the app API. This avoids engine-dependent buffering/routing in the
+  temporary review endpoint; it keeps the real progress assertions.
 - Automated contrast/layout checks do not replace a screen-reader usability
   session. Firefox was not run locally. Remote CI covers WebKit as well.
 - Hosted feature enablement, Redis-backed hosted paper journeys and the first

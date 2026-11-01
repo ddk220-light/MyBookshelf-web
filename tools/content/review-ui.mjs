@@ -15,7 +15,7 @@ const origin=option('--base-url','http://127.0.0.1:4183');
 const reference=option('--reference-url','http://127.0.0.1:4197');
 await mkdir(output,{recursive:true});
 const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||'/usr/bin/chromium'});
-const stream=await startReviewStream();const results=[];
+const stream=await startReviewStream({upstreamOrigin:origin});const results=[];
 try{
   for(const light of ['daylight','lamplight','ink']){
     for(const [device,width,height] of [['phone',390,844],['desktop',1280,900]]){
@@ -28,7 +28,7 @@ try{
         const page=await context.newPage();const errors=[];
         page.on('pageerror',error=>errors.push(error.message));
         await installContentReviewFixture(page,state,{loadingUrl:stream.url});
-        await openReviewState(page,state,origin);
+        await openReviewState(page,state,state==='Loading'?stream.origin:origin);
         if(state==='LibraryBookFreeEdition')await page.locator('.content-also-free').scrollIntoViewIfNeeded();
         await page.mouse.move(width-1,height-1);
         const filename=`${state}-${device}-${light}.png`;

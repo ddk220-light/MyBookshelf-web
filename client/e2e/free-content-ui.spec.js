@@ -76,8 +76,8 @@ test.describe('approved free-content UI behavior',()=>{
     await page.getByRole('button',{name:'Hide them',exact:true}).click();await expect(page.getByRole('region',{name:'Unclear access'})).toHaveCount(0);
   });
   test('loading shows actual streamed progress and static placeholders',async({page,baseURL})=>{
-    const stream=await startReviewStream();try{
-      await installContentReviewFixture(page,'Loading',{loadingUrl:stream.url});await openReviewState(page,'Loading',baseURL);
+    const stream=await startReviewStream({upstreamOrigin:baseURL});try{
+      await installContentReviewFixture(page,'Loading',{loadingUrl:stream.url});await openReviewState(page,'Loading',stream.origin);
       await expect(page.getByText('12 found',{exact:true})).toBeVisible();
       await expect(page.getByText('Searching…',{exact:true})).toBeVisible();
       await expect(page.getByText('Waiting its turn',{exact:true})).toBeVisible();
