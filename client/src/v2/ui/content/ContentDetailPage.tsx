@@ -70,8 +70,8 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
     {item.readingActions.length>1&&<section aria-label="Other free reading locations"><h2>Other free reading locations</h2>{item.readingActions.filter(action=>action!==primary).map(action=>{
       const location=item.locations.find(location=>location.id===action.locationId);
       const label=action.downloads.some(file=>file.mimeType==='application/pdf'&&file.url===action.url)?`Read PDF at ${location?.host||'source'}`:action.label;
-      return <div key={action.locationId}><p><a href={safeSource(action.url)} target="_blank" rel="noopener noreferrer" aria-label={`${label} (opens ${location?.host||'source'})`}>{label} <ExternalLinkIcon/></a></p>
-        {action.requiresAccount&&<p>Free account required at {location?.host||'the source'}.</p>}{location?.version&&<p>Version at this host: {location.version}</p>}<p>{location?.license?.statement||location?.license?.id||'Licence not stated.'}</p></div>;
+      return <div key={action.locationId}>{action.requiresAccount&&<p>Free account required at {location?.host||'the source'}.</p>}<p><a href={safeSource(action.url)} target="_blank" rel="noopener noreferrer" aria-label={`${label}${action.requiresAccount?' · free account required':''} (opens ${location?.host||'source'})`}>{label} <ExternalLinkIcon/></a></p>
+        {location?.version&&<p>Version at this host: {location.version}</p>}<p>{location?.license?.statement||location?.license?.id||'Licence not stated.'}</p></div>;
     })}</section>}
     {item.relations.length>0&&<section className="content-relations"><h2>Related versions</h2>{item.relations.map(relation=>{
       const label=relationNames[relation.kind]||relation.kind.replace(/_/g,' ');

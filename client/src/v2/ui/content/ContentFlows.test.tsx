@@ -208,4 +208,6 @@ it('prefers an anonymous PDF over an account-required HTML reader for the same i
   mount(<ContentDetail contentKey={item.key}/>);await screen.findByRole('heading',{name:item.title});
   expect(screen.getByRole('link',{name:'Read at Repository (opens Repository)'})).toHaveClass('content-read');
   expect(screen.getByText('Free account required at Account Host.')).toBeInTheDocument();
+  const accountLink=screen.getByRole('link',{name:'Read at Account Host · free account required (opens Account Host)'});
+  expect(screen.getByText('Free account required at Account Host.').compareDocumentPosition(accountLink)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 });
