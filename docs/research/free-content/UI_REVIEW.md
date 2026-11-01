@@ -20,7 +20,7 @@ visual comparison, not a numerical pixel-match claim.
 | Board | Implemented correction |
 | --- | --- |
 | FreeStart | Match header spacing, introductory copy, compact filled browse tiles, icons and type. Add real recent queries with scope labels; retain only six in same-tab memory. Clearing a query returns to browse. No fabricated sample history. |
-| FreeBookResults | Compact 52×78 covers and rows, supplied format summaries, inline loaded counts/source names, working type filter, labelled disabled filters, horizontally scrollable filter row, stronger contrast and the full opt-in unclear notice. |
+| FreeBookResults | Compact 52×78 covers and rows, supplied format summaries, inline loaded counts/source names, working type filter, labelled disabled filters, horizontally scrollable filter row, stronger contrast and the full opt-in unclear notice. The whole result row is a touch target, with a full-row keyboard focus outline. |
 | FreeBookDetail | Add the top bookmark control, reading-status line, supplied-format grid, source-host note, compact rights block and per-location observation time. Use SVG outbound icons so missing glyphs cannot render as boxes. |
 | LibraryBookFreeEdition | Keep the exact-identifier optional lookup below circulation; match the inset card treatment. The full-screen audit exposed an existing dark-theme circulation-location contrast failure, fixed using the shared reading-light secondary ink. |
 | PaperResults | Restore distinct type/version and source-reported correction/retraction pills, author truncation, host/index access wording and the type/language/year filter order. Type filtering changes the actual request; unavailable year/language filters explain their limits. |

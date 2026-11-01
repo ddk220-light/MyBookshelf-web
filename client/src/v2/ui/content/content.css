@@ -40,11 +40,14 @@
 .content-count { display:flex; gap:8px; align-items:center; justify-content:space-between; font-size:.8125rem; color:var(--ink-muted); }
 .content-count .text-button { flex-shrink:0; font-size:.8125rem; padding:8px 0 8px 12px; font-weight:600; white-space:nowrap; }
 .content-coverage { margin:0 0 8px; font-size:.8125rem; line-height:1.5; color:var(--ink-muted); }
-.content-result { display:flex; gap:14px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line); overflow-wrap:anywhere; }
+.content-result { position:relative; display:flex; gap:14px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line); overflow-wrap:anywhere; }
 .content-result>div { min-width:0; flex:1; }
 .content-result>a { text-decoration:none; }
 .content-result h2 { margin:0 0 2px; font:500 1.1875rem/1.26 var(--serif); letter-spacing:0; }
 .content-result h2 a { color:var(--ink-title); text-decoration:none; }
+.content-result h2 a::after { content:''; position:absolute; inset:0; cursor:pointer; border-radius:10px; }
+.content-result h2 a:focus-visible { outline:none; }
+.content-result h2 a:focus-visible::after { outline:3px solid var(--reader-accent); outline-offset:3px; }
 .content-result p { margin:3px 0; }
 .content-authors { color:var(--ink-author); font-size:.9375rem; line-height:1.4; }
 .content-credit,.content-result .muted { font-size:.8125rem; line-height:1.4; color:var(--ink-muted); }

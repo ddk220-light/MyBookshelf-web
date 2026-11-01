@@ -44,7 +44,9 @@ test.describe('approved free-content UI behavior',()=>{
   test('desktop selection follows Back and survives resizing to a phone',async({page,baseURL})=>{
     await page.setViewportSize({width:1280,height:900});await installContentReviewFixture(page,'FreeBookResults');
     await openReviewState(page,'FreeBookResults',baseURL);
-    await page.locator('.content-result h2 a').first().click();await expect(page.locator('.content-detail h1')).toHaveText('Pride and Prejudice');
+    const row=await page.locator('.content-result').first().boundingBox();
+    await page.mouse.click(row.x+row.width-5,row.y+row.height-5);
+    await expect(page.locator('.content-detail h1')).toHaveText('Pride and Prejudice');
     await expect(page.locator('.content-result.is-selected h2 a')).toHaveAttribute('aria-current','true');
     await page.getByRole('heading',{name:'Emma',exact:true}).getByRole('link').click();await expect(page.locator('.content-detail h1')).toHaveText('Emma');
     await page.goBack();await expect(page.locator('.content-detail h1')).toHaveText('Pride and Prejudice');
