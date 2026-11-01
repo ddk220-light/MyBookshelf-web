@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
-import { CONTENT_POLICY_REVISION, parseContentSearch, parseContentResolve, readingActions, observedAccess } from './contracts.js';
+import { CONTENT_POLICY_REVISION, parseContentSearch, parseContentResolve, parseContentLocate, readingActions, observedAccess } from './contracts.js';
 
 function failure(code, message, status = 503) { return Object.assign(new Error(message), { code, status }); }
-function folded(value) { return value.normalize('NFKD').replace(/\p{M}/gu, '').toLocaleLowerCase(); }
+function folded(value) { return value.normalize('NFKD').replace(/(\p{Script=Latin})\p{M}+/gu, '$1').normalize('NFC').toLocaleLowerCase(); }
 function hash(value) { return createHash('sha256').update(value).digest('hex'); }
 
 export function readGutenbergSnapshot() {
@@ -87,6 +87,18 @@ export function createLocalContentService({ loadSnapshot = readGutenbergSnapshot
       const item = byKey.get(request.key);
       if (!item) throw failure('CONTENT_NOT_FOUND', 'This item is not in the current free-book catalog.', 404);
       return { item: present(item, request), policyRevision:CONTENT_POLICY_REVISION };
+    },
+    locate(input) {
+      const request=parseContentLocate(input);ensure();
+      const items=[];
+      for(const {item} of indexed){
+        const match=request.identifiers.find(wanted=>item.identifiers.some(identity=>identity.scheme===wanted.scheme&&identity.value===wanted.value));
+        if(!match||!['book','learning_resource'].includes(item.kind))continue;
+        const value=present(item,request);
+        if(value.access==='free_full_text')items.push({...value,match});
+        if(items.length===3)break;
+      }
+      return {items,policyRevision:CONTENT_POLICY_REVISION};
     },
   };
 }

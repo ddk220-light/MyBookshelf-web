@@ -9,9 +9,10 @@ import { catalogStatus } from '../journal/DueSlip';
 import { exampleBooks } from '../../exampleBooks';
 import { readBookLookup, readCachedAvailability, readReaderPreferences, writeReaderPreferences, type ReaderPreferences } from '../../readerState';
 import type { RecentBook } from '../../types';
+import { SavedContentCard } from '../content/ContentResult';
 
 export function ShelfPage() {
-  const { library, loadingLibrary, libraryError, retryLibrary, state, clearRecentBooks, removeRecentBook, unsaveBook, recoveryMode, reportStorageFailure } = useLibrary();
+  const { library, loadingLibrary, libraryError, retryLibrary, state, clearRecentBooks, removeRecentBook, unsaveBook, unsaveContent, recoveryMode, reportStorageFailure } = useLibrary();
   const [preferences, setPreferences] = useState(readReaderPreferences);
   const [editing, setEditing] = useState(false);
   const [clearing, setClearing] = useState(false);
@@ -21,13 +22,15 @@ export function ShelfPage() {
   };
   const books = [...state.savedBooks].sort((a, b) => preferences.shelfSort === 'title' ? a.title.localeCompare(b.title) : preferences.shelfSort === 'author'
     ? a.authors.join(', ').localeCompare(b.authors.join(', ')) || a.title.localeCompare(b.title) : Date.parse(b.viewedAt) - Date.parse(a.viewedAt));
+  const content = [...state.savedContent].sort((a,b) => preferences.shelfSort === 'title' ? a.title.localeCompare(b.title) : preferences.shelfSort === 'author'
+    ? a.authors.join(', ').localeCompare(b.authors.join(', ')) || a.title.localeCompare(b.title) : Date.parse(b.savedAt)-Date.parse(a.savedAt));
   return <section className="page-section reader-shelf">
     <header className="reader-shelf-header"><h1>Shelf</h1>
       <Link className="library-chip" to="/app/libraries" state={{ after: '/app/shelf' }}>{loadingLibrary ? 'Loading library…' : library?.name || (libraryError ? 'Library unavailable' : 'Choose a library')} <span aria-hidden="true">⌄</span></Link>
       <div className="view-switch" role="group" aria-label="Shelf view"><button aria-label="Bookcase" aria-pressed={preferences.shelfView === 'shelf'} onClick={() => update({ shelfView: 'shelf' })}>▥</button><button aria-label="List" aria-pressed={preferences.shelfView === 'list'} onClick={() => update({ shelfView: 'list' })}>☷</button></div>
       <Link className="text-link shelf-find" to="/app/search">Find a book</Link>
     </header>
-    <div className="shelf-controls"><span>{books.length} {books.length === 1 ? 'book' : 'books'}</span>
+    <div className="shelf-controls"><span>{books.length+content.length} {content.length ? 'items' : books.length === 1 ? 'book' : 'books'}</span>
       <label><span className="visually-hidden">Sort saved books</span><select aria-label="Sort saved books" value={preferences.shelfSort} onChange={event => update({ shelfSort: event.target.value as ReaderPreferences['shelfSort'] })}><option value="recent">Recently added</option><option value="title">Title</option><option value="author">Author</option></select></label>
       <button className="text-button" aria-pressed={editing} onClick={() => setEditing(!editing)}>{editing ? 'Done' : 'Edit'}</button>
     </div>
@@ -42,7 +45,8 @@ export function ShelfPage() {
               {editing && <button className="text-button" disabled={recoveryMode} aria-label={'Remove ' + book.title + ' from saved books'} onClick={() => unsaveBook(book.bookKey)}>Remove</button>}</li>;
           })}
         </ul>}
-        {!books.length && <div className="shelf-start"><h2>Start your shelf</h2><p>Save the books you want to read.</p><Link className="button-link" to="/app/search">Find a book</Link>
+        {content.length > 0 && <section aria-labelledby="saved-content-heading"><h2 id="saved-content-heading">Free books and papers</h2><ul className="saved-content-list">{content.map(item=><li key={item.contentKey}><SavedContentCard item={item} editing={editing} disabled={recoveryMode} onRemove={unsaveContent}/></li>)}</ul></section>}
+        {!books.length && !content.length && <div className="shelf-start"><h2>Start your shelf</h2><p>Save the books you want to read.</p><Link className="button-link" to="/app/search">Find a book</Link>
           <ul className="shelf-examples">{exampleBooks.slice(0, 3).map(({ book }) => <li key={book.bookKey}><Link to={'/app/books/' + encodeURIComponent(book.bookKey)} state={{ from: 'shelf', book }}><Cover book={book} /><span>{book.title}</span></Link></li>)}</ul></div>}
         <DogAnimation pose="sit" className="shelf-bucky" />
       </div>

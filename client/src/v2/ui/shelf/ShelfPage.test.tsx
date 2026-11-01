@@ -5,7 +5,7 @@ import { ShelfPage } from './ShelfPage';
 
 vi.mock('../../context', () => ({ useLibrary: () => ({
   library: { id: 'fixture', name: 'Fixture library' },
-  state: { recentBooks: [], savedBooks: Array.from({ length: 25 }, (_, index) => ({
+  state: { recentBooks: [], savedContent: [], savedBooks: Array.from({ length: 25 }, (_, index) => ({
     bookKey: `v1:openlibrary:OL${index}W`, title: `Saved book ${index + 1}`, authors: index === 0 ? [] : ['Reader'],
     source: 'direct', viewedAt: '2026-10-03T00:00:00Z',
   })) },

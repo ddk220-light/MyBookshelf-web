@@ -8,6 +8,7 @@ import { BookPage } from './ui/book/BookPage';
 import { ScanPage } from './ui/scan/ScanPage';
 import { uiMessages as m } from './uiMessages';
 import { SelectLibraryPage } from './ui/library/SelectLibraryPage';
+import { ContentDetailPage } from './ui/content/ContentDetailPage';
 
 export { LibrariesPage } from './ui/library/LibrariesPage';
 
@@ -29,6 +30,7 @@ export function AnonymousWebApp() {
     <Route path="/app/search" element={<ScanPage />} />
     <Route path="/app/settings" element={<SettingsPage />} />
     <Route path="/app/books/:bookKey" element={<BookPage />} />
+    <Route path="/app/read/:contentKey" element={<ContentDetailPage />} />
     <Route path="/find" element={<Navigate to="/app/search" replace />} />
     <Route path="/privacy" element={<Navigate to="/settings#privacy" replace />} />
     <Route path="/login" element={<NativeAppNotice />} />

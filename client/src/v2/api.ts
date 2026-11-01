@@ -1,24 +1,28 @@
 import type { Availability, PublicBook, PublicLibrary, PublicLibraryPage, LibraryDiscovery, LibraryAreas, Place } from './types';
+import type { ContentSourceStatus } from './contentTypes';
 
 type ApiErrorBody = { error?: { code?: string; message?: string } };
 
 export class PublicApiError extends Error {
   readonly code: string;
   readonly status: number;
+  readonly sources?: ContentSourceStatus[];
 
-  constructor({ code = 'REQUEST_FAILED', message = 'Something went wrong. Please try again.', status = 0 }: {
+  constructor({ code = 'REQUEST_FAILED', message = 'Something went wrong. Please try again.', status = 0, sources }: {
     code?: string;
     message?: string;
     status?: number;
+    sources?: ContentSourceStatus[];
   } = {}) {
     super(message);
     this.name = 'PublicApiError';
     this.code = code;
     this.status = status;
+    if (sources) this.sources = sources;
   }
 }
 
-async function post<T>(path: string, body: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
+export async function post<T>(path: string, body: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`/api/v2${path}`, {
@@ -33,12 +37,13 @@ async function post<T>(path: string, body: Record<string, unknown>, signal?: Abo
     throw new PublicApiError({ code: 'NETWORK_ERROR', message: 'Unable to reach the catalog service.' });
   }
 
-  const data = await response.json().catch(() => ({})) as T & ApiErrorBody;
+  const data = await response.json().catch(() => ({})) as T & ApiErrorBody & { sources?: ContentSourceStatus[] };
   if (!response.ok) {
     throw new PublicApiError({
       code: data.error?.code,
       message: data.error?.message,
       status: response.status,
+      sources: data.sources,
     });
   }
   return data;

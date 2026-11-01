@@ -62,7 +62,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const route = location.pathname.split('/')[2];
-    const names: Record<string, string> = { shelf: 'Your bookshelf', search: 'Search books', libraries: 'Choose a library', settings: 'Settings', books: 'Book details' };
+    const names: Record<string, string> = { shelf: 'Your bookshelf', search: 'Search books', libraries: 'Choose a library', settings: 'Settings', books: 'Book details', read: 'Free reading details' };
     document.title = (names[route] || 'Choose a library') + ' — MyBookshelf';
   }, [location.pathname]);
 

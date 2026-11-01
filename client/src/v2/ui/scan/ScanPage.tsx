@@ -14,8 +14,16 @@ import { uiMessages as m } from '../../uiMessages';
 import { ScanIcon, SearchIcon } from '../icons';
 import { Sheet } from '../Sheet';
 import { BookCard } from '../BookCard';
+import { ContentSearchPage, SearchScopes } from '../content/ContentSearchPage';
 
 export function ScanPage() {
+  const location = useLocation();
+  const scope = new URLSearchParams(location.search).get('scope');
+  if (import.meta.env.VITE_CONTENT_DISCOVERY_ENABLED === 'true' && (scope === 'free' || scope === 'papers')) return <ContentSearchPage key={scope} scope={scope} />;
+  return <LibraryScanPage />;
+}
+
+function LibraryScanPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { library, loadingLibrary, libraryError, retryLibrary, state } = useLibrary();
@@ -82,6 +90,7 @@ export function ScanPage() {
 
   return <section className="page-section search-page">
     <header className="page-heading"><h1>Search</h1></header>
+    {import.meta.env.VITE_CONTENT_DISCOVERY_ENABLED === 'true' && <SearchScopes scope="library" />}
     <div className="search-layout">
     <aside className="selected-library" aria-label={m.yourLibrary}>
       {loadingLibrary ? <p role="status">{m.loadingLibrary}</p> : libraryError ? <><p role="alert">{m.libraryLoadError}</p><button className="button-quiet" onClick={retryLibrary}>{m.retry}</button></> : library ? <span>{library.name}</span> : null}

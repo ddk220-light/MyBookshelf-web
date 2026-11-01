@@ -1,6 +1,6 @@
 # MyBookshelf web handoff
 
-Updated 2026-10-31. Active repository:
+Updated 2026-11-01 for free-content implementation. Active repository:
 **https://github.com/ddk220-light/MyBookshelf-web**, default branch `main`.
 The owner has chosen to do all future web work in this repository. Build, test,
 plan and implement here directly. Do not depend on the previous private checkout
@@ -53,13 +53,13 @@ are available here without the private branch.
   Repository protection and vulnerability-reporting settings also need owner
   administration. Keep the previous production deployment as the rollback target.
 
-## Free-content discovery: researched, implementation not started
+## Free-content discovery: implementation in progress
 
 The [source research](research/free-content/README.md) covers free ebooks,
 scientific papers, textbooks, children's books and related collections. It
-proposes metadata imports plus bounded live API search, with reading links to
-original hosts. The [architecture](research/free-content/architecture.md) is a
-proposal, not an implemented feature or approved database migration.
+defines metadata imports plus bounded live API search, with reading links to
+original hosts. This chat is exclusively for the free-content feature; account
+work belongs to its separate branch and project.
 
 Branch `research/free-content-discovery` was recreated on this repository after
 the previous environment's unpushed commit `ee7d88e` could not be recovered.
@@ -67,10 +67,26 @@ The documents and historical probe outcomes were reconstructed from the retained
 conversation; the original raw responses and complete fetch ledger are unavailable.
 The research overview records these limits. Future work continues here directly.
 
-UI for this feature is approved as a proposal (2026-11-01):
+UI artifacts and implementation are approved (2026-11-01):
 [boards and implementation handoff](design/2026-11-free-content/README.md), with
-the owner's nine decisions. Next step is implementation from that handoff,
-starting with the shelf-storage decision for non-ISBN items. Nothing is built yet.
+the owner's nine decisions. Worktree: `/workspace/MyBookshelf-web-free-sources-implementation`;
+branch: `research/free-content-discovery-implementation`, based on approved
+artifact commit `760863a`. Track [project 4](https://github.com/users/ddk220-light/projects/4)
+and [index #73](https://github.com/ddk220-light/MyBookshelf-web/issues/73).
+
+Implemented: source-native identity/access contracts, bounded official Gutenberg
+metadata import and local search/resolve, Europe PMC adapter and atomic shared
+Redis coordination, search scopes, content reader pages and browser shelf v2
+migration. The optional library bridge requires exact ISBN/work evidence.
+See [implementation decisions and story state](research/free-content/IMPLEMENTATION.md)
+and [validation](research/free-content/VALIDATION.md). Open Textbook Library is
+the next source story. Other paper sources and the children's pilot are pending.
+
+Both client and backend flags default off. Live paper search additionally needs
+shared Redis REST credentials and explicit budget configuration; no hosted store
+has been provisioned. The local Gutenberg snapshot needs daily refresh because
+positive access evidence expires after 24 hours. No deployment or production
+enablement has been performed.
 
 ## Account work: architecture chosen, implementation not started
 
@@ -96,6 +112,11 @@ future discovery scope. **They still need requirements and definitions**, includ
 privacy, moderation, work identity, deletion and acceptance criteria.
 
 ## Resume in this order
+
+For this branch, continue the free-content stories in
+[IMPLEMENTATION.md](research/free-content/IMPLEMENTATION.md), creating native
+tasks as each story is reached. The account instructions below are historical
+handoff context for another branch; they do not apply to this task.
 
 1. Read this handoff, the foundation analysis and
    [the delivery backlog](plans/2026-10-31-accounts-delivery-backlog.md).

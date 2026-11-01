@@ -42,6 +42,7 @@ export function createContentService({env=process.env,local=createLocalContentSe
     return value.page;
   }
   return {
+    locate(input){return local.locate(input);},
     async search(input) {
       const query=parseContentSearch(input);
       if(query.kinds.includes('book')||query.kinds.includes('learning_resource'))return local.search(input);

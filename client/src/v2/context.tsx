@@ -11,9 +11,11 @@ import {
   SAVED_BOOKS_CAP,
   emptyState,
   isSaved,
+  withSavedContent,
   type AnonymousWebState,
 } from './localState';
 import type { PublicBook, PublicLibrary, RecentBook, RecentSource } from './types';
+import type { ContentItem } from './contentTypes';
 import { readReaderPreferences, writeReaderPreferences } from './readerState';
 
 export type SaveResult = 'saved' | 'already-saved' | 'full' | 'recovery';
@@ -39,6 +41,8 @@ export type LibraryState = {
   clearSavedBooks: () => void;
   saveBook: (book: PublicBook) => SaveResult;
   unsaveBook: (bookKey: string) => void;
+  saveContent: (item: ContentItem) => SaveResult;
+  unsaveContent: (key: string) => void;
 };
 
 const LibraryStateContext = createContext<LibraryState | null>(null);
@@ -163,13 +167,21 @@ export function LibraryStateProvider({ children }: { children: ReactNode }) {
     commit((saved) => ({ ...saved, recentBooks: saved.recentBooks.filter((item) => item.bookKey !== bookKey) }));
   }, [commit]);
   const clearRecentBooks = useCallback(() => commit((saved) => ({ ...saved, recentBooks: [] })), [commit]);
-  const clearSavedBooks = useCallback(() => { if (commit(saved => ({ ...saved, savedBooks: [] }))) setRemoved(null); }, [commit]);
+  const clearSavedBooks = useCallback(() => { if (commit(saved => ({ ...saved, savedBooks: [], savedContent: [] }))) setRemoved(null); }, [commit]);
   const saveBook = useCallback((book: PublicBook): SaveResult => {
     if (recovery.current) return 'recovery';
     if (isSaved(stateRef.current, book.bookKey)) return 'already-saved';
-    if (stateRef.current.savedBooks.length >= SAVED_BOOKS_CAP) return 'full';
+    if (stateRef.current.savedBooks.length + stateRef.current.savedContent.length >= SAVED_BOOKS_CAP) return 'full';
     return commit((saved) => withSavedBook(saved, book)) ? 'saved' : 'recovery';
   }, [commit]);
+  const saveContent = useCallback((item: ContentItem): SaveResult => {
+    if (recovery.current) return 'recovery';
+    if (stateRef.current.savedContent.some(value => value.contentKey === item.key)) return 'already-saved';
+    if (stateRef.current.savedBooks.length + stateRef.current.savedContent.length >= SAVED_BOOKS_CAP) return 'full';
+    if (withSavedContent(stateRef.current, item) === stateRef.current) return 'recovery';
+    return commit(saved => withSavedContent(saved, item)) ? 'saved' : 'recovery';
+  }, [commit]);
+  const unsaveContent = useCallback((key: string) => { commit(saved => ({ ...saved, savedContent: saved.savedContent.filter(item => item.contentKey !== key) })); }, [commit]);
   const unsaveBook = useCallback((bookKey: string) => {
     const index = stateRef.current.savedBooks.findIndex(book => book.bookKey === bookKey);
     const book = stateRef.current.savedBooks[index];
@@ -177,6 +189,11 @@ export function LibraryStateProvider({ children }: { children: ReactNode }) {
   }, [commit]);
   const undoRemoval = useCallback(() => {
     if (!removed) return;
+    if (!isSaved(stateRef.current, removed.book.bookKey) && stateRef.current.savedBooks.length + stateRef.current.savedContent.length >= SAVED_BOOKS_CAP) {
+      setStorageNotice('Your shelf is full. Remove an item before restoring this book.');
+      setRemoved(null);
+      return;
+    }
     if (commit(saved => {
       if (isSaved(saved, removed.book.bookKey)) return saved;
       const books = [...saved.savedBooks];
@@ -205,7 +222,9 @@ export function LibraryStateProvider({ children }: { children: ReactNode }) {
     clearSavedBooks,
     saveBook,
     unsaveBook,
-  }), [state, library, loadingLibrary, libraryError, storageNotice, recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removed, undoRemoval, reportStorageFailure, selectLibrary, retryLibrary, rememberBook, removeRecentBook, clearRecentBooks, clearSavedBooks, saveBook, unsaveBook]);
+    saveContent,
+    unsaveContent,
+  }), [state, library, loadingLibrary, libraryError, storageNotice, recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removed, undoRemoval, reportStorageFailure, selectLibrary, retryLibrary, rememberBook, removeRecentBook, clearRecentBooks, clearSavedBooks, saveBook, unsaveBook, saveContent, unsaveContent]);
 
   return <LibraryStateContext.Provider value={value}>{children}</LibraryStateContext.Provider>;
 }

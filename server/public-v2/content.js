@@ -1,7 +1,7 @@
 import { createContentService } from '../services/content/search.js';
 
 export function mountContentRoutes(router, service = createContentService()) {
-  for (const operation of ['search','resolve']) router.post(`/content/${operation}`, async (req,res) => {
+  for (const operation of ['search','resolve','locate']) router.post(`/content/${operation}`, async (req,res) => {
     try { return res.json(await service[operation](req.body)); }
     catch (error) {
       const known = ['CONTENT_INVALID_REQUEST','CONTENT_CURSOR_INVALID','CONTENT_CURSOR_EXPIRED','CONTENT_NOT_FOUND','CONTENT_DISABLED','CONTENT_UNAVAILABLE','CONTENT_FILTER_UNSUPPORTED'].includes(error?.code);

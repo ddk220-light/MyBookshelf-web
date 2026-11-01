@@ -1,4 +1,5 @@
 import { isIP } from 'node:net';
+import ISBN from 'isbn3';
 
 export const CONTENT_POLICY_REVISION = '2026-11-01.1';
 export const CONTENT_KINDS = ['book', 'chapter', 'article', 'preprint', 'thesis', 'report', 'learning_resource', 'audiobook', 'other'];
@@ -101,4 +102,19 @@ export function parseContentResolve(input) {
   const parsed = parseContentKey(body.key);
   if (!parsed) throw new ContentValidationError('Choose a valid content item.');
   return { key: body.key, parsed, ...languageContext(body) };
+}
+
+export function parseContentLocate(input) {
+  const body=object(input,['isbn13','workId','country','languages']);
+  const identifiers=[];
+  if(body.isbn13!=null){
+    if(typeof body.isbn13!=='string'||!/^97[89]\d{10}$/.test(body.isbn13)||ISBN.parse(body.isbn13)?.isbn13!==body.isbn13)throw new ContentValidationError();
+    identifiers.push({scheme:'isbn13',value:body.isbn13});
+  }
+  if(body.workId!=null){
+    if(typeof body.workId!=='string'||! /^(?:\/works\/)?OL\d+W$/.test(body.workId))throw new ContentValidationError();
+    identifiers.push({scheme:'openlibrary_work',value:body.workId.startsWith('/')?body.workId:'/works/'+body.workId});
+  }
+  if(!identifiers.length)throw new ContentValidationError();
+  return {identifiers,...languageContext(body)};
 }

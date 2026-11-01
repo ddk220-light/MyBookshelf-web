@@ -41,3 +41,23 @@ test('disabled discovery never reads the snapshot; unavailable is not an empty p
   assert.throws(()=>service().search({query:'x',kinds:['article']}),/not connected/);
   assert.throws(()=>service({cursorSecret:undefined}).search({query:'x'}),/unavailable/);
 });
+
+test('library link-back uses exact identifier evidence and never title similarity',()=>{
+  const mapped=structuredClone(data);mapped.records[0].identifiers=[{scheme:'isbn13',value:'9780140328721'}];
+  const api=service({loadSnapshot:()=>mapped});
+  const found=api.locate({isbn13:'9780140328721'});
+  assert.equal(found.items.length,1);assert.deepEqual(found.items[0].match,{scheme:'isbn13',value:'9780140328721'});
+  assert.equal(api.locate({isbn13:'9780142410363'}).items.length,0);
+  assert.throws(()=>api.locate({title:'Fixture title 1'}));
+  assert.equal(service({loadSnapshot:()=>mapped,now:()=>now+86400_001}).locate({isbn13:'9780140328721'}).items.length,0);
+});
+
+test('search folds Latin accents without erasing Tamil or Hindi vowel signs',()=>{
+  const mapped=structuredClone(data);mapped.records[0].title='தமிழ்';mapped.records[1].title='हिन्दी';mapped.records[2].title='École';
+  const api=service({loadSnapshot:()=>mapped});
+  assert.equal(api.search({query:'தமிழ்'}).items.length,1);
+  assert.equal(api.search({query:'தமழ'}).items.length,0);
+  assert.equal(api.search({query:'हिन्दी'}).items.length,1);
+  assert.equal(api.search({query:'हनद'}).items.length,0);
+  assert.equal(api.search({query:'ecole'}).items.length,1);
+});

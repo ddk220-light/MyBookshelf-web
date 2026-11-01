@@ -21,6 +21,7 @@ export function TabBar() {
     </Link>
     <nav className="tab-bar" aria-label="Primary navigation">
       {TABS.map(({ to, label, icon: Icon }) => (
+        to === '/app/search' && location.pathname.startsWith('/app/read/') ? <Link key={to} to={to} className="tab-item active" aria-current="page"><span className="tab-icon"><Icon /></span>{label}</Link> :
         <NavLink key={to} to={to === '/app/libraries' && encodedBookKey ? `/app/libraries?book=${encodedBookKey}` : to}
           aria-keyshortcuts={to === '/app/search' ? 'Alt+/' : undefined}
           state={to === '/app/libraries' && encodedBookKey ? libraryReturn(location.pathname, location.search, location.state) : undefined} className="tab-item">

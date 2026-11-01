@@ -1,0 +1,13 @@
+import { post } from './api';
+import type { ContentItem, ContentKind, ContentPage } from './contentTypes';
+export const contentApi = {
+  async locate(identifiers:{isbn13?:string;workId?:string},signal?:AbortSignal):Promise<ContentItem[]> {
+    return (await post<{items:ContentItem[]}>('/content/locate',{...identifiers},signal)).items;
+  },
+  search(query: string, kinds: ContentKind[], options: { cursor?: string; includeUnclear?: boolean; languages?: string[] } = {}, signal?: AbortSignal): Promise<ContentPage> {
+    return post('/content/search', { query, kinds, access: 'free_full_text', limit: 20, ...options }, signal);
+  },
+  async resolve(key: string, signal?: AbortSignal): Promise<ContentItem> {
+    return (await post<{ item: ContentItem }>('/content/resolve', { key }, signal)).item;
+  },
+};

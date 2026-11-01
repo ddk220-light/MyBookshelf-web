@@ -1,6 +1,8 @@
 # Free books and research discovery
 
-Research date: **2026-10-31**. Status: proposal with historical live API samples; no application behavior changed.
+Research date: **2026-10-31**. Implementation authorized 2026-11-01; see
+[story progress and contract decisions](IMPLEMENTATION.md) and [validation](VALIDATION.md).
+The research observations below remain historical evidence, separate from fresh implementation checks.
 
 Canonical repository: **[ddk220-light/MyBookshelf-web](https://github.com/ddk220-light/MyBookshelf-web)**. All future development belongs here.
 
