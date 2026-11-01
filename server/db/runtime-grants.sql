@@ -18,3 +18,19 @@ DROP POLICY IF EXISTS auth_settings_service ON user_settings;
 CREATE POLICY auth_settings_service ON user_settings TO mybookshelf_auth USING (true) WITH CHECK (true);
 GRANT SELECT, INSERT, UPDATE, DELETE ON account_rate_buckets TO mybookshelf_auth;
 REVOKE ALL ON account_rate_buckets FROM mybookshelf_reading;
+GRANT SELECT, INSERT, UPDATE, DELETE ON account_mail_jobs, account_email_challenges TO mybookshelf_auth;
+REVOKE ALL ON account_mail_jobs, account_email_challenges FROM mybookshelf_reading;
+-- Worker role and its grant are added when the scheduled worker is configured;
+-- reading and auth roles remain distinct from that job-processing credential.
+-- Apply this block after the private job worker role has been created.
+DO $$ BEGIN
+  IF EXISTS (SELECT FROM pg_roles WHERE rolname='mybookshelf_worker') THEN
+    GRANT USAGE ON SCHEMA public TO mybookshelf_worker;
+    GRANT SELECT,INSERT,UPDATE,DELETE ON account_mail_jobs TO mybookshelf_worker;
+    GRANT SELECT("expiresAt"),DELETE ON account_email_challenges TO mybookshelf_worker;
+    GRANT SELECT(reset_at),DELETE ON account_rate_buckets TO mybookshelf_worker;
+    REVOKE ALL ON "user","session","account","verification",user_books,recent_book_views FROM mybookshelf_worker;
+  END IF;
+END $$;
+GRANT SELECT,INSERT,UPDATE,DELETE ON account_recent_proofs TO mybookshelf_auth;
+REVOKE ALL ON account_recent_proofs FROM mybookshelf_reading;

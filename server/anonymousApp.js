@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import { HTML_SECURITY_POLICY } from '../shared/security-policy.js';
+import { HTML_SECURITY_POLICY } from '../shared/security-policy.mjs';
 
 import { createPublicV2Router } from './public-v2/router.js';
 
@@ -20,7 +20,7 @@ const PUBLIC_API_NOT_FOUND = Object.freeze({
 });
 
 // Open Library can redirect older covers through Internet Archive's ZIP image service.
-export { HTML_SECURITY_POLICY } from '../shared/security-policy.js';
+export { HTML_SECURITY_POLICY } from '../shared/security-policy.mjs';
 
 function legacyCookieOptions() {
   return {

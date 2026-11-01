@@ -21,8 +21,17 @@ D05-publish-all-before-R02 rule. R03 still gates the production release.
 - Narrow session bootstrap, server-cookie renewal forwarding, absolute 30-day
   expiry and idempotent app identity provisioning. Deleting identities cannot be
   reactivated by provisioning. Raw session tokens never reach the bootstrap JSON.
-- Auth protocol routes beyond the foundation health probe remain gated until
-  their mail, validation, abuse and lifecycle stories are implemented.
+- App facades now implement signup/one-use scanner-safe verification, sign-in,
+  recovery, atomic reset/change, fresh-session recent-auth proof and device
+  revocation. Raw sensitive auth protocols remain disabled so policy cannot be
+  bypassed. Password screening sends only a padded HIBP hash prefix.
+- Mail enqueue joins supported Better Auth transactions. Encrypted durable jobs
+  use fenced leases, provider idempotency IDs, bounded retries and ciphertext
+  removal after send/expiry. Actual delivery awaits the staging sender setup.
+- Private reading APIs implement versioned library preference, exact-reference
+  saved books, signed revision-bound pagination, conditional ten-second undo,
+  quota/clear fencing and opt-in bounded history with generation protection.
+  A separate reading pool revalidates the session under the owner lock.
 
 ## Evidence
 
@@ -33,7 +42,7 @@ concurrent identity provisioning, deleting identities, origin checks and account
 outage isolation. These tests are included in the server test command and CI,
 which now provisions a disposable Postgres service.
 
-Full server suite: 491 passing. Client suite: 120 passing after compatible
+Full server suite at this checkpoint: 501 passing. Client suite: 120 passing after compatible
 security maintenance (Vite 6.4.5, Vitest 4.1.12 and patched transitive packages).
 Dependency audit: zero findings at this checkpoint. No claim of final browser,
 real-provider, real-mail or release validation is made.
@@ -75,7 +84,20 @@ Parent stories remain open until their full acceptance criteria pass, including
 hosted/provider exits. D05 tracks progressive decomposition, not a prerequisite
 requiring every future child to exist before implementation starts.
 
-Next: finish S03-B abuse/CSRF/return-path boundaries, then expand and implement
-P02/S04 mail/signup and subsequent stories. Real Google/Apple configuration and
-mail-domain delivery must be proved before account release. Preserve exact source
-book identities and all reviewed privacy/import/session policies.
+Additional tasks published and linked as reached:
+P02 #69–70; S04 #71–72; S05 #80–81; S07 #82–83; S06 #91–92;
+S11 #93–94; S12 #95–96; S13 #97–98; S14 #99–100.
+
+Current verification also covers password-proof rotation, atomic notification
+failure rollback with token/session preservation, concurrent library edits,
+operation receipts, private metadata, long valid VPL identities, microsecond
+pagination, the 1,000-book boundary, history opt-in/pause/expiry/trim and late writes.
+Production build passes. Actual frontend journeys remain pending.
+
+Next: atomic guest import, account entry/settings screens and asynchronous client
+repository/identity isolation; then the remaining credential/provider/profile and
+export/deletion stories. Real Google/Apple configuration and mail-domain delivery
+must be proved before account release. Resend's initial legal-policy acceptance
+was presented to the owner and remains pending; no terms were accepted implicitly.
+The temporary provisioning credential was removed from session storage at the
+end of its authorized setup window. No persistent administrator token was created.

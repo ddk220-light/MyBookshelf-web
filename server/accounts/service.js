@@ -2,7 +2,15 @@ import { Pool } from 'pg';
 import { toNodeHandler } from 'better-auth/node';
 import { createAccountAuth } from '../auth/auth.js';
 import { assertAuthRole, resolveAppIdentity } from '../db/identity.js';
-import { csrfForSession } from './security.js';
+import { csrfForSession,consumeLimits } from './security.js';
+import { enqueueAccountMail } from '../jobs/mail.js';
+import { createAuthActions } from './auth-actions.js';
+import { createCredentialActions } from './credential-actions.js';
+import { createSessionActions } from './session-actions.js';
+import { createReadingActions } from './reading.js';
+import { assertReadingRole } from '../db/owner-transaction.js';
+import { createShelfActions } from './books.js';
+import { createHistoryActions } from './history.js';
 
 const ABSOLUTE_SESSION_MS = 30 * 86400 * 1000;
 
@@ -11,11 +19,27 @@ export async function createAccountService(config) {
     connectionTimeoutMillis: 3000, idleTimeoutMillis: 30000, statement_timeout: 5000 });
   // Keep background pool errors from becoming uncaught exceptions; never log values.
   pool.on('error', () => {});
+  let readingPool;
   try {
     // No request-time DDL. A missing migration fails only the account service.
     await pool.query('SELECT 1 FROM "session" LIMIT 0');
     await assertAuthRole(pool);
-    const auth = createAccountAuth({ pool, config });
+    if(config.readingDatabaseURL){
+      readingPool=new Pool({connectionString:config.readingDatabaseURL,max:4,connectionTimeoutMillis:3000,idleTimeoutMillis:30000,statement_timeout:5000});
+      readingPool.on('error',()=>{});await assertReadingRole(readingPool);
+    }
+    let auth;
+    const mail = (kind) => async (data) => {
+      try { return await enqueueAccountMail(auth, config, kind, data, data.token); }
+      catch { throw new Error('Account mail queue is unavailable.'); }
+    };
+    auth = createAccountAuth({ pool, config, sendVerificationEmail: mail('verify'),
+      sendResetPassword: mail('reset'), onExistingUserSignUp: mail('duplicate') });
+    const credentials=createCredentialActions({auth,pool,config});
+    const sessions=createSessionActions({auth,pool,consumeProof:credentials.consumeProof});
+    const actions = {...createAuthActions({ auth, pool, config }),...credentials,...sessions};
+    const reading=readingPool?createReadingActions({pool:readingPool,sessionActive:async(identity)=>Boolean((await pool.query('SELECT 1 FROM "session" WHERE id=$1 AND "userId"=$2 AND "expiresAt">now() AND "createdAt">now()-interval \'30 days\'',[identity.sessionId,identity.authUserId])).rowCount)}):null;
+    if(reading)Object.assign(reading,createShelfActions({owned:reading.owned,secret:config.secret}),createHistoryActions({owned:reading.owned}));
     async function identity(headers, setCookie = () => {}) {
       const result = await auth.api.getSession({ headers, returnHeaders: true });
       const value = result.response;
@@ -33,12 +57,13 @@ export async function createAccountService(config) {
         user: { id: appId ?? value.user.id, name: value.user.name, email: value.user.email, emailVerified: value.user.emailVerified } };
     }
     return {
-      auth, handleAuth: toNodeHandler(auth), identity,
+      auth, handleAuth: toNodeHandler(auth), identity, actions, reading,
+      limitPrivate:(identity)=>consumeLimits(pool,config.secret,[{scope:'private-mutations',subject:identity.user.id,max:120,seconds:60}]),
       async session(headers, setCookie) {
         const { sessionId, authUserId, ...summary } = await identity(headers, setCookie);
         return summary;
       },
-      async close() { await pool.end(); },
+      async close() { await Promise.all([pool.end(),readingPool?.end()]); },
     };
-  } catch (error) { await pool.end(); throw error; }
+  } catch (error) { await Promise.all([pool.end(),readingPool?.end()]); throw error; }
 }

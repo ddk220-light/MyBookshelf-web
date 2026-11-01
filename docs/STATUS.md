@@ -65,8 +65,10 @@ The [implementation record](accounts/IMPLEMENTATION.md) contains the exact curre
 scope, actual tests, staging resource IDs and task links. The foundation now has
 pinned Better Auth/native Postgres, shared lazy application composition,
 transactional migrations, separate runtime roles, forced RLS, active-identity
-provisioning and a narrow private session facade. No account signup/settings UI
-is implemented yet; unfinished sensitive routes remain gated.
+provisioning and a narrow private session facade. App facades now cover signup/verification, password/session lifecycle and
+private library/shelf/history APIs, backed by 501 passing server tests at this
+checkpoint. No account signup/settings UI is implemented yet; weaker raw auth
+routes remain gated.
 
 An isolated staging Neon DB, private export/ledger stores and Vercel project
 exist in iad1. Real staging migrations/roles were verified and secrets configured
@@ -74,8 +76,8 @@ in hosting. Production resources were not created. The current production site
 remains on its existing Git connection; staging uses the canonical MyBookshelf-web
 repository. See the runbook at `tools/accounts/README.md`.
 
-Continue with S03-B security controls, then expand P02/S04 and later stories as
-reached. Real mail, Google/Apple, hosted journeys, restore/deletion and final
+Continue with S14 import and account client screens/repository integration;
+expand subsequent stories as reached. Real mail, Google/Apple, hosted journeys, restore/deletion and final
 accessibility evidence remain required. Parent stories stay open until complete.
 Preserve private data, exact book identities, guest browsing and all three lights.
 

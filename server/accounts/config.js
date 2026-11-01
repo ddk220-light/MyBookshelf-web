@@ -18,6 +18,11 @@ export function readAccountConfig(env = process.env) {
     if (!['postgres:', 'postgresql:'].includes(database.protocol)) throw new Error();
     return Object.freeze({ enabled: true, baseURL: base.origin, secret: env.BETTER_AUTH_SECRET,
       databaseURL: env.ACCOUNTS_AUTH_DATABASE_URL, environment: env.ACCOUNTS_ENVIRONMENT,
-      secureCookies: !local });
+      secureCookies: !local,
+      readingDatabaseURL: env.ACCOUNTS_READING_DATABASE_URL,
+      resendKey: env.RESEND_API_KEY, mailFrom: env.ACCOUNTS_MAIL_FROM,
+      jobSecret: env.ACCOUNTS_JOB_SECRET,
+      workerDatabaseURL: env.ACCOUNTS_WORKER_DATABASE_URL,
+      cronSecret: env.ACCOUNTS_CRON_SECRET });
   } catch { throw new AccountConfigurationError(); }
 }
