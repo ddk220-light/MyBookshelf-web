@@ -5,6 +5,8 @@ Deepak Ravikumar. Draft author: Codex. Deepak approved the document packet and
 DEC-01–10 in chat on 2026-11-01 (America/Los_Angeles), at commit
 `5056de00bc1091fd11a8b49cf358e2594c37a49e`. Implementation and evidence are recorded in [IMPLEMENTATION.md](IMPLEMENTATION.md)
 and [VALIDATION.md](VALIDATION.md); R03 remains pending.
+The implemented screens and approved artifact are compared in
+[SCREEN_REVIEW.md](SCREEN_REVIEW.md), with a normal-size phone/desktop gallery.
 
 Start with the PRD and the decisions below. The other documents specify how the
 experience, implementation and release would meet those requirements.

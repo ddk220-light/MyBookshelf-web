@@ -1,6 +1,6 @@
 # Account validation evidence
 
-Updated 2026-11-01 UTC. Code candidate: `aa3b5bfd7f7720b2283d08b68ac6c1e7079e0bfc`, branch
+Updated 2026-11-01 UTC. Code candidate: `56915a6785f26daa55b7ea684372a23875c136ee`, branch
 `account-settings`, [PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57).
 R02 approved documents/Claude canvas v4 at `36a1436`. **R03 remains pending;
 this is an implemented feature, not production approval. The owner's later rollout
@@ -9,9 +9,11 @@ configuration record below.**
 
 ## Reproducible local checks
 
-The feature build `61e461c` passed all 318 public browser scenarios; the final
-follow-up only bounds deletion-status polling and expands its unit/load evidence.
-The final account lane runs after rebuilding that follow-up.
+The UI/retry candidate above passed the checks below on a frozen client build.
+The account lane uses a fresh harness for each browser profile, keeping actual
+production rate limits enabled. [SCREEN_REVIEW.md](SCREEN_REVIEW.md) records the
+artifact comparison and [the gallery](evidence/ui-review/index.html) separates
+default phone typography from enlarged-text stress cases.
 
 Node 22.23.4; PostgreSQL 18.6; migrations 001–011; npm lockfile v3.
 Disposable loopback database, actual native auth/reading/worker roles, synthetic
@@ -23,26 +25,27 @@ not count as passing evidence. No hosted account or provider secrets enter CI.
 | --- | --- |
 | Clean dependencies | `npm ci`: pass |
 | Types | `npm run typecheck:client`: pass |
-| Client | `npm run test:client`: **142 passed**, 31 files |
+| Client | `npm run test:client`: **143 passed**, 32 files |
 | Server | `npm test --workspace server`: **514 passed, zero skipped**, including actual Postgres and isolated restore |
 | Build | `npm run build`: pass; nine public guides/sixteen sitemap URLs |
 | SEO | `npm run test:seo`: pass |
 | Deployment contracts | `node --test tools/deployment/*.test.mjs`: pass |
 | Dependencies | `npm audit`: **zero findings**; `npm ls`: clean |
-| Public browsers | Chromium, mobile Chromium, WebKit: **318 passed** on the frozen feature build; 21 account scenarios intentionally excluded in this lane |
-| Account browsers | Same three projects, real local API/cookies/Postgres: **21 passed**, no synthetic API responses for account operations |
+| Public browsers | Chromium, mobile Chromium, WebKit: **318 passed** on the frozen candidate build; 24 account scenarios intentionally excluded in this lane |
+| Account browsers | Same three projects, real local API/cookies/Postgres: **24 passed**; successful operations use real APIs/data, with deliberate network failures for recovery checks |
 | Source hygiene | Whitespace, local documentation links and changed-file secret-pattern checks: pass |
 
 Run the public Playwright lane with `ACCOUNT_E2E` unset. For account journeys,
 build the client, start a fresh `ACCOUNT_E2E=true node tools/accounts/e2e-server.mjs`,
-then run:
+then run one profile:
 
 ```sh
 ACCOUNT_E2E=true PLAYWRIGHT_BASE_URL=http://127.0.0.1:4300 \
-  npm run test:e2e --workspace client -- accounts-real.spec.js \
-  --project=chromium --project=mobile-chromium --project=webkit --workers=2
+  npm run test:e2e --workspace client -- accounts-real.spec.js accounts-visual.spec.js \
+  --project=chromium --workers=2
 ```
 
+Restart the harness and repeat for `mobile-chromium` and `webkit`, as CI does.
 Use `npx playwright install --with-deps chromium webkit` on supported CI hosts.
 This workspace used system Chromium and Playwright 1.55.1 WebKit 26.0/build 2203.
 Portable WebKit libraries lived under `/tmp`; the host dependency validator was
@@ -61,7 +64,7 @@ The following distinguishes completed automated evidence from mandatory live exi
 | T01 #42, auth/providers | Native signup/verification/reset/session/email-change tests; signed Google/Apple token fixtures validate PKCE/state/nonce/issuer/audience/signature, expiry/replay, relay/name preservation, intent owner/session binding, link collision, concurrent last-method unlink and transactional notice rollback | Actual received mail; live Google/Apple, cancellation/returning login, mobile Safari form POST and Apple relay |
 | T02 #43, privacy/security | Actual forced RLS, missing context/pooled reuse/A-B isolation, non-owner grants, shared two-instance limiter, CSRF/origin/redirect/raw-route denial, deleting identity fences, no-store/noindex, proof expiry/replay and export omissions | Hosting/log-drain redaction/retention audit and live provider configuration |
 | T03 #44, synchronization | Real DB save/remove/undo/clear/import/history/version/generation races, quota/pagination, retry receipts; two-browser refresh/revocation/switch, late-response rejection, memory-only caches, guest-lock/cleanup concurrency, uncertain sign-out and deletion response | Hosted two-device repeat on the selected deployment; full staged race checklist sign-off |
-| T04 #45, accessibility/UI | Three lights, desktop/mobile Chromium and WebKit; axe on settings/deletion, keyboard Escape/focus restore and modal background controls inert; pending/error focus tests; [representative screenshots](evidence/README.md) reviewed | Full route/state visual stress matrix, 320px/zoom/forced colors account review, real VoiceOver/Safari and NVDA/Firefox (or agreed equivalent) |
+| T04 #45, accessibility/UI | Three lights, 320/390/768/1440px, 200% text and forced colors; 85 paired artifact/app entries per browser plus bottom settings captures; axe, long strings, actual pending/error/retry flows, Escape/focus restore and modal background controls inert; [screen review](SCREEN_REVIEW.md) and [gallery](evidence/ui-review/index.html) | Real VoiceOver/Safari and NVDA/Firefox (or agreed equivalent) |
 | T05 #46, regression/resilience | Full public browser suite, catalog/server/client/SEO/deployment checks; auth/DB outage isolation, storage corruption/denial, lost responses, bounded hash queue, maximum import and 1,000-book boundaries; twenty-reader local HTTP load below | Hosted cold start/pool wait/worker freshness measurements, final staged outage/rollback rehearsal |
 | T06 #47, lifecycle/operations | Owned coherent export; immediate deletion denial, ledger outage/retry/receipt recovery; fenced provider retries/ciphertext expiry; isolated real-Postgres restore suppresses deleted identity, preserves another reader's books, invalidates all restored authentication and reconstructs encrypted provider jobs | Actual provider revocation, running schedule/alerts, hosted snapshot restore/retention proof and second operator's drill |
 
@@ -70,6 +73,29 @@ library protocol. Browser account journeys use a loopback-only synthetic outbox
 reader. Neither is evidence of real external provider access or mail delivery.
 No critical/high local defect remains known after these checks; untested release
 exits remain blocking rather than being classified as passing tests.
+
+## UI comparison and failure recovery
+
+All three browser profiles passed eight real-account journeys each. The visual
+journey captures 85 paired entries across 33 named screen/state cases per profile,
+plus twelve bottom-of-settings pairs and enlarged-text/forced-color images. The
+curated gallery retains thirteen pairs and three labelled stress images; complete
+matrix metadata for all three profiles is checked in alongside it. No measured
+pixel-match score or live provider success is claimed.
+
+This pass repaired card/form sizing, small-screen typography, reveal-button
+padding, history controls and missing settings actions. It also repaired exact-ID
+clear/import retries, success notices incorrectly shown as dialog errors, result
+heading/document titles, equivalent-error focus and cross-tab appearance updates.
+See the screen review for deliberate differences and reproduction details.
+
+The first combined run exhausted the real sign-in limiter across browser profiles.
+Fresh per-profile harnesses fix fixture isolation without changing production
+limits. A standalone reproduction confirmed WebKit can retain stylesheet media
+evaluation after repeated screenshot/resizes; the test reasserts normal screen
+media and verifies actual responsive CSS before capture. A sign-out assertion now
+waits for server acknowledgement after private UI clears. The final runs pass all
+24 account journeys and 318 public scenarios.
 
 ## Load and resource evidence
 
@@ -155,7 +181,7 @@ returned HTTP 200 with `email:false`, `google:false`, `apple:false`.
   deletion deadlines and data expiry before accounts are enabled. GitHub Actions
   is one scheduling option, not an application requirement.
 - Hosted backup lifetime (at most thirty days), isolated restore/second operator,
-  remaining UI/accessibility/performance/logging checks and final R03 acceptance
+  remaining real assistive-technology/performance/logging checks and final R03 acceptance
   remain production exits. These require actual evidence, not a resource's plan name.
 
 These owner-directed activation deferrals supersede the earlier request to supply

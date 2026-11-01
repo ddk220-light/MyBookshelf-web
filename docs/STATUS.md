@@ -65,10 +65,16 @@ bounded maintenance tooling. See [implementation](accounts/IMPLEMENTATION.md),
 [validation](accounts/VALIDATION.md) and [operations](accounts/OPERATIONS.md).
 
 Node 22 checks include 514 server tests with actual local Postgres roles and
-142 client tests, type checking, production build and zero audit findings.
+143 client tests, type checking, production build and zero audit findings.
 Browser and hosted evidence are dated in VALIDATION.md; controlled provider/mail
 transports do not prove live delivery. Guest/public behavior and exact catalog
 identities remain required contracts.
+
+The subsequent [account screen review](accounts/SCREEN_REVIEW.md) fixes form/card
+layout, field/focus errors and failed clear/import retries, adds paired artifact
+captures, and checks narrow/zoomed layouts in three lights. The owner's phone-type
+review sets account headings to 28px with 16px body/input text. Default-size images
+and enlarged-text stress images are labelled separately in the gallery.
 
 Isolated staging uses `mybookshelf-accounts-staging` in iad1, Neon and a separate
 private deletion ledger. Real staging migration checksums 001–011 match the repo;

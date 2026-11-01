@@ -49,10 +49,10 @@ reviewed requirements. Changes to product behavior must be called out for R02.
 - [x] R01 approval and input commit recorded.
 - [x] Claude-produced preview and inspectable source/export available to Deepak.
 - [x] Each UX flow and UI route maps to named artifact screens and material states.
-- [ ] Desktop/mobile and all three lights inspected; keyboard/focus checks recorded.
+- [x] Desktop/mobile and all three lights inspected; implementation keyboard/focus and screen comparisons recorded in [SCREEN_REVIEW.md](SCREEN_REVIEW.md).
 - [x] Missing states, assumptions and proposed changes listed with disposition.
-- [ ] UI_DESIGN.md and affected delivery tasks reconciled with the artifact.
-- [ ] R02 receives exact source commit, preview, screenshots and updated packet.
+- [x] UI_DESIGN.md and affected delivery tasks reconciled with the artifact; subsequent implementation fixes tracked in #135, #136 and #138.
+- [x] R02 receives exact source commit, preview and updated packet; approval recorded below at `36a1436`.
 
 ## Version and review record
 

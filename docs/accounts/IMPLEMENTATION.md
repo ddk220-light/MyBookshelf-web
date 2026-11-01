@@ -67,6 +67,11 @@ This supersedes the older requirement to publish every child before R02.
   explicit consent, keyboard cancellation/focus restoration and recoverable errors.
   Website privacy/support copy now describes optional accounts while retaining
   the separate native-app policy.
+- The [artifact comparison](SCREEN_REVIEW.md) records the subsequent UI pass:
+  bounded forms/cards, quieter phone headings, inline save/history controls,
+  reachable import/clear actions, field-error focus and exact-request retries
+  from failed clear/import screens. Default phone text is 28px for headings and
+  16px for body/inputs; enlarged-text samples are labelled separately.
 
 ## Staging resources actually verified
 
@@ -103,9 +108,9 @@ required live evidence; implementation is not equivalent to release approval.
 | S08–10 | #116–119, #123–124 |
 | S11–14 | #93–100 |
 | S15 | #129–130 |
-| S16–18 | #101–103, #105 |
+| S16–18 | #101–103, #105, #135, #138 |
 | S21 | #106, #111 |
-| S19 validation consolidation | #131, reusing existing T01–T06 #42–47 |
+| S19 validation consolidation | #131, reusing existing T01–T06 #42–47; T04 screen comparison #136 |
 | S20 operations | #132–133 |
 
 Current owner-directed sequencing: Resend is production-only, Google/Apple remain

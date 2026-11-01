@@ -1,5 +1,33 @@
 # Synthetic account UI samples
 
+The latest [paired gallery](ui-review/index.html) and
+[screen review](../SCREEN_REVIEW.md) cover implementation `56915a6`. Default phone
+captures use a 390 CSS-pixel viewport at 100% text, with 28px headings and 16px
+body/inputs. Enlarged-text cases are labelled separately. Actual successful account
+operations use the disposable real API/Postgres; all displayed readers are synthetic.
+
+| Latest normal phone screen | App | Approved artifact |
+| --- | --- | --- |
+| Create account, Daylight | [App](ui-review/sign-up-daylight-390-app.png) | [Artifact](ui-review/sign-up-daylight-390-artifact.png) |
+| Create account, Lamplight | [App](ui-review/sign-up-lamplight-390-app.png) | [Artifact](ui-review/sign-up-lamplight-390-artifact.png) |
+| Create account, Ink | [App](ui-review/sign-up-ink-390-app.png) | [Artifact](ui-review/sign-up-ink-390-artifact.png) |
+| Account settings | [App](ui-review/settings-daylight-390-app.png) | [Artifact](ui-review/settings-daylight-390-artifact.png) |
+| Bottom data controls | [App](ui-review/settings-lamplight-390-bottom-app.png) | [Artifact](ui-review/settings-lamplight-390-bottom-artifact.png) |
+
+The gallery includes desktop, field/error recovery and sensitive dialogs. Matrix
+metadata: [Chromium](ui-review/matrix-chromium.json),
+[mobile Chromium](ui-review/matrix-mobile-chromium.json),
+[WebKit](ui-review/matrix-webkit.json). Each records 85 paired entries; twelve
+additional bottom settings pairs and separate stress images extend each run.
+Native pixel dimensions on high-DPR profiles do not change the CSS font size.
+The curated gallery uses DPR 1 images, contains no browser state/credentials and
+is not evidence of real external mail/provider success or manual screen-reader checks.
+
+## Earlier implementation checkpoint
+
+The samples below predate the layout/type/retry fixes above and remain dated
+historical evidence.
+
 Captured 2026-11-01 against code `61e461c501d9f256e96996cc8d169e2bdb1bd807`,
 real loopback API/Postgres, from `accounts-real.spec.js`. Every displayed identity
 is synthetic (`example.test`); no mail link, token, deletion nonce or real data
