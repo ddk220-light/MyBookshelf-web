@@ -13,7 +13,7 @@ import './content.css';
 
 const memory=new Map<string,{page:ContentPage;expires:number}>();
 function remembered(key:string){const value=memory.get(key);if(value&&value.expires>Date.now())return value.page;memory.delete(key);return undefined;}
-const sourceNames:Record<string,string>={gutenberg:'Project Gutenberg','open-textbook-library':'Open Textbook Library',europepmc:'Europe PMC',doaj:'DOAJ',arxiv:'arXiv',openalex:'Wide paper search','children-pilot':'Reviewed children’s starter set',storyweaver:'StoryWeaver'};
+const sourceNames:Record<string,string>={bookdash:'Book Dash',gutenberg:'Project Gutenberg','open-textbook-library':'Open Textbook Library',europepmc:'Europe PMC',doaj:'DOAJ',arxiv:'arXiv',openalex:'Wide paper search','children-pilot':'Reviewed children’s starter set',storyweaver:'StoryWeaver'};
 function sourceStatus(source:ContentSourceStatus){return ({ok:`${source.returned} shown`,searching:'Searching…',disabled:'Not connected yet',not_selected:'Not searched this time',queued:'Busy · try again',timeout:'Timed out',throttled:'Please try later',quota_exhausted:'At today’s limit',unavailable:'Could not answer',unsupported:'Filter not supported'} as Record<string,string>)[source.status]||'Could not answer';}
 
 export function SearchScopes({scope}:{scope:'library'|'free'|'papers'}){
@@ -62,7 +62,8 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
   const sources=busy&&progress.length?progress:error?.sources||page?.sources||[];
   const failed=sources.filter(source=>!['ok','disabled','not_selected','searching'].includes(source.status));
   const free=page?.items.filter(item=>item.access==='free_full_text')||[];
-  const unknown=page?.items.filter(item=>item.access!=='free_full_text')||[];
+  const account=page?.items.filter(item=>item.access==='free_account_required')||[];
+  const unknown=page?.items.filter(item=>item.access==='unknown')||[];
   const returnTo='/app/search?'+new URLSearchParams({scope,q:query,...children?{collection:'children'}:textbooks?{collection:'textbooks'}:{},...onlySource?{source:onlySource}:{}});
   const itemLink=(key:string)=>desktop?returnTo+'&item='+encodeURIComponent(key):'/app/read/'+encodeURIComponent(key);
   function submit(event:React.FormEvent){event.preventDefault();if(!input.trim()&&!children)return;setUnclear(false);
@@ -77,7 +78,7 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
       <p>Read at the original source. No library card needed.</p><div className="content-browse">
         <Link to="/app/search?scope=free&q=literature"><strong>Classic literature</strong><span>Project Gutenberg</span></Link>
         <Link to="/app/search?scope=free&collection=textbooks&q=education"><strong>Open textbooks</strong><span>Open Textbook Library</span></Link>
-        {import.meta.env.VITE_CHILDREN_PILOT_ENABLED==='true'?<Link to="/app/search?scope=free&collection=children"><strong>Children’s stories</strong><span>Reviewed starter set</span></Link>:<span aria-disabled="true"><strong>Children’s stories</strong><span>Reviewed starter set · awaiting source review</span></span>}
+        {import.meta.env.VITE_CHILDREN_PILOT_ENABLED==='true'?<Link to="/app/search?scope=free&collection=children"><strong>Children’s stories</strong><span>Reviewed starter set</span></Link>:<span aria-disabled="true"><strong>Children’s stories</strong><span>Reviewed starter set · not enabled yet</span></span>}
         <Link to="/app/search?scope=papers"><strong>Research papers</strong><span>From open research sources</span></Link></div></div>:<>
       {children&&<div className="content-start"><h2>A reviewed starter set</h2><p>Stories in English, <span lang="hi">हिन्दी</span> and <span lang="ta">தமிழ்</span>. This is a small reviewed collection, not every free children’s book. Levels are as the publisher labels them; they do not imply an age.</p></div>}
       <div className="content-filters"><label><span className="visually-hidden">Language</span><select aria-label="Language" value={searchLanguage} disabled={scope==='papers'} title={scope==='papers'?'Language filtering across paper sources is not available yet.':undefined} onChange={e=>setLanguage(e.target.value)}>
@@ -91,7 +92,7 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
       {error&&<div className="content-notice" role="alert"><h2>{error.code==='CONTENT_COLLECTION_UNAVAILABLE'?'The starter set is still being checked':sources.some(s=>s.status==='quota_exhausted')?'At today’s limit':'Couldn’t check all sources'}</h2><p>{error.message}</p>
         <p>This does not mean there is no free copy.</p><button onClick={again}>Try again</button>{' · '}<Link to={'/app/search?q='+encodeURIComponent(query)}>Search library books instead</Link>
         {sources.length>0&&<button className="text-button" onClick={()=>setSourcesOpen(true)}>Sources</button>}</div>}
-      {page&&<><div className="content-count"><span>{free.length} {scope==='papers'?(free.length===1?'paper':'papers'):(free.length===1?'free book':'free books')} shown</span><button className="text-button" onClick={()=>setSourcesOpen(true)}>Sources</button></div>
+      {page&&<><div className="content-count"><span>{free.length+account.length} {scope==='papers'?(free.length+account.length===1?'paper':'papers'):(free.length+account.length===1?'free book':'free books')} shown</span><button className="text-button" onClick={()=>setSourcesOpen(true)}>Sources</button></div>
         {page.sources.some(s=>s.complete===false)&&<p className="content-coverage">Searching limited catalog snapshots{page.sources.some(s=>s.catalogRecords)?` with ${page.sources.reduce((sum,s)=>sum+(s.catalogRecords||0),0).toLocaleString()} records`:''}. Source coverage varies.</p>}
         {page.sources.some(s=>s.scope&&s.status==='ok')&&<p className="content-coverage">Coverage: {page.sources.filter(s=>s.scope&&s.status==='ok').map(s=>s.scope).join(' · ')}. See Sources for this search’s coverage.</p>}
         {failed.length>0&&<div className="content-notice"><p>Some sources could not answer. Other results are shown.</p>{page.sessionCursor&&failed.filter(s=>s.retryable).map(source=><button key={source.id} disabled={busy} onClick={()=>void load(page.sessionCursor,source.id)}>Try {sourceNames[source.id]||source.name} again</button>)}</div>}
@@ -99,6 +100,7 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
         {page.sources.some(s=>s.freshness==='stale')&&<p className="content-notice">These source details need refreshing. Older reading links are marked unclear.</p>}
         <div className={'content-results-layout'+(desktop&&selected?' has-detail':'')}><div className="content-results">
           {free.map(item=><ContentResult key={item.key} item={item} to={itemLink(item.key)} returnTo={returnTo}/>)}
+          {account.length>0&&<section aria-label="Free account required"><h2>Free account required</h2><p>These books are free to read after signing in at the source.</p>{account.map(item=><ContentResult key={item.key} item={item} to={itemLink(item.key)} returnTo={returnTo}/>)}</section>}
           {page.hiddenUnclear>0&&<p className="content-unclear-notice">{page.hiddenUnclear} {page.hiddenUnclear===1?'result has':'results have'} unclear access. <button className="text-button" onClick={()=>setUnclear(!unclear)}>{unclear?'Hide them':'Show them, labelled'}</button></p>}
           {!busy&&!error&&!failed.length&&!page.items.length&&<div className="content-empty"><h2>No verified free copy in these results</h2><p>{page.hiddenUnclear?'Some records need clearer access evidence.':'These sources answered but did not return a free copy for this search.'}</p>
             <Link className="button-link" to={library?'/app/search?q='+encodeURIComponent(query):'/app/libraries'}>{library?'Check your library':'Choose a library'}</Link></div>}

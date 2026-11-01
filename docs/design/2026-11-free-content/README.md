@@ -58,12 +58,23 @@ placeholder otherwise.
    non-commercial. Traffic expectations and quotas are set later, so build
    budgets as configuration, not constants.
 
+## Owner clarification: free source accounts (2026-11-01)
+
+The owner clarified: free source login is acceptable, and those books must be
+searchable with a link to the book. Verified `free_account_required` books now
+appear under **Free account required**, with the condition repeated on the card
+and before the source reading link. Anonymous reading remains distinct. Unknown
+registration charges, previews, loans and paid access remain excluded. These are
+accounts on the reading site, not a MyBookshelf account feature. The updated
+implementation and source evidence supersede the old registration exclusion in
+the boards; the remaining approved layout and shelf behavior still apply.
+
 ## 2. Scope
 
 First release (matches research Phase A/B):
 
-- Free to read: Project Gutenberg (local metadata import) and Open Textbook
-  Library. Other free versions (LibriVox, Wikisource) appear only on detail
+- Free to read: Project Gutenberg (local metadata import), Open Textbook
+  Library and the bounded Book Dash catalog (owner-approved source expansion). Other free versions (LibriVox, Wikisource) appear only on detail
   pages as separate items, when a source links them.
 - Papers: OpenAlex (when its key and budget are verified), Europe PMC, DOAJ,
   arXiv.
@@ -105,7 +116,7 @@ Each row names the board, what it proves, and the data it needs from
 | Board | What it shows | Data and behaviour |
 | --- | --- | --- |
 | `FreeStart` | Free to read with no query: four browse tiles (Classic literature, Open textbooks, Children's stories, Research papers) and recent free searches. | Tiles are static links into scopes/collections. Recent searches reuse the existing search memory, tagged with scope. Tile subtitles name the source. |
-| `FreeBookResults` | Results for a free-book query, filter chips, loaded count with a Sources link, and the hidden-unclear notice. | Show **loaded counts**, never a global total ("3 free books shown · from Project Gutenberg"). Only `access: free_full_text` items are listed. Items with `unknown`/`metadata_only` access for this query are counted in the notice; "Show them, labelled" appends them under an "Unclear access" heading (see `DeskFreeSearch`). `preview`, `borrow`, `registration`, `restricted` are never shown (decision 4). Filter chips: language, format, kind. Unsupported filters must be disabled with a reason, not silently ignored. |
+| `FreeBookResults` | Results for a free-book query, filter chips, loaded count with a Sources link, and the hidden-unclear notice. | Show **loaded counts**, never a global total ("3 free books shown · from Project Gutenberg"). Anonymous `free_full_text` items and a separately labelled `free_account_required` group are listed. Items with `unknown`/`metadata_only` access for this query are counted in the notice; "Show them, labelled" appends them under an "Unclear access" heading (see `DeskFreeSearch`). `preview`, `borrow`, unknown-price `registration` and `restricted` are never shown. Verified free accounts follow the owner clarification above. Filter chips: language, format, kind. Unsupported filters must be disabled with a reason, not silently ignored. |
 | `FreeBookDetail` | One free edition: Read at host (primary), format links, rights, other free versions, library link-back, Save. | Primary action is the location's `readerUrl` or `landingUrl`, labelled "Read at [host]". Format buttons only for supplied `downloads` (label by MIME: EPUB, Kindle, Plain text, PDF). Rights box: source statement verbatim plus generic country note; footer "From [source] · checked [relative time]" from `evidence.observedAt`. "Other free versions" lists related items only when `relations` carry source evidence; each row states how it differs ("Separate recording", "Different source text"). |
 | `LibraryBookFreeEdition` | Existing `/app/books/:bookKey` page with a new "Also free to read" card under availability. | Show only when a free item is linked by an exact identifier or the Open Library work ID (`workId`) with source evidence. Never by title similarity. Copy must say it is a different edition. Link opens `/app/read/:contentKey`. If resolution fails or is slow, omit the section; do not show an error on the library page. |
 | `PaperResults` | Paper results with type pill, title, authors, container/year, and access line naming index and host. | Pill from `kind` (+ `version` for preprints: "Preprint · v3"). Source-supplied flags ("Correction listed", "Retracted") as a second pill in `--chk`/`--err`, worded as the source's claim. Access line: "Free · Found via [index], read at [host]" when they differ; "Free · HTML, PDF at arXiv" when the index is the host. Authors truncate to three plus "+ N". |

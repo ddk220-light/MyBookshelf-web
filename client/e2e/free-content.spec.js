@@ -111,4 +111,24 @@ test.describe('free-content discovery',()=>{
     expect(await page.locator('#main-content').evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
     expect((await new AxeBuilder({page}).include('#main-content').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
   });
+  test('free-account stories stay searchable, disclose the source condition and survive shelf reload',async({page})=>{
+    const story={...fixture,key:'fcd:v1:storyweaver:7777778',kind:'book',title:'Synthetic free-account browser story',access:'free_account_required',
+      locations:[{...fixture.locations[0],id:'story',host:'StoryWeaver',access:'free_account_required',landingUrl:'https://storyweaver.org.in/en/stories/7777778-synthetic-fixture'}],
+      readingActions:[{locationId:'story',label:'Read at StoryWeaver',url:'https://storyweaver.org.in/en/stories/7777778-synthetic-fixture',requiresAccount:true,downloads:[]}]};
+    await page.route('**/api/v2/content/search',route=>route.fulfill({json:{items:[story],nextCursor:null,hiddenUnclear:0,coverage:'partial',policyRevision:'test',sources:[{id:'storyweaver',status:'ok',returned:1}]}}));
+    await page.route('**/api/v2/content/resolve',route=>route.fulfill({json:{item:story}}));
+    await page.goto('/app/search?scope=free&q=free-account-browser-story');
+    await expect(page.getByRole('region',{name:'Free account required'})).toContainText(story.title);
+    await expect(page.getByText('Free account required at StoryWeaver')).toBeVisible();
+    await expect(page.getByRole('heading',{name:'Unclear access'})).toHaveCount(0);
+    await page.getByRole('heading',{name:story.title}).getByRole('link').click();
+    await expect(page.getByRole('link',{name:'Read at StoryWeaver · free account required (opens StoryWeaver)'})).toHaveAttribute('href',story.readingActions[0].url);
+    await page.getByRole('button',{name:'Save to shelf'}).click();
+    await page.getByRole('link',{name:'Shelf',exact:true}).click();await page.reload();
+    await page.getByRole('link',{name:new RegExp(story.title)}).click();
+    await expect(page.getByText(/Sign in there to read this book/)).toBeVisible();
+    await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
+    expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+  });
+
 });

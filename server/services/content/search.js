@@ -1,5 +1,5 @@
 import {createHash,createHmac,timingSafeEqual} from 'node:crypto';
-import {createLocalContentService} from './localCatalog.js';
+import {createLocalContentService,readLocalSnapshots} from './localCatalog.js';
 import {createEuropePmcAdapter} from './europePmc.js';
 import {createDoajAdapter} from './doaj.js';
 import {createArxivAdapter} from './arxiv.js';
@@ -7,7 +7,7 @@ import {createOpenalexAdapter} from './openalex.js';
 import {createRedisCoordinator} from './coordinator.js';
 import {sourceSignal} from './sourceHttp.js';
 import {createChildrenService} from './children.js';
-import {CONTENT_POLICY_REVISION,parseContentSearch,parseContentResolve,parseContentKey,normalizeDoi,readingActions,observedAccess} from './contracts.js';
+import {CONTENT_POLICY_REVISION,parseContentSearch,parseContentResolve,parseContentKey,normalizeDoi,readingActions,observedAccess,itemAccess,isReadableAccess} from './contracts.js';
 
 const hash=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 function error(code,message,status=503,sources){return Object.assign(new Error(message),{code,status,sources});}
@@ -17,8 +17,10 @@ const SOURCES={europepmc:{name:'Europe PMC',env:'EUROPEPMC',initial:'*',scope:'B
   openalex:{name:'Wide paper search',env:'OPENALEX',initial:'*',scope:'Multidisciplinary literature'}};
 const sessionPolicy={dailyLimit:1000000,perMinute:10000,concurrency:10};
 
-export function createContentService({env=process.env,local=createLocalContentService(),paperAdapter=createEuropePmcAdapter(),
+export function createContentService({env=process.env,local,paperAdapter=createEuropePmcAdapter(),
   adapters={},children,coordinatorFactory=()=>createRedisCoordinator(),now=()=>Date.now()}={}){
+  local||=createLocalContentService({enabled:env.CONTENT_DISCOVERY_ENABLED==='true',cursorSecret:env.CONTENT_CURSOR_SECRET,now,
+    loadSnapshot:()=>readLocalSnapshots({includeChildren:env.CONTENT_CHILDREN_ENABLED==='true',now:now()})});
   const providers={europepmc:paperAdapter,doaj:createDoajAdapter(),arxiv:createArxivAdapter(),openalex:createOpenalexAdapter(),...adapters};
   let coordinator;
   const pilot=children||createChildrenService({enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&env.CONTENT_CHILDREN_ENABLED==='true',cursorSecret:env.CONTENT_CURSOR_SECRET,now});
@@ -47,7 +49,7 @@ export function createContentService({env=process.env,local=createLocalContentSe
     return order.filter(enabled).slice(0,3);
   }
   function present(item,query){return {...item,readingActions:readingActions(item,{...query,now:now()}),
-    access:item.locations.some(l=>observedAccess(l,{...query,now:now()})==='free_full_text')?'free_full_text':'unknown'};}
+    access:itemAccess(item,{...query,now:now()})};}
   function sign(payload){return createHmac('sha256',env.CONTENT_CURSOR_SECRET).update(payload).digest('base64url');}
   function encode(previous,binding,expires){const payload=Buffer.from(JSON.stringify({previous,binding,expires})).toString('base64url');return payload+'.'+sign(payload);}
   function decode(cursor,binding){
@@ -119,7 +121,7 @@ export function createContentService({env=process.env,local=createLocalContentSe
             if(seen.has(raw.key))continue;seen.add(raw.key);
             if(!query.kinds.includes(raw.kind)||query.languages.length&&!raw.languages?.some(l=>query.languages.includes(l)))continue;
             const item=present(raw,query);
-            if(item.access==='free_full_text')queue.push(item);
+            if(isReadableAccess(item.access)&&(query.access!=='free_full_text'||item.access==='free_full_text'))queue.push(item);
             else if(!item.locations.length||item.locations.some(l=>['unknown','metadata_only'].includes(observedAccess(l,{...query,now:now()})))){
               hiddenUnclear++;if(query.includeUnclear)queue.push(item);
             }

@@ -24,8 +24,8 @@ class RefreshTests(unittest.TestCase):
             root = Path(directory); baseline = root / 'active'; self.baseline(baseline)
             original = {p.name: p.read_bytes() for p in baseline.iterdir()}
             result = prepare(baseline, root / 'candidate', self.importer)
-            self.assertEqual(len(result['sources']), 2)
-            self.assertEqual([r['metadataChanged'] for r in result['sources']], [0, 0])
+            self.assertEqual(len(result['sources']), 3)
+            self.assertEqual([r['metadataChanged'] for r in result['sources']], [0, 0, 0])
             self.assertTrue((root / 'candidate' / 'report.md').exists())
             self.assertEqual({p.name: p.read_bytes() for p in baseline.iterdir()}, original)
             with self.assertRaises(ValueError): prepare(baseline, root / 'candidate', self.importer)
@@ -39,6 +39,12 @@ class RefreshTests(unittest.TestCase):
                 if source == 'open-textbook-library': raise ValueError('Source unavailable')
             with self.assertRaises(ValueError): prepare(baseline, root / 'failed', fail)
             self.assertFalse((root / 'failed').exists())
+            self.assertEqual({p.name: p.read_bytes() for p in baseline.iterdir()}, original)
+            def fail_last(source, target, prior):
+                self.importer(source, target, prior)
+                if source == 'bookdash': raise ValueError('Last source unavailable')
+            with self.assertRaises(ValueError): prepare(baseline, root / 'failed-last', fail_last)
+            self.assertFalse((root / 'failed-last').exists())
             self.assertEqual({p.name: p.read_bytes() for p in baseline.iterdir()}, original)
             def empty(source, target, prior): target.write_text(json.dumps({**prior, 'records': [], 'recordCount': 0}))
             with self.assertRaises(ValueError): prepare(baseline, root / 'empty', empty)

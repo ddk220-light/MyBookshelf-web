@@ -3,7 +3,7 @@ import path from 'node:path';
 import {randomBytes} from 'node:crypto';
 import {createLocalContentService} from '../../server/services/content/localCatalog.js';
 const directory=process.argv[2]||'server/data/content';
-const snapshots=['gutenberg','open-textbook-library'].map(source=>JSON.parse(readFileSync(path.join(directory,source+'.json'),'utf8')));
+const snapshots=['gutenberg','open-textbook-library','bookdash'].map(source=>JSON.parse(readFileSync(path.join(directory,source+'.json'),'utf8')));
 const service=createLocalContentService({enabled:true,cursorSecret:randomBytes(32).toString('hex'),loadSnapshot:()=>snapshots});
 const report=[];
 for(const snapshot of snapshots){

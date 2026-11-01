@@ -1,19 +1,30 @@
 import { readFileSync } from 'node:fs';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
-import { CONTENT_POLICY_REVISION, parseContentSearch, parseContentResolve, parseContentLocate, parseContentKey, readingActions, observedAccess } from './contracts.js';
+import { readChildrenManifest, validateChildrenManifest } from './children.js';
+import { CONTENT_POLICY_REVISION, parseContentSearch, parseContentResolve, parseContentLocate, parseContentKey, readingActions, observedAccess, itemAccess, isReadableAccess } from './contracts.js';
 
 function failure(code, message, status = 503) { return Object.assign(new Error(message), { code, status }); }
-function folded(value) { return value.normalize('NFKD').replace(/(\p{Script=Latin})\p{M}+/gu, '$1').normalize('NFC').toLocaleLowerCase(); }
+function folded(value) { return value.normalize('NFKD').replace(/(\p{Script=Latin})\p{M}+/gu, '$1').normalize('NFC').replace(/[\u2018\u2019]/g, "'").toLocaleLowerCase(); }
 function hash(value) { return createHash('sha256').update(value).digest('hex'); }
 
 const LOCAL_SOURCES = { gutenberg: { name: 'Project Gutenberg', kind: 'book' },
-  'open-textbook-library': { name: 'Open Textbook Library', kind: 'learning_resource' } };
+  'open-textbook-library': { name: 'Open Textbook Library', kind: 'learning_resource' },
+  bookdash: { name: 'Book Dash', kind: 'book' },
+  storyweaver: { name: 'StoryWeaver reviewed starter set', kind: 'book' } };
 
-export function readLocalSnapshots() {
-  return Object.keys(LOCAL_SOURCES).map(sourceId => {
+export function readLocalSnapshots({includeChildren = process.env.CONTENT_CHILDREN_ENABLED === 'true', now = Date.now()} = {}) {
+  const snapshots = ['gutenberg','open-textbook-library','bookdash'].map(sourceId => {
     try { return JSON.parse(readFileSync(new URL(`../../data/content/${sourceId}.json`, import.meta.url), 'utf8')); }
     catch { return { sourceId, unavailable: true }; }
   });
+  if (includeChildren) {
+    try {
+      const records = validateChildrenManifest(readChildrenManifest(), {now});
+      snapshots.push({schemaVersion:1,sourceId:'storyweaver',revision:hash(JSON.stringify(records)),
+        importedAt:records.map(item=>item.provenance[0].retrievedAt).sort()[0],recordCount:records.length,complete:false,records});
+    } catch { snapshots.push({sourceId:'storyweaver',unavailable:true}); }
+  }
+  return snapshots;
 }
 
 export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
@@ -51,7 +62,7 @@ export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
   }
   function present(item, context) {
     return { ...item, readingActions: readingActions(item, { ...context, now: now() }),
-      access: item.locations.some(l => observedAccess(l, { ...context, now: now() }) === 'free_full_text') ? 'free_full_text' : 'unknown' };
+      access: itemAccess(item, { ...context, now: now() }) };
   }
   function signature(value) { return createHmac('sha256', cursorSecret).update(value).digest('base64url'); }
   function cursorState(cursor, binding) {
@@ -84,7 +95,7 @@ export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
       const eligible = [];
       for (const { item } of matching) {
         const value = present(item, query);
-        if (value.access === 'free_full_text') eligible.push(value);
+        if (isReadableAccess(value.access) && (query.access !== 'free_full_text' || value.access === 'free_full_text')) eligible.push(value);
         else if (item.locations.some(l => ['unknown', 'metadata_only'].includes(observedAccess(l, { ...query, now: now() })))) {
           hiddenUnclear++;
           if (query.includeUnclear) eligible.push(value);
@@ -119,7 +130,7 @@ export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
         const match=request.identifiers.find(wanted=>item.identifiers.some(identity=>identity.scheme===wanted.scheme&&identity.value===wanted.value));
         if(!match||!['book','learning_resource'].includes(item.kind))continue;
         const value=present(item,request);
-        if(value.access==='free_full_text')items.push({...value,match});
+        if(isReadableAccess(value.access))items.push({...value,match});
         if(items.length===3)break;
       }
       return {items,policyRevision:CONTENT_POLICY_REVISION};

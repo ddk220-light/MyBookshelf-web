@@ -1,7 +1,7 @@
 import { isIP } from 'node:net';
 import ISBN from 'isbn3';
 
-export const CONTENT_POLICY_REVISION = '2026-11-01.3';
+export const CONTENT_POLICY_REVISION = '2026-11-01.4';
 export const CONTENT_KINDS = ['book', 'chapter', 'article', 'preprint', 'thesis', 'report', 'learning_resource', 'audiobook', 'other'];
 export const SOURCE_STATUSES = ['ok', 'not_selected', 'disabled', 'unsupported', 'timeout', 'unavailable', 'throttled', 'quota_exhausted', 'queued'];
 const EPMC_SOURCES = new Set(['MED', 'PMC', 'PPR', 'AGR', 'CBA', 'HIR', 'CTX', 'ETH', 'PAT']);
@@ -24,6 +24,8 @@ export function parseContentKey(value) {
   if (pg) return { sourceId: 'gutenberg', recordId: pg[1] };
   const textbook = /^fcd:v1:open-textbook-library:([1-9]\d{0,8})$/.exec(value);
   if (textbook) return { sourceId: 'open-textbook-library', recordId: textbook[1] };
+  const bookdash = /^fcd:v1:bookdash:([1-9]\d{0,8})$/.exec(value);
+  if (bookdash) return { sourceId: 'bookdash', recordId: bookdash[1] };
   const story = /^fcd:v1:storyweaver:([1-9]\d{0,8})$/.exec(value);
   if (story) return { sourceId: 'storyweaver', recordId: story[1] };
   const doaj = /^fcd:v1:doaj:([a-f0-9]{32})$/.exec(value);
@@ -60,20 +62,31 @@ export function safeWebUrl(value) {
 export function observedAccess(location, { country = null, now = Date.now() } = {}) {
   if (!location || !safeWebUrl(location.readerUrl || location.landingUrl)) return 'unknown';
   if (['preview', 'borrow', 'registration', 'restricted', 'metadata_only', 'unknown'].includes(location.access)) return location.access;
-  if (location.access !== 'free_full_text') return 'unknown';
+  if (!isReadableAccess(location.access)) return 'unknown';
   const evidence = location.evidence;
   const observed = Date.parse(evidence?.observedAt);
   if (!evidence?.sourceId || !evidence?.field || !Number.isFinite(observed) || observed > now + 300_000 || now - observed > DAY) return 'unknown';
   if (location.country && location.country !== country) return 'unknown';
   if (location.linkCheck?.outcome === 'broken') return 'unknown';
-  return 'free_full_text';
+  return location.access;
+}
+
+export function isReadableAccess(access) {
+  return access === 'free_full_text' || access === 'free_account_required';
+}
+
+export function itemAccess(item, context) {
+  const access = (item.locations || []).map(location => observedAccess(location, context));
+  return access.includes('free_full_text') ? 'free_full_text' : access.includes('free_account_required') ? 'free_account_required' : 'unknown';
 }
 
 export function readingActions(item, context) {
-  return (item.locations || []).filter(location => observedAccess(location, context) === 'free_full_text').map(location => ({
+  return (item.locations || []).filter(location => isReadableAccess(observedAccess(location, context)))
+    .sort((a,b) => Number(a.access === 'free_account_required') - Number(b.access === 'free_account_required')).map(location => ({
     locationId: location.id, label: `Read at ${location.host || item.provenance?.[0]?.sourceId || 'source'}`,
     url: safeWebUrl(location.readerUrl || location.landingUrl),
-    downloads: (location.downloads || []).flatMap(file => {
+    ...(location.access === 'free_account_required' ? {requiresAccount:true} : {}),
+    downloads: (location.access === 'free_account_required' ? [] : location.downloads || []).flatMap(file => {
       const url = safeWebUrl(file.url);
       return url && ['application/pdf', 'application/epub+zip', 'text/plain', 'text/html', 'application/x-mobipocket-ebook'].includes(file.mimeType) ? [{ url, mimeType: file.mimeType }] : [];
     }),
@@ -103,14 +116,14 @@ export function parseContentSearch(input) {
   const kinds = body.kinds ?? ['book', 'learning_resource'];
   if (!Array.isArray(kinds) || !kinds.length || kinds.length > CONTENT_KINDS.length || kinds.some(k => !CONTENT_KINDS.includes(k))) throw new ContentValidationError();
   const limit = body.limit ?? 20;
-  if (!Number.isInteger(limit) || limit < 1 || limit > 40 || (body.access != null && body.access !== 'free_full_text')) throw new ContentValidationError();
+  if (!Number.isInteger(limit) || limit < 1 || limit > 40 || (body.access != null && !['free','free_full_text'].includes(body.access))) throw new ContentValidationError();
   if (body.cursor != null && (typeof body.cursor !== 'string' || body.cursor.length > 2048)) throw new ContentValidationError();
   if (body.includeUnclear != null && typeof body.includeUnclear !== 'boolean') throw new ContentValidationError();
   const paperSources=['europepmc','doaj','arxiv','openalex'];
   if(body.sourceIds!=null&&(!Array.isArray(body.sourceIds)||!body.sourceIds.length||body.sourceIds.length>3||body.sourceIds.some(id=>!paperSources.includes(id))))throw new ContentValidationError();
   if(body.retrySource!=null&&(!paperSources.includes(body.retrySource)||!body.cursor))throw new ContentValidationError();
   return { query: body.query.trim().normalize('NFC'), kinds: [...new Set(kinds)], ...languageContext(body),
-    access: 'free_full_text', limit, cursor: body.cursor || null, includeUnclear: body.includeUnclear === true,
+    access: body.access || 'free', limit, cursor: body.cursor || null, includeUnclear: body.includeUnclear === true,
     sourceIds:body.sourceIds?[...new Set(body.sourceIds)]:null,retrySource:body.retrySource||null,
     collection:body.collection||null,level:body.level||null };
 }

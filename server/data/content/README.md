@@ -76,3 +76,27 @@ are 1,831,733 and 2,582,376 bytes respectively.
 `children-pilot.json` is an empty review manifest, separate from both catalogs.
 It is deliberately rejected for enablement until complete real English, Hindi
 and Tamil source metadata is present. See [the review gate](../../../docs/research/free-content/CHILDREN_REVIEW.md).
+
+## Book Dash and reviewed children
+
+`bookdash.json` contains 30 English-language Book Dash edition records from the
+public WordPress catalog and original book pages. The source’s English taxonomy
+reported 214 entries at review; this is a disclosed subset, not the entire
+1,116-entry multilingual catalog. Source-native IDs are pinned after initial
+selection so normal refresh cannot remove saved books just because newer books
+were published. Roles and public full-book-gallery evidence are retained; no
+reading levels, download files or language variants are guessed.
+
+The publisher’s [book reuse policy](https://bookdash.org/re-using-the-book-dash-content/)
+specifies CC BY 4.0. No book text or artwork is included here. Source pages are
+read sequentially with bounded requests; failures preserve the active snapshot.
+The reviewed daily refresh and snapshot audit include this catalog.
+
+`children-pilot.json` now contains three current StoryWeaver records with original
+author/illustrator/translator roles, publisher levels, exact original-story
+relations and dated review evidence. All three require a free source account;
+that condition is explicit, and post-login reading was not tested. The owner
+approved including free source accounts on 2026-11-01. Their manifest is rechecked
+by `tools/content/refresh_children.mjs`; changed credits, prices or policy stop
+refresh. See [the source review](../../../docs/research/free-content/CHILDREN_REVIEW.md).
+Source-account credentials, book pages and images are not stored.

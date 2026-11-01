@@ -3,7 +3,7 @@ import test from 'node:test';
 import {createChildrenService,validateChildrenManifest,readChildrenManifest} from './children.js';
 import {createContentService} from './search.js';
 const now=Date.parse('2026-11-01T09:00:00Z');
-// Synthetic review protocol data only; active manifest is deliberately empty.
+// Synthetic review protocol fixtures; production records have independent source evidence.
 function manifest(){return {schemaVersion:1,collectionId:'children',status:'reviewed',records:['en','hi','ta'].map((language,index)=>{
   const url=`https://storyweaver.org.in/en/stories/${7777771+index}-synthetic-fixture`;
   return {key:`fcd:v1:storyweaver:${7777771+index}`,title:['Synthetic English pilot fixture','हिन्दी परीक्षण कहानी','தமிழ் சோதனைக் கதை'][index],
@@ -14,9 +14,15 @@ function manifest(){return {schemaVersion:1,collectionId:'children',status:'revi
       creditsUrl:url,languageUrl:url,levelUrl:url,rightsUrl:url,readingUrl:url}};
 })};}
 const make=(options={})=>createChildrenService({enabled:true,cursorSecret:'synthetic-children-cursor-secret-of-32-characters',now:()=>now,loadManifest:manifest,...options});
-test('production pilot remains unpublished; disabled collection never reads or invents records',()=>{
-  assert.deepEqual(readChildrenManifest().records,[]);
-  assert.throws(()=>validateChildrenManifest(readChildrenManifest(),{now}),e=>e.code==='CONTENT_COLLECTION_UNAVAILABLE');
+test('reviewed production translations retain current source credits; disabled collection never reads records',()=>{
+  const data=readChildrenManifest();
+  const reviewedNow=Math.max(...data.records.map(record=>Date.parse(record.review.reviewedAt)));
+  const records=validateChildrenManifest(data,{now:reviewedNow});
+  assert.deepEqual(records.map(record=>record.languages[0]).sort(),['en','hi','ta']);
+  assert.equal(records.find(record=>record.key==='fcd:v1:storyweaver:8').contributors.find(c=>c.role==='translator').name,'Manisha Chaudhry');
+  assert.equal(records.find(record=>record.key==='fcd:v1:storyweaver:2252').contributors.find(c=>c.role==='translator').name,'Manickavasagam Deivanayagam');
+  assert.ok(records.every(record=>record.locations[0].access==='free_account_required'));
+  assert.throws(()=>validateChildrenManifest({...data,records:[]},{now}),e=>e.code==='CONTENT_COLLECTION_UNAVAILABLE');
   assert.throws(()=>make({enabled:false,loadManifest:()=>{throw Error('must not read');}}).search({query:'',collection:'children'}),e=>e.code==='CONTENT_COLLECTION_UNAVAILABLE');
 });
 test('review gate rejects missing languages, roles, licence, evidence, off-host links and full-text fields',()=>{
@@ -50,4 +56,40 @@ test('service routes the pilot independently and rejects unsupported mixed scope
   assert.equal((await service.search({query:'',collection:'children'})).items.length,3);
   assert.equal((await service.resolve({key:'fcd:v1:storyweaver:7777771'})).item.title,'Synthetic English pilot fixture');
   await assert.rejects(service.search({query:'x',kinds:['book','article']}),e=>e.code==='CONTENT_FILTER_UNSUPPORTED');
+});
+
+function accountManifest(){
+  const data=manifest();
+  for(const record of data.records){record.access='free_account_required';Object.assign(record.review,{noLogin:false,publicFullText:false,freeAccount:true,fullTextOffered:true,postLoginReadingVerified:false,accountNoticeUrl:record.recordUrl,rightsPolicyUrl:'https://storyweaver.org.in/en/open-content'});}
+  data.records[1].originalStoryKey=data.records[0].key;return data;
+}
+test('free-account stories are searchable, linked and separately labelled without a MyBookshelf login',()=>{
+  const service=make({loadManifest:accountManifest});
+  const found=service.search({query:'',collection:'children'});
+  assert.equal(found.items.length,3);assert.equal(found.hiddenUnclear,0);
+  assert.ok(found.items.every(item=>item.access==='free_account_required'&&item.readingActions[0].requiresAccount));
+  assert.equal(service.search({query:'',collection:'children',access:'free_full_text'}).items.length,0);
+  const hindi=service.resolve({key:'fcd:v1:storyweaver:7777772'}).item;
+  assert.equal(hindi.relations[0].targetKey,'fcd:v1:storyweaver:7777771');
+  const stale=make({loadManifest:accountManifest,now:()=>now+86400001});
+  assert.equal(stale.search({query:'',collection:'children'}).items.length,0);
+  assert.ok(stale.search({query:'',collection:'children',includeUnclear:true}).items.every(item=>item.access==='unknown'&&!item.readingActions.length));
+});
+test('account review rejects unknown charges, contradictory access, wrong notice IDs and unreviewed originals',()=>{
+  for(const mutate of [m=>m.records[0].access='registration',m=>m.records[0].review.freeAccount=false,m=>m.records[0].review.publicFullText=true,
+    m=>m.records[0].review.accountNoticeUrl=m.records[1].recordUrl,m=>m.records[0].review.rightsPolicyUrl='https://other.example/policy',
+    m=>m.records[1].originalStoryKey='fcd:v1:storyweaver:9999999']){
+    const data=accountManifest();mutate(data);assert.throws(()=>validateChildrenManifest(data,{now}),e=>e.code==='CONTENT_COLLECTION_UNAVAILABLE');
+  }
+});
+
+test('ordinary free-book search includes reviewed source-account stories independently of Redis',async()=>{
+  const reviewed=readChildrenManifest();const reviewedNow=Math.max(...reviewed.records.map(record=>Date.parse(record.review.reviewedAt)));
+  const service=createContentService({env:{CONTENT_DISCOVERY_ENABLED:'true',CONTENT_CHILDREN_ENABLED:'true',CONTENT_CURSOR_SECRET:'test-free-book-search-without-redis-secret'},now:()=>reviewedNow,
+    coordinatorFactory:()=>{throw Error('Book discovery must not require Redis');}});
+  const result=await service.search({query:'குண்டு',access:'free',languages:['ta']});
+  assert.equal(result.items.length,1);assert.equal(result.items[0].key,'fcd:v1:storyweaver:2252');
+  assert.equal(result.items[0].access,'free_account_required');assert.equal(result.hiddenUnclear,0);
+  assert.equal((await service.resolve({key:result.items[0].key})).item.contributors.find(c=>c.role==='translator').name,'Manickavasagam Deivanayagam');
+  assert.equal((await service.search({query:'குண்டு',access:'free_full_text'})).items.length,0);
 });

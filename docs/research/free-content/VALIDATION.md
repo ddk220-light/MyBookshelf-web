@@ -3,13 +3,16 @@
 Checks performed 2026-11-01 in the isolated free-content worktree using Node
 22.23.4. No hosted preview or production enablement is claimed.
 
-Latest local result: **531 server, 138 client, eight Python and 236 full
-feature-enabled desktop/mobile Chromium checks passed**, plus typecheck,
-production build, SEO/deployment and pinned actionlint verification. Following
-the final reader/link fixes, the 12 reader-flow tests and 24 feature browser
-checks passed again. CI for the draft PR runs Chromium/mobile/WebKit with the
-feature both disabled and enabled; consult [PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110)
-for current run status. Hosted enablement and real pilot publication remain blocked.
+Latest local result after the owner’s free-account clarification and Book Dash:
+**537 server tests (real Redis, no skips), 141 client tests, 12 Python checks and
+238 complete feature-enabled desktop/mobile browser journeys passed**. Typecheck,
+production build, SEO/deployment, isolated client-only build and pinned actionlint
+checks passed. The focused feature browser file passed 26 journeys. CI on
+[PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110) also runs WebKit
+and both disabled/enabled feature paths; consult the PR for the current head.
+Hosted enablement and first scheduled refresh execution remain release checks.
+
+Earlier per-slice counts below are dated checkpoints, not the latest totals.
 
 ## Search → API → metadata → reader → shelf
 
@@ -65,7 +68,9 @@ This workspace uses `/usr/bin/chromium` via
 
 - Hosted shared Redis REST binding and explicit per-source budgets; flags remain
   off without them. Local Gutenberg search requires no database.
-- Reviewed real children's records with original credits and languages.
+- Reviewed real children’s metadata and local app journeys are now complete.
+  The three StoryWeaver books require a free source account, as accepted by the
+  owner; no source account was created and post-login reading was not tested.
 - Automated reviewed catalog refresh before 24-hour access evidence expiry;
   the candidate tool/daily draft-PR workflow are now implemented and tested
   locally; first scheduled execution follows default-branch merge. Stale evidence
@@ -178,3 +183,44 @@ The automatic deployment's project settings were inspected read-only; the fix is
 contained in this branch's source. Final deployment/CI status is recorded on
 [PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110) and task
 [#134](https://github.com/ddk220-light/MyBookshelf-web/issues/134).
+
+## Free source accounts and additional source delivery
+
+The owner explicitly accepted free source login and assigned source research to
+Codex. Public StoryWeaver metadata loaded in a normal browser even though direct
+requests were blocked. Actual Read Story controls for records 7, 8 and 2252
+returned 401 and a free signup offer. They are searchable as
+`free_account_required`, grouped separately and labelled again before the source
+reading link. Generic/unknown-price registration remains excluded. Explicit
+`access: free_full_text` API requests remain anonymous-only. Old evidence becomes
+unknown, and account-conditioned actions never invent direct file downloads.
+
+[Primary review evidence](evidence/2026-11-01/children-source-review.json) records
+current credits, source levels, original-story relations and the books policy.
+A fresh browser recheck passed for all three records using
+`tools/content/refresh_children.mjs`; changed credits, levels, identity, charges
+or policy prevent renewal. Its guard tests pass. The old mirror had a different
+Hindi translation link and Tamil translator; current primary facts were used.
+
+[Actual app flows](evidence/2026-11-01/expanded-sources-app-flow.json) passed on
+phone/desktop for source-account Tamil and anonymous Book Dash reading links:
+search → detail → save → reload → reopen, preserving source-native IDs and
+creator credits. Both flowed without Redis, page errors or horizontal overflow
+at 320px/200% text. Captures include the
+[Tamil phone detail](evidence/2026-11-01/children-reviewed-detail-phone.png) and
+[Book Dash desktop search/detail](evidence/2026-11-01/bookdash-detail-desktop.png).
+
+Book Dash’s 30-record subset imported and passed runtime search/resolve/freshness
+audit. A second real refresh used pinned native IDs and retained all 30; newer
+catalog entries cannot evict saved editions from the bounded subset. Import tests
+cover source-only URLs/language/credits/galleries, metadata-only output, failed
+refresh preservation and identity retention. The anonymous source reader sample
+loaded all 14 supplied pages. No book artwork/text or guessed downloads enter the
+snapshot. Source/API candidates and limits are in [the expanded survey](ADDITIONAL_SOURCES.md).
+
+Current real-source records: 1,000 Gutenberg, 1,909 textbook, 30 Book Dash and
+three reviewed StoryWeaver records. This is 2,942 bounded metadata records,
+not a worldwide catalog size or a search-match total. Eight sources have
+implementations: these four book sources plus four existing live paper adapters.
+The OpenAlex key was rechecked successfully. Redis remains deferred by the owner;
+no hosted store, source account or production enablement was created here.

@@ -13,6 +13,7 @@ jobs:
       - run: node tools/deployment/check-client-service-build.mjs
       - run: docker run -d --name mybookshelf-free-content-test-redis redis:7-alpine
       - run: python -m unittest discover -s tools/content -v
+      - run: node --test tools/content/*.test.mjs
       - run: npm run typecheck:client
       - run: npm run test:client
       - run: npm test --workspace=server
@@ -26,4 +27,5 @@ jobs:
       - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
         env:
           VITE_CONTENT_DISCOVERY_ENABLED: 'true'
+          VITE_CHILDREN_PILOT_ENABLED: 'true'
           FREE_CONTENT_E2E: 'true'

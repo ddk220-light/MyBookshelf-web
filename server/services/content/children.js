@@ -1,6 +1,6 @@
 import {readFileSync,statSync} from 'node:fs';
 import {createHash,createHmac,timingSafeEqual} from 'node:crypto';
-import {CONTENT_POLICY_REVISION,parseContentKey,parseContentSearch,parseContentResolve,safeWebUrl,observedAccess,readingActions} from './contracts.js';
+import {CONTENT_POLICY_REVISION,parseContentKey,parseContentSearch,parseContentResolve,safeWebUrl,observedAccess,readingActions,isReadableAccess} from './contracts.js';
 const hash=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 function unavailable(reason){return Object.assign(Error('The reviewed children’s starter set is not ready yet.'),
   {code:'CONTENT_COLLECTION_UNAVAILABLE',status:503,validationReason:reason});}
@@ -22,7 +22,7 @@ export function validateChildrenManifest(manifest,{now=Date.now()}={}){
   if(!onlyFields(manifest,['schemaVersion','collectionId','status','records'])||manifest.schemaVersion!==1||manifest.collectionId!=='children'||manifest.status!=='reviewed'
     ||!Array.isArray(manifest.records)||!manifest.records.length||manifest.records.length>30||Buffer.byteLength(JSON.stringify(manifest))>128*1024)fail('A reviewed nonempty bounded manifest is required');
   const keys=new Set(),languages=new Set();
-  const fields=['key','title','contributors','language','originalLanguage','publisher','readingLevel','license','readerUrl','recordUrl','review'];
+  const fields=['key','title','contributors','language','originalLanguage','originalStoryKey','publisher','readingLevel','license','readerUrl','recordUrl','access','review'];
   return manifest.records.map(record=>{
     if(!record||Object.keys(record).some(key=>!fields.includes(key)))fail('Only reviewed metadata fields are allowed');
     const parsed=parseContentKey(record.key),id=parsed?.recordId;
@@ -35,14 +35,25 @@ export function validateChildrenManifest(manifest,{now=Date.now()}={}){
       ||record.language!==record.originalLanguage&&!credits.some(c=>c.role==='translator'))fail('Complete original contributor roles required');
     if(!storyUrl(record.readerUrl,id)||!storyUrl(record.recordUrl,id))fail('Exact original reading/metadata URLs required');
     if(!onlyFields(record.license,['id','url','statement'])||record.license.id!=='CC-BY-4.0'||record.license.url!=='https://creativecommons.org/licenses/by/4.0/'||!validText(record.license.statement))fail('Per-record supported licence evidence required');
+    const access=record.access||'free_full_text';
+    if(!isReadableAccess(access))fail('Only verified no-cost reading conditions are supported');
+    const accountRequired=access==='free_account_required';
     const review=record.review,stamp=Date.parse(review?.reviewedAt);
-    if(!onlyFields(review,['reviewedBy','reviewedAt','noLogin','publicFullText','creditsUrl','languageUrl','levelUrl','rightsUrl','readingUrl'])||!validText(review.reviewedBy,150)||!Number.isFinite(stamp)||stamp>now+300000||review.noLogin!==true||review.publicFullText!==true
+    if(!onlyFields(review,['reviewedBy','reviewedAt','noLogin','publicFullText','freeAccount','fullTextOffered','postLoginReadingVerified','accountNoticeUrl','rightsPolicyUrl','creditsUrl','languageUrl','levelUrl','rightsUrl','readingUrl'])||!validText(review.reviewedBy,150)||!Number.isFinite(stamp)||stamp>now+300000
       ||['creditsUrl','languageUrl','levelUrl','rightsUrl','readingUrl'].some(field=>!storyUrl(review[field],id)))fail('Complete dated source review is required');
+    if(accountRequired){
+      if(review.noLogin!==false||review.publicFullText!==false||review.freeAccount!==true||review.fullTextOffered!==true
+        ||typeof review.postLoginReadingVerified!=='boolean'||!storyUrl(review.accountNoticeUrl,id)
+        ||review.rightsPolicyUrl!=='https://storyweaver.org.in/en/open-content')fail('Free source account and book-policy evidence required');
+    }else if(review.noLogin!==true||review.publicFullText!==true)fail('Anonymous full reading evidence required');
+    const original=record.originalStoryKey&&manifest.records.find(item=>item.key===record.originalStoryKey);
+    if(record.originalStoryKey&&(!original||original.key===record.key||original.language!==record.originalLanguage))fail('Original translation identity must name a reviewed source record');
     return {key:record.key,kind:'book',title:record.title,contributors:credits,languages:[record.language],
       identifiers:[{scheme:'storyweaver',value:id}],subjects:['Children’s stories'],collections:['children'],
-      publisher:record.publisher,readingLevel:record.readingLevel,originalLanguage:record.originalLanguage,relations:[],
+      publisher:record.publisher,readingLevel:record.readingLevel,originalLanguage:record.originalLanguage,
+      relations:original?[{kind:'translation_of',targetKey:original.key,evidence:'Reviewed source originalStory.id and original language'}]:[],
       locations:[{id:'storyweaver:'+id,host:'StoryWeaver',landingUrl:record.recordUrl,readerUrl:record.readerUrl,downloads:[],
-        access:'free_full_text',license:record.license,evidence:{sourceId:'storyweaver',field:'Reviewed anonymous full reading + per-record licence',observedAt:review.reviewedAt}}],
+        access,license:record.license,evidence:{sourceId:'storyweaver',field:accountRequired?'Reviewed book metadata, free-account reading offer and book licence policy':'Reviewed anonymous full reading + per-record licence',observedAt:review.reviewedAt}}],
       provenance:[{sourceId:'storyweaver',sourceRecordId:id,recordUrl:record.recordUrl,retrievedAt:review.reviewedAt,mappingVersion:'reviewed-children-v1'}]};
   }).map((item,index,all)=>{
     if(index===all.length-1&&!['en','hi','ta'].every(language=>languages.has(language)))fail('Reviewed English, Hindi and Tamil records are all required');
@@ -78,8 +89,8 @@ export function createChildrenService({enabled=process.env.CONTENT_CHILDREN_ENAB
       const matching=records.filter(item=>(!query.languages.length||query.languages.includes(item.languages[0]))
         &&(!query.level||item.readingLevel.label===query.level)
         &&terms.every(term=>[item.title,...item.contributors.map(c=>c.name)].join(' ').toLocaleLowerCase().includes(term))).map(item=>present(item,query));
-      const hiddenUnclear=matching.filter(item=>item.access!=='free_full_text').length;
-      const eligible=matching.filter(item=>item.access==='free_full_text'||query.includeUnclear);const items=eligible.slice(offset,offset+query.limit);
+      const hiddenUnclear=matching.filter(item=>item.access==='unknown').length;
+      const eligible=matching.filter(item=>isReadableAccess(item.access)?query.access!=='free_full_text'||item.access==='free_full_text':query.includeUnclear&&item.access==='unknown');const items=eligible.slice(offset,offset+query.limit);
       const payload=Buffer.from(JSON.stringify({binding,offset:offset+items.length,expires})).toString('base64url');
       return {items,hiddenUnclear,nextCursor:offset+items.length<eligible.length?payload+'.'+sign(payload):null,coverage:'partial',policyRevision:CONTENT_POLICY_REVISION,
         availableLevels:[...new Set(records.map(item=>item.readingLevel.label))],

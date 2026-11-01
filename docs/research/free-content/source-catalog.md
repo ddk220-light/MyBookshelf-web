@@ -1,6 +1,6 @@
 # Source catalog and connection options
 
-Research date: 2026-10-31. Reconstructed for MyBookshelf-web; see [provenance](README.md#repository-transfer-and-evidence-provenance) and [historical API observations](evidence.json). Provider rules and quotas need rechecking before enabling a connector.
+Research date: 2026-10-31. Update 2026-11-01: [additional probes and Book Dash delivery](ADDITIONAL_SOURCES.md). Reconstructed for MyBookshelf-web; see [provenance](README.md#repository-transfer-and-evidence-provenance) and [historical API observations](evidence.json). Provider rules and quotas need rechecking before enabling a connector.
 
 **Roles:** host supplies the reading destination; index describes items hosted elsewhere; resolver finds a location from an identifier. Some providers perform several roles.
 
@@ -69,7 +69,7 @@ OAI-PMH is a metadata **harvesting**, not keyword-search, protocol. Standardize 
 | **DIKSHA — educational resources** | [Platform](https://diksha.gov.in/); investigate approved deployed search API/partnership. Sunbird software availability does not establish public DIKSHA API access. | Documents, lessons and other media; filter types/language/board/grade and per-resource rights. | Site retrieved, production API access/terms unverified. **High / P2**. |
 | **StoryWeaver — children's host** | [Platform](https://storyweaver.org.in/en/about), [FAQ](https://storyweaver.org.in/en/faqs); request feed/export or curate canonical story links. | FAQ states CC BY 4.0 stories. Preserve authors, illustrators, translators, language, level and translation relations. | No supported public discovery API verified. A site shell is not API evidence. **Medium curated, high full connector / P1 pilot**. |
 | **African Storybook — children's host** | [Site](https://www.africanstorybook.org/); curated language/level collections or agreed export. | Site identifies CC BY 4.0; verify book-level attribution/translations/reader URLs. Multilingual early literacy. | Public search API not verified. **Medium/high / P1 pilot, P2 full connector**. |
-| **Book Dash — children's host** | [Current books catalog](https://bookdash.org/books/); curate or request export. | Picture books/translations/source materials; verify each license/credits and screen reader vs print-ready download. | Old `/our-books/` gave 404; use `/books/`. Public discovery API unverified. **Medium/high / P1 pilot**. |
+| **Book Dash — children's host** | [Current books catalog](https://bookdash.org/books/); curate or request export. | Picture books/translations/source materials; verify each license/credits and screen reader vs print-ready download. | The public WordPress book API and language taxonomy were verified on 2026-11-01; a pinned 30-English-edition subset is implemented with exact creator roles and public-gallery evidence. See [current source operations](ADDITIONAL_SOURCES.md). **Implemented bounded subset**. |
 
 A reviewed 50–100-book children's catalog is a useful explicit pilot scope, not a claim of comprehensive repository search. Do not infer age suitability from the word children in a subject string.
 

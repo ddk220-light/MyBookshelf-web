@@ -34,9 +34,9 @@ Create each story's native tasks when reached; implement and verify before closi
   it is not connected. `ok` with zero results is distinct from timeout,
   unavailable, throttled and quota-exhausted. Counts describe loaded items,
   never a federated global total.
-- Default results contain free full text only. An explicit unclear group may
+- Default results contain anonymous free full text and a separately labelled verified free-account group (owner clarification 2026-11-01). An explicit unclear group may
   contain unknown/metadata-only items with labelled source links; previews,
-  borrowing, registration and restricted access stay excluded in v1.
+  borrowing, unknown-price registration and restricted access stay excluded in v1.
 - Source cursors remain server-owned. Browser tokens bind query, context,
   policy/index revisions and expiry. Shared live quota reservation and page
   advancement must pass a two-instance test before a live source is enabled.
@@ -71,9 +71,24 @@ into book-edition identity. No account feature is part of this delivery.
 | FCD03 Europe PMC | [#85](https://github.com/ddk220-light/MyBookshelf-web/issues/85), [#86](https://github.com/ddk220-light/MyBookshelf-web/issues/86) | Adapter and shared coordination implemented/tested; hosted Redis binding and budgets pending |
 | FCD04 UI/shelf | [#88](https://github.com/ddk220-light/MyBookshelf-web/issues/88), [#89](https://github.com/ddk220-light/MyBookshelf-web/issues/89), [#90](https://github.com/ddk220-light/MyBookshelf-web/issues/90), [#104](https://github.com/ddk220-light/MyBookshelf-web/issues/104) | Implemented; client, access, migration and desktop/mobile checks pass. Source progress and source-only retry now implemented |
 | FCD05 expanded sources | [#107](https://github.com/ddk220-light/MyBookshelf-web/issues/107): OTL [#108](https://github.com/ddk220-light/MyBookshelf-web/issues/108), [#109](https://github.com/ddk220-light/MyBookshelf-web/issues/109); planner [#112](https://github.com/ddk220-light/MyBookshelf-web/issues/112), DOAJ [#113](https://github.com/ddk220-light/MyBookshelf-web/issues/113), arXiv [#114](https://github.com/ddk220-light/MyBookshelf-web/issues/114), broad index [#115](https://github.com/ddk220-light/MyBookshelf-web/issues/115) | Code/protocol and actual-source checks pass; flags remain off pending hosted coordination/budget enablement |
-| FCD06 children's pilot | [#120](https://github.com/ddk220-light/MyBookshelf-web/issues/120): source review [#121](https://github.com/ddk220-light/MyBookshelf-web/issues/121), UI/validation [#122](https://github.com/ddk220-light/MyBookshelf-web/issues/122) | Curation gate/UI implemented; publication blocked on real reviewed metadata. Official StoryWeaver requests returned 403; manifest remains empty |
-| FCD07 final validation | [#125](https://github.com/ddk220-light/MyBookshelf-web/issues/125): refresh [#126](https://github.com/ddk220-light/MyBookshelf-web/issues/126), verification [#127](https://github.com/ddk220-light/MyBookshelf-web/issues/127), handoff [#128](https://github.com/ddk220-light/MyBookshelf-web/issues/128) | In progress; full feature-enabled Chromium desktop/mobile suite passed 226 journeys before pilot additions |
+| FCD06 children's pilot | [#120](https://github.com/ddk220-light/MyBookshelf-web/issues/120): source review [#121](https://github.com/ddk220-light/MyBookshelf-web/issues/121), UI/validation [#122](https://github.com/ddk220-light/MyBookshelf-web/issues/122) | Three actual EN/HI/TA records reviewed. Free source login is owner-approved; labelled search/reader/shelf behavior and unchanged-record refresh are implemented (#137, #139). Hosted publication remains gated |
+| FCD07 final validation | [#125](https://github.com/ddk220-light/MyBookshelf-web/issues/125): refresh [#126](https://github.com/ddk220-light/MyBookshelf-web/issues/126), verification [#127](https://github.com/ddk220-light/MyBookshelf-web/issues/127), handoff [#128](https://github.com/ddk220-light/MyBookshelf-web/issues/128) | Local implementation and regression checks pass; final intended hosted/refresh execution remains tracked in #127 |
 
 Paper protocol and operational decisions: [OPERATIONS.md](OPERATIONS.md).
 Implementation PR: [#110](https://github.com/ddk220-light/MyBookshelf-web/pull/110),
 targeting `research/free-content-discovery`.
+
+## Owner updates and additional-source delivery
+
+The owner postponed Redis and confirmed that Codex owns children’s sourcing. The
+existing OpenAlex key was rechecked and accepted; no replacement key or owner
+curation is pending. Free source login is explicitly allowed. The API distinguishes
+`free_account_required` from anonymous full text and unknown-price registration;
+ordinary book search includes the reviewed set when its flag is enabled.
+
+[FCD08 #140](https://github.com/ddk220-light/MyBookshelf-web/issues/140) adds Book Dash:
+source research #141, metadata/local integration #142 and verification #143. A
+real 30-English-edition subset preserves native IDs and source credits without
+invented reading levels. Live refresh retained all keys; the anonymous original
+reader and app flows passed. The [expanded source inventory](ADDITIONAL_SOURCES.md)
+records other current candidates and their concrete gaps.

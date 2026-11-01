@@ -163,3 +163,49 @@ it('library free-edition cards require exact evidence and fail quietly when it i
   locate.mockRejectedValue(new Error('offline'));mount(<AlsoFree book={{...legacyBook,isbn13:'9780140328721'}}/>);
   await waitFor(()=>expect(locate).toHaveBeenCalledTimes(3));expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
+
+it('keeps free source accounts searchable in their own labelled group and discloses the reader condition',async()=>{
+  const book:ContentItem={...structuredClone(item),key:'fcd:v1:storyweaver:7777778',kind:'book',title:'Synthetic free-account story',access:'free_account_required',
+    locations:[{...item.locations[0],id:'story',host:'StoryWeaver',access:'free_account_required',landingUrl:'https://storyweaver.org.in/en/stories/7777778-synthetic-fixture'}],
+    readingActions:[{locationId:'story',label:'Read at StoryWeaver',url:'https://storyweaver.org.in/en/stories/7777778-synthetic-fixture',requiresAccount:true,downloads:[]}]};
+  vi.mocked(contentApi.search).mockResolvedValue({...page,items:[item,book]});
+  const search=mount(<ContentSearchPage scope="free"/>,'/app/search?scope=free&q=free-account-test');
+  expect(await screen.findByRole('region',{name:'Free account required'})).toHaveTextContent(book.title);
+  expect(screen.getByText('Free account required at StoryWeaver')).toBeInTheDocument();
+  expect(screen.queryByRole('heading',{name:'Unclear access'})).not.toBeInTheDocument();
+  expect(screen.getByText('2 free books shown')).toBeInTheDocument();
+  search.unmount();vi.mocked(contentApi.resolve).mockResolvedValue(book);
+  mount(<ContentDetail contentKey={book.key}/>);
+  await screen.findByRole('heading',{name:book.title});
+  expect(screen.getByText(/Sign in there to read this book/)).toHaveTextContent('Free account required at StoryWeaver');
+  expect(screen.getByRole('link',{name:'Read at StoryWeaver · free account required (opens StoryWeaver)'})).toHaveAttribute('href',book.readingActions[0].url);
+  fireEvent.click(screen.getByRole('button',{name:'Save to shelf'}));
+  expect(JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!).savedContent[0].contentKey).toBe(book.key);
+});
+
+it('shows Book Dash original creator credits even when no reading level is supplied',async()=>{
+  const book:ContentItem={...item,key:'fcd:v1:bookdash:7777778',kind:'book',title:'Synthetic Book Dash credit fixture',
+    contributors:[{name:'Fixture Writer',role:'author'},{name:'Fixture Illustrator',role:'illustrator'},{name:'Fixture Designer',role:'designer'}],
+    locations:[{...item.locations[0],id:'book',host:'Book Dash',landingUrl:'https://bookdash.org/books/synthetic-fixture/'}],
+    readingActions:[{locationId:'book',label:'Read at Book Dash',url:'https://bookdash.org/books/synthetic-fixture/',downloads:[]}]};
+  vi.mocked(contentApi.search).mockResolvedValue({...page,items:[book]});
+  const search=mount(<ContentSearchPage scope="free"/>,'/app/search?scope=free&q=bookdash-credit-test');
+  expect(await screen.findByText('Illustrated by Fixture Illustrator')).toBeInTheDocument();
+  expect(screen.queryByText(/Publisher level/)).not.toBeInTheDocument();
+  search.unmount();vi.mocked(contentApi.resolve).mockResolvedValue(book);mount(<ContentDetail contentKey={book.key}/>);
+  await screen.findByRole('heading',{name:book.title});
+  expect(screen.getByText('designer: Fixture Designer')).toBeInTheDocument();
+  expect(screen.getByRole('link',{name:'Read at Book Dash (opens Book Dash)'})).toHaveAttribute('href',book.readingActions[0].url);
+});
+
+it('prefers an anonymous PDF over an account-required HTML reader for the same item',async()=>{
+  const pdf='https://repository.example.org/paper.pdf',account='https://account.example.org/paper';
+  vi.mocked(contentApi.resolve).mockResolvedValue({...item,
+    locations:[{...item.locations[0],id:'pdf',host:'Repository',landingUrl:pdf,readerUrl:undefined},
+      {...item.locations[0],id:'account',host:'Account Host',landingUrl:account,readerUrl:account,access:'free_account_required'}],
+    readingActions:[{locationId:'pdf',label:'Read at Repository',url:pdf,downloads:[{url:pdf,mimeType:'application/pdf'}]},
+      {locationId:'account',label:'Read at Account Host',url:account,requiresAccount:true,downloads:[]}]});
+  mount(<ContentDetail contentKey={item.key}/>);await screen.findByRole('heading',{name:item.title});
+  expect(screen.getByRole('link',{name:'Read at Repository (opens Repository)'})).toHaveClass('content-read');
+  expect(screen.getByText('Free account required at Account Host.')).toBeInTheDocument();
+});

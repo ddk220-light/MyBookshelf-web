@@ -1,8 +1,9 @@
 # Free-content source operations
 
 All flags default off. No hosted Redis service or production deployment has
-been created by this implementation. Gutenberg and Open Textbook Library use
-bundled metadata and require no database. Live paper sources need the shared
+been created by this implementation. Gutenberg, Open Textbook Library and Book Dash use
+bundled metadata and require no database. The reviewed StoryWeaver set also
+searches locally, including ordinary Free to read searches when its flag is on. Live paper sources need the shared
 Redis REST URL/token and a strong random `CONTENT_CURSOR_SECRET` (at least 32
 characters), plus an explicit daily/minute budget for each enabled source.
 The build's `VITE_CONTENT_DISCOVERY_ENABLED` controls the Search scopes.
@@ -13,6 +14,11 @@ The build's `VITE_CONTENT_DISCOVERY_ENABLED` controls the Search scopes.
 | DOAJ | `CONTENT_DOAJ_ENABLED` | `CONTENT_DOAJ_DAILY_LIMIT`, `CONTENT_DOAJ_PER_MINUTE` | At least 500 ms between dispatches across instances |
 | arXiv | `CONTENT_ARXIV_ENABLED` | `CONTENT_ARXIV_DAILY_LIMIT`, `CONTENT_ARXIV_PER_MINUTE` | At least 3 seconds between dispatches; one active request |
 | Wide paper search | `CONTENT_OPENALEX_ENABLED` | `CONTENT_OPENALEX_DAILY_LIMIT`, `CONTENT_OPENALEX_PER_MINUTE` | Maximum 500 ordinary requests/day; verifies current free allowance, $0.001 search pricing and zero prepaid funds before dispatch |
+
+The existing OpenAlex key was rechecked on 2026-11-01: the API accepted it and
+its free budget/search-price/no-prepaid conditions passed. No replacement key is
+requested. The owner postponed Redis setup; live paper dispatch stays off until
+hosted coordination is configured, independently of the local book catalogs.
 
 Other source daily budgets allow 1–100,000, minute budgets 1–300; these are
 configuration bounds, not recommended traffic allowances. Choose lower team
@@ -68,7 +74,7 @@ regressions before enabling a refreshed catalog. Never manually advance timestam
 ## Reviewed daily refresh
 
 `python tools/content/refresh_catalogs.py --output-dir /tmp/new-free-candidates`
-prepares both imports in a new directory, preserving the active baseline. Any
+prepares the three catalog imports in a new directory, preserving the active baseline. Any
 source failure, empty/schema-invalid candidate or shrink failure leaves no
 published candidate. `node tools/content/audit_snapshots.mjs /tmp/new-free-candidates`
 verifies actual source identities, indexing and current reading evidence. Inspect
@@ -96,3 +102,20 @@ imports the dependency-free shared CSP module, not the Express application.
 `node tools/deployment/check-client-service-build.mjs` reproduces that boundary
 in a temporary installation; it excludes environment files, generated assets
 and existing node_modules. CI runs this alongside the full workspace checks.
+
+## Reviewed source-account books
+
+The owner accepted free source login on 2026-11-01. `access: free` searches both
+anonymous free text and verified `free_account_required` items. The older explicit
+`access: free_full_text` request remains anonymous-only. Generic registration is
+not promoted. Cards/results/details disclose the condition and source link;
+account-conditioned actions never invent direct downloads. Freshness/context and
+safe-link rules apply to both positive access classes.
+
+The three reviewed StoryWeaver books require `CONTENT_CHILDREN_ENABLED=true`
+(and the normal discovery flag); the children's browse tile additionally uses
+`VITE_CHILDREN_PILOT_ENABLED=true`. No source account or reader credentials are
+stored by MyBookshelf. Source review/refresh instructions are in
+[CHILDREN_REVIEW.md](CHILDREN_REVIEW.md). The refresh workflow checks these records
+in a browser and refuses changed credits/levels, unknown charges or failed policy
+checks. It proposes metadata; it never promotes production.

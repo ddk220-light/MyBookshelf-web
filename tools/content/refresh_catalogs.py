@@ -10,7 +10,7 @@ import subprocess
 import sys
 import tempfile
 
-SOURCES = {'gutenberg': 'import_gutenberg.py', 'open-textbook-library': 'import_textbooks.py'}
+SOURCES = {'gutenberg': 'import_gutenberg.py', 'open-textbook-library': 'import_textbooks.py', 'bookdash': 'import_bookdash.py'}
 
 
 def semantic(value):
@@ -31,8 +31,8 @@ def compare(before, after):
 def import_source(source, target, prior):
     script = Path(__file__).resolve().parent / SOURCES[source]
     command = [sys.executable, str(script), '--output', str(target)]
-    if source == 'gutenberg': command += ['--max-records', str(prior['recordCount'])]
-    subprocess.run(command, check=True, timeout=120, stdout=subprocess.DEVNULL)
+    if source in ('gutenberg', 'bookdash'): command += ['--max-records', str(prior['recordCount'])]
+    subprocess.run(command, check=True, timeout=240 if source == 'bookdash' else 120, stdout=subprocess.DEVNULL)
 
 
 def prepare(baseline, output, importer=import_source):
@@ -58,11 +58,11 @@ def prepare(baseline, output, importer=import_source):
         report = {'preparedAt': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'sources': rows,
                   'note': 'Candidate metadata only. Missing keys are absent from this export/subset, not proven deleted from the source. Review before merge; never automatically enable production.'}
         (staged / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
-        lines = ['Refresh metadata and access observations from the official Gutenberg and Open Textbook Library exports.', '',
+        lines = ['Refresh metadata and access observations from official Gutenberg, Open Textbook Library and Book Dash sources.', '',
                  '| Source | Before | After | Added | Missing from candidate | Metadata changes |', '| --- | --- | --- | --- | --- | --- |']
         for row in rows:
             lines.append(f'| {row["sourceId"]} | {row["before"]} | {row["after"]} | {len(row["added"])} | {len(row["missingFromCandidate"])} | {row["metadataChanged"]} |')
-        lines += ['', report['note'], '', 'No book text, artwork, reviews or descriptions are included. Source rights remain separate from CC0 catalog metadata.',
+        lines += ['', report['note'], '', 'No book text, artwork, reviews or descriptions are included. Catalog metadata and each source’s content rights are recorded separately.',
                   'Validation: bounded importers, snapshot API audit and importer tests. The refresh workflow explicitly dispatches full application CI for this draft PR.']
         (staged / 'report.md').write_text('\n'.join(lines) + '\n')
         os.replace(staged, output)

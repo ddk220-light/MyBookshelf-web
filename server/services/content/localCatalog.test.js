@@ -90,3 +90,26 @@ test('one damaged catalog preserves the other source and never pretends no textb
   assert.equal(page.items.length,3);assert.equal(page.sources.find(s=>s.id==='open-textbook-library').status,'unavailable');
   assert.throws(()=>api.search({query:'Fixture',kinds:['learning_resource']}),/unavailable/);
 });
+
+test('Book Dash native editions share local paging without merging same-title Gutenberg books',()=>{
+  const record={...item(123),key:'fcd:v1:bookdash:123',title:'Fixture title 1',publisher:'Book Dash',
+    contributors:[{name:'Fixture Writer',role:'author'},{name:'Fixture Artist',role:'illustrator'}],
+    locations:[{...item(123).locations[0],host:'Book Dash',landingUrl:'https://bookdash.org/books/synthetic-fixture/'}]};
+  const bookdash={schemaVersion:1,sourceId:'bookdash',revision:'c'.repeat(64),recordCount:1,complete:false,importedAt:observedAt,records:[record]};
+  const make=()=>service({loadSnapshot:()=>[structuredClone(data),structuredClone(bookdash)]});
+  const first=make().search({query:'Fixture',limit:2});
+  const next=make().search({query:'Fixture',limit:2,cursor:first.nextCursor});
+  const keys=[...first.items,...next.items].map(item=>item.key);
+  assert.equal(new Set(keys).size,4);assert.ok(keys.includes('fcd:v1:bookdash:123'));assert.ok(keys.includes('fcd:v1:gutenberg:1'));
+  const detail=make().resolve({key:record.key}).item;
+  assert.equal(detail.readingActions[0].label,'Read at Book Dash');
+  assert.equal(detail.contributors.find(c=>c.role==='illustrator').name,'Fixture Artist');assert.equal(detail.readingLevel,undefined);
+  assert.equal(first.sources.find(source=>source.id==='bookdash').catalogRecords,1);
+});
+
+test('curly source apostrophes accept ordinary typed book queries without changing edition identity',()=>{
+  const record={...item(123),key:'fcd:v1:bookdash:123',title:'Writer’s Book'};
+  const snapshot={schemaVersion:1,sourceId:'bookdash',revision:'c'.repeat(64),recordCount:1,complete:false,importedAt:observedAt,records:[record]};
+  const found=service({loadSnapshot:()=>snapshot}).search({query:"Writer's"});
+  assert.equal(found.items[0].key,record.key);assert.equal(found.items[0].title,'Writer’s Book');
+});

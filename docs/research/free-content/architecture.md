@@ -1,5 +1,13 @@
 # Free-content discovery architecture
 
+Implementation update (2026-11-01): the delivered bounded catalogs use bundled,
+read-only metadata and local search; PostgreSQL is not a prerequisite for this
+release. Shared Redis coordinates live paper sources. The owner has accepted
+verified free source accounts, represented separately as `free_account_required`.
+See [current contracts/progress](IMPLEMENTATION.md), [source operations](OPERATIONS.md)
+and [the reviewed children's set](CHILDREN_REVIEW.md). The scale architecture below
+remains planning guidance where it differs from those implemented choices.
+
 Proposed design, originally researched 2026-10-31 and reconstructed for the canonical MyBookshelf-web repository. Scope: search metadata and link users to content at its existing host. No connectors, migrations or runtime changes are implemented by this branch.
 
 ## 1. System shape
@@ -99,7 +107,7 @@ type AccessLocation = {
   landingUrl: string;
   readerUrl?: string;
   downloads: Array<{ url: string; mimeType: string }>;
-  access: 'free_full_text' | 'preview' | 'borrow' | 'registration'
+  access: 'free_full_text' | 'free_account_required' | 'preview' | 'borrow' | 'registration'
         | 'restricted' | 'metadata_only' | 'unknown';
   license?: { id?: string; url?: string; statement?: string };
   rightsJurisdiction?: string;

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { contentKey, parseContentKey, normalizeDoi, safeWebUrl, observedAccess, readingActions, parseContentSearch, parseContentResolve } from './contracts.js';
+import { contentKey, parseContentKey, normalizeDoi, safeWebUrl, observedAccess, readingActions, parseContentSearch, parseContentResolve, itemAccess } from './contracts.js';
 
 test('source-native identities survive round trip; DOI does not become content identity', () => {
   assert.equal(contentKey('gutenberg', '1342'), 'fcd:v1:gutenberg:1342');
@@ -37,6 +37,20 @@ test('free article selection never substitutes a subscription DOI location', () 
   assert.equal(result.length,1);
   assert.equal(result[0].url, free.landingUrl);
   assert.equal(result[0].label,'Read at Europe PMC');
+});
+
+test('verified free source accounts remain explicit, fresh and separate from unknown registration', () => {
+  const account={...free,id:'account',access:'free_account_required',downloads:[{url:free.landingUrl,mimeType:'application/pdf'}]};
+  assert.equal(observedAccess(account,{now}),'free_account_required');
+  const [action]=readingActions({locations:[account]},{now});
+  assert.equal(action.requiresAccount,true);assert.deepEqual(action.downloads,[]);
+  assert.equal(itemAccess({locations:[account]},{now}),'free_account_required');
+  assert.equal(itemAccess({locations:[account,free]},{now}),'free_full_text');
+  assert.equal(readingActions({locations:[account,free]},{now})[0].locationId,free.id);
+  assert.equal(observedAccess(account,{now:now+86400001}),'unknown');
+  assert.deepEqual(readingActions({locations:[{...account,access:'registration'}]},{now}),[]);
+  assert.equal(parseContentSearch({query:'x'}).access,'free');
+  assert.equal(parseContentSearch({query:'x',access:'free_full_text'}).access,'free_full_text');
 });
 
 test('outbound actions reject unsafe schemes, credentials, local addresses and invalid download types', () => {

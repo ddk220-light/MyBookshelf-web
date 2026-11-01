@@ -70,7 +70,7 @@ No additional credentials are needed to review this plan. The original Google Bo
 2. Choose a real **application contact email** for request identification and, if enabled, Unpaywall's required `email` parameter. No email was invented, registered, or sent during this work.
 3. Optional later: Semantic Scholar, BHL and Europeana keys; CORE upgrade/eligibility confirmation. Standard Ebooks feed access and children's/OER catalog feeds need provider-specific arrangements.
 
-Assumptions: global discovery with explicit language/country context; lawful public hosts; no reader login required for the default Read free filter; no full-text hosting, subscription purchases, or library-card integration. Existing India library coverage makes NCERT, DIKSHA, StoryWeaver and Shodhganga useful follow-ups, but their discovery integrations are not assumed ready.
+Assumptions: global discovery with explicit language/country context; lawful public hosts; verified free source login is allowed (owner clarification 2026-11-01), labelled separately from anonymous reading; no full-text hosting, subscription purchases, or library-card integration. Existing India library coverage makes NCERT, DIKSHA, StoryWeaver and Shodhganga useful follow-ups, but their discovery integrations are not assumed ready.
 
 ## Repository transfer and evidence provenance
 
@@ -103,3 +103,16 @@ Owner decisions on the proposal:
    country's rules", rather than a per-country claim.
 9. Use the existing public contact for request identification. Use is
    non-commercial. Traffic expectations and quotas will be set later.
+
+## Current source work (2026-11-01)
+
+The owner clarified that free source login is acceptable and asked Codex to
+research additional sources. Three real StoryWeaver records in English, Hindi
+and Tamil are now reviewed and searchable with an explicit free-account label;
+no source account was created. Book Dash adds 30 real English-language editions
+with public anonymous reading links. These are source-native metadata records,
+not fictional board samples. The existing OpenAlex key was accepted by its API;
+Redis setup is postponed, so live paper enablement remains deferred.
+See [children’s review](CHILDREN_REVIEW.md), [additional sources](ADDITIONAL_SOURCES.md)
+and [validation](VALIDATION.md). All source flags still default off pending the
+intended hosted release checks; local metadata searches need no hosted store.

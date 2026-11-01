@@ -83,16 +83,22 @@ and [validation](research/free-content/VALIDATION.md). Open Textbook Library is
 implemented with 1,909 real metadata records, combined catalog search and ISBN
 links. DOAJ, arXiv and OpenAlex adapters, bounded multi-source paging, shared
 record caching, source progress and source-only retry are implemented and tested.
-The reviewed children's pilot and final hosted enablement are pending.
+The reviewed children’s pilot now has source records; intended hosted enablement is pending.
 
-The pilot's validation, filters, credits and translation identities are implemented;
-its manifest is deliberately empty until actual English/Hindi/Tamil metadata
-can be reviewed. See [the source review gate](research/free-content/CHILDREN_REVIEW.md).
-Final local checks: 531 server tests, 138 client tests, 236 full desktop/mobile
-browser journeys, eight Python checks, typecheck/build/SEO/deployment and workflow
+The pilot now contains three reviewed real English/Hindi/Tamil source records,
+with exact current credits, levels and original-story relations. The owner has
+accepted free source login; cards and reader actions disclose that requirement.
+Post-login reading has not been tested. Source research and curation belong to
+Codex; no owner-supplied feed or metadata is pending. See [the source review gate](research/free-content/CHILDREN_REVIEW.md).
+Latest local checks: 537 server tests, 141 client tests, 238 full desktop/mobile
+browser journeys, 12 Python checks, typecheck/build/SEO/deployment and workflow
 lint pass. A final targeted reader check and 24 feature browser checks passed
 after link/rights fixes. All-source exact lookups and a 40-result real-paper flow
 also passed locally with actual Redis; this is separate from hosted enablement.
+
+Book Dash now adds 30 real English-language editions with original creator roles
+and anonymous reading links; see [additional sources](research/free-content/ADDITIONAL_SOURCES.md).
+The four local book sources contain 2,942 metadata records in disclosed subsets.
 
 Both client and backend flags default off. Live paper search additionally needs
 shared Redis REST credentials and explicit budget configuration; no hosted store
@@ -135,10 +141,11 @@ privacy, moderation, work identity, deletion and acceptance criteria.
    [operations](research/free-content/OPERATIONS.md) and
    [validation](research/free-content/VALIDATION.md). Existing native tasks belong
    to [project 4](https://github.com/users/ddk220-light/projects/4) / index #73.
-3. Pending inputs are the shared hosted Redis REST bindings/budgets and verified
-   pilot metadata in English/Hindi/Tamil. Questions are pending in this chat;
-   elapsed time does not authorize enabling flags or publishing invented records.
-4. Complete the remaining FCD07 hosted/real-pilot checks when those inputs arrive.
+3. The owner postponed hosted Redis configuration. The existing OpenAlex key is
+   present and accepted. Free source login is explicitly allowed; do not ask the
+   owner to curate the children’s records. See #139 and the current source evidence.
+4. Complete the remaining FCD07 hosted checks when Redis is configured; local
+   book catalogs and the reviewed children’s set remain independent of Redis.
    Keep the bounded Gutenberg subset/OTL export coverage explicit. Account work
    has its own branch/project; its historical planning section above is context.
 
