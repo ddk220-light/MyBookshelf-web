@@ -308,6 +308,15 @@ export class AccountRepository {
         "Your import choices changed. Open a new preview before importing.",
         409,
       );
+    if (
+      this.pending?.path === "/imports" &&
+      this.pending.body.importId === importId
+    )
+      return this.retry<{
+        savedAdded: number;
+        historyAccepted: number;
+        historyExpired: number;
+      }>();
     return this.mutate<{
       savedAdded: number;
       historyAccepted: number;

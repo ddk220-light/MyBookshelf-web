@@ -125,10 +125,14 @@ test.describe("account browser → real API → isolated Postgres", () => {
             .click();
           await expect(page).toHaveURL(/\/app\/shelf$/);
           await expect(page.getByText(email, { exact: true })).toHaveCount(0);
-          const session = await (
-            await page.request.get("/api/account/session")
-          ).json();
-          expect(session.status).toBe("guest");
+          // Private UI clears before the server acknowledges sign-out.
+          await expect
+            .poll(
+              async () =>
+                (await (await page.request.get("/api/account/session")).json())
+                  .status,
+            )
+            .toBe("guest");
         } finally {
           await request.post("/__accounts_test__/cleanup", { data: { email } });
         }

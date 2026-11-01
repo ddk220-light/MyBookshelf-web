@@ -70,6 +70,7 @@ const app = createApplication({
     if (
       req.path !== "/__accounts_test__/mail" &&
       req.path !== "/__accounts_test__/cleanup" &&
+      req.path !== "/__accounts_test__/missing-name" &&
       req.path !== "/__accounts_test__/deletion-jobs"
     )
       return accounts(req, res, next);
@@ -79,6 +80,13 @@ const app = createApplication({
         return res.sendStatus(400);
       try {
         const email = req.body.email;
+        if (req.path.endsWith("/missing-name")) {
+          await admin.query('UPDATE "user" SET name=$1 WHERE email=$2', [
+            "",
+            email,
+          ]);
+          return res.json({ ok: true });
+        }
         if (req.path.endsWith("/deletion-jobs")) {
           const row = (
             await admin.query(
@@ -125,7 +133,12 @@ const app = createApplication({
         const job = (
           await admin.query(
             `SELECT j.payload FROM account_mail_jobs j JOIN "user" u ON u.id=j."authUserId" WHERE u.email=$1 AND j.kind=$2 AND j.status='queued' AND j."expiresAt">now() ORDER BY j."createdAt" DESC LIMIT 1`,
-            [email, req.body.kind === "newEmail" ? "newEmail" : "verify"],
+            [
+              email,
+              ["newEmail", "reset"].includes(req.body.kind)
+                ? req.body.kind
+                : "verify",
+            ],
           )
         ).rows[0];
         if (!job) return res.sendStatus(404);

@@ -9,6 +9,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { accountRequest, AccountApiError } from "../../auth/accountClient";
 import { useAccountSession } from "../../auth/AccountSessionProvider";
 import { useLibrary } from "../../context";
+import {
+  readAnonymousWebStateWithStatus,
+  ANONYMOUS_WEB_STORAGE_KEY,
+} from "../../localState";
 import { ConfirmDialog } from "../ConfirmDialog";
 import { PasswordField, EmailField } from "./AccountPages";
 import {
@@ -59,9 +63,28 @@ export function AccountSettingsPage() {
   const [capabilities, setCapabilities] = useState<AccountCapabilities | null>(
     null,
   );
+  const [clearSaved, setClearSaved] = useState(false);
+  const [guestCopy, setGuestCopy] = useState(readAnonymousWebStateWithStatus);
+  useEffect(() => {
+    const refreshCopy = () => setGuestCopy(readAnonymousWebStateWithStatus());
+    const changed = (event: StorageEvent) => {
+      if (event.key === null || event.key === ANONYMOUS_WEB_STORAGE_KEY)
+        refreshCopy();
+    };
+    window.addEventListener("focus", refreshCopy);
+    window.addEventListener("storage", changed);
+    return () => {
+      window.removeEventListener("focus", refreshCopy);
+      window.removeEventListener("storage", changed);
+    };
+  }, []);
   const [action, setAction] = useState<Sensitive | null>(null),
     [proof, setProof] = useState<Proof | null>(null),
     [clear, setClear] = useState(false);
+  const errorRef = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (error && !action) errorRef.current?.focus();
+  }, [error, action]);
   const password = useRef(""),
     alive = useRef(true);
   const load = useCallback(async () => {
@@ -420,7 +443,7 @@ export function AccountSettingsPage() {
         <h1>Your account</h1>
       </header>
       {error && !action && (
-        <p role="alert" className="account-error">
+        <p role="alert" className="account-error" tabIndex={-1} ref={errorRef}>
           {error}
           <button className="text-button" onClick={() => void load()}>
             Refresh settings
@@ -432,7 +455,7 @@ export function AccountSettingsPage() {
         <p role="status">Loading account settings…</p>
       ) : (
         <>
-          <section aria-labelledby="private-profile">
+          <section className="account-card" aria-labelledby="private-profile">
             <h2 id="private-profile" className="settings-label">
               Private details
             </h2>
@@ -442,36 +465,54 @@ export function AccountSettingsPage() {
             >
               <div className="account-field">
                 <label htmlFor="private-name">Your name</label>
-                <input
-                  id="private-name"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  autoComplete="name"
-                  maxLength={160}
-                  required
-                />
+                <div className="account-name-row">
+                  <input
+                    id="private-name"
+                    aria-describedby="private-name-hint"
+                    value={name}
+                    onChange={(event) => {
+                      setName(event.target.value);
+                      if (notice === "Name saved") setNotice("");
+                    }}
+                    autoComplete="name"
+                    maxLength={160}
+                    required
+                  />
+                  <button
+                    aria-label="Save name"
+                    className="button-quiet"
+                    disabled={busy || name === profile.name}
+                  >
+                    {busy
+                      ? "Saving…"
+                      : notice === "Name saved"
+                        ? "Saved"
+                        : "Save"}
+                  </button>
+                </div>
               </div>
-              <p className="form-hint">
+              <p className="form-hint" id="private-name-hint">
                 Only you see this name. It isn’t a public profile.
               </p>
-              <button disabled={busy || name === profile.name}>
-                {busy ? "Saving…" : "Save name"}
-              </button>
-              <p>
-                Email: <strong>{profile.email}</strong>
-              </p>
-              <button
-                type="button"
-                className="button-quiet"
-                disabled={busy}
-                onClick={() =>
-                  begin({ action: "email-change", label: "Change email" })
-                }
-              >
-                Change email
-              </button>
+              <div className="account-row">
+                <div className="account-stack">
+                  <strong>Email</strong>
+                  <span>{profile.email}</span>
+                </div>
+                <button
+                  type="button"
+                  className="text-button"
+                  disabled={busy}
+                  onClick={() =>
+                    begin({ action: "email-change", label: "Change email" })
+                  }
+                >
+                  Change email
+                </button>
+              </div>
               {profile.pendingEmail && (
-                <div className="account-card">
+                <div className="account-pending-email" role="status">
+                  <strong>Confirm your new email</strong>
                   <p>
                     Waiting for confirmation at{" "}
                     <strong>{profile.pendingEmail.email}</strong>. The link
@@ -512,56 +553,65 @@ export function AccountSettingsPage() {
               )}
             </form>
           </section>
-          <section aria-labelledby="login-methods">
+          <section className="account-card" aria-labelledby="login-methods">
             <h2 id="login-methods" className="settings-label">
               Sign-in methods
             </h2>
-            <ul>
+            <ul className="account-methods">
               {profile.methods.map((method) => (
-                <li key={method.provider}>
-                  {method.provider === "password"
-                    ? "Email and password"
-                    : method.provider === "google"
-                      ? "Google"
-                      : "Apple"}
-                  {!method.usable ? " — unavailable" : ""}
-                  {profile.methods.filter((m) => m.usable).length > 1 && (
+                <li className="account-row" key={method.provider}>
+                  <div className="account-stack">
+                    <strong>
+                      {method.provider === "password"
+                        ? "Email and password"
+                        : method.provider === "google"
+                          ? "Google"
+                          : "Apple"}
+                    </strong>
+                    <span className="form-hint">
+                      {method.usable ? "Connected" : "Unavailable"}
+                    </span>
+                  </div>
+                  {method.provider === "password" && method.usable && (
                     <button
                       type="button"
                       className="text-button"
-                      disabled={busy}
                       onClick={() =>
                         begin({
-                          action: "provider-unlink",
-                          target: method.provider,
-                          label:
-                            "Disconnect " +
-                            (method.provider === "password"
-                              ? "password"
-                              : method.provider === "google"
-                                ? "Google"
-                                : "Apple"),
+                          action: "password-change",
+                          label: "Change password",
                         })
                       }
                     >
-                      Disconnect
+                      Change password
                     </button>
                   )}
+                  {method.provider !== "password" &&
+                    profile.methods.filter((m) => m.usable).length > 1 && (
+                      <button
+                        type="button"
+                        className="text-button"
+                        disabled={busy}
+                        onClick={() =>
+                          begin({
+                            action: "provider-unlink",
+                            target: method.provider,
+                            label:
+                              "Disconnect " +
+                              (method.provider === "password"
+                                ? "password"
+                                : method.provider === "google"
+                                  ? "Google"
+                                  : "Apple"),
+                          })
+                        }
+                      >
+                        Disconnect
+                      </button>
+                    )}
                 </li>
               ))}
             </ul>
-            {profile.methods.some(
-              (m) => m.provider === "password" && m.usable,
-            ) && (
-              <button
-                className="button-quiet"
-                onClick={() =>
-                  begin({ action: "password-change", label: "Change password" })
-                }
-              >
-                Change password
-              </button>
-            )}
             {!profile.methods.some(
               (m) => m.provider === "password" && m.usable,
             ) && (
@@ -602,49 +652,23 @@ export function AccountSettingsPage() {
                 </button>
               ))}
           </section>
-          <section aria-labelledby="history-controls">
-            <h2 id="history-controls" className="settings-label">
-              Recently viewed
-            </h2>
-            <p>
-              {library.historyEnabled
-                ? "On: remember the newest 50 books you open for up to 30 days."
-                : "Paused: opening books won’t add to your account history. Previously stored books stay until they expire or you remove them."}
-            </p>
-            <button
-              role="switch"
-              aria-checked={Boolean(library.historyEnabled)}
-              disabled={library.recoveryMode}
-              onClick={() =>
-                void library.setHistoryEnabled?.(!library.historyEnabled)
-              }
-            >
-              {library.historyEnabled
-                ? "Pause recently viewed"
-                : "Turn on recently viewed"}
-            </button>
-            <button
-              className="text-button"
-              disabled={library.recoveryMode}
-              onClick={() => setClear(true)}
-            >
-              Clear recently viewed
-            </button>
-          </section>
-          <section aria-labelledby="signed-in-devices">
+          <section className="account-card" aria-labelledby="signed-in-devices">
             <h2 id="signed-in-devices" className="settings-label">
               Signed-in devices
             </h2>
             <ul className="account-devices">
               {devices.map((device) => (
-                <li key={device.id}>
-                  <strong>
-                    {device.device}
-                    {device.current ? " · This device" : ""}
-                  </strong>
-                  <p>
-                    Signed in {new Date(device.createdAt).toLocaleDateString()}
-                  </p>
+                <li className="account-row" key={device.id}>
+                  <div className="account-stack">
+                    <strong>
+                      {device.device}
+                      {device.current ? " · This device" : ""}
+                    </strong>
+                    <span className="form-hint">
+                      Signed in{" "}
+                      {new Date(device.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
                   <button
                     className="text-button"
                     disabled={busy}
@@ -664,7 +688,7 @@ export function AccountSettingsPage() {
               ))}
             </ul>
             <button
-              className="button-destructive"
+              className="button-quiet"
               onClick={() =>
                 begin({ action: "signout-all", label: "Sign out all devices" })
               }
@@ -672,45 +696,142 @@ export function AccountSettingsPage() {
               Sign out all devices
             </button>
           </section>
-          <p>
-            <a href="/privacy#website">Privacy policy</a>
-          </p>
-          <section aria-labelledby="account-data-controls">
+          <section className="account-card" aria-labelledby="history-controls">
+            <h2 id="history-controls" className="settings-label">
+              Recently viewed
+            </h2>
+            <div className="account-row account-history-row">
+              <div className="account-stack">
+                <strong>Save recently viewed books to my account</strong>
+                <p className="form-hint">
+                  {library.historyEnabled
+                    ? "On. Up to 50 books for 30 days."
+                    : "Off. When on, up to 50 books for 30 days. Existing entries still expire."}
+                </p>
+              </div>
+              <button
+                className="account-history-switch"
+                role="switch"
+                aria-label="Save recently viewed books to my account"
+                aria-checked={Boolean(library.historyEnabled)}
+                aria-busy={library.pending}
+                disabled={library.recoveryMode || library.pending}
+                onClick={() =>
+                  void library.setHistoryEnabled?.(!library.historyEnabled)
+                }
+              >
+                <span aria-hidden="true" />
+              </button>
+            </div>
+            <div className="account-row">
+              <span className="form-hint">
+                {library.state.recentBooks.length} recent books
+              </span>
+              <button
+                className="text-button"
+                disabled={library.recoveryMode}
+                onClick={() => setClear(true)}
+              >
+                Clear recently viewed
+              </button>
+            </div>
+          </section>
+          <section
+            className="account-card"
+            aria-labelledby="account-data-controls"
+          >
             <h2 id="account-data-controls" className="settings-label">
               Your data
             </h2>
-            <p>
-              Download your private profile, library, saved books and current
-              history as JSON.
+            {guestCopy.status === "ok" &&
+              (guestCopy.state.savedBooks.length > 0 ||
+                guestCopy.state.recentBooks.length > 0) && (
+                <div className="account-row">
+                  <div className="account-stack">
+                    <strong>Books on this browser</strong>
+                    <span className="form-hint">
+                      {guestCopy.state.savedBooks.length} saved{" "}
+                      {guestCopy.state.savedBooks.length === 1
+                        ? "book"
+                        : "books"}{" "}
+                      · separate device copy
+                    </span>
+                  </div>
+                  <Link className="text-link" to="/app/account/import">
+                    Review import
+                  </Link>
+                </div>
+              )}
+            <div className="account-row">
+              <div className="account-stack">
+                <strong>Saved books</strong>
+                <span className="form-hint">
+                  {library.loadingAccount
+                    ? "Loading saved books…"
+                    : `${library.state.savedBooks.length} ${library.state.savedBooks.length === 1 ? "book" : "books"} in your account`}
+                </span>
+              </div>
+              <button
+                className="text-button"
+                disabled={library.recoveryMode || library.pending}
+                onClick={() => setClearSaved(true)}
+              >
+                Clear saved books
+              </button>
+            </div>
+            <p>Download your private account data as JSON.</p>
+            <div className="account-actions">
+              <button
+                type="button"
+                className="button-quiet"
+                disabled={busy}
+                onClick={() =>
+                  begin({ action: "export", label: "Download account data" })
+                }
+              >
+                Download account data
+              </button>
+              <button
+                type="button"
+                className="button-destructive"
+                disabled={busy}
+                onClick={() =>
+                  begin({ action: "delete", label: "Delete account" })
+                }
+              >
+                Delete account
+              </button>
+            </div>
+            <p className="form-hint">
+              Deleting your account ends access immediately. Separate guest
+              copies and downloads remain under your control.
             </p>
-            <button
-              type="button"
-              className="button-quiet"
-              disabled={busy}
-              onClick={() =>
-                begin({ action: "export", label: "Download account data" })
-              }
-            >
-              Download account data
-            </button>
-            <p>
-              Deleting your account ends access immediately and removes live
-              account data within 24 hours. Separate guest copies and downloads
-              remain under your control.
-            </p>
-            <button
-              type="button"
-              className="button-destructive"
-              disabled={busy}
-              onClick={() =>
-                begin({ action: "delete", label: "Delete account" })
-              }
-            >
-              Delete account
-            </button>
           </section>
+          <p className="account-settings-footnote">
+            Reading light and companion settings stay on this device.{" "}
+            <a href="/privacy#website">Privacy policy</a>
+          </p>
         </>
       )}
+      <ConfirmDialog
+        open={clearSaved}
+        title="Clear saved books?"
+        body={
+          <p>
+            This clears saved books from your account on every device. Recently
+            viewed books and the separate copy in this browser stay.
+          </p>
+        }
+        confirmLabel="Clear saved books"
+        cancelLabel="Cancel"
+        pending={library.pending}
+        error={library.mutationError}
+        onConfirm={async () => {
+          if (await (library.retryMutation ?? library.clearSavedBooks)())
+            setClearSaved(false);
+        }}
+        onCancel={() => setClearSaved(false)}
+      />
       <ConfirmDialog
         open={clear}
         title="Clear recently viewed?"
@@ -722,9 +843,10 @@ export function AccountSettingsPage() {
         confirmLabel="Clear recently viewed"
         cancelLabel="Cancel"
         pending={library.pending}
-        error={library.mutationNotice}
+        error={library.mutationError}
         onConfirm={async () => {
-          if (await library.clearRecentBooks()) setClear(false);
+          if (await (library.retryMutation ?? library.clearRecentBooks)())
+            setClear(false);
         }}
         onCancel={() => setClear(false)}
       />

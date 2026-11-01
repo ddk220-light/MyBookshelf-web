@@ -39,6 +39,7 @@ export function AccountLibraryStateProvider({
   const [pending, setPending] = useState(false),
     [loading, setLoading] = useState(true),
     [notice, setNotice] = useState<string | null>(null);
+  const [mutationError, setMutationError] = useState<string | null>(null);
   const [undo, setUndo] = useState<{
     book: RecentBook;
     id: string;
@@ -58,11 +59,12 @@ export function AccountLibraryStateProvider({
         if (error.status === 409) account.invalidate();
         return;
       }
-      setNotice(
+      const message =
         error instanceof Error
           ? error.message
-          : "Your account could not be refreshed.",
-      );
+          : "Your account could not be refreshed.";
+      setNotice(message);
+      setMutationError(message);
       if (error instanceof AccountApiError && error.status === 401)
         account.invalidate();
     },
@@ -121,6 +123,7 @@ export function AccountLibraryStateProvider({
       if (!repo || busy.current || !snapshotRef.current) return null;
       busy.current = true;
       setPending(true);
+      setMutationError(null);
       setNotice(label + "…");
       onRetrySuccess.current = after as ((value: unknown) => void) | undefined;
       try {
@@ -306,6 +309,11 @@ export function AccountLibraryStateProvider({
     pending,
     loadingAccount: loading,
     mutationNotice: notice,
+    mutationError,
+    pendingImportId:
+      repository.current?.pending?.path === "/imports"
+        ? String(repository.current.pending.body.importId)
+        : undefined,
     retryMutation: repository.current?.pending ? retryMutation : undefined,
     historyEnabled: snapshot?.summary.historyEnabled ?? false,
     setHistoryEnabled,

@@ -26,7 +26,7 @@ export function TabBar() {
         <NavLink key={to} to={to === '/app/libraries' && encodedBookKey ? `/app/libraries?book=${encodedBookKey}` : to}
           aria-keyshortcuts={to === '/app/search' ? 'Alt+/' : undefined}
           state={to === '/app/libraries' && encodedBookKey ? libraryReturn(location.pathname, location.search, location.state) : undefined} className="tab-item">
-          <span className="tab-icon"><Icon /></span>{label}
+          <span className="tab-icon"><Icon /></span><span className="tab-label">{label}</span>
         </NavLink>
       ))}
     </nav>

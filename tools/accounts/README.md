@@ -43,17 +43,25 @@ uses actual auth/reading roles and refuses production/non-local databases. It is
 not imported by the deployed application. Its synthetic outbox reader is a mail
 transport double; this does not prove real provider delivery or Google/Apple.
 
-Run the `accounts-real.spec.js` Playwright file with `ACCOUNT_E2E=true` and
+Run `accounts-real.spec.js` and `accounts-visual.spec.js` with `ACCOUNT_E2E=true` and
 `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4300`. The standard test configuration skips
-this file unless that opt-in is present. Desktop/mobile Chromium and WebKit scenarios cover
+these files unless that opt-in is present. Desktop/mobile Chromium and WebKit scenarios cover
 all reading lights, verification, profile, explicit import/copy cleanup,
 remote refresh/revocation, email changes, export and deletion receipt recovery. Set
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` only when using a system Chromium.
 
-Start a fresh harness process for each complete run. It creates ephemeral test
+The visual journey also compares static approved-artifact captures and exercises
+pending/error/lost-response recovery, 320px layouts, enlarged text and forced colors.
+Its outbox accepts verification/reset requests only for synthetic `pw-` identities;
+a separate guarded fixture clears a synthetic user's name to test completion.
+Neither helper exists in the deployed application.
+
+Start a fresh harness process for each browser profile. It creates ephemeral test
 signing/limiter secrets. Repeated runs against one long-lived harness deliberately
 hit the real shared IP limiter; do not disable or weaken production limits to
-make repeated fixtures pass. Synthetic fixture users are cleaned up by each test.
+make repeated fixtures pass. The workflow demonstrates this per-profile lifecycle.
+Synthetic fixture users are cleaned up by each test. Build once before browser
+runs and keep the static bundle unchanged while tests are using it.
 
 ## Synthetic local load check
 

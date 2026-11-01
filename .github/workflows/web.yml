@@ -37,8 +37,14 @@ jobs:
           ACCOUNT_E2E: 'true'
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:4300
         run: |
-          node tools/accounts/e2e-server.mjs > /tmp/accounts-e2e.log 2>&1 &
-          account_harness_pid=$!
-          trap 'kill "$account_harness_pid" 2>/dev/null || true' EXIT
-          curl --fail --silent --output /dev/null --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:4300/api/health
-          npm run test:e2e --workspace=client -- accounts-real.spec.js --project=chromium --project=mobile-chromium --project=webkit --workers=2
+          # Each profile gets fresh limiter secrets; exercise real production
+          # limits without exhausting one synthetic loopback IP across profiles.
+          for account_browser in chromium mobile-chromium webkit; do
+            node tools/accounts/e2e-server.mjs > "/tmp/accounts-e2e-$account_browser.log" 2>&1 &
+            account_harness_pid=$!
+            trap 'kill "$account_harness_pid" 2>/dev/null || true' EXIT
+            curl --fail --silent --output /dev/null --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:4300/api/health
+            npm run test:e2e --workspace=client -- accounts-real.spec.js accounts-visual.spec.js --project="$account_browser" --workers=2
+            kill "$account_harness_pid"
+            wait "$account_harness_pid" || true
+          done

@@ -2,7 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { BookNavigation } from '../bookNavigation';
-import { readReadingLightPreference, writeReadingLight, type ReadingLight, type ReadingLightPreference } from '../readingLight';
+import { readReadingLightPreference, writeReadingLight, APPEARANCE_STORAGE_KEY, READING_LIGHT_STORAGE_KEY, type ReadingLight, type ReadingLightPreference } from '../readingLight';
 import { useMediaQuery } from '../useMediaQuery';
 import { useLibrary } from '../context';
 import { Notice } from './Notice';
@@ -25,6 +25,14 @@ export function AppFrame({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const screen = useRef<HTMLElement | null>(null);
   const [preference, setLightState] = useState<ReadingLightPreference>(() => readReadingLightPreference());
+  useEffect(() => {
+    const update = (event: StorageEvent) => {
+      if (event.key === null || event.key === APPEARANCE_STORAGE_KEY || event.key === READING_LIGHT_STORAGE_KEY)
+        setLightState(readReadingLightPreference());
+    };
+    window.addEventListener('storage', update);
+    return () => window.removeEventListener('storage', update);
+  }, []);
   const dark = useMediaQuery('(prefers-color-scheme: dark)');
   const light = preference === 'system' ? dark ? 'lamplight' : 'daylight' : preference;
   const setLight = useCallback((next: ReadingLightPreference) => {
@@ -64,12 +72,20 @@ export function AppFrame({ children }: { children: ReactNode }) {
   useEffect(() => {
     const route = location.pathname.split('/')[2];
     const names: Record<string, string> = { shelf: 'Your bookshelf', search: 'Search books', libraries: 'Choose a library', settings: 'Settings', books: 'Book details' };
-    document.title = (names[route] || 'Choose a library') + ' — MyBookshelf';
+    const accountNames: Record<string, string> = {
+      'sign-in': 'Sign in', 'sign-up': 'Create account', verify: 'Verify your email',
+      'forgot-password': 'Reset your password', 'reset-password': 'Choose a new password',
+      'email-change': 'Confirm your new email', return: 'Continue securely',
+      'complete-profile': 'Add your name', import: 'Bring books over', deletion: 'Account deletion status',
+    };
+    const title = location.pathname === '/app/settings/account' ? 'Your account'
+      : route === 'account' ? accountNames[location.pathname.split('/')[3]] : names[route];
+    document.title = (title || 'Choose a library') + ' — MyBookshelf';
   }, [location.pathname]);
 
   return <DogAnimationProvider><ReadingLightContext.Provider value={{ light, preference, setLight }}>
     <div className="app-backdrop">
-      <div className={`app-frame${location.pathname.startsWith('/app/books/') ? ' book-mode' : ''}`}>
+      <div className={`app-frame${location.pathname.startsWith('/app/books/') ? ' book-mode' : ''}${location.pathname.startsWith('/app/account/') ? ' account-entry-mode' : ''}`}>
         <a className="desktop-skip" href="#main-content">{m.skipToContent}</a>
         <TabBar />
         <main id="main-content" ref={screen} className="app-screen" tabIndex={-1}>

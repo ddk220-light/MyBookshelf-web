@@ -105,7 +105,7 @@ export function ProviderEntry({
       {capabilities.google && (
         <button
           type="button"
-          className="provider-button"
+          className="provider-button provider-google"
           disabled={disabled || pending}
           onClick={() => void start("google")}
         >
@@ -127,7 +127,9 @@ export function ProviderEntry({
               d="M12 6.1c1.5 0 2.8.5 3.8 1.5l2.9-2.8A9.7 9.7 0 0 0 12 2a10 10 0 0 0-9 5.6l3.4 2.6A6 6 0 0 1 12 6.1Z"
             />
           </svg>
-          Continue with Google
+          {location.pathname.endsWith("/sign-up")
+            ? "Continue with Google"
+            : "Sign in with Google"}
         </button>
       )}
       {capabilities.apple && (
@@ -143,7 +145,9 @@ export function ProviderEntry({
               d="M17 12.3c0-2 1.6-3 1.7-3.1-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.8-3.2.8-.6 0-1.6-.8-2.7-.7-1.4 0-2.7.8-3.4 2-1.5 2.5-.4 6.2 1 8.2.6 1 1.3 2 2.4 1.9 1-.1 1.4-.6 2.7-.6s1.7.6 2.8.6 1.7-.9 2.4-1.9c.7-1.1 1-2.1 1.1-2.2-.1 0-2.1-.8-2.1-3.4ZM14.8 6.3c.5-.7.9-1.6.8-2.5-.8 0-1.8.6-2.4 1.3-.5.6-1 1.5-.9 2.4.9.1 1.9-.5 2.5-1.2Z"
             />
           </svg>
-          Continue with Apple
+          {location.pathname.endsWith("/sign-up")
+            ? "Continue with Apple"
+            : "Sign in with Apple"}
         </button>
       )}
       {pending && <p role="status">Opening secure sign-in…</p>}

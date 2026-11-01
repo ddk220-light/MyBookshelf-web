@@ -47,6 +47,8 @@ export type LibraryState = {
   pending?:boolean;
   loadingAccount?:boolean;
   mutationNotice?:string|null;
+  mutationError?:string|null;
+  pendingImportId?:string;
   retryMutation?:()=>Promise<boolean>;
   historyEnabled?:boolean;
   setHistoryEnabled?:(enabled:boolean)=>Promise<boolean>;

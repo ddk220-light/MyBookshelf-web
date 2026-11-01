@@ -14,10 +14,10 @@ it('offers configured providers and preserves entered details when provider star
  }));
  render(<MemoryRouter initialEntries={['/app/account/sign-in?returnTo=%2F%2Foutside.test']}><AnonymousWebApp/></MemoryRouter>);
  fireEvent.change(screen.getByLabelText('Email',{exact:true}),{target:{value:'private@example.test'}});
- fireEvent.click(await screen.findByRole('button',{name:'Continue with Google'}));
+ fireEvent.click(await screen.findByRole('button',{name:'Sign in with Google'}));
  expect(await screen.findByRole('alert')).toHaveTextContent('Google is temporarily unavailable.');
  expect(screen.getByLabelText('Email',{exact:true})).toHaveValue('private@example.test');
- expect(screen.queryByRole('button',{name:'Continue with Apple'})).toBeNull();
+ expect(screen.queryByRole('button',{name:'Sign in with Apple'})).toBeNull();
  expect(posts).toEqual([{path:'/api/account/sign-in/social',body:{provider:'google',returnTo:'/app/shelf'}}]);
 });
 it('provider cancellation offers recovery without exchanging or performing an account action',async()=>{

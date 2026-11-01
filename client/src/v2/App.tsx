@@ -7,7 +7,6 @@ import {DeletionReceiptProvider} from './auth/DeletionReceiptProvider';
 import {DeletionStatusPage} from './ui/account/DeletionStatusPage';
 import {safeAccountReturn} from './auth/accountClient';
 import {SignInPage,VerifyPage,RecoveryPage,ImportPage,EmailChangePage,ProviderReturnPage,CompleteProfilePage} from './ui/account/AccountPages';
-import './ui/account/account.css';
 import {AccountSettingsPage} from './ui/account/AccountSettingsPage';
 import { LibraryStateProvider } from './context';
 import { LibrariesPage } from './ui/library/LibrariesPage';

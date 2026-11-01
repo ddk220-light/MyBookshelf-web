@@ -29,30 +29,51 @@ export function AccountForm({
   onSubmit,
   busy,
   error,
+  noValidate = false,
+  backTo = "/app/settings",
+  backLabel = "Settings",
 }: {
   title: string;
   children: ReactNode;
   onSubmit?: (event: FormEvent<HTMLFormElement>) => void;
   busy?: boolean;
-  error?: string;
+  error?: ReactNode;
+  noValidate?: boolean;
+  backTo?: string;
+  backLabel?: string;
 }) {
   const heading = useId(),
-    errorRef = useRef<HTMLParagraphElement>(null);
+    errorRef = useRef<HTMLParagraphElement>(null),
+    headingRef = useRef<HTMLHeadingElement>(null),
+    previousTitle = useRef(title);
   useEffect(() => {
-    if (error) errorRef.current?.focus();
+    document.title = title + " — MyBookshelf";
+    if (previousTitle.current !== title) {
+      previousTitle.current = title;
+      headingRef.current?.focus();
+    }
+  }, [title]);
+  const previousError = useRef("");
+  useEffect(() => {
+    const message = errorRef.current?.textContent || "";
+    if (message && message !== previousError.current) errorRef.current?.focus();
+    previousError.current = message;
   }, [error]);
   return (
     <section className="page-section account-page">
-      <Link className="back-link" to="/app/settings">
-        ← Settings
+      <Link className="back-link" to={backTo}>
+        ← {backLabel}
       </Link>
       <form
         className="account-form"
         aria-labelledby={heading}
         onSubmit={onSubmit || ((event) => event.preventDefault())}
         aria-busy={busy}
+        noValidate={noValidate}
       >
-        <h1 id={heading}>{title}</h1>
+        <h1 id={heading} ref={headingRef} tabIndex={-1}>
+          {title}
+        </h1>
         {error && (
           <p
             className="account-error"
@@ -73,14 +94,19 @@ export function PasswordField({
   autoComplete = "current-password",
   name = "password",
   hint,
+  error,
+  id: inputId,
 }: {
   label?: string;
   autoComplete?: string;
   name?: string;
   hint?: string;
+  error?: string;
+  id?: string;
 }) {
   const [show, setShow] = useState(false),
-    id = useId();
+    generatedId = useId(),
+    id = inputId || generatedId;
   return (
     <div className="account-field">
       <label htmlFor={id}>{label}</label>
@@ -91,7 +117,10 @@ export function PasswordField({
           type={show ? "text" : "password"}
           autoComplete={autoComplete}
           required
-          aria-describedby={hint ? id + "-hint" : undefined}
+          aria-invalid={Boolean(error) || undefined}
+          aria-describedby={
+            error ? id + "-error" : hint ? id + "-hint" : undefined
+          }
         />
         <button
           type="button"
@@ -104,11 +133,21 @@ export function PasswordField({
         </button>
       </div>
       {hint && <small id={id + "-hint"}>{hint}</small>}
+      {error && (
+        <small className="account-field-error" id={id + "-error"}>
+          {error}
+        </small>
+      )}
     </div>
   );
 }
-export function EmailField({ label = "Email" }: { label?: string } = {}) {
-  const id = useId();
+export function EmailField({
+  label = "Email",
+  error,
+  id: inputId,
+}: { label?: string; error?: string; id?: string } = {}) {
+  const generatedId = useId(),
+    id = inputId || generatedId;
   return (
     <div className="account-field">
       <label htmlFor={id}>{label}</label>
@@ -119,7 +158,14 @@ export function EmailField({ label = "Email" }: { label?: string } = {}) {
         autoComplete="email"
         required
         maxLength={254}
+        aria-invalid={Boolean(error) || undefined}
+        aria-describedby={error ? id + "-error" : undefined}
       />
+      {error && (
+        <small className="account-field-error" id={id + "-error"}>
+          {error}
+        </small>
+      )}
     </div>
   );
 }
@@ -132,6 +178,7 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
     [errorCode, setErrorCode] = useState(""),
     [sent, setSent] = useState(false),
     [email, setEmail] = useState("");
+  const [fields, setFields] = useState<Record<string, string>>({});
   const alive = useRef(true);
   useEffect(() => {
     alive.current = true;
@@ -144,6 +191,26 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
     if (busy) return;
     const data = new FormData(event.currentTarget),
       address = String(data.get("email") || "");
+    if (signup) {
+      const next: Record<string, string> = {},
+        name = String(data.get("name") || "").trim(),
+        password = String(data.get("password") || "");
+      if (!name || [...name].length > 80 || /[\u0000-\u001f\u007f]/.test(name))
+        next["account-private-name"] =
+          "Enter a name between 1 and 80 characters.";
+      if (
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address.trim()) ||
+        address.length > 254
+      )
+        next["account-email"] = "Enter a valid email address.";
+      if ([...password].length < 15 || [...password].length > 128)
+        next["account-password"] = "Use between 15 and 128 characters.";
+      setFields(next);
+      if (Object.keys(next).length) {
+        setError("");
+        return;
+      }
+    }
     setBusy(true);
     setError("");
     setEmail(address);
@@ -247,14 +314,38 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
       title={signup ? "Create account" : "Sign in"}
       onSubmit={(event) => void submit(event)}
       busy={busy}
-      error={error}
+      noValidate={signup}
+      error={
+        Object.keys(fields).length ? (
+          <>
+            <strong>
+              Check {Object.keys(fields).length}{" "}
+              {Object.keys(fields).length === 1 ? "field" : "fields"}
+            </strong>
+            {Object.entries(fields).map(([id, message]) => (
+              <span key={id}>
+                {" "}
+                ·{" "}
+                <a
+                  href={"#" + id}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    document.getElementById(id)?.focus();
+                  }}
+                >
+                  {message}
+                </a>
+              </span>
+            ))}
+          </>
+        ) : (
+          error
+        )
+      }
     >
       {signup && (
         <>
-          <p>
-            Keep your library and saved books across devices. Your name stays
-            private.
-          </p>
+          <p>Keep your shelf across devices.</p>
           <div className="account-field">
             <label htmlFor="account-private-name">Your name</label>
             <input
@@ -263,14 +354,29 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
               autoComplete="name"
               required
               maxLength={160}
+              aria-invalid={
+                Boolean(fields["account-private-name"]) || undefined
+              }
+              aria-describedby={
+                fields["account-private-name"]
+                  ? "account-name-error"
+                  : "account-name-hint"
+              }
             />
+            <small id="account-name-hint">Private. Only you see it.</small>
+            {fields["account-private-name"] && (
+              <small className="account-field-error" id="account-name-error">
+                {fields["account-private-name"]}
+              </small>
+            )}
           </div>
         </>
       )}
-      <ProviderEntry disabled={busy} onError={setError} />
-      <EmailField />
+      <EmailField id="account-email" error={fields["account-email"]} />
       <PasswordField
         autoComplete={signup ? "new-password" : "current-password"}
+        id="account-password"
+        error={fields["account-password"]}
         hint={
           signup
             ? "Use 15–128 characters. Spaces and paste are welcome."
@@ -283,8 +389,15 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
         </Link>
       )}
       <button disabled={busy} type="submit">
-        {busy ? "Please wait…" : signup ? "Create account" : "Sign in"}
+        {busy
+          ? signup
+            ? "Creating account…"
+            : "Signing in…"
+          : signup
+            ? "Create account"
+            : "Sign in"}
       </button>
+      <ProviderEntry disabled={busy} onError={setError} />
       {errorCode === "VERIFY_EMAIL_REQUIRED" && (
         <button
           type="button"
@@ -303,16 +416,20 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
           ? "Already have an account? Sign in"
           : "New here? Create account"}
       </Link>
-      <button
-        type="button"
-        className="text-button"
-        onClick={() => {
-          continueGuest();
-          navigate("/app/shelf", { replace: true, state: null });
-        }}
-      >
-        Continue using this browser
-      </button>
+      <p className="account-entry-footer">
+        <a href="/privacy#website">Privacy</a>
+        <span aria-hidden="true">·</span>
+        <button
+          type="button"
+          className="text-button"
+          onClick={() => {
+            continueGuest();
+            navigate("/app/shelf", { replace: true, state: null });
+          }}
+        >
+          Continue using this browser
+        </button>
+      </p>
     </AccountForm>
   );
 }
@@ -411,10 +528,12 @@ export function RecoveryPage({ reset = false }: { reset?: boolean }) {
             : "Check your email"
           : reset
             ? "Choose a new password"
-            : "Forgot password?"
+            : "Reset your password"
       }
       busy={busy}
       error={error}
+      backTo="/app/account/sign-in"
+      backLabel="Sign in"
       onSubmit={(event) => void submit(event)}
     >
       {done ? (
@@ -484,7 +603,13 @@ export function ImportPage() {
         history,
         deviceLibrary ? "use-device" : "keep-account",
       );
-      if (!result || !alive.current) return;
+      if (!alive.current) return;
+      if (!result) {
+        setError(
+          "Couldn’t confirm the import. Your browser copy is unchanged. Retry this import to check the same request.",
+        );
+        return;
+      }
       let suffix = "Your copy in this browser is unchanged.";
       if (remove) {
         const retained = history
@@ -498,15 +623,15 @@ export function ImportPage() {
           includeHistory: history,
           deviceLibrary,
           retainedHistory: new Set(retained.books.map((b) => b.bookKey)),
-          isCurrent:()=>alive.current,
+          isCurrent: () => alive.current,
         });
-        if(!alive.current)return;
+        if (!alive.current) return;
         suffix = cleaned
           ? "Removed unchanged imported copies here. Any newer device changes were kept."
           : "Imported successfully. The copy here could not be removed; it is still safe to keep it.";
       }
       setDone(
-        `${result.savedAdded} saved books imported. ${result.historyAccepted} recent books accepted${result.historyExpired ? `; ${result.historyExpired} older entries skipped` : ""}. ${suffix}`,
+        `${result.savedAdded} saved ${result.savedAdded === 1 ? "book" : "books"} imported. ${result.historyAccepted} recent ${result.historyAccepted === 1 ? "book" : "books"} accepted${result.historyExpired ? `; ${result.historyExpired} older entries skipped` : ""}. ${suffix}`,
       );
     } catch (failure) {
       if (alive.current)
@@ -547,8 +672,10 @@ export function ImportPage() {
             <strong>{session.user?.email}</strong>.
           </p>
           <p>
-            {frozen.state.savedBooks.length} saved books ·{" "}
-            {frozen.state.recentBooks.length} recent books
+            {frozen.state.savedBooks.length} saved{" "}
+            {frozen.state.savedBooks.length === 1 ? "book" : "books"} ·{" "}
+            {frozen.state.recentBooks.length} recent{" "}
+            {frozen.state.recentBooks.length === 1 ? "book" : "books"}
           </p>
           {frozen.status !== "ok" && (
             <p role="alert">
@@ -566,6 +693,7 @@ export function ImportPage() {
             <input
               type="checkbox"
               checked={history}
+              disabled={busy || library.pendingImportId === id}
               onChange={(event) => setHistory(event.target.checked)}
             />
             Include recently viewed books from the last 30 days
@@ -578,6 +706,7 @@ export function ImportPage() {
               <input
                 type="checkbox"
                 checked={deviceLibrary}
+                disabled={busy || library.pendingImportId === id}
                 onChange={(event) => setDeviceLibrary(event.target.checked)}
               />
               Use this browser’s library instead of my account library
@@ -587,6 +716,7 @@ export function ImportPage() {
             <input
               type="checkbox"
               checked={remove}
+              disabled={busy || library.pendingImportId === id}
               onChange={(event) => setRemove(event.target.checked)}
             />
             Remove the copy here after the import is confirmed
@@ -594,12 +724,16 @@ export function ImportPage() {
           <button
             disabled={
               busy ||
-              library.recoveryMode ||
+              (library.recoveryMode && library.pendingImportId !== id) ||
               frozen.status !== "ok" ||
               bytes > 2 * 1024 * 1024
             }
           >
-            {busy ? "Importing…" : "Bring books over"}
+            {busy
+              ? "Importing…"
+              : library.pendingImportId === id
+                ? "Retry import"
+                : "Bring books over"}
           </button>
           <button
             type="button"
@@ -607,7 +741,9 @@ export function ImportPage() {
             disabled={busy}
             onClick={() => navigate("/app/shelf", { replace: true })}
           >
-            Keep them here for now
+            {library.pendingImportId === id
+              ? "Check later"
+              : "Keep them here for now"}
           </button>
         </>
       )}
@@ -696,8 +832,13 @@ export function ProviderReturnPage() {
     location = useLocation(),
     navigate = useNavigate();
   const recent = useRecentAuth();
-  const alive=useRef(true);
-  useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
+  const alive = useRef(true);
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const providerError = new URLSearchParams(location.search).get("error");
@@ -720,7 +861,7 @@ export function ProviderReturnPage() {
     setError("");
     try {
       const checked = await account.refresh(true);
-      if(!alive.current)return;
+      if (!alive.current) return;
       if (checked.status !== "authenticated")
         throw Error(
           checked.status === "unverified"
@@ -737,7 +878,7 @@ export function ProviderReturnPage() {
           csrf: checked.csrfToken,
           body: { flowId },
         });
-        if(!alive.current)return;
+        if (!alive.current) return;
         if (result.kind === "confirmed") recent.set(result, checked);
         navigate("/app/settings/account", { replace: true, state: null });
         return;
@@ -753,7 +894,7 @@ export function ProviderReturnPage() {
         { replace: true, state: null },
       );
     } catch (failure) {
-      if(!alive.current)return;
+      if (!alive.current) return;
       setError(
         failure instanceof Error ? failure.message : "Couldn’t finish sign-in.",
       );
