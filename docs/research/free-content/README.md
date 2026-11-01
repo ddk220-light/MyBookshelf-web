@@ -75,3 +75,27 @@ Assumptions: global discovery with explicit language/country context; lawful pub
 The original worktree branch was committed as `ee7d88e` in a previous environment but was not pushed. That environment became unavailable. The replacement checkout, archived repository and GitHub did not contain that commit. These documents were **reconstructed from the research and tool results retained in this conversation**, on the canonical web repository's `9f5bb4b` baseline. They are not a byte-for-byte recovery of the original commit.
 
 The original evidence file recorded 85 fetch observations and 23 API probes, 20 of which returned HTTP 200. The replacement [evidence file](evidence.json) preserves the 23 probe URLs/outcomes recoverable from the conversation, documentation references and material findings. Original raw responses, the complete documentation-fetch ledger and response hashes are unavailable; they have not been fabricated or represented as fresh checks. This branch carries only the research and documentation links, not the old repository's history or native applications.
+
+## UI proposal and owner decisions (2026-11-01)
+
+UI boards (Design canvas, private until shared): https://claude.ai/artifact/NHwYSSaU4VGXDt2Pp9aA4X.
+They cover free-book and paper search, details, the library book page link,
+source status, partial/unavailable/empty/limit/loading states, the children's
+pilot and a desktop layout. Records on the boards are samples.
+
+Owner decisions on the proposal:
+
+1. Keep the four app tabs. Free to read and Papers are scopes inside Search.
+2. Free books and papers can be saved to the shelf. Storage for items without
+   ISBNs still needs an engineering design before implementation.
+3. Results with unclear access are hidden by default and clearly marked when shown.
+4. No "include previews and loans" option in the first release.
+5. When the broad paper index is at its daily limit, say so plainly
+   ("at today's limit") without naming the provider.
+6. Children's pilot: English, Hindi and Tamil, using each publisher's own levels.
+7. A free book links back to the reader's library by title search, without
+   treating the two as the same edition.
+8. Rights text stays generic for now: source statement plus "check your
+   country's rules", rather than a per-country claim.
+9. Use the existing public contact for request identification. Use is
+   non-commercial. Traffic expectations and quotas will be set later.
