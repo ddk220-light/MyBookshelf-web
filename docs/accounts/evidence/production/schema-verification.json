@@ -1,0 +1,124 @@
+{
+  "resourceId": "store_Y2EqcbZyTyIEwnbN",
+  "externalResourceId": "misty-cake-69893992",
+  "migrations": [
+    {
+      "name": "001-auth.sql",
+      "checksum": "993e0e299baef03d62a7575a3cedf0f07bdb5308794ad40a82ccf0629bf46afc"
+    },
+    {
+      "name": "002-reading.sql",
+      "checksum": "a15181b6ce6af3d0b767a3771b2ffca6873afe8c913a1755040cda4bb165aec1"
+    },
+    {
+      "name": "003-abuse.sql",
+      "checksum": "ec94661c3fdc42feebd5432849c1e366f62b45cfe115e15fba68f7fa544be005"
+    },
+    {
+      "name": "004-mail.sql",
+      "checksum": "62266363f41da09c162e94dc48693e1e772cd6744a44cb398d7504b36eebc88f"
+    },
+    {
+      "name": "005-recent-proof.sql",
+      "checksum": "5a1e6aaec10be1ec797d0e3acd79a43babda9bc1fe27a291d7ec61cabe988340"
+    },
+    {
+      "name": "006-email-change.sql",
+      "checksum": "7fc6d688feffc4e0f57cd7240251e54afe0359b499e4a60074cdce45d62ab953"
+    },
+    {
+      "name": "007-session-guard.sql",
+      "checksum": "91fa0878dc04fe89122c092ac33b87887054bb81fb15eda053e8027170c885e7"
+    },
+    {
+      "name": "008-provider-intents.sql",
+      "checksum": "985b6021f78a35e5c96b4f8fdefe60af253c82d1ab6be73ef74bc40071e44a7c"
+    },
+    {
+      "name": "009-account-lifecycle.sql",
+      "checksum": "fee470d1890b943ac4d80d9d6a7417ad33682c15c2213c187c010a1a35121510"
+    },
+    {
+      "name": "010-account-retention.sql",
+      "checksum": "2c4046de6ad362e62a77de7562a4e851af7a7e602bb98c14f50e12f6f854059f"
+    },
+    {
+      "name": "011-mail-retention.sql",
+      "checksum": "2ce72503078793bd71b14754a48926a6b9f56c8d9cb9713c66a81079d6eb04a9"
+    }
+  ],
+  "roles": [
+    {
+      "rolname": "mybookshelf_auth",
+      "rolsuper": "f",
+      "rolbypassrls": "f",
+      "owns_auth": "f",
+      "credentials": "t",
+      "reading": "f"
+    },
+    {
+      "rolname": "mybookshelf_reading",
+      "rolsuper": "f",
+      "rolbypassrls": "f",
+      "owns_auth": "f",
+      "credentials": "f",
+      "reading": "t"
+    },
+    {
+      "rolname": "mybookshelf_worker",
+      "rolsuper": "f",
+      "rolbypassrls": "f",
+      "owns_auth": "f",
+      "credentials": "f",
+      "reading": "f"
+    }
+  ],
+  "forcedRLS": [
+    {
+      "relname": "account_operations",
+      "relrowsecurity": "t",
+      "relforcerowsecurity": "t"
+    },
+    {
+      "relname": "app_users",
+      "relrowsecurity": "t",
+      "relforcerowsecurity": "t"
+    },
+    {
+      "relname": "guest_imports",
+      "relrowsecurity": "t",
+      "relforcerowsecurity": "t"
+    },
+    {
+      "relname": "recent_book_views",
+      "relrowsecurity": "t",
+      "relforcerowsecurity": "t"
+    },
+    {
+      "relname": "user_books",
+      "relrowsecurity": "t",
+      "relforcerowsecurity": "t"
+    },
+    {
+      "relname": "user_libraries",
+      "relrowsecurity": "t",
+      "relforcerowsecurity": "t"
+    },
+    {
+      "relname": "user_settings",
+      "relrowsecurity": "t",
+      "relforcerowsecurity": "t"
+    }
+  ],
+  "administratorCapabilities": {
+    "current_user": "neondb_owner",
+    "rolsuper": "f",
+    "rolbypassrls": "t",
+    "rolcreatedb": "t"
+  },
+  "ledgerConfigured": true,
+  "ledgerReadableToOperator": true,
+  "accountEntryEnabled": false,
+  "canonicalOrigin": "https://mybookshelf.cloud",
+  "nativeCronSecretConfigured": true
+}

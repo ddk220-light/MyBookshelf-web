@@ -13,14 +13,16 @@ import { readingRoute } from "./reading-routes.js";
 
 const RESERVED_AUTH =
   /^\/api\/auth\/(?:ok|get-session|sign-up\/email|sign-in\/(?:email|social)|sign-out|verify-email|send-verification-email|request-password-reset|reset-password|callback\/[^/]+|change-password|change-email|link-social|unlink-account|delete-user|list-sessions|revoke-session|revoke-sessions|revoke-other-sessions|update-user|set-password)(?:\/|$)/;
-const unavailable = (res) =>
+const unavailable = (res, code = "ACCOUNT_UNAVAILABLE") =>
   res
     .status(503)
     .json({
       error: {
-        code: "ACCOUNT_UNAVAILABLE",
+        code,
         message:
-          "Accounts are temporarily unavailable. You can continue browsing.",
+          code === "ACCOUNT_DISABLED"
+            ? "Accounts aren’t enabled here yet. You can continue browsing."
+            : "Accounts are temporarily unavailable. You can continue browsing.",
       },
     });
 
@@ -85,7 +87,7 @@ export function createAccountMiddleware({
     };
     try {
       const config = readAccountConfig(env);
-      if (!config.enabled) return unavailable(res);
+      if (!config.enabled) return unavailable(res, "ACCOUNT_DISABLED");
       const callback=/^\/api\/auth\/callback\/(google|apple)$/.exec(path)?.[1];
       // Auth protocol and sensitive routes stay closed until their individual
       // policy/mail/lifecycle stories are implemented. /get-session returns raw

@@ -1,9 +1,12 @@
 # Account operations and release gate
 
-This is the runbook for PR #57, branch `account-settings`. R02 documents and
-Claude canvas v4 are approved. **R03 has not approved a production release.**
+This is the runbook for the account implementation. R02 documents and Claude
+canvas v4 are approved. Deepak subsequently authorized production completion;
+the actual feature rollout is still in progress. Read
+[PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) for current production resources,
+evidence and unfinished exits; the staging observations below are historical.
 Deepak is the release/configuration owner. A second operator has not yet followed
-this runbook; automated checks are recorded separately from that requirement.
+this runbook; automated checks are recorded separately from that observation.
 
 ## Owner's current rollout choices
 
@@ -48,11 +51,11 @@ Private deletion ledger: `store_Gs9zkvOMQteZihLA`. Its separate read/write token
 `store_anEQSluYF2hXAEQT` is unused by v1: export streams an authenticated attachment,
 with no persistent export file or URL. Do not start retaining export copies.
 
-The existing production project remains connected to the older `MyBookshelf/main`
-repository. Its domains, credentials and deployment have not been changed.
-Production database/storage provisioning was rejected by automatic approval
-review earlier in this task and remains deferred. Staging supports implementation
-and review; production resources must be explicitly settled for R03.
+The existing production project's persistent Git connection remains on the older
+`MyBookshelf/main` repository. Explicit source-reference deployments now serve
+`MyBookshelf-web` at its existing domains. Dedicated production Neon and private
+ledger resources have since been provisioned under the owner's production
+instruction. See the current production record; do not reuse staging credentials.
 
 ## Migrations and restoration
 

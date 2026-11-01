@@ -3,6 +3,188 @@ import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import AxeBuilder from "@axe-core/playwright";
 const enabled = process.env.ACCOUNT_E2E === "true";
+test("unavailable signup preserves browser books and recovers when the service returns", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    !enabled,
+    "Run only against the explicit loopback account harness.",
+  );
+  const fixture = {
+    version: 1,
+    selectedLibraryId: null,
+    recentBooks: [],
+    savedBooks: [
+      {
+        bookKey: "v1:isbn:9780262033848",
+        isbn13: "9780262033848",
+        title: "Synthetic preserved guest book",
+        authors: ["Synthetic author"],
+        viewedAt: new Date().toISOString(),
+        source: "direct",
+      },
+    ],
+  };
+  await page.addInitScript(
+    (value) =>
+      localStorage.setItem(
+        "mybookshelf.anonymous-web.v1",
+        JSON.stringify(value),
+      ),
+    fixture,
+  );
+  const unavailable = (route) =>
+    route.fulfill({
+      status: 503,
+      json: {
+        error: {
+          code: "ACCOUNT_DISABLED",
+          message: "Accounts aren’t enabled here yet.",
+        },
+      },
+    });
+  await page.route("**/api/account/session", unavailable);
+  let posts = 0;
+  page.on("request", (req) => {
+    if (
+      req.method() === "POST" &&
+      new URL(req.url()).pathname.startsWith("/api/account/")
+    )
+      posts++;
+  });
+  await page.goto("/app/account/sign-up");
+  await expect(
+    page.getByRole("heading", { name: "Accounts aren’t available right now" }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Email", { exact: true })).toHaveCount(0);
+  await page.screenshot({
+    path: testInfo.outputPath("account-unavailable.png"),
+    fullPage: true,
+  });
+  await page
+    .getByRole("button", { name: "Continue using this browser", exact: true })
+    .click();
+  await expect(
+    page
+      .getByRole("region", { name: "Saved books" })
+      .getByRole("link", { name: "Synthetic preserved guest book" }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Settings", exact: true }).click();
+  await expect(
+    page.getByRole("link", { name: "Create account", exact: true }),
+  ).toHaveCount(0);
+  await page
+    .getByRole("region", { name: "Keep your shelf across devices" })
+    .getByRole("link", { name: "Sign in", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Accounts aren’t available right now" }),
+  ).toBeVisible();
+  await page.unroute("**/api/account/session", unavailable);
+  await page.getByRole("button", { name: "Try again", exact: true }).click();
+  await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Sign in", exact: true }),
+  ).toBeEnabled();
+  expect(
+    (
+      await page.evaluate(() =>
+        JSON.parse(localStorage.getItem("mybookshelf.anonymous-web.v1")),
+      )
+    ).savedBooks,
+  ).toEqual(fixture.savedBooks);
+  expect(posts).toBe(0);
+});
+test("native signup navigation, validation, duplicate submit and verification lead to a working session", async ({
+  page,
+  request,
+}) => {
+  test.skip(
+    !enabled,
+    "Run only against the explicit loopback account harness.",
+  );
+  const email = "pw-" + randomUUID() + "@example.test";
+  const password = "Synthetic signup workflow password " + randomUUID();
+  let submissions = 0;
+  page.on("request", (req) => {
+    if (
+      req.method() === "POST" &&
+      new URL(req.url()).pathname === "/api/account/sign-up"
+    )
+      submissions++;
+  });
+  try {
+    await page.goto("/app/settings");
+    await page
+      .getByRole("link", { name: "Create account", exact: true })
+      .click();
+    await page
+      .getByLabel("Your name", { exact: true })
+      .fill("Synthetic workflow reader");
+    await page.getByLabel("Email", { exact: true }).fill(email);
+    await page.getByLabel("Password", { exact: true }).fill("too short");
+    await page
+      .getByRole("button", { name: "Create account", exact: true })
+      .click();
+    await expect(page.locator("#account-password")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
+    expect(submissions).toBe(0);
+    await page.getByLabel("Password", { exact: true }).fill(password);
+    await page
+      .getByRole("button", { name: "Create account", exact: true })
+      .dblclick();
+    await expect(
+      page.getByRole("heading", { name: "Check your email" }),
+    ).toBeVisible();
+    expect(submissions).toBe(1);
+    await page.getByRole("link", { name: "Sign in after verifying" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Sign in", exact: true }),
+    ).toBeVisible();
+    await expect(page.getByLabel("Password", { exact: true })).toHaveAttribute(
+      "autocomplete",
+      "current-password",
+    );
+    await expect(page.getByLabel("Email", { exact: true })).toHaveValue("");
+    await page.getByLabel("Email", { exact: true }).fill(email);
+    await page.getByLabel("Password", { exact: true }).fill(password);
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(
+      page.getByRole("button", { name: "Send verification link" }),
+    ).toBeVisible();
+    expect(
+      (await (await page.request.get("/api/account/session")).json()).status,
+    ).toBe("guest");
+    const mail = await request.post("/__accounts_test__/mail", {
+      data: { email },
+    });
+    expect(mail.ok()).toBeTruthy();
+    const { token } = await mail.json();
+    await page.goto("/app/account/verify?token=" + encodeURIComponent(token));
+    await page
+      .getByRole("button", { name: "Verify email", exact: true })
+      .click();
+    await expect(
+      page.getByRole("heading", { name: "Email verified" }),
+    ).toBeVisible();
+    await page
+      .getByRole("link", { name: "Sign in", exact: true })
+      .first()
+      .click();
+    await page.getByLabel("Email", { exact: true }).fill(email);
+    await page.getByLabel("Password", { exact: true }).fill(password);
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page).toHaveURL(/\/app\/shelf$/);
+    expect(
+      (await (await page.request.get("/api/account/session")).json()).status,
+    ).toBe("authenticated");
+    expect(submissions).toBe(1);
+  } finally {
+    await request.post("/__accounts_test__/cleanup", { data: { email } });
+  }
+});
 test.describe("account browser → real API → isolated Postgres", () => {
   test.skip(
     !enabled,

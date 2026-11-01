@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { accountRequest } from "./accountClient";
+import { accountRequest, AccountApiError } from "./accountClient";
 import { setReaderIdentityScope } from "../readerState";
 import { clearSearchMemory } from "../searchMemory";
 import { clearCatalogMetadata } from "../catalogMetadata";
@@ -34,6 +34,7 @@ export type AccountSession = {
   logoutPending?: boolean;
   sessionEnded?: boolean;
   needsProfileCompletion?: boolean;
+  availability?: "disabled" | "unavailable";
 };
 type SessionReply = {
   status: "guest" | "unverified" | "authenticated" | "unavailable";
@@ -215,12 +216,27 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
           }
           publish(reply);
           if (explicitSignin) broadcast(false, tabId.current);
-        } catch {
+        } catch (failure) {
           if (version === request.current)
             publish(
               guestLock.current
-                ? { status: "guest", logoutPending: true }
-                : { status: "unavailable" },
+                ? {
+                    status: "guest",
+                    logoutPending: true,
+                    availability:
+                      failure instanceof AccountApiError &&
+                      failure.code === "ACCOUNT_DISABLED"
+                        ? "disabled"
+                        : "unavailable",
+                  }
+                : {
+                    status: "unavailable",
+                    availability:
+                      failure instanceof AccountApiError &&
+                      failure.code === "ACCOUNT_DISABLED"
+                        ? "disabled"
+                        : "unavailable",
+                  },
             );
         }
       };
@@ -247,7 +263,11 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     pending.current = null;
     guestLock.current = true;
     writeOverride(true);
-    publish({ status: "guest", logoutPending: serverMayBeActive });
+    publish({
+      status: "guest",
+      logoutPending: serverMayBeActive,
+      availability: current.current.availability,
+    });
     broadcast(true, tabId.current);
   }, [publish]);
   const invalidate = useCallback(() => {

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAccountSession } from "../../auth/AccountSessionProvider";
 import { useLibrary } from "../../context";
 
@@ -39,7 +39,7 @@ export function AccountSummary() {
         </>
       ) : session.status === "checking" ? (
         <p role="status">Checking your account…</p>
-      ) : session.status === "guest" ? (
+      ) : session.status === "guest" && !session.availability ? (
         <>
           <p>
             A free account keeps your library and saved books on every device.
@@ -71,8 +71,32 @@ export function AccountSummary() {
   );
 }
 export function AccountNotice() {
+  const location = useLocation();
   const { session, refresh, continueGuest, signOut } = useAccountSession(),
     library = useLibrary();
+  const entry =
+    /^\/app\/account\/(sign-up|sign-in|forgot-password|reset-password|verify)$/.test(
+      location.pathname,
+    );
+  if (entry && (session.status === "unavailable" || session.availability))
+    return null;
+  if (session.availability === "disabled")
+    return (
+      <div className="account-sync-notice" role="status">
+        <span>
+          Accounts aren’t enabled here yet. You can keep using this browser’s
+          shelf.
+        </span>
+        <button onClick={() => void refresh()}>
+          Check account availability
+        </button>
+        {session.status !== "guest" && (
+          <button className="text-button" onClick={continueGuest}>
+            Continue as guest
+          </button>
+        )}
+      </div>
+    );
   if (session.status === "checking")
     return (
       <div className="account-sync-notice" role="status">
