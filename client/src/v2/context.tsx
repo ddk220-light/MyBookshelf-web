@@ -15,8 +15,10 @@ import {
 } from './localState';
 import type { PublicBook, PublicLibrary, RecentBook, RecentSource } from './types';
 import { readReaderPreferences, writeReaderPreferences } from './readerState';
+import {useAccountSession} from './auth/AccountSessionProvider';
+import {AccountLibraryStateProvider,UnavailableLibraryStateProvider} from './storage/AccountLibraryStateProvider';
 
-export type SaveResult = 'saved' | 'already-saved' | 'full' | 'recovery';
+export type SaveResult = 'saved' | 'already-saved' | 'full' | 'recovery' | 'failed';
 
 export type LibraryState = {
   state: AnonymousWebState;
@@ -29,19 +31,26 @@ export type LibraryState = {
   startNewShelf: () => void;
   removedLibraryNotice: string | null;
   removedBook: RecentBook | null;
-  undoRemoval: () => void;
+  undoRemoval: () => Promise<boolean>;
   reportStorageFailure: () => void;
-  selectLibrary: (library: PublicLibrary) => void;
+  selectLibrary: (library: PublicLibrary) => Promise<boolean>;
   retryLibrary: () => void;
-  rememberBook: (book: PublicBook, source: RecentSource) => void;
-  removeRecentBook: (bookKey: string) => void;
-  clearRecentBooks: () => void;
-  clearSavedBooks: () => void;
-  saveBook: (book: PublicBook) => SaveResult;
-  unsaveBook: (bookKey: string) => void;
+  rememberBook: (book: PublicBook, source: RecentSource) => Promise<boolean>;
+  removeRecentBook: (bookKey: string) => Promise<boolean>;
+  clearRecentBooks: () => Promise<boolean>;
+  clearSavedBooks: () => Promise<boolean>;
+  saveBook: (book: PublicBook) => Promise<SaveResult>;
+  unsaveBook: (bookKey: string) => Promise<boolean>;
+  pending?:boolean;
+  loadingAccount?:boolean;
+  mutationNotice?:string|null;
+  retryMutation?:()=>Promise<boolean>;
+  historyEnabled?:boolean;
+  setHistoryEnabled?:(enabled:boolean)=>Promise<boolean>;
+  importGuest?:(id:string,snapshot:AnonymousWebState,history:boolean,policy:'keep-account'|'use-device')=>Promise<{savedAdded:number;historyAccepted:number;historyExpired:number}|null>;
 };
 
-const LibraryStateContext = createContext<LibraryState | null>(null);
+export const LibraryStateContext = createContext<LibraryState | null>(null);
 
 export function useLibrary(): LibraryState {
   const value = useContext(LibraryStateContext);
@@ -49,7 +58,14 @@ export function useLibrary(): LibraryState {
   return value;
 }
 
-export function LibraryStateProvider({ children }: { children: ReactNode }) {
+export function LibraryStateProvider({children,entryMode=false}:{children:ReactNode;entryMode?:boolean}) {
+  const {session}=useAccountSession();
+  if(entryMode)return <UnavailableLibraryStateProvider>{children}</UnavailableLibraryStateProvider>;
+  if(session.status==='guest')return <GuestLibraryStateProvider>{children}</GuestLibraryStateProvider>;
+  if(session.status==='authenticated')return <AccountLibraryStateProvider>{children}</AccountLibraryStateProvider>;
+  return <UnavailableLibraryStateProvider>{children}</UnavailableLibraryStateProvider>;
+}
+function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
   const [initialBrowserState] = useState(readAnonymousWebStateWithStatus);
   const [state, setState] = useState<AnonymousWebState>(initialBrowserState.state);
   const stateRef = useRef(state);
@@ -148,41 +164,41 @@ export function LibraryStateProvider({ children }: { children: ReactNode }) {
     return () => { current = false; };
   }, [state.selectedLibraryId, libraryRetry, commit, reportStorageFailure]);
 
-  const selectLibrary = useCallback((selected: PublicLibrary) => {
-    if (!commit((saved) => withSelectedLibrary(saved, selected.id))) return;
+  const selectLibrary = useCallback(async(selected: PublicLibrary) => {
+    if (!commit((saved) => withSelectedLibrary(saved, selected.id))) return false;
     if (!writeReaderPreferences({ selectedLibrary: { id: selected.id, name: selected.name } })) reportStorageFailure();
     setRemovedLibraryNotice(null);
     setLibrary(selected);
-    setLibraryError(null);
+    setLibraryError(null);return true;
   }, [commit, reportStorageFailure]);
   const retryLibrary = useCallback(() => setLibraryRetry((count) => count + 1), []);
-  const rememberBook = useCallback((book: PublicBook, source: RecentSource) => {
-    commit((saved) => withRecentBook(saved, book, source));
+  const rememberBook = useCallback(async(book: PublicBook, source: RecentSource) => {
+    return commit((saved) => withRecentBook(saved, book, source));
   }, [commit]);
-  const removeRecentBook = useCallback((bookKey: string) => {
-    commit((saved) => ({ ...saved, recentBooks: saved.recentBooks.filter((item) => item.bookKey !== bookKey) }));
+  const removeRecentBook = useCallback(async(bookKey: string) => {
+    return commit((saved) => ({ ...saved, recentBooks: saved.recentBooks.filter((item) => item.bookKey !== bookKey) }));
   }, [commit]);
-  const clearRecentBooks = useCallback(() => commit((saved) => ({ ...saved, recentBooks: [] })), [commit]);
-  const clearSavedBooks = useCallback(() => { if (commit(saved => ({ ...saved, savedBooks: [] }))) setRemoved(null); }, [commit]);
-  const saveBook = useCallback((book: PublicBook): SaveResult => {
+  const clearRecentBooks = useCallback(async() => commit((saved) => ({ ...saved, recentBooks: [] })), [commit]);
+  const clearSavedBooks = useCallback(async() => { const ok=commit(saved => ({ ...saved, savedBooks: [] }));if(ok)setRemoved(null);return ok; }, [commit]);
+  const saveBook = useCallback(async(book: PublicBook): Promise<SaveResult> => {
     if (recovery.current) return 'recovery';
     if (isSaved(stateRef.current, book.bookKey)) return 'already-saved';
     if (stateRef.current.savedBooks.length >= SAVED_BOOKS_CAP) return 'full';
     return commit((saved) => withSavedBook(saved, book)) ? 'saved' : 'recovery';
   }, [commit]);
-  const unsaveBook = useCallback((bookKey: string) => {
+  const unsaveBook = useCallback(async(bookKey: string) => {
     const index = stateRef.current.savedBooks.findIndex(book => book.bookKey === bookKey);
     const book = stateRef.current.savedBooks[index];
-    if (book && commit(saved => withoutSavedBook(saved, bookKey))) setRemoved({ book, index });
+    if (book && commit(saved => withoutSavedBook(saved, bookKey))){setRemoved({book,index});return true;}return false;
   }, [commit]);
-  const undoRemoval = useCallback(() => {
-    if (!removed) return;
+  const undoRemoval = useCallback(async() => {
+    if (!removed) return false;
     if (commit(saved => {
       if (isSaved(saved, removed.book.bookKey)) return saved;
       const books = [...saved.savedBooks];
       books.splice(Math.min(removed.index, books.length), 0, removed.book);
       return { ...saved, savedBooks: books };
-    })) setRemoved(null);
+    })){setRemoved(null);return true;}return false;
   }, [commit, removed]);
   useEffect(() => {
     if (!removed) return;

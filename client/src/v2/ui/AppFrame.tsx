@@ -10,6 +10,7 @@ import { uiMessages as m } from '../uiMessages';
 import { TabBar } from './TabBar';
 import { DogAnimationProvider } from './DogAnimation';
 import { ConfirmDialog } from './ConfirmDialog';
+import {AccountNotice} from './account/AccountSummary';
 
 const ReadingLightContext = createContext<{ light: ReadingLight; preference: ReadingLightPreference; setLight: (l: ReadingLightPreference) => void }>({ light: 'daylight', preference: 'system', setLight: () => {} });
 
@@ -37,7 +38,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
   }, [light]);
   useEffect(() => {
     if (!location.hash) {
-      screen.current?.scrollTo(0, 0);
+      screen.current?.scrollTo?.(0, 0);
       return;
     }
     const frame = requestAnimationFrame(() => document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: 'start' }));
@@ -72,6 +73,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
         <a className="desktop-skip" href="#main-content">{m.skipToContent}</a>
         <TabBar />
         <main id="main-content" ref={screen} className="app-screen" tabIndex={-1}>
+          <AccountNotice/>
           {storageNotice && <div className="site-notice"><Notice tone="error">{storageNotice}</Notice>{recoveryMode && <div className="recovery-actions"><button onClick={reloadShelf}>Reload shelf</button><button className="button-quiet" onClick={() => setResetting(true)}>Start a new shelf</button></div>}</div>}
           {removedLibraryNotice && <div className="site-notice"><Notice>{removedLibraryNotice}</Notice></div>}
           {children}

@@ -9,9 +9,12 @@ import { LibraryCard } from '../library/LibraryCard';
 import { useDogAnimation } from '../DogAnimation';
 import { uiMessages as m } from '../../uiMessages';
 import { CopyLibraryLink } from '../library/CopyLibraryLink';
+import {AccountSummary} from '../account/AccountSummary';
+import {useAccountSession} from '../../auth/AccountSessionProvider';
 
 export function SettingsPage() {
-  const { library, loadingLibrary, libraryError, retryLibrary, clearSavedBooks, recoveryMode } = useLibrary();
+  const { library, loadingLibrary, libraryError, retryLibrary, clearSavedBooks, recoveryMode,pending } = useLibrary();
+  const {session}=useAccountSession();
   const { light, preference, setLight } = useReadingLight();
   const { enabled, setEnabled } = useDogAnimation();
   const links = getAppStoreLinks();
@@ -19,6 +22,7 @@ export function SettingsPage() {
 
   return <section className="page-section settings-page">
     <header className="page-heading"><h1>{m.settings}</h1></header>
+    <AccountSummary/>
 
     <section aria-labelledby="settings-library">
       <h2 id="settings-library" className="settings-label">Your library</h2>
@@ -43,7 +47,7 @@ export function SettingsPage() {
 
     <section className="prose" id="privacy" aria-labelledby="settings-privacy">
       <h2 id="settings-privacy" className="settings-label">Privacy</h2>
-      <p>Your books are saved in this browser. They don’t sync across devices, and clearing browser data removes them.</p>
+      <p>{session.status==='authenticated'?'Your account library and saved books are private and sync after confirmation. You control whether recently viewed books are recorded.':'Your guest books are saved in this browser. They don’t sync across devices, and clearing browser data removes them.'}</p>
       <a className="text-link" href="/privacy#website">Privacy policy</a>
     </section>
 
@@ -74,7 +78,8 @@ export function SettingsPage() {
       title="Clear saved books?"
       body={<p>Your saved shelf will be emptied. This cannot be undone.</p>}
       confirmLabel="Clear saved books"
-      onConfirm={() => { clearSavedBooks(); setConfirming(false); }}
+      pending={pending}
+      onConfirm={async() => { if(await clearSavedBooks())setConfirming(false); }}
       onCancel={() => setConfirming(false)}
     />
   </section>;

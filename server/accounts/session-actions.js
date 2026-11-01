@@ -10,7 +10,7 @@ export function createSessionActions({auth,pool,consumeProof}) {
   return {
     async list(identity,headers){
       const sessions=await auth.api.listSessions({headers});
-      return {sessions:sessions.map(s=>({id:s.id,device:label(s.userAgent),current:s.id===identity.sessionId,createdAt:s.createdAt,expiresAt:s.expiresAt}))};
+      return {sessions:sessions.filter(s=>Date.now()-new Date(s.createdAt).getTime()<30*86400000).map(s=>({id:s.id,device:label(s.userAgent),current:s.id===identity.sessionId,createdAt:s.createdAt,expiresAt:s.expiresAt}))};
     },
     async revoke(body,identity,headers,setCookie){
       strictObject(body,['sessionId','proof']);

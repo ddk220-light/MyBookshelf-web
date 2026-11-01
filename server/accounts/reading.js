@@ -27,9 +27,10 @@ export function createReadingActions({pool,sessionActive=async()=>true,directory
       });
     },
     async selectLibrary(body,identity){
-      strictObject(body,['libraryId','settingsRevision','operationId']);validateLibrary(body.libraryId);revision(body.settingsRevision);
+      strictObject(body,['libraryId','settingsRevision','operationId']);revision(body.settingsRevision);
       return owned(identity,(client,settings,id)=>operation(client,id,'library',body,async()=>{
         if(Number(settings.revision)!==body.settingsRevision)throw conflict();
+        validateLibrary(body.libraryId);
         await client.query('UPDATE user_libraries SET selected=false WHERE user_id=$1 AND selected',[id]);
         if(body.libraryId!==null)await client.query('INSERT INTO user_libraries(user_id,directory_id,selected) VALUES($1,$2,true) ON CONFLICT(user_id,directory_id) DO UPDATE SET selected=true',[id,body.libraryId]);
         const updated=(await client.query('UPDATE user_settings SET revision=revision+1 WHERE user_id=$1 RETURNING *',[id])).rows[0];

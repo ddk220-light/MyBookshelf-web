@@ -10,6 +10,7 @@ export function readingRoute(path,method){
     '/api/account/history/views':{POST:'view'},
     '/api/account/history/settings':{PATCH:'historySettings'},
     '/api/account/history/clear':{POST:'clearHistory'},
+    '/api/account/imports':{POST:'importGuest'},
   };
   const reference=/^\/api\/account\/books\/([0-9a-f-]{36})$/i.exec(path);
   const historyReference=/^\/api\/account\/history\/([0-9a-f-]{36})$/i.exec(path);

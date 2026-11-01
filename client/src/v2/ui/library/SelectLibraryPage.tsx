@@ -45,7 +45,7 @@ export function SelectLibraryPage() {
     <Sheet open title="Choose this library?" onClose={() => navigate(returnTo, { replace: true, state: navigation?.bookNavigation })}>
     {library ? <><LibraryCard library={library} />
       {selected && selected.id !== library.id && <p>Current library: {selected.name}</p>}
-      <div className="shared-library-actions"><button disabled={recoveryMode} onClick={() => { selectLibrary(library); navigate(returnTo, { replace: true, state: { ...navigation?.bookNavigation, focusSearch: true } }); }}>Choose {library.name}</button>
+      <div className="shared-library-actions"><button disabled={recoveryMode} onClick={async() => {if(await selectLibrary(library)===false)return; navigate(returnTo, { replace: true, state: { ...navigation?.bookNavigation, focusSearch: true } }); }}>Choose {library.name}</button>
       <Link className="button-quiet" to={returnTo} replace state={navigation?.bookNavigation}>Cancel</Link></div>
     </> : !failure ? <p role="status">{m.openingLibraryLink}</p> : <>
       <Notice tone="error">{failure === 'missing' ? m.libraryLinkMissing : m.libraryLinkUnavailable}</Notice>

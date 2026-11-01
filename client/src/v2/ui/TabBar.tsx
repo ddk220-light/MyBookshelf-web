@@ -2,6 +2,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { LibraryIcon, SearchIcon, SettingsIcon, ShelfIcon } from './icons';
 import { uiMessages as m } from '../uiMessages';
 import { libraryReturn } from '../bookNavigation';
+import {useAccountSession} from '../auth/AccountSessionProvider';
 
 const TABS = [
   { to: '/app/shelf', label: m.shelf, icon: ShelfIcon },
@@ -13,6 +14,7 @@ const TABS = [
 // One navigation and one route tree: CSS switches the desktop sidebar and
 // mobile bottom bar without remounting the reader's page or camera.
 export function TabBar() {
+  const {session}=useAccountSession();
   const location = useLocation();
   const encodedBookKey = location.pathname.match(/^\/app\/books\/([^/]+)$/)?.[1];
   return <aside className="app-navigation" aria-label={m.appNavigation}>
@@ -28,6 +30,7 @@ export function TabBar() {
         </NavLink>
       ))}
     </nav>
+    <div className="desktop-account">{session.status==='authenticated'?<><strong>{session.user?.name}</strong><span>{session.user?.email}</span><Link to="/app/settings/account">Your account</Link></>:<Link to="/app/account/sign-in">Sign in</Link>}</div>
     <a className="desktop-support" href="/support" aria-label={m.supportLabel}>{m.helpSupport} <span aria-hidden="true">↗</span></a>
   </aside>;
 }

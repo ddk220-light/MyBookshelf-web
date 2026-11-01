@@ -13,6 +13,7 @@ export function createAccountMiddleware({ env = process.env, initialize = async 
 }, retryAfterMs = 5000 } = {}) {
   let service, pending, retryAt = 0;
   const parser = express.json({ limit: '32kb', strict: true });
+  const importParser=express.json({limit:'2mb',strict:true});
   const postPaths = new Set(['/api/account/sign-up','/api/account/sign-in','/api/account/verify-email','/api/account/resend-verification','/api/account/sign-out','/api/account/forgot-password','/api/account/reset-password','/api/account/reauth/password','/api/account/password','/api/account/sessions/revoke','/api/account/sign-out-all']);
   return async function accounts(req, res, next) {
     const path = req.path;
@@ -25,14 +26,15 @@ export function createAccountMiddleware({ env = process.env, initialize = async 
       // policy/mail/lifecycle stories are implemented. /get-session returns raw
       // library rows, so browsers must use the narrow /api/account/session facade.
       const isPost = postPaths.has(path);
+      const profile=path==='/api/account/profile';
       const reading=readingRoute(path,req.method);
-      const mutation=isPost||(reading&&req.method!=='GET');
-      if (!isPost && !reading && !['/api/auth/ok','/api/account/session','/api/account/capabilities','/api/account/sessions'].includes(path)) return unavailable(res);
-      if (reading?!reading.action:req.method !== (isPost ? 'POST' : 'GET')) return res.status(405).json({ error: { code: 'METHOD_NOT_ALLOWED', message: 'This method is not supported.' } });
+      const mutation=isPost||((reading||profile)&&req.method!=='GET');
+      if (!isPost && !reading && !profile && !['/api/auth/ok','/api/account/session','/api/account/capabilities','/api/account/sessions'].includes(path)) return unavailable(res);
+      if (profile?!['GET','PATCH'].includes(req.method):reading?!reading.action:req.method !== (isPost ? 'POST' : 'GET')) return res.status(405).json({ error: { code: 'METHOD_NOT_ALLOWED', message: 'This method is not supported.' } });
       if (mutation) {
         requireOrigin(req, config.baseURL);
         if (!req.is('application/json')) throw new AccountRequestError(415,'JSON_REQUIRED','Send a JSON request.');
-        await new Promise((resolve,reject) => parser(req,res,(error) => error ? reject(error) : resolve()));
+        await new Promise((resolve,reject) => (path==='/api/account/imports'?importParser:parser)(req,res,(error) => error ? reject(error) : resolve()));
       }
       const origin = req.get('Origin');
       if (origin && origin !== config.baseURL) return res.status(403).json({ error: { code: 'ORIGIN_REJECTED', message: 'The request origin is not allowed.' } });
@@ -49,11 +51,17 @@ export function createAccountMiddleware({ env = process.env, initialize = async 
         if (value !== undefined) headers.set(key, Array.isArray(value) ? value.join(', ') : value);
       }
       const setCookie = (cookie) => res.append('Set-Cookie',cookie);
+      if(profile){
+        const identity=await service.identity(headers,setCookie);
+        if(identity.status!=='authenticated')throw new AccountRequestError(401,'SIGN_IN_REQUIRED','Sign in to continue.');
+        if(mutation){requireMutation(req,identity,config);await service.limitPrivate(identity);}
+        return res.json(mutation?await service.actions.updateProfile(req.body,identity,headers,setCookie):await service.actions.profile(identity,headers));
+      }
       if(reading){
         if(!service.reading)return unavailable(res);
         const identity=await service.identity(headers,setCookie);
         if(identity.status!=='authenticated')throw new AccountRequestError(401,'SIGN_IN_REQUIRED','Sign in to continue.');
-        if(mutation){requireMutation(req,identity,config);await service.limitPrivate(identity);}
+        if(mutation){requireMutation(req,identity,config);await service.limitPrivate(identity,reading.action);}
         const args=reading.action==='state'?[identity]:[req.method==='GET'?req.query:req.body,identity,reading.referenceId];
         return res.json(await service.reading[reading.action](...args));
       }

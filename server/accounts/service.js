@@ -11,10 +11,12 @@ import { createReadingActions } from './reading.js';
 import { assertReadingRole } from '../db/owner-transaction.js';
 import { createShelfActions } from './books.js';
 import { createHistoryActions } from './history.js';
+import { createImportActions } from './imports.js';
+import {createProfileActions} from './profile-actions.js';
 
 const ABSOLUTE_SESSION_MS = 30 * 86400 * 1000;
 
-export async function createAccountService(config) {
+export async function createAccountService(config,{checkPassword}={}) {
   const pool = new Pool({ connectionString: config.databaseURL, max: 4,
     connectionTimeoutMillis: 3000, idleTimeoutMillis: 30000, statement_timeout: 5000 });
   // Keep background pool errors from becoming uncaught exceptions; never log values.
@@ -35,11 +37,11 @@ export async function createAccountService(config) {
     };
     auth = createAccountAuth({ pool, config, sendVerificationEmail: mail('verify'),
       sendResetPassword: mail('reset'), onExistingUserSignUp: mail('duplicate') });
-    const credentials=createCredentialActions({auth,pool,config});
+    const credentials=createCredentialActions({auth,pool,config,checkPassword});
     const sessions=createSessionActions({auth,pool,consumeProof:credentials.consumeProof});
-    const actions = {...createAuthActions({ auth, pool, config }),...credentials,...sessions};
+    const actions = {...createAuthActions({ auth, pool, config,checkPassword }),...credentials,...sessions,...createProfileActions({auth,pool})};
     const reading=readingPool?createReadingActions({pool:readingPool,sessionActive:async(identity)=>Boolean((await pool.query('SELECT 1 FROM "session" WHERE id=$1 AND "userId"=$2 AND "expiresAt">now() AND "createdAt">now()-interval \'30 days\'',[identity.sessionId,identity.authUserId])).rowCount)}):null;
-    if(reading)Object.assign(reading,createShelfActions({owned:reading.owned,secret:config.secret}),createHistoryActions({owned:reading.owned}));
+    if(reading)Object.assign(reading,createShelfActions({owned:reading.owned,secret:config.secret}),createHistoryActions({owned:reading.owned}),createImportActions(reading));
     async function identity(headers, setCookie = () => {}) {
       const result = await auth.api.getSession({ headers, returnHeaders: true });
       const value = result.response;
@@ -58,7 +60,7 @@ export async function createAccountService(config) {
     }
     return {
       auth, handleAuth: toNodeHandler(auth), identity, actions, reading,
-      limitPrivate:(identity)=>consumeLimits(pool,config.secret,[{scope:'private-mutations',subject:identity.user.id,max:120,seconds:60}]),
+      limitPrivate:(identity,action)=>consumeLimits(pool,config.secret,[{scope:'private-mutations',subject:identity.user.id,max:120,seconds:60},...(action==='importGuest'?[{scope:'imports',subject:identity.user.id,max:5,seconds:3600}]:[])]),
       async session(headers, setCookie) {
         const { sessionId, authUserId, ...summary } = await identity(headers, setCookie);
         return summary;

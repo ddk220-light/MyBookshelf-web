@@ -8,6 +8,7 @@ const pages = new Map<string, SearchPage>();
 export type SearchView = { visibleCount: number; expandedKeys: string[]; scrollTop: number; visited: boolean };
 const views = new Map<string, SearchView>();
 const MAX_CANDIDATE_SETS = 20;
+export function clearSearchMemory(): void { candidates.clear();catalogs.clear();queries.clear();pages.clear();views.clear(); }
 
 function opaqueId(): string {
   const values = new Uint32Array(2);

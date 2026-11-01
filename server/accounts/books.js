@@ -43,7 +43,7 @@ export function createShelfActions({owned,secret}){
       if(!Number.isInteger(limit)||limit<1||limit>100||Object.keys(query).some(k=>!['cursor','limit'].includes(k)))throw invalid('Choose a shelf page size between 1 and 100.');
       return owned(identity,async(client,settings,id)=>{
         const cursor=query.cursor?decode(query.cursor,id,Number(settings.shelf_revision)):null;
-        const rows=(await client.query(`SELECT b.*,r.book_key,to_char(b.saved_at,'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at FROM user_books b JOIN book_refs r ON r.id=b.reference_id WHERE b.user_id=$1
+        const rows=(await client.query(`SELECT b.*,r.book_key,to_char(b.saved_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at FROM user_books b JOIN book_refs r ON r.id=b.reference_id WHERE b.user_id=$1
           ${cursor?'AND (b.saved_at,b.reference_id)<($3::timestamptz,$4::uuid)':''} ORDER BY b.saved_at DESC,b.reference_id DESC LIMIT $2`,cursor?[id,limit+1,cursor.at,cursor.id]:[id,limit+1])).rows;
         const page=rows.slice(0,limit),last=page.at(-1);
         return {books:page.map(bookDTO),...versions(settings),nextCursor:rows.length>limit?encode({owner:id,r:Number(settings.shelf_revision),at:last.cursor_at,id:last.reference_id}):null};
@@ -66,10 +66,11 @@ export function createShelfActions({owned,secret}){
       operationId(ref);strictObject(body,['shelfRevision','operationId']);revision(body.shelfRevision);
       return owned(identity,(client,settings,id)=>operation(client,id,'book-remove',{...body,referenceId:ref},async()=>{
         if(Number(settings.shelf_revision)!==body.shelfRevision)throw conflict();
-        const removed=(await client.query('DELETE FROM user_books WHERE user_id=$1 AND reference_id=$2 RETURNING *',[id,ref])).rows[0];
+        const removed=(await client.query(`DELETE FROM user_books WHERE user_id=$1 AND reference_id=$2 RETURNING *,
+          to_char(saved_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS saved_at_exact`,[id,ref])).rows[0];
         const updated=(await client.query('UPDATE user_settings SET shelf_revision=shelf_revision+1 WHERE user_id=$1 RETURNING *',[id])).rows[0];
         // The owner-private receipt holds the exact removed row for conditional undo.
-        return {status:'removed',referenceId:ref,undoUntil:removed?new Date(Date.now()+10000).toISOString():null,removed:removed?{snapshot:removed.display_snapshot,savedAt:new Date(removed.saved_at).toISOString()}:null,...versions(updated)};
+        return {status:'removed',referenceId:ref,undoUntil:removed?new Date(Date.now()+10000).toISOString():null,removed:removed?{snapshot:removed.display_snapshot,savedAt:removed.saved_at_exact}:null,...versions(updated)};
       }));
     },
     async undo(body,identity){

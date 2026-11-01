@@ -42,7 +42,7 @@ concurrent identity provisioning, deleting identities, origin checks and account
 outage isolation. These tests are included in the server test command and CI,
 which now provisions a disposable Postgres service.
 
-Full server suite at this checkpoint: 501 passing. Client suite: 120 passing after compatible
+Full server suite at this checkpoint: 503 passing. Client suite: 120 passing after compatible
 security maintenance (Vite 6.4.5, Vitest 4.1.12 and patched transitive packages).
 Dependency audit: zero findings at this checkpoint. No claim of final browser,
 real-provider, real-mail or release validation is made.
@@ -92,11 +92,27 @@ Current verification also covers password-proof rotation, atomic notification
 failure rollback with token/session preservation, concurrent library edits,
 operation receipts, private metadata, long valid VPL identities, microsecond
 pagination, the 1,000-book boundary, history opt-in/pause/expiry/trim and late writes.
-Production build passes. Actual frontend journeys remain pending.
+Production build passes. The new client has 127 passing tests, including delayed identity responses,
+retry request identity, cache isolation, compare-before-remove import cleanup,
+uncertain sign-out, initial-form preservation and scanner-safe links. Six real
+loopback browser→API→Postgres journeys pass on Chromium desktop/mobile in all three
+lights, including signup/verification/sign-in/profile/sign-out and account-settings
+axe checks. Mail transport in those journeys is an explicitly synthetic outbox
+reader; this is not real delivery/provider evidence.
 
-Next: atomic guest import, account entry/settings screens and asynchronous client
-repository/identity isolation; then the remaining credential/provider/profile and
-export/deletion stories. Real Google/Apple configuration and mail-domain delivery
+Atomic guest import and the asynchronous account/guest client repositories are
+now implemented, together with entry/recovery/import screens and initial settings
+for private name, password, history and signed-in devices. Account-linked reader,
+availability and lookup caches stay in memory. Identity invalidation clears search,
+reader, catalog and library-discovery memory, with a nonce-only cross-tab fallback.
+Unknown/unavailable sessions require explicit guest continuation. A persistent
+non-sensitive guest override prevents private hydration after uncertain sign-out.
+The local browser harness refuses non-loopback/non-test databases and is absent
+from deployed entry points.
+
+S16 #101, S18 #102–103, S17 #105 and S21 #106 are published and linked.
+Next: verified email changes, Google/Apple and explicit method management, then
+export/deletion, retention/restore and remaining browser/release evidence. Real Google/Apple configuration and mail-domain delivery
 must be proved before account release. Resend's initial legal-policy acceptance
 was presented to the owner and remains pending; no terms were accepted implicitly.
 The temporary provisioning credential was removed from session storage at the
