@@ -1,6 +1,6 @@
 # MyBookshelf web handoff
 
-Updated 2026-10-31. Active repository:
+Updated 2026-11-01. Active repository:
 **https://github.com/ddk220-light/MyBookshelf-web**, default branch `main`.
 The owner has chosen to do all future web work in this repository. Build, test,
 plan and implement here directly. Do not depend on the previous private checkout
@@ -53,7 +53,7 @@ are available here without the private branch.
   Repository protection and vulnerability-reporting settings also need owner
   administration. Keep the previous production deployment as the rollback target.
 
-## Account work: architecture chosen, implementation not started
+## Account work: document packet ready for review
 
 The owner requested secure signup with name/email/password, verification,
 sign-in, password recovery, sign-out, Google and Apple, and synchronization of
@@ -83,16 +83,16 @@ privacy, moderation, work identity, deletion and acceptance criteria.
 2. Open the [Account Management project](https://github.com/users/ddk220-light/projects/3)
    and [planning index #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1).
    The native board and 55 child issues now exist. Reuse them.
-3. Start [D01: write the PRD](https://github.com/ddk220-light/MyBookshelf-web/issues/2).
-   [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7) records the
-   owner's PRD review. [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56)
-   then has Claude create a reviewable UI artifact. D02–D05 produce UX,
-   engineering/test, UI and detailed delivery specifications using that artifact.
-   R02 includes the Claude artifact; T04 compares implementation with its approved
-   version. These artifacts have not yet been created.
-4. Present the concrete versioned packet for
-   [R02 / #8](https://github.com/ddk220-light/MyBookshelf-web/issues/8). Implementation
-   and provisioning wait for explicit owner approval. No approval is recorded yet.
+3. Review the [version 0.1 account packet](accounts/README.md): PRD, UX,
+   engineering design, test strategy, UI specification, delivery tasks and Claude
+   handoff. [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7)
+   now reviews all document drafts, as requested by the owner. DEC-01–10 are
+   concrete proposals, not recorded approvals.
+4. After R01 approval, [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56)
+   has Claude create the interactive UI artifact. Reconcile the specs and publish
+   D05's specified child tasks before [R02 / #8](https://github.com/ddk220-light/MyBookshelf-web/issues/8).
+   R02 approves the artifact and final implementation packet. Provisioning and
+   runtime feature work remain behind R02. No approval or Claude artifact exists yet.
 5. Build with focused tests, then complete final T01–T06 validation and operations
    readiness. [R03 / #9](https://github.com/ddk220-light/MyBookshelf-web/issues/9)
    reviews the tested release before L01 production rollout.
@@ -104,20 +104,27 @@ integration-credential failure is historical; see the updated
 account services or implement features. Social discovery remains future scope.
 
 The working branch is `account-settings`, with worktree
-`/workspace/worktrees/MyBookshelf-web-account-settings` in this environment.
+`/workspace/MyBookshelf-web-accounts` in this environment. The separate
+`research/free-content-discovery` worktree is untouched by account documentation.
 
 ## Account project publication verification
 
-Verified 56 unique project items, including the existing roadmap, with all items
-at Todo. The 55 new issues have kind/stage labels and native parents; 114 explicit
-blocked-by links encode the plan. Owner-review, core-sync, final-validation and
+The original publication verified 56 unique project items, including the existing roadmap,
+with all items at Todo. D01–D04 document drafts are now ready for review;
+D05 has a delivery draft with native child-task publication remaining before R02.
+The 55 child issues retain kind/stage labels and native parents; 116 native
+blocked-by links encode the revised plan. The revised document-first sequence removes
+D02/D03 dependence on R01 and D04 dependence on S22. R01 reviews D01–D05
+drafts; it consumes D05's draft without waiting for its later child publication.
+Owner-review, core-sync, final-validation and
 rollout dependency sets were read back and checked. The project has an All work
 table plus six focused views, with labels, parent issues and sub-issue progress
 visible. All account implementation paths reach R02; rollout reaches R03.
 
 Documentation links, dependency acyclicity and whitespace checks passed. This was
-planning publication only; application tests were not rerun and no account
-feature or design deliverable is marked complete.
+documentation work only; application tests were not rerun. The version 0.1
+designs are drafts ready for review, and no runtime feature is implemented.
+D05 child-issue publication and Claude artifact reconciliation remain before R02.
 
 ## This handoff's verification
 
