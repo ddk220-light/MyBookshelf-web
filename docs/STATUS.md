@@ -82,11 +82,14 @@ privacy, moderation, work identity, deletion and acceptance criteria.
    [delivery backlog](plans/2026-10-31-accounts-delivery-backlog.md).
 2. Open the [Account Management project](https://github.com/users/ddk220-light/projects/3)
    and [planning index #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1).
-   The native board and 54 child issues now exist. Reuse them.
+   The native board and 55 child issues now exist. Reuse them.
 3. Start [D01: write the PRD](https://github.com/ddk220-light/MyBookshelf-web/issues/2).
    [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7) records the
-   owner's PRD review. D02–D05 then produce UX, engineering/test, UI and detailed
-   delivery specifications. Their artifacts have not yet been written.
+   owner's PRD review. [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56)
+   then has Claude create a reviewable UI artifact. D02–D05 produce UX,
+   engineering/test, UI and detailed delivery specifications using that artifact.
+   R02 includes the Claude artifact; T04 compares implementation with its approved
+   version. These artifacts have not yet been created.
 4. Present the concrete versioned packet for
    [R02 / #8](https://github.com/ddk220-light/MyBookshelf-web/issues/8). Implementation
    and provisioning wait for explicit owner approval. No approval is recorded yet.
@@ -105,8 +108,8 @@ The working branch is `account-settings`, with worktree
 
 ## Account project publication verification
 
-Verified 55 unique project items, including the existing roadmap, with all items
-at Todo. The 54 new issues have kind/stage labels and native parents; 111 explicit
+Verified 56 unique project items, including the existing roadmap, with all items
+at Todo. The 55 new issues have kind/stage labels and native parents; 114 explicit
 blocked-by links encode the plan. Owner-review, core-sync, final-validation and
 rollout dependency sets were read back and checked. The project has an All work
 table plus six focused views, with labels, parent issues and sub-issue progress

@@ -12,7 +12,8 @@ retired authentication and unrelated research archives are outside its scope.
   data, account lifecycle, existing book identities and security boundaries.
 - [Delivery backlog](plans/2026-10-31-accounts-delivery-backlog.md): the published
   project, five definition tasks, owner review gates, seven epics, 21 account
-  stories, early prerequisites and final validation. Seven social discovery
+  implementation stories, a Claude-created UI-artifact story after the PRD, early
+  prerequisites and final validation. Seven social discovery
   stories remain outside the account release.
 - [Work-aware search](work-aware-search.md): how the current code already uses
   Open Library works, editions, ISBNs and catalog records; limits of grouping.

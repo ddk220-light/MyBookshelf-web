@@ -4,9 +4,9 @@ Updated 2026-10-31. Owner: Deepak Ravikumar. Repository: `ddk220-light/MyBookshe
 
 The [Account Management project](https://github.com/users/ddk220-light/projects/3)
 and [planning index #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1)
-organize the work. There are 54 child issues plus the existing index: seven epics,
+organize the work. There are 55 child issues plus the existing index: seven epics,
 five definition tasks, three owner review gates, four prerequisite tasks,
-21 account stories, six final validation tasks, one rollout task and seven future
+21 implementation stories, one Claude UI-artifact story, six final validation tasks, one rollout task and seven future
 discovery stories. Planning IDs below are distinct from GitHub issue numbers.
 
 The [foundation analysis](2026-10-31-accounts-social-foundation.md) remains the
@@ -18,10 +18,11 @@ has not started; proposed schemas do not authorize migrations.
 
 1. D01 writes the PRD; R01 records Deepak's explicit review of its version and
    resolves scope/behavior decisions before UX and engineering design finalize.
-2. D02 creates UX flows, D03 engineering design and test strategy, D04 UI design,
+2. S22 has Claude create a reviewable UI artifact from the approved PRD,
+   coordinating with D02 UX flows. D03 creates engineering design and test strategy, D04 UI design,
    and D05 concrete child tasks and the delivery plan. D05 includes estimates,
    ownership, dependency checks and acceptance-to-test traceability.
-3. R02 reviews the complete versioned packet. Implementation and provisioning
+3. R02 reviews the complete versioned packet, including Claude's artifact. Implementation and provisioning
    depend on this approval. Closing a drafting issue alone is not approval.
 4. P01–P04 establish staging, database, mail and provider prerequisites early.
    Implement stories with focused tests. Core storage integration can proceed
@@ -43,6 +44,11 @@ The definition tasks create `docs/accounts/PRD.md`, `UX_DESIGN.md`,
 Final validation and operations create `VALIDATION.md` and `OPERATIONS.md` in the
 same directory. Link reviewable screen artifacts and exact commits from issues.
 
+S22 retains a Claude-created preview and source/export under
+`docs/design/accounts/claude-artifact/`, with creator, PRD/artifact versions,
+review and implementation handoff recorded in `docs/accounts/UI_ARTIFACT.md`.
+D04 uses this artifact as visual input; T04 validates against the approved version.
+
 ## Board conventions
 
 Status starts at Todo; it does not imply readiness or approval. Labels distinguish
@@ -62,15 +68,21 @@ acceptance and require separate requirements and review.
 | [D01 / #2](https://github.com/ddk220-light/MyBookshelf-web/issues/2) | **Write the account-management PRD** — Goals, users, MVP/non-goals, account flows, signup fields, guest behavior, sync/history/privacy rules, success criteria, failure behavior, dependencies, open decisions and measurable release acceptance. Social features explicitly deferred. | [E00 / #10](https://github.com/ddk220-light/MyBookshelf-web/issues/10) | Foundation analysis / child exit criteria |
 | [D02 / #3](https://github.com/ddk220-light/MyBookshelf-web/issues/3) | **Design account UX journeys and reviewable screen flows** — Desktop/mobile journeys for signup, verification, sign-in, recovery, provider return, explicit linking, sign-out, settings, guest import and sync failures; accessible content and all empty/loading/error states. | [E00 / #10](https://github.com/ddk220-light/MyBookshelf-web/issues/10) | [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7) |
 | [D03 / #4](https://github.com/ddk220-light/MyBookshelf-web/issues/4) | **Write engineering design, integration-spike plan and test strategy** — Versioned auth integration spike, schema/migrations, ownership/RLS, APIs, identity reuse, concurrency/import/history rules, runtime roles, environments, mail/OAuth setup, threat review, test strategy, rollout/rollback and operational responsibilities. | [E00 / #10](https://github.com/ddk220-light/MyBookshelf-web/issues/10) | [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7) |
-| [D04 / #5](https://github.com/ddk220-light/MyBookshelf-web/issues/5) | **Write UI design and implementation specification** — Route/component/state inventory, storage/auth adapters, API contracts, session/cache isolation, responsive/theme behavior, accessibility and visual acceptance tied to current design references. | [E00 / #10](https://github.com/ddk220-light/MyBookshelf-web/issues/10) | [D02 / #3](https://github.com/ddk220-light/MyBookshelf-web/issues/3), [D03 / #4](https://github.com/ddk220-light/MyBookshelf-web/issues/4) |
+| [D04 / #5](https://github.com/ddk220-light/MyBookshelf-web/issues/5) | **Write UI design and implementation specification** — Route/component/state inventory, storage/auth adapters, API contracts, session/cache isolation, responsive/theme behavior, accessibility and visual acceptance tied to current design references. | [E00 / #10](https://github.com/ddk220-light/MyBookshelf-web/issues/10) | [D02 / #3](https://github.com/ddk220-light/MyBookshelf-web/issues/3), [D03 / #4](https://github.com/ddk220-light/MyBookshelf-web/issues/4), [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56) |
 | [D05 / #6](https://github.com/ddk220-light/MyBookshelf-web/issues/6) | **Decompose approved requirements into reviewable delivery tasks** — Each ready story has linked, independently verifiable engineering/UI/configuration/test tasks, dependencies and completion criteria; missing decisions become explicit definition tasks. Future stories receive requirements/discovery tasks before implementation decomposition. | [E00 / #10](https://github.com/ddk220-light/MyBookshelf-web/issues/10) | [D01 / #2](https://github.com/ddk220-light/MyBookshelf-web/issues/2), [D02 / #3](https://github.com/ddk220-light/MyBookshelf-web/issues/3), [D03 / #4](https://github.com/ddk220-light/MyBookshelf-web/issues/4), [D04 / #5](https://github.com/ddk220-light/MyBookshelf-web/issues/5) |
+
+## Claude UI-artifact story
+
+| ID / issue | Work and acceptance direction | Parent | Depends on |
+| --- | --- | --- | --- |
+| [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56) | **Claude creates the account-management UI artifact after the PRD** — Interactive desktop/mobile artifact in all reading lights, material flow/error states, accessible behavior, inspectable source/export and versioned handoff for owner review. | [E00 / #10](https://github.com/ddk220-light/MyBookshelf-web/issues/10) | [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7) |
 
 ## Owner review gates
 
 | ID / issue | Work and acceptance direction | Parent | Depends on |
 | --- | --- | --- | --- |
 | [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7) | **Review and approve the PRD** — Deepak reviews the versioned PRD and open decisions; record an explicit approve/changes-requested decision with the reviewed commit or document version. | [E00 / #10](https://github.com/ddk220-light/MyBookshelf-web/issues/10) | [D01 / #2](https://github.com/ddk220-light/MyBookshelf-web/issues/2) |
-| [R02 / #8](https://github.com/ddk220-light/MyBookshelf-web/issues/8) | **Review and approve UX, UI, engineering design and delivery plan** — Deepak receives the PRD, UX flows, UI screens, engineering design, test strategy and decomposed plan as one review packet. | [E00 / #10](https://github.com/ddk220-light/MyBookshelf-web/issues/10) | [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7), [D02 / #3](https://github.com/ddk220-light/MyBookshelf-web/issues/3), [D03 / #4](https://github.com/ddk220-light/MyBookshelf-web/issues/4), [D04 / #5](https://github.com/ddk220-light/MyBookshelf-web/issues/5), [D05 / #6](https://github.com/ddk220-light/MyBookshelf-web/issues/6) |
+| [R02 / #8](https://github.com/ddk220-light/MyBookshelf-web/issues/8) | **Review and approve UX, UI, engineering design and delivery plan** — Deepak receives the PRD, Claude-created UI artifact, UX flows, UI screens, engineering design, test strategy and decomposed plan as one review packet. | [E00 / #10](https://github.com/ddk220-light/MyBookshelf-web/issues/10) | [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7), [D02 / #3](https://github.com/ddk220-light/MyBookshelf-web/issues/3), [D03 / #4](https://github.com/ddk220-light/MyBookshelf-web/issues/4), [D04 / #5](https://github.com/ddk220-light/MyBookshelf-web/issues/5), [D05 / #6](https://github.com/ddk220-light/MyBookshelf-web/issues/6), [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56) |
 | [R03 / #9](https://github.com/ddk220-light/MyBookshelf-web/issues/9) | **Review tested release and approve production rollout** — Deepak reviews the actual staging candidate, validation report, remaining defects, privacy text and release/rollback plan. | [E05 / #15](https://github.com/ddk220-light/MyBookshelf-web/issues/15) | [S19 / #39](https://github.com/ddk220-light/MyBookshelf-web/issues/39), [S20 / #40](https://github.com/ddk220-light/MyBookshelf-web/issues/40) |
 
 ## Epics
