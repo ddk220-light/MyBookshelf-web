@@ -11,8 +11,9 @@ discovery stories. Planning IDs below are distinct from GitHub issue numbers.
 
 The [foundation analysis](2026-10-31-accounts-social-foundation.md) remains the
 architecture direction. The [version 0.2 document packet](../accounts/README.md) now contains the PRD,
-UX, engineering, UI, test strategy and detailed delivery drafts for R01 review.
-They are not approved artifacts; Claude's visual artifact follows that review. Implementation
+UX, engineering, UI, test strategy and detailed delivery documents approved in R01
+on 2026-11-01 at `5056de00bc1091fd11a8b49cf358e2594c37a49e`. Codex is paused
+for Claude’s visual artifact check-in; remaining D05 publication follows it. Implementation
 has not started; proposed schemas do not authorize migrations.
 
 ## Delivery and owner review gates

@@ -53,7 +53,7 @@ are available here without the private branch.
   Repository protection and vulnerability-reporting settings also need owner
   administration. Keep the previous production deployment as the rollback target.
 
-## Account work: document packet ready for review
+## Account work: documents approved; waiting for Claude artifact
 
 The owner requested secure signup with name/email/password, verification,
 sign-in, password recovery, sign-out, Google and Apple, and synchronization of
@@ -83,16 +83,17 @@ privacy, moderation, work identity, deletion and acceptance criteria.
 2. Open the [Account Management project](https://github.com/users/ddk220-light/projects/3)
    and [planning index #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1).
    The native board and 55 child issues now exist. Reuse them.
-3. Review the [version 0.2 account packet](accounts/README.md): PRD, UX,
+3. Deepak approved the [version 0.2 account packet](accounts/README.md): PRD, UX,
    engineering design, test strategy, UI specification, delivery tasks and Claude
    handoff. [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7)
-   now reviews all document drafts, as requested by the owner. DEC-01–10 are
-   concrete proposals, not recorded approvals.
-4. After R01 approval, [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56)
-   has Claude create the interactive UI artifact. Reconcile the specs and publish
+   records approval on 2026-11-01 (America/Los_Angeles) for commit
+   `5056de00bc1091fd11a8b49cf358e2594c37a49e`, including DEC-01–10.
+   No changes or exceptions were requested.
+4. Wait for Claude’s check-in for [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56)
+   (interactive UI artifact), as explicitly requested by the owner. Then reconcile the specs and publish
    D05's specified child tasks before [R02 / #8](https://github.com/ddk220-light/MyBookshelf-web/issues/8).
    R02 approves the artifact and final implementation packet. Provisioning and
-   runtime feature work remain behind R02. No approval or Claude artifact exists yet.
+   runtime feature work remain behind R02. Artifact/design and release approval remain pending.
 5. Build with focused tests, then complete final T01–T06 validation and operations
    readiness. [R03 / #9](https://github.com/ddk220-light/MyBookshelf-web/issues/9)
    reviews the tested release before L01 production rollout.
@@ -111,13 +112,14 @@ shared review references.
 ## Account project publication verification
 
 The original publication verified 56 unique project items, including the existing roadmap,
-with all items at Todo. D01–D04 document drafts are now ready for review;
+with all items at Todo. D01–D04 drafts and R01 document review are now complete;
 D05 has a delivery draft with native child-task publication remaining before R02.
 The 55 child issues retain kind/stage labels and native parents; 117 native
 blocked-by links encode the revised plan. The revised document-first sequence removes
 D02/D03 dependence on R01 and D04 dependence on S22. R01 reviews D01–D05
 drafts; it consumes D05's draft without waiting for its later child publication.
-D05's remaining publication is explicitly blocked by R01.
+D05’s R01 prerequisite is now satisfied; remaining work is held for Claude’s
+artifact check-in at the owner’s request.
 Owner-review, core-sync, final-validation and
 rollout dependency sets were read back and checked. The project has an All work
 table plus six focused views, with labels, parent issues and sub-issue progress
@@ -125,7 +127,7 @@ visible. All account implementation paths reach R02; rollout reaches R03.
 
 Documentation links, dependency acyclicity and whitespace checks passed. This was
 documentation work only; application tests were not rerun. The version 0.2 packet's
-designs are drafts ready for review, and no runtime feature is implemented.
+documents are approved at R01, and no runtime feature is implemented.
 D05 child-issue publication and Claude artifact reconciliation remain before R02.
 
 ## This handoff's verification

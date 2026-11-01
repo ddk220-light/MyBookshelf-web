@@ -1,7 +1,7 @@
 # Claude UI artifact: handoff and review record
 
 Version 0.1, 2026-11-01. Story [S22 #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56).
-**Artifact status: not started.** Creator: Claude. Reviewer: Deepak Ravikumar.
+**Artifact status: awaiting Claude’s check-in.** Creator: Claude. Reviewer: Deepak Ravikumar.
 This file is the brief; it is not a Claude-created artifact or an approval.
 
 ## Start condition
@@ -9,7 +9,9 @@ This file is the brief; it is not a Claude-created artifact or an approval.
 Start only after [R01 #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7)
 records Deepak's approval of the exact document-packet commit. Copy that commit
 and decision into the record below. The owner requested documents for review
-first, then Claude's artifact. No automatic Claude handoff is triggered here.
+first, then Claude's artifact. R01 was approved in chat on 2026-11-01
+(America/Los_Angeles) for `5056de00bc1091fd11a8b49cf358e2594c37a49e`.
+Codex is paused for Claude’s check-in. No automatic Claude invocation is triggered here.
 
 ## Brief to give Claude
 
@@ -46,7 +48,7 @@ reviewed requirements. Changes to product behavior must be called out for R02.
 
 ## Completion and reconciliation
 
-- [ ] R01 approval and input commit recorded.
+- [x] R01 approval and input commit recorded.
 - [ ] Claude-produced preview and inspectable source/export available to Deepak.
 - [ ] Each UX flow and UI route maps to named artifact screens and material states.
 - [ ] Desktop/mobile and all three lights inspected; keyboard/focus checks recorded.
@@ -58,7 +60,7 @@ reviewed requirements. Changes to product behavior must be called out for R02.
 
 | Field | Value |
 | --- | --- |
-| R01-approved packet commit | Pending owner review |
+| R01-approved packet commit | `5056de00bc1091fd11a8b49cf358e2594c37a49e` — Deepak, 2026-11-01 (America/Los_Angeles); chat approval recorded in R01 |
 | Claude artifact version/source commit | Not created |
 | Preview / source export | Not created |
 | Coverage inventory | Pending UX-01–11 and UI route mapping |

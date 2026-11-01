@@ -1,17 +1,20 @@
 # Account management: review packet
 
-Packet version **0.2 — ready for R01 review**, 2026-11-01. Product owner/reviewer:
-Deepak Ravikumar. Draft author: Codex. All choices below are proposals pending
-review; no account services or application code have been implemented.
+Packet version **0.2 — R01 approved**, 2026-11-01. Product owner/reviewer:
+Deepak Ravikumar. Draft author: Codex. Deepak approved the document packet and
+DEC-01–10 in chat on 2026-11-01 (America/Los_Angeles), at commit
+`5056de00bc1091fd11a8b49cf358e2594c37a49e`. No account services or application code have been implemented.
 
 Start with the PRD and the decisions below. The other documents specify how the
 experience, implementation and release would meet those requirements.
 
-This revision retains the ten product proposals below. Engineering/UI/test
+This revision retains the ten product decisions below. Engineering/UI/test
 clarifications cover maximum-size imports, private metadata snapshots, reset
 atomicity, identity-cache clearing and recovery after a lost deletion response.
 Unchanged documents retain their own version 0.1; review the whole packet at its
-linked commit. No review approval has been recorded.
+linked commit. R01 approval is recorded in [#7](https://github.com/ddk220-light/MyBookshelf-web/issues/7).
+The owner asked Codex to wait for Claude’s UI artifact check-in; remaining D05
+publication/reconciliation resumes afterward. R02 and R03 remain pending.
 
 | Document | Review purpose | Delivery issue |
 | --- | --- | --- |
@@ -25,11 +28,11 @@ linked commit. No review approval has been recorded.
 
 ## Decisions for this review
 
-These are proposed answers, not unresolved placeholders. Approve them together
-or identify a decision ID to change. Engineering feasibility checks are tracked
+These decisions were accepted in R01 with no requested changes or exceptions.
+Engineering feasibility checks are tracked
 separately in S01 and do not require choosing an auth-library version now.
 
-| ID | Proposed decision | Why / tradeoff |
+| ID | Approved decision | Why / tradeoff |
 | --- | --- | --- |
 | DEC-01 | Release includes email/password, Google **and** Apple. All reading data and names stay private; social features are deferred. | Provider setup is part of the critical path; no silent Apple deferral. |
 | DEC-02 | Accounts hold up to **1,000 saved references**; guest limit remains 100. One selected library. Appearance, shelf sort and companion preferences remain device-local. | Useful cross-device capacity with bounded operations; no broader settings sync in v1. |
@@ -49,18 +52,18 @@ This supersedes the older PRD-only-first sequence in the original backlog.
 
 1. **R01 / [#7](https://github.com/ddk220-light/MyBookshelf-web/issues/7): review this document packet.**
    Record the exact Git commit, DEC-01–10 decisions, requested changes and Deepak's
-   explicit decision. Current decision: **pending**.
+   explicit decision. Current decision: **approved, 2026-11-01**, for the commit above.
 2. **S22:** after R01 approval, Claude makes the interactive UI artifact from the
    reviewed packet. Its source, preview, state coverage and deviations are recorded
-   in [UI_ARTIFACT.md](UI_ARTIFACT.md). Current artifact: **not started**.
+   in [UI_ARTIFACT.md](UI_ARTIFACT.md). Current artifact: **awaiting Claude’s check-in**.
 3. **R02 / [#8](https://github.com/ddk220-light/MyBookshelf-web/issues/8): review Claude's artifact and reconciled documents/tasks.**
    Explicit approval authorizes provisioning and feature implementation. Current
    decision: **pending**. A merged documentation PR does not constitute approval.
 4. **R03 / [#9](https://github.com/ddk220-light/MyBookshelf-web/issues/9): review the tested staging release**, then L01 production rollout.
 
 For each review, append reviewer/date, immutable artifact commit(s), decision,
-comment disposition and accepted exceptions to its issue. No reviewer decision
-has been recorded in this draft. Changed product behavior returns to the relevant
+comment disposition and accepted exceptions to its issue. R01 records the owner’s
+chat approval; R02/R03 remain pending. Changed product behavior returns to the relevant
 review before implementation continues.
 
 ## Evidence and limits

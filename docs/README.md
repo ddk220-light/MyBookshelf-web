@@ -5,11 +5,11 @@ This repository contains the current web code, tests, runtime inputs, CI,
 deployment configuration and the recent work analysis. Native app source,
 retired authentication and unrelated research archives are outside its scope.
 
-## Accounts: document review, then Claude UI artifact
+## Accounts: documents approved; awaiting Claude UI artifact
 
 - [Account review packet](accounts/README.md): PRD, UX, engineering, test strategy,
-  UI specification, delivery tasks and Claude handoff, ready for R01 document
-  review. Claude creates the artifact after that review; R02 gates implementation.
+  UI specification, delivery tasks and Claude handoff, approved in R01. Await
+  Claude’s artifact check-in; R02 gates implementation.
 - [Architecture and data structure](plans/2026-10-31-accounts-social-foundation.md):
   open-source auth options, Better Auth/Postgres recommendation, private reading
   data, account lifecycle, existing book identities and security boundaries.
