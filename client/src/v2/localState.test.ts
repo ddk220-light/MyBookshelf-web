@@ -41,10 +41,11 @@ describe('anonymous browser state', () => {
 
     expect(writeAnonymousWebState(next, storage)).toBe(true);
     expect(JSON.parse(storage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!)).toEqual({
-      version: 1,
+      version: 2,
       selectedLibraryId: 'in:chennai-university',
       recentBooks: [{ ...book, source: 'isbn', viewedAt: '2026-08-03T12:00:00.000Z' }],
       savedBooks: [],
+      savedContent: [],
     });
   });
 
@@ -69,7 +70,7 @@ describe('anonymous browser state', () => {
   it('safely resets malformed or unavailable storage', () => {
     const corrupt = new MemoryStorage();
     corrupt.setItem(ANONYMOUS_WEB_STORAGE_KEY, '{not json');
-    expect(readAnonymousWebState(corrupt)).toEqual({ version: 1, selectedLibraryId: null, recentBooks: [], savedBooks: [] });
+    expect(readAnonymousWebState(corrupt)).toEqual({ version: 2, selectedLibraryId: null, recentBooks: [], savedBooks: [], savedContent: [] });
     expect(readAnonymousWebStateWithStatus(corrupt).status).toBe('corrupt');
     expect(readAnonymousWebStateWithStatus(null).status).toBe('unavailable');
     expect(writeAnonymousWebState(readAnonymousWebState(null), null)).toBe(false);

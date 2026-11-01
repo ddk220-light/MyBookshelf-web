@@ -1,30 +1,34 @@
 import type { Availability, PublicBook, PublicLibrary, PublicLibraryPage, LibraryDiscovery, LibraryAreas, Place } from './types';
+import type { ContentSourceStatus } from './contentTypes';
 
 type ApiErrorBody = { error?: { code?: string; message?: string } };
 
 export class PublicApiError extends Error {
   readonly code: string;
   readonly status: number;
+  readonly sources?: ContentSourceStatus[];
 
-  constructor({ code = 'REQUEST_FAILED', message = 'Something went wrong. Please try again.', status = 0 }: {
+  constructor({ code = 'REQUEST_FAILED', message = 'Something went wrong. Please try again.', status = 0, sources }: {
     code?: string;
     message?: string;
     status?: number;
+    sources?: ContentSourceStatus[];
   } = {}) {
     super(message);
     this.name = 'PublicApiError';
     this.code = code;
     this.status = status;
+    if (sources) this.sources = sources;
   }
 }
 
-async function post<T>(path: string, body: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
+export async function post<T>(path: string, body: Record<string, unknown>, signal?: AbortSignal, progress?:(source:ContentSourceStatus)=>void): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`/api/v2${path}`, {
       method: 'POST',
       credentials: import.meta.env.VITE_DEPLOYMENT_ENV === 'preview' ? 'same-origin' : 'omit',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json',...progress?{Accept:'application/x-ndjson'}:{} },
       body: JSON.stringify(body),
       signal,
     });
@@ -33,12 +37,35 @@ async function post<T>(path: string, body: Record<string, unknown>, signal?: Abo
     throw new PublicApiError({ code: 'NETWORK_ERROR', message: 'Unable to reach the catalog service.' });
   }
 
-  const data = await response.json().catch(() => ({})) as T & ApiErrorBody;
+  if(progress&&response.headers.get('content-type')?.includes('application/x-ndjson')){
+    const reader=response.body?.getReader();if(!reader)throw new PublicApiError();
+    const decoder=new TextDecoder();let pending='',bytes=0,result:T|undefined;
+    try{
+      while(true){const {value,done}=await reader.read();
+        if(value){bytes+=value.byteLength;if(bytes>4*1024*1024)throw new PublicApiError();pending+=decoder.decode(value,{stream:true});}
+        const lines=pending.split('\n');pending=lines.pop()!;
+        for(const line of lines){if(!line.trim())continue;const event=JSON.parse(line);
+          if(event.type==='source'){
+            if(typeof event.source?.id!=='string'||typeof event.source.status!=='string')throw new PublicApiError();
+            progress(event.source);
+          }
+          else if(event.type==='result')result=event.result as T;
+          else if(event.type==='error')throw new PublicApiError({code:event.error?.code,message:event.error?.message,status:event.status,sources:event.sources});
+        }
+        if(done)break;
+      }
+      if(result===undefined||pending.trim())throw new PublicApiError({code:'CONTENT_UNAVAILABLE',message:'The sources could not finish answering. Please try again.'});
+      return result;
+    }catch(error){if(error instanceof PublicApiError||signal?.aborted)throw error;throw new PublicApiError({code:'CONTENT_UNAVAILABLE',message:'The sources could not finish answering. Please try again.'});}
+    finally{await reader.cancel().catch(()=>{});}
+  }
+  const data = await response.json().catch(() => ({})) as T & ApiErrorBody & { sources?: ContentSourceStatus[] };
   if (!response.ok) {
     throw new PublicApiError({
       code: data.error?.code,
       message: data.error?.message,
       status: response.status,
+      sources: data.sources,
     });
   }
   return data;

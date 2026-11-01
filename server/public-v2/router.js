@@ -7,6 +7,7 @@ import { createPublicCatalogBookService } from './catalogBooks.js';
 import { createDiscoveryService } from './discovery.js';
 import { createPlaceSearch } from './places.js';
 import { createRedactedTelemetrySink } from './telemetry.js';
+import { mountContentRoutes } from './content.js';
 import {
   PublicV2ValidationError,
   parseAvailability,
@@ -82,6 +83,7 @@ export function createPublicV2Router({
   availability = null,
   rateLimit = {},
   telemetry = createRedactedTelemetrySink(),
+  content,
 } = {}) {
   const router = Router();
   const bookService = books || createPublicBookService({ catalogs: createPublicCatalogBookService({ directory }) });
@@ -95,6 +97,7 @@ export function createPublicV2Router({
     next();
   });
   router.use(createIpRateLimiter(rateLimit));
+  mountContentRoutes(router, content);
 
   router.post('/places/search', route(telemetry, 'place_search', async (req, res) => {
     res.json({ places: await places(parsePlaceSearch(req.body)) });

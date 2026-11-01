@@ -9,6 +9,7 @@ import { Notice } from '../Notice';
 import { Sheet } from '../Sheet';
 import { DogAnimation } from '../DogAnimation';
 import { useBookScreen } from './useBookScreen';
+import { AlsoFree } from '../content/AlsoFree';
 import {useAccountSession} from '../../auth/AccountSessionProvider';
 export { withCatalogTitle } from './useBookScreen';
 
@@ -62,6 +63,7 @@ export function BookPage() {
           {library && <CatalogDetails library={library} availability={availability} saved={saved} showIdentity={false} showChange={false} />}
           <LibraryAttribution attribution={availability?.attribution || library?.attribution} />
         </section>
+        {import.meta.env.VITE_CONTENT_DISCOVERY_ENABLED === 'true' && <AlsoFree book={book}/>}
         <section className="reader-book-about"><h2>About this book</h2>
           <p className="story-text">{description ? fullStory ? description : short : 'No description available.'}</p>
           {short !== description && <button className="inline-disclosure" aria-expanded={fullStory} onClick={() => setFullStory(value => !value)}>{fullStory ? 'Less' : 'More'}</button>}

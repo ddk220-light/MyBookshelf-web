@@ -1,0 +1,21 @@
+export type ContentKind = 'book' | 'chapter' | 'article' | 'preprint' | 'thesis' | 'report' | 'learning_resource' | 'audiobook' | 'other';
+export type ContentSourceStatus = { id: string; name?: string; status: string; returned: number;
+  scope?: string; complete?: boolean; catalogRecords?: number; freshness?: string; importedAt?: string; truncated?: boolean;retryable?:boolean };
+export type ContentItem = {
+  key: string; kind: ContentKind; title: string; contributors: Array<{ name: string; role: string }>;
+  identifiers: Array<{ scheme: string; value: string }>; languages: string[]; subjects: string[];
+  publishedAt?: string; version?: string; container?: { title: string }; flags?: string[];
+  collections?:string[];publisher?:string;readingLevel?:{publisher:string;label:string};originalLanguage?:string;
+  access: 'free_full_text' | 'free_account_required' | 'unknown';
+  match?: { scheme: string; value: string };
+  locations: Array<{ id: string; host: string; landingUrl: string; readerUrl?: string; access: string; version?:string;
+    license?: { id?: string; statement?: string; url?: string }; rightsJurisdiction?: string;
+    evidence: { sourceId: string; field: string; observedAt: string } }>;
+  provenance: Array<{ sourceId: string; sourceRecordId: string; recordUrl: string; retrievedAt: string }>;
+  relations: Array<{ kind: string; targetKey?: string; targetUrl?:string; evidence: string }>;
+  readingActions: Array<{ locationId: string; label: string; url: string; requiresAccount?:boolean; downloads: Array<{ url: string; mimeType: string }> }>;
+};
+export type ContentPage = { items: ContentItem[]; nextCursor: string | null; hiddenUnclear: number;
+  coverage: string; sources: ContentSourceStatus[]; policyRevision: string;sessionCursor?:string;availableLevels?:string[] };
+export type SavedContent = { kind: 'content'; contentKey: string; itemKind: ContentKind;
+  title: string; authors: string[]; host: string; savedAt: string };

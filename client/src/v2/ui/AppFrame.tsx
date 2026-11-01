@@ -71,7 +71,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const route = location.pathname.split('/')[2];
-    const names: Record<string, string> = { shelf: 'Your bookshelf', search: 'Search books', libraries: 'Choose a library', settings: 'Settings', books: 'Book details' };
+    const names: Record<string, string> = { shelf: 'Your bookshelf', search: 'Search books', libraries: 'Choose a library', settings: 'Settings', books: 'Book details', read: 'Free reading details' };
     const accountNames: Record<string, string> = {
       'sign-in': 'Sign in', 'sign-up': 'Create account', verify: 'Verify your email',
       'forgot-password': 'Reset your password', 'reset-password': 'Choose a new password',

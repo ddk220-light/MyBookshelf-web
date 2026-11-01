@@ -290,7 +290,10 @@ export class AccountRepository {
     if (!body) {
       body = {
         importId,
-        snapshot: structuredClone(snapshot),
+        // Account imports retain their approved library-book wire contract.
+        // Source-native content stays in the local browser shelf and cleanup
+        // preserves it rather than sending unrecognized identities to the API.
+        snapshot: structuredClone({version:1,selectedLibraryId:snapshot.selectedLibraryId,recentBooks:snapshot.recentBooks,savedBooks:snapshot.savedBooks}),
         includeHistory,
         libraryPolicy,
         settingsRevision: versions.settingsRevision,

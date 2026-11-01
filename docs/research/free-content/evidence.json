@@ -1,0 +1,230 @@
+{
+  "researchDate": "2026-10-31",
+  "provenance": "Reconstructed from earlier tool results in this conversation after environment replacement. This is not the original evidence.json and is not a new network check.",
+  "originalCommitReported": "ee7d88e",
+  "originalCommitRecovered": false,
+  "originalRawResponsesAvailable": false,
+  "originalResponseHashesAvailable": false,
+  "originalLedgerReportedCounts": {
+    "allFetchObservations": 85,
+    "apiProbes": 23,
+    "apiProbesHttp200": 20
+  },
+  "limitations": [
+    "Only the 23 API probe URLs/outcomes and selected findings recoverable from the conversation are reproduced here; the complete original 85-request documentation ledger is unavailable.",
+    "No response hashes were reconstructed or invented.",
+    "One-time small samples do not establish uptime, load capacity, complete coverage, rights, or integration correctness.",
+    "No end-to-end reader/download navigation or cross-country access test.",
+    "HTTP 200 for documentation may be an app shell; it is not a successful API probe.",
+    "No full catalog import, authenticated OpenAlex paging, OAI resumption cycle or Unpaywall DOI call was performed.",
+    "No new keys/accounts/email registrations or paid services were created.",
+    "Credential values and signed download URLs are excluded."
+  ],
+  "notableDocumentationFindings": [
+    {
+      "url": "https://gutendex.com/",
+      "finding": "Documentation recommended running your own server for long-term use."
+    },
+    {
+      "url": "https://standardebooks.org/feeds",
+      "finding": "New-release RSS/Atom public; other feeds benefit members/producers/sponsors."
+    },
+    {
+      "url": "https://openlibrary.org/developers/api",
+      "finding": "Human-centered lookup supported; APIs not intended as bulk/high-traffic commercial backend. Reviewed limits 1 RPS default, 3 with app/contact identification."
+    },
+    {
+      "url": "https://info.arxiv.org/help/api/tou.html",
+      "finding": "Legacy API/OAI/RSS terms required at most one request per three seconds and one connection across machines under our control."
+    },
+    {
+      "url": "https://help.openalex.org/access/example-costs/",
+      "finding": "Reviewed free allowance $1/day/account; ordinary search $0.001/call. Recheck before implementation."
+    },
+    {
+      "url": "https://help.openalex.org/api/authentication/",
+      "finding": "Verified free key supported; keyless first page possible, cursor paging past first page needs key. Reviewed RPS 10 keyless/30 free-key."
+    },
+    {
+      "url": "https://unpaywall.org/products/api/v2",
+      "supportingAsset": "https://unpaywall.org/js/app.dd2a222a.js",
+      "finding": "Page was JS shell; official app asset documented title-search retirement on 2026-09-18 (410). DOI resolver remains the proposed integration; docs stated real email and 100,000/day."
+    },
+    {
+      "url": "https://open.umn.edu/opentextbooks/discovery",
+      "finding": "MARC/CSV/JSON/RSS/Atom and deletion list documented; catalog records CC0."
+    },
+    {
+      "url": "https://doabooks.org/en/librarians/doab-metadata",
+      "finding": "Corrected from obsolete 404 URL. Official metadata feeds/OAI, CC0 metadata and rich xoai format documented."
+    },
+    {
+      "url": "https://oapen.org/librarians/metadata",
+      "finding": "Corrected from obsolete 404 URL. Metadata feeds/OAI and CC0 metadata documented, including exports without download links."
+    },
+    {
+      "url": "https://core.ac.uk/services/api",
+      "finding": "Page described free unregistered access subject to terms, five single requests or one batch/10 sec; faster access may cost or need eligibility."
+    },
+    {
+      "url": "https://storyweaver.org.in/en/faqs",
+      "finding": "FAQ stated CC BY 4.0 for stories; no public discovery API verified."
+    },
+    {
+      "url": "https://bookdash.org/books/",
+      "finding": "Current catalog retrieved; old /our-books/ returned 404. No supported public discovery API verified."
+    },
+    {
+      "url": "https://ncert.nic.in/textbook.php",
+      "finding": "503 during original inspection; API/feed not verified."
+    },
+    {
+      "url": "https://eric.ed.gov/?api",
+      "finding": "503 during original inspection; not treated as implementation-ready."
+    },
+    {
+      "url": "https://oercommons.org/help/learn-more-about",
+      "finding": "403 during original inspection; API/feed terms unresolved."
+    }
+  ],
+  "requests": [
+    {
+      "id": "probe-gutendex",
+      "url": "https://gutendex.com/books/?search=pride%20prejudice",
+      "httpStatus": null,
+      "note": "Read timeout; not evidence of general service downtime."
+    },
+    {
+      "id": "probe-openlibrary",
+      "url": "https://openlibrary.org/search.json?q=pride%20prejudice&limit=1&fields=key,title,author_name,ebook_access,ia,public_scan_b,editions",
+      "httpStatus": 200,
+      "note": "Work-level ebook_access public with many Archive IDs; not proof every edition is public."
+    },
+    {
+      "id": "probe-archive",
+      "url": "https://archive.org/advancedsearch.php?q=title%3A%28pride%20prejudice%29%20AND%20mediatype%3Atexts&fl%5B%5D=identifier&fl%5B%5D=title&rows=1&output=json",
+      "httpStatus": 200,
+      "note": "Search metadata returned; item access not checked."
+    },
+    {
+      "id": "probe-doaj",
+      "url": "https://doaj.org/api/search/articles/bibjson.title%3Amalaria?pageSize=1",
+      "httpStatus": 200,
+      "note": "Article metadata and fulltext link returned; publisher destination not opened."
+    },
+    {
+      "id": "probe-openalex",
+      "url": "https://api.openalex.org/works?search=malaria&filter=is_oa:true&per-page=1",
+      "httpStatus": 200,
+      "note": "Anonymous first page succeeded; meta.cost_usd was 0.001. No keyed paging tested."
+    },
+    {
+      "id": "probe-crossref",
+      "url": "https://api.crossref.org/works?query.title=malaria&rows=1",
+      "httpStatus": 200,
+      "note": "Bibliographic metadata returned; no free-reading assertion."
+    },
+    {
+      "id": "probe-arxiv",
+      "url": "https://export.arxiv.org/api/query?search_query=all:quantum&start=0&max_results=1",
+      "httpStatus": 200,
+      "note": "Atom entry returned; no reader navigation or rate/load testing."
+    },
+    {
+      "id": "probe-europepmc",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=malaria%20AND%20OPEN_ACCESS:Y&format=json&pageSize=1&resultType=core",
+      "httpStatus": 200,
+      "note": "OA result metadata with DOI/PMCID and full-text information returned."
+    },
+    {
+      "id": "probe-semantic",
+      "url": "https://api.semanticscholar.org/graph/v1/paper/search?query=malaria&limit=1&fields=title,openAccessPdf,url,externalIds",
+      "httpStatus": 429,
+      "note": "Anonymous search rate limited; no authenticated retry."
+    },
+    {
+      "id": "probe-zenodo",
+      "url": "https://zenodo.org/api/records?q=malaria&size=1",
+      "httpStatus": 200,
+      "note": "First result was an open dataset, demonstrating need for type filters."
+    },
+    {
+      "id": "probe-hal",
+      "url": "https://api.archives-ouvertes.fr/search/?q=title_t:malaria&rows=1&wt=json&fl=docid,title_s,uri_s,fileMain_s,doiId_s",
+      "httpStatus": 200,
+      "note": "Returned uri_s and DOI but no fileMain_s; not proof of full text."
+    },
+    {
+      "id": "probe-wikisource",
+      "url": "https://en.wikisource.org/w/api.php?action=query&list=search&srsearch=pride%20prejudice&srlimit=1&format=json",
+      "httpStatus": 200,
+      "note": "Search result returned; page identity/language mapping remains to implement."
+    },
+    {
+      "id": "probe-loc",
+      "url": "https://www.loc.gov/books/?fo=json&c=1&at=results",
+      "httpStatus": 200,
+      "note": "Book metadata returned; online readability not verified."
+    },
+    {
+      "id": "probe-librivox",
+      "url": "https://librivox.org/api/feed/audiobooks/?title=Pride%20and%20Prejudice&format=json&limit=1",
+      "httpStatus": 200,
+      "note": "Title query returned audiobook ID 253 and canonical LibriVox URL."
+    },
+    {
+      "id": "probe-doab-identify",
+      "url": "https://directory.doabooks.org/oai/request?verb=Identify",
+      "httpStatus": 200,
+      "note": "OAI identification succeeded."
+    },
+    {
+      "id": "probe-core",
+      "url": "https://api.core.ac.uk/v3/search/works?q=malaria&limit=1",
+      "httpStatus": 200,
+      "note": "Anonymous v3 search succeeded; commercial eligibility and rate testing not performed."
+    },
+    {
+      "id": "probe-gutenberg-redirect",
+      "url": "https://www.gutenberg.org/ebooks/1342.rdf",
+      "httpStatus": 404,
+      "note": "Redirect produced malformed destination; direct catalog URL subsequently worked."
+    },
+    {
+      "id": "probe-gutenberg-rdf",
+      "url": "https://www.gutenberg.org/cache/epub/1342/pg1342.rdf",
+      "httpStatus": 200,
+      "note": "Catalog RDF response returned; not a full catalog import."
+    },
+    {
+      "id": "probe-doab-formats",
+      "url": "https://directory.doabooks.org/oai/request?verb=ListMetadataFormats",
+      "httpStatus": 200,
+      "note": "Available metadata formats returned."
+    },
+    {
+      "id": "probe-doab-records",
+      "url": "https://directory.doabooks.org/oai/request?verb=ListRecords&metadataPrefix=oai_dc&from=2026-10-30",
+      "httpStatus": 200,
+      "note": "Incremental XML records returned; no resumption traversal or full harvest."
+    },
+    {
+      "id": "probe-oapen-identify",
+      "url": "https://library.oapen.org/oai/request?verb=Identify",
+      "httpStatus": 200,
+      "note": "Identification only; no OAPEN record mapping tested."
+    },
+    {
+      "id": "probe-doab-one",
+      "url": "https://directory.doabooks.org/oai/request?verb=GetRecord&identifier=oai%3Adoabooks.org%3A20.500.12854%2F26303&metadataPrefix=xoai",
+      "httpStatus": 200,
+      "note": "One rich xoai metadata record returned."
+    },
+    {
+      "id": "probe-googlebooks",
+      "url": "https://www.googleapis.com/books/v1/volumes?q=pride%20prejudice&filter=free-ebooks&maxResults=1",
+      "httpStatus": 200,
+      "note": "Used then-configured key; credential omitted. One item kQ0mAAAAMAAJ, country US, ALL_PAGES, FULL_PUBLIC_DOMAIN, reader and EPUB/PDF links; signed URLs omitted."
+    }
+  ]
+}

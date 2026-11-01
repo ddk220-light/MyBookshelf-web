@@ -279,10 +279,11 @@ export function AccountLibraryStateProvider({
   const value: LibraryState = {
     state: snapshot
       ? {
-          version: 1,
+          version: 2,
           selectedLibraryId: snapshot.summary.selectedLibraryId,
           savedBooks: snapshot.books,
           recentBooks: snapshot.recent,
+          savedContent: [],
         }
       : emptyState(),
     library: snapshot?.summary.selectedLibrary ?? null,

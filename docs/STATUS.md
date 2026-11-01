@@ -43,6 +43,13 @@ are available here without the private branch.
 
 ## Release state: recheck before changing production
 
+The owner authorized the free-content merge/deployment on 2026-11-01. Its
+[release record](research/free-content/RELEASE.md) identifies the existing
+production project/domain and rollback deployment. PR #110 now targets `main`
+and integrates the account production baseline at `7ab9d89`. Actual deployment
+and hosted checks are recorded in [#127](https://github.com/ddk220-light/MyBookshelf-web/issues/127).
+The following older release observations are historical checkpoints.
+
 - Reviewed preview: https://mybookshelf-jh0o69edr-ddk220.vercel.app/,
   deployment `dpl_4WuSysFWU4wQhHqNhEGksvU7W9FA`, application commit
   `02aa0d6d7673c449d1b138b38c64053b0d7bc29c`.
@@ -63,6 +70,62 @@ are available here without the private branch.
   connections, and complete Search Console/Bing ownership and sitemap submission.
   Repository protection and vulnerability-reporting settings also need owner
   administration. Keep the previous production deployment as the rollback target.
+
+## Free-content discovery: implementation in progress
+
+The [source research](research/free-content/README.md) covers free ebooks,
+scientific papers, textbooks, children's books and related collections. It
+defines metadata imports plus bounded live API search, with reading links to
+original hosts. This chat is exclusively for the free-content feature; account
+work belongs to its separate branch and project.
+
+Branch `research/free-content-discovery` was recreated on this repository after
+the previous environment's unpushed commit `ee7d88e` could not be recovered.
+The documents and historical probe outcomes were reconstructed from the retained
+conversation; the original raw responses and complete fetch ledger are unavailable.
+The research overview records these limits. Future work continues here directly.
+
+UI artifacts and implementation are approved (2026-11-01):
+[boards and implementation handoff](design/2026-11-free-content/README.md), with
+the owner's nine decisions. Worktree: `/workspace/MyBookshelf-web-free-sources-implementation`;
+branch: `research/free-content-discovery-implementation`, based on approved
+artifact commit `760863a`. Track [project 4](https://github.com/users/ddk220-light/projects/4)
+and [index #73](https://github.com/ddk220-light/MyBookshelf-web/issues/73).
+
+Implemented: source-native identity/access contracts, bounded official Gutenberg
+metadata import and local search/resolve, Europe PMC adapter and atomic shared
+Redis coordination, search scopes, content reader pages and browser shelf v2
+migration. The optional library bridge requires exact ISBN/work evidence.
+See [implementation decisions and story state](research/free-content/IMPLEMENTATION.md)
+and [validation](research/free-content/VALIDATION.md). Open Textbook Library is
+implemented with 1,909 real metadata records, combined catalog search and ISBN
+links. DOAJ, arXiv and OpenAlex adapters, bounded multi-source paging, shared
+record caching, source progress and source-only retry are implemented and tested.
+The reviewed children’s pilot now has source records; intended hosted enablement is pending.
+
+The pilot now contains three reviewed real English/Hindi/Tamil source records,
+with exact current credits, levels and original-story relations. The owner has
+accepted free source login; cards and reader actions disclose that requirement.
+Post-login reading has not been tested. Source research and curation belong to
+Codex; no owner-supplied feed or metadata is pending. See [the source review gate](research/free-content/CHILDREN_REVIEW.md).
+Latest UI review: 537 server tests, 141 client tests, 262 broad desktop/mobile
+browser journeys, 50 final feature browser checks and 84 board/theme/device
+captures pass, with typecheck/build/SEO/deployment. See the [screen comparison](research/free-content/UI_REVIEW.md).
+The unchanged importers previously passed 12 Python checks; workflow lint passed.
+All-source exact lookups and a 40-result real-paper flow
+also passed locally with actual Redis; this is separate from hosted enablement.
+
+Book Dash now adds 30 real English-language editions with original creator roles
+and anonymous reading links; see [additional sources](research/free-content/ADDITIONAL_SOURCES.md).
+The four local book sources contain 2,942 metadata records in disclosed subsets.
+
+Both client and backend flags default off. Live paper search additionally needs
+shared Redis REST credentials and explicit budget configuration; no hosted store
+has been provisioned. The local Gutenberg snapshot needs daily refresh because
+positive access evidence expires after 24 hours. A reviewed daily refresh workflow
+is implemented; it becomes schedulable only when merged onto the default branch.
+It proposes a draft metadata PR and runs CI. Production enablement and verification
+for the owner's authorized release are tracked in the [release record](research/free-content/RELEASE.md).
 
 ## Account work: implemented; staging release exits pending
 
@@ -93,6 +156,25 @@ private ledger writes/reads/encrypted cleanup and anonymous-read denial pass.
 Runtime credentials are Preview/account-settings only, administrator Development
 only. Existing production resources/Git connection remain unchanged.
 
+## Resume this free-content branch
+
+1. Use `/workspace/MyBookshelf-web-free-sources-implementation` on
+   `research/free-content-discovery-implementation`, based on approved artifacts
+   at `760863a`. Keep its [draft PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110)
+   based on `main` for the authorized release. Preserve other worktrees.
+2. Read [implementation/story state](research/free-content/IMPLEMENTATION.md),
+   [operations](research/free-content/OPERATIONS.md) and
+   [validation](research/free-content/VALIDATION.md). Existing native tasks belong
+   to [project 4](https://github.com/users/ddk220-light/projects/4) / index #73.
+3. The owner postponed hosted Redis configuration. The existing OpenAlex key is
+   present and accepted. Free source login is explicitly allowed; do not ask the
+   owner to curate the children’s records. See #139 and the current source evidence.
+4. Complete the remaining FCD07 hosted checks when Redis is configured; local
+   book catalogs and the reviewed children’s set remain independent of Redis.
+   Keep the bounded Gutenberg subset/OTL export coverage explicit. Account work
+   has its own branch/project; its historical planning section above is context.
+
+## Account release context
 The owner subsequently instructed: Resend only for production; keep Google/Apple
 disabled and add their credentials later. These are deliberate activation deferrals,
 not current staging setup requests. Live staging capabilities confirm all three

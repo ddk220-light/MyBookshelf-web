@@ -26,6 +26,23 @@ retired authentication and unrelated research archives are outside its scope.
 - [Work-aware search](work-aware-search.md): how the current code already uses
   Open Library works, editions, ISBNs and catalog records; limits of grouping.
 
+## Free ebooks and scientific papers: implementation
+
+- [Overview and source categories](research/free-content/README.md).
+- [Repository catalog, APIs and access requirements](research/free-content/source-catalog.md).
+- [Metadata discovery architecture and delivery phases](research/free-content/architecture.md).
+- [Historical API observations and recovery limits](research/free-content/evidence.json).
+- [UI boards and implementation handoff](design/2026-11-free-content/README.md):
+  approved free-reading screens, owner decisions and acceptance checklist.
+
+Implementation is in PR #110 on `research/free-content-discovery-implementation`;
+source flags still default off. See [implementation](research/free-content/IMPLEMENTATION.md),
+[screen comparison and visual fixes](research/free-content/UI_REVIEW.md),
+[children’s review](research/free-content/CHILDREN_REVIEW.md) and
+[additional sources](research/free-content/ADDITIONAL_SOURCES.md). The original unpushed
+research was reconstructed from its conversation after an environment replacement;
+the overview records the provenance and evidence limits.
+
 ## UI, designs and SEO
 
 - [Approved UI/SEO implementation plan](seo/IMPLEMENTATION_PLAN.md).

@@ -26,6 +26,9 @@ export function SettingsIcon() {
 export function BookmarkIcon() {
   return <svg {...iconProps} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"><path d="M6 3h12v19l-6-4-6 4Z" /></svg>;
 }
+export function ExternalLinkIcon() {
+  return <svg {...iconProps} width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h7v7M13 3 3 13"/></svg>;
+}
 export function ShareIcon() {
   return <svg {...iconProps} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m-4-8 4-4 4 4M6 12v9h12v-9" /></svg>;
 }

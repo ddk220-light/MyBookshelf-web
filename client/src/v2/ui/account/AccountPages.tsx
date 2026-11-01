@@ -698,6 +698,7 @@ export function ImportPage() {
             {frozen.state.recentBooks.length} recent{" "}
             {frozen.state.recentBooks.length === 1 ? "book" : "books"}
           </p>
+          {frozen.state.savedContent.length>0&&<p>Free books and papers stay on this browser’s shelf. They are not included in this account import.</p>}
           {frozen.status !== "ok" && (
             <p role="alert">
               The device shelf could not be read safely. Keep it here and

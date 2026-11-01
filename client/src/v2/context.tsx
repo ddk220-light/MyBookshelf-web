@@ -11,10 +11,12 @@ import {
   SAVED_BOOKS_CAP,
   emptyState,
   isSaved,
+  withSavedContent,
   toRecentBook,
   type AnonymousWebState,
 } from './localState';
 import type { PublicBook, PublicLibrary, RecentBook, RecentSource } from './types';
+import type { ContentItem } from './contentTypes';
 import { readReaderPreferences, writeReaderPreferences } from './readerState';
 import {useAccountSession} from './auth/AccountSessionProvider';
 import {AccountLibraryStateProvider,UnavailableLibraryStateProvider} from './storage/AccountLibraryStateProvider';
@@ -44,6 +46,10 @@ export type LibraryState = {
   clearSavedBooks: () => Promise<boolean>;
   saveBook: (book: PublicBook) => Promise<SaveResult>;
   unsaveBook: (bookKey: string) => Promise<boolean>;
+  // Native content references stay on the browser shelf; the account wire
+  // contract still accepts library books only.
+  saveContent?: (item: ContentItem) => Promise<SaveResult>;
+  unsaveContent?: (key: string) => Promise<boolean>;
   pending?:boolean;
   loadingAccount?:boolean;
   mutationNotice?:string|null;
@@ -202,13 +208,24 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     return commit((saved) => ({ ...saved, recentBooks: saved.recentBooks.filter((item) => item.bookKey !== bookKey) }));
   }, [commit]);
   const clearRecentBooks = useCallback(async() => commit((saved) => ({ ...saved, recentBooks: [] })), [commit]);
-  const clearSavedBooks = useCallback(async() => { const ok=await commit(saved => ({ ...saved, savedBooks: [] }));if(ok&&alive.current)setRemoved(null);return ok; }, [commit]);
+  const clearSavedBooks = useCallback(async() => { const ok=await commit(saved => ({ ...saved, savedBooks: [], savedContent: [] }));if(ok&&alive.current)setRemoved(null);return ok; }, [commit]);
   const saveBook = useCallback(async(book: PublicBook): Promise<SaveResult> => {
     if (recovery.current) return 'recovery';
     let result:SaveResult='saved';
-    const ok=await commit(saved=>{if(isSaved(saved,book.bookKey)){result='already-saved';return saved;}if(saved.savedBooks.length>=SAVED_BOOKS_CAP){result='full';return saved;}return withSavedBook(saved,book);});
+    const ok=await commit(saved=>{if(isSaved(saved,book.bookKey)){result='already-saved';return saved;}if(saved.savedBooks.length+saved.savedContent.length>=SAVED_BOOKS_CAP){result='full';return saved;}return withSavedBook(saved,book);});
     return ok?result:'recovery';
   }, [commit]);
+  const saveContent = useCallback(async(item: ContentItem): Promise<SaveResult> => {
+    if(recovery.current)return 'recovery';
+    let result:SaveResult='saved';
+    const ok=await commit(saved=>{
+      if(saved.savedContent.some(value=>value.contentKey===item.key)){result='already-saved';return saved;}
+      if(saved.savedBooks.length+saved.savedContent.length>=SAVED_BOOKS_CAP){result='full';return saved;}
+      const next=withSavedContent(saved,item);if(next===saved)result='failed';return next;
+    });
+    return ok?result:'recovery';
+  },[commit]);
+  const unsaveContent = useCallback(async(key:string)=>commit(saved=>({...saved,savedContent:saved.savedContent.filter(item=>item.contentKey!==key)})),[commit]);
   const unsaveBook = useCallback(async(bookKey: string) => {
     let removed:{book:RecentBook;index:number}|null=null;
     const ok=await commit(saved=>{const index=saved.savedBooks.findIndex(book=>book.bookKey===bookKey),book=saved.savedBooks[index];if(book)removed={book,index};return withoutSavedBook(saved,bookKey);});
@@ -219,7 +236,7 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     let full=false;
     if (await commit(saved => {
       if (isSaved(saved, removed.book.bookKey)) return saved;
-      if(saved.savedBooks.length>=SAVED_BOOKS_CAP){full=true;return saved;}
+      if(saved.savedBooks.length+saved.savedContent.length>=SAVED_BOOKS_CAP){full=true;return saved;}
       const books = [...saved.savedBooks];
       books.splice(Math.min(removed.index, books.length), 0, removed.book);
       return { ...saved, savedBooks: books };
@@ -247,7 +264,9 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     clearSavedBooks,
     saveBook,
     unsaveBook,
-  }), [state, library, loadingLibrary, libraryError, storageNotice, recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removed, undoRemoval, reportStorageFailure, selectLibrary, retryLibrary, rememberBook, updateRecentDisplay, removeRecentBook, clearRecentBooks, clearSavedBooks, saveBook, unsaveBook]);
+    saveContent,
+    unsaveContent,
+  }), [state, library, loadingLibrary, libraryError, storageNotice, recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removed, undoRemoval, reportStorageFailure, selectLibrary, retryLibrary, rememberBook, updateRecentDisplay, removeRecentBook, clearRecentBooks, clearSavedBooks, saveBook, unsaveBook, saveContent, unsaveContent]);
 
   return <LibraryStateContext.Provider value={value}>{children}</LibraryStateContext.Provider>;
 }

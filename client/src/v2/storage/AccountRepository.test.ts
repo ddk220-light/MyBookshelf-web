@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AccountRepository } from "./AccountRepository";
+import { emptyState } from '../localState';
 import type { AccountSession } from "../auth/AccountSessionProvider";
 import {
   setReaderIdentityScope,
@@ -52,6 +53,16 @@ const reads = (path: string) =>
     : path.startsWith("/api/account/books")
       ? { ...versions, books: [], nextCursor: null }
       : { ...versions, books: [] };
+it('imports the v2 browser library shelf without sending source-native references to the account API',async()=>{
+  let sent:Record<string,unknown>|undefined;
+  vi.stubGlobal('fetch',vi.fn(async(path:string,options?:RequestInit)=>{
+    if(path==='/api/account/imports'){sent=JSON.parse(String(options?.body));return response({savedAdded:0,historyAccepted:0,historyExpired:0});}
+    return response(reads(path));
+  }));
+  const repo=new AccountRepository(()=>session,()=>true);await repo.loadSnapshot();
+  await repo.importGuest('review-import',{...emptyState(),savedContent:[{kind:'content',contentKey:'fcd:v1:gutenberg:1342',itemKind:'book',title:'Source book',authors:['Source Author'],host:'Project Gutenberg',savedAt:'2026-01-01T00:00:00Z'}]},false,'keep-account');
+  expect(sent?.snapshot).toEqual({version:1,selectedLibraryId:null,recentBooks:[],savedBooks:[]});
+});
 afterEach(() => {
   vi.unstubAllGlobals();
   localStorage.clear();

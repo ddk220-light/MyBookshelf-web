@@ -3,9 +3,10 @@ import { APPEARANCE_STORAGE_KEY, READING_LIGHT_STORAGE_KEY } from './readingLigh
 import { DOG_ANIMATION_STORAGE_KEY } from './dogAnimation';
 import { clearReaderState } from './readerState';
 import type { PublicBook, RecentBook, RecentSource } from './types';
+import type { ContentItem, SavedContent } from './contentTypes';
 
 export const ANONYMOUS_WEB_STORAGE_KEY = 'mybookshelf.anonymous-web.v1';
-const VERSION = 1;
+const VERSION = 2;
 const HISTORY_LIMIT = 50;
 export const SAVED_BOOKS_CAP = 100;
 const SOURCES: ReadonlySet<string> = new Set(['camera', 'isbn', 'search', 'direct']);
@@ -15,6 +16,7 @@ export type AnonymousWebState = {
   selectedLibraryId: string | null;
   recentBooks: RecentBook[];
   savedBooks: RecentBook[];
+  savedContent: SavedContent[];
 };
 
 export type AnonymousWebStateRead = {
@@ -22,7 +24,23 @@ export type AnonymousWebStateRead = {
   status: 'ok' | 'unavailable' | 'corrupt';
 };
 
-export const emptyState = (): AnonymousWebState => ({ version: VERSION, selectedLibraryId: null, recentBooks: [], savedBooks: [] });
+export const emptyState = (): AnonymousWebState => ({ version: VERSION, selectedLibraryId: null, recentBooks: [], savedBooks: [], savedContent: [] });
+
+function isSavedContent(value: unknown): value is SavedContent {
+  if (!value || typeof value !== 'object') return false;
+  const item = value as Partial<SavedContent>;
+  return item.kind === 'content' && typeof item.contentKey === 'string'
+    && /^fcd:v1:[a-z0-9-]+:[A-Za-z0-9:_.-]{1,150}$/.test(item.contentKey)
+    && Boolean(text(item.title, 500)) && Array.isArray(item.authors) && item.authors.length <= 20
+    && item.authors.every(a => Boolean(text(a, 240))) && Boolean(text(item.host, 240))
+    && ['book','chapter','article','preprint','thesis','report','learning_resource','audiobook','other'].includes(item.itemKind || '')
+    && typeof item.savedAt === 'string' && Number.isFinite(Date.parse(item.savedAt));
+}
+
+function normalizeSavedContent(item: SavedContent): SavedContent {
+  return { kind: 'content', contentKey: item.contentKey, itemKind: item.itemKind, title: item.title.trim(),
+    authors: item.authors.map(a => a.trim()), host: item.host.trim(), savedAt: item.savedAt };
+}
 
 function text(value: unknown, maximum: number): string | undefined {
   return typeof value === 'string' && value.trim().length > 0 && value.length <= maximum ? value.trim() : undefined;
@@ -67,14 +85,17 @@ export function readAnonymousWebStateWithStatus(storage: StorageLike | null = br
   try {
     if (!raw) return { state: emptyState(), status: 'ok' };
     const parsed = JSON.parse(raw) as Partial<AnonymousWebState>;
-    if (!parsed || parsed.version !== VERSION || !Array.isArray(parsed.recentBooks)) return { state: emptyState(), status: 'corrupt' };
+    if (!parsed || ![1, VERSION].includes(parsed.version as number) || !Array.isArray(parsed.recentBooks)) return { state: emptyState(), status: 'corrupt' };
     const recentBooks = parsed.recentBooks.filter(isRecentBook).map(normalizeRecentBook);
     const savedBooks = (Array.isArray(parsed.savedBooks) ? parsed.savedBooks : []).filter(isRecentBook).map(normalizeRecentBook);
+    const rawContent = parsed.version === VERSION ? parsed.savedContent : [];
+    const savedContent = (Array.isArray(rawContent) ? rawContent : []).filter(isSavedContent).map(normalizeSavedContent);
     const damaged = recentBooks.length !== parsed.recentBooks.length
       || (parsed.savedBooks !== undefined && (!Array.isArray(parsed.savedBooks) || savedBooks.length !== parsed.savedBooks.length))
-      || (parsed.selectedLibraryId != null && !text(parsed.selectedLibraryId, 160));
+      || (parsed.selectedLibraryId != null && !text(parsed.selectedLibraryId, 160))
+      || (rawContent !== undefined && (!Array.isArray(rawContent) || savedContent.length !== rawContent.length));
     return {
-      state: { version: VERSION, selectedLibraryId: text(parsed.selectedLibraryId, 160) || null, recentBooks, savedBooks },
+      state: { version: VERSION, selectedLibraryId: text(parsed.selectedLibraryId, 160) || null, recentBooks, savedBooks, savedContent },
       status: damaged ? 'corrupt' : 'ok',
     };
   } catch {
@@ -90,6 +111,7 @@ export function writeAnonymousWebState(state: AnonymousWebState, storage: Storag
       selectedLibraryId: text(state.selectedLibraryId, 160) || null,
       recentBooks: state.recentBooks.filter(isRecentBook).map(normalizeRecentBook).slice(0, HISTORY_LIMIT),
       savedBooks: state.savedBooks.map(normalizeRecentBook),
+      savedContent: state.savedContent.filter(isSavedContent).map(normalizeSavedContent),
     }));
     return true;
   } catch {
@@ -131,7 +153,7 @@ export function withRecentBook(state: AnonymousWebState, book: PublicBook, sourc
 }
 
 export function withSavedBook(state: AnonymousWebState, book: PublicBook): AnonymousWebState {
-  if (isSaved(state, book.bookKey) || state.savedBooks.length >= SAVED_BOOKS_CAP) return state;
+  if (isSaved(state, book.bookKey) || state.savedBooks.length + state.savedContent.length >= SAVED_BOOKS_CAP) return state;
   const entry = toRecentBook(book, 'direct');
   return { ...state, savedBooks: [entry, ...state.savedBooks] };
 }
@@ -142,4 +164,13 @@ export function withoutSavedBook(state: AnonymousWebState, bookKey: string): Ano
 
 export function isSaved(state: AnonymousWebState, bookKey: string): boolean {
   return state.savedBooks.some((item) => item.bookKey === bookKey);
+}
+
+export function withSavedContent(state: AnonymousWebState, item: ContentItem, savedAt = new Date().toISOString()): AnonymousWebState {
+  if (state.savedContent.some(value => value.contentKey === item.key)
+    || state.savedContent.length + state.savedBooks.length >= SAVED_BOOKS_CAP) return state;
+  const entry: SavedContent = { kind: 'content', contentKey: item.key, itemKind: item.kind, title: item.title,
+    authors: item.contributors.filter(c => c.role === 'author').map(c => c.name).slice(0,20),
+    host: item.locations.find(location => location.id === item.readingActions[0]?.locationId)?.host || item.locations[0]?.host || item.provenance[0]?.sourceId || 'Source', savedAt };
+  return isSavedContent(entry) ? { ...state, savedContent: [normalizeSavedContent(entry), ...state.savedContent] } : state;
 }

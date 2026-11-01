@@ -13,6 +13,7 @@ const book = (key: string, title = key) => ({
   source: "direct" as const,
   viewedAt: "2026-01-01T00:00:00Z",
 });
+const content = (key: string) => ({kind:'content' as const,contentKey:'fcd:v1:gutenberg:'+key,itemKind:'book' as const,title:'Reviewed source book',authors:['Source Author'],host:'Project Gutenberg',savedAt:'2026-01-01T00:00:00Z'});
 afterEach(() => {
   localStorage.clear();
   vi.unstubAllGlobals();
@@ -38,12 +39,14 @@ it("removes acknowledged unchanged copies and preserves concurrent guest additio
     ...emptyState(),
     selectedLibraryId: "bc:smcl",
     savedBooks: [book("a"), book("b")],
+    savedContent: [content('1342')],
     recentBooks: [book("c"), book("expired")],
   };
   writeAnonymousWebState({
     ...frozen,
     selectedLibraryId: "bc:sfpl",
     savedBooks: [book("a"), book("b", "Edited elsewhere"), book("new")],
+    savedContent: [content('1342'),content('158')],
     recentBooks: [book("c"), book("expired"), book("new-recent")],
   });
   expect(
@@ -63,6 +66,7 @@ it("removes acknowledged unchanged copies and preserves concurrent guest additio
     "new-recent",
   ]);
   expect(remaining.selectedLibraryId).toBe("bc:sfpl");
+  expect(remaining.savedContent.map(item=>item.contentKey)).toEqual(['fcd:v1:gutenberg:1342','fcd:v1:gutenberg:158']);
 });
 it("retains the guest copy when cross-tab coordination is unavailable", async () => {
   vi.stubGlobal("navigator", {});
