@@ -26,8 +26,9 @@ export function SearchScopes({scope}:{scope:'library'|'free'|'papers'}){
 export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
   const location=useLocation();const navigate=useNavigate();const {library}=useLibrary();
   const params=new URLSearchParams(location.search);const query=params.get('q')||'';const selected=params.get('item');
+  const textbooks=scope==='free'&&params.get('collection')==='textbooks';
   const [input,setInput]=useState(query);const [unclear,setUnclear]=useState(false);const [language,setLanguage]=useState('');
-  const memoryKey=scope+':'+query+':'+unclear+':'+language;
+  const memoryKey=scope+':'+textbooks+':'+query+':'+unclear+':'+language;
   const [page,setPage]=useState<ContentPage|null>(()=>remembered(memoryKey)||null);
   const [busy,setBusy]=useState(false);const [error,setError]=useState<PublicApiError|null>(null);const [retry,setRetry]=useState(0);
   const [sourcesOpen,setSourcesOpen]=useState(false);const controller=useRef<AbortController|null>(null);
@@ -36,7 +37,7 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
   const load=useCallback(async(cursor?:string)=>{
     controller.current?.abort();const request=new AbortController();controller.current=request;setBusy(true);setError(null);
     try{
-      const result=await contentApi.search(query,scope==='free'?['book','learning_resource']:['article','preprint','chapter','thesis','report'],
+      const result=await contentApi.search(query,scope==='free'?(textbooks?['learning_resource']:['book','learning_resource']):['article','preprint','chapter','thesis','report'],
         {includeUnclear:unclear,...language?{languages:[language]}:{},...cursor?{cursor}:{}},request.signal);
       if(request.signal.aborted)return;
       const previous=cursor?remembered(memoryKey)?.items||[]:[];
@@ -46,7 +47,7 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
       if(memory.size>12)memory.delete(memory.keys().next().value!);
     }catch(failure){if(!request.signal.aborted)setError(failure instanceof PublicApiError?failure:new PublicApiError());}
     finally{if(controller.current===request)setBusy(false);}
-  },[query,scope,unclear,language,memoryKey]);
+  },[query,scope,textbooks,unclear,language,memoryKey]);
   useEffect(()=>{
     setError(null);const saved=remembered(memoryKey);setPage(saved||null);
     if(query&&!saved)void load();
@@ -56,11 +57,11 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
   const failed=sources.filter(source=>!['ok','disabled','not_selected'].includes(source.status));
   const free=page?.items.filter(item=>item.access==='free_full_text')||[];
   const unknown=page?.items.filter(item=>item.access!=='free_full_text')||[];
-  const returnTo='/app/search?'+new URLSearchParams({scope,q:query});
+  const returnTo='/app/search?'+new URLSearchParams({scope,q:query,...textbooks?{collection:'textbooks'}:{}});
   const itemLink=(key:string)=>desktop?returnTo+'&item='+encodeURIComponent(key):'/app/read/'+encodeURIComponent(key);
   function submit(event:React.FormEvent){event.preventDefault();if(!input.trim())return;setUnclear(false);
     if(input.trim()===query){again();return;}
-    navigate('/app/search?'+new URLSearchParams({scope,q:input.trim()}));}
+    navigate('/app/search?'+new URLSearchParams({scope,q:input.trim(),...textbooks?{collection:'textbooks'}:{}}));}
   function again(){memory.delete(memoryKey);setRetry(value=>value+1);}
   return <section className="page-section content-search"><header className="page-heading"><h1>Search</h1></header>
     <form className="content-search-form" onSubmit={submit}><label className="visually-hidden" htmlFor="book-search">{scope==='papers'?'Search papers, DOI or arXiv ID':'Search free books'}</label>
@@ -69,7 +70,7 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
     {!query?<div className="content-start"><h2>{scope==='papers'?'Research papers, free to read':'Find something free to read'}</h2>
       <p>Read at the original source. No library card needed.</p><div className="content-browse">
         <Link to="/app/search?scope=free&q=literature"><strong>Classic literature</strong><span>Project Gutenberg</span></Link>
-        <span aria-disabled="true"><strong>Open textbooks</strong><span>Not connected yet</span></span>
+        <Link to="/app/search?scope=free&collection=textbooks&q=education"><strong>Open textbooks</strong><span>Open Textbook Library</span></Link>
         <span aria-disabled="true"><strong>Children’s stories</strong><span>Reviewed starter set · coming later</span></span>
         <Link to="/app/search?scope=papers"><strong>Research papers</strong><span>From open research sources</span></Link></div></div>:<>
       <div className="content-filters"><label><span className="visually-hidden">Language</span><select value={language} disabled={scope==='papers'} title={scope==='papers'?'This paper source does not support language filtering yet.':undefined} onChange={e=>setLanguage(e.target.value)}>
@@ -77,12 +78,13 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
         <button type="button" disabled title="Format filtering is not available for these sources yet." aria-describedby="content-format-help">All formats</button>
         <span id="content-format-help" className="visually-hidden">Format filtering is not available for these sources yet.</span>
       </div>
+      {textbooks&&<p className="content-coverage">Open textbooks · <Link to={'/app/search?scope=free&q='+encodeURIComponent(query)}>Search all free books</Link>. This catalog export does not supply languages; a language filter excludes those records.</p>}
       {busy&&<p role="status">Checking sources… This should take no more than a few seconds.</p>}
       {error&&<div className="content-notice" role="alert"><h2>{sources.some(s=>s.status==='quota_exhausted')?'At today’s limit':'Couldn’t check all sources'}</h2><p>{error.message}</p>
         <p>This does not mean there is no free copy.</p><button onClick={again}>Try again</button>{' · '}<Link to={'/app/search?q='+encodeURIComponent(query)}>Search library books instead</Link>
         {sources.length>0&&<button className="text-button" onClick={()=>setSourcesOpen(true)}>Sources</button>}</div>}
       {page&&<><div className="content-count"><span>{free.length} {scope==='papers'?'papers':'free books'} shown</span><button className="text-button" onClick={()=>setSourcesOpen(true)}>Sources</button></div>
-        {page.sources.some(s=>s.complete===false)&&<p className="content-coverage">Searching a limited catalog snapshot{page.sources.find(s=>s.catalogRecords)?.catalogRecords?` of ${page.sources.find(s=>s.catalogRecords)!.catalogRecords!.toLocaleString()} records`:''}.</p>}
+        {page.sources.some(s=>s.complete===false)&&<p className="content-coverage">Searching limited catalog snapshots{page.sources.some(s=>s.catalogRecords)?` with ${page.sources.reduce((sum,s)=>sum+(s.catalogRecords||0),0).toLocaleString()} records`:''}. Source coverage varies.</p>}
         {page.sources.some(s=>s.scope)&&<p className="content-coverage">{page.sources.find(s=>s.scope)?.scope} · other paper sources are not connected yet.</p>}
         {failed.length>0&&<p className="content-notice">Some sources could not answer. Other results are shown.</p>}
         {page.sources.some(s=>s.id==='openalex'&&s.status==='quota_exhausted')&&<p className="content-notice">Wide paper search is at today’s limit. Other source results are shown.</p>}

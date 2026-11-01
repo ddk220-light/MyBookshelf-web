@@ -61,3 +61,32 @@ test('search folds Latin accents without erasing Tamil or Hindi vowel signs',()=
   assert.equal(api.search({query:'हनद'}).items.length,0);
   assert.equal(api.search({query:'ecole'}).items.length,1);
 });
+
+function textbooks(){
+  const record={...item(5),key:'fcd:v1:open-textbook-library:5',kind:'learning_resource',languages:['und'],
+    identifiers:[{scheme:'isbn13',value:'9780140328721'}],provenance:[{sourceId:'open-textbook-library'}]};
+  return {...data,sourceId:'open-textbook-library',recordCount:1,revision:'c'.repeat(64),records:[record]};
+}
+test('combined catalogs keep source identity, filter unknown languages and replay all pages',()=>{
+  const loadSnapshot=()=>[structuredClone(data),textbooks()];
+  const make=()=>service({loadSnapshot});const query={query:'Fixture',kinds:['book','learning_resource'],limit:2};
+  const first=make().search(query),second=make().search({...query,cursor:first.nextCursor});
+  assert.equal(first.items.length+second.items.length,4);
+  assert.equal(new Set([...first.items,...second.items].map(i=>i.key)).size,4);
+  assert.deepEqual(make().search({...query,cursor:first.nextCursor}),second);
+  const only=make().search({...query,kinds:['learning_resource']});
+  assert.equal(only.items[0].key,'fcd:v1:open-textbook-library:5');
+  assert.equal(only.sources.find(s=>s.id==='gutenberg').status,'not_selected');
+  assert.equal(only.sources.find(s=>s.id==='open-textbook-library').returned,1);
+  assert.equal(make().search({...query,languages:['en']}).items.length,2);
+  assert.equal(make().search({...query,kinds:['learning_resource'],languages:['en']}).items.length,0);
+  assert.equal(make().locate({isbn13:'9780140328721'}).items[0].kind,'learning_resource');
+  assert.equal(make().resolve({key:'fcd:v1:open-textbook-library:5'}).item.access,'free_full_text');
+  assert.throws(()=>service({loadSnapshot:()=>[data,{...textbooks(),revision:'d'.repeat(64)}]}).search({...query,cursor:first.nextCursor}),/expired/);
+});
+test('one damaged catalog preserves the other source and never pretends no textbook exists',()=>{
+  const api=service({loadSnapshot:()=>[data,{sourceId:'open-textbook-library',unavailable:true}]});
+  const page=api.search({query:'Fixture',kinds:['book','learning_resource']});
+  assert.equal(page.items.length,3);assert.equal(page.sources.find(s=>s.id==='open-textbook-library').status,'unavailable');
+  assert.throws(()=>api.search({query:'Fixture',kinds:['learning_resource']}),/unavailable/);
+});

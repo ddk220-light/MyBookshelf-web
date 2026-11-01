@@ -4,6 +4,7 @@ import { contentKey, parseContentKey, normalizeDoi, safeWebUrl, observedAccess, 
 
 test('source-native identities survive round trip; DOI does not become content identity', () => {
   assert.equal(contentKey('gutenberg', '1342'), 'fcd:v1:gutenberg:1342');
+  assert.equal(contentKey('open-textbook-library', '4'), 'fcd:v1:open-textbook-library:4');
   assert.deepEqual(parseContentKey(contentKey('europepmc','PMC123','PMC')), { sourceId:'europepmc',recordSource:'PMC',recordId:'PMC123' });
   for (const key of ['v1:isbn:9780140328721','fcd:v2:gutenberg:1','fcd:v1:gutenberg:0','https://doi.org/10.1234/test','fcd:v1:europepmc:BAD:123']) assert.equal(parseContentKey(key),null);
   assert.equal(normalizeDoi('https://doi.org/10.1234/TEST.V2'),'10.1234/test.v2');

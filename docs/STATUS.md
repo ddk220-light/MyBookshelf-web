@@ -80,7 +80,8 @@ Redis coordination, search scopes, content reader pages and browser shelf v2
 migration. The optional library bridge requires exact ISBN/work evidence.
 See [implementation decisions and story state](research/free-content/IMPLEMENTATION.md)
 and [validation](research/free-content/VALIDATION.md). Open Textbook Library is
-the next source story. Other paper sources and the children's pilot are pending.
+implemented with 1,909 real metadata records, combined catalog search and ISBN
+links. Other paper sources and the children's pilot are pending.
 
 Both client and backend flags default off. Live paper search additionally needs
 shared Redis REST credentials and explicit budget configuration; no hosted store

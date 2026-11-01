@@ -84,7 +84,7 @@ export function createContentService({env=process.env,local=createLocalContentSe
     },
     async resolve(input) {
       const request=parseContentResolve(input);
-      if(request.parsed.sourceId==='gutenberg')return local.resolve(input);
+      if(request.parsed.sourceId!=='europepmc')return local.resolve(input);
       const policy=live();
       const pageKey=hash({key:request.key,country:request.country,languages:request.languages,policy:CONTENT_POLICY_REVISION});
       const page=await coordinated(pageKey,policy,()=>paperAdapter.search({query:'record lookup',limit:1},{exactRecord:request.parsed}));

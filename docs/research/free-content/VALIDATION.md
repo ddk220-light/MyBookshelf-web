@@ -57,7 +57,7 @@ This workspace uses `/usr/bin/chromium` via
 
 - Hosted shared Redis REST binding and explicit per-source budgets; flags remain
   off without them. Local Gutenberg search requires no database.
-- OTL combined-catalog checks; DOAJ/arXiv/OpenAlex policy and adapter work;
+- DOAJ/arXiv/OpenAlex policy and adapter work;
   reviewed real children's records with original credits and languages.
 - Per-source planner, bounded concurrent progress and source-specific retry;
   current requests return one bounded response, not streaming results.
@@ -69,3 +69,20 @@ This workspace uses `/usr/bin/chromium` via
 Reference boards contain fictional papers and children's stories. Test fixtures
 are explicit synthetic protocol data; they are not production catalogs. Captures
 use actual Gutenberg metadata, not those fictional records.
+
+## Open Textbook Library follow-up
+
+The official CSV was freshly fetched at 2026-11-01T09:08:56Z; 2,735,385 bytes,
+1,909 unique records. The discovery page's CC0 catalog statement was rechecked.
+Raw source hash, protocol limits and the JSON/CSV coverage discrepancy are
+recorded in [the snapshot notes](../../../server/data/content/README.md).
+
+Six Python importer tests, 25 focused content/API tests (real Redis included),
+510 full server tests, 131 client tests and 14 feature browser checks pass.
+Typecheck and feature-enabled production build pass.
+The [real textbook flow](evidence/2026-11-01/textbook-flow.json) verifies on
+phone/desktop: search → resolve → supplied LibreTexts host link → save → reload
+→ reopen, and exact source ISBN `9781946135100` → OTL record 4. No made-up file
+download buttons appeared for the host's HTML landing page. There were no browser
+page errors or horizontal overflow. These are metadata and browser checks, not
+an exhaustive check of every publisher's outbound link.

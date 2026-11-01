@@ -3,17 +3,18 @@ import type { CSSProperties } from 'react';
 import type { ContentItem, SavedContent } from '../../contentTypes';
 
 export function kindLabel(kind: string) { return ({article:'Article',preprint:'Preprint',chapter:'Chapter',book:'Book',learning_resource:'Learning resource',thesis:'Thesis',report:'Report',audiobook:'Audiobook'} as Record<string,string>)[kind] || 'Item'; }
+function bookLike(kind:string){return kind==='book'||kind==='learning_resource';}
 export function ContentCover({ title, kind }: { title: string; kind: string }) {
   const colors=['#7b3e31','#315340','#3d4f7a','#65537a'];
   const color=colors[Array.from(title).reduce((sum,letter)=>sum+letter.charCodeAt(0),0)%colors.length];
-  return <span className={`content-cover ${kind === 'book' ? 'content-book-cover' : 'content-paper-cover'}`} style={{'--content-cover-color':color} as CSSProperties} aria-hidden="true">{kind!=='book'&&<small>{kindLabel(kind)}</small>}<strong>{title}</strong></span>;
+  return <span className={`content-cover ${bookLike(kind) ? 'content-book-cover' : 'content-paper-cover'}`} style={{'--content-cover-color':color} as CSSProperties} aria-hidden="true">{!bookLike(kind)&&<small>{kindLabel(kind)}</small>}<strong>{title}</strong></span>;
 }
 export function ContentResult({ item, to, returnTo }: { item: ContentItem; to: string; returnTo: string }) {
   const authors = item.contributors.filter(c => c.role === 'author');
   const host = item.readingActions[0]?.label.replace(/^Read at /,'') || item.locations[0]?.host || 'Source';
   return <article className="content-result">
-    {item.kind === 'book' && <Link tabIndex={-1} aria-hidden="true" to={to} state={{returnTo}}><ContentCover title={item.title} kind={item.kind} /></Link>}
-    <div>{item.kind!=='book'&&<p className="content-kind">{kindLabel(item.kind)}{item.version ? ` · ${item.version}` : ''}
+    {bookLike(item.kind) && <Link tabIndex={-1} aria-hidden="true" to={to} state={{returnTo}}><ContentCover title={item.title} kind={item.kind} /></Link>}
+    <div>{!bookLike(item.kind)&&<p className="content-kind">{kindLabel(item.kind)}{item.version ? ` · ${item.version}` : ''}
       {item.flags?.includes('source_reports_retracted') && <span className="content-warning"> · Retraction listed by source</span>}</p>}
       <h2><Link to={to} state={{returnTo}}>{item.title}</Link></h2>
       <p>{authors.slice(0,3).map(c=>c.name).join(', ')}{authors.length>3?` + ${authors.length-3}`:''}</p>

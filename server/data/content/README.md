@@ -30,3 +30,33 @@ The first source must stay behind `CONTENT_DISCOVERY_ENABLED` until refresh,
 deployment size and final UI/source checks are complete. Positive access evidence
 expires after 24 hours and is downgraded to unknown; an overdue refresh must not
 be presented as fresh free-reading evidence.
+
+## Open Textbook Library
+
+`open-textbook-library.json` contains 1,909 records from the official
+https://open.umn.edu/opentextbooks/download.csv retrieved 2026-11-01T09:08:56Z.
+The source CSV SHA-256 is
+`8c6e55eed36f527a0229eb5210c845effca3c578fd508d8da67096c584e4d9a9`.
+The discovery page explicitly licenses catalog records as CC0; individual books
+retain their supplied licence statement (without an invented version).
+
+The same day's JSON endpoint advertised 2,038 records; this export therefore
+does not establish complete website coverage. `complete` stays false. The CSV
+omits language: records use `und`, which does not match an English/Hindi/Tamil
+filter. Contributor roles are parsed only from explicit `Name - Role` entries.
+Reviews and descriptions are discarded. Only supported digital links explicitly
+priced `$0.00` can supply reading evidence. A "PDF" label pointing to an HTML
+landing page is not exposed as a PDF download; only supplied `.pdf`/`.epub`
+file URLs become those download actions. No destination's availability or
+licence version is inferred from its hostname.
+
+```sh
+python tools/content/import_textbooks.py --output server/data/content/open-textbook-library.json
+```
+
+The importer shares bounded atomic snapshot activation and shrink protection.
+Offline imports require their original `--observed-at`; age is never renewed
+merely by running an offline import. Both catalogs are bundled read-only at
+runtime, independently attributed and indexed together, with a combined index
+revision bound into pagination cursors. A damaged source does not hide the
+other catalog or become a truthful empty result.

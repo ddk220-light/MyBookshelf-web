@@ -46,6 +46,18 @@ it('labels absent licence and opens only the supplied source action',async()=>{
   expect(read).toHaveAttribute('href','https://europepmc.org/articles/PMC123');expect(read).toHaveAttribute('rel','noopener noreferrer');
 });
 
+it('keeps textbook collection searches distinct and labels the catalog language gap',async()=>{
+  const textbook:ContentItem={...item,key:'fcd:v1:open-textbook-library:123',kind:'learning_resource',title:'Synthetic textbook fixture',languages:['und'],
+    provenance:[{...item.provenance[0],sourceId:'open-textbook-library',sourceRecordId:'123'}]};
+  vi.mocked(contentApi.search).mockResolvedValue({...page,items:[textbook],sources:[{id:'open-textbook-library',status:'ok',returned:1,complete:false,catalogRecords:1909}]});
+  mount(<ContentSearchPage scope="free"/>,'/app/search?scope=free&collection=textbooks&q=textbook-fixture');
+  await screen.findByRole('heading',{name:textbook.title});
+  const calls=vi.mocked(contentApi.search).mock.calls;
+  expect(calls[calls.length-1]?.[1]).toEqual(['learning_resource']);
+  expect(screen.getByText(/does not supply languages/)).toBeInTheDocument();
+  expect(screen.getByText(/1,909 records/)).toBeInTheDocument();
+});
+
 it('shows unknown items only after explicit consent and keeps source states inspectable',async()=>{
   vi.mocked(contentApi.search).mockImplementation(async(_q,_k,options)=>({...page,hiddenUnclear:1,
     items:options?.includeUnclear?[item,{...item,key:'fcd:v1:europepmc:MED:124',title:'Unknown-access fixture',access:'unknown',readingActions:[]}]:[item]}));

@@ -51,9 +51,9 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
     <section className="content-rights"><h2>Reading and rights</h2><p>{rights?.statement||rights?.id||'Licence not stated.'}</p>
       <p>Free to read does not always mean free to reuse. Check your country’s rules and the source’s terms.</p></section>
     {item.relations.length>0&&<section><h2>Related versions</h2>{item.relations.map(relation=><p key={relation.targetKey}><Link to={'/app/read/'+encodeURIComponent(relation.targetKey)}>{relation.kind} · separate item</Link></p>)}</section>}
-    {item.kind==='book'&&<p className="content-library-link"><Link to={'/app/search?q='+encodeURIComponent(item.title+' '+item.contributors.filter(c=>c.role==='author').slice(0,1).map(c=>c.name).join(' '))}>
+    {['book','learning_resource'].includes(item.kind)&&<p className="content-library-link"><Link to={'/app/search?q='+encodeURIComponent(item.title+' '+item.contributors.filter(c=>c.role==='author').slice(0,1).map(c=>c.name).join(' '))}>
       Prefer print? {library?`Search ${library.name}`:'Search library books'}</Link><small>A title search may find a different edition.</small></p>}
-    {source&&<footer className="content-provenance">From {source.sourceId==='gutenberg'?'Project Gutenberg':source.sourceId==='europepmc'?'Europe PMC':source.sourceId} · checked {new Date(source.retrievedAt).toLocaleDateString()}
+    {source&&<footer className="content-provenance">From {source.sourceId==='gutenberg'?'Project Gutenberg':source.sourceId==='open-textbook-library'?'Open Textbook Library':source.sourceId==='europepmc'?'Europe PMC':source.sourceId} · checked {new Date(source.retrievedAt).toLocaleDateString()}
       {safeSource(source.recordUrl)&&<> · <a href={safeSource(source.recordUrl)} target="_blank" rel="noopener noreferrer">Source record ↗</a></>}</footer>}
   </section>;
 }

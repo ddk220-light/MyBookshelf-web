@@ -21,6 +21,8 @@ export function parseContentKey(value) {
   if (typeof value !== 'string' || value.length > 200) return null;
   const pg = /^fcd:v1:gutenberg:([1-9]\d{0,8})$/.exec(value);
   if (pg) return { sourceId: 'gutenberg', recordId: pg[1] };
+  const textbook = /^fcd:v1:open-textbook-library:([1-9]\d{0,8})$/.exec(value);
+  if (textbook) return { sourceId: 'open-textbook-library', recordId: textbook[1] };
   const pmc = /^fcd:v1:europepmc:([A-Z]{3}):([A-Za-z0-9][A-Za-z0-9_.-]{0,100})$/.exec(value);
   if (pmc && EPMC_SOURCES.has(pmc[1])) return { sourceId: 'europepmc', recordSource: pmc[1], recordId: pmc[2] };
   return null;

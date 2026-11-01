@@ -1,16 +1,22 @@
 import { readFileSync } from 'node:fs';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
-import { CONTENT_POLICY_REVISION, parseContentSearch, parseContentResolve, parseContentLocate, readingActions, observedAccess } from './contracts.js';
+import { CONTENT_POLICY_REVISION, parseContentSearch, parseContentResolve, parseContentLocate, parseContentKey, readingActions, observedAccess } from './contracts.js';
 
 function failure(code, message, status = 503) { return Object.assign(new Error(message), { code, status }); }
 function folded(value) { return value.normalize('NFKD').replace(/(\p{Script=Latin})\p{M}+/gu, '$1').normalize('NFC').toLocaleLowerCase(); }
 function hash(value) { return createHash('sha256').update(value).digest('hex'); }
 
-export function readGutenbergSnapshot() {
-  return JSON.parse(readFileSync(new URL('../../data/content/gutenberg.json', import.meta.url), 'utf8'));
+const LOCAL_SOURCES = { gutenberg: { name: 'Project Gutenberg', kind: 'book' },
+  'open-textbook-library': { name: 'Open Textbook Library', kind: 'learning_resource' } };
+
+export function readLocalSnapshots() {
+  return Object.keys(LOCAL_SOURCES).map(sourceId => {
+    try { return JSON.parse(readFileSync(new URL(`../../data/content/${sourceId}.json`, import.meta.url), 'utf8')); }
+    catch { return { sourceId, unavailable: true }; }
+  });
 }
 
-export function createLocalContentService({ loadSnapshot = readGutenbergSnapshot,
+export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
   enabled = process.env.CONTENT_DISCOVERY_ENABLED === 'true', cursorSecret = process.env.CONTENT_CURSOR_SECRET,
   now = () => Date.now() } = {}) {
   let catalog;
@@ -20,14 +26,28 @@ export function createLocalContentService({ loadSnapshot = readGutenbergSnapshot
     if (!enabled) throw failure('CONTENT_DISABLED', 'Free-content discovery is not connected yet.');
     if (typeof cursorSecret !== 'string' || cursorSecret.length < 32) throw failure('CONTENT_UNAVAILABLE', 'Free-content discovery is temporarily unavailable.');
     if (catalog) return;
-    const data = loadSnapshot();
-    if (data.schemaVersion !== 1 || data.sourceId !== 'gutenberg' || !/^[a-f0-9]{64}$/.test(data.revision)
-      || !Array.isArray(data.records) || data.records.length !== data.recordCount || !data.recordCount || data.recordCount > 10000) throw failure('CONTENT_UNAVAILABLE', 'The free-book catalog is temporarily unavailable.');
-    byKey = new Map(data.records.map(item => [item.key, item]));
-    if (byKey.size !== data.recordCount) throw failure('CONTENT_UNAVAILABLE', 'The free-book catalog is temporarily unavailable.');
-    indexed = data.records.map(item => ({ item, title: folded(item.title),
+    const loaded = loadSnapshot();
+    const snapshots = Array.isArray(loaded) ? loaded : [loaded];
+    const valid = [], unavailable = new Set();
+    for (const data of snapshots) {
+      const source = LOCAL_SOURCES[data?.sourceId];
+      if (!source || valid.some(s => s.sourceId === data.sourceId)) throw failure('CONTENT_UNAVAILABLE', 'The free-book catalog is temporarily unavailable.');
+      if (data.schemaVersion !== 1 || !/^[a-f0-9]{64}$/.test(data.revision)
+        || !Number.isFinite(Date.parse(data.importedAt)) || !Array.isArray(data.records)
+        || data.records.length !== data.recordCount || !data.recordCount || data.recordCount > 10000
+        || new Set(data.records.map(item => item?.key)).size !== data.recordCount
+        || data.records.some(item => parseContentKey(item?.key)?.sourceId !== data.sourceId || item.kind !== source.kind
+          || typeof item.title !== 'string' || !Array.isArray(item.contributors) || !Array.isArray(item.languages)
+          || !Array.isArray(item.subjects) || !Array.isArray(item.identifiers) || !Array.isArray(item.locations))) {
+        unavailable.add(data.sourceId); continue;
+      }
+      valid.push(data);
+    }
+    const records = valid.flatMap(data => data.records);
+    byKey = new Map(records.map(item => [item.key, item]));
+    indexed = records.map(item => ({ item, title: folded(item.title),
       text: folded([item.title, ...item.contributors.map(c => c.name), ...item.subjects].join(' ')) }));
-    catalog = data;
+    catalog = { snapshots: valid, unavailable, revision: hash(JSON.stringify(valid.map(s => [s.sourceId, s.revision]))) };
   }
   function present(item, context) {
     return { ...item, readingActions: readingActions(item, { ...context, now: now() }),
@@ -43,7 +63,7 @@ export function createLocalContentService({ loadSnapshot = readGutenbergSnapshot
     try {
       const state = JSON.parse(Buffer.from(payload, 'base64url').toString());
       if (state.binding !== binding || state.revision !== catalog.revision || state.expires <= now()
-        || !Number.isInteger(state.offset) || state.offset < 0 || state.offset > 10000) throw new Error();
+        || !Number.isInteger(state.offset) || state.offset < 0 || state.offset > 20000) throw new Error();
       return state;
     } catch { throw failure('CONTENT_CURSOR_EXPIRED', 'This search has expired or changed. Search again to continue.', 409); }
   }
@@ -53,11 +73,13 @@ export function createLocalContentService({ loadSnapshot = readGutenbergSnapshot
       ensure();
       const binding = hash(JSON.stringify({ ...query, cursor: null, policy: CONTENT_POLICY_REVISION }));
       const state = cursorState(query.cursor, binding);
-      const chosen = query.kinds.includes('book');
+      const chosen = Object.entries(LOCAL_SOURCES).filter(([,source]) => query.kinds.includes(source.kind)).map(([id]) => id);
+      if (!chosen.length) throw failure('CONTENT_UNAVAILABLE', 'Paper search is not connected yet. Please try the free-book catalog.');
+      if (!catalog.snapshots.some(source => chosen.includes(source.sourceId))) throw failure('CONTENT_UNAVAILABLE', 'The selected free-book catalogs are temporarily unavailable.');
       const terms = folded(query.query).split(/\s+/);
-      const matching = chosen ? indexed.filter(row => terms.every(term => row.text.includes(term))
+      const matching = indexed.filter(row => query.kinds.includes(row.item.kind) && terms.every(term => row.text.includes(term))
         && (!query.languages.length || row.item.languages.some(l => query.languages.includes(l))))
-        .sort((a,b) => Number(b.title === folded(query.query)) - Number(a.title === folded(query.query)) || a.title.localeCompare(b.title) || a.item.key.localeCompare(b.item.key)) : [];
+        .sort((a,b) => Number(b.title === folded(query.query)) - Number(a.title === folded(query.query)) || a.title.localeCompare(b.title) || a.item.key.localeCompare(b.item.key));
       let hiddenUnclear = 0;
       const eligible = [];
       for (const { item } of matching) {
@@ -68,7 +90,6 @@ export function createLocalContentService({ loadSnapshot = readGutenbergSnapshot
           if (query.includeUnclear) eligible.push(value);
         }
       }
-      if (!chosen) throw failure('CONTENT_UNAVAILABLE', 'Paper search is not connected yet. Please try the free-book catalog.');
       const items = eligible.slice(state.offset, state.offset + query.limit);
       let nextCursor = null;
       if (state.offset + items.length < eligible.length) {
@@ -76,10 +97,13 @@ export function createLocalContentService({ loadSnapshot = readGutenbergSnapshot
         nextCursor = payload + '.' + signature(payload);
       }
       return { items, nextCursor, hiddenUnclear, coverage: 'partial', policyRevision: CONTENT_POLICY_REVISION,
-        sources: [{ id:'gutenberg',name:'Project Gutenberg',status:'ok',returned:items.length,
-          catalogRecords:catalog.recordCount,complete:catalog.complete,importedAt:catalog.importedAt,
-          freshness:now() - Date.parse(catalog.importedAt) <= 86400_000 ? 'fresh' : 'stale' },
-          ...['open-textbook-library','europepmc','doaj','arxiv','openalex'].map(id => ({id,status:'disabled',returned:0}))] };
+        sources: [...Object.entries(LOCAL_SOURCES).map(([id,source]) => {
+          const snapshot = catalog.snapshots.find(s => s.sourceId === id);
+          return { id, name:source.name, status:!chosen.includes(id)?'not_selected':catalog.unavailable.has(id)?'unavailable':snapshot?'ok':'disabled',
+            returned:items.filter(item => parseContentKey(item.key).sourceId === id).length,
+            ...(snapshot && chosen.includes(id) ? {catalogRecords:snapshot.recordCount,complete:snapshot.complete,importedAt:snapshot.importedAt,
+              freshness:now()-Date.parse(snapshot.importedAt)<=86400_000?'fresh':'stale'} : {}) };
+        }), ...['europepmc','doaj','arxiv','openalex'].map(id => ({id,status:'disabled',returned:0}))] };
     },
     resolve(input) {
       const request = parseContentResolve(input);
