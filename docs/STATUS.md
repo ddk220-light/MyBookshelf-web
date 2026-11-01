@@ -30,7 +30,35 @@ match has been demonstrated. [The screen review](seo/SCREEN_REVIEW.md) explains
 the intentional differences and [the reference boards](design/2026-10-mobile/index.html)
 are available here without the private branch.
 
-## Release state: recheck before changing production
+## Current production release
+
+The owner instructed “Push to prod if your checks are clean”; the instruction and
+passing candidate are recorded on [R03 #9](https://github.com/ddk220-light/MyBookshelf-web/issues/9).
+[PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57) merged at
+`c17a75771c85e030666ec859040592a162df51b9`, with exactly the tested `41c8340` tree.
+That source is live at **https://mybookshelf.cloud**, production deployment
+`dpl_4FX4UbnpVFZKzaQRx6GZYgKCKaeG` (READY, Node 22/iad1). Home/settings/privacy/
+sitemap/health and supported public catalog API smoke checks pass.
+
+**Account signup is not enabled.** Production currently has catalog credentials
+only. Dedicated account storage, verified Resend mail and scheduled cleanup remain
+unconfigured. Google/Apple stay disabled. Account endpoints deliberately return
+503/private/no-store; explicit browser-shelf continuation remains available.
+See [the release record](accounts/releases/2026-11-01-production.md) and
+[operations](accounts/OPERATIONS.md) before activating accounts.
+
+This was a one-time deployment of the reviewed `MyBookshelf-web` commit. The
+production project's persistent Git connection still points to the older
+`MyBookshelf/main`; changing that connection was rejected by automatic approval
+review. Future releases require an explicit deployment from this repo until the
+connection change is approved. The old linked repository can still auto-deploy.
+Domains, catalog credentials and normal domain auto-assignment are preserved.
+Rollback target: `dpl_G6GaQUUqD7q6w7s8BcmX5n3EyHBd`.
+
+## Earlier release evidence
+
+The following are historical checkpoints, superseded for the live source by the
+production record above.
 
 - Reviewed preview: https://mybookshelf-jh0o69edr-ddk220.vercel.app/,
   deployment `dpl_4WuSysFWU4wQhHqNhEGksvU7W9FA`, application commit
@@ -53,7 +81,7 @@ are available here without the private branch.
   Repository protection and vulnerability-reporting settings also need owner
   administration. Keep the previous production deployment as the rollback target.
 
-## Account work: implemented; staging release exits pending
+## Account work: source deployed; activation exits pending
 
 Deepak approved the document packet and Claude canvas v4 at R02 (`36a1436`),
 then authorized progressive story/task implementation. Feature code in
@@ -80,7 +108,8 @@ Isolated staging uses `mybookshelf-accounts-staging` in iad1, Neon and a separat
 private deletion ledger. Real staging migration checksums 001–011 match the repo;
 private ledger writes/reads/encrypted cleanup and anonymous-read denial pass.
 Runtime credentials are Preview/account-settings only, administrator Development
-only. Existing production resources/Git connection remain unchanged.
+only. Production source is deployed as recorded above; production account entry remains
+disabled. Existing catalog credentials and the persistent Git connection are retained.
 
 The owner subsequently instructed: Resend only for production; keep Google/Apple
 disabled and add their credentials later. These are deliberate activation deferrals,
@@ -89,7 +118,7 @@ methods remain disabled. The GitHub workflow is an optional staging scheduler;
 its Actions-secret HTTP 403 does not require a permission change to finish coding.
 See [current rollout choices](accounts/OPERATIONS.md#owners-current-rollout-choices).
 Production still needs real mail, active cleanup/alerts, hosted backup/restore,
-retention proof and final accessibility/operator/R03 review before account enablement.
+retention proof and final accessibility/operator/R03 activation evidence before account enablement.
 Provider-specific live checks apply before those methods are enabled later.
 
 Worktree: `/workspace/worktrees/MyBookshelf-web-account-settings`, branch

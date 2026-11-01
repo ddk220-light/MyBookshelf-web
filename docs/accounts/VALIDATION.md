@@ -2,10 +2,11 @@
 
 Updated 2026-11-01 UTC. Code candidate: `56915a6785f26daa55b7ea684372a23875c136ee`, branch
 `account-settings`, [PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57).
-R02 approved documents/Claude canvas v4 at `36a1436`. **R03 remains pending;
-this is an implemented feature, not production approval. The owner's later rollout
-choices defer Resend to production and keep Google/Apple disabled; see the current
-configuration record below.**
+R02 approved documents/Claude canvas v4 at `36a1436`. The owner subsequently
+authorized deployment after clean checks. Merge `c17a757` has the same tested tree
+and is now live; **production account activation remains gated on setup and live
+operational evidence**. See the [production release record](releases/2026-11-01-production.md).
+Resend is production-only and Google/Apple remain disabled.
 
 ## Reproducible local checks
 
@@ -186,5 +187,5 @@ returned HTTP 200 with `email:false`, `google:false`, `apple:false`.
 
 These owner-directed activation deferrals supersede the earlier request to supply
 all provider/mail/scheduler prerequisites for staging now. No real terms were
-accepted, no verification bypass/test inbox was deployed, and production remains
-unchanged. See [OPERATIONS.md](OPERATIONS.md#owners-current-rollout-choices).
+accepted, no verification bypass/test inbox was deployed, and production account entry remains
+disabled. The tested source deployment is recorded in the production release note. See [OPERATIONS.md](OPERATIONS.md#owners-current-rollout-choices).

@@ -1,7 +1,10 @@
 # Account operations and release gate
 
-This is the runbook for PR #57, branch `account-settings`. R02 documents and
-Claude canvas v4 are approved. **R03 has not approved a production release.**
+This is the runbook for PR #57, now merged to `main`. R02 documents and
+Claude canvas v4 are approved. The owner subsequently authorized deployment after
+clean checks; the tested source is now in production. **Account activation remains
+gated on production setup and live operational checks.** See the
+[2026-11-01 release record](releases/2026-11-01-production.md).
 Deepak is the release/configuration owner. A second operator has not yet followed
 this runbook; automated checks are recorded separately from that requirement.
 
@@ -48,11 +51,14 @@ Private deletion ledger: `store_Gs9zkvOMQteZihLA`. Its separate read/write token
 `store_anEQSluYF2hXAEQT` is unused by v1: export streams an authenticated attachment,
 with no persistent export file or URL. Do not start retaining export copies.
 
-The existing production project remains connected to the older `MyBookshelf/main`
-repository. Its domains, credentials and deployment have not been changed.
-Production database/storage provisioning was rejected by automatic approval
-review earlier in this task and remains deferred. Staging supports implementation
-and review; production resources must be explicitly settled for R03.
+The production project remains connected to the older `MyBookshelf/main`
+repository. Its domains and catalog credentials are retained, while deployment
+`dpl_4FX4UbnpVFZKzaQRx6GZYgKCKaeG` serves the reviewed `MyBookshelf-web` commit
+`c17a757` through a one-time deployment. Automatic approval review rejected
+permanently relinking the Git repository; that connection remains unchanged.
+Production account storage/mail/cleanup are not provisioned or enabled. Do not
+copy staging credentials into production. Settle and verify the production account
+resources before enabling entry; code deployment alone does not pass those checks.
 
 ## Migrations and restoration
 

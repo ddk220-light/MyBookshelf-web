@@ -4,7 +4,8 @@ Updated 2026-11-01. Feature code is implemented on `account-settings` in
 [PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57).
 [Validation](VALIDATION.md) records the tested code and remaining release exits;
 [operations](OPERATIONS.md) records actual resources and configuration.
-**R03 and production rollout remain pending.**
+**The tested source is deployed to production; account activation remains pending.**
+See the [production code release](releases/2026-11-01-production.md).
 
 Deepak approved the documents and Claude canvas v4 (`1793518146-c9ad`) at
 `36a1436`, then authorized story-by-story child-task publication and implementation.
@@ -90,9 +91,11 @@ against staging; no decrypted credentials are stored in repository files.
 The temporary provisioning token expired and was removed from session storage;
 no persistent administrator API token was created.
 
-Production provisioning was rejected by automatic approval review earlier;
-production remains deferred to R03. Existing production domains, credentials and
-Git connection to `MyBookshelf/main` remain unchanged. Neon plan metadata does not
+Production account provisioning remains incomplete. The owner authorized code
+deployment after clean checks, and reviewed source `c17a757` is live through a
+one-time deployment. Production domains, catalog credentials and the persistent
+Git connection to `MyBookshelf/main` are retained. Account entry stays disabled
+until its dedicated production services are configured and verified. Neon plan metadata does not
 prove its actual backup lifetime. Hosted retention/restore evidence is still needed.
 
 ## Progressive task publication

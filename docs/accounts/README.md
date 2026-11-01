@@ -4,7 +4,9 @@ Packet version **0.2 — R01 and R02 approved**, 2026-11-01. Product owner/revie
 Deepak Ravikumar. Draft author: Codex. Deepak approved the document packet and
 DEC-01–10 in chat on 2026-11-01 (America/Los_Angeles), at commit
 `5056de00bc1091fd11a8b49cf358e2594c37a49e`. Implementation and evidence are recorded in [IMPLEMENTATION.md](IMPLEMENTATION.md)
-and [VALIDATION.md](VALIDATION.md); R03 remains pending.
+and [VALIDATION.md](VALIDATION.md). The tested source is deployed;
+[the production release record](releases/2026-11-01-production.md) explains the
+still-gated account activation and retained deployment connection.
 The implemented screens and approved artifact are compared in
 [SCREEN_REVIEW.md](SCREEN_REVIEW.md), with a normal-size phone/desktop gallery.
 
