@@ -1,7 +1,7 @@
 # Claude UI artifact: handoff and review record
 
-Version 0.1, 2026-11-01. Story [S22 #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56).
-**Artifact status: awaiting Claude’s check-in.** Creator: Claude. Reviewer: Deepak Ravikumar.
+Version 0.2, 2026-11-01. Story [S22 #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56).
+**Artifact status: created, awaiting R02 review.** Creator: Claude. Reviewer: Deepak Ravikumar.
 This file is the brief; it is not a Claude-created artifact or an approval.
 
 ## Start condition
@@ -9,9 +9,7 @@ This file is the brief; it is not a Claude-created artifact or an approval.
 Start only after [R01 #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7)
 records Deepak's approval of the exact document-packet commit. Copy that commit
 and decision into the record below. The owner requested documents for review
-first, then Claude's artifact. R01 was approved in chat on 2026-11-01
-(America/Los_Angeles) for `5056de00bc1091fd11a8b49cf358e2594c37a49e`.
-Codex is paused for Claude’s check-in. No automatic Claude invocation is triggered here.
+first, then Claude's artifact. No automatic Claude handoff is triggered here.
 
 ## Brief to give Claude
 
@@ -49,10 +47,10 @@ reviewed requirements. Changes to product behavior must be called out for R02.
 ## Completion and reconciliation
 
 - [x] R01 approval and input commit recorded.
-- [ ] Claude-produced preview and inspectable source/export available to Deepak.
-- [ ] Each UX flow and UI route maps to named artifact screens and material states.
+- [x] Claude-produced preview and inspectable source/export available to Deepak.
+- [x] Each UX flow and UI route maps to named artifact screens and material states.
 - [ ] Desktop/mobile and all three lights inspected; keyboard/focus checks recorded.
-- [ ] Missing states, assumptions and proposed changes listed with disposition.
+- [x] Missing states, assumptions and proposed changes listed with disposition.
 - [ ] UI_DESIGN.md and affected delivery tasks reconciled with the artifact.
 - [ ] R02 receives exact source commit, preview, screenshots and updated packet.
 
@@ -60,13 +58,83 @@ reviewed requirements. Changes to product behavior must be called out for R02.
 
 | Field | Value |
 | --- | --- |
-| R01-approved packet commit | `5056de00bc1091fd11a8b49cf358e2594c37a49e` — Deepak, 2026-11-01 (America/Los_Angeles); chat approval recorded in R01 |
-| Claude artifact version/source commit | Not created |
-| Preview / source export | Not created |
-| Coverage inventory | Pending UX-01–11 and UI route mapping |
-| Claude assumptions and deviations | Pending artifact |
+| R01-approved packet commit | `5056de00bc1091fd11a8b49cf358e2594c37a49e` (packet v0.2, DEC-01–10 as proposed). Approved by Deepak Ravikumar on 2026-11-01; recorded on [#7](https://github.com/ddk220-light/MyBookshelf-web/issues/7). |
+| Claude artifact version/source commit | Artifact v0.2, canvas version 3 (`1793517848-1a98`); source in this commit under `docs/design/accounts/claude-artifact/` |
+| Preview / source export | https://claude.ai/artifact/4wk6xx8eN6JZdFz95uM1d8 (private until shared) · [source and README](../design/accounts/claude-artifact/README.md) |
+| Coverage inventory | Below |
+| Claude assumptions and deviations | Below |
 | R02 decision / reviewer / date | Pending Deepak review |
 | Approved artifact used by T04 | Pending R02 |
+
+## Coverage
+
+| Flow | Artifact screens (Main) | States shown |
+| --- | --- | --- |
+| UX-01 Sign up | Settings, guest; Create account; Check your email | checking account, accounts unavailable; submitting, field errors, rate limited; resent, mail delayed, verified on another device |
+| UX-02 Verify | Verify link | ready, verifying, expired, already used |
+| UX-03 Sign in | Sign in; Google or Apple (labelled simulation); Add your name | wrong details, not verified, rate limited, provider cancelled, provider collision, offline; name missing from provider; Apple relay address |
+| UX-04 Recovery | Forgot password; New password | neutral sent message; expired or used, updated |
+| UX-05 Guest import | Bring books over | preview with history unchecked and library choice, importing, over capacity, failed, imported with keep or remove the copy here |
+| UX-06 Reading and sync | Shelf while signed in; Clear saved books | saved, saving, save failed, changed on another device, undo after remove, couldn't refresh, empty; clear confirmation |
+| UX-07 Account details | Account settings; Change email | saving and saved name, email change pending |
+| UX-08 Security and methods | Account settings; Confirm it's you | last sign-in method (disconnect disabled with reason), couldn't sign out another device |
+| UX-09 Sign out | Signing out | not confirmed, session expired, signed out |
+| UX-10 Export and delete | Export; Delete account | downloaded, error; confirm with Cancel first, accepted, no reply |
+| UX-11 History | Recently viewed choice; Account settings | off by default, on, paused |
+
+Every screen works at Phone 390, Phone 320 and Desktop 1440, in Daylight,
+Lamplight and Ink, with a 200% page-zoom view for phones. The `Emails` board covers:
+
+| Email | Covers |
+| --- | --- |
+| E1 | verify email |
+| E2 | sign-up attempt for an existing account |
+| E3 | password reset |
+| E4 | reset request for a Google- or Apple-only account |
+| E5 | unknown address (nothing sent) |
+| E6 | password changed |
+| E7 | confirm new email |
+| E8 | change requested, to the current address |
+| E9 | email changed |
+| E10 | sign-in method connected |
+| E11 | account deleted |
+| E12 | expired or used links (nothing sent unless asked) |
+
+## Deviations and decisions for R02
+
+1. **Wording (owner-approved, applied to UX_DESIGN.md):**
+   - "Signed-in devices" instead of "Sessions".
+   - "Remove the copy here" instead of "Remove device copy".
+   - "Couldn't finish signing out" as the heading when the server doesn't
+     confirm sign-out, with Try again and Continue as guest.
+2. **Desktop entry point (owner-approved):** the sidebar footer shows "Sign
+   in" for guests, and the private name and email when signed in. Settings
+   remains the main entry. There is no sign-up prompt while saving.
+3. **Provider buttons (owner-approved):** these follow each provider's
+   published style.
+   - **Google:** the four-colour G on a white button with a `#747775` border
+     (dark variant in Lamplight), Roboto Medium, "Continue with Google" on
+     Create account and "Sign in with Google" on Sign in.
+   - **Apple:** black with the white Apple logo (white in Lamplight), "Continue
+     with Apple" or "Sign in with Apple".
+
+   Check the final assets against each provider's current guidelines at
+   implementation.
+4. **Emails E8 and E10 are proposals beyond the PRD.**
+   - **E8:** a notice to the current address when an email change is
+     requested. The PRD requires a notice; this adds one at request time as
+     well as at completion (E9).
+   - **E10:** security notices when a sign-in method is connected,
+     disconnected or a password is first set.
+
+   Accept or drop both at R02.
+5. **Apple without a name:** returning from Apple always goes to "Add your
+   name", because Apple shares the name only on first authorization.
+6. **Dialog focus:** the canvas can't trap or restore focus. The structure
+   (labelled dialog, Cancel first) is shown, and the UI specification's focus
+   rules apply in implementation.
+7. **Emails use one light style** in every reading light. Sender domain and
+   support address are placeholders until P02 configures sending.
 
 Creation alone does not authorize feature implementation. R02 approves the actual
 artifact plus reconciled designs; T04 later evaluates the implemented UI against

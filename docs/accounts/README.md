@@ -55,7 +55,8 @@ This supersedes the older PRD-only-first sequence in the original backlog.
    explicit decision. Current decision: **approved, 2026-11-01**, for the commit above.
 2. **S22:** after R01 approval, Claude makes the interactive UI artifact from the
    reviewed packet. Its source, preview, state coverage and deviations are recorded
-   in [UI_ARTIFACT.md](UI_ARTIFACT.md). Current artifact: **awaiting Claude’s check-in**.
+   in [UI_ARTIFACT.md](UI_ARTIFACT.md). Current artifact: **v0.2 created**, awaiting R02
+   ([source](../design/accounts/claude-artifact/README.md)).
 3. **R02 / [#8](https://github.com/ddk220-light/MyBookshelf-web/issues/8): review Claude's artifact and reconciled documents/tasks.**
    Explicit approval authorizes provisioning and feature implementation. Current
    decision: **pending**. A merged documentation PR does not constitute approval.

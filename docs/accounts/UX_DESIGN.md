@@ -48,8 +48,8 @@ its exact key. New sign-in never replays a pending destructive action automatica
 | UX-05 Guest import (AC-12) | Verified account → preview destination name/email, count of device saves, recent history count and library choices | Confirm import → acknowledged counts (added/already saved/skipped expired) → optionally remove exact imported device data | “Not now” returns to reading; offer remains in settings. History box unchecked; separate future-history choice. Overflow explains capacity and changes nothing. Failure retains snapshot, retry uses same import ID. Corrupt storage routes to existing recovery, never silent import. |
 | UX-06 Reading and sync (AC-09–11,14) | Existing book Save, shelf Remove/Undo, library Select and recent-history controls | Pending label → confirmed state; another device refreshes to see result | Offline says “Couldn't save to your account. Retry when connected.” Conflicts say “Your shelf changed on another device. Refresh to try again.” Existing content can remain marked stale while authenticated; expired identity content clears. |
 | UX-07 Account details (AC-08) | Settings → Account → private name; Change email | Name acknowledged inline. New email displays pending verification until confirmed; old email remains valid meanwhile | Name errors retain text. Email changes require recent auth; cancel leaves old email. Collision/expiry returns recoverable error without disclosing who owns address. |
-| UX-08 Security and methods (AC-04,05,07) | Settings → Security → change/set password, linked methods, active sessions | Explicit link confirms provider; disconnect confirms remaining method; selected session disappears after revoke | Recent-auth screen uses existing password or linked provider. Provider collision recommends signing into that account; never offers email-based merge. Last-method control disabled with explanation. Failed revocation stays actionable. |
-| UX-09 Sign out/switch (AC-05,14) | “Sign out” distinct from “Sign out all devices” → submit | Hide account state; restore separate guest shelf and local appearance; other tabs recheck identity | Hide private content even if request fails; show “Server sign-out could not be confirmed” with Retry and Continue as guest. No success toast. Local guest mode suppresses automatic session hydration and persists across reloads until resolved. |
+| UX-08 Security and methods (AC-04,05,07) | Settings → Sign-in methods and Signed-in devices → change/set password, linked methods, devices | Explicit link confirms provider; disconnect confirms remaining method; a device disappears after Sign out | Recent-auth screen uses existing password or linked provider. Provider collision recommends signing into that account; never offers email-based merge. Last-method control disabled with explanation. Failed revocation stays actionable. |
+| UX-09 Sign out/switch (AC-05,14) | “Sign out” distinct from “Sign out all devices” → submit | Hide account state; restore separate guest shelf and local appearance; other tabs recheck identity | Hide private content even if request fails; show “Couldn't finish signing out” (the server didn't confirm the sign-out) with Try again and Continue as guest. No success toast. Local guest mode suppresses automatic session hydration and persists across reloads until resolved. |
 | UX-10 Export/delete (AC-13) | Settings → Your data → Export JSON or Delete account → recent auth → explicit confirmation | Export downloads once. Delete acknowledgement ends session and explains cleanup/backup windows | Confirm name/email and “Delete account” button; no prechecked local-data deletion. Provider/job error after accepted deletion cannot restore access. Failure before acknowledgement offers status recheck/retry without claiming deletion. |
 | UX-11 History (AC-11) | First sign-in or Settings → “Save recently viewed books to my account” off by default | Enable announces “On”; pause preserves existing list; remove/clear confirmed separately | Explain “Up to 50 books for 30 days”. Clear needs confirmation. Failed toggle returns to server value with error; old pending views do not reappear after pause/clear. |
 
@@ -65,7 +65,7 @@ Password      [            Show]    Sign-in methods
 At least 15 characters              Password [Change] / [Set password]
 [Create account]                    Google [Connect / Disconnect]
                                     Apple  [Connect / Disconnect]
-Or continue with                    Sessions [This browser] [Other browser: Revoke]
+Or continue with                    Signed-in devices [This browser] [Safari on iPhone: Sign out]
 [Google] [Apple]                    [Sign out] [Sign out all devices]
 Already have an account? Sign in
 Continue using this browser         Your reading data
@@ -88,7 +88,7 @@ Library: keep account library
 After success only:                 backups within 30 days. Provider cleanup may
 Your books are now in your account  retry if the provider is unavailable.
 Device copy remains here            [ ] Also remove the guest shelf in this browser
-[Remove device copy] [Keep it]       [Cancel] [Delete account]
+[Remove the copy here] [Keep it]     [Cancel] [Delete account]
 ```
 
 These specify hierarchy and meaning, not final visual spacing or provider-button

@@ -53,7 +53,7 @@ are available here without the private branch.
   Repository protection and vulnerability-reporting settings also need owner
   administration. Keep the previous production deployment as the rollback target.
 
-## Account work: documents approved; waiting for Claude artifact
+## Account work: documents approved; Claude artifact ready for R02
 
 The owner requested secure signup with name/email/password, verification,
 sign-in, password recovery, sign-out, Google and Apple, and synchronization of
@@ -89,8 +89,10 @@ privacy, moderation, work identity, deletion and acceptance criteria.
    records approval on 2026-11-01 (America/Los_Angeles) for commit
    `5056de00bc1091fd11a8b49cf358e2594c37a49e`, including DEC-01–10.
    No changes or exceptions were requested.
-4. Wait for Claude’s check-in for [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56)
-   (interactive UI artifact), as explicitly requested by the owner. Then reconcile the specs and publish
+4. Claude checked in [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56):
+   artifact v0.2 is at https://claude.ai/artifact/4wk6xx8eN6JZdFz95uM1d8, with source in
+   [design/accounts/claude-artifact](design/accounts/claude-artifact/README.md) and coverage
+   and deviations in [UI_ARTIFACT.md](accounts/UI_ARTIFACT.md). Next, reconcile the specs and publish
    D05's specified child tasks before [R02 / #8](https://github.com/ddk220-light/MyBookshelf-web/issues/8).
    R02 approves the artifact and final implementation packet. Provisioning and
    runtime feature work remain behind R02. Artifact/design and release approval remain pending.

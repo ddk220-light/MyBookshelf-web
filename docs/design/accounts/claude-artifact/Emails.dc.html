@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Account emails</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@500&amp;display=swap">
+<style>
+body{margin:0}
+.mail{display:flex;flex-direction:column;background:#fff;border-radius:12px;box-shadow:0 0 0 1px #e2dacd,0 6px 18px rgba(0,0,0,.08);overflow:hidden;font:15px/1.55 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#1f1a17}
+.meta{display:flex;flex-direction:column;gap:2px;padding:14px 18px;background:#f4efe6;border-bottom:1px solid #e7e0d5;font-size:13px;color:#4a423b}
+.meta b{color:#1f1a17}
+.tag{align-self:flex-start;margin-bottom:6px;padding:2px 8px;border-radius:999px;background:#2f5340;color:#fff;font-size:11px;font-weight:700;letter-spacing:.03em}
+.tag.p{background:#9a6200}
+.body{display:flex;flex-direction:column;gap:12px;padding:20px 22px 22px}
+.body h2{margin:0;font:500 24px/1.2 'Newsreader',Georgia,serif}
+.body p{margin:0}
+.cta{align-self:flex-start;display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:10px;background:#2f5340;color:#fff;font-weight:600;text-decoration:none}
+.small{font-size:13px;color:#6b6259}
+.foot{margin-top:4px;padding-top:12px;border-top:1px solid #efe9df;font-size:12px;color:#6b6259}
+.none{display:flex;flex-direction:column;gap:8px;padding:20px 22px;background:#faf7f1;border-radius:12px;border:2px dashed #b9afa2;font:15px/1.5 system-ui,sans-serif;color:#4a423b}
+.none b{color:#1f1a17}
+</style>
+</helmet>
+<div style="width: 1840px; height: 2440px; box-sizing: border-box; padding: 48px; background: #ece7de; display: flex; flex-direction: column; gap: 28px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; color: #1f1a17">
+  <header style="display: flex; flex-direction: column; gap: 6px">
+    <h1 style="margin: 0; font: 500 40px/1.1 'Newsreader', Georgia, serif">Account emails</h1>
+    <p style="margin: 0; font-size: 16px; color: #4a423b">Every email the account flows send, including edge cases. Emails use one light style in every reading light. Sender domain and support address are placeholders.</p>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start">
+
+    <article class="mail" aria-label="Verify your email">
+      <div class="meta"><span class="tag">E1 · UX-01, UX-02</span><span><b>Subject:</b> Verify your email for MyBookshelf</span><span><b>To:</b> reader@example.test</span><span><b>From:</b> MyBookshelf &lt;accounts@[SENDING DOMAIN]&gt;</span></div>
+      <div class="body">
+        <h2>Verify your email</h2>
+        <p>Hi Reader Example, confirm this address to finish creating your MyBookshelf account.</p>
+        <a class="cta" href="#">Verify email</a>
+        <p class="small">The link works for 24 hours and opens a page where you confirm. If you asked for more than one email, use the newest.</p>
+        <p class="small">Didn't create an account? Ignore this email. Nothing happens unless you confirm.</p>
+        <p class="foot">Sent because this address was used to create a MyBookshelf account. MyBookshelf · [SUPPORT ADDRESS]</p>
+      </div>
+    </article>
+
+    <article class="mail" aria-label="Sign-up with an address that already has an account">
+      <div class="meta"><span class="tag">E2 · AC-02 duplicate sign-up</span><span><b>Subject:</b> Someone tried to create an account with your email</span><span><b>To:</b> reader@example.test</span></div>
+      <div class="body">
+        <h2>You already have an account</h2>
+        <p>Someone tried to create a MyBookshelf account with this address. There's already an account for it.</p>
+        <a class="cta" href="#">Sign in</a>
+        <p class="small">Forgot your password? <a href="#" style="color: #2f5340">Reset it</a>. If this wasn't you, you don't need to do anything.</p>
+        <p class="foot">The sign-up page shows the same "Check your email" message either way, so it never reveals who has an account.</p>
+      </div>
+    </article>
+
+    <article class="mail" aria-label="Reset your password">
+      <div class="meta"><span class="tag">E3 · UX-04</span><span><b>Subject:</b> Reset your MyBookshelf password</span><span><b>To:</b> reader@example.test</span></div>
+      <div class="body">
+        <h2>Reset your password</h2>
+        <p>Use this link to choose a new password.</p>
+        <a class="cta" href="#">Choose a new password</a>
+        <p class="small">It works once, for 30 minutes. Changing your password signs you out on every device.</p>
+        <p class="small">Didn't ask for this? Ignore this email. Your password stays the same.</p>
+        <p class="foot">MyBookshelf · [SUPPORT ADDRESS]</p>
+      </div>
+    </article>
+
+    <article class="mail" aria-label="Reset requested for an account with no password">
+      <div class="meta"><span class="tag">E4 · AC-04 Google or Apple only</span><span><b>Subject:</b> Signing in to MyBookshelf</span><span><b>To:</b> reader@example.test</span></div>
+      <div class="body">
+        <h2>You sign in with Google</h2>
+        <p>Someone asked to reset the password for this address. Your account doesn't have a password. You sign in with Google.</p>
+        <a class="cta" href="#">Sign in with Google</a>
+        <p class="small">Want a password too? Sign in with Google, then go to Settings › Sign-in methods › Set password.</p>
+        <p class="foot">The reset page shows the same message for every address.</p>
+      </div>
+    </article>
+
+    <div class="none" aria-label="Reset requested for an unknown address">
+      <span class="tag p" style="color: #fff">E5 · AC-04 unknown address</span>
+      <b>No email is sent</b>
+      <span>When nobody has an account with the address, nothing is sent. The page still says "If this address can receive a reset link, we'll send one," so it never reveals who has an account.</span>
+    </div>
+
+    <article class="mail" aria-label="Password changed">
+      <div class="meta"><span class="tag">E6 · AC-04 change or reset</span><span><b>Subject:</b> Your MyBookshelf password was changed</span><span><b>To:</b> reader@example.test</span></div>
+      <div class="body">
+        <h2>Your password was changed</h2>
+        <p>The password for your MyBookshelf account was changed on 1 November 2026. You were signed out on your other devices.</p>
+        <p class="small">If this wasn't you, <a href="#" style="color: #2f5340">reset your password</a> now.</p>
+        <p class="foot">MyBookshelf · [SUPPORT ADDRESS]</p>
+      </div>
+    </article>
+
+    <article class="mail" aria-label="Confirm your new email address">
+      <div class="meta"><span class="tag">E7 · UX-07</span><span><b>Subject:</b> Confirm your new email for MyBookshelf</span><span><b>To:</b> new.reader@example.test</span></div>
+      <div class="body">
+        <h2>Confirm your new email</h2>
+        <p>Confirm this address to use it to sign in to MyBookshelf. Until you do, your current email keeps working.</p>
+        <a class="cta" href="#">Confirm new email</a>
+        <p class="small">The link works for 24 hours. Didn't ask for this? Ignore this email.</p>
+        <p class="foot">MyBookshelf · [SUPPORT ADDRESS]</p>
+      </div>
+    </article>
+
+    <article class="mail" aria-label="Email change requested, to the old address">
+      <div class="meta"><span class="tag">E8 · AC-08 to the current address</span><span><b>Subject:</b> Someone asked to change your MyBookshelf email</span><span><b>To:</b> reader@example.test</span></div>
+      <div class="body">
+        <h2>A change to your sign-in email was requested</h2>
+        <p>Someone asked to change the sign-in email for your account to n•••••@example.test. Nothing changes until the new address is confirmed.</p>
+        <p class="small">If this wasn't you, sign in, cancel the change in Settings, and change your password.</p>
+        <p class="foot">MyBookshelf · [SUPPORT ADDRESS]</p>
+      </div>
+    </article>
+
+    <article class="mail" aria-label="Email changed, to the old address">
+      <div class="meta"><span class="tag">E9 · AC-08 after confirming</span><span><b>Subject:</b> Your MyBookshelf email was changed</span><span><b>To:</b> reader@example.test</span></div>
+      <div class="body">
+        <h2>Your sign-in email was changed</h2>
+        <p>Your MyBookshelf account now signs in with n•••••@example.test. This address no longer works for signing in. Your other devices were signed out.</p>
+        <p class="small">If this wasn't you, contact [SUPPORT ADDRESS]. We can explain your options, but we can't change an account without proof it's yours.</p>
+        <p class="foot">MyBookshelf · [SUPPORT ADDRESS]</p>
+      </div>
+    </article>
+
+    <article class="mail" aria-label="Sign-in method connected">
+      <div class="meta"><span class="tag p">E10 · Proposed, not in the PRD</span><span><b>Subject:</b> Google was connected to your MyBookshelf account</span><span><b>To:</b> reader@example.test</span></div>
+      <div class="body">
+        <h2>Google can now sign you in</h2>
+        <p>Google (reader@example.test) was connected to your MyBookshelf account on 1 November 2026.</p>
+        <p class="small">If this wasn't you, sign in, disconnect it in Settings › Sign-in methods, and change your password.</p>
+        <p class="foot">The same email covers disconnecting a method and setting a password for the first time.</p>
+      </div>
+    </article>
+
+    <article class="mail" aria-label="Account deleted">
+      <div class="meta"><span class="tag">E11 · UX-10</span><span><b>Subject:</b> Your MyBookshelf account was deleted</span><span><b>To:</b> reader@example.test</span></div>
+      <div class="body">
+        <h2>Your account was deleted</h2>
+        <p>Your MyBookshelf account was deleted on 1 November 2026. You were signed out everywhere.</p>
+        <p>Your account data is removed within 24 hours, and from backups within 30 days. Books saved only in a browser stay in that browser until you clear them.</p>
+        <p class="small">Didn't do this? Contact [SUPPORT ADDRESS]. A deleted account can't be restored.</p>
+        <p class="foot">This is the last email about this account.</p>
+      </div>
+    </article>
+
+    <div class="none" aria-label="Expired or used links">
+      <span class="tag p" style="color: #fff">E12 · Expired, used or replaced links</span>
+      <b>No new email by itself</b>
+      <span>Opening an expired, used or replaced link shows a page with "Send a new link" or "Request a new link". A new email goes only when the reader asks, within the resend limit.</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1840,"height":2440}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
