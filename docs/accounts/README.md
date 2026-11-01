@@ -1,6 +1,6 @@
 # Account management: review packet
 
-Packet version **0.2 — R01 approved**, 2026-11-01. Product owner/reviewer:
+Packet version **0.2 — R01 and R02 approved**, 2026-11-01. Product owner/reviewer:
 Deepak Ravikumar. Draft author: Codex. Deepak approved the document packet and
 DEC-01–10 in chat on 2026-11-01 (America/Los_Angeles), at commit
 `5056de00bc1091fd11a8b49cf358e2594c37a49e`. No account services or application code have been implemented.
@@ -13,8 +13,9 @@ clarifications cover maximum-size imports, private metadata snapshots, reset
 atomicity, identity-cache clearing and recovery after a lost deletion response.
 Unchanged documents retain their own version 0.1; review the whole packet at its
 linked commit. R01 approval is recorded in [#7](https://github.com/ddk220-light/MyBookshelf-web/issues/7).
-The owner asked Codex to wait for Claude’s UI artifact check-in; remaining D05
-publication/reconciliation resumes afterward. R02 and R03 remain pending.
+Deepak approved all checked-in artifacts at `36a1436` on 2026-11-01 and
+instructed implementation with story-by-story task expansion. R02 is complete;
+R03 release acceptance remains pending. See [the implementation record](IMPLEMENTATION.md).
 
 | Document | Review purpose | Delivery issue |
 | --- | --- | --- |
@@ -59,12 +60,13 @@ This supersedes the older PRD-only-first sequence in the original backlog.
    ([source](../design/accounts/claude-artifact/README.md)).
 3. **R02 / [#8](https://github.com/ddk220-light/MyBookshelf-web/issues/8): review Claude's artifact and reconciled documents/tasks.**
    Explicit approval authorizes provisioning and feature implementation. Current
-   decision: **pending**. A merged documentation PR does not constitute approval.
+   decision: **approved, 2026-11-01**, by the owner’s explicit chat instruction.
+   The owner superseded full upfront child publication with progressive story decomposition.
 4. **R03 / [#9](https://github.com/ddk220-light/MyBookshelf-web/issues/9): review the tested staging release**, then L01 production rollout.
 
 For each review, append reviewer/date, immutable artifact commit(s), decision,
 comment disposition and accepted exceptions to its issue. R01 records the owner’s
-chat approval; R02/R03 remain pending. Changed product behavior returns to the relevant
+chat approval; R02 is approved and R03 remains pending. Changed product behavior returns to the relevant
 review before implementation continues.
 
 ## Evidence and limits

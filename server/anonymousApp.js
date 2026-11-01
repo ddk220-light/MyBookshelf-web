@@ -57,7 +57,7 @@ function setStaticHeaders(res, filePath) {
   }
 }
 
-export function createAnonymousApp({ clientDist, publicRouter = createPublicV2Router() } = {}) {
+export function createAnonymousApp({ clientDist, publicRouter = createPublicV2Router(), accounts } = {}) {
   const app = express();
   const publicCorsOrigin = process.env.NODE_ENV === 'production' ? false : true;
 
@@ -81,6 +81,8 @@ export function createAnonymousApp({ clientDist, publicRouter = createPublicV2Ro
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
+
+  if (accounts) app.use(accounts);
 
   // All pre-anonymous APIs and legacy image uploads are deliberately inert.
   // These handlers are mounted before static files and never parse cookies.

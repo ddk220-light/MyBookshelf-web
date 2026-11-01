@@ -53,84 +53,35 @@ are available here without the private branch.
   Repository protection and vulnerability-reporting settings also need owner
   administration. Keep the previous production deployment as the rollback target.
 
-## Account work: documents approved; Claude artifact ready for R02
+## Account work: R02 approved; foundation implementation active
 
-The owner requested secure signup with name/email/password, verification,
-sign-in, password recovery, sign-out, Google and Apple, and synchronization of
-library preference, saved books and viewed books. Anonymous use should continue.
+Deepak approved all checked-in artifacts at `36a1436` on 2026-11-01 and
+instructed progressive story-task publication and implementation. R01 and R02
+are complete; Claude’s canvas version 4 is the approved visual reference.
+R03 still gates production release. The earlier wait-for-artifact and
+publish-all-children-before-R02 instructions are superseded.
 
-Direction: Better Auth in the existing Express API, managed Postgres (Neon is
-preferred), transactional email, secure server sessions and private owner-scoped
-reading data. The architecture is in
-[the foundation analysis](plans/2026-10-31-accounts-social-foundation.md).
-PRD/UX/engineering/UI specifications must settle the remaining implementation
-choices before schema and API work begins. No database, OAuth client, mail service,
-account UI or account persistence has been provisioned/implemented by this work.
+The [implementation record](accounts/IMPLEMENTATION.md) contains the exact current
+scope, actual tests, staging resource IDs and task links. The foundation now has
+pinned Better Auth/native Postgres, shared lazy application composition,
+transactional migrations, separate runtime roles, forced RLS, active-identity
+provisioning and a narrow private session facade. No account signup/settings UI
+is implemented yet; unfinished sensitive routes remain gated.
 
-Book identities reuse Open Library work/edition IDs, normalized ISBNs and existing
-catalog keys. A small `book_refs` store supports relationships; do not build a
-new universal catalog or fuzzy work-matching engine. Unresolved references remain
-saveable. See [existing discovery behavior](work-aware-search.md).
+An isolated staging Neon DB, private export/ledger stores and Vercel project
+exist in iad1. Real staging migrations/roles were verified and secrets configured
+in hosting. Production resources were not created. The current production site
+remains on its existing Git connection; staging uses the canonical MyBookshelf-web
+repository. See the runbook at `tools/accounts/README.md`.
 
-Reviews, comments, follows, favorites, reading statuses, lists and activity are
-future discovery scope. **They still need requirements and definitions**, including
-privacy, moderation, work identity, deletion and acceptance criteria.
+Continue with S03-B security controls, then expand P02/S04 and later stories as
+reached. Real mail, Google/Apple, hosted journeys, restore/deletion and final
+accessibility evidence remain required. Parent stories stay open until complete.
+Preserve private data, exact book identities, guest browsing and all three lights.
 
-## Resume in this order
-
-1. Read this handoff, the foundation analysis and
-   [delivery backlog](plans/2026-10-31-accounts-delivery-backlog.md).
-2. Open the [Account Management project](https://github.com/users/ddk220-light/projects/3)
-   and [planning index #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1).
-   The native board and 55 child issues now exist. Reuse them.
-3. Deepak approved the [version 0.2 account packet](accounts/README.md): PRD, UX,
-   engineering design, test strategy, UI specification, delivery tasks and Claude
-   handoff. [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7)
-   records approval on 2026-11-01 (America/Los_Angeles) for commit
-   `5056de00bc1091fd11a8b49cf358e2594c37a49e`, including DEC-01–10.
-   No changes or exceptions were requested.
-4. Claude checked in [S22 / #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56):
-   artifact v0.2 is at https://claude.ai/artifact/4wk6xx8eN6JZdFz95uM1d8, with source in
-   [design/accounts/claude-artifact](design/accounts/claude-artifact/README.md) and coverage
-   and deviations in [UI_ARTIFACT.md](accounts/UI_ARTIFACT.md). Next, reconcile the specs and publish
-   D05's specified child tasks before [R02 / #8](https://github.com/ddk220-light/MyBookshelf-web/issues/8).
-   R02 approves the artifact and final implementation packet. Provisioning and
-   runtime feature work remain behind R02. Artifact/design and release approval remain pending.
-5. Build with focused tests, then complete final T01–T06 validation and operations
-   readiness. [R03 / #9](https://github.com/ddk220-light/MyBookshelf-web/issues/9)
-   reviews the tested release before L01 production rollout.
-
-GitHub Projects access now works through the official Projects MCP service using
-the configured `GH_PROJECT_TOKEN` binding at `api.githubcopilot.com`. The earlier
-integration-credential failure is historical; see the updated
-[credential notes](development/credentials.md). Project creation did not provision
-account services or implement features. Social discovery remains future scope.
-
-The working branch is `account-settings`, with worktree
-`/workspace/worktrees/MyBookshelf-web-account-settings` in this environment.
-Other checkouts may use a different local path; the branch and linked PR are the
-shared review references.
-
-## Account project publication verification
-
-The original publication verified 56 unique project items, including the existing roadmap,
-with all items at Todo. D01–D04 drafts and R01 document review are now complete;
-D05 has a delivery draft with native child-task publication remaining before R02.
-The 55 child issues retain kind/stage labels and native parents; 117 native
-blocked-by links encode the revised plan. The revised document-first sequence removes
-D02/D03 dependence on R01 and D04 dependence on S22. R01 reviews D01–D05
-drafts; it consumes D05's draft without waiting for its later child publication.
-D05’s R01 prerequisite is now satisfied; remaining work is held for Claude’s
-artifact check-in at the owner’s request.
-Owner-review, core-sync, final-validation and
-rollout dependency sets were read back and checked. The project has an All work
-table plus six focused views, with labels, parent issues and sub-issue progress
-visible. All account implementation paths reach R02; rollout reaches R03.
-
-Documentation links, dependency acyclicity and whitespace checks passed. This was
-documentation work only; application tests were not rerun. The version 0.2 packet's
-documents are approved at R01, and no runtime feature is implemented.
-D05 child-issue publication and Claude artifact reconciliation remain before R02.
+Worktree: `/workspace/worktrees/MyBookshelf-web-account-settings`, branch
+`account-settings`. Existing [project](https://github.com/users/ddk220-light/projects/3)
+and [PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57) track this work.
 
 ## This handoff's verification
 

@@ -73,12 +73,12 @@ are implementation/configuration; V tasks verify the resulting behavior. Follow
 the parent story's blocked-by issues, then local task order. Test IDs refer to
 [TEST_STRATEGY.md](TEST_STRATEGY.md); AC IDs refer to [PRD](PRD.md).
 
-These specifications are ready to review now. D05 remains open until each task
-is published as a linked native child issue (or mapped to an existing equivalent),
-with owner/estimate and dependencies. Publish after R01 revisions and before R02;
-reuse stable IDs to prevent duplicates. S19 already has T01–T06 native children
-and should not receive duplicate verification issues. S22's artifact work stays
-assigned by role to Claude, not to a fabricated GitHub identity.
+R02 approved these specifications and Claude’s checked-in artifact at `36a1436`.
+The owner explicitly requested progressive publication: define native child tasks
+as each story is reached, then implement and verify them. This supersedes the
+older all-children-before-R02 condition. D05 remains open for that ongoing work.
+S19 reuses T01–T06 and S22 remains credited to Claude. Actual tasks and evidence
+are recorded in [IMPLEMENTATION.md](IMPLEMENTATION.md).
 
 ### E01 — Foundation (#11)
 

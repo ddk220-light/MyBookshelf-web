@@ -1,7 +1,7 @@
 # Claude UI artifact: handoff and review record
 
 Version 0.2, 2026-11-01. Story [S22 #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56).
-**Artifact status: created, awaiting R02 review.** Creator: Claude. Reviewer: Deepak Ravikumar.
+**Artifact status: approved at R02; implementation authorized.** Creator: Claude. Reviewer: Deepak Ravikumar.
 This file is the brief; it is not a Claude-created artifact or an approval.
 
 ## Start condition
@@ -63,8 +63,8 @@ reviewed requirements. Changes to product behavior must be called out for R02.
 | Preview / source export | https://claude.ai/artifact/4wk6xx8eN6JZdFz95uM1d8 (private until shared) · [source and README](../design/accounts/claude-artifact/README.md) |
 | Coverage inventory | Below |
 | Claude assumptions and deviations | Below |
-| R02 decision / reviewer / date | Pending Deepak review |
-| Approved artifact used by T04 | Pending R02 |
+| R02 decision / reviewer / date | Approved by Deepak on 2026-11-01 in chat, at `36a1436`; progressive story-task publication authorized |
+| Approved artifact used by T04 | Canvas version 4 (`1793518146-c9ad`), repository snapshot `36a1436` |
 
 ## Coverage
 
@@ -100,7 +100,7 @@ Lamplight and Ink, with a 200% page-zoom view for phones. The `Emails` board cov
 | E11 | account deleted |
 | E12 | expired or used links (nothing sent unless asked) |
 
-## Deviations and decisions for R02
+## R02-approved deviations and decisions
 
 1. **Wording (owner-approved, applied to UX_DESIGN.md):**
    - "Signed-in devices" instead of "Sessions".

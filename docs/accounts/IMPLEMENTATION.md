@@ -1,0 +1,81 @@
+# Account implementation record
+
+R02: Deepak approved all artifacts at `36a1436` on 2026-11-01 and authorized
+implementation. Claude artifact: v0.2 / canvas version 4 (`1793518146-c9ad`).
+The owner explicitly requested progressive task publication: expand each story
+when reached, then implement and verify its tasks. This supersedes the older
+D05-publish-all-before-R02 rule. R03 still gates the production release.
+
+## Current foundation
+
+- Shared local/Vercel application composition with lazy optional account service.
+  Public catalog requests never initialize auth or database code.
+- Exact Better Auth 1.7.14 and pg 8.23.1; native Postgres adapter, no ORM.
+  Database transactions are enabled by the native adapter. Cookie cache is off;
+  implicit linking is disabled; provider tokens use library encryption support.
+- Version-generated auth migration and app-owned identity/settings/library/book/
+  history/import/operation schema. Migrations are transactional, locked and
+  checksum-checked; requests never run DDL.
+- Separate auth and reading roles; forced row security, transaction-local owner
+  context, lifecycle row locking and explicit rejection of privileged runtime roles.
+- Narrow session bootstrap, server-cookie renewal forwarding, absolute 30-day
+  expiry and idempotent app identity provisioning. Deleting identities cannot be
+  reactivated by provisioning. Raw session tokens never reach the bootstrap JSON.
+- Auth protocol routes beyond the foundation health probe remain gated until
+  their mail, validation, abuse and lifecycle stories are implemented.
+
+## Evidence
+
+Node 22.23.4, local PostgreSQL 18.6. Six account tests/suites cover actual
+Postgres roles and pooled reuse, raw Express body handling, verification,
+password reset rollback, token replay/revocation, session renewal/absolute expiry,
+concurrent identity provisioning, deleting identities, origin checks and account
+outage isolation. These tests are included in the server test command and CI,
+which now provisions a disposable Postgres service.
+
+Full server suite: 491 passing. Client suite: 120 passing after compatible
+security maintenance (Vite 6.4.5, Vitest 4.1.12 and patched transitive packages).
+Dependency audit: zero findings at this checkpoint. No claim of final browser,
+real-provider, real-mail or release validation is made.
+
+## Staging setup
+
+Isolated resources in iad1:
+
+| Resource | Identifier |
+| --- | --- |
+| Vercel staging project | `prj_tlwAzT2LGtV1HDRfW7DzhiWWihFF` / `mybookshelf-accounts-staging` |
+| Neon staging project | `bold-band-47854367` / store `store_tVhnBuK6FDTErqQ5` |
+| Private export store | `store_anEQSluYF2hXAEQT` |
+| Independent private deletion ledger | `store_Gs9zkvOMQteZihLA` |
+
+Neon uses the existing Free plan. Migrations were applied to the real staging
+DB, and both runtime roles were authenticated and verified as non-superuser and
+non-BYPASSRLS. Hosting secrets were configured directly in Vercel. The migration
+administrator connection is connected only to the staging project's development
+environment. Runtime credentials are scoped to the account-settings preview
+branch; the staging project's default target has no account credentials. No decrypted credentials are saved in the
+repository or local files. Account entry remains disabled until its service
+stories pass. Real backup/restore and deletion-ledger drills remain T06.
+
+Production resources have not been created. Automatic approval review rejected
+production provisioning; it is deferred while staging supports implementation.
+The existing production site's repository/domain/configuration is unchanged.
+
+## Task publication
+
+Native tasks created as work reached P01/S01/S02/S03:
+
+- P01-A #58, P01-V #59, P01-B #67.
+- S01-A #60, S01-B #61, S01-V #62.
+- S02-A #63, S02-V #64.
+- S03-A #65, S03-V #66, S03-B #68.
+
+Parent stories remain open until their full acceptance criteria pass, including
+hosted/provider exits. D05 tracks progressive decomposition, not a prerequisite
+requiring every future child to exist before implementation starts.
+
+Next: finish S03-B abuse/CSRF/return-path boundaries, then expand and implement
+P02/S04 mail/signup and subsequent stories. Real Google/Apple configuration and
+mail-domain delivery must be proved before account release. Preserve exact source
+book identities and all reviewed privacy/import/session policies.

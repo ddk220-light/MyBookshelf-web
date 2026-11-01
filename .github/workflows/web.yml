@@ -3,6 +3,20 @@ on: [push, pull_request]
 jobs:
   checks:
     runs-on: ubuntu-latest
+    services:
+      accounts-postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: local-account-tests
+          POSTGRES_DB: accounts_test
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d accounts_test"
+          --health-interval 2s --health-timeout 2s --health-retries 20
+    env:
+      ACCOUNT_TEST_DATABASE_URL: postgres://postgres:local-account-tests@127.0.0.1:55432/accounts_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

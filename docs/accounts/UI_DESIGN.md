@@ -150,3 +150,16 @@ Record approved visual choices, missing states and deviations in UI_ARTIFACT.md.
 Update this specification and the affected tasks before R02. T04 compares the
 implementation to that exact approved source and documents intentional differences;
 automated screenshots alone do not demonstrate accessibility or fidelity.
+
+## Approved artifact reconciliation
+
+R02 approved canvas version 4 at `36a1436`, including E8/E10 security mail,
+“Signed-in devices,” “Remove the copy here,” failed-sign-out wording and the
+desktop sidebar account entry. Google/Apple buttons follow their approved brand
+variants; Google may use licensed, locally served Roboto Medium for its button,
+while the existing reading/body fonts stay unchanged.
+
+The Apple prototype demonstrates missing-name completion. Production asks for a
+name only when no valid stored private name exists; a returning provider response
+without a name must not erase or repeatedly replace that stored name. Prototype
+dialog focus limitations remain required production implementation/T04 checks.
