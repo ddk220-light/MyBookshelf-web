@@ -18,6 +18,7 @@ import { readAnonymousWebStateWithStatus } from "../../localState";
 import { removeAcknowledgedDeviceCopy } from "../../storage/importCleanup";
 import { useLinkToken } from "../../auth/LinkTokenProvider";
 import { ProviderEntry } from "./ProviderEntry";
+import { useAccountEntryPending } from "../../auth/entryReadiness";
 import {
   useRecentAuth,
   type RecentResult,
@@ -42,6 +43,7 @@ export function AccountForm({
   backTo?: string;
   backLabel?: string;
 }) {
+  const entryPending = useAccountEntryPending();
   const heading = useId(),
     errorRef = useRef<HTMLParagraphElement>(null),
     headingRef = useRef<HTMLHeadingElement>(null),
@@ -67,8 +69,25 @@ export function AccountForm({
       <form
         className="account-form"
         aria-labelledby={heading}
-        onSubmit={onSubmit || ((event) => event.preventDefault())}
-        aria-busy={busy}
+        onClickCapture={(event) => {
+          // A submit can collapse the mobile keyboard or replace this form.
+          // Ignore the second tap of that gesture if another action moves
+          // beneath the pointer. Keyboard activation still has detail 0.
+          if (
+            event.detail > 1 &&
+            event.target instanceof Element &&
+            event.target.closest("button, a")
+          ) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }}
+        onSubmit={(event) => {
+          if (entryPending) event.preventDefault();
+          else if (onSubmit) onSubmit(event);
+          else event.preventDefault();
+        }}
+        aria-busy={busy || entryPending}
         noValidate={noValidate}
       >
         <h1 id={heading} ref={headingRef} tabIndex={-1}>
@@ -170,6 +189,7 @@ export function EmailField({
   );
 }
 export function SignInPage({ signup = false }: { signup?: boolean }) {
+  const entryPending = useAccountEntryPending();
   const { refresh, continueGuest, prepareSignIn } = useAccountSession(),
     navigate = useNavigate(),
     location = useLocation();
@@ -188,7 +208,7 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
   }, []);
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (busy) return;
+    if (busy || entryPending) return;
     const data = new FormData(event.currentTarget),
       address = String(data.get("email") || "");
     if (signup) {
@@ -388,7 +408,7 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
           Forgot password?
         </Link>
       )}
-      <button disabled={busy} type="submit">
+      <button disabled={busy || entryPending} type="submit">
         {busy
           ? signup
             ? "Creating account…"
@@ -397,7 +417,7 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
             ? "Create account"
             : "Sign in"}
       </button>
-      <ProviderEntry disabled={busy} onError={setError} />
+      <ProviderEntry disabled={busy || entryPending} onError={setError} />
       {errorCode === "VERIFY_EMAIL_REQUIRED" && (
         <button
           type="button"
@@ -491,13 +511,14 @@ export function VerifyPage() {
   );
 }
 export function RecoveryPage({ reset = false }: { reset?: boolean }) {
+  const entryPending = useAccountEntryPending();
   const token = useLinkToken(),
     [busy, setBusy] = useState(false),
     [done, setDone] = useState(false),
     [error, setError] = useState("");
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (busy) return;
+    if (busy || entryPending) return;
     const data = new FormData(event.currentTarget);
     setBusy(true);
     setError("");
@@ -549,7 +570,7 @@ export function RecoveryPage({ reset = false }: { reset?: boolean }) {
             autoComplete="new-password"
             hint="Use 15–128 characters."
           />
-          <button disabled={busy || !token}>
+          <button disabled={busy || entryPending || !token}>
             {busy ? "Updating…" : "Update password"}
           </button>
           {!token && <p>This link is missing. Request a new reset link.</p>}
@@ -558,7 +579,7 @@ export function RecoveryPage({ reset = false }: { reset?: boolean }) {
         <>
           <p>We’ll email the next step if this address can receive it.</p>
           <EmailField />
-          <button disabled={busy}>
+          <button disabled={busy || entryPending}>
             {busy ? "Sending…" : "Send reset link"}
           </button>
         </>

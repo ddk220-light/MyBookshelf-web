@@ -7,6 +7,8 @@ retired authentication and unrelated research archives are outside its scope.
 
 ## Accounts: implementation and release evidence
 
+- [Current production rollout](accounts/PRODUCTION_ROLLOUT.md): actual resources,
+  signup repairs, hosted restore evidence and remaining live activation checks.
 - [Account review packet](accounts/README.md): PRD, UX, engineering, test strategy,
   UI specification, delivery tasks and Claude handoff. R01/R02 are approved;
   R03 gates production release.

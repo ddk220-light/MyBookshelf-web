@@ -20,21 +20,17 @@ export function createJobMiddleware({ env = process.env } = {}) {
           .digest(),
       )
     )
-      return res
-        .status(403)
-        .json({
-          error: { code: "FORBIDDEN", message: "This endpoint is private." },
-        });
+      return res.status(403).json({
+        error: { code: "FORBIDDEN", message: "This endpoint is private." },
+      });
     if (req.method !== "GET") return res.status(405).end();
     if (!env.ACCOUNTS_WORKER_DATABASE_URL || !env.ACCOUNTS_JOB_SECRET)
-      return res
-        .status(503)
-        .json({
-          error: {
-            code: "JOBS_UNAVAILABLE",
-            message: "Account jobs are unavailable.",
-          },
-        });
+      return res.status(503).json({
+        error: {
+          code: "JOBS_UNAVAILABLE",
+          message: "Account jobs are unavailable.",
+        },
+      });
     try {
       const [
         { Pool },
@@ -103,21 +99,24 @@ export function createJobMiddleware({ env = process.env } = {}) {
     EXISTS(SELECT 1 FROM account_provider_cleanup WHERE status IN ('queued','running','expired') AND "createdAt"<now()-interval '24 hours') AS "providerCleanupOverdue",
     EXISTS(SELECT 1 FROM account_mail_jobs WHERE status='queued' AND "createdAt"<now()-interval '1 hour') AS "mailDelayed"`)
       ).rows[0];
-      await pool.query(
-        `UPDATE account_job_health SET last_succeeded=now() WHERE name='account-maintenance'`,
-      );
+      const unhealthy =
+        deletion.unavailable ||
+        mail.unavailable ||
+        Object.values(alerts).some(Boolean);
+      if (!unhealthy)
+        await pool.query(
+          `UPDATE account_job_health SET last_succeeded=now() WHERE name='account-maintenance'`,
+        );
       return res
-        .status(deletion.unavailable || mail.unavailable ? 503 : 200)
+        .status(unhealthy ? 503 : 200)
         .json({ deletion, providers, mail, alerts });
     } catch {
-      return res
-        .status(503)
-        .json({
-          error: {
-            code: "JOBS_UNAVAILABLE",
-            message: "Account jobs are unavailable.",
-          },
-        });
+      return res.status(503).json({
+        error: {
+          code: "JOBS_UNAVAILABLE",
+          message: "Account jobs are unavailable.",
+        },
+      });
     }
   };
 }

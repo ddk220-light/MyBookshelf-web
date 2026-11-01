@@ -1,5 +1,10 @@
 # Account validation evidence
 
+Current production work and new signup/worker regressions are recorded in
+[PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md). The owner has since authorized
+production completion. The candidate/results below are dated implementation
+evidence, not a claim of completed production account activation.
+
 Updated 2026-11-01 UTC. Code candidate: `56915a6785f26daa55b7ea684372a23875c136ee`, branch
 `account-settings`, [PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57).
 R02 approved documents/Claude canvas v4 at `36a1436`. **R03 remains pending;

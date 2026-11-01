@@ -8,6 +8,7 @@ import {DeletionStatusPage} from './ui/account/DeletionStatusPage';
 import {safeAccountReturn} from './auth/accountClient';
 import {SignInPage,VerifyPage,RecoveryPage,ImportPage,EmailChangePage,ProviderReturnPage,CompleteProfilePage} from './ui/account/AccountPages';
 import {AccountSettingsPage} from './ui/account/AccountSettingsPage';
+import {AccountEntryGate} from './ui/account/AccountEntryGate';
 import { LibraryStateProvider } from './context';
 import { LibrariesPage } from './ui/library/LibrariesPage';
 import { AppFrame } from './ui/AppFrame';
@@ -51,11 +52,11 @@ function IdentityApp(){
     <Route path="/app/search" element={<ScanPage />} />
     <Route path="/app/settings" element={<SettingsPage />} />
     <Route path="/app/settings/account" element={<AccountSettingsPage/>}/>
-    <Route path="/app/account/sign-in" element={<SignInPage key="signin"/>}/>
-    <Route path="/app/account/sign-up" element={<SignInPage key="signup" signup/>}/>
-    <Route path="/app/account/verify" element={<VerifyPage/>}/>
-    <Route path="/app/account/forgot-password" element={<RecoveryPage key="forgot"/>}/>
-    <Route path="/app/account/reset-password" element={<RecoveryPage key="reset" reset/>}/>
+    <Route path="/app/account/sign-in" element={<AccountEntryGate key="signin"><SignInPage/></AccountEntryGate>}/>
+    <Route path="/app/account/sign-up" element={<AccountEntryGate key="signup" needsEmail allowProviders><SignInPage signup/></AccountEntryGate>}/>
+    <Route path="/app/account/verify" element={<AccountEntryGate key="verify"><VerifyPage/></AccountEntryGate>}/>
+    <Route path="/app/account/forgot-password" element={<AccountEntryGate key="forgot" needsEmail><RecoveryPage/></AccountEntryGate>}/>
+    <Route path="/app/account/reset-password" element={<AccountEntryGate key="reset"><RecoveryPage reset/></AccountEntryGate>}/>
     <Route path="/app/account/email-change" element={<EmailChangePage/>}/>
     <Route path="/app/account/return" element={<ProviderReturnPage/>}/>
     <Route path="/app/account/complete-profile" element={<CompleteProfilePage/>}/>

@@ -6,6 +6,16 @@ The owner has chosen to do all future web work in this repository. Build, test,
 plan and implement here directly. Do not depend on the previous private checkout
 or copy its Git history/native applications into this repository.
 
+**Current account rollout:** the owner authorized production completion. Source
+`c17a757` is deployed at `https://mybookshelf.cloud`; account entry remains disabled
+while production Resend setup and live release checks are unfinished. Dedicated
+production Neon/private deletion storage, migrations, roles and a hosted logical
+restore drill are now verified. The active repair branch is
+`codex/account-signup-availability`. Read the
+[current production record](accounts/PRODUCTION_ROLLOUT.md) before the older dated
+release observations below. Project tasks #147–150 stay open until real production
+activation and workflow checks pass.
+
 ## What is implemented
 
 The anonymous React/Vite app and Express catalog API, work/edition discovery,

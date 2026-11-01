@@ -27,6 +27,7 @@ test('public catalog never initializes accounts; disabled accounts fail privatel
   assert.equal(catalog.status, 200); assert.equal(catalog.headers['set-cookie'], undefined);
   const response = await request(app).get('/api/account/session');
   assert.equal(response.status, 503); assert.equal(response.headers['cache-control'], 'private, no-store');
+  assert.equal(response.body.error.code, 'ACCOUNT_DISABLED');
   assert.equal(response.headers['x-robots-tag'], 'noindex'); assert.equal(calls, 0);
   assert.equal((await request(app).post('/api/auth/login').send({})).status, 410);
 });
@@ -37,6 +38,7 @@ test('database initialization failures are bounded and retry without blocking pu
     initialize: async () => { calls++; throw Error('sensitive connection string'); } }) });
   const response = await request(app).get('/api/auth/ok');
   assert.equal(response.status, 503); assert.ok(!response.text.includes('sensitive'));
+  assert.equal(response.body.error.code, 'ACCOUNT_UNAVAILABLE');
   assert.equal((await request(app).get('/api/account/session')).status, 503); assert.equal(calls, 1);
   assert.equal((await request(app).get('/api/health')).status, 200);
 });
