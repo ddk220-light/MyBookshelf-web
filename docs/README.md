@@ -22,6 +22,8 @@ retired authentication and unrelated research archives are outside its scope.
 - [Repository catalog, APIs and access requirements](research/free-content/source-catalog.md).
 - [Metadata discovery architecture and delivery phases](research/free-content/architecture.md).
 - [Historical API observations and recovery limits](research/free-content/evidence.json).
+- [UI boards and implementation handoff](design/2026-11-free-content/README.md):
+  approved free-reading screens, owner decisions and acceptance checklist.
 
 This is planning material, not an enabled app feature. The original unpushed
 research was reconstructed from its conversation after an environment replacement;

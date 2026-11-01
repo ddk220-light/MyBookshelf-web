@@ -67,6 +67,11 @@ The documents and historical probe outcomes were reconstructed from the retained
 conversation; the original raw responses and complete fetch ledger are unavailable.
 The research overview records these limits. Future work continues here directly.
 
+UI for this feature is approved as a proposal (2026-11-01):
+[boards and implementation handoff](design/2026-11-free-content/README.md), with
+the owner's nine decisions. Next step is implementation from that handoff,
+starting with the shelf-storage decision for non-ISBN items. Nothing is built yet.
+
 ## Account work: architecture chosen, implementation not started
 
 The owner requested secure signup with name/email/password, verification,

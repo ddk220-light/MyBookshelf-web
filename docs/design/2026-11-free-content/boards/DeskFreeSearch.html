@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desktop free search</title>
+<style>@font-face{font-family:Newsreader;src:url("../../../../client/public-app/fonts/Newsreader.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+body{margin:0}
+[data-light]{--bg:#faf7f1;--surface:#fff;--fill:#efe9df;--ink:#1f1a17;--ink2:#4a423b;--ink3:#6b6259;--line:#e7e0d5;--accent:#2f5340;--on:#fff;--bar:rgba(250,247,241,.96);--ok:#2f7a4b;--chk:#9a6200;--ref:#6b4fa0;--err:#b42318;--placeholder:#e9e1d3;--covershadow:rgba(31,26,23,.28);--hero:#ece3d3}
+[data-light="lamplight"]{--bg:#15120f;--surface:#1f1b17;--fill:#2b2621;--ink:#f1e9dc;--ink2:#d3c8b8;--ink3:#a89d8c;--line:#463d33;--accent:#9fd0ae;--on:#10261a;--bar:rgba(21,18,15,.96);--ok:#7fcf98;--chk:#e8b45a;--ref:#c2aef0;--err:#f28b82;--placeholder:#2b2621;--covershadow:rgba(0,0,0,.6);--hero:#231e19}
+[data-light="ink"]{--bg:#f6f7f9;--surface:#fff;--fill:#e9edf2;--ink:#101828;--ink2:#344054;--ink3:#5a6474;--line:#dde2e9;--accent:#1d4f91;--on:#fff;--bar:rgba(246,247,249,.96);--ok:#13784a;--chk:#9a5b00;--ref:#6b3fc4;--err:#b42318;--placeholder:#e9edf2;--covershadow:rgba(16,24,40,.25);--hero:#e6ebf1}
+a{color:var(--accent)}a:hover{color:var(--ink)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<!-- Proposal board for free-content discovery. Sample records; links to hosts are inert. See ../README.md. -->
+<div data-light="daylight" style="box-sizing: border-box; min-height: 860px; display: flex; flex-wrap: wrap; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <aside aria-label="App navigation" style="flex: 1 1 200px; max-width: 240px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; padding: 28px 16px; border-right: 1px solid var(--line)">
+    <a href="#" style="margin: 0 0 20px 8px; font-family: 'Newsreader', Georgia, serif; font-size: 22px; font-weight: 600; color: var(--ink); text-decoration: none">MyBookshelf</a>
+    <a href="#" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink2); font-size: 15px; text-decoration: none">Shelf</a>
+    <a href="#" aria-current="page" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; background: var(--fill); color: var(--accent); font-size: 15px; font-weight: 600; text-decoration: none">Search</a>
+    <a href="#" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink2); font-size: 15px; text-decoration: none">Libraries</a>
+    <a href="#" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink2); font-size: 15px; text-decoration: none">Settings</a>
+  </aside>
+
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; padding: 28px 32px; max-width: 1200px">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px">
+      <h1 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 32px; line-height: 38px">Search</h1>
+      <label style="position: relative; flex: 1 1 320px; display: flex; align-items: center">
+        <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Title, author or subject</span>
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="stroke: var(--ink3); position: absolute; left: 12px"><circle cx="8.5" cy="8.5" r="5.5"></circle><path d="M13 13l4 4"></path></svg>
+        <input type="search" value="jane austen" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 16px 0 38px; border: 0; border-radius: 12px; background: var(--fill); font: 17px system-ui, sans-serif; color: var(--ink)">
+      </label>
+      <div role="group" aria-label="Search in" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); flex: 0 1 420px; padding: 2px; border-radius: 10px; background: var(--fill)">
+        <button type="button" style="height: 40px; border: 0; border-radius: 8px; background: transparent; color: var(--ink2); font: 500 14px system-ui, sans-serif">Library books</button>
+        <button type="button" aria-pressed="true" style="height: 40px; border: 0; border-radius: 8px; background: var(--surface); color: var(--ink); font: 600 14px system-ui, sans-serif; box-shadow: 0 0 0 1px var(--line)">Free to read</button>
+        <button type="button" style="height: 40px; border: 0; border-radius: 8px; background: transparent; color: var(--ink2); font: 500 14px system-ui, sans-serif">Papers</button>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <section aria-label="Results" style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column">
+        <p style="margin: 0 0 4px; font-size: 13px; color: var(--ink3)">4 free books shown · Project Gutenberg · <a href="#" style="font-weight: 600; text-decoration: none">Sources</a></p>
+        <a href="#" aria-current="true" style="display: flex; gap: 14px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--fill); color: inherit; text-decoration: none">
+          <span aria-hidden="true" style="flex: 0 0 44px; height: 66px; box-sizing: border-box; padding: 5px 3px; display: flex; align-items: flex-end; border-radius: 2px 3px 3px 2px; background: #7a3b2e; color: #f6eee0; font: 500 8px/10px 'Newsreader', Georgia, serif">Pride and Prejudice</span>
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-weight: 500">Pride and Prejudice</span><span style="font-size: 14px; color: var(--ink2)">Jane Austen</span><span style="font-size: 13px; font-weight: 600; color: var(--ok)">Free · Read online, EPUB, Kindle</span></span>
+        </a>
+        <a href="#" style="display: flex; gap: 14px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none">
+          <span aria-hidden="true" style="flex: 0 0 44px; height: 66px; box-sizing: border-box; padding: 5px 3px; display: flex; align-items: flex-end; border-radius: 2px 3px 3px 2px; background: #2f5340; color: #f6eee0; font: 500 8px/10px 'Newsreader', Georgia, serif">Emma</span>
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-weight: 500">Emma</span><span style="font-size: 14px; color: var(--ink2)">Jane Austen</span><span style="font-size: 13px; font-weight: 600; color: var(--ok)">Free · Read online, EPUB, Kindle</span></span>
+        </a>
+        <a href="#" style="display: flex; gap: 14px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none">
+          <span aria-hidden="true" style="flex: 0 0 44px; height: 66px; box-sizing: border-box; padding: 5px 3px; display: flex; align-items: flex-end; border-radius: 2px 3px 3px 2px; background: #3d4f7a; color: #f6eee0; font: 500 8px/10px 'Newsreader', Georgia, serif">Persuasion</span>
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-weight: 500">Persuasion</span><span style="font-size: 14px; color: var(--ink2)">Jane Austen</span><span style="font-size: 13px; font-weight: 600; color: var(--ok)">Free · Read online, EPUB, Kindle</span></span>
+        </a>
+        <a href="#" style="display: flex; gap: 14px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none">
+          <span aria-hidden="true" style="flex: 0 0 44px; height: 66px; box-sizing: border-box; padding: 5px 3px; display: flex; align-items: flex-end; border-radius: 2px 3px 3px 2px; background: #b8892f; color: #1f1a17; font: 500 8px/10px 'Newsreader', Georgia, serif">Sense and Sensibility</span>
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-weight: 500">Sense and Sensibility</span><span style="font-size: 14px; color: var(--ink2)">Jane Austen</span><span style="font-size: 13px; font-weight: 600; color: var(--ok)">Free · Read online, EPUB, Kindle</span></span>
+        </a>
+        <p style="margin: 14px 12px 4px; font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink3)">Unclear access · 3 <a href="#" style="margin-left: 6px; text-transform: none; letter-spacing: 0; text-decoration: none">Hide</a></p>
+        <a href="#" style="display: flex; gap: 14px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none">
+          <span aria-hidden="true" style="flex: 0 0 44px; height: 66px; display: grid; place-items: center; border-radius: 2px 3px 3px 2px; background: var(--placeholder); color: var(--ink3)"><svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M11 6c-2-1.5-4.5-2-7-2v12c2.5 0 5 .5 7 2 2-1.5 4.5-2 7-2V4c-2.5 0-5 .5-7 2zM11 6v12"></path></svg></span>
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-weight: 500">Pride and Prejudice, illustrated scan</span><span style="font-size: 14px; color: var(--ink2)">Jane Austen · Internet Archive</span><span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--chk)"><svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><circle cx="4" cy="4" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"></circle></svg>Access unclear · may be a loan, check at the source</span></span>
+        </a>
+      </section>
+
+      <section aria-labelledby="dt" style="flex: 1 1 420px; min-width: 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: 16px; background: var(--surface); box-shadow: 0 0 0 1px var(--line)">
+        <div style="display: flex; gap: 20px; align-items: flex-end">
+          <span role="img" aria-label="Cover of Pride and Prejudice" style="flex: 0 0 104px; height: 156px; box-sizing: border-box; padding: 10px 8px; display: flex; align-items: flex-end; border-radius: 2px 4px 4px 2px; background: #7a3b2e; color: #f6eee0; font: 500 16px/19px 'Newsreader', Georgia, serif; box-shadow: 2px 4px 10px var(--covershadow)">Pride and Prejudice</span>
+          <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+            <h2 id="dt" style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 30px; line-height: 34px">Pride and Prejudice</h2>
+            <p style="margin: 0; font-size: 16px; color: var(--ink2)">Jane Austen</p>
+            <p style="margin: 0; font-size: 13px; color: var(--ink3)">Project Gutenberg eBook #1342 · English</p>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <a href="#" style="display: flex; align-items: center; gap: 8px; height: 46px; padding: 0 20px; border-radius: 12px; background: var(--accent); color: var(--on); font: 600 16px system-ui, sans-serif; text-decoration: none">Read at Project Gutenberg ↗</a>
+          <a href="#" style="display: grid; place-items: center; height: 46px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--line); color: var(--ink); font: 500 15px system-ui, sans-serif; text-decoration: none">EPUB ↗</a>
+          <a href="#" style="display: grid; place-items: center; height: 46px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--line); color: var(--ink); font: 500 15px system-ui, sans-serif; text-decoration: none">Kindle ↗</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 12px; background: var(--fill)">
+          <span style="font-size: 14px; font-weight: 600">Public domain in the USA</span>
+          <span style="font-size: 14px; line-height: 20px; color: var(--ink2)">Project Gutenberg asks readers outside the USA to check their own country's copyright rules first.</span>
+        </div>
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink3)">Other free versions</span>
+          <a href="#" style="display: flex; align-items: center; min-height: 44px; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 15px; text-decoration: none">Audiobook · LibriVox<span style="margin-left: 8px; font-size: 13px; color: var(--ink3)">Separate recording</span><span style="margin-left: auto; color: var(--accent)">↗</span></a>
+          <a href="#" style="display: flex; align-items: center; min-height: 44px; color: var(--ink); font-size: 15px; text-decoration: none">Wikisource transcription<span style="margin-left: 8px; font-size: 13px; color: var(--ink3)">Different source text</span><span style="margin-left: auto; color: var(--accent)">↗</span></a>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+/* Reading light: ?light=daylight|lamplight|ink. Boards default to Daylight. */
+(function(){var l=new URLSearchParams(location.search).get('light');if(!/^(daylight|lamplight|ink)$/.test(l||''))l='daylight';
+document.querySelectorAll('[data-light]').forEach(function(e){e.setAttribute('data-light',l)});
+document.querySelectorAll('a[href$=".html"]').forEach(function(a){if(l!=='daylight')a.href=a.getAttribute('href')+'?light='+l});
+document.querySelectorAll('a[href="#"]').forEach(function(a){a.addEventListener('click',function(ev){ev.preventDefault()})});})();
+</script>
+</body>
+</html>

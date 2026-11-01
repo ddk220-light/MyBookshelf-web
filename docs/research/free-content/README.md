@@ -78,7 +78,9 @@ The original evidence file recorded 85 fetch observations and 23 API probes, 20 
 
 ## UI proposal and owner decisions (2026-11-01)
 
-UI boards (Design canvas, private until shared): https://claude.ai/artifact/NHwYSSaU4VGXDt2Pp9aA4X.
+UI boards: [docs/design/2026-11-free-content](../../design/2026-11-free-content/README.md)
+(implementation handoff and standalone HTML boards). Owner review copy on a
+private Design canvas: https://claude.ai/artifact/NHwYSSaU4VGXDt2Pp9aA4X.
 They cover free-book and paper search, details, the library book page link,
 source status, partial/unavailable/empty/limit/loading states, the children's
 pilot and a desktop layout. Records on the boards are samples.
