@@ -85,11 +85,22 @@ links. DOAJ, arXiv and OpenAlex adapters, bounded multi-source paging, shared
 record caching, source progress and source-only retry are implemented and tested.
 The reviewed children's pilot and final hosted enablement are pending.
 
+The pilot's validation, filters, credits and translation identities are implemented;
+its manifest is deliberately empty until actual English/Hindi/Tamil metadata
+can be reviewed. See [the source review gate](research/free-content/CHILDREN_REVIEW.md).
+Final local checks: 530 server tests, 138 client tests, 236 full desktop/mobile
+browser journeys, eight Python checks, typecheck/build/SEO/deployment and workflow
+lint pass. A final targeted reader check and 24 feature browser checks passed
+after link/rights fixes. All-source exact lookups and a 40-result real-paper flow
+also passed locally with actual Redis; this is separate from hosted enablement.
+
 Both client and backend flags default off. Live paper search additionally needs
 shared Redis REST credentials and explicit budget configuration; no hosted store
 has been provisioned. The local Gutenberg snapshot needs daily refresh because
-positive access evidence expires after 24 hours. No deployment or production
-enablement has been performed.
+positive access evidence expires after 24 hours. A reviewed daily refresh workflow
+is implemented; it becomes schedulable only when merged onto the default branch.
+It proposes a draft metadata PR, runs CI and retains production flags. No production
+enablement or promotion has been performed.
 
 ## Account work: architecture chosen, implementation not started
 
@@ -114,32 +125,24 @@ Reviews, comments, follows, favorites, reading statuses, lists and activity are
 future discovery scope. **They still need requirements and definitions**, including
 privacy, moderation, work identity, deletion and acceptance criteria.
 
-## Resume in this order
+## Resume this free-content branch
 
-For this branch, continue the free-content stories in
-[IMPLEMENTATION.md](research/free-content/IMPLEMENTATION.md), creating native
-tasks as each story is reached. The account instructions below are historical
-handoff context for another branch; they do not apply to this task.
+1. Use `/workspace/MyBookshelf-web-free-sources-implementation` on
+   `research/free-content-discovery-implementation`, based on approved artifacts
+   at `760863a`. Keep its [draft PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110)
+   based on `research/free-content-discovery`. Preserve other worktrees.
+2. Read [implementation/story state](research/free-content/IMPLEMENTATION.md),
+   [operations](research/free-content/OPERATIONS.md) and
+   [validation](research/free-content/VALIDATION.md). Existing native tasks belong
+   to [project 4](https://github.com/users/ddk220-light/projects/4) / index #73.
+3. Pending inputs are the shared hosted Redis REST bindings/budgets and verified
+   pilot metadata in English/Hindi/Tamil. Questions are pending in this chat;
+   elapsed time does not authorize enabling flags or publishing invented records.
+4. Complete the remaining FCD07 hosted/real-pilot checks when those inputs arrive.
+   Keep the bounded Gutenberg subset/OTL export coverage explicit. Account work
+   has its own branch/project; its historical planning section above is context.
 
-1. Read this handoff, the foundation analysis and
-   [the delivery backlog](plans/2026-10-31-accounts-delivery-backlog.md).
-2. Verify the newly configured GitHub Projects credential in the new environment,
-   using [the credential notes](development/credentials.md). Do not expose its value.
-3. Continue from the existing [GitHub planning index issue #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1).
-   The native GitHub Project and child issues have **not** been created. Create
-   them from the checked-in backlog once access works, linking epics/stories and
-   marking future expansion as needing requirements. Avoid duplicate index issues.
-4. Start with the five requested tasks: PRD, UX design, engineering implementation
-   plan, UI implementation plan, then detailed task decomposition for each story.
-   This handoff preserves the outline; it does not mark those deliverables done.
-
-The prior chat paused backlog publication to resolve credentials. Its existing
-integration could access the repository and create issues, but Projects requests
-failed with `Resource not accessible by integration`. The newly added secret did
-not appear in that task's running secret bindings. This is a task/configuration
-observation, not proof that the saved environment was configured incorrectly.
-
-## This handoff's verification
+## Historical repository handoff verification (2026-10-31)
 
 The public repo matched the latest reviewed web export. An additional startup
 audit found and fixed its missing local environment loader; a real-server smoke

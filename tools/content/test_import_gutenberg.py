@@ -13,7 +13,7 @@ RDF = b'''<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
  <pgterms:ebook rdf:about="ebooks/123"><dcterms:title>Import contract fixture</dcterms:title>
  <dcterms:type><rdf:Description><rdf:value>Text</rdf:value></rdf:Description></dcterms:type>
  <dcterms:rights>Public domain in the USA.</dcterms:rights>
- <dcterms:hasFormat><pgterms:file rdf:about="https://www.gutenberg.org/ebooks/123.html">
+ <dcterms:hasFormat><pgterms:file rdf:about="https://www.gutenberg.org/files/123/fixture.html">
  <dcterms:format><rdf:Description><rdf:value>text/html; charset=utf-8</rdf:value></rdf:Description></dcterms:format>
  </pgterms:file></dcterms:hasFormat></pgterms:ebook></rdf:RDF>'''
 
@@ -24,7 +24,10 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(item['locations'][0]['access'], 'free_full_text')
         self.assertEqual(item['locations'][0]['rightsJurisdiction'], 'US')
         self.assertEqual(parse_record(RDF.replace(b'Public domain in the USA.', b'Unknown'), OBSERVED)['locations'][0]['access'], 'unknown')
-        self.assertEqual(parse_record(RDF.replace(b'https://www.gutenberg.org/ebooks/123.html', b'http://127.0.0.1/private'), OBSERVED)['locations'][0]['access'], 'unknown')
+        self.assertEqual(parse_record(RDF.replace(b'https://www.gutenberg.org/files/123/fixture.html', b'http://127.0.0.1/private'), OBSERVED)['locations'][0]['access'], 'unknown')
+        virtual = RDF.replace(b'https://www.gutenberg.org/files/123/fixture.html', b'https://www.gutenberg.org/ebooks/123.html.images')
+        self.assertEqual(parse_record(virtual, OBSERVED)['locations'][0]['access'], 'unknown')
+        self.assertNotIn('readerUrl', parse_record(virtual, OBSERVED)['locations'][0])
 
     def test_xml_and_archive_boundaries(self):
         with self.assertRaises(ValueError): parse_record(b'<!DOCTYPE x><x/>', OBSERVED)

@@ -1,0 +1,60 @@
+name: Review free-content catalog refresh
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 5 * * *'
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+concurrency:
+  group: free-content-catalog-refresh
+  cancel-in-progress: false
+jobs:
+  propose-refresh:
+    runs-on: ubuntu-latest
+    env:
+      CATALOG_BASE_BRANCH: ${{ github.event.repository.default_branch }}
+      CATALOG_REFRESH_BRANCH: automation/free-content-catalog-refresh
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Continue the dedicated metadata branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git ls-remote --exit-code --heads origin "$CATALOG_REFRESH_BRANCH" > /dev/null; then
+            git fetch origin "$CATALOG_REFRESH_BRANCH"
+            git switch --track "origin/$CATALOG_REFRESH_BRANCH"
+            git merge --no-edit "origin/$CATALOG_BASE_BRANCH"
+          else
+            git switch -c "$CATALOG_REFRESH_BRANCH" "origin/$CATALOG_BASE_BRANCH"
+          fi
+      - run: npm ci --ignore-scripts
+      - run: python -m unittest discover -s tools/content -v
+      - name: Prepare both bounded metadata candidates
+        run: python tools/content/refresh_catalogs.py --output-dir /tmp/free-content-candidates
+      - name: Audit candidate API identities and current reading evidence
+        run: node tools/content/audit_snapshots.mjs /tmp/free-content-candidates
+      - name: Propose review and retain production flags
+        run: |
+          cp /tmp/free-content-candidates/gutenberg.json server/data/content/gutenberg.json
+          cp /tmp/free-content-candidates/open-textbook-library.json server/data/content/open-textbook-library.json
+          cp /tmp/free-content-candidates/report.json docs/research/free-content/evidence/latest-refresh.json
+          git add server/data/content/gutenberg.json server/data/content/open-textbook-library.json docs/research/free-content/evidence/latest-refresh.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Refresh official free-content metadata observations'
+          git push origin "$CATALOG_REFRESH_BRANCH"
+          CATALOG_PR_NUMBER=$(gh pr list --base "$CATALOG_BASE_BRANCH" --head "$CATALOG_REFRESH_BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$CATALOG_PR_NUMBER" ]; then
+            gh pr edit "$CATALOG_PR_NUMBER" --body-file /tmp/free-content-candidates/report.md
+          else
+            gh pr create --draft --base "$CATALOG_BASE_BRANCH" --head "$CATALOG_REFRESH_BRANCH" --title 'Refresh free-content metadata catalogs' --body-file /tmp/free-content-candidates/report.md
+          fi
+          gh workflow run web.yml --ref "$CATALOG_REFRESH_BRANCH"

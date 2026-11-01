@@ -1,5 +1,5 @@
 name: Web application
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 jobs:
   checks:
     runs-on: ubuntu-latest
@@ -22,7 +22,7 @@ jobs:
       - run: node --test tools/deployment/*.test.mjs
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
-      - run: npm run test:e2e --workspace=client -- free-content.spec.js --project=chromium --project=mobile-chromium --workers=2
+      - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
         env:
           VITE_CONTENT_DISCOVERY_ENABLED: 'true'
           FREE_CONTENT_E2E: 'true'

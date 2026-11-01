@@ -45,6 +45,20 @@ test.describe('free-content discovery',()=>{
     await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(trigger).toBeFocused();
     await expect(page.getByText('Wide paper search is at today’s limit. Other source results are shown.')).toBeVisible();
   });
+  test('clearing a mixed shelf names books and papers and preserves viewed history',async({page})=>{
+    await mock(page);await page.goto('/app/search?scope=papers&q=clear-fixture');
+    await page.evaluate(()=>{
+      const book={bookKey:'v1:isbn:9780140328721',title:'Legacy viewed fixture',authors:['Legacy Author'],source:'direct',viewedAt:'2026-10-01T00:00:00Z'};
+      localStorage.setItem('mybookshelf.anonymous-web.v1',JSON.stringify({version:1,selectedLibraryId:null,recentBooks:[book],savedBooks:[book]}));
+    });await page.reload();
+    await page.getByRole('heading',{name:fixture.title}).getByRole('link').click();await page.getByRole('button',{name:'Save to shelf'}).click();
+    await page.getByRole('link',{name:'Settings',exact:true}).click();
+    await page.getByRole('button',{name:'Clear saved books and papers',exact:true}).click();
+    const dialog=page.getByRole('dialog');await expect(dialog).toContainText('Your viewed book history will stay.');
+    await dialog.getByRole('button',{name:'Clear saved books and papers',exact:true}).click();
+    const state=await page.evaluate(()=>JSON.parse(localStorage.getItem('mybookshelf.anonymous-web.v1')));
+    expect(state.savedBooks).toEqual([]);expect(state.savedContent).toEqual([]);expect(state.recentBooks[0].title).toBe('Legacy viewed fixture');
+  });
   test('outage never renders a no-copy claim',async({page})=>{
     await mock(page,{failure:true});await page.goto('/app/search?scope=papers&q=failed-fixture');
     await expect(page.getByRole('alert')).toContainText('This does not mean there is no free copy.');
@@ -67,5 +81,34 @@ test.describe('free-content discovery',()=>{
     await page.evaluate(()=>document.documentElement.style.fontSize='200%');
     await expect(page.getByRole('button',{name:'Sources',exact:true})).toBeVisible();
     expect(await page.locator('#main-content').evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
+  });
+  test('an unpublished pilot stays unavailable rather than showing invented stories',async({page})=>{
+    await page.route('**/api/v2/content/search',route=>route.fulfill({status:503,json:{error:{code:'CONTENT_COLLECTION_UNAVAILABLE',message:'The reviewed children’s starter set is not ready yet.'}}}));
+    await page.goto('/app/search?scope=free&collection=children');
+    await expect(page.getByRole('heading',{name:'The starter set is still being checked'})).toBeVisible();
+    await expect(page.locator('.content-result')).toHaveCount(0);
+    await expect(page.getByRole('heading',{name:'No verified free copy in these results'})).toHaveCount(0);
+  });
+  for(const light of ['daylight','lamplight','ink'])test(`synthetic pilot controls preserve credits and Tamil language in ${light}`,async({page})=>{
+    await page.addInitScript(light=>localStorage.setItem('mybookshelf.appearance.v1',JSON.stringify({version:1,preference:light})),light);
+    await page.route('**/api/v2/content/search',route=>{
+      const body=route.request().postDataJSON(),tamil=body.languages?.[0]==='ta';
+      const story={...fixture,key:'fcd:v1:storyweaver:'+ (tamil?'7777773':'7777772'),kind:'book',title:tamil?'தமிழ் சோதனைக் கதை':'हिन्दी परीक्षण कहानी',
+        languages:[tamil?'ta':'hi'],collections:['children'],readingLevel:{publisher:'Synthetic fixture publisher',label:'Source level one'},
+        contributors:[{name:'Fixture Author',role:'author'},{name:'Fixture Illustrator',role:'illustrator'},{name:'Fixture Translator',role:'translator'}],
+        locations:[{...fixture.locations[0],id:'story',host:'StoryWeaver',landingUrl:'https://storyweaver.org.in/en/stories/7777772-synthetic-fixture',readerUrl:'https://storyweaver.org.in/en/stories/7777772-synthetic-fixture'}],
+        readingActions:[{locationId:'story',label:'Read at StoryWeaver',url:'https://storyweaver.org.in/en/stories/7777772-synthetic-fixture',downloads:[]}],
+        provenance:[{...fixture.provenance[0],sourceId:'storyweaver'}]};
+      return route.fulfill({json:{items:[story],nextCursor:null,hiddenUnclear:0,availableLevels:['Source level one'],coverage:'partial',policyRevision:'fixture',sources:[{id:'children-pilot',status:'ok',returned:1}]}});
+    });
+    await page.goto('/app/search?scope=free&collection=children');
+    await expect(page.getByRole('heading',{name:'हिन्दी परीक्षण कहानी'})).toHaveAttribute('lang','hi');
+    await page.getByLabel('Language',{exact:true}).selectOption('ta');
+    await expect(page.getByRole('heading',{name:'தமிழ் சோதனைக் கதை'})).toHaveAttribute('lang','ta');
+    await expect(page.getByText('Illustrated by Fixture Illustrator')).toBeVisible();
+    await expect(page.getByText('Translated by Fixture Translator')).toBeVisible();
+    await page.getByLabel('Publisher level').selectOption('Source level one');
+    expect(await page.locator('#main-content').evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
+    expect((await new AxeBuilder({page}).include('#main-content').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
   });
 });

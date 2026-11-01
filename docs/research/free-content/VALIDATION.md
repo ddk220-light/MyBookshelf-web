@@ -3,6 +3,14 @@
 Checks performed 2026-11-01 in the isolated free-content worktree using Node
 22.23.4. No hosted preview or production enablement is claimed.
 
+Latest local result: **530 server, 138 client, eight Python and 236 full
+feature-enabled desktop/mobile Chromium checks passed**, plus typecheck,
+production build, SEO/deployment and pinned actionlint verification. Following
+the final reader/link fixes, the 12 reader-flow tests and 24 feature browser
+checks passed again. CI for the draft PR runs Chromium/mobile/WebKit with the
+feature both disabled and enabled; consult [PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110)
+for current run status. Hosted enablement and real pilot publication remain blocked.
+
 ## Search → API → metadata → reader → shelf
 
 The actual Gutenberg snapshot supplies the search results and source-host links
@@ -59,9 +67,12 @@ This workspace uses `/usr/bin/chromium` via
   off without them. Local Gutenberg search requires no database.
 - Reviewed real children's records with original credits and languages.
 - Automated reviewed catalog refresh before 24-hour access evidence expiry;
-  stale evidence must remain unknown. Fresh host-link sampling and deletion checks.
+  the candidate tool/daily draft-PR workflow are now implemented and tested
+  locally; first scheduled execution follows default-branch merge. Stale evidence
+  remains unknown. No global Gutenberg/OTL completeness or deletion claim.
 - Finish board-state coverage, source-specific retraction/version fixtures,
-  Firefox/WebKit journeys, fresh protected preview and final release checks.
+  fresh protected preview and final hosted release checks. WebKit runs in CI;
+  Firefox is not part of the existing CI browser matrix and has not been run here.
 
 Reference boards contain fictional papers and children's stories. Test fixtures
 are explicit synthetic protocol data; they are not production catalogs. Captures
@@ -126,3 +137,28 @@ The full existing+feature browser suite passed **226** desktop/mobile Chromium
 journeys with the main feature flag enabled before pilot controls were added.
 Existing library/camera/shelf behavior also works with the new Search scopes
 visible. The CI lane should run both flags-off and flags-on paths.
+
+## Final source and refresh checks
+
+All four paper adapters passed fresh [exact-record lookups](evidence/2026-11-01/exact-lookups.json)
+without the record cache. Their observed times were 252–1,635 ms in this workspace;
+these small samples are not SLAs. A fresh full paper flow also passed after final
+changes: source progress, 20 + 20 unique records, save/reload/reopen and legacy
+arXiv version lookup. The [flow report](evidence/2026-11-01/papers-live-flow.json)
+records actual statuses and timing.
+
+[HEAD/header-only sampling](evidence/2026-11-01/host-head-checks.json) returned
+200 from the textbook, DOAJ publisher, arXiv and Europe PMC hosts. It found a
+Gutenberg legacy HTML 404; GET response headers confirmed it. The supplied direct
+HTML and EPUB routes returned 200. Importer v2 removes virtual HTML links and
+uses supplied direct HTML/landing URLs; a fresh 1,000-record import and runtime
+audit passed. The primary location's licence and downloads now stay together;
+other hosts/versions retain their own licence, and retraction flags appear on
+direct detail visits. No full-text content was stored.
+
+The refresh tool prepared both real catalogs without changing the baseline until
+both passed validation. Counts and identities stayed stable; metadata differences
+are the Gutenberg mapping-version/link changes. The daily workflow passed
+actionlint 1.7.7 (release checksum verified), but has not executed on the default
+branch or created an automated refresh PR yet. Actual source captures were
+updated in all three reading lights with no page errors or horizontal overflow.

@@ -11,11 +11,12 @@ import { uiMessages as m } from '../../uiMessages';
 import { CopyLibraryLink } from '../library/CopyLibraryLink';
 
 export function SettingsPage() {
-  const { library, loadingLibrary, libraryError, retryLibrary, clearSavedBooks, recoveryMode } = useLibrary();
+  const { library, state, loadingLibrary, libraryError, retryLibrary, clearSavedBooks, recoveryMode } = useLibrary();
   const { light, preference, setLight } = useReadingLight();
   const { enabled, setEnabled } = useDogAnimation();
   const links = getAppStoreLinks();
   const [confirming, setConfirming] = useState(false);
+  const clearLabel=state.savedContent.length?'Clear saved books and papers':'Clear saved books';
 
   return <section className="page-section settings-page">
     <header className="page-heading"><h1>{m.settings}</h1></header>
@@ -43,7 +44,7 @@ export function SettingsPage() {
 
     <section className="prose" id="privacy" aria-labelledby="settings-privacy">
       <h2 id="settings-privacy" className="settings-label">Privacy</h2>
-      <p>Your books are saved in this browser. They don’t sync across devices, and clearing browser data removes them.</p>
+      <p>Your shelf is saved in this browser. It doesn’t sync across devices, and clearing browser data removes it.</p>
       <a className="text-link" href="/privacy#website">Privacy policy</a>
     </section>
 
@@ -66,14 +67,14 @@ export function SettingsPage() {
 
     <section className="danger-card" aria-labelledby="settings-danger">
       <h2 id="settings-danger" className="settings-label danger-label">Saved data</h2>
-      <button className="button-destructive" disabled={recoveryMode} onClick={() => setConfirming(true)}>Clear saved books</button>
+      <button className="button-destructive" disabled={recoveryMode} onClick={() => setConfirming(true)}>{clearLabel}</button>
     </section>
 
     <ConfirmDialog
       open={confirming}
-      title="Clear saved books?"
-      body={<p>Your saved shelf will be emptied. This cannot be undone.</p>}
-      confirmLabel="Clear saved books"
+      title={clearLabel+'?'}
+      body={<p>{state.savedContent.length?'Your saved library books, free books and papers will be removed from this browser. Your viewed book history will stay. This cannot be undone.':'Your saved shelf will be emptied. This cannot be undone.'}</p>}
+      confirmLabel={clearLabel}
       onConfirm={() => { clearSavedBooks(); setConfirming(false); }}
       onCancel={() => setConfirming(false)}
     />

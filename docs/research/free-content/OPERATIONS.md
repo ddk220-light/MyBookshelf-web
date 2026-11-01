@@ -61,3 +61,29 @@ and provenance are in [the snapshot notes](../../../server/data/content/README.m
 Offline reimports retain original observation times. Check removals, schema,
 shrink protection, source permissions, host-link samples, bundle inclusion and
 regressions before enabling a refreshed catalog. Never manually advance timestamps.
+
+## Reviewed daily refresh
+
+`python tools/content/refresh_catalogs.py --output-dir /tmp/new-free-candidates`
+prepares both imports in a new directory, preserving the active baseline. Any
+source failure, empty/schema-invalid candidate or shrink failure leaves no
+published candidate. `node tools/content/audit_snapshots.mjs /tmp/new-free-candidates`
+verifies actual source identities, indexing and current reading evidence. Inspect
+the report's additions, missing keys and semantic changes before updating files.
+Observation-time changes are reported separately from bibliographic changes.
+
+The daily `free-content-refresh.yml` workflow creates/updates a dedicated draft
+metadata PR and explicitly dispatches `web.yml`; GitHub's generated token does
+not automatically trigger normal push/PR workflows. It never merges, changes
+feature flags or promotes production. The schedule becomes active only after
+the workflow reaches the default branch. GitHub Actions must have repository
+permission to create PRs; a rejected write fails visibly. First scheduled
+execution and hosted deployment behavior remain release checks.
+
+Source sampling found Gutenberg's supplied virtual HTML route returning 404
+for both HEAD and GET response headers, while the supplied direct `/files/`
+HTML URL returned 200. Mapping v2 excludes virtual HTML links, chooses supplied
+direct HTML where available and otherwise uses the catalog landing page. Valid
+supplied EPUB/Kindle routes remain available; no file path is guessed. Download
+buttons use the primary location's formats/rights, one per MIME. Other reading
+locations show their own version/licence instead of inheriting the primary one.

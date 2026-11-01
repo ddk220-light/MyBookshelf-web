@@ -1,6 +1,8 @@
 # Free reading: UI boards and implementation handoff
 
-Status: **approved UI proposal, not implemented.** Dated 2026-11-01.
+Status: **approved UI reference; implementation in progress.** Dated 2026-11-01.
+Current decisions, implemented slices and remaining gates are in
+[the implementation record](../../research/free-content/IMPLEMENTATION.md).
 
 Implement free-book and research-paper discovery from this document, the boards
 in [`boards/`](boards/) (gallery: [index.html](index.html)) and the research in

@@ -59,6 +59,10 @@ def parse_record(raw, observed_at):
     for file in ebook.findall('dc:hasFormat/pg:file', NS):
         url = supplied_url(file.get(ABOUT, ''))
         mime = text(file.find('dc:format/rdf:Description/rdf:value', NS)).split(';')[0].strip()
+        # The legacy virtual HTML endpoint can return 404 even while the RDF
+        # supplies a working /files/ HTML edition. Generated EPUB/Kindle routes
+        # still work; retain those supplied URLs without inventing replacements.
+        if url and mime == 'text/html' and urllib.parse.urlsplit(url).path.startswith('/ebooks/'): continue
         if url and mime in MIMES and not any(f['url'] == url for f in formats):
             formats.append({'url': url, 'mimeType': mime})
     # Do not infer a reusable/global public domain licence from catalog membership.
@@ -77,7 +81,7 @@ def parse_record(raw, observed_at):
             'subjects': [text(x, 300) for x in ebook.findall('dc:subject/rdf:Description/rdf:value', NS)][:30],
             'publishedAt': text(ebook.find('dc:issued', NS), 20) or None, 'relations': [],
             'locations': [location], 'provenance': [{'sourceId': 'gutenberg', 'sourceRecordId': number,
-                'recordUrl': landing, 'retrievedAt': observed_at, 'mappingVersion': 'gutenberg-rdf-v1'}]}
+                'recordUrl': landing, 'retrievedAt': observed_at, 'mappingVersion': 'gutenberg-rdf-v2'}]}
 
 
 def snapshot(records, observed_at, source_url, complete=False):

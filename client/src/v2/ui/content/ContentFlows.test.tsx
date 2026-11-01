@@ -46,6 +46,21 @@ it('labels absent licence and opens only the supplied source action',async()=>{
   expect(read).toHaveAttribute('href','https://europepmc.org/articles/PMC123');expect(read).toHaveAttribute('rel','noopener noreferrer');
 });
 
+it('keeps other-host versions and licences separate from primary download actions',async()=>{
+  const other={id:'pdf',host:'Other repository',landingUrl:'https://repository.example/item.pdf',access:'free_full_text',version:'submittedVersion',
+    license:{id:'CC-BY-NC-4.0'},evidence:item.locations[0].evidence};
+  vi.mocked(contentApi.resolve).mockResolvedValue({...item,flags:['source_reports_retracted'],
+    locations:[{...item.locations[0],license:{id:'CC-BY-4.0'}},other],
+    readingActions:[...item.readingActions,{locationId:'pdf',label:'Read at Other repository',url:other.landingUrl,downloads:[{url:other.landingUrl,mimeType:'application/pdf'}]}]});
+  const view=mount(<ContentDetail contentKey={item.key}/>);
+  await screen.findByRole('heading',{name:item.title});
+  expect(screen.getByText('Retraction listed by source')).toBeInTheDocument();
+  expect(view.container.querySelector('.content-formats')).toBeNull();
+  const locations=screen.getByRole('region',{name:'Other free reading locations'});
+  expect(locations).toHaveTextContent('CC-BY-NC-4.0');expect(locations).toHaveTextContent('submittedVersion');
+  expect(screen.getByRole('link',{name:'Read PDF at Other repository (opens Other repository)'})).toHaveAttribute('href',other.landingUrl);
+});
+
 it('keeps textbook collection searches distinct and labels the catalog language gap',async()=>{
   const textbook:ContentItem={...item,key:'fcd:v1:open-textbook-library:123',kind:'learning_resource',title:'Synthetic textbook fixture',languages:['und'],
     provenance:[{...item.provenance[0],sourceId:'open-textbook-library',sourceRecordId:'123'}]};

@@ -60,3 +60,19 @@ merely by running an offline import. Both catalogs are bundled read-only at
 runtime, independently attributed and indexed together, with a combined index
 revision bound into pagination cursors. A damaged source does not hide the
 other catalog or become a truthful empty result.
+
+## Current refresh and review-only pilot
+
+The current snapshots were fetched again on 2026-11-01T10:24Z through the
+candidate refresh pipeline. [The report](../../../docs/research/free-content/evidence/latest-refresh.json)
+records unchanged identities/counts and the Gutenberg v2 mapping correction:
+omit legacy virtual HTML endpoints that can return 404, use supplied direct HTML
+or the catalog landing page, retain supplied working generated ebook formats.
+No book-file path was invented. Source metadata still supports 987 Gutenberg
+and 1,905 OTL records with current free-reading evidence; these are evidence
+counts, not exhaustive host-link or global-rights audits. Current JSON sizes
+are 1,831,733 and 2,582,376 bytes respectively.
+
+`children-pilot.json` is an empty review manifest, separate from both catalogs.
+It is deliberately rejected for enablement until complete real English, Hindi
+and Tamil source metadata is present. See [the review gate](../../../docs/research/free-content/CHILDREN_REVIEW.md).
