@@ -1,0 +1,77 @@
+# Free books and research discovery
+
+Research date: **2026-10-31**. Status: proposal with historical live API samples; no application behavior changed.
+
+Canonical repository: **[ddk220-light/MyBookshelf-web](https://github.com/ddk220-light/MyBookshelf-web)**. All future development belongs here.
+
+Build a **metadata discovery service with outbound reading links**. Use a hybrid of locally indexed metadata catalogs and a small number of live search adapters. The app should not download or serve the books or papers themselves.
+
+This is feasible with free sources. The difficult parts are deciding whether a specific edition is actually readable, keeping source permissions and quotas current, and combining overlapping records without losing versions or translations. Free content does not imply an unlimited free search API.
+
+- [Source catalog](source-catalog.md): categories, repositories, connection methods, credentials, constraints, and priorities.
+- [Architecture and delivery plan](architecture.md): contracts, query flow, storage, repository integration, and rollout gates.
+- [Evidence](evidence.json): historical request URLs, observed outcomes, selected findings, and verification limits.
+
+## Recommendation
+
+Start with **Free books** and **Research papers**. Add **Textbooks & learning** through the Open Textbook Library catalog, then a curated **Children's books** collection. Treat language, subject, reading level, format, and access conditions as separate filters rather than mutually exclusive categories.
+
+| First integrations | Connection | Why |
+| --- | --- | --- |
+| Project Gutenberg | Official metadata import; local search | Public-domain ebook foundation without scraping or dependence on the public Gutendex demo |
+| Open Textbook Library | Official CSV/JSON metadata; local search | Documented CC0 catalog for educational material |
+| DOAJ | Live article search | OA journal articles with publisher full-text links |
+| Europe PMC | Live search and record details | Biomedical literature with explicit full-text/OA fields |
+| arXiv | Atom API behind a shared request queue | Direct preprint coverage with clearly labeled versions |
+| OpenAlex | Live search after key/budget verification | Broad multidisciplinary discovery and OA locations; usage is metered |
+| DOAB / OAPEN | Metadata imports and OAI-PMH updates | Scholarly books and chapters; next import candidates |
+
+Reuse Google Books and Open Library selectively to enrich book records and resolve existing saved books to candidate free editions. Their general catalogs contain previews, borrowing offers, and metadata-only records; they should not define the free-reading collection by themselves.
+
+## Categories
+
+| Category | Typical material | Representative sources |
+| --- | --- | --- |
+| General ebooks and public-domain literature | Novels, poetry, essays, historical nonfiction | Gutenberg, Standard Ebooks, Wikisource, Internet Archive |
+| Scholarly books and chapters | Research monographs, edited volumes, academic chapters | DOAB, OAPEN |
+| Journal articles | Published research and reviews | DOAJ, Europe PMC/PMC, OpenAlex |
+| Preprints and working papers | Research before or outside formal journal publication | arXiv, bioRxiv/medRxiv, HAL, Zenodo |
+| Theses, dissertations, institutional outputs | Graduate research, technical reports, repository manuscripts | CORE, HAL, Shodhganga, university repositories |
+| Textbooks and open educational resources | Textbooks, lessons, course readings, exercises | Open Textbook Library, OpenStax, LibreTexts, OER Commons, NCERT, DIKSHA |
+| Children's books and early literacy | Picture books, graded stories, translations, wordless books | StoryWeaver, African Storybook, Book Dash |
+| Government, policy, organizational publications | Reports, policy papers, public documents | World Bank Open Knowledge Repository, Library of Congress, institutional repositories |
+| Historical and cultural collections | Digitized books, serials, rare texts, regional-language literature | Internet Archive, Library of Congress, Europeana, Biodiversity Heritage Library, Wikisource |
+| Audiobooks (optional extension) | Recorded readings of public-domain books | LibriVox |
+
+Journals are **containers**, articles are **items**, and PDF/EPUB/HTML are **formats**. Children's and educational are audience/use classifications that can apply to several item types. An ebook can be a textbook, a children's story, or an academic monograph simultaneously.
+
+## What the original checks established
+
+Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.
+
+These were small one-time checks, not integration, rights, uptime, completeness, or user-country tests. Important counterexamples:
+
+- An Open Library work returned `ebook_access: public` alongside many Internet Archive identifiers. That does not identify which edition is freely readable.
+- A HAL hit had a record URL and DOI but no `fileMain_s`: a repository hit is not necessarily full text.
+- Zenodo returned a dataset; item-type filtering is essential.
+- DOAJ supplied an older HTTP publisher URL; metadata alone does not prove the destination still works.
+- Semantic Scholar returned **429**, and Gutendex timed out. Those checks do not establish general service availability.
+- Some documentation URLs moved; corrected DOAB/OAPEN URLs appear in the catalog. Some sites returned only a JavaScript shell. NCERT/ERIC/OER Commons could not be fully inspected.
+
+Two current details make older integration advice unreliable: Standard Ebooks' full OPDS feeds require membership/access arrangements, and Unpaywall's documentation said its title-search endpoint retired on **2026-09-18**. Use Unpaywall for DOI resolution and another index for search. Recheck these policies before implementation.
+
+## Credentials and implementation inputs
+
+No additional credentials are needed to review this plan. The original Google Books free-ebook query succeeded using the configured key. For implementation:
+
+1. Verify **`OPENALEX_API_KEY`** in the backend. The replacement environment reports the variable configured; no authenticated OpenAlex request was made during this repository transfer. At the research date the free account included $1/day of API usage, roughly 1,000 ordinary search requests before caching. Disable paid overages unless deliberately budgeted.
+2. Choose a real **application contact email** for request identification and, if enabled, Unpaywall's required `email` parameter. No email was invented, registered, or sent during this work.
+3. Optional later: Semantic Scholar, BHL and Europeana keys; CORE upgrade/eligibility confirmation. Standard Ebooks feed access and children's/OER catalog feeds need provider-specific arrangements.
+
+Assumptions: global discovery with explicit language/country context; lawful public hosts; no reader login required for the default Read free filter; no full-text hosting, subscription purchases, or library-card integration. Existing India library coverage makes NCERT, DIKSHA, StoryWeaver and Shodhganga useful follow-ups, but their discovery integrations are not assumed ready.
+
+## Repository transfer and evidence provenance
+
+The original worktree branch was committed as `ee7d88e` in a previous environment but was not pushed. That environment became unavailable. The replacement checkout, archived repository and GitHub did not contain that commit. These documents were **reconstructed from the research and tool results retained in this conversation**, on the canonical web repository's `9f5bb4b` baseline. They are not a byte-for-byte recovery of the original commit.
+
+The original evidence file recorded 85 fetch observations and 23 API probes, 20 of which returned HTTP 200. The replacement [evidence file](evidence.json) preserves the 23 probe URLs/outcomes recoverable from the conversation, documentation references and material findings. Original raw responses, the complete documentation-fetch ledger and response hashes are unavailable; they have not been fabricated or represented as fresh checks. This branch carries only the research and documentation links, not the old repository's history or native applications.

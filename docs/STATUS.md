@@ -53,6 +53,20 @@ are available here without the private branch.
   Repository protection and vulnerability-reporting settings also need owner
   administration. Keep the previous production deployment as the rollback target.
 
+## Free-content discovery: researched, implementation not started
+
+The [source research](research/free-content/README.md) covers free ebooks,
+scientific papers, textbooks, children's books and related collections. It
+proposes metadata imports plus bounded live API search, with reading links to
+original hosts. The [architecture](research/free-content/architecture.md) is a
+proposal, not an implemented feature or approved database migration.
+
+Branch `research/free-content-discovery` was recreated on this repository after
+the previous environment's unpushed commit `ee7d88e` could not be recovered.
+The documents and historical probe outcomes were reconstructed from the retained
+conversation; the original raw responses and complete fetch ledger are unavailable.
+The research overview records these limits. Future work continues here directly.
+
 ## Account work: architecture chosen, implementation not started
 
 The owner requested secure signup with name/email/password, verification,

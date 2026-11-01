@@ -16,6 +16,17 @@ retired authentication and unrelated research archives are outside its scope.
 - [Work-aware search](work-aware-search.md): how the current code already uses
   Open Library works, editions, ISBNs and catalog records; limits of grouping.
 
+## Free ebooks and scientific papers: researched proposal
+
+- [Overview and source categories](research/free-content/README.md).
+- [Repository catalog, APIs and access requirements](research/free-content/source-catalog.md).
+- [Metadata discovery architecture and delivery phases](research/free-content/architecture.md).
+- [Historical API observations and recovery limits](research/free-content/evidence.json).
+
+This is planning material, not an enabled app feature. The original unpushed
+research was reconstructed from its conversation after an environment replacement;
+the overview records the provenance and evidence limits.
+
 ## UI, designs and SEO
 
 - [Approved UI/SEO implementation plan](seo/IMPLEMENTATION_PLAN.md).
