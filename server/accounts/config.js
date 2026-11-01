@@ -23,6 +23,8 @@ export function readAccountConfig(env = process.env) {
       resendKey: env.RESEND_API_KEY, mailFrom: env.ACCOUNTS_MAIL_FROM,
       jobSecret: env.ACCOUNTS_JOB_SECRET,
       workerDatabaseURL: env.ACCOUNTS_WORKER_DATABASE_URL,
-      cronSecret: env.ACCOUNTS_CRON_SECRET });
+      cronSecret: env.ACCOUNTS_CRON_SECRET,
+      googleClientId:env.GOOGLE_CLIENT_ID,googleClientSecret:env.GOOGLE_CLIENT_SECRET,
+      appleClientId:env.APPLE_CLIENT_ID,appleClientSecret:env.APPLE_CLIENT_SECRET });
   } catch { throw new AccountConfigurationError(); }
 }

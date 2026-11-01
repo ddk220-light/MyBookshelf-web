@@ -33,11 +33,13 @@ export type AccountSession = {
   epoch: number;
   logoutPending?: boolean;
   sessionEnded?: boolean;
+  needsProfileCompletion?: boolean;
 };
 type SessionReply = {
   status: "guest" | "unverified" | "authenticated" | "unavailable";
   user?: AccountUser;
   csrfToken?: string;
+  needsProfileCompletion?: boolean;
 };
 type SessionContext = {
   session: AccountSession;
@@ -46,6 +48,7 @@ type SessionContext = {
   continueGuest: () => void;
   invalidate: () => void;
   prepareSignIn: () => void;
+  beginProviderRedirect: () => void;
 };
 const fallback: SessionContext = {
   session: { status: "guest", epoch: 0 },
@@ -54,6 +57,7 @@ const fallback: SessionContext = {
   continueGuest: () => {},
   invalidate: () => {},
   prepareSignIn: () => {},
+  beginProviderRedirect: () => {},
 };
 const Context = createContext<SessionContext>(fallback);
 export const useAccountSession = () => useContext(Context);
@@ -258,6 +262,13 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     request.current++;
     pending.current = null;
   }, []);
+  const beginProviderRedirect = useCallback(() => {
+    prepareSignIn();
+    // A confirmed, user-initiated provider redirect must survive the full-page
+    // round trip without the uncertain-signout recovery deleting its new session.
+    guestLock.current = false;
+    writeOverride(false);
+  }, [prepareSignIn]);
   const signOut = useCallback(async () => {
     const csrf = current.current.csrfToken ?? logoutCsrf.current;
     logoutCsrf.current = csrf;
@@ -350,6 +361,7 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
         continueGuest,
         invalidate,
         prepareSignIn,
+        beginProviderRedirect,
       }}
     >
       {children}

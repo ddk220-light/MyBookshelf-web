@@ -17,6 +17,11 @@ import { useLibrary } from "../../context";
 import { readAnonymousWebStateWithStatus } from "../../localState";
 import { removeAcknowledgedDeviceCopy } from "../../storage/importCleanup";
 import { useLinkToken } from "../../auth/LinkTokenProvider";
+import { ProviderEntry } from "./ProviderEntry";
+import {
+  useRecentAuth,
+  type RecentResult,
+} from "../../auth/RecentAuthProvider";
 
 export function AccountForm({
   title,
@@ -262,6 +267,7 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
           </div>
         </>
       )}
+      <ProviderEntry disabled={busy} onError={setError} />
       <EmailField />
       <PasswordField
         autoComplete={signup ? "new-password" : "current-password"}
@@ -671,6 +677,198 @@ export function EmailChangePage() {
           <Link to="/app/settings/account">Back to your account</Link>
         </>
       )}
+    </AccountForm>
+  );
+}
+
+function afterProviderSignIn(returnTo: string) {
+  const guest = readAnonymousWebStateWithStatus().state;
+  return guest.savedBooks.length ||
+    guest.recentBooks.length ||
+    guest.selectedLibraryId
+    ? "/app/account/import"
+    : returnTo;
+}
+export function ProviderReturnPage() {
+  const account = useAccountSession(),
+    location = useLocation(),
+    navigate = useNavigate();
+  const recent = useRecentAuth();
+  const [busy, setBusy] = useState(false),
+    [error, setError] = useState("");
+  const providerError = new URLSearchParams(location.search).get("error");
+  const message =
+    providerError === "access_denied"
+      ? "Sign-in was cancelled. You can try again or keep using this browser."
+      : providerError &&
+          [
+            "account_not_linked",
+            "email_already_in_use",
+            "account_already_linked_to_different_user",
+          ].includes(providerError)
+        ? "This email belongs to an existing account. Sign in with its current method, then connect the provider from account settings."
+        : providerError
+          ? "We couldn’t finish provider sign-in. Restart from sign in."
+          : "";
+  const complete = async () => {
+    if (busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      const checked = await account.refresh(true);
+      if (checked.status !== "authenticated")
+        throw Error(
+          checked.status === "unverified"
+            ? "Your provider did not confirm a verified email. Use email sign-up or another verified sign-in method."
+            : "Couldn’t check your account. Restart sign-in.",
+        );
+      const flowId = new URLSearchParams(location.search).get("flow");
+      if (flowId) {
+        const result = await accountRequest<
+          RecentResult & { kind: "confirmed" | "linked" }
+        >("/provider/result", {
+          method: "POST",
+          identity: checked.user?.id,
+          csrf: checked.csrfToken,
+          body: { flowId },
+        });
+        if (result.kind === "confirmed") recent.set(result, checked);
+        navigate("/app/settings/account", { replace: true, state: null });
+        return;
+      }
+      const destination = safeAccountReturn(
+        new URLSearchParams(location.search).get("returnTo"),
+      );
+      navigate(
+        checked.needsProfileCompletion
+          ? "/app/account/complete-profile?returnTo=" +
+              encodeURIComponent(destination)
+          : afterProviderSignIn(destination),
+        { replace: true, state: null },
+      );
+    } catch (failure) {
+      setError(
+        failure instanceof Error ? failure.message : "Couldn’t finish sign-in.",
+      );
+      setBusy(false);
+    }
+  };
+  return (
+    <AccountForm
+      title={
+        providerError ? "Sign-in needs another try" : "Continue to your account"
+      }
+      busy={busy}
+      error={message || error}
+    >
+      {!providerError && (
+        <>
+          <p>
+            Your provider has returned you to MyBookshelf. Continue to check
+            your account and choose what to bring over from this browser.
+          </p>
+          <button type="button" disabled={busy} onClick={() => void complete()}>
+            {busy ? "Checking…" : "Continue to my account"}
+          </button>
+        </>
+      )}
+      <Link to="/app/account/sign-in" replace>
+        Back to sign in
+      </Link>
+      <button
+        type="button"
+        className="text-button"
+        onClick={() => {
+          account.continueGuest();
+          navigate("/app/shelf", { replace: true, state: null });
+        }}
+      >
+        Continue using this browser
+      </button>
+    </AccountForm>
+  );
+}
+export function CompleteProfilePage() {
+  const account = useAccountSession(),
+    navigate = useNavigate(),
+    location = useLocation();
+  const [busy, setBusy] = useState(false),
+    [error, setError] = useState("");
+  const alive = useRef(true);
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (busy) return;
+    const name = String(new FormData(event.currentTarget).get("name") || "");
+    setBusy(true);
+    setError("");
+    try {
+      const profile = await accountRequest<{ profileRevision: number }>(
+        "/profile",
+        { identity: account.session.user?.id },
+      );
+      await accountRequest("/profile", {
+        method: "PATCH",
+        identity: account.session.user?.id,
+        csrf: account.session.csrfToken,
+        body: { name, profileRevision: profile.profileRevision },
+      });
+      const checked = await account.refresh();
+      if (!alive.current) return;
+      if (checked.status !== "authenticated" || checked.needsProfileCompletion)
+        throw Error("Couldn’t confirm your name. Try again.");
+      navigate(
+        afterProviderSignIn(
+          safeAccountReturn(
+            new URLSearchParams(location.search).get("returnTo"),
+          ),
+        ),
+        { replace: true, state: null },
+      );
+    } catch (failure) {
+      if (alive.current) {
+        setError(
+          failure instanceof Error
+            ? failure.message
+            : "Couldn’t save your name.",
+        );
+        setBusy(false);
+      }
+    }
+  };
+  return (
+    <AccountForm
+      title="Add your name"
+      busy={busy}
+      error={error}
+      onSubmit={(event) => void submit(event)}
+    >
+      <p>
+        Your provider didn’t share a name. Choose the private name you want to
+        use here. Only you can see it.
+      </p>
+      <div className="account-field">
+        <label htmlFor="provider-private-name">Your name</label>
+        <input
+          id="provider-private-name"
+          name="name"
+          autoComplete="name"
+          required
+          maxLength={160}
+        />
+      </div>
+      <button disabled={busy || account.session.status !== "authenticated"}>
+        {busy ? "Saving…" : "Save and continue"}
+      </button>
+      {account.session.status !== "checking" &&
+        account.session.status !== "authenticated" && (
+          <Link to="/app/account/sign-in">Sign in to continue</Link>
+        )}
     </AccountForm>
   );
 }

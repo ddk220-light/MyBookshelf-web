@@ -3,6 +3,7 @@ import { AccountRequestError, consumeLimits, csrfForSession } from './security.j
 import { strictObject, emailAddress, accountPassword, accountToken, checkCompromisedPassword } from './validation.js';
 import { enqueueAccountMail, challengeDigest } from '../jobs/mail.js';
 import { authTransaction } from '../auth/transaction.js';
+import {verifiedPasswordContext} from '../auth/password-rotation.js';
 
 const proofActions = new Set(['password-change','password-setup','email-change','provider-link','provider-unlink','export','delete','signout-all','session-revoke']);
 export function createCredentialActions({auth,pool,config,checkPassword=checkCompromisedPassword}) {
@@ -72,7 +73,7 @@ export function createCredentialActions({auth,pool,config,checkPassword=checkCom
       requireMail();strictObject(body,['password','currentPassword','proof']);const password=accountPassword(body.password);await checkPassword(password);
       const outcome=await authTransaction(auth,pool,identity.authUserId,async(adapter)=>{
         await consumeProof(adapter,identity,body.proof,'password-change');
-        const changed=await auth.api.changePassword({body:{newPassword:password,currentPassword:body.currentPassword,revokeOtherSessions:true},headers,returnHeaders:true});
+        const changed=body.currentPassword?await auth.api.changePassword({body:{newPassword:password,currentPassword:body.currentPassword,revokeOtherSessions:true},headers,returnHeaders:true}):await verifiedPasswordContext.run({...identity,password},()=>auth.api.changeVerifiedPassword({headers,returnHeaders:true}));
         const context=await auth.$context;const user=await context.internalAdapter.findUserById(identity.authUserId);
         await enqueueAccountMail(auth,config,'passwordChanged',{user});return changed;
       });

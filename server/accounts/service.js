@@ -14,6 +14,9 @@ import { createHistoryActions } from "./history.js";
 import { createImportActions } from "./imports.js";
 import { createProfileActions } from "./profile-actions.js";
 import { createEmailActions } from "./email-actions.js";
+import {createSocialActions} from './social-actions.js';
+import {privateName,checkCompromisedPassword} from './validation.js';
+import {createMethodActions} from './method-actions.js';
 
 const ABSOLUTE_SESSION_MS = 30 * 86400 * 1000;
 
@@ -73,7 +76,9 @@ export async function createAccountService(config, { checkPassword } = {}) {
       ...createAuthActions({ auth, pool, config, checkPassword }),
       ...credentials,
       ...sessions,
-      ...createProfileActions({ auth, pool }),
+      ...createSocialActions({auth,pool,config}),
+      ...createMethodActions({auth,pool,config,consumeProof:credentials.consumeProof,checkPassword:checkPassword??checkCompromisedPassword}),
+      ...createProfileActions({ auth, pool, config }),
       ...createEmailActions({
         auth,
         pool,
@@ -121,7 +126,9 @@ export async function createAccountService(config, { checkPassword } = {}) {
         : null;
       if (value.user.emailVerified && !appId) return { status: "unavailable" };
       for (const cookie of result.headers.getSetCookie()) setCookie(cookie);
+      let needsProfileCompletion=false;try{privateName(value.user.name);}catch{needsProfileCompletion=true;}
       return {
+        needsProfileCompletion,
         status: value.user.emailVerified ? "authenticated" : "unverified",
         sessionId: value.session.id,
         authUserId: value.user.id,

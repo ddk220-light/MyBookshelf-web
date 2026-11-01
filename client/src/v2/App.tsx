@@ -2,7 +2,8 @@ import {useLayoutEffect,useRef} from 'react';
 import { Link, Navigate, Route, Routes,useLocation,useNavigate } from 'react-router-dom';
 import {AccountSessionProvider,useAccountSession} from './auth/AccountSessionProvider';
 import {LinkTokenProvider} from './auth/LinkTokenProvider';
-import {SignInPage,VerifyPage,RecoveryPage,ImportPage,EmailChangePage} from './ui/account/AccountPages';
+import {RecentAuthProvider} from './auth/RecentAuthProvider';
+import {SignInPage,VerifyPage,RecoveryPage,ImportPage,EmailChangePage,ProviderReturnPage,CompleteProfilePage} from './ui/account/AccountPages';
 import './ui/account/account.css';
 import {AccountSettingsPage} from './ui/account/AccountSettingsPage';
 import { LibraryStateProvider } from './context';
@@ -26,7 +27,7 @@ function NotFoundPage() {
 }
 
 export function AnonymousWebApp() {
-  return <AccountSessionProvider><LinkTokenProvider><IdentityApp/></LinkTokenProvider></AccountSessionProvider>;
+  return <AccountSessionProvider><RecentAuthProvider><LinkTokenProvider><IdentityApp/></LinkTokenProvider></RecentAuthProvider></AccountSessionProvider>;
 }
 function IdentityApp(){
   const {session}=useAccountSession(),navigate=useNavigate(),location=useLocation();
@@ -50,6 +51,8 @@ function IdentityApp(){
     <Route path="/app/account/forgot-password" element={<RecoveryPage key="forgot"/>}/>
     <Route path="/app/account/reset-password" element={<RecoveryPage key="reset" reset/>}/>
     <Route path="/app/account/email-change" element={<EmailChangePage/>}/>
+    <Route path="/app/account/return" element={<ProviderReturnPage/>}/>
+    <Route path="/app/account/complete-profile" element={<CompleteProfilePage/>}/>
     <Route path="/app/account/import" element={<ImportPage/>}/>
     <Route path="/app/books/:bookKey" element={<BookPage />} />
     <Route path="/find" element={<Navigate to="/app/search" replace />} />

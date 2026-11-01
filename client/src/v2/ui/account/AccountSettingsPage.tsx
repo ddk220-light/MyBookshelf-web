@@ -11,6 +11,11 @@ import { useAccountSession } from "../../auth/AccountSessionProvider";
 import { useLibrary } from "../../context";
 import { ConfirmDialog } from "../ConfirmDialog";
 import { PasswordField, EmailField } from "./AccountPages";
+import {
+  useRecentAuth,
+  type RecentAction,
+} from "../../auth/RecentAuthProvider";
+import type { AccountCapabilities } from "./ProviderEntry";
 
 type Profile = {
   name: string;
@@ -30,12 +35,13 @@ type Device = {
   expiresAt: string;
 };
 type Sensitive = {
-  action: "password-change" | "session-revoke" | "signout-all" | "email-change";
+  action: RecentAction;
   target?: string;
   label: string;
 };
 type Proof = { proof: string; csrfToken: string };
 export function AccountSettingsPage() {
+  const recent = useRecentAuth();
   const account = useAccountSession(),
     library = useLibrary(),
     navigate = useNavigate();
@@ -47,6 +53,9 @@ export function AccountSettingsPage() {
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [notice, setNotice] = useState("");
+  const [capabilities, setCapabilities] = useState<AccountCapabilities | null>(
+    null,
+  );
   const [action, setAction] = useState<Sensitive | null>(null),
     [proof, setProof] = useState<Proof | null>(null),
     [clear, setClear] = useState(false);
@@ -89,6 +98,39 @@ export function AccountSettingsPage() {
       password.current = "";
     };
   }, [load, account.session.status]);
+  useEffect(() => {
+    let active = true;
+    void accountRequest<AccountCapabilities>("/capabilities")
+      .then((value) => {
+        if (active) setCapabilities(value);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+  useEffect(() => {
+    if (!recent.pending) return;
+    const value = recent.pending;
+    const labels: Record<RecentAction, string> = {
+      "password-change": "Change password",
+      "password-setup": "Set password",
+      "email-change": "Change email",
+      "provider-link": "Connect method",
+      "provider-unlink": "Disconnect method",
+      "session-revoke": "Sign out this device",
+      "signout-all": "Sign out all devices",
+      export: "Download account data",
+      delete: "Delete account",
+    };
+    setAction({
+      action: value.action,
+      target: value.target,
+      label: labels[value.action],
+    });
+    setProof({ proof: value.proof, csrfToken: value.csrfToken });
+    recent.clear();
+  }, [recent.pending, recent.clear]);
   const begin = (next: Sensitive) => {
     setError("");
     setNotice("");
@@ -101,6 +143,43 @@ export function AccountSettingsPage() {
     setProof(null);
     password.current = "";
     setError("");
+  };
+  const confirmProvider = async (provider: "google" | "apple") => {
+    if (!action || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      const reply = await accountRequest<{ url: string }>("/provider/start", {
+        method: "POST",
+        identity: sessionRef.current.user?.id,
+        csrf: sessionRef.current.csrfToken,
+        body: {
+          provider,
+          mode: "reauth",
+          action: action.action,
+          target: action.target,
+        },
+      });
+      if (!alive.current) return;
+      const destination = new URL(reply.url);
+      if (
+        destination.protocol !== "https:" ||
+        destination.hostname !==
+          (provider === "google" ? "accounts.google.com" : "appleid.apple.com")
+      )
+        throw Error("Couldn’t open secure provider confirmation.");
+      account.beginProviderRedirect();
+      window.location.assign(destination.href);
+    } catch (failure) {
+      if (alive.current) {
+        setError(
+          failure instanceof Error
+            ? failure.message
+            : "Couldn’t confirm your identity.",
+        );
+        setBusy(false);
+      }
+    }
   };
   const confirm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -142,14 +221,47 @@ export function AccountSettingsPage() {
       const newPassword = String(
         new FormData(event.currentTarget).get("password") || "",
       );
+      if (action.action === "provider-link") {
+        const provider = action.target;
+        if (provider !== "google" && provider !== "apple")
+          throw Error("Choose a provider from settings.");
+        const reply = await accountRequest<{ url: string }>("/provider/start", {
+          method: "POST",
+          csrf: proof.csrfToken,
+          identity: sessionRef.current.user?.id,
+          body: {
+            provider,
+            mode: "link",
+            action: "provider-link",
+            proof: proof.proof,
+          },
+        });
+        if (!alive.current) return;
+        const target = new URL(reply.url);
+        if (
+          target.protocol !== "https:" ||
+          target.hostname !==
+            (provider === "google"
+              ? "accounts.google.com"
+              : "appleid.apple.com")
+        )
+          throw Error("Couldn’t open secure provider sign-in.");
+        account.beginProviderRedirect();
+        window.location.assign(target.href);
+        return;
+      }
       const path =
         action.action === "password-change"
           ? "/password"
-          : action.action === "email-change"
-            ? "/email-change"
-            : action.action === "session-revoke"
-              ? "/sessions/revoke"
-              : "/sign-out-all";
+          : action.action === "password-setup"
+            ? "/password/setup"
+            : action.action === "provider-unlink"
+              ? "/provider/unlink"
+              : action.action === "email-change"
+                ? "/email-change"
+                : action.action === "session-revoke"
+                  ? "/sessions/revoke"
+                  : "/sign-out-all";
       await accountRequest(path, {
         method: "POST",
         csrf: proof.csrfToken,
@@ -160,16 +272,20 @@ export function AccountSettingsPage() {
                 currentPassword: password.current,
                 proof: proof.proof,
               }
-            : action.action === "email-change"
-              ? {
-                  newEmail: String(
-                    new FormData(event.currentTarget).get("email") || "",
-                  ),
-                  proof: proof.proof,
-                }
-              : action.action === "session-revoke"
-                ? { sessionId: action.target, proof: proof.proof }
-                : { proof: proof.proof },
+            : action.action === "password-setup"
+              ? { password: newPassword, proof: proof.proof }
+              : action.action === "provider-unlink"
+                ? { provider: action.target, proof: proof.proof }
+                : action.action === "email-change"
+                  ? {
+                      newEmail: String(
+                        new FormData(event.currentTarget).get("email") || "",
+                      ),
+                      proof: proof.proof,
+                    }
+                  : action.action === "session-revoke"
+                    ? { sessionId: action.target, proof: proof.proof }
+                    : { proof: proof.proof },
       });
       if (!alive.current) return;
       password.current = "";
@@ -178,11 +294,15 @@ export function AccountSettingsPage() {
       setNotice(
         action.action === "password-change"
           ? "Password updated. Other devices were signed out."
-          : action.action === "email-change"
-            ? "Check your new address. Your current email stays valid until you confirm the change."
-            : action.action === "session-revoke"
-              ? "Signed out that device."
-              : "Signed out all devices.",
+          : action.action === "password-setup"
+            ? "Password set. You can now sign in with your verified email and password."
+            : action.action === "provider-unlink"
+              ? "Sign-in method disconnected."
+              : action.action === "email-change"
+                ? "Check your new address. Your current email stays valid until you confirm the change."
+                : action.action === "session-revoke"
+                  ? "Signed out that device."
+                  : "Signed out all devices.",
       );
       await account.refresh(action.action === "password-change");
       await load();
@@ -362,6 +482,28 @@ export function AccountSettingsPage() {
                       ? "Google"
                       : "Apple"}
                   {!method.usable ? " — unavailable" : ""}
+                  {profile.methods.filter((m) => m.usable).length > 1 && (
+                    <button
+                      type="button"
+                      className="text-button"
+                      disabled={busy}
+                      onClick={() =>
+                        begin({
+                          action: "provider-unlink",
+                          target: method.provider,
+                          label:
+                            "Disconnect " +
+                            (method.provider === "password"
+                              ? "password"
+                              : method.provider === "google"
+                                ? "Google"
+                                : "Apple"),
+                        })
+                      }
+                    >
+                      Disconnect
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -377,6 +519,45 @@ export function AccountSettingsPage() {
                 Change password
               </button>
             )}
+            {!profile.methods.some(
+              (m) => m.provider === "password" && m.usable,
+            ) && (
+              <button
+                type="button"
+                className="button-quiet"
+                disabled={busy}
+                onClick={() =>
+                  begin({ action: "password-setup", label: "Set password" })
+                }
+              >
+                Set a password
+              </button>
+            )}
+            {(["google", "apple"] as const)
+              .filter(
+                (provider) =>
+                  capabilities?.[provider] &&
+                  !profile.methods.some((m) => m.provider === provider),
+              )
+              .map((provider) => (
+                <button
+                  key={provider}
+                  type="button"
+                  className="button-quiet"
+                  disabled={busy}
+                  onClick={() =>
+                    begin({
+                      action: "provider-link",
+                      target: provider,
+                      label:
+                        "Connect " +
+                        (provider === "google" ? "Google" : "Apple"),
+                    })
+                  }
+                >
+                  Connect {provider === "google" ? "Google" : "Apple"}
+                </button>
+              ))}
           </section>
           <section aria-labelledby="history-controls">
             <h2 id="history-controls" className="settings-label">
@@ -478,6 +659,18 @@ export function AccountSettingsPage() {
           onCancel={cancel}
           onConfirm={confirm}
           onFinish={finish}
+          hasPassword={Boolean(
+            profile?.methods.some((m) => m.provider === "password" && m.usable),
+          )}
+          providers={(["google", "apple"] as const).filter((provider) =>
+            Boolean(
+              capabilities?.[provider] &&
+                profile?.methods.some(
+                  (m) => m.provider === provider && m.usable,
+                ),
+            ),
+          )}
+          onProviderConfirm={confirmProvider}
         />
       )}
     </section>
@@ -491,6 +684,9 @@ function AccountActionDialog({
   onCancel,
   onConfirm,
   onFinish,
+  hasPassword,
+  providers,
+  onProviderConfirm,
 }: {
   action: Sensitive;
   proof: Proof | null;
@@ -499,6 +695,9 @@ function AccountActionDialog({
   onCancel: () => void;
   onConfirm: (event: FormEvent<HTMLFormElement>) => Promise<void>;
   onFinish: (event: FormEvent<HTMLFormElement>) => Promise<void>;
+  hasPassword: boolean;
+  providers: Array<"google" | "apple">;
+  onProviderConfirm: (provider: "google" | "apple") => Promise<void>;
 }) {
   const ref = useRef<HTMLDialogElement>(null),
     previous = useRef<Element | null>(null);
@@ -534,10 +733,27 @@ function AccountActionDialog({
         {!proof ? (
           <>
             <p>
-              Confirm your password to continue. You’ll review the change before
-              it happens.
+              Confirm with a connected sign-in method. You’ll review the change
+              before it happens.
             </p>
-            <PasswordField />
+            {hasPassword && <PasswordField />}
+            {providers.map((provider) => (
+              <button
+                key={provider}
+                type="button"
+                className="button-quiet"
+                disabled={busy}
+                onClick={() => void onProviderConfirm(provider)}
+              >
+                Confirm with {provider === "google" ? "Google" : "Apple"}
+              </button>
+            ))}
+            {!hasPassword && !providers.length && (
+              <p>
+                Your connected provider is temporarily unavailable. Try again
+                when it is available.
+              </p>
+            )}
           </>
         ) : action.action === "email-change" ? (
           <>
@@ -547,7 +763,8 @@ function AccountActionDialog({
             </p>
             <EmailField label="New email" />
           </>
-        ) : action.action === "password-change" ? (
+        ) : action.action === "password-change" ||
+          action.action === "password-setup" ? (
           <PasswordField
             label="New password"
             autoComplete="new-password"
@@ -555,9 +772,13 @@ function AccountActionDialog({
           />
         ) : (
           <p>
-            {action.action === "signout-all"
-              ? "Every signed-in device, including this one, will need to sign in again."
-              : "This device will need to sign in again."}
+            {action.action === "provider-link"
+              ? `Continue to ${action.target === "google" ? "Google" : "Apple"} to authorize the sign-in method you want to connect.`
+              : action.action === "provider-unlink"
+                ? "Disconnect this sign-in method? Your other method will remain available."
+                : action.action === "signout-all"
+                  ? "Every signed-in device, including this one, will need to sign in again."
+                  : "This device will need to sign in again."}
           </p>
         )}
         <div className="cream-dialog-actions">
@@ -570,7 +791,7 @@ function AccountActionDialog({
           >
             Cancel
           </button>
-          <button disabled={busy}>
+          <button disabled={busy || (!proof && !hasPassword)}>
             {busy ? "Please wait…" : proof ? action.label : "Continue"}
           </button>
         </div>

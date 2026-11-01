@@ -42,7 +42,7 @@ concurrent identity provisioning, deleting identities, origin checks and account
 outage isolation. These tests are included in the server test command and CI,
 which now provisions a disposable Postgres service.
 
-Full server suite at this checkpoint: 504 passing. Client suite: 120 passing after compatible
+Full server suite at this checkpoint: 506 passing. Client suite: 134 passing after compatible
 security maintenance (Vite 6.4.5, Vitest 4.1.12 and patched transitive packages).
 Dependency audit: zero findings at this checkpoint. No claim of final browser,
 real-provider, real-mail or release validation is made.
@@ -128,8 +128,27 @@ rejects stale reads begun before a confirmed mutation. Explicit sign-in revokes
 the former current-browser session and publishes the new identity before private
 navigation; old sign-out responses cannot replace that identity.
 
-Next: Google/Apple and explicit method management, then
-export/deletion, retention/restore and remaining browser/release evidence. Real Google/Apple configuration and mail-domain delivery
+Google/Apple redirect facades and conditional entry/return/name-completion UI are
+implemented. A supported provider adapter uses the pinned library’s nonce/state
+store and ID-token verifier. Native protocol tests cover Google and Apple state,
+PKCE, signature, issuer, audience and nonce failures, relay addresses, missing
+names, replay and forbidden implicit linking. These use controlled provider
+responses with real signed fixture tokens and actual Postgres/native sessions;
+they do not substitute for live provider testing.
+
+S08 #116–117, S09 #118–119 and S10 #123–124 are published and linked. Explicit
+provider link/reauth intents bind user/session/provider for five minutes. Provider
+reauth requires the exact connected subject, rotates the current session and
+returns a one-use proof through an authenticated POST, then a separate UI
+confirmation. Serialized unlink protects the final configured usable method.
+First password requires verified email plus recent auth; provider-confirmed
+password changes use supported server-only hashing/session helpers. Required
+method notices share the mutation transaction; injected DB failures prove link
+and first-password rollback. Password work has a per-process two-job budget with
+eight waiting slots and a one-second wait limit, alongside shared abuse limits.
+Schema 008 is applied to staging with runtime grants.
+
+Next: export/deletion, retention/restore and remaining browser/release evidence. Real Google/Apple configuration and mail-domain delivery
 must be proved before account release. Resend's initial legal-policy acceptance
 was presented to the owner and remains pending; no terms were accepted implicitly.
 The temporary provisioning credential was removed from session storage at the

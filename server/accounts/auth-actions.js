@@ -13,6 +13,7 @@ import {
 } from "./validation.js";
 import { challengeDigest } from "../jobs/mail.js";
 import { authTransaction } from "../auth/transaction.js";
+import {configuredProviders} from '../auth/providers.js';
 
 const ack = Object.freeze({
   status: "check-email",
@@ -43,7 +44,7 @@ export function createAuthActions({
     ]);
   return {
     capabilities() {
-      return { email: mailReady(), google: false, apple: false };
+      const providers=configuredProviders(config);return { email: mailReady(), google:Boolean(providers.google), apple:Boolean(providers.apple&&config.secureCookies),canonicalOrigin:config.baseURL };
     },
     async signup(body, ip) {
       requireMail();

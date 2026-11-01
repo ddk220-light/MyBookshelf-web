@@ -36,9 +36,11 @@ export function createAccountMiddleware({
     retryAt = 0;
   const parser = express.json({ limit: "32kb", strict: true });
   const importParser = express.json({ limit: "2mb", strict: true });
+  const callbackParser=express.urlencoded({extended:false,limit:'32kb',parameterLimit:20});
   const postPaths = new Set([
     "/api/account/sign-up",
     "/api/account/sign-in",
+    '/api/account/sign-in/social',
     "/api/account/verify-email",
     "/api/account/resend-verification",
     "/api/account/sign-out",
@@ -51,6 +53,10 @@ export function createAccountMiddleware({
     "/api/account/email-change",
     "/api/account/email-change/cancel",
     "/api/account/email-change/confirm",
+    '/api/account/provider/start',
+    '/api/account/provider/result',
+    '/api/account/provider/unlink',
+    '/api/account/password/setup',
   ]);
   return async function accounts(req, res, next) {
     const path = req.path;
@@ -70,6 +76,7 @@ export function createAccountMiddleware({
     try {
       const config = readAccountConfig(env);
       if (!config.enabled) return unavailable(res);
+      const callback=/^\/api\/auth\/callback\/(google|apple)$/.exec(path)?.[1];
       // Auth protocol and sensitive routes stay closed until their individual
       // policy/mail/lifecycle stories are implemented. /get-session returns raw
       // library rows, so browsers must use the narrow /api/account/session facade.
@@ -79,6 +86,7 @@ export function createAccountMiddleware({
       const mutation = isPost || ((reading || profile) && req.method !== "GET");
       if (
         !isPost &&
+        !callback &&
         !reading &&
         !profile &&
         ![
@@ -90,7 +98,7 @@ export function createAccountMiddleware({
       )
         return unavailable(res);
       if (
-        profile
+        callback?!((req.method==='GET')||(callback==='apple'&&req.method==='POST')):profile
           ? !["GET", "PATCH"].includes(req.method)
           : reading
             ? !reading.action
@@ -120,8 +128,12 @@ export function createAccountMiddleware({
           ),
         );
       }
+      if(callback&&req.method==='POST'){
+        if(!req.is('application/x-www-form-urlencoded'))throw new AccountRequestError(415,'INVALID_CALLBACK','Restart Apple sign-in from MyBookshelf.');
+        await new Promise((resolve,reject)=>callbackParser(req,res,error=>error?reject(error):resolve()));
+      }
       const origin = req.get("Origin");
-      if (origin && origin !== config.baseURL)
+      if (!callback&&origin && origin !== config.baseURL)
         return res
           .status(403)
           .json({
@@ -153,6 +165,10 @@ export function createAccountMiddleware({
           headers.set(key, Array.isArray(value) ? value.join(", ") : value);
       }
       const setCookie = (cookie) => res.append("Set-Cookie", cookie);
+      if(callback){
+        const result=await service.actions.oauthCallback(callback,{query:req.query,body:req.body,method:req.method,headers,ip:requestIP(req,env)},setCookie);
+        return res.redirect(result.status,result.location);
+      }
       if (profile) {
         const identity = await service.identity(headers, setCookie);
         if (identity.status !== "authenticated")
@@ -215,6 +231,7 @@ export function createAccountMiddleware({
         return res.json(
           await service.actions.verify(req.body, requestIP(req, env)),
         );
+      if(path==='/api/account/sign-in/social')return res.json(await service.actions.signInSocial(req.body,requestIP(req,env),headers,setCookie));
       if (path === "/api/account/sign-in")
         return res.json(
           await service.actions.signin(
@@ -250,6 +267,10 @@ export function createAccountMiddleware({
           "/api/account/sign-out-all",
           "/api/account/email-change",
           "/api/account/email-change/cancel",
+          '/api/account/provider/start',
+          '/api/account/provider/result',
+          '/api/account/provider/unlink',
+          '/api/account/password/setup',
         ].includes(path)
       ) {
         const identity = await service.identity(headers, setCookie);
@@ -261,6 +282,10 @@ export function createAccountMiddleware({
           );
         requireIdentityView(req, identity);
         if (isPost) requireMutation(req, identity, config);
+        if(path==='/api/account/provider/start')return res.json(await service.actions.startProviderAction(req.body,identity,headers,setCookie));
+        if(path==='/api/account/provider/result')return res.json(await service.actions.providerResult(req.body,identity));
+        if(path==='/api/account/provider/unlink')return res.json(await service.actions.unlinkMethod(req.body,identity,headers));
+        if(path==='/api/account/password/setup')return res.json(await service.actions.setFirstPassword(req.body,identity,headers));
         if (path === "/api/account/email-change")
           return res
             .status(202)

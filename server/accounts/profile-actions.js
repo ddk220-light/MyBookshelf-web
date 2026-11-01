@@ -2,7 +2,8 @@ import { strictObject, privateName } from "./validation.js";
 import { revision, conflict } from "./operations.js";
 import { authTransaction } from "../auth/transaction.js";
 import { AccountRequestError } from "./security.js";
-export function createProfileActions({ auth, pool }) {
+import {configuredProviders} from '../auth/providers.js';
+export function createProfileActions({ auth, pool, config={} }) {
   return {
     async profile(identity, headers) {
       return authTransaction(
@@ -54,8 +55,8 @@ export function createProfileActions({ auth, pool }) {
                 provider:
                   a.providerId === "credential" ? "password" : a.providerId,
                 usable:
-                  a.providerId !== "credential" ||
-                  Boolean(a.password && user.emailVerified),
+                  a.providerId === "credential" ?
+                  Boolean(a.password && user.emailVerified):Boolean(configuredProviders(config)[a.providerId]&&(a.providerId!=='apple'||config.secureCookies)),
               })),
           };
         },

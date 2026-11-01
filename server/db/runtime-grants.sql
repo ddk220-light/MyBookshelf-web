@@ -35,3 +35,5 @@ END $$;
 GRANT SELECT,INSERT,UPDATE,DELETE ON account_recent_proofs TO mybookshelf_auth;
 REVOKE ALL ON account_recent_proofs FROM mybookshelf_reading;
 GRANT EXECUTE ON FUNCTION public.account_session_active(text) TO mybookshelf_reading;
+GRANT SELECT,INSERT,UPDATE,DELETE ON account_provider_intents TO mybookshelf_auth;
+REVOKE ALL ON account_provider_intents FROM mybookshelf_reading;

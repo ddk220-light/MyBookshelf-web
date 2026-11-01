@@ -66,13 +66,13 @@ scope, actual tests, staging resource IDs and task links. The foundation now has
 pinned Better Auth/native Postgres, shared lazy application composition,
 transactional migrations, separate runtime roles, forced RLS, active-identity
 provisioning and a narrow private session facade. App facades now cover signup/verification, password/session lifecycle and
-private library/shelf/history APIs, backed by 504 passing server tests at this
+private library/shelf/history APIs, backed by 506 passing server tests at this
 checkpoint. Account entry/import and initial settings UI are implemented with memory-only
 account repositories and explicit guest continuation on uncertain identity.
-The current checkpoint has 131 client tests and twelve real local Chromium
+The current checkpoint has 134 client tests and twelve real local Chromium
 account journeys across desktop/mobile and three lights, including axe checks.
-Weaker raw auth routes remain gated. Verified email change is now implemented; social methods and export/
-deletion are still being implemented; this is not a release-ready candidate.
+Weaker raw auth routes remain gated. Verified email change and Google/Apple method-management code are implemented;
+export/deletion and live-provider validation are still in progress; this is not a release-ready candidate.
 
 An isolated staging Neon DB, private export/ledger stores and Vercel project
 exist in iad1. Real staging migrations/roles were verified and secrets configured
@@ -80,7 +80,7 @@ in hosting. Production resources were not created. The current production site
 remains on its existing Git connection; staging uses the canonical MyBookshelf-web
 repository. See the runbook at `tools/accounts/README.md`.
 
-Continue with S08–10 providers and S15 export/deletion;
+Continue with S15 export/deletion and live S08–10 provider verification;
 expand subsequent tasks as reached. Real mail, Google/Apple, hosted journeys, restore/deletion and final
 accessibility evidence remain required. Parent stories stay open until complete.
 Preserve private data, exact book identities, guest browsing and all three lights.
