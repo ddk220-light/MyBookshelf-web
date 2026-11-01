@@ -29,16 +29,16 @@ it.each(['savedBooks', 'recentBooks'])('blocks automatic and explicit writes whi
   fireEvent.click(screen.getByText('Save'));
   expect(screen.getByText('1 saved')).toBeInTheDocument();
 });
-it('restores the original saved entry with Undo for ten seconds', () => {
+it('restores the original saved entry with Undo for ten seconds', async() => {
   vi.useFakeTimers();
   render(<LibraryStateProvider><Controls /></LibraryStateProvider>);
-  fireEvent.click(screen.getByText('Save'));
+  await act(async()=>{fireEvent.click(screen.getByText('Save'));});
   const original = localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY);
-  fireEvent.click(screen.getByText('Remove'));
+  await act(async()=>{fireEvent.click(screen.getByText('Remove'));});
   act(() => vi.advanceTimersByTime(9999));
-  fireEvent.click(screen.getByText('Undo'));
+  await act(async()=>{fireEvent.click(screen.getByText('Undo'));});
   expect(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)).toBe(original);
-  fireEvent.click(screen.getByText('Remove'));
+  await act(async()=>{fireEvent.click(screen.getByText('Remove'));});
   act(() => vi.advanceTimersByTime(10000));
   expect(screen.queryByText('Undo')).toBeNull();
 });

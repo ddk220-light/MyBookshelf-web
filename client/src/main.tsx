@@ -9,6 +9,7 @@ import './v2/desktop.css';
 import './v2/reading-room.css';
 import './v2/reader.css';
 import './v2/reader-desktop.css';
+import './v2/ui/account/account.css';
 
 // The retired account site could have left only an auth flash, a same-origin
 // service worker, or its caches. This migration does not touch anonymous state.

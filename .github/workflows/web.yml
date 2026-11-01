@@ -3,6 +3,20 @@ on: [push, pull_request]
 jobs:
   checks:
     runs-on: ubuntu-latest
+    services:
+      accounts-postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: local-account-tests
+          POSTGRES_DB: accounts_test
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d accounts_test"
+          --health-interval 2s --health-timeout 2s --health-retries 20
+    env:
+      ACCOUNT_TEST_DATABASE_URL: postgres://postgres:local-account-tests@127.0.0.1:55432/accounts_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -18,3 +32,19 @@ jobs:
       - run: node --test tools/deployment/*.test.mjs
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
+      - name: Verify real account browser journeys against disposable Postgres
+        env:
+          ACCOUNT_E2E: 'true'
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:4300
+        run: |
+          # Each profile gets fresh limiter secrets; exercise real production
+          # limits without exhausting one synthetic loopback IP across profiles.
+          for account_browser in chromium mobile-chromium webkit; do
+            node tools/accounts/e2e-server.mjs > "/tmp/accounts-e2e-$account_browser.log" 2>&1 &
+            account_harness_pid=$!
+            trap 'kill "$account_harness_pid" 2>/dev/null || true' EXIT
+            curl --fail --silent --output /dev/null --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:4300/api/health
+            npm run test:e2e --workspace=client -- accounts-real.spec.js accounts-visual.spec.js --project="$account_browser" --workers=2
+            kill "$account_harness_pid"
+            wait "$account_harness_pid" || true
+          done

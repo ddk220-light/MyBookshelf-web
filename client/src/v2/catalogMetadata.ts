@@ -3,6 +3,7 @@ import { publicApi } from './api';
 import type { PublicBook } from './types';
 
 const requests = new Map<string, { expires: number; promise: Promise<PublicBook | null> }>();
+export function clearCatalogMetadata():void { requests.clear(); }
 
 export function mergeCatalogMetadata(book: PublicBook, extra: PublicBook | null): PublicBook {
   if (!extra || extra.bookKey !== book.bookKey || extra.isbn13 !== book.isbn13) return book;

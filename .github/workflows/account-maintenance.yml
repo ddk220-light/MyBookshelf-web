@@ -1,0 +1,28 @@
+name: Account staging maintenance
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: account-staging-maintenance
+  cancel-in-progress: false
+jobs:
+  maintenance:
+    if: github.event_name == 'workflow_dispatch' || vars.ACCOUNTS_STAGING_JOBS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: accounts-staging
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run bounded private account maintenance
+        env:
+          ACCOUNTS_STAGING_CRON_SECRET: ${{ secrets.ACCOUNTS_STAGING_CRON_SECRET }}
+          ACCOUNTS_STAGING_DEPLOYMENT_BYPASS: ${{ secrets.ACCOUNTS_STAGING_DEPLOYMENT_BYPASS }}
+        run: node tools/accounts/run-maintenance.mjs

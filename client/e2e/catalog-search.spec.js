@@ -52,6 +52,7 @@ test('a Tamil title without an ISBN can be chosen, checked, saved and reopened w
   await expect(page.getByText('1 available · 2 total', { exact: true })).toBeVisible();
   await expect(page.getByText('Fourth floor · 1 not for loan', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Save book', exact: true }).click();
+  await expect(page.getByRole('button', {name:'On your shelf',exact:true})).toBeVisible();
   await page.reload();
   await expect(page.getByRole('heading', { name: book.title, exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'On your shelf', exact: true })).toBeVisible();

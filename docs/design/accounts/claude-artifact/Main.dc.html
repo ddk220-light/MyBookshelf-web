@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MyBookshelf accounts prototype</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&amp;family=Roboto:wght@500&amp;display=swap">
+<style>
+body{margin:0}
+.rv{font:14px/1.4 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#1f1a17}
+.rv h2{margin:14px 0 6px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#6b6259}
+.rvb{display:block;width:100%;min-height:36px;margin:0 0 4px;padding:6px 10px;border:1px solid #e2dacd;border-radius:8px;background:#fff;color:#1f1a17;font:14px system-ui,sans-serif;text-align:left;cursor:pointer}
+.rvb.on{background:#2f5340;border-color:#2f5340;color:#fff;font-weight:600}
+.rvseg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.rvseg2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+.rvseg .rvb,.rvseg2 .rvb{text-align:center;margin:0}
+.ux{display:inline-block;margin-left:6px;font-size:11px;opacity:.75}
+.app{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;overflow:hidden;box-shadow:0 0 0 1px var(--line),0 12px 32px rgba(0,0,0,.18);border-radius:18px;position:relative;display:flex}
+.app *{box-sizing:border-box}
+.scroll{flex:1;min-width:0;overflow-y:auto;position:relative}
+.side{flex:0 0 248px;display:flex;flex-direction:column;gap:4px;padding:32px 20px 20px;background:var(--surface);border-right:1px solid var(--line)}
+.brand{font:500 22px 'Newsreader',Georgia,serif;margin:0 0 24px 8px;color:var(--ink)}
+.tab{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border-radius:10px;color:var(--ink2);text-decoration:none;font-weight:500;background:none;border:0;font-size:15px;text-align:left;cursor:pointer}
+.tab.on{background:var(--fill);color:var(--accent);font-weight:700}
+.who{margin-top:auto;display:flex;flex-direction:column;gap:2px;padding:12px;border-top:1px solid var(--line);font-size:14px}
+.tabs{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px 22px;background:var(--bar);border-top:1px solid var(--line)}
+.tabs .tab{flex-direction:column;gap:2px;font-size:12px;min-height:48px;justify-content:center}
+.page{padding:28px 16px 120px}
+.page.wide{padding:44px 48px 64px}
+.col{max-width:448px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.colw{max-width:768px;display:flex;flex-direction:column;gap:20px}
+.h1{margin:0;font:500 32px/1.15 'Newsreader',Georgia,serif;color:var(--ink);overflow-wrap:anywhere}
+.h2{margin:0;font:600 17px/1.3 system-ui,sans-serif;color:var(--ink)}
+.lead{margin:0;color:var(--ink2)}
+.muted{margin:0;font-size:14px;color:var(--ink3)}
+.back{display:inline-flex;align-items:center;gap:4px;min-height:44px;color:var(--accent);background:none;border:0;padding:0;font:16px system-ui,sans-serif;cursor:pointer;align-self:flex-start}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-weight:600;font-size:15px}
+.fld input{height:48px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--fill);color:var(--ink);font:16px system-ui,sans-serif;width:100%}
+.fld input.bad{border:2px solid var(--err)}
+.pw{position:relative;display:flex}
+.pw input{padding-right:76px}
+.pw button{position:absolute;right:4px;top:2px;height:44px;padding:0 12px;border:0;background:none;color:var(--accent);font:600 15px system-ui,sans-serif;cursor:pointer}
+.hint{font-size:14px;color:var(--ink3)}
+.errt{font-size:14px;color:var(--err);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border:0;border-radius:12px;background:var(--accent);color:var(--on);font:600 16px system-ui,sans-serif;cursor:pointer;text-decoration:none}
+.btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:600 16px system-ui,sans-serif;cursor:pointer}
+.btn3{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;border:0;background:none;color:var(--accent);font:500 15px system-ui,sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.danger{background:var(--dangerbg);color:var(--dangerink)}
+.busy{opacity:.85;cursor:progress}
+.card{display:flex;flex-direction:column;gap:12px;padding:18px;background:var(--surface);border-radius:14px;box-shadow:0 0 0 1px var(--line)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;flex-wrap:wrap}
+.row+.row{border-top:1px solid var(--line2)}
+.stack{display:flex;flex-direction:column;gap:2px;min-width:0}
+.or{display:flex;align-items:center;gap:12px;color:var(--ink3);font-size:14px}
+.or::before,.or::after{content:'';flex:1;height:1px;background:var(--line)}
+.prov{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.note{display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--surface);box-shadow:0 0 0 1px var(--line);font-size:15px}
+.note.err{box-shadow:0 0 0 1px var(--line),inset 4px 0 0 var(--err)}
+.note.warn{box-shadow:0 0 0 1px var(--line),inset 4px 0 0 var(--chk)}
+.note.ok{box-shadow:0 0 0 1px var(--line),inset 4px 0 0 var(--ok)}
+.note b{display:block;margin-bottom:2px}
+.ico{flex:0 0 20px;width:20px;height:20px;margin-top:2px}
+.chk{display:flex;gap:12px;align-items:flex-start;min-height:44px;font-size:16px}
+.chk input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;background:var(--fill);font-size:13px;font-weight:600;color:var(--ink2)}
+.sw{position:relative;width:52px;height:32px;border-radius:16px;border:0;background:var(--ink4);cursor:pointer;flex:0 0 52px}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:left .15s}
+.sw.on{background:var(--accent)}
+.sw.on::after{left:23px}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:5}
+.dlg{width:100%;max-width:440px;display:flex;flex-direction:column;gap:14px;padding:22px;background:var(--surface);border-radius:16px;box-shadow:0 0 0 1px var(--line),0 16px 40px rgba(0,0,0,.3)}
+.toast{position:absolute;left:16px;right:16px;bottom:96px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:0 8px 0 16px;border-radius:12px;background:var(--toastbg);color:var(--toastink);z-index:4}
+.toast button{min-height:44px;border:0;background:none;color:var(--toastacc);font:700 15px system-ui,sans-serif;cursor:pointer}
+.book{display:flex;gap:14px;align-items:center;min-height:88px;border-bottom:1px solid var(--line2)}
+.cov{flex:0 0 48px;height:72px;border-radius:2px 4px 4px 2px;background:var(--fill);box-shadow:inset 3px 0 0 var(--line)}
+.sim{padding:12px 14px;border-radius:10px;border:2px dashed var(--ink4);font-size:14px;color:var(--ink2)}
+.gbtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 12px;border:1px solid var(--gline);border-radius:12px;background:var(--gbg);color:var(--gink);font:500 15px 'Roboto',system-ui,sans-serif;cursor:pointer}
+.abtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 12px;border:1px solid var(--abg);border-radius:12px;background:var(--abg);color:var(--aink);font:500 15px -apple-system,'SF Pro Text',system-ui,sans-serif;cursor:pointer}
+.gbtn svg,.abtn svg{flex:0 0 18px;width:18px;height:18px}
+.zoomed{zoom:2}
+.sk{height:12px;border-radius:6px;background:var(--fill)}
+@media (prefers-reduced-motion: reduce){.sw::after{transition:none}}
+</style>
+</helmet>
+<div class="rv" style="width: 1840px; height: 1000px; box-sizing: border-box; padding: 32px; background: #ece7de; display: flex; gap: 32px; align-items: flex-start">
+  <aside aria-label="Review controls" style="flex: 0 0 300px; height: 936px; overflow-y: auto; padding: 18px; background: #faf7f1; border-radius: 14px; box-shadow: 0 0 0 1px #e2dacd">
+    <p style="margin: 0; font: 600 18px Georgia, serif">Account prototype</p>
+    <p style="margin: 4px 0 0; font-size: 12px; color: #6b6259">Review controls · S22 · packet 5056de0 · simulated data, no real sign-in</p>
+    <h2>Device</h2>
+    <div class="rvseg"><sc-for list="{{devices}}" as="d" hint-placeholder-count="3"><button type="button" class="rvb {{d.cls}}" onClick="{{d.pick}}">{{d.label}}</button></sc-for></div>
+    <button type="button" class="rvb {{zoomCls}}" style="margin-top: 4px" aria-pressed="{{zoomPressed}}" onClick="{{toggleZoom}}">Page zoom 200% (phone)</button>
+    <h2>Reading light</h2>
+    <div class="rvseg"><sc-for list="{{lights}}" as="l" hint-placeholder-count="3"><button type="button" class="rvb {{l.cls}}" onClick="{{l.pick}}">{{l.label}}</button></sc-for></div>
+    <h2>State of this screen</h2>
+    <sc-for list="{{variants}}" as="vv" hint-placeholder-count="3"><button type="button" class="rvb {{vv.cls}}" onClick="{{vv.pick}}">{{vv.label}}</button></sc-for>
+    <sc-for list="{{groups}}" as="g" hint-placeholder-count="5">
+      <h2>{{g.label}}</h2>
+      <sc-for list="{{g.items}}" as="s" hint-placeholder-count="3"><button type="button" class="rvb {{s.cls}}" onClick="{{s.pick}}">{{s.label}}<span class="ux">{{s.ux}}</span></button></sc-for>
+    </sc-for>
+  </aside>
+
+  <div class="app {{zoomFrameCls}}" style="{{frameStyle}}">
+    <sc-if value="{{isDesk}}" hint-placeholder-val="{{ false }}">
+      <nav class="side" aria-label="Main">
+        <p class="brand">myBookshelf</p>
+        <button type="button" class="tab {{tabShelf}}" onClick="{{goShelf}}">Shelf</button>
+        <button type="button" class="tab">Search</button>
+        <button type="button" class="tab">Libraries</button>
+        <button type="button" class="tab {{tabSettings}}" onClick="{{goSettings}}">Settings</button>
+        <div class="who">
+          <sc-if value="{{signedIn}}" hint-placeholder-val="{{ false }}"><b>Reader Example</b><span style="color: var(--ink3); overflow-wrap: anywhere">reader@example.test</span></sc-if>
+          <sc-if value="{{notSignedIn}}" hint-placeholder-val="{{ true }}"><button type="button" class="btn3" onClick="{{goSignIn}}">Sign in</button><span style="color: var(--ink3)">Your shelf is on this browser</span></sc-if>
+        </div>
+      </nav>
+    </sc-if>
+    <div class="scroll">
+      <div class="{{pageCls}}">
+
+        <!-- Settings, guest -->
+        <sc-if value="{{is.settingsGuest}}" hint-placeholder-val="{{ true }}">
+          <div class="colw">
+            <h1 class="h1">Settings</h1>
+            <section class="card" aria-labelledby="acc-h">
+              <sc-if value="{{v.loading}}" hint-placeholder-val="{{ false }}">
+                <div role="status" aria-live="polite" style="display: flex; flex-direction: column; gap: 10px"><span class="muted">Checking your account…</span><div class="sk" style="width: 60%"></div><div class="sk" style="width: 40%"></div></div>
+              </sc-if>
+              <sc-if value="{{v.unavailable}}" hint-placeholder-val="{{ false }}">
+                <div class="note warn" role="status"><svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l8.2 14.5H1.8z" fill="none" stroke="currentColor" stroke-width="1.7"></path><path d="M10 8v4M10 14.6v.1" stroke="currentColor" stroke-width="1.8"></path></svg><div><b>Accounts aren't available right now</b>Your shelf on this browser still works. Search and libraries work as usual.</div></div>
+                <button type="button" class="btn2" style="align-self: flex-start">Try again</button>
+              </sc-if>
+              <sc-if value="{{v.normal}}" hint-placeholder-val="{{ true }}">
+                <h2 id="acc-h" class="h2">Keep your shelf across devices</h2>
+                <p class="lead">A free account keeps your library and saved books on every device. Your shelf on this browser keeps working without one.</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px"><button type="button" class="btn" onClick="{{goSignUp}}">Create account</button><button type="button" class="btn2" onClick="{{goSignIn}}">Sign in</button></div>
+              </sc-if>
+            </section>
+            <section class="card"><h2 class="h2">Your library</h2><div class="row"><div class="stack"><b>Anna Centenary Library</b><span class="muted">Chennai · checks availability</span></div><button type="button" class="btn3">Change</button></div></section>
+            <section class="card"><h2 class="h2">Reading light</h2><p class="muted">Daylight, Lamplight or Ink. Saved on this device.</p></section>
+          </div>
+        </sc-if>
+
+        <!-- Sign up -->
+        <sc-if value="{{is.signUp}}" hint-placeholder-val="{{ false }}">
+          <form class="col" aria-labelledby="su-h" novalidate="novalidate">
+            <button type="button" class="back" onClick="{{goSettings}}">‹ Settings</button>
+            <h1 id="su-h" class="h1">Create account</h1>
+            <p class="lead">Keep your shelf across devices.</p>
+            <sc-if value="{{v.errors}}" hint-placeholder-val="{{ false }}">
+              <div class="note err" role="alert" tabindex="-1"><div><b>Check 2 fields</b><a href="#su-name" style="color: var(--accent)">Enter your name</a> · <a href="#su-pw" style="color: var(--accent)">Use at least 15 characters</a></div></div>
+            </sc-if>
+            <sc-if value="{{v.limited}}" hint-placeholder-val="{{ false }}">
+              <div class="note warn" role="alert"><div><b>Too many attempts</b>Wait about 10 minutes, then try again. You can keep using your shelf meanwhile.</div></div>
+            </sc-if>
+            <div class="fld"><label for="su-name">Your name</label><input id="su-name" class="{{badCls}}" autocomplete="name" aria-describedby="su-name-h" placeholder=""><span id="su-name-h" class="{{nameHintCls}}">{{nameHint}}</span></div>
+            <div class="fld"><label for="su-email">Email</label><input id="su-email" type="email" autocomplete="email" value="reader@example.test"></div>
+            <div class="fld"><label for="su-pw">Password</label><div class="pw"><input id="su-pw" class="{{badCls}}" type="{{pwType}}" autocomplete="new-password" aria-describedby="su-pw-h" value="short pass"><button type="button" aria-pressed="{{showPw}}" onClick="{{togglePw}}">{{pwLabel}}</button></div><span id="su-pw-h" class="{{pwHintCls}}">{{pwHint}}</span></div>
+            <button type="button" class="btn {{busyCls}}" aria-busy="{{isBusy}}" onClick="{{goCheckEmail}}">{{signUpLabel}}</button>
+            <div class="or">or continue with</div>
+            <div class="prov"><button type="button" class="gbtn" onClick="{{goGoogle}}"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>Continue with Google</button><button type="button" class="abtn" onClick="{{goApple}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.37 1.43c0 1.14-.49 2.27-1.18 3.08-.74.9-1.99 1.57-2.99 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.57-2.27 1.21-2.98.8-.94 2.14-1.64 3.25-1.68.03.13.05.28.05.43zm4.56 15.71c-.03.07-.46 1.58-1.52 3.12-.94 1.34-1.94 2.71-3.43 2.71-1.52 0-1.9-.88-3.63-.88-1.7 0-2.3.91-3.67.91-1.38 0-2.33-1.26-3.43-2.8-1.29-1.82-2.32-4.63-2.32-7.28 0-4.28 2.8-6.55 5.55-6.55 1.45 0 2.68.95 3.6.95.87 0 2.22-1.01 3.9-1.01.61 0 2.89.06 4.37 2.19-.13.09-2.38 1.37-2.38 4.19 0 3.26 2.85 4.42 2.96 4.45z"></path></svg>Continue with Apple</button></div>
+            <p class="muted">Already have an account? <button type="button" class="btn3" onClick="{{goSignIn}}">Sign in</button></p>
+            <p class="muted"><a href="#" style="color: var(--accent)">Privacy</a> · <button type="button" class="btn3" onClick="{{goSettings}}">Continue using this browser</button></p>
+          </form>
+        </sc-if>
+
+        <!-- Check email -->
+        <sc-if value="{{is.checkEmail}}" hint-placeholder-val="{{ false }}">
+          <div class="col">
+            <h1 class="h1">Check your email</h1>
+            <p class="lead">We sent a link to <b style="overflow-wrap: anywhere">reader@example.test</b>. Open it to finish creating your account. It works for 24 hours.</p>
+            <sc-if value="{{v.resent}}" hint-placeholder-val="{{ false }}"><div class="note ok" role="status"><div>Sent again. It can take a few minutes to arrive.</div></div></sc-if>
+            <sc-if value="{{v.delayed}}" hint-placeholder-val="{{ false }}"><div class="note warn" role="status"><div><b>Email may be delayed</b>We couldn't confirm it was sent. Try resending in a few minutes.</div></div></sc-if>
+            <sc-if value="{{v.elsewhere}}" hint-placeholder-val="{{ false }}"><div class="note" role="status"><div><b>Verified on another device?</b>Come back here and we'll check.</div></div><button type="button" class="btn" onClick="{{goImport}}">I've verified</button></sc-if>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px"><button type="button" class="btn2">Resend email</button><button type="button" class="btn3" onClick="{{goSignUp}}">Use a different email</button></div>
+            <p class="muted">Your shelf on this browser stays as it is. <button type="button" class="btn3" onClick="{{goVerify}}">Open the link (simulated)</button></p>
+          </div>
+        </sc-if>
+
+        <!-- Verify landing -->
+        <sc-if value="{{is.verify}}" hint-placeholder-val="{{ false }}">
+          <div class="col">
+            <sc-if value="{{v.ready}}" hint-placeholder-val="{{ true }}"><h1 class="h1">Verify your email</h1><p class="lead">Confirm this is your address: <b style="overflow-wrap: anywhere">reader@example.test</b></p><button type="button" class="btn" onClick="{{goHistory}}">Verify email</button></sc-if>
+            <sc-if value="{{v.verifying}}" hint-placeholder-val="{{ false }}"><h1 class="h1">Verify your email</h1><button type="button" class="btn busy" aria-busy="true">Verifying…</button></sc-if>
+            <sc-if value="{{v.expired}}" hint-placeholder-val="{{ false }}"><h1 class="h1">This link has expired</h1><p class="lead">Links work for 24 hours. We can send a new one.</p><button type="button" class="btn" onClick="{{goCheckEmail}}">Send a new link</button></sc-if>
+            <sc-if value="{{v.used}}" hint-placeholder-val="{{ false }}"><h1 class="h1">This link was already used</h1><p class="lead">Your email may already be verified. Sign in to continue.</p><button type="button" class="btn" onClick="{{goSignIn}}">Sign in</button></sc-if>
+          </div>
+        </sc-if>
+
+        <!-- Sign in -->
+        <sc-if value="{{is.signIn}}" hint-placeholder-val="{{ false }}">
+          <form class="col" aria-labelledby="si-h" novalidate="novalidate">
+            <button type="button" class="back" onClick="{{goSettings}}">‹ Settings</button>
+            <h1 id="si-h" class="h1">Sign in</h1>
+            <sc-if value="{{v.bad}}" hint-placeholder-val="{{ false }}"><div class="note err" role="alert"><div>Email or password is incorrect.</div></div></sc-if>
+            <sc-if value="{{v.unverified}}" hint-placeholder-val="{{ false }}"><div class="note warn" role="alert"><div><b>Verify your email first</b>We can send a new link to that address.</div></div><button type="button" class="btn2" onClick="{{goCheckEmail}}">Send link</button></sc-if>
+            <sc-if value="{{v.limited}}" hint-placeholder-val="{{ false }}"><div class="note warn" role="alert"><div><b>Too many attempts</b>Wait about 10 minutes, or reset your password.</div></div></sc-if>
+            <sc-if value="{{v.cancelled}}" hint-placeholder-val="{{ false }}"><div class="note" role="status"><div>Google sign-in was cancelled. Nothing changed.</div></div></sc-if>
+            <sc-if value="{{v.collision}}" hint-placeholder-val="{{ false }}"><div class="note warn" role="alert"><div><b>This Google account isn't connected here</b>If you already have an account, sign in with your password, then connect Google in Settings.</div></div></sc-if>
+            <sc-if value="{{v.offline}}" hint-placeholder-val="{{ false }}"><div class="note warn" role="alert"><div><b>You're offline</b>Sign in when you're connected. Your shelf on this browser still works.</div></div></sc-if>
+            <div class="fld"><label for="si-email">Email</label><input id="si-email" type="email" autocomplete="email" value="reader@example.test"></div>
+            <div class="fld"><label for="si-pw">Password</label><div class="pw"><input id="si-pw" type="{{pwType}}" autocomplete="current-password" value="correct horse battery"><button type="button" aria-pressed="{{showPw}}" onClick="{{togglePw}}">{{pwLabel}}</button></div></div>
+            <button type="button" class="btn3" style="align-self: flex-start" onClick="{{goForgot}}">Forgot password?</button>
+            <button type="button" class="btn" onClick="{{goImport}}">Sign in</button>
+            <div class="or">or continue with</div>
+            <div class="prov"><button type="button" class="gbtn" onClick="{{goGoogle}}"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>Sign in with Google</button><button type="button" class="abtn" onClick="{{goApple}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.37 1.43c0 1.14-.49 2.27-1.18 3.08-.74.9-1.99 1.57-2.99 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.57-2.27 1.21-2.98.8-.94 2.14-1.64 3.25-1.68.03.13.05.28.05.43zm4.56 15.71c-.03.07-.46 1.58-1.52 3.12-.94 1.34-1.94 2.71-3.43 2.71-1.52 0-1.9-.88-3.63-.88-1.7 0-2.3.91-3.67.91-1.38 0-2.33-1.26-3.43-2.8-1.29-1.82-2.32-4.63-2.32-7.28 0-4.28 2.8-6.55 5.55-6.55 1.45 0 2.68.95 3.6.95.87 0 2.22-1.01 3.9-1.01.61 0 2.89.06 4.37 2.19-.13.09-2.38 1.37-2.38 4.19 0 3.26 2.85 4.42 2.96 4.45z"></path></svg>Sign in with Apple</button></div>
+            <p class="muted">New here? <button type="button" class="btn3" onClick="{{goSignUp}}">Create account</button></p>
+            <p class="muted"><button type="button" class="btn3" onClick="{{goSettings}}">Continue using this browser</button></p>
+          </form>
+        </sc-if>
+
+        <!-- Provider simulation -->
+        <sc-if value="{{is.provider}}" hint-placeholder-val="{{ false }}">
+          <div class="col">
+            <p class="sim" role="note">Simulation of the {{providerName}} sign-in page. Not a real {{providerName}} page.</p>
+            <h1 class="h1">Continue to MyBookshelf</h1>
+            <p class="lead">Signed in to {{providerName}} as <b>{{providerEmail}}</b></p>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px"><button type="button" class="btn" onClick="{{providerContinue}}">Continue</button><button type="button" class="btn2" onClick="{{providerCancel}}">Cancel</button></div>
+          </div>
+        </sc-if>
+
+        <!-- Complete private name -->
+        <sc-if value="{{is.completeName}}" hint-placeholder-val="{{ false }}">
+          <form class="col" novalidate="novalidate">
+            <h1 class="h1">One more step</h1>
+            <p class="lead">What should we call you? Only you see this.</p>
+            <div class="fld"><label for="cn-name">Your name</label><input id="cn-name" autocomplete="name"></div>
+            <button type="button" class="btn" onClick="{{goImport}}">Continue</button>
+          </form>
+        </sc-if>
+
+        <!-- Forgot password -->
+        <sc-if value="{{is.forgot}}" hint-placeholder-val="{{ false }}">
+          <form class="col" novalidate="novalidate">
+            <button type="button" class="back" onClick="{{goSignIn}}">‹ Sign in</button>
+            <h1 class="h1">Reset your password</h1>
+            <sc-if value="{{v.normal}}" hint-placeholder-val="{{ true }}"><div class="fld"><label for="fp-email">Email</label><input id="fp-email" type="email" autocomplete="email" value="reader@example.test"></div><button type="button" class="btn" onClick="{{goForgotSent}}">Send reset link</button></sc-if>
+            <sc-if value="{{v.sent}}" hint-placeholder-val="{{ false }}"><div class="note" role="status"><div>If this address can receive a reset link, we'll send one. Check your email.</div></div><p class="muted"><button type="button" class="btn3" onClick="{{goReset}}">Open the link (simulated)</button></p></sc-if>
+          </form>
+        </sc-if>
+
+        <!-- Reset password -->
+        <sc-if value="{{is.reset}}" hint-placeholder-val="{{ false }}">
+          <form class="col" novalidate="novalidate">
+            <sc-if value="{{v.normal}}" hint-placeholder-val="{{ true }}"><h1 class="h1">Choose a new password</h1><div class="fld"><label for="rp-pw">New password</label><div class="pw"><input id="rp-pw" type="{{pwType}}" autocomplete="new-password" aria-describedby="rp-h"><button type="button" aria-pressed="{{showPw}}" onClick="{{togglePw}}">{{pwLabel}}</button></div><span id="rp-h" class="hint">At least 15 characters. Spaces are fine.</span></div><button type="button" class="btn" onClick="{{goResetDone}}">Update password</button></sc-if>
+            <sc-if value="{{v.expired}}" hint-placeholder-val="{{ false }}"><h1 class="h1">This link can't be used</h1><p class="lead">Reset links work once, for 30 minutes.</p><button type="button" class="btn" onClick="{{goForgot}}">Request a new link</button></sc-if>
+            <sc-if value="{{v.done}}" hint-placeholder-val="{{ false }}"><h1 class="h1">Password updated</h1><p class="lead">Sign in again. Other devices were signed out.</p><button type="button" class="btn" onClick="{{goSignIn}}">Sign in</button></sc-if>
+          </form>
+        </sc-if>
+
+        <!-- Guest import -->
+        <sc-if value="{{is.importBooks}}" hint-placeholder-val="{{ false }}">
+          <div class="col">
+            <sc-if value="{{v.done}}" hint-placeholder-val="{{ false }}">
+              <h1 class="h1">Your books are in your account</h1>
+              <div class="note ok" role="status"><div>Added 21 · 3 were already saved</div></div>
+              <p class="lead">A copy is still saved on this browser. Anyone using this browser can see it.</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px"><button type="button" class="btn2" onClick="{{goHistory}}">Remove the copy here</button><button type="button" class="btn" onClick="{{goHistory}}">Keep it</button></div>
+            </sc-if>
+            <sc-if value="{{importForm}}" hint-placeholder-val="{{ true }}">
+              <h1 class="h1">Bring this browser's books?</h1>
+              <div class="card" style="gap: 4px"><span class="muted">Into the account</span><b>Reader Example</b><span style="overflow-wrap: anywhere">reader@example.test</span></div>
+              <p class="lead">24 saved books · 8 recently viewed</p>
+              <sc-if value="{{v.overflow}}" hint-placeholder-val="{{ false }}"><div class="note err" role="alert"><div><b>Not enough room</b>Your account holds 1,000 books and has 990. Nothing was imported. Remove some books from your account, then try again.</div></div></sc-if>
+              <sc-if value="{{v.failed}}" hint-placeholder-val="{{ false }}"><div class="note err" role="alert"><div><b>Couldn't import</b>Nothing changed. Try again. Your books stay on this browser.</div></div></sc-if>
+              <label class="chk"><input type="checkbox" checked="{{inclHistory}}" onChange="{{toggleHistory}}"><span>Include recently viewed books<br><span class="hint">This doesn't turn on saving history.</span></span></label>
+              <fieldset style="border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px"><legend class="h2" style="margin-bottom: 6px">Library</legend>
+                <label class="chk"><input type="radio" name="lib" checked="{{libAccount}}" onChange="{{pickLibAccount}}"><span>Keep your account's library<br><span class="hint">Alameda County Library</span></span></label>
+                <label class="chk"><input type="radio" name="lib" checked="{{libDevice}}" onChange="{{pickLibDevice}}"><span>Use this browser's library<br><span class="hint">Anna Centenary Library</span></span></label>
+              </fieldset>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px"><button type="button" class="btn {{busyCls}}" aria-busy="{{isBusy}}" onClick="{{goImportDone}}">{{importLabel}}</button><button type="button" class="btn2" onClick="{{goHistory}}">Not now</button></div>
+              <p class="muted">You can do this later in Settings.</p>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- History consent -->
+        <sc-if value="{{is.historyConsent}}" hint-placeholder-val="{{ false }}">
+          <div class="col">
+            <h1 class="h1">Save recently viewed books to your account?</h1>
+            <p class="lead">Up to 50 books for 30 days, so you can pick up where you left off on another device. Off unless you turn it on.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px"><button type="button" class="btn" onClick="{{historyOnGo}}">Turn on</button><button type="button" class="btn2" onClick="{{goShelf}}">Not now</button></div>
+            <p class="muted">You can change this any time in Settings.</p>
+          </div>
+        </sc-if>
+
+        <!-- Shelf with sync states -->
+        <sc-if value="{{is.shelfSync}}" hint-placeholder-val="{{ false }}">
+          <div class="colw">
+            <div class="row" style="min-height: 0"><h1 class="h1">Shelf</h1><span class="badge">Reader Example's account</span></div>
+            <sc-if value="{{v.stale}}" hint-placeholder-val="{{ false }}"><div class="note warn" role="status"><div>Couldn't refresh your shelf. <button type="button" class="btn3">Try again</button></div></div></sc-if>
+            <sc-if value="{{v.conflict}}" hint-placeholder-val="{{ false }}"><div class="note warn" role="alert"><div><b>Your shelf changed on another device</b>Refresh to see it, then try again.</div></div><button type="button" class="btn2" style="align-self: flex-start">Refresh</button></sc-if>
+            <div>
+              <div class="book"><span class="cov" aria-hidden="true"></span><div class="stack"><b>Wings of Fire</b><span class="muted">A. P. J. Abdul Kalam</span><span class="muted">{{wingsStatus}}</span></div></div>
+              <div class="book"><span class="cov" aria-hidden="true"></span><div class="stack"><b>The Alchemist</b><span class="muted">Paulo Coelho</span><span class="muted">Saved to your account</span></div></div>
+              <div class="book"><span class="cov" aria-hidden="true"></span><div class="stack"><b>Nineteen Eighty-Four</b><span class="muted">George Orwell</span><span class="muted">Saved to your account</span></div></div>
+            </div>
+            <sc-if value="{{v.empty}}" hint-placeholder-val="{{ false }}"><div class="card"><h2 class="h2">Your account shelf is empty</h2><p class="lead">Books you save while signed in appear here on every device.</p><button type="button" class="btn" style="align-self: flex-start">Find a book</button></div></sc-if>
+          </div>
+          <sc-if value="{{v.failed}}" hint-placeholder-val="{{ false }}"><div class="toast" role="alert"><span>Couldn't save to your account. Retry when connected.</span><button type="button">Retry</button></div></sc-if>
+          <sc-if value="{{v.undo}}" hint-placeholder-val="{{ false }}"><div class="toast" role="status"><span>Removed The Hobbit</span><button type="button">Undo</button></div></sc-if>
+        </sc-if>
+
+        <!-- Account settings -->
+        <sc-if value="{{settingsBase}}" hint-placeholder-val="{{ false }}">
+          <div class="colw">
+            <h1 class="h1">Settings</h1>
+            <sc-if value="{{v.emailPending}}" hint-placeholder-val="{{ false }}"><div class="note warn" role="status"><div><b>Confirm your new email</b>We sent a link to <b style="display: inline; overflow-wrap: anywhere">new.reader@example.test</b>. Your current email keeps working until then. <button type="button" class="btn3">Cancel change</button></div></div></sc-if>
+            <section class="card" aria-labelledby="ac-h">
+              <h2 id="ac-h" class="h2">Account</h2>
+              <div class="fld"><label for="ac-name">Your name</label><div style="display: flex; gap: 10px"><input id="ac-name" value="Reader Example" autocomplete="name" style="flex: 1"><button type="button" class="btn2 {{busyCls}}" aria-busy="{{isBusy}}">{{nameSaveLabel}}</button></div><span class="hint">Private. Only you see it.</span></div>
+              <div class="row"><div class="stack"><b>Email</b><span style="overflow-wrap: anywhere">reader@example.test</span></div><button type="button" class="btn3" onClick="{{goChangeEmail}}">Change</button></div>
+            </section>
+            <section class="card" aria-labelledby="sm-h">
+              <h2 id="sm-h" class="h2">Sign-in methods</h2>
+              <div class="row"><div class="stack"><b>Password</b><span class="muted">{{pwStatus}}</span></div><button type="button" class="btn3" onClick="{{goReauth}}">{{pwAction}}</button></div>
+              <div class="row"><div class="stack"><b>Google</b><span class="muted">Connected · reader@example.test</span></div><button type="button" class="btn3" disabled="{{lastMethod}}" aria-describedby="lm-h" onClick="{{goReauth}}">Disconnect</button></div>
+              <sc-if value="{{lastMethod}}" hint-placeholder-val="{{ false }}"><p id="lm-h" class="hint" style="margin: 0">Set a password or connect Apple before disconnecting Google. You need at least one way to sign in.</p></sc-if>
+              <div class="row"><div class="stack"><b>Apple</b><span class="muted">Not connected</span></div><button type="button" class="btn3" onClick="{{goReauth}}">Connect</button></div>
+            </section>
+            <section class="card" aria-labelledby="se-h">
+              <h2 id="se-h" class="h2">Signed-in devices</h2>
+              <div class="row"><div class="stack"><b>This browser</b><span class="muted">Chrome on Mac · now</span></div></div>
+              <div class="row"><div class="stack"><b>Safari on iPhone</b><span class="muted">Last used 2 days ago</span></div><button type="button" class="btn3">Sign out</button></div>
+              <sc-if value="{{v.revokeFailed}}" hint-placeholder-val="{{ false }}"><div class="note err" role="alert"><div>Couldn't sign out Safari on iPhone. <button type="button" class="btn3">Try again</button></div></div></sc-if>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px"><button type="button" class="btn2" onClick="{{goSignOutFail}}">Sign out</button><button type="button" class="btn2">Sign out all devices</button></div>
+            </section>
+            <section class="card" aria-labelledby="hi-h">
+              <h2 id="hi-h" class="h2">Recently viewed</h2>
+              <div class="row"><div class="stack"><b>Save recently viewed books to my account</b><span class="muted">{{historyStatus}}</span></div><button type="button" role="switch" aria-checked="{{historyOn}}" aria-label="Save recently viewed books to my account" class="sw {{historyCls}}" onClick="{{toggleHistoryOn}}"></button></div>
+              <div class="row"><span class="muted">12 books saved</span><button type="button" class="btn3">Clear recently viewed</button></div>
+            </section>
+            <section class="card" aria-labelledby="da-h">
+              <h2 id="da-h" class="h2">Your data</h2>
+              <div class="row"><div class="stack"><b>Books on this browser</b><span class="muted">24 saved books not in your account</span></div><button type="button" class="btn3" onClick="{{goImport}}">Review import</button></div>
+              <div class="row"><div class="stack"><b>Saved books</b><span class="muted">24 books in your account</span></div><button type="button" class="btn3" onClick="{{goClear}}">Clear saved books</button></div>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px"><button type="button" class="btn2" onClick="{{goExport}}">Export data</button><button type="button" class="btn2" style="color: var(--err)" onClick="{{goDelete}}">Delete account</button></div>
+            </section>
+            <p class="muted">Reading light and companion settings stay on this device.</p>
+          </div>
+        </sc-if>
+
+        <!-- Change email -->
+        <sc-if value="{{is.changeEmail}}" hint-placeholder-val="{{ false }}">
+          <form class="col" novalidate="novalidate">
+            <button type="button" class="back" onClick="{{goAccount}}">‹ Settings</button>
+            <h1 class="h1">Change email</h1>
+            <div class="fld"><label for="ce-email">New email</label><input id="ce-email" type="email" autocomplete="email"></div>
+            <p class="muted">Your current address keeps working until you confirm the new one. We'll let reader@example.test know.</p>
+            <button type="button" class="btn" onClick="{{goEmailPending}}">Send confirmation link</button>
+          </form>
+        </sc-if>
+
+        <!-- Recent authentication -->
+        <sc-if value="{{is.reauth}}" hint-placeholder-val="{{ false }}">
+          <form class="col" novalidate="novalidate">
+            <button type="button" class="back" onClick="{{goAccount}}">‹ Settings</button>
+            <h1 class="h1">Confirm it's you</h1>
+            <p class="lead">For your security, sign in again before changing how you sign in or deleting your data.</p>
+            <div class="fld"><label for="ra-pw">Password</label><div class="pw"><input id="ra-pw" type="{{pwType}}" autocomplete="current-password"><button type="button" aria-pressed="{{showPw}}" onClick="{{togglePw}}">{{pwLabel}}</button></div></div>
+            <button type="button" class="btn" onClick="{{goAccount}}">Continue</button>
+            <div class="or">or</div>
+            <button type="button" class="gbtn" onClick="{{goGoogle}}"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>Continue with Google</button>
+            <p class="muted">You'll come back to confirm before anything changes.</p>
+          </form>
+        </sc-if>
+
+        <!-- Sign out / session states -->
+        <sc-if value="{{is.signOut}}" hint-placeholder-val="{{ false }}">
+          <div class="col">
+            <sc-if value="{{v.unconfirmed}}" hint-placeholder-val="{{ true }}"><h1 class="h1">Couldn't finish signing out</h1><div class="note warn" role="alert"><div>We've hidden your account on this browser, but the server didn't confirm the sign-out. Try again when you're connected.</div></div><div style="display: flex; flex-wrap: wrap; gap: 10px"><button type="button" class="btn">Try again</button><button type="button" class="btn2" onClick="{{goGuest}}">Continue as guest</button></div></sc-if>
+            <sc-if value="{{v.expired}}" hint-placeholder-val="{{ false }}"><h1 class="h1">You've been signed out</h1><p class="lead">Your session ended. Sign in to see your account shelf, or keep using this browser's shelf.</p><div style="display: flex; flex-wrap: wrap; gap: 10px"><button type="button" class="btn" onClick="{{goSignIn}}">Sign in</button><button type="button" class="btn2" onClick="{{goGuest}}">Continue as guest</button></div></sc-if>
+            <sc-if value="{{v.done}}" hint-placeholder-val="{{ false }}"><h1 class="h1">Signed out</h1><p class="lead">You're using this browser's shelf again.</p><button type="button" class="btn" onClick="{{goGuest}}">Go to Settings</button></sc-if>
+          </div>
+        </sc-if>
+
+        <!-- Dialogs over settings -->
+        <sc-if value="{{is.deleteAcct}}" hint-placeholder-val="{{ false }}">
+          <div class="scrim">
+            <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dl-h" aria-describedby="dl-d">
+              <sc-if value="{{v.normal}}" hint-placeholder-val="{{ true }}">
+                <h2 id="dl-h" class="h1" style="font-size: 26px">Delete account?</h2>
+                <p class="lead" style="overflow-wrap: anywhere">Reader Example · reader@example.test</p>
+                <p id="dl-d" style="margin: 0">Access ends now. Your account data is deleted within 24 hours and from backups within 30 days.</p>
+                <label class="chk"><input type="checkbox"><span>Also remove the books saved in this browser</span></label>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end"><button type="button" class="btn2" onClick="{{goAccount}}">Cancel</button><button type="button" class="btn danger" onClick="{{goDeleteDone}}">Delete account</button></div>
+              </sc-if>
+              <sc-if value="{{v.accepted}}" hint-placeholder-val="{{ false }}">
+                <h2 id="dl-h2" class="h1" style="font-size: 26px">Account deleted</h2>
+                <p style="margin: 0">You're signed out. Your data is removed within 24 hours, and from backups within 30 days.</p>
+                <button type="button" class="btn" onClick="{{goGuest}}">Done</button>
+              </sc-if>
+              <sc-if value="{{v.unknown}}" hint-placeholder-val="{{ false }}">
+                <h2 class="h1" style="font-size: 26px">Couldn't confirm deletion</h2>
+                <p style="margin: 0">We didn't get a reply. Your account may not be deleted yet.</p>
+                <button type="button" class="btn">Check status</button>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{is.exportData}}" hint-placeholder-val="{{ false }}">
+          <div class="scrim">
+            <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="ex-h">
+              <h2 id="ex-h" class="h1" style="font-size: 26px">Export your data</h2>
+              <p style="margin: 0">A JSON file with your name, email, sign-in methods, library, saved books and recently viewed books. No passwords or session details.</p>
+              <sc-if value="{{v.done}}" hint-placeholder-val="{{ false }}"><div class="note ok" role="status"><div>Downloaded mybookshelf-export.json</div></div></sc-if>
+              <sc-if value="{{v.error}}" hint-placeholder-val="{{ false }}"><div class="note err" role="alert"><div>Couldn't prepare your export. Try again.</div></div></sc-if>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end"><button type="button" class="btn2" onClick="{{goAccount}}">Close</button><button type="button" class="btn" onClick="{{goExportDone}}">Download JSON</button></div>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{is.clearSaved}}" hint-placeholder-val="{{ false }}">
+          <div class="scrim">
+            <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="cl-h">
+              <h2 id="cl-h" class="h1" style="font-size: 26px">Clear saved books?</h2>
+              <p style="margin: 0">This removes 24 saved books from your account on every device. Recently viewed books aren't affected.</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end"><button type="button" class="btn2" onClick="{{goAccount}}">Cancel</button><button type="button" class="btn danger" onClick="{{goAccount}}">Clear saved books</button></div>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+    <sc-if value="{{showTabs}}" hint-placeholder-val="{{ false }}">
+      <nav class="tabs" aria-label="Main">
+        <button type="button" class="tab {{tabShelf}}" onClick="{{goShelf}}">Shelf</button>
+        <button type="button" class="tab">Search</button>
+        <button type="button" class="tab">Libraries</button>
+        <button type="button" class="tab {{tabSettings}}" onClick="{{goSettings}}">Settings</button>
+      </nav>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1840,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { screen: 'settingsGuest', variant: 'normal', device: 'phone', light: 'daylight', zoom: false, showPw: false, inclHistory: false, lib: 'account', historyOn: false, provider: 'Google' };
+  }
+  go(screen, variant) { this.setState({ screen: screen, variant: variant || this.defaults()[screen] || 'normal' }); }
+  defaults() { return { verify: 'ready', signOut: 'unconfirmed' }; }
+  renderVals() {
+    var s = this.state;
+    var self = this;
+    var LIGHTS = {
+      daylight: '--bg:#faf7f1;--surface:#fff;--fill:#efe9df;--ink:#1f1a17;--ink2:#4a423b;--ink3:#6b6259;--ink4:#8a8178;--line:#e7e0d5;--line2:#efe9df;--accent:#2f5340;--on:#fff;--bar:rgba(250,247,241,.96);--ok:#2f7a4b;--chk:#9a6200;--err:#b42318;--toastbg:#2b2420;--toastink:#fbf8f1;--toastacc:#e9c58a;--dangerbg:#b42318;--dangerink:#fff;--gbg:#fff;--gline:#747775;--gink:#1f1f1f;--abg:#000;--aink:#fff',
+      lamplight: '--bg:#15120f;--surface:#1f1b17;--fill:#2b2621;--ink:#f1e9dc;--ink2:#d3c8b8;--ink3:#a89d8c;--ink4:#8f8474;--line:#463d33;--line2:#2f2923;--accent:#9fd0ae;--on:#10261a;--bar:rgba(21,18,15,.96);--ok:#7fcf98;--chk:#e8b45a;--err:#f28b82;--toastbg:#f1e9dc;--toastink:#1f1a17;--toastacc:#2f5340;--dangerbg:#f28b82;--dangerink:#2a0e0b;--gbg:#131314;--gline:#8e918f;--gink:#e3e3e3;--abg:#fff;--aink:#000',
+      ink: '--bg:#f6f7f9;--surface:#fff;--fill:#e9edf2;--ink:#101828;--ink2:#344054;--ink3:#5a6474;--ink4:#8a93a3;--line:#dde2e9;--line2:#eef1f5;--accent:#1d4f91;--on:#fff;--bar:rgba(246,247,249,.96);--ok:#13784a;--chk:#9a5b00;--err:#b42318;--toastbg:#101828;--toastink:#f6f7f9;--toastacc:#9cc1f2;--dangerbg:#b42318;--dangerink:#fff;--gbg:#fff;--gline:#747775;--gink:#1f1f1f;--abg:#000;--aink:#fff'
+    };
+    var SCREENS = [
+      { g: 'Start', id: 'settingsGuest', label: 'Settings, guest', ux: 'UX-01', vs: [['normal', 'Normal'], ['loading', 'Checking account'], ['unavailable', 'Accounts unavailable']] },
+      { g: 'Start', id: 'signUp', label: 'Create account', ux: 'UX-01', vs: [['normal', 'Normal'], ['submitting', 'Submitting'], ['errors', 'Field errors'], ['limited', 'Rate limited']] },
+      { g: 'Start', id: 'checkEmail', label: 'Check your email', ux: 'UX-01', vs: [['normal', 'Normal'], ['resent', 'Resent'], ['delayed', 'Mail delayed'], ['elsewhere', 'Verified elsewhere']] },
+      { g: 'Start', id: 'verify', label: 'Verify link', ux: 'UX-02', vs: [['ready', 'Ready'], ['verifying', 'Verifying'], ['expired', 'Expired'], ['used', 'Already used']] },
+      { g: 'Sign in', id: 'signIn', label: 'Sign in', ux: 'UX-03', vs: [['normal', 'Normal'], ['bad', 'Wrong details'], ['unverified', 'Not verified'], ['limited', 'Rate limited'], ['cancelled', 'Provider cancelled'], ['collision', 'Provider collision'], ['offline', 'Offline']] },
+      { g: 'Sign in', id: 'provider', label: 'Google or Apple', ux: 'UX-03', vs: [['normal', 'Has name'], ['noname', 'No name returned']] },
+      { g: 'Sign in', id: 'completeName', label: 'Add your name', ux: 'UX-03', vs: [['normal', 'Normal']] },
+      { g: 'Sign in', id: 'forgot', label: 'Forgot password', ux: 'UX-04', vs: [['normal', 'Normal'], ['sent', 'Sent (neutral)']] },
+      { g: 'Sign in', id: 'reset', label: 'New password', ux: 'UX-04', vs: [['normal', 'Normal'], ['expired', 'Expired or used'], ['done', 'Updated']] },
+      { g: 'After sign-in', id: 'importBooks', label: 'Bring books over', ux: 'UX-05', vs: [['normal', 'Preview'], ['importing', 'Importing'], ['overflow', 'Over capacity'], ['failed', 'Failed'], ['done', 'Imported']] },
+      { g: 'After sign-in', id: 'historyConsent', label: 'Recently viewed choice', ux: 'UX-11', vs: [['normal', 'Normal']] },
+      { g: 'Reading', id: 'shelfSync', label: 'Shelf while signed in', ux: 'UX-06', vs: [['normal', 'Saved'], ['pending', 'Saving'], ['failed', 'Save failed'], ['conflict', 'Conflict'], ['undo', 'Undo remove'], ['stale', 'Couldn\'t refresh'], ['empty', 'Empty']] },
+      { g: 'Settings', id: 'settingsAccount', label: 'Account settings', ux: 'UX-07,08,11', vs: [['normal', 'Normal'], ['saving', 'Saving name'], ['saved', 'Name saved'], ['emailPending', 'Email change pending'], ['lastMethod', 'Last sign-in method'], ['revokeFailed', 'Sign-out of device failed'], ['paused', 'History paused']] },
+      { g: 'Settings', id: 'changeEmail', label: 'Change email', ux: 'UX-07', vs: [['normal', 'Normal']] },
+      { g: 'Settings', id: 'reauth', label: 'Confirm it\'s you', ux: 'UX-08', vs: [['normal', 'Normal']] },
+      { g: 'Settings', id: 'signOut', label: 'Signing out', ux: 'UX-09', vs: [['unconfirmed', 'Not confirmed'], ['expired', 'Session expired'], ['done', 'Signed out']] },
+      { g: 'Your data', id: 'exportData', label: 'Export', ux: 'UX-10', vs: [['normal', 'Confirm'], ['done', 'Downloaded'], ['error', 'Error']] },
+      { g: 'Your data', id: 'deleteAcct', label: 'Delete account', ux: 'UX-10', vs: [['normal', 'Confirm'], ['accepted', 'Accepted'], ['unknown', 'No reply']] },
+      { g: 'Your data', id: 'clearSaved', label: 'Clear saved books', ux: 'UX-06', vs: [['normal', 'Confirm']] }
+    ];
+    var cur = SCREENS.filter(function (x) { return x.id === s.screen; })[0];
+    var groupsOrder = ['Start', 'Sign in', 'After sign-in', 'Reading', 'Settings', 'Your data'];
+    var groups = groupsOrder.map(function (gl) {
+      return { label: gl, items: SCREENS.filter(function (x) { return x.g === gl; }).map(function (x) {
+        return { label: x.label, ux: x.ux, cls: x.id === s.screen ? 'on' : '', pick: function () { self.go(x.id, x.vs[0][0]); } };
+      }) };
+    });
+    var variants = cur.vs.map(function (p) { return { label: p[1], cls: p[0] === s.variant ? 'on' : '', pick: function () { self.setState({ variant: p[0] }); } }; });
+    var is = {}; SCREENS.forEach(function (x) { is[x.id] = x.id === s.screen; });
+    var v = {}; cur.vs.forEach(function (p) { v[p[0]] = p[0] === s.variant; });
+    var isDesk = s.device === 'desktop';
+    var zoomOn = s.zoom && !isDesk;
+    var accountScreens = ['shelfSync', 'settingsAccount', 'changeEmail', 'reauth', 'exportData', 'deleteAcct', 'clearSaved'];
+    var signedIn = accountScreens.indexOf(s.screen) >= 0;
+    var tabScreens = ['settingsGuest', 'shelfSync', 'settingsAccount', 'exportData', 'deleteAcct', 'clearSaved'];
+    var settingsBase = ['settingsAccount', 'exportData', 'deleteAcct', 'clearSaved'].indexOf(s.screen) >= 0;
+    var vSettings = s.screen === 'settingsAccount' ? s.variant : 'normal';
+    var historyOn = s.historyOn || vSettings === 'paused';
+    var go = function (screen, variant) { return function () { self.go(screen, variant); }; };
+    var busy = s.variant === 'submitting' || s.variant === 'importing' || s.variant === 'saving';
+    return {
+      lights: [['daylight', 'Daylight'], ['lamplight', 'Lamplight'], ['ink', 'Ink']].map(function (p) { return { label: p[1], cls: p[0] === s.light ? 'on' : '', pick: function () { self.setState({ light: p[0] }); } }; }),
+      variants: variants, groups: groups, is: is, v: v,
+      devices: [['phone', 'Phone 390'], ['narrow', 'Phone 320'], ['desktop', 'Desktop 1440']].map(function (p) { return { label: p[1], cls: p[0] === s.device ? 'on' : '', pick: function () { self.setState({ device: p[0] }); } }; }),
+      zoomCls: s.zoom ? 'on' : '', zoomPressed: s.zoom ? 'true' : 'false',
+      toggleZoom: function () { self.setState({ zoom: !s.zoom }); },
+      zoomFrameCls: zoomOn ? 'zoomed' : '',
+      isDesk: isDesk,
+      frameStyle: (isDesk ? 'width: 1440px; height: 900px; ' : zoomOn ? 'width: ' + (s.device === 'narrow' ? 160 : 195) + 'px; height: 460px; margin: 0 auto; ' : 'width: ' + (s.device === 'narrow' ? 320 : 390) + 'px; height: 844px; margin: 0 auto; ') + LIGHTS[s.light],
+      pageCls: isDesk ? 'page wide' : 'page',
+      showTabs: !isDesk && tabScreens.indexOf(s.screen) >= 0,
+      signedIn: signedIn, notSignedIn: !signedIn,
+      tabShelf: s.screen === 'shelfSync' ? 'on' : '', tabSettings: (s.screen === 'settingsGuest' || settingsBase) ? 'on' : '',
+      settingsBase: settingsBase,
+      showPw: s.showPw ? 'true' : 'false', pwType: s.showPw ? 'text' : 'password', pwLabel: s.showPw ? 'Hide' : 'Show',
+      togglePw: function () { self.setState({ showPw: !s.showPw }); },
+      badCls: s.variant === 'errors' ? 'bad' : '',
+      nameHint: s.variant === 'errors' ? 'Enter your name' : 'Private. Only you see it.', nameHintCls: s.variant === 'errors' ? 'errt' : 'hint',
+      pwHint: s.variant === 'errors' ? 'Use at least 15 characters' : 'At least 15 characters. Spaces are fine.', pwHintCls: s.variant === 'errors' ? 'errt' : 'hint',
+      busyCls: busy ? 'busy' : '', isBusy: busy ? 'true' : 'false',
+      signUpLabel: s.variant === 'submitting' ? 'Creating account…' : 'Create account',
+      importLabel: s.variant === 'importing' ? 'Importing…' : 'Import 24 saved books',
+      importForm: s.screen === 'importBooks' && s.variant !== 'done',
+      inclHistory: s.inclHistory, toggleHistory: function () { self.setState({ inclHistory: !s.inclHistory }); },
+      libAccount: s.lib === 'account', libDevice: s.lib === 'device',
+      pickLibAccount: function () { self.setState({ lib: 'account' }); }, pickLibDevice: function () { self.setState({ lib: 'device' }); },
+      providerName: s.provider, providerEmail: s.provider === 'Apple' ? 'a1b2c3@privaterelay.example.test' : 'reader@example.test',
+      providerContinue: function () { self.go(s.variant === 'noname' || s.provider === 'Apple' ? 'completeName' : 'importBooks', 'normal'); },
+      providerCancel: go('signIn', 'cancelled'),
+      goGoogle: function () { self.setState({ screen: 'provider', variant: 'normal', provider: 'Google' }); },
+      goApple: function () { self.setState({ screen: 'provider', variant: 'normal', provider: 'Apple' }); },
+      nameSaveLabel: vSettings === 'saving' ? 'Saving…' : vSettings === 'saved' ? 'Saved' : 'Save',
+      lastMethod: vSettings === 'lastMethod',
+      pwStatus: vSettings === 'lastMethod' ? 'Not set' : 'Set', pwAction: vSettings === 'lastMethod' ? 'Set password' : 'Change',
+      historyOn: historyOn ? 'true' : 'false', historyCls: historyOn ? 'on' : '',
+      historyStatus: vSettings === 'paused' ? 'Paused. The 12 books already saved stay until they expire.' : historyOn ? 'On. Up to 50 books for 30 days.' : 'Off. Up to 50 books for 30 days when on.',
+      toggleHistoryOn: function () { self.setState({ historyOn: !s.historyOn }); },
+      wingsStatus: s.variant === 'pending' ? 'Saving to your account…' : s.variant === 'failed' ? 'Not saved to your account' : 'Saved to your account',
+      goSettings: go('settingsGuest', 'normal'), goSignUp: go('signUp', 'normal'), goSignIn: go('signIn', 'normal'),
+      goCheckEmail: go('checkEmail', 'normal'), goVerify: go('verify', 'ready'), goImport: go('importBooks', 'normal'),
+      goImportDone: go('importBooks', 'done'), goHistory: go('historyConsent', 'normal'),
+      historyOnGo: function () { self.setState({ historyOn: true, screen: 'shelfSync', variant: 'normal' }); },
+      goForgot: go('forgot', 'normal'), goForgotSent: go('forgot', 'sent'), goReset: go('reset', 'normal'), goResetDone: go('reset', 'done'),
+      goShelf: go('shelfSync', 'normal'), goAccount: go('settingsAccount', 'normal'), goChangeEmail: go('changeEmail', 'normal'),
+      goEmailPending: go('settingsAccount', 'emailPending'), goReauth: go('reauth', 'normal'),
+      goSignOutFail: go('signOut', 'unconfirmed'), goGuest: go('settingsGuest', 'normal'),
+      goExport: go('exportData', 'normal'), goExportDone: go('exportData', 'done'),
+      goDelete: go('deleteAcct', 'normal'), goDeleteDone: go('deleteAcct', 'accepted'), goClear: go('clearSaved', 'normal')
+    };
+  }
+}
+</script>
+</body>
+</html>

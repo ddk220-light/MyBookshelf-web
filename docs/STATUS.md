@@ -1,6 +1,6 @@
 # MyBookshelf web handoff
 
-Updated 2026-10-31. Active repository:
+Updated 2026-11-01. Active repository:
 **https://github.com/ddk220-light/MyBookshelf-web**, default branch `main`.
 The owner has chosen to do all future web work in this repository. Build, test,
 plan and implement here directly. Do not depend on the previous private checkout
@@ -53,48 +53,49 @@ are available here without the private branch.
   Repository protection and vulnerability-reporting settings also need owner
   administration. Keep the previous production deployment as the rollback target.
 
-## Account work: architecture chosen, implementation not started
+## Account work: implemented; staging release exits pending
 
-The owner requested secure signup with name/email/password, verification,
-sign-in, password recovery, sign-out, Google and Apple, and synchronization of
-library preference, saved books and viewed books. Anonymous use should continue.
+Deepak approved the document packet and Claude canvas v4 at R02 (`36a1436`),
+then authorized progressive story/task implementation. Feature code in
+[PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57) now includes
+email/password, Google/Apple protocol and method management, verified email
+change, private library/shelf/history, explicit guest import, identity-isolated
+UI, streaming export, durable deletion, independent restore suppression and
+bounded maintenance tooling. See [implementation](accounts/IMPLEMENTATION.md),
+[validation](accounts/VALIDATION.md) and [operations](accounts/OPERATIONS.md).
 
-Direction: Better Auth in the existing Express API, managed Postgres (Neon is
-preferred), transactional email, secure server sessions and private owner-scoped
-reading data. The architecture is in
-[the foundation analysis](plans/2026-10-31-accounts-social-foundation.md).
-PRD/UX/engineering/UI specifications must settle the remaining implementation
-choices before schema and API work begins. No database, OAuth client, mail service,
-account UI or account persistence has been provisioned/implemented by this work.
+Node 22 checks include 514 server tests with actual local Postgres roles and
+143 client tests, type checking, production build and zero audit findings.
+Browser and hosted evidence are dated in VALIDATION.md; controlled provider/mail
+transports do not prove live delivery. Guest/public behavior and exact catalog
+identities remain required contracts.
 
-Book identities reuse Open Library work/edition IDs, normalized ISBNs and existing
-catalog keys. A small `book_refs` store supports relationships; do not build a
-new universal catalog or fuzzy work-matching engine. Unresolved references remain
-saveable. See [existing discovery behavior](work-aware-search.md).
+The subsequent [account screen review](accounts/SCREEN_REVIEW.md) fixes form/card
+layout, field/focus errors and failed clear/import retries, adds paired artifact
+captures, and checks narrow/zoomed layouts in three lights. The owner's phone-type
+review sets account headings to 28px with 16px body/input text. Default-size images
+and enlarged-text stress images are labelled separately in the gallery.
 
-Reviews, comments, follows, favorites, reading statuses, lists and activity are
-future discovery scope. **They still need requirements and definitions**, including
-privacy, moderation, work identity, deletion and acceptance criteria.
+Isolated staging uses `mybookshelf-accounts-staging` in iad1, Neon and a separate
+private deletion ledger. Real staging migration checksums 001–011 match the repo;
+private ledger writes/reads/encrypted cleanup and anonymous-read denial pass.
+Runtime credentials are Preview/account-settings only, administrator Development
+only. Existing production resources/Git connection remain unchanged.
 
-## Resume in this order
+The owner subsequently instructed: Resend only for production; keep Google/Apple
+disabled and add their credentials later. These are deliberate activation deferrals,
+not current staging setup requests. Live staging capabilities confirm all three
+methods remain disabled. The GitHub workflow is an optional staging scheduler;
+its Actions-secret HTTP 403 does not require a permission change to finish coding.
+See [current rollout choices](accounts/OPERATIONS.md#owners-current-rollout-choices).
+Production still needs real mail, active cleanup/alerts, hosted backup/restore,
+retention proof and final accessibility/operator/R03 review before account enablement.
+Provider-specific live checks apply before those methods are enabled later.
 
-1. Read this handoff, the foundation analysis and
-   [the delivery backlog](plans/2026-10-31-accounts-delivery-backlog.md).
-2. Verify the newly configured GitHub Projects credential in the new environment,
-   using [the credential notes](development/credentials.md). Do not expose its value.
-3. Continue from the existing [GitHub planning index issue #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1).
-   The native GitHub Project and child issues have **not** been created. Create
-   them from the checked-in backlog once access works, linking epics/stories and
-   marking future expansion as needing requirements. Avoid duplicate index issues.
-4. Start with the five requested tasks: PRD, UX design, engineering implementation
-   plan, UI implementation plan, then detailed task decomposition for each story.
-   This handoff preserves the outline; it does not mark those deliverables done.
-
-The prior chat paused backlog publication to resolve credentials. Its existing
-integration could access the repository and create issues, but Projects requests
-failed with `Resource not accessible by integration`. The newly added secret did
-not appear in that task's running secret bindings. This is a task/configuration
-observation, not proof that the saved environment was configured incorrectly.
+Worktree: `/workspace/worktrees/MyBookshelf-web-account-settings`, branch
+`account-settings`. The existing
+[project](https://github.com/users/ddk220-light/projects/3) tracks epics, stories,
+progressively linked tasks and remaining validation.
 
 ## This handoff's verification
 

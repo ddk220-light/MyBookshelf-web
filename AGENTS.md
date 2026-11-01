@@ -19,8 +19,9 @@ Keep the handoff accurate when completing substantial work.
 - Respect catalog restrictions, keyboard access and reduced motion. Compare UI
   work against the reference boards and the approved decisions, on desktop and
   mobile in all three reading lights.
-- Account architecture is planning material. PRD/UX/engineering/UI specifications
-  and story decomposition come first. Social expansion still needs requirements
-  and definitions. Do not treat proposed tables as approved migrations.
+- Account PRD/UX/engineering/UI and Claude canvas version 4 are approved at R02.
+  Expand concrete tasks for each story as it is reached, then implement and test.
+  Preserve the reviewed contracts; R03 still gates production release. Social
+  expansion still needs separately reviewed requirements and definitions.
 - Production and preview are distinct. Check current deployment configuration
   before releasing; the handoff records the last verified state.

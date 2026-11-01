@@ -34,6 +34,7 @@ for (const field of ['savedBooks','recentBooks']) test('damaged ' + field + ' bl
   await page.getByRole('dialog').getByRole('button', { name: 'Start a new shelf', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Reload shelf', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Save book', exact: true }).click();
+  await expect(page.getByRole('button', {name:'On your shelf',exact:true})).toBeVisible();
   expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).savedBooks.length, key)).toBe(1);
 });
 
@@ -63,7 +64,7 @@ test('transient library failure preserves selection and confirmed removal keeps 
   missing = true;
   await page.getByRole('button', { name: 'Retry', exact: true }).click();
   await expect(page.locator('.site-notice')).toContainText(LINKED_LIBRARY.name + ' is no longer listed');
-  expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).selectedLibraryId, key)).toBeNull();
+  await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key)).selectedLibraryId, key)).toBeNull();
 });
 
 test('restored storage access never overwrites a shelf that could not be read', async ({ page }) => {

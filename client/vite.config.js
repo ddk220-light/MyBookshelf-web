@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { HTML_SECURITY_POLICY } from '../server/anonymousApp.js';
+import { HTML_SECURITY_POLICY } from '../shared/security-policy.mjs';
 
 export default defineConfig({
   appType: 'mpa',

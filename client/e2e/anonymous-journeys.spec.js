@@ -78,6 +78,7 @@ test('direct links work without a library and confirmed catalog titles survive s
   await page.goto('/app/books/' + encodeURIComponent(BOOK.bookKey));
   await expect(page.getByRole('heading', { name: 'பரமார்த்த குரு கதைகள்', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Save book', exact: true }).click();
+  await expect(page.getByRole('button', {name:'On your shelf',exact:true})).toBeVisible();
   const stored = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), key);
   expect(stored.savedBooks[0].title).toBe('பரமார்த்த குரு கதைகள்');
   expect(stored.recentBooks[0].title).toBe('பரமார்த்த குரு கதைகள்');
@@ -151,6 +152,7 @@ test('themes default to device, explicit choice overrides it, and clearing only 
   expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).savedBooks.length, key)).toBe(1);
   await page.getByRole('button', { name: 'Clear saved books', exact: true }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Clear saved books', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   const stored = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), key);
   expect(stored.savedBooks).toEqual([]);
   expect(stored.recentBooks).toHaveLength(1);

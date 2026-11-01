@@ -8,14 +8,22 @@
   "scripts": {
     "dev": "node --watch index.js",
     "start": "node index.js",
-    "test": "node --test --test-reporter=spec index.test.js anonymousApp.test.js vercel.test.js public-v2/*.test.js services/*.test.js services/providers/*.test.js"
+    "test": "node --test --test-reporter=spec index.test.js anonymousApp.test.js vercel.test.js public-v2/*.test.js services/*.test.js services/providers/*.test.js accounts/*.test.js",
+    "accounts:migrate": "node db/migrate.js",
+    "accounts:generate-schema": "node db/generate-auth-schema.js",
+    "test:accounts": "node --test accounts/*.test.js"
   },
   "dependencies": {
+    "@better-auth/core": "1.7.14",
+    "@vercel/blob": "2.4.0",
+    "better-auth": "1.7.14",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "isbn3": "2.0.12",
+    "jose": "6.2.14",
     "node-fetch": "^3.3.2",
+    "pg": "8.23.1",
     "undici": "^7.30.1"
   },
   "devDependencies": {
