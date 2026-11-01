@@ -1,6 +1,6 @@
 # Account delivery plan
 
-Version 0.2, 2026-11-01. D05. **Draft for R01 review.** Reuse the existing
+Version 0.2, 2026-11-01. D05. **Approved at R02; progressive implementation active.** Reuse the existing
 [project](https://github.com/users/ddk220-light/projects/3) and
 [numbered backlog](../plans/2026-10-31-accounts-delivery-backlog.md). This document
 decomposes work into reviewable tasks; IDs below are task specifications, not a
@@ -38,8 +38,8 @@ flowchart LR
     D5 --> R1[R01 document review]
     R1 --> C[S22 Claude artifact]
     C --> R2[R02 artifact and final design approval]
-    R1 --> Publish[D05 child-task publication]
-    Publish --> R2
+    R2 --> Publish[D05 progressive child-task publication]
+    Publish --> F
     R2 --> P[P01-P04 prerequisites]
     P --> F[S01-S03 foundation]
     F --> A[S04-S10 and S21 auth]
@@ -63,8 +63,9 @@ The latest user instruction supersedes PRD-only-first sequencing: D02/D03 now us
 the draft PRD; D04 drafts before S22; R01 reviews **all** drafts; S22 then creates
 the artifact and reconciles D02/D04/D05 before R02. Native dependencies must not
 retain D02/D03→R01 or D04→S22, which would introduce a review cycle.
-R01 consumes the D05 draft but does not wait for closure of D05: that issue also
-includes child-issue publication after R01, and R02 remains blocked on it.
+R01 consumed the D05 draft. R02 is approved; the owner subsequently authorized
+progressive child publication as each story is reached. D05 stays open for that
+ongoing bookkeeping rather than blocking completed R02 approval.
 
 ## Task definition and publication
 

@@ -1,7 +1,7 @@
 # Account test strategy and release evidence
 
-Version 0.2, 2026-11-01. D03. **Planned tests; none of the account checks below
-has run yet.** A documentation review is not runtime validation. Requirements:
+Version 0.2, 2026-11-01. D03. **Approved test plan.** Actual results and remaining required checks are recorded
+in [VALIDATION.md](VALIDATION.md). A documentation review is not runtime validation. Requirements:
 [PRD](PRD.md). Contracts: [ENGINEERING_DESIGN.md](ENGINEERING_DESIGN.md).
 
 ## Test layers and fixtures

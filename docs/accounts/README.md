@@ -3,7 +3,8 @@
 Packet version **0.2 — R01 and R02 approved**, 2026-11-01. Product owner/reviewer:
 Deepak Ravikumar. Draft author: Codex. Deepak approved the document packet and
 DEC-01–10 in chat on 2026-11-01 (America/Los_Angeles), at commit
-`5056de00bc1091fd11a8b49cf358e2594c37a49e`. No account services or application code have been implemented.
+`5056de00bc1091fd11a8b49cf358e2594c37a49e`. Implementation and evidence are recorded in [IMPLEMENTATION.md](IMPLEMENTATION.md)
+and [VALIDATION.md](VALIDATION.md); R03 remains pending.
 
 Start with the PRD and the decisions below. The other documents specify how the
 experience, implementation and release would meet those requirements.
@@ -56,7 +57,7 @@ This supersedes the older PRD-only-first sequence in the original backlog.
    explicit decision. Current decision: **approved, 2026-11-01**, for the commit above.
 2. **S22:** after R01 approval, Claude makes the interactive UI artifact from the
    reviewed packet. Its source, preview, state coverage and deviations are recorded
-   in [UI_ARTIFACT.md](UI_ARTIFACT.md). Current artifact: **v0.2 created**, awaiting R02
+   in [UI_ARTIFACT.md](UI_ARTIFACT.md). Current artifact: **v0.2 / canvas v4 approved at R02**
    ([source](../design/accounts/claude-artifact/README.md)).
 3. **R02 / [#8](https://github.com/ddk220-light/MyBookshelf-web/issues/8): review Claude's artifact and reconciled documents/tasks.**
    Explicit approval authorizes provisioning and feature implementation. Current
@@ -76,9 +77,9 @@ and planning branch `account-settings` at `f648f20`. See the engineering invento
 for inspected files. Checks passed for local document links, all 17 PRD requirements mapped to
 final tests, task specifications for all 22 stories, and the 56-issue/117-edge
 native dependency graph (acyclic; implementation reaches R02 and rollout R03).
-Whitespace checks passed. Auth integration, vendor configuration, browser
-accessibility, visual fidelity, performance and operational drills are future
-work with explicit test tasks; there are no passing account-test claims yet.
+Whitespace checks passed. That paragraph describes the planning checkpoint. Current auth, browser,
+performance and operational evidence, with unresolved live exits, is maintained
+in [VALIDATION.md](VALIDATION.md).
 
 Use the existing [project](https://github.com/users/ddk220-light/projects/3),
 [backlog](../plans/2026-10-31-accounts-delivery-backlog.md) and

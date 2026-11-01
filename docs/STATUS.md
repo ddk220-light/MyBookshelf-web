@@ -53,41 +53,40 @@ are available here without the private branch.
   Repository protection and vulnerability-reporting settings also need owner
   administration. Keep the previous production deployment as the rollback target.
 
-## Account work: R02 approved; foundation implementation active
+## Account work: implemented; staging release exits pending
 
-Deepak approved all checked-in artifacts at `36a1436` on 2026-11-01 and
-instructed progressive story-task publication and implementation. R01 and R02
-are complete; Claude’s canvas version 4 is the approved visual reference.
-R03 still gates production release. The earlier wait-for-artifact and
-publish-all-children-before-R02 instructions are superseded.
+Deepak approved the document packet and Claude canvas v4 at R02 (`36a1436`),
+then authorized progressive story/task implementation. Feature code in
+[PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57) now includes
+email/password, Google/Apple protocol and method management, verified email
+change, private library/shelf/history, explicit guest import, identity-isolated
+UI, streaming export, durable deletion, independent restore suppression and
+bounded maintenance tooling. See [implementation](accounts/IMPLEMENTATION.md),
+[validation](accounts/VALIDATION.md) and [operations](accounts/OPERATIONS.md).
 
-The [implementation record](accounts/IMPLEMENTATION.md) contains the exact current
-scope, actual tests, staging resource IDs and task links. The foundation now has
-pinned Better Auth/native Postgres, shared lazy application composition,
-transactional migrations, separate runtime roles, forced RLS, active-identity
-provisioning and a narrow private session facade. App facades now cover signup/verification, password/session lifecycle and
-private library/shelf/history APIs, backed by 506 passing server tests at this
-checkpoint. Account entry/import and initial settings UI are implemented with memory-only
-account repositories and explicit guest continuation on uncertain identity.
-The current checkpoint has 134 client tests and twelve real local Chromium
-account journeys across desktop/mobile and three lights, including axe checks.
-Weaker raw auth routes remain gated. Verified email change and Google/Apple method-management code are implemented;
-export/deletion and live-provider validation are still in progress; this is not a release-ready candidate.
+Node 22 checks include 514 server tests with actual local Postgres roles and
+142 client tests, type checking, production build and zero audit findings.
+Browser and hosted evidence are dated in VALIDATION.md; controlled provider/mail
+transports do not prove live delivery. Guest/public behavior and exact catalog
+identities remain required contracts.
 
-An isolated staging Neon DB, private export/ledger stores and Vercel project
-exist in iad1. Real staging migrations/roles were verified and secrets configured
-in hosting. Production resources were not created. The current production site
-remains on its existing Git connection; staging uses the canonical MyBookshelf-web
-repository. See the runbook at `tools/accounts/README.md`.
+Isolated staging uses `mybookshelf-accounts-staging` in iad1, Neon and a separate
+private deletion ledger. Real staging migration checksums 001–011 match the repo;
+private ledger writes/reads/encrypted cleanup and anonymous-read denial pass.
+Runtime credentials are Preview/account-settings only, administrator Development
+only. Existing production resources/Git connection remain unchanged.
 
-Continue with S15 export/deletion and live S08–10 provider verification;
-expand subsequent tasks as reached. Real mail, Google/Apple, hosted journeys, restore/deletion and final
-accessibility evidence remain required. Parent stories stay open until complete.
-Preserve private data, exact book identities, guest browsing and all three lights.
+R03 still needs live Google/Apple/mobile Safari and mail, active scheduler/alerts,
+hosted backup/restore and retention proof, assistive-technology/second-operator
+checks and owner release approval. Required provider secrets and Resend's explicit
+legal-policy consent are pending. Actions secret setup is blocked by HTTP 403
+with the available GitHub connection. Continue from these concrete exits;
+do not recreate provisioned resources or silently defer Apple.
 
 Worktree: `/workspace/worktrees/MyBookshelf-web-account-settings`, branch
-`account-settings`. Existing [project](https://github.com/users/ddk220-light/projects/3)
-and [PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57) track this work.
+`account-settings`. The existing
+[project](https://github.com/users/ddk220-light/projects/3) tracks epics, stories,
+progressively linked tasks and remaining validation.
 
 ## This handoff's verification
 
