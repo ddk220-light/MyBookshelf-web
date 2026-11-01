@@ -37,7 +37,7 @@ export function createLocalContentService({ loadSnapshot = readGutenbergSnapshot
   function cursorState(cursor, binding) {
     if (!cursor) return { offset: 0, expires: now() + 900_000 };
     const [payload, mac, extra] = cursor.split('.');
-    if (extra || !payload || !mac) throw failure('CONTENT_CURSOR_INVALID', 'Start this search again.', 409);
+    if (extra || !payload || !/^[A-Za-z0-9_-]{43}$/.test(mac || '')) throw failure('CONTENT_CURSOR_INVALID', 'Start this search again.', 409);
     const expected = signature(payload);
     if (mac.length !== expected.length || !timingSafeEqual(Buffer.from(mac), Buffer.from(expected))) throw failure('CONTENT_CURSOR_INVALID', 'Start this search again.', 409);
     try {
