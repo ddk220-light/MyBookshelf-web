@@ -494,11 +494,13 @@ export function ImportPage() {
             )
           : { books: [] };
         if (!alive.current) return;
-        const cleaned = removeAcknowledgedDeviceCopy(frozen.state, {
+        const cleaned = await removeAcknowledgedDeviceCopy(frozen.state, {
           includeHistory: history,
           deviceLibrary,
           retainedHistory: new Set(retained.books.map((b) => b.bookKey)),
+          isCurrent:()=>alive.current,
         });
+        if(!alive.current)return;
         suffix = cleaned
           ? "Removed unchanged imported copies here. Any newer device changes were kept."
           : "Imported successfully. The copy here could not be removed; it is still safe to keep it.";
@@ -694,6 +696,8 @@ export function ProviderReturnPage() {
     location = useLocation(),
     navigate = useNavigate();
   const recent = useRecentAuth();
+  const alive=useRef(true);
+  useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const providerError = new URLSearchParams(location.search).get("error");
@@ -716,10 +720,11 @@ export function ProviderReturnPage() {
     setError("");
     try {
       const checked = await account.refresh(true);
+      if(!alive.current)return;
       if (checked.status !== "authenticated")
         throw Error(
           checked.status === "unverified"
-            ? "Your provider did not confirm a verified email. Use email sign-up or another verified sign-in method."
+            ? "Your provider did not confirm a verified email. Check your email for a verification link, then sign in again."
             : "Couldn’t check your account. Restart sign-in.",
         );
       const flowId = new URLSearchParams(location.search).get("flow");
@@ -732,6 +737,7 @@ export function ProviderReturnPage() {
           csrf: checked.csrfToken,
           body: { flowId },
         });
+        if(!alive.current)return;
         if (result.kind === "confirmed") recent.set(result, checked);
         navigate("/app/settings/account", { replace: true, state: null });
         return;
@@ -747,6 +753,7 @@ export function ProviderReturnPage() {
         { replace: true, state: null },
       );
     } catch (failure) {
+      if(!alive.current)return;
       setError(
         failure instanceof Error ? failure.message : "Couldn’t finish sign-in.",
       );

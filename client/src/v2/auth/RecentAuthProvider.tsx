@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
 import {
   useAccountSession,
   type AccountSession,
@@ -40,6 +46,15 @@ export function RecentAuthProvider({ children }: { children: ReactNode }) {
     value.expiresAt > Date.now()
       ? value
       : null;
+  useEffect(() => {
+    if (
+      value &&
+      (value.owner !== session.user?.id ||
+        value.epoch !== session.epoch ||
+        value.expiresAt <= Date.now())
+    )
+      setValue(null);
+  }, [value, session.user?.id, session.epoch]);
   return (
     <Context.Provider
       value={{

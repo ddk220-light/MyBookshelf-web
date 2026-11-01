@@ -17,10 +17,13 @@ import { createEmailActions } from "./email-actions.js";
 import {createSocialActions} from './social-actions.js';
 import {privateName,checkCompromisedPassword} from './validation.js';
 import {createMethodActions} from './method-actions.js';
+import {createExportActions} from './export-actions.js';
+import {createDeletionActions} from './deletion-actions.js';
+import {createDeletionLedger} from '../jobs/deletion-ledger.js';
 
 const ABSOLUTE_SESSION_MS = 30 * 86400 * 1000;
 
-export async function createAccountService(config, { checkPassword } = {}) {
+export async function createAccountService(config, { checkPassword,ledger=createDeletionLedger(config) } = {}) {
   const pool = new Pool({
     connectionString: config.databaseURL,
     max: 4,
@@ -78,6 +81,7 @@ export async function createAccountService(config, { checkPassword } = {}) {
       ...sessions,
       ...createSocialActions({auth,pool,config}),
       ...createMethodActions({auth,pool,config,consumeProof:credentials.consumeProof,checkPassword:checkPassword??checkCompromisedPassword}),
+      ...createDeletionActions({auth,pool,config,consumeProof:credentials.consumeProof,ledger}),
       ...createProfileActions({ auth, pool, config }),
       ...createEmailActions({
         auth,
@@ -104,6 +108,7 @@ export async function createAccountService(config, { checkPassword } = {}) {
         createShelfActions({ owned: reading.owned, secret: config.secret }),
         createHistoryActions({ owned: reading.owned }),
         createImportActions(reading),
+        createExportActions({owned:reading.owned,pool,config}),
       );
     async function identity(headers, setCookie = () => {}) {
       const result = await auth.api.getSession({
@@ -147,6 +152,7 @@ export async function createAccountService(config, { checkPassword } = {}) {
       identity,
       actions,
       reading,
+      maintenance:{ledger,purgeDeletion:actions.purgeDeletion},
       limitPrivate: (identity, action) =>
         consumeLimits(pool, config.secret, [
           {

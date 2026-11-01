@@ -13,7 +13,7 @@ import {AccountSummary} from '../account/AccountSummary';
 import {useAccountSession} from '../../auth/AccountSessionProvider';
 
 export function SettingsPage() {
-  const { library, loadingLibrary, libraryError, retryLibrary, clearSavedBooks, recoveryMode,pending } = useLibrary();
+  const { library, loadingLibrary, libraryError, retryLibrary, clearSavedBooks, recoveryMode,pending,mutationNotice } = useLibrary();
   const {session}=useAccountSession();
   const { light, preference, setLight } = useReadingLight();
   const { enabled, setEnabled } = useDogAnimation();
@@ -79,6 +79,7 @@ export function SettingsPage() {
       body={<p>Your saved shelf will be emptied. This cannot be undone.</p>}
       confirmLabel="Clear saved books"
       pending={pending}
+      error={mutationNotice}
       onConfirm={async() => { if(await clearSavedBooks())setConfirming(false); }}
       onCancel={() => setConfirming(false)}
     />

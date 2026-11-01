@@ -26,7 +26,11 @@ export function accountToken(value) {
 export async function checkCompromisedPassword(password, fetcher = fetch) {
   // Only the first five SHA-1 hex characters leave the server; never send the
   // password or full hash. SHA-1 here is a range lookup, not password storage.
-  const digest = createHash('sha1').update(password).digest('hex').toUpperCase();
+  // Match the pinned library's native scrypt input normalization. Otherwise a
+  // compatibility-character spelling could bypass screening for the password
+  // that the native verifier actually accepts. The facade still passes the
+  // original password unchanged to the native hash/verify functions.
+  const digest = createHash('sha1').update(password.normalize('NFKC')).digest('hex').toUpperCase();
   let response;
   try { response = await fetcher('https://api.pwnedpasswords.com/range/' + digest.slice(0, 5), {
     headers: { 'Add-Padding': 'true' }, signal: AbortSignal.timeout(4000),

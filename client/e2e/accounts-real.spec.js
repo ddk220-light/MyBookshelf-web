@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import AxeBuilder from "@axe-core/playwright";
 const enabled = process.env.ACCOUNT_E2E === "true";
 test.describe("account browser → real API → isolated Postgres", () => {
@@ -10,7 +11,7 @@ test.describe("account browser → real API → isolated Postgres", () => {
   for (const light of ["daylight", "lamplight", "ink"])
     test(
       "signup, scanner-safe verification, profile and sign-out in " + light,
-      async ({ page, request }) => {
+      async ({ page, request }, testInfo) => {
         const email = "pw-" + randomUUID() + "@example.test",
           password = "a synthetic browser password " + randomUUID();
         await page.addInitScript(
@@ -30,6 +31,10 @@ test.describe("account browser → real API → isolated Postgres", () => {
             "data-light",
             light,
           );
+          await page.screenshot({
+            path: testInfo.outputPath("account-sign-up-" + light + ".png"),
+            fullPage: true,
+          });
           await page
             .getByLabel("Your name", { exact: true })
             .fill("Synthetic private reader");
@@ -101,6 +106,15 @@ test.describe("account browser → real API → isolated Postgres", () => {
             .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
             .analyze();
           expect(a11y.violations).toEqual([]);
+          expect(
+            await page.evaluate(
+              () => document.documentElement.scrollWidth <= window.innerWidth,
+            ),
+          ).toBe(true);
+          await page.screenshot({
+            path: testInfo.outputPath("account-settings-" + light + ".png"),
+            fullPage: true,
+          });
           const storage = await page.evaluate(() =>
             JSON.stringify({ ...localStorage }),
           );
@@ -517,5 +531,194 @@ test("switching accounts rejects an older view and never renders the previous pr
   } finally {
     for (const email of emails)
       await request.post("/__accounts_test__/cleanup", { data: { email } });
+  }
+});
+
+test("private export downloads JSON; deletion can be cancelled, confirmed once and checked after a lost response", async ({
+  page,
+  request,
+}, testInfo) => {
+  test.skip(
+    !enabled,
+    "Run only against the explicit loopback account harness.",
+  );
+  const base = process.env.PLAYWRIGHT_BASE_URL,
+    email = "pw-" + randomUUID() + "@example.test",
+    password = "a synthetic data-controls password " + randomUUID();
+  try {
+    expect(
+      (
+        await request.post("/api/account/sign-up", {
+          headers: { Origin: base },
+          data: { name: "Synthetic export reader", email, password },
+        })
+      ).status(),
+    ).toBe(202);
+    const token = (
+      await (
+        await request.post("/__accounts_test__/mail", { data: { email } })
+      ).json()
+    ).token;
+    expect(
+      (
+        await request.post("/api/account/verify-email", {
+          headers: { Origin: base },
+          data: { token },
+        })
+      ).ok(),
+    ).toBeTruthy();
+    await page.goto("/app/account/sign-in");
+    await page.getByLabel("Email", { exact: true }).fill(email);
+    await page.getByLabel("Password", { exact: true }).fill(password);
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await page.goto("/app/settings/account");
+    await page.evaluate(() =>
+      localStorage.setItem(
+        "mybookshelf.anonymous-web.v1",
+        JSON.stringify({
+          version: 1,
+          selectedLibraryId: null,
+          recentBooks: [],
+          savedBooks: [
+            {
+              bookKey: "v1:isbn:9780553418026",
+              title: "Separate guest copy",
+              authors: ["Andy Weir"],
+              source: "direct",
+              viewedAt: new Date().toISOString(),
+            },
+          ],
+        }),
+      ),
+    );
+    await page
+      .getByRole("button", { name: "Download account data", exact: true })
+      .click();
+    let dialog = page.getByRole("dialog");
+    await dialog.getByLabel("Password", { exact: true }).fill(password);
+    await dialog.getByRole("button", { name: "Continue", exact: true }).click();
+    const downloaded = page.waitForEvent("download");
+    await dialog
+      .getByRole("button", { name: "Download account data", exact: true })
+      .click();
+    const download = await downloaded;
+    expect(download.suggestedFilename()).toBe("mybookshelf-account.json");
+    const data = JSON.parse(await readFile(await download.path(), "utf8"));
+    expect(data.schemaVersion).toBe(1);
+    expect(data.profile.email).toBe(email);
+    expect(data.profile.signInMethods).toEqual(["password"]);
+    expect(data.savedBooks).toEqual([]);
+    for (const forbidden of [
+      "authUserId",
+      "sessionId",
+      "accessToken",
+      "csrfToken",
+      "passwordHash",
+    ])
+      expect(JSON.stringify(data)).not.toContain(forbidden);
+    await page
+      .getByRole("button", { name: "Delete account", exact: true })
+      .click();
+    dialog = page.getByRole("dialog");
+    await page.keyboard.press("Escape");
+    await expect(
+      page.getByRole("button", { name: "Delete account", exact: true }),
+    ).toBeFocused();
+    await expect(page.getByLabel("Your name", { exact: true })).toHaveValue(
+      "Synthetic export reader",
+    );
+    await page
+      .getByRole("button", { name: "Delete account", exact: true })
+      .click();
+    dialog = page.getByRole("dialog");
+    await dialog.getByLabel("Password", { exact: true }).fill(password);
+    await dialog.getByRole("button", { name: "Continue", exact: true }).click();
+    await expect(
+      dialog.getByText("This permanently deletes your account.", {
+        exact: false,
+      }),
+    ).toBeVisible();
+    for (let step = 0; step < 12; step++) {
+      await page.keyboard.press("Tab");
+      expect(
+        await page.evaluate(
+          () =>
+            document.activeElement === document.body ||
+            Boolean(document.activeElement?.closest("dialog")),
+        ),
+      ).toBe(true);
+    }
+    await page.screenshot({
+      path: testInfo.outputPath("account-delete-confirmation.png"),
+      fullPage: true,
+    });
+    const a11y = await new AxeBuilder({ page })
+      .include("dialog")
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(a11y.violations).toEqual([]);
+    await dialog
+      .getByLabel("I understand and want to delete my account.")
+      .check();
+    let deletionPosts = 0,
+      nonce = "";
+    await page.route("**/api/account/deletion", async (route) => {
+      deletionPosts++;
+      nonce = route.request().postDataJSON().receiptNonce;
+      await route.fetch();
+      await route.abort("failed");
+    });
+    await dialog
+      .getByRole("button", { name: "Delete account", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/app\/account\/deletion$/);
+    await expect(page.getByRole("alert")).toContainText(
+      "Couldn’t confirm the response",
+    );
+    await page
+      .getByRole("button", { name: "Check deletion status", exact: true })
+      .click();
+    await expect(
+      page.getByText("Your deletion request is durably recorded", {
+        exact: false,
+      }),
+    ).toBeVisible();
+    expect(deletionPosts).toBe(1);
+    expect(nonce).toHaveLength(43);
+    const storage = await page.evaluate(() =>
+      JSON.stringify({
+        local: { ...localStorage },
+        session: { ...sessionStorage },
+      }),
+    );
+    expect(storage).not.toContain(nonce);
+    expect(page.url()).not.toContain(nonce);
+    expect(
+      (
+        await request.post("/__accounts_test__/deletion-jobs", {
+          data: { email },
+        })
+      ).ok(),
+    ).toBeTruthy();
+    await page
+      .getByRole("button", { name: "Check deletion status", exact: true })
+      .click();
+    await expect(
+      page.getByRole("heading", { name: "Account cleanup complete" }),
+    ).toBeVisible();
+    expect(
+      (await (await page.request.get("/api/account/session")).json()).status,
+    ).toBe("guest");
+    expect(deletionPosts).toBe(1);
+    expect(
+      await page.evaluate(
+        () =>
+          JSON.parse(localStorage.getItem("mybookshelf.anonymous-web.v1"))
+            .savedBooks[0].title,
+      ),
+    ).toBe("Separate guest copy");
+  } finally {
+    await request.post("/__accounts_test__/cleanup", { data: { email } });
   }
 });

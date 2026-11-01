@@ -21,7 +21,7 @@ For runtime configuration, copy names from `.env.example`, generate a strong
 random auth secret privately and configure exact origins. Run migrations only
 with `ACCOUNTS_MIGRATION_DATABASE_URL` via `npm run accounts:migrate --workspace=server`.
 Create distinct non-owner, non-superuser, non-BYPASSRLS LOGIN roles named
-`mybookshelf_auth` and `mybookshelf_reading` privately, then apply
+`mybookshelf_auth`, `mybookshelf_reading` and `mybookshelf_worker` privately, then apply
 `server/db/runtime-grants.sql` with the migration administrator. Configure their
 separate URLs for runtime; never put the administrator credential in a deployed
 application environment. Keep TLS verification enabled for hosted databases.
@@ -45,12 +45,24 @@ transport double; this does not prove real provider delivery or Google/Apple.
 
 Run the `accounts-real.spec.js` Playwright file with `ACCOUNT_E2E=true` and
 `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4300`. The standard test configuration skips
-this file unless that opt-in is present. Desktop/mobile Chromium scenarios cover
+this file unless that opt-in is present. Desktop/mobile Chromium and WebKit scenarios cover
 all reading lights, verification, profile, explicit import/copy cleanup,
-remote refresh/revocation and email changes. Set
+remote refresh/revocation, email changes, export and deletion receipt recovery. Set
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` only when using a system Chromium.
 
 Start a fresh harness process for each complete run. It creates ephemeral test
 signing/limiter secrets. Repeated runs against one long-lived harness deliberately
 hit the real shared IP limiter; do not disable or weaken production limits to
 make repeated fixtures pass. Synthetic fixture users are cleaned up by each test.
+
+## Synthetic local load check
+
+With the same disposable database, run `ACCOUNT_BENCHMARK=true node tools/accounts/benchmark.mjs`. It creates twenty synthetic
+readers with 1,000 saved books each, exercises actual HTTP/cookies/roles and
+pagination, prints aggregate latency/memory/status counts, then removes its fixtures.
+It rejects hosted/non-test databases and never contacts mail or identity providers.
+This measures local API capacity; hosted cold starts, provider latency, worker lag
+and independent operational alerts require separate staging evidence.
+
+See [validation](../../docs/accounts/VALIDATION.md) and
+[operations](../../docs/accounts/OPERATIONS.md) for evidence and release gates.

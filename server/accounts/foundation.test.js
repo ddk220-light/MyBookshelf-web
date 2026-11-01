@@ -46,9 +46,10 @@ test('sensitive raw routes remain gated; origin rejects precede database work', 
   const app = createApplication({ accounts: createAccountMiddleware({ env: enabled, initialize: async () => {
     calls++; return { session: async () => ({ status: 'guest' }) };
   } }) });
-  for (const path of ['/api/auth/sign-up/email', '/api/auth/change-password', '/api/auth/get-session', '/api/account/export']) {
+  for (const path of ['/api/auth/sign-up/email', '/api/auth/change-password', '/api/auth/get-session']) {
     assert.equal((await request(app).post(path).send({})).status, 503);
   }
+  for(const path of ['/api/account/export','/api/account/deletion','/api/account/deletion/status'])assert.equal((await request(app).post(path).send({})).status,403);
   assert.equal((await request(app).get('/api/account/session').set('Origin', 'https://attacker.test')).status, 403);
   assert.equal(calls, 0);
   assert.deepEqual((await request(app).get('/api/account/session').set('Origin', enabled.BETTER_AUTH_URL)).body, { status: 'guest' });

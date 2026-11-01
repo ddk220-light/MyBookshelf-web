@@ -1,9 +1,9 @@
 import { privateName } from "../accounts/validation.js";
 const chosenName = (profile) => {
   try {
-    return { name: privateName(profile.name) };
+    return { name: privateName(profile.name), image:null };
   } catch {
-    return { name: "" };
+    return { name: "", image:null };
   }
 };
 export function configuredProviders(config) {

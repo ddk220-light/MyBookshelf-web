@@ -16,6 +16,7 @@ import {
   type RecentAction,
 } from "../../auth/RecentAuthProvider";
 import type { AccountCapabilities } from "./ProviderEntry";
+import { useDeletionReceipt } from "../../auth/DeletionReceiptProvider";
 
 type Profile = {
   name: string;
@@ -42,6 +43,8 @@ type Sensitive = {
 type Proof = { proof: string; csrfToken: string };
 export function AccountSettingsPage() {
   const recent = useRecentAuth();
+  const deletion = useDeletionReceipt(),
+    exportRequest = useRef<string | null>(null);
   const account = useAccountSession(),
     library = useLibrary(),
     navigate = useNavigate();
@@ -132,6 +135,7 @@ export function AccountSettingsPage() {
     recent.clear();
   }, [recent.pending, recent.clear]);
   const begin = (next: Sensitive) => {
+    exportRequest.current = null;
     setError("");
     setNotice("");
     setProof(null);
@@ -139,6 +143,7 @@ export function AccountSettingsPage() {
     setAction(next);
   };
   const cancel = () => {
+    exportRequest.current = null;
     setAction(null);
     setProof(null);
     password.current = "";
@@ -221,6 +226,44 @@ export function AccountSettingsPage() {
       const newPassword = String(
         new FormData(event.currentTarget).get("password") || "",
       );
+      if (action.action === "export") {
+        exportRequest.current ??= crypto.randomUUID();
+        const data = await accountRequest<Record<string, unknown>>("/export", {
+          method: "POST",
+          csrf: proof.csrfToken,
+          identity: sessionRef.current.user?.id,
+          body: { proof: proof.proof, operationId: exportRequest.current },
+        });
+        if (!alive.current) return;
+        const url = URL.createObjectURL(
+          new Blob([JSON.stringify(data, null, 2)], {
+            type: "application/json",
+          }),
+        );
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "mybookshelf-account.json";
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setAction(null);
+        setProof(null);
+        setNotice(
+          "Download started. Check your browser’s downloads. Keep the file private.",
+        );
+        return;
+      }
+      if (action.action === "delete") {
+        if (new FormData(event.currentTarget).get("confirm-deletion") !== "on")
+          throw Error("Confirm that you understand account deletion.");
+        const result = deletion.submit({
+          proof: proof.proof,
+          csrfToken: proof.csrfToken,
+          identity: sessionRef.current.user!.id,
+        });
+        navigate("/app/account/deletion", { replace: true, state: null });
+        await result;
+        return;
+      }
       if (action.action === "provider-link") {
         const provider = action.target;
         if (provider !== "google" && provider !== "apple")
@@ -632,6 +675,40 @@ export function AccountSettingsPage() {
           <p>
             <a href="/privacy#website">Privacy policy</a>
           </p>
+          <section aria-labelledby="account-data-controls">
+            <h2 id="account-data-controls" className="settings-label">
+              Your data
+            </h2>
+            <p>
+              Download your private profile, library, saved books and current
+              history as JSON.
+            </p>
+            <button
+              type="button"
+              className="button-quiet"
+              disabled={busy}
+              onClick={() =>
+                begin({ action: "export", label: "Download account data" })
+              }
+            >
+              Download account data
+            </button>
+            <p>
+              Deleting your account ends access immediately and removes live
+              account data within 24 hours. Separate guest copies and downloads
+              remain under your control.
+            </p>
+            <button
+              type="button"
+              className="button-destructive"
+              disabled={busy}
+              onClick={() =>
+                begin({ action: "delete", label: "Delete account" })
+              }
+            >
+              Delete account
+            </button>
+          </section>
         </>
       )}
       <ConfirmDialog
@@ -645,6 +722,7 @@ export function AccountSettingsPage() {
         confirmLabel="Clear recently viewed"
         cancelLabel="Cancel"
         pending={library.pending}
+        error={library.mutationNotice}
         onConfirm={async () => {
           if (await library.clearRecentBooks()) setClear(false);
         }}
@@ -709,6 +787,11 @@ function AccountActionDialog({
       if (previous.current instanceof HTMLElement) previous.current.focus();
     };
   }, []);
+  useEffect(() => {
+    if (error)
+      ref.current?.querySelector<HTMLElement>('[role="alert"]')?.focus();
+    else if (proof) ref.current?.querySelector<HTMLElement>("h2")?.focus();
+  }, [proof?.proof, error]);
   return (
     <dialog
       ref={ref}
@@ -720,13 +803,15 @@ function AccountActionDialog({
         if (!busy) onCancel();
       }}
     >
-      <h2 id="sensitive-title">{proof ? action.label : "Confirm it’s you"}</h2>
+      <h2 id="sensitive-title" tabIndex={-1}>
+        {proof ? action.label : "Confirm it’s you"}
+      </h2>
       <form
         className="account-form"
         onSubmit={(event) => void (proof ? onFinish(event) : onConfirm(event))}
       >
         {error && (
-          <p className="account-error" role="alert">
+          <p className="account-error" role="alert" tabIndex={-1}>
             {error}
           </p>
         )}
@@ -754,6 +839,25 @@ function AccountActionDialog({
                 when it is available.
               </p>
             )}
+          </>
+        ) : action.action === "export" ? (
+          <p>
+            The JSON file includes your private profile, preferences, sign-in
+            method names, library, saved books and unexpired history. Keep your
+            download private.
+          </p>
+        ) : action.action === "delete" ? (
+          <>
+            <p>
+              This permanently deletes your account. Access ends immediately;
+              live data cleanup is targeted within 24 hours. Backups expire
+              within 30 days. Separate guest copies and downloads remain
+              unchanged.
+            </p>
+            <label className="account-check">
+              <input type="checkbox" name="confirm-deletion" required />I
+              understand and want to delete my account.
+            </label>
           </>
         ) : action.action === "email-change" ? (
           <>
@@ -791,7 +895,14 @@ function AccountActionDialog({
           >
             Cancel
           </button>
-          <button disabled={busy || (!proof && !hasPassword)}>
+          <button
+            className={
+              proof && action.action === "delete"
+                ? "button-destructive"
+                : undefined
+            }
+            disabled={busy || (!proof && !hasPassword)}
+          >
             {busy ? "Please wait…" : proof ? action.label : "Continue"}
           </button>
         </div>

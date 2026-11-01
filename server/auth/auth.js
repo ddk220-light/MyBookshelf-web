@@ -11,6 +11,7 @@ import { verifiedOidc } from "./verified-oidc.js";
 import { providerIntents } from "./provider-intents.js";
 import { passwordRotation } from "./password-rotation.js";
 import { passwordBudget } from "./password-budget.js";
+import {deletionSchema} from './deletion-schema.js';
 
 export function authOptions({
   pool,
@@ -86,6 +87,7 @@ export function authOptions({
       providerIntents,
       verifiedOidc,
       passwordRotation,
+      deletionSchema,
     ],
     // Never emit library errors containing request details, tokens or SQL values.
     logger: { disabled: true },

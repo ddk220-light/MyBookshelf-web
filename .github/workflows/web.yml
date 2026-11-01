@@ -32,3 +32,13 @@ jobs:
       - run: node --test tools/deployment/*.test.mjs
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
+      - name: Verify real account browser journeys against disposable Postgres
+        env:
+          ACCOUNT_E2E: 'true'
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:4300
+        run: |
+          node tools/accounts/e2e-server.mjs > /tmp/accounts-e2e.log 2>&1 &
+          account_harness_pid=$!
+          trap 'kill "$account_harness_pid" 2>/dev/null || true' EXIT
+          curl --fail --silent --output /dev/null --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:4300/api/health
+          npm run test:e2e --workspace=client -- accounts-real.spec.js --project=chromium --project=mobile-chromium --project=webkit --workers=2

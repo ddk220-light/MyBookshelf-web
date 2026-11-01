@@ -25,6 +25,7 @@ export function readAccountConfig(env = process.env) {
       workerDatabaseURL: env.ACCOUNTS_WORKER_DATABASE_URL,
       cronSecret: env.ACCOUNTS_CRON_SECRET,
       googleClientId:env.GOOGLE_CLIENT_ID,googleClientSecret:env.GOOGLE_CLIENT_SECRET,
-      appleClientId:env.APPLE_CLIENT_ID,appleClientSecret:env.APPLE_CLIENT_SECRET });
+      appleClientId:env.APPLE_CLIENT_ID,appleClientSecret:env.APPLE_CLIENT_SECRET,
+      deletionLedgerToken:env.ACCOUNTS_DELETION_LEDGER_READ_WRITE_TOKEN });
   } catch { throw new AccountConfigurationError(); }
 }

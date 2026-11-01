@@ -9,9 +9,11 @@ import { Notice } from '../Notice';
 import { Sheet } from '../Sheet';
 import { DogAnimation } from '../DogAnimation';
 import { useBookScreen } from './useBookScreen';
+import {useAccountSession} from '../../auth/AccountSessionProvider';
 export { withCatalogTitle } from './useBookScreen';
 
 export function BookPage() {
+  const {session}=useAccountSession();
   const model = useBookScreen();
   const { book, error, from, backState, library, loadingLibrary, libraryError, retryLibrary, availability, availabilityError,
     retryAvailability, saved, saving, toggleSaved, announcement, libraryPath, returnState, exactIsbn, selectedLanguage, changePreference } = model;
@@ -41,7 +43,7 @@ export function BookPage() {
       <div className="reader-book-cover-column">
         <div className="reader-book-hero"><Cover book={book} fallback={<span className="typeset-cover"><strong>{book.title}</strong><small>{book.authors.join(', ')}</small></span>} /></div>
         <div className="reader-book-actions">
-          <button className="save-book-button" disabled={saving||model.recoveryMode} aria-busy={saving} aria-label={saved ? 'On your shelf' : 'Save book'} aria-pressed={saved} onClick={()=>void toggleSaved()}><span className="book-action-icon" aria-hidden="true"><BookmarkIcon /></span><span className="book-action-label">{saving?'Saving…':saved ? '✓ On your shelf' : '+ Save book'}</span></button>
+          <button className="save-book-button" disabled={saving||(model.recoveryMode&&session.status!=='guest')} aria-busy={saving} aria-label={saved ? 'On your shelf' : 'Save book'} aria-pressed={saved} onClick={()=>void toggleSaved()}><span className="book-action-icon" aria-hidden="true"><BookmarkIcon /></span><span className="book-action-label">{saving?'Saving…':saved ? '✓ On your shelf' : '+ Save book'}</span></button>
           <button className="button-quiet" aria-label="Share" onClick={() => void share()}><span className="book-action-icon" aria-hidden="true"><ShareIcon /></span><span className="book-action-label">Share</span></button>
         </div>
         {shareMessage && <p className="form-hint" role="status">{shareMessage}</p>}

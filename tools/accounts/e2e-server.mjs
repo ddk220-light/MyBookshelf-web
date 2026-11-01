@@ -11,6 +11,9 @@ import {
   testRoleURL,
 } from "../../server/accounts/test-database.js";
 import { decryptMail } from "../../server/jobs/mail.js";
+import { createDeletionLedger } from "../../server/jobs/deletion-ledger.js";
+import { memoryBlob } from "../../server/accounts/test-ledger.js";
+import { runDeletionBatch } from "../../server/jobs/deletions.js";
 const require = createRequire(
   new URL("../../server/package.json", import.meta.url),
 );
@@ -45,11 +48,17 @@ const env = {
   ACCOUNTS_MAIL_FROM: "accounts@example.test",
 };
 let service;
+const ledger = createDeletionLedger(
+  { deletionLedgerToken: "synthetic-loopback-only" },
+  { blob: memoryBlob() },
+);
+const deletedFixtures = new Map();
 const accounts = createAccountMiddleware({
   env,
   initialize: async (config) => {
     service = await createAccountService(config, {
       checkPassword: async () => {},
+      ledger,
     });
     return service;
   },
@@ -60,7 +69,8 @@ const app = createApplication({
   accounts: (req, res, next) => {
     if (
       req.path !== "/__accounts_test__/mail" &&
-      req.path !== "/__accounts_test__/cleanup"
+      req.path !== "/__accounts_test__/cleanup" &&
+      req.path !== "/__accounts_test__/deletion-jobs"
     )
       return accounts(req, res, next);
     if (req.method !== "POST") return res.sendStatus(405);
@@ -69,10 +79,30 @@ const app = createApplication({
         return res.sendStatus(400);
       try {
         const email = req.body.email;
+        if (req.path.endsWith("/deletion-jobs")) {
+          const row = (
+            await admin.query(
+              'SELECT d.* FROM account_deletions d JOIN "user" u ON u.id=d."authUserId" WHERE u.email=$1',
+              [email],
+            )
+          ).rows[0];
+          if (!row || !service) return res.sendStatus(404);
+          deletedFixtures.set(email, row.authUserId);
+          await runDeletionBatch(
+            admin,
+            { ledger, purge: service.maintenance.purgeDeletion },
+            { jobId: row.id },
+          );
+          return res.json({ ok: true });
+        }
         if (req.path.endsWith("/cleanup")) {
           const ids = (
             await admin.query('SELECT id FROM "user" WHERE email=$1', [email])
           ).rows.map((r) => r.id);
+          if (deletedFixtures.has(email)) {
+            ids.push(deletedFixtures.get(email));
+            deletedFixtures.delete(email);
+          }
           await admin.query(
             'DELETE FROM account_mail_jobs WHERE "authUserId"=ANY($1::text[])',
             [ids],
@@ -82,6 +112,14 @@ const app = createApplication({
             [ids],
           );
           await admin.query('DELETE FROM "user" WHERE email=$1', [email]);
+          await admin.query(
+            'DELETE FROM account_deletions WHERE "authUserId"=ANY($1::text[])',
+            [ids],
+          );
+          await admin.query(
+            'DELETE FROM account_provider_cleanup WHERE "authUserId"=ANY($1::text[])',
+            [ids],
+          );
           return res.json({ ok: true });
         }
         const job = (

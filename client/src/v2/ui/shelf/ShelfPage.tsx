@@ -12,7 +12,7 @@ import type { RecentBook } from '../../types';
 import {useAccountSession} from '../../auth/AccountSessionProvider';
 
 export function ShelfPage() {
-  const { library, loadingLibrary, libraryError, retryLibrary, state, clearRecentBooks, removeRecentBook, unsaveBook, recoveryMode, reportStorageFailure,pending,historyEnabled } = useLibrary();
+  const { library, loadingLibrary, libraryError, retryLibrary, state, clearRecentBooks, removeRecentBook, unsaveBook, recoveryMode, reportStorageFailure,pending,historyEnabled,mutationNotice } = useLibrary();
   const {session}=useAccountSession();
   const [preferences, setPreferences] = useState(readReaderPreferences);
   const [editing, setEditing] = useState(false);
@@ -60,7 +60,7 @@ export function ShelfPage() {
       </aside>
     </div>
     <ConfirmDialog open={clearing} title="Clear recently viewed books?" body={<p>Your saved shelf stays. This cannot be undone.</p>}
-      confirmLabel="Clear recent books" pending={pending} onConfirm={async() => { if(await clearRecentBooks())setClearing(false); }} onCancel={() => setClearing(false)} />
+      confirmLabel="Clear recent books" pending={pending} error={mutationNotice} onConfirm={async() => { if(await clearRecentBooks())setClearing(false); }} onCancel={() => setClearing(false)} />
   </section>;
 }
 

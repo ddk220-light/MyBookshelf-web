@@ -1,11 +1,11 @@
 const USER_ID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 
 // ownerId is resolved by the server's session guard; never take it from JSON.
-export async function withOwner(pool, ownerId, run) {
+export async function withOwner(pool, ownerId, run, {repeatableRead=false}={}) {
   if (!USER_ID.test(ownerId)) throw new Error('Invalid owner identity.');
   const client = await pool.connect();
   try {
-    await client.query('BEGIN');
+    await client.query(repeatableRead?'BEGIN ISOLATION LEVEL REPEATABLE READ':'BEGIN');
     await client.query("SELECT set_config('mybookshelf.user_id', $1, true)", [ownerId]);
     const user = await client.query('SELECT status FROM app_users WHERE id=$1 FOR UPDATE', [ownerId]);
     if (user.rowCount !== 1 || user.rows[0].status !== 'active') throw new Error('Account is unavailable.');

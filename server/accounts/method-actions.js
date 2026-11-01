@@ -9,6 +9,7 @@ import { authTransaction } from "../auth/transaction.js";
 import { oauthStartContext } from "../auth/oauth-hooks.js";
 import { configuredProviders } from "../auth/providers.js";
 import { challengeDigest, enqueueAccountMail } from "../jobs/mail.js";
+import {enqueueProviderCleanup} from '../jobs/provider-cleanup.js';
 
 const actions = new Set([
   "password-change",
@@ -285,6 +286,7 @@ export function createMethodActions({
               "LAST_SIGN_IN_METHOD",
               "Connect another usable sign-in method before removing this one.",
             );
+          await enqueueProviderCleanup(auth,config,selected);
           await auth.api.unlinkAccount({
             headers,
             body: { accountId: selected.id },
@@ -315,6 +317,7 @@ export function createMethodActions({
               "VERIFY_EMAIL_REQUIRED",
               "Verify your email first.",
             );
+          if((await context.internalAdapter.findCredentialAccount(identity.authUserId))?.password)throw new AccountRequestError(409,'PASSWORD_ALREADY_SET','A password is already set. Refresh settings to change it.');
           await auth.api.setPassword({
             headers,
             body: { newPassword: password },

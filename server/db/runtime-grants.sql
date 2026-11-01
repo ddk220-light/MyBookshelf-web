@@ -37,3 +37,13 @@ REVOKE ALL ON account_recent_proofs FROM mybookshelf_reading;
 GRANT EXECUTE ON FUNCTION public.account_session_active(text) TO mybookshelf_reading;
 GRANT SELECT,INSERT,UPDATE,DELETE ON account_provider_intents TO mybookshelf_auth;
 REVOKE ALL ON account_provider_intents FROM mybookshelf_reading;
+GRANT SELECT,INSERT,UPDATE,DELETE ON account_deletions,account_provider_cleanup TO mybookshelf_auth;
+REVOKE ALL ON account_deletions,account_provider_cleanup FROM mybookshelf_reading;
+GRANT EXECUTE ON FUNCTION public.account_export_authorize(text,text,uuid) TO mybookshelf_reading;
+DO $$ BEGIN
+ IF EXISTS(SELECT FROM pg_roles WHERE rolname='mybookshelf_worker') THEN
+  GRANT SELECT,UPDATE,DELETE ON account_deletions,account_provider_cleanup TO mybookshelf_worker;
+  GRANT SELECT,INSERT,UPDATE ON account_job_health TO mybookshelf_worker;
+  GRANT EXECUTE ON FUNCTION public.account_retention() TO mybookshelf_worker;
+ END IF;
+END $$;

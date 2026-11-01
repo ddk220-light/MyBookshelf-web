@@ -57,6 +57,12 @@ export function useBookScreen() {
     record();document.addEventListener('visibilitychange',record);
     return()=>document.removeEventListener('visibilitychange',record);
   },[book?.bookKey,rememberBook,libraryState.loadingAccount]);
+  useEffect(()=>{
+    if(book&&opened.current===book.bookKey&&libraryState.updateRecentDisplay)void libraryState.updateRecentDisplay(withCatalogTitle(book,availability));
+    // Display refinement preserves the original guest open time/source. Private
+    // history has no such callback, so metadata refresh cannot record a new view.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[book?.bookKey,book?.title,book?.authors.join('\u0000'),book?.coverUrl,book?.isbn13,book?.metadataStatus,availability?.catalogTitle,availability?.matchKind,availability?.freshness,availability?.errorCode,libraryState.updateRecentDisplay]);
   const availabilityBookKey = book?.bookKey, libraryId = library?.id;
   const lookupBookKey = exactIsbn && book?.isbn13 ? 'v1:isbn:' + book.isbn13 : availabilityBookKey;
   useEffect(() => {

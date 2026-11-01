@@ -79,7 +79,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
           {children}
         </main>
         {removedBook && <div className="undo-notice" role="status"><span>Removed {removedBook.title}</span><button onClick={undoRemoval}>Undo</button></div>}
-        <ConfirmDialog open={resetting} title="Start a new shelf?" body={<p>This replaces the saved shelf in this browser. The original contents cannot be recovered after this.</p>} confirmLabel="Start a new shelf" onConfirm={() => { startNewShelf(); setResetting(false); }} onCancel={() => setResetting(false)} />
+        <ConfirmDialog open={resetting} title="Start a new shelf?" body={<p>This replaces the saved shelf in this browser. The original contents cannot be recovered after this.</p>} confirmLabel="Start a new shelf" onConfirm={async() => { await startNewShelf(); setResetting(false); }} onCancel={() => setResetting(false)} />
       </div>
     </div>
   </ReadingLightContext.Provider></DogAnimationProvider>;

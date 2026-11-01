@@ -3,6 +3,9 @@ import { Link, Navigate, Route, Routes,useLocation,useNavigate } from 'react-rou
 import {AccountSessionProvider,useAccountSession} from './auth/AccountSessionProvider';
 import {LinkTokenProvider} from './auth/LinkTokenProvider';
 import {RecentAuthProvider} from './auth/RecentAuthProvider';
+import {DeletionReceiptProvider} from './auth/DeletionReceiptProvider';
+import {DeletionStatusPage} from './ui/account/DeletionStatusPage';
+import {safeAccountReturn} from './auth/accountClient';
 import {SignInPage,VerifyPage,RecoveryPage,ImportPage,EmailChangePage,ProviderReturnPage,CompleteProfilePage} from './ui/account/AccountPages';
 import './ui/account/account.css';
 import {AccountSettingsPage} from './ui/account/AccountSettingsPage';
@@ -27,15 +30,19 @@ function NotFoundPage() {
 }
 
 export function AnonymousWebApp() {
-  return <AccountSessionProvider><RecentAuthProvider><LinkTokenProvider><IdentityApp/></LinkTokenProvider></RecentAuthProvider></AccountSessionProvider>;
+  return <AccountSessionProvider><DeletionReceiptProvider><RecentAuthProvider><LinkTokenProvider><IdentityApp/></LinkTokenProvider></RecentAuthProvider></DeletionReceiptProvider></AccountSessionProvider>;
 }
 function IdentityApp(){
-  const {session}=useAccountSession(),navigate=useNavigate(),location=useLocation();
+  const {session,continueGuest}=useAccountSession(),navigate=useNavigate(),location=useLocation();
   const prior=useRef<string|null>(null),current=session.status==='authenticated'?session.user?.id||null:null;
-  const entryMode=/^\/app\/account\/(sign-in|sign-up|verify|forgot-password|reset-password|email-change|return|complete-profile)$/.test(location.pathname);
+  const entryMode=/^\/app\/account\/(sign-in|sign-up|verify|forgot-password|reset-password|email-change|return|complete-profile|deletion)$/.test(location.pathname);
   const redirect=prior.current!==null&&prior.current!==current&&!entryMode;
-  useLayoutEffect(()=>{if(redirect)navigate('/app/shelf',{replace:true,state:null});prior.current=current;},[current,redirect,navigate,location.pathname]);
-  if(redirect)return <p role="status">Updating your account…</p>;
+  const incomplete=session.status==='authenticated'&&session.needsProfileCompletion&&!entryMode;
+  useLayoutEffect(()=>{if(redirect)navigate('/app/shelf',{replace:true,state:null});else if(incomplete)navigate('/app/account/complete-profile?returnTo='+encodeURIComponent(safeAccountReturn(location.pathname+location.search)),{replace:true,state:null});prior.current=current;},[current,redirect,incomplete,navigate,location.pathname,location.search]);
+  if(redirect||incomplete)return <p role="status">Updating your account…</p>;
+  // Mount forms only after bootstrap selects their repository, so a typed
+  // public search is not replaced by the checking→guest transition.
+  if(session.status==='checking'&&!entryMode)return <section className="page-section"><p role="status">Checking your account…</p><button type="button" onClick={continueGuest}>Continue using this browser</button></section>;
   return <LibraryStateProvider key={entryMode?'account-entry':session.epoch} entryMode={entryMode}><AppFrame><Routes>
     <Route path="/app/libraries" element={<LibrariesPage />} />
     <Route path="/select/:slug" element={<SelectLibraryPage />} />
@@ -53,6 +60,7 @@ function IdentityApp(){
     <Route path="/app/account/email-change" element={<EmailChangePage/>}/>
     <Route path="/app/account/return" element={<ProviderReturnPage/>}/>
     <Route path="/app/account/complete-profile" element={<CompleteProfilePage/>}/>
+    <Route path="/app/account/deletion" element={<DeletionStatusPage/>}/>
     <Route path="/app/account/import" element={<ImportPage/>}/>
     <Route path="/app/books/:bookKey" element={<BookPage />} />
     <Route path="/find" element={<Navigate to="/app/search" replace />} />

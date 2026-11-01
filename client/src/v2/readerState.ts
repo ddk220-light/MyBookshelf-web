@@ -17,7 +17,11 @@ let identityScope: string | null = null;
 // Unknown/private identities never read or write a guest's derived book caches.
 export function setReaderIdentityScope(scope: string | null): void {
   if(scope===identityScope)return;
+  const previous=identityScope;
   session.clear();identityScope=scope;
+  // Unknown scopes cannot read a guest cache. A normal guest bootstrap should
+  // preserve its public library display name and prior availability summaries.
+  if((previous===null&&scope==='checking')||(previous==='checking'&&scope===null))return;
   for(const key of [AVAILABILITY_CACHE_KEY,LOOKUP_PREFERENCES_KEY])try{browserStorage()?.removeItem(key);}catch{/* Memory is already isolated. */}
   try {
     const storage=browserStorage(),raw=JSON.parse(storage?.getItem(READER_PREFERENCES_KEY)||'null') as Partial<ReaderPreferences>|null;

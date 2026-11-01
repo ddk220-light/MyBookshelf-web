@@ -23,11 +23,14 @@ test(
     const admin = new Pool({ connectionString }),
       emails = [],
       codes = new Map(),
-      usedCodes = new Set();
+      usedCodes = new Set(),
+      states = new Set();
     let service;
-    const faultName='oidc_fault_'+randomUUID().replaceAll('-','');
+    const faultName = "oidc_fault_" + randomUUID().replaceAll("-", "");
     t.after(async () => {
-      await admin.query(`DROP TRIGGER IF EXISTS ${faultName} ON account_mail_jobs; DROP FUNCTION IF EXISTS ${faultName}(); DROP TABLE IF EXISTS ${faultName};`);
+      await admin.query(
+        `DROP TRIGGER IF EXISTS ${faultName} ON account_mail_jobs; DROP FUNCTION IF EXISTS ${faultName}(); DROP TABLE IF EXISTS ${faultName};`,
+      );
       const ids = (
         await admin.query('SELECT id FROM "user" WHERE email=ANY($1::text[])', [
           emails,
@@ -41,9 +44,17 @@ test(
         'DELETE FROM account_email_challenges WHERE "authUserId"=ANY($1::text[])',
         [ids],
       );
+      await admin.query(
+        'DELETE FROM account_provider_cleanup WHERE "authUserId"=ANY($1::text[])',
+        [ids],
+      );
       await admin.query('DELETE FROM "user" WHERE email=ANY($1::text[])', [
         emails,
       ]);
+      await admin.query(
+        "DELETE FROM verification WHERE identifier=ANY($1::text[])",
+        [[...states].map((state) => "auth-state:" + state)],
+      );
       await service?.close();
       await admin.end();
     });
@@ -109,6 +120,7 @@ test(
         email_verified: entry.provider === "apple" ? "true" : true,
         ...(entry.name ? { name: entry.name } : {}),
         nonce: entry.badNonce ? "incorrect-nonce" : entry.nonce,
+        picture: "https://example.test/unneeded-provider-photo.jpg",
       };
       const token = await new SignJWT(claims)
         .setProtectedHeader({ alg: "RS256", kid })
@@ -203,6 +215,7 @@ test(
         ...details,
       };
       codes.set(code, entry);
+      states.add(authorization.searchParams.get("state"));
       const headers = cookiesFor(cookies);
       if (provider === "apple")
         headers.set("origin", "https://appleid.apple.com");
@@ -252,6 +265,15 @@ test(
     const identity = await service.identity(signed.headers);
     assert.equal(identity.status, "authenticated");
     assert.equal(identity.user.email, google.entry.email);
+    assert.equal(
+      (
+        await admin.query('SELECT image FROM "user" WHERE id=$1', [
+          identity.authUserId,
+        ])
+      ).rows[0].image,
+      null,
+      "provider photos are not retained for this private-name UI",
+    );
     const account = (
       await admin.query(
         'SELECT "accessToken","refreshToken","idToken" FROM account WHERE "userId"=$1',
@@ -292,6 +314,26 @@ test(
       ).searchParams.has("error"),
     );
     assert.equal(usedCodes.has(wrongState.code), false);
+    const expiredState = await start("google");
+    assert.equal(
+      (
+        await admin.query(
+          `UPDATE verification SET "expiresAt"=now()-interval '1 minute', value=jsonb_set(value::jsonb,'{expiresAt}',to_jsonb((extract(epoch from (now()-interval '1 minute'))*1000)::bigint))::text WHERE identifier=$1`,
+          ["auth-state:" + expiredState.state],
+        )
+      ).rowCount,
+      1,
+    );
+    assert.ok(
+      new URL((await complete(expiredState)).location).searchParams.has(
+        "error",
+      ),
+    );
+    assert.equal(
+      usedCodes.has(expiredState.code),
+      false,
+      "expired native state rejects before code exchange",
+    );
     const collision = await start("apple", {
       email: google.entry.email,
       firstName: "Other",
@@ -387,6 +429,90 @@ test(
       );
       return { ...response, identity, ...result };
     };
+    const beforeIntents = new Set(
+      (
+        await admin.query(
+          'SELECT id FROM account_provider_intents WHERE "sessionId"=$1',
+          [identity.sessionId],
+        )
+      ).rows.map((row) => row.id),
+    );
+    const expiredIntent = await start(
+      "google",
+      {
+        mode: "reauth",
+        action: "export",
+        email: google.entry.email,
+        subject: google.entry.subject,
+      },
+      signed.headers,
+    );
+    const newIntents = (
+      await admin.query(
+        'SELECT id FROM account_provider_intents WHERE "sessionId"=$1',
+        [identity.sessionId],
+      )
+    ).rows.filter((row) => !beforeIntents.has(row.id));
+    assert.equal(newIntents.length, 1);
+    await admin.query(
+      "UPDATE account_provider_intents SET \"expiresAt\"=now()-interval '1 minute' WHERE id=$1",
+      [newIntents[0].id],
+    );
+    assert.ok(
+      new URL((await complete(expiredIntent)).location).searchParams.has(
+        "error",
+      ),
+      "expired intent cannot mint a proof",
+    );
+    const switched = await start(
+      "google",
+      {
+        mode: "reauth",
+        action: "export",
+        email: google.entry.email,
+        subject: google.entry.subject,
+      },
+      signed.headers,
+    );
+    switched.headers.set(
+      "cookie",
+      switched.headers.get("cookie") +
+        "; " +
+        again.headers
+          .get("cookie")
+          .split("; ")
+          .filter((cookie) => cookie.includes(".session_token="))
+          .join("; "),
+    );
+    assert.ok(
+      new URL((await complete(switched)).location).searchParams.has("error"),
+      "another current account cannot finish an old intent",
+    );
+    const revokedDevice = await complete(
+      await start("google", {
+        email: google.entry.email,
+        subject: google.entry.subject,
+      }),
+    );
+    const revokedFlow = await start(
+      "google",
+      {
+        mode: "reauth",
+        action: "export",
+        email: google.entry.email,
+        subject: google.entry.subject,
+      },
+      revokedDevice.headers,
+    );
+    await service.actions.signout(revokedDevice.headers, () => {});
+    assert.ok(
+      new URL((await complete(revokedFlow)).location).searchParams.has("error"),
+      "revoked original session cannot finish an intent",
+    );
+    assert.equal(
+      (await service.identity(signed.headers)).status,
+      "authenticated",
+    );
     const wrongSubject = await start(
       "google",
       { mode: "reauth", action: "export" },
@@ -437,14 +563,45 @@ test(
       },
       freshLinkProof.headers,
     );
-    await admin.query(`INSERT INTO ${faultName}(id) VALUES($1)`,[identity.authUserId]);
-    assert.ok(new URL((await complete(newApple)).location).searchParams.has('error'));
-    assert.equal((await admin.query('SELECT 1 FROM account WHERE "userId"=$1',[identity.authUserId])).rowCount,1,'notice failure rolls back native link');
-    await admin.query(`DELETE FROM ${faultName} WHERE id=$1`,[identity.authUserId]);
+    await admin.query(`INSERT INTO ${faultName}(id) VALUES($1)`, [
+      identity.authUserId,
+    ]);
+    assert.ok(
+      new URL((await complete(newApple)).location).searchParams.has("error"),
+    );
+    assert.equal(
+      (
+        await admin.query('SELECT 1 FROM account WHERE "userId"=$1', [
+          identity.authUserId,
+        ])
+      ).rowCount,
+      1,
+      "notice failure rolls back native link",
+    );
+    await admin.query(`DELETE FROM ${faultName} WHERE id=$1`, [
+      identity.authUserId,
+    ]);
     // The authorization code is one-use even when our transaction rolls back.
-    assert.ok(new URL((await complete(newApple)).location).searchParams.has('error'));
-    const retriedProof=await confirm('google',freshLinkProof.headers,google,'provider-link');
-    const retriedApple=await start('apple',{mode:'link',action:'provider-link',proof:retriedProof.proof,email:newApple.entry.email,subject:newApple.entry.subject},retriedProof.headers);
+    assert.ok(
+      new URL((await complete(newApple)).location).searchParams.has("error"),
+    );
+    const retriedProof = await confirm(
+      "google",
+      freshLinkProof.headers,
+      google,
+      "provider-link",
+    );
+    const retriedApple = await start(
+      "apple",
+      {
+        mode: "link",
+        action: "provider-link",
+        proof: retriedProof.proof,
+        email: newApple.entry.email,
+        subject: newApple.entry.subject,
+      },
+      retriedProof.headers,
+    );
     const linkReply = await complete(retriedApple);
     assert.equal(new URL(linkReply.location).searchParams.has("error"), false);
     assert.equal(
@@ -525,7 +682,9 @@ test(
     );
     assert.equal(before.rowCount, 0);
     const testPassword = "A long synthetic first password 5682";
-    await admin.query(`INSERT INTO ${faultName}(id) VALUES($1)`,[setup.identity.authUserId]);
+    await admin.query(`INSERT INTO ${faultName}(id) VALUES($1)`, [
+      setup.identity.authUserId,
+    ]);
     await assert.rejects(
       service.actions.setFirstPassword(
         { password: testPassword, proof: setup.proof },
@@ -533,8 +692,19 @@ test(
         setup.headers,
       ),
     );
-    assert.equal((await admin.query('SELECT 1 FROM account WHERE "userId"=$1 AND "providerId"=$2',[setup.identity.authUserId,'credential'])).rowCount,0,'notice failure rolls back first password and leaves proof reusable');
-    await admin.query(`DELETE FROM ${faultName} WHERE id=$1`,[setup.identity.authUserId]);
+    assert.equal(
+      (
+        await admin.query(
+          'SELECT 1 FROM account WHERE "userId"=$1 AND "providerId"=$2',
+          [setup.identity.authUserId, "credential"],
+        )
+      ).rowCount,
+      0,
+      "notice failure rolls back first password and leaves proof reusable",
+    );
+    await admin.query(`DELETE FROM ${faultName} WHERE id=$1`, [
+      setup.identity.authUserId,
+    ]);
     await service.actions.setFirstPassword(
       { password: testPassword, proof: setup.proof },
       setup.identity,
@@ -551,12 +721,34 @@ test(
       (await service.identity(cookiesFor(passwordCookies))).status,
       "authenticated",
     );
-    const change=await confirm('apple',setup.headers,relay,'password-change');
-    const changedCookies=[];
-    await service.actions.changePassword({password:testPassword+' changed',proof:change.proof},change.identity,change.headers,c=>changedCookies.push(c));
-    assert.equal(await service.auth.api.getSession({headers:change.headers}),null);
-    assert.equal(await service.auth.api.getSession({headers:cookiesFor(passwordCookies)}),null,'provider-confirmed password change revokes other devices');
-    assert.equal((await service.identity(cookiesFor(changedCookies))).status,'authenticated');
+    const change = await confirm(
+      "apple",
+      setup.headers,
+      relay,
+      "password-change",
+    );
+    const changedCookies = [];
+    await service.actions.changePassword(
+      { password: testPassword + " changed", proof: change.proof },
+      change.identity,
+      change.headers,
+      (c) => changedCookies.push(c),
+    );
+    assert.equal(
+      await service.auth.api.getSession({ headers: change.headers }),
+      null,
+    );
+    assert.equal(
+      await service.auth.api.getSession({
+        headers: cookiesFor(passwordCookies),
+      }),
+      null,
+      "provider-confirmed password change revokes other devices",
+    );
+    assert.equal(
+      (await service.identity(cookiesFor(changedCookies))).status,
+      "authenticated",
+    );
     await admin.query(
       "UPDATE app_users SET status='deleting' WHERE auth_user_id=$1",
       [identity.authUserId],

@@ -15,7 +15,7 @@ export function createReadingActions({
   sessionActive = async () => true,
   directory = createPublicDirectoryService(),
 }) {
-  const owned = (identity, run) =>
+  const owned = (identity, run, options) =>
     withOwner(pool, identity.user.id, async (client) => {
       if (!(await sessionActive(identity, client)))
         throw new AccountRequestError(
@@ -33,7 +33,7 @@ export function createReadingActions({
         ])
       ).rows[0];
       return run(client, settings, identity.user.id);
-    });
+    },options);
   const validateLibrary = (id) => {
     if (
       id !== null &&

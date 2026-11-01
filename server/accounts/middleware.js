@@ -1,4 +1,6 @@
 import express from "express";
+import {randomUUID} from 'node:crypto';
+import {streamAccountExport} from './stream-export.js';
 import {
   AccountRequestError,
   requireOrigin,
@@ -57,6 +59,9 @@ export function createAccountMiddleware({
     '/api/account/provider/result',
     '/api/account/provider/unlink',
     '/api/account/password/setup',
+    '/api/account/export',
+    '/api/account/deletion',
+    '/api/account/deletion/status',
   ]);
   return async function accounts(req, res, next) {
     const path = req.path;
@@ -72,7 +77,12 @@ export function createAccountMiddleware({
       "Cache-Control": "private, no-store",
       "X-Robots-Tag": "noindex",
       "Referrer-Policy": "no-referrer",
+      'X-Request-ID':randomUUID(),
     });
+    const sendJSON=res.json;
+    res.json=function(value){
+      return sendJSON.call(this,value?.error?{...value,error:{...value.error,requestId:res.get('X-Request-ID')}}:value);
+    };
     try {
       const config = readAccountConfig(env);
       if (!config.enabled) return unavailable(res);
@@ -219,6 +229,7 @@ export function createAccountMiddleware({
       }
       if (path === "/api/account/capabilities")
         return res.json(service.actions.capabilities());
+      if(path==='/api/account/deletion/status')return res.json(await service.actions.deletionStatus(req.body,requestIP(req,env)));
       if (path === "/api/account/sign-up")
         return res
           .status(202)
@@ -271,6 +282,8 @@ export function createAccountMiddleware({
           '/api/account/provider/result',
           '/api/account/provider/unlink',
           '/api/account/password/setup',
+          '/api/account/export',
+          '/api/account/deletion',
         ].includes(path)
       ) {
         const identity = await service.identity(headers, setCookie);
@@ -286,6 +299,13 @@ export function createAccountMiddleware({
         if(path==='/api/account/provider/result')return res.json(await service.actions.providerResult(req.body,identity));
         if(path==='/api/account/provider/unlink')return res.json(await service.actions.unlinkMethod(req.body,identity,headers));
         if(path==='/api/account/password/setup')return res.json(await service.actions.setFirstPassword(req.body,identity,headers));
+        if(path==='/api/account/export'){
+          if(!service.reading)throw new AccountRequestError(503,'ACCOUNT_UNAVAILABLE','Account data is temporarily unavailable.');
+          const value=await service.reading.exportAccount(req.body,identity);
+          res.set({'Content-Type':'application/json; charset=utf-8','Content-Disposition':'attachment; filename="mybookshelf-account.json"','X-Content-Type-Options':'nosniff'});
+          await streamAccountExport(res,value);return;
+        }
+        if(path==='/api/account/deletion')return res.status(202).json(await service.actions.deleteAccount(req.body,identity,headers,setCookie));
         if (path === "/api/account/email-change")
           return res
             .status(202)
