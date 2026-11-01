@@ -7,11 +7,12 @@ plan and implement here directly. Do not depend on the previous private checkout
 or copy its Git history/native applications into this repository.
 
 **Current account rollout:** the owner authorized production completion. Source
-`c17a757` is deployed at `https://mybookshelf.cloud`; account entry remains disabled
+`7ab9d89` is deployed at `https://mybookshelf.cloud`; account entry remains disabled
 while production Resend setup and live release checks are unfinished. Dedicated
 production Neon/private deletion storage, migrations, roles and a hosted logical
 restore drill are now verified. The active repair branch is
-`codex/account-signup-availability`. Read the
+`codex/account-production-health-monitor` (S20-C). The merged signup repair is
+PR #151. Read the
 [current production record](accounts/PRODUCTION_ROLLOUT.md) before the older dated
 release observations below. Project tasks #147–150 stay open until real production
 activation and workflow checks pass.

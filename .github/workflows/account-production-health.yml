@@ -1,0 +1,22 @@
+name: Production account health
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '2,7,12,17,22,27,32,37,42,47,52,57 * * * *'
+permissions: {}
+concurrency:
+  group: account-production-health
+  cancel-in-progress: false
+jobs:
+  account-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check production worker freshness and configured services
+        run: |
+          # Readiness is aggregate only. No database, session or cron credential
+          # enters Actions. A failed/stale worker fails this independent job.
+          curl --fail --silent --show-error --max-time 25 \
+            --output /tmp/account-health.json \
+            https://mybookshelf.cloud/api/account/health
+          node -e 'const fs = require("node:fs"); if (JSON.parse(fs.readFileSync("/tmp/account-health.json", "utf8")).status !== "ready") process.exit(1); console.log("Production account worker and prerequisites are ready.");'
