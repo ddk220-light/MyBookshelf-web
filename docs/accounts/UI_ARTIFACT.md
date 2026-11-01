@@ -59,7 +59,7 @@ reviewed requirements. Changes to product behavior must be called out for R02.
 | Field | Value |
 | --- | --- |
 | R01-approved packet commit | `5056de00bc1091fd11a8b49cf358e2594c37a49e` (packet v0.2, DEC-01–10 as proposed). Approved by Deepak Ravikumar on 2026-11-01; recorded on [#7](https://github.com/ddk220-light/MyBookshelf-web/issues/7). |
-| Claude artifact version/source commit | Artifact v0.2, canvas version 3 (`1793517848-1a98`); source in this commit under `docs/design/accounts/claude-artifact/` |
+| Claude artifact version/source commit | Artifact v0.2, canvas version 4 (`1793518146-c9ad`); source in this commit under `docs/design/accounts/claude-artifact/` |
 | Preview / source export | https://claude.ai/artifact/4wk6xx8eN6JZdFz95uM1d8 (private until shared) · [source and README](../design/accounts/claude-artifact/README.md) |
 | Coverage inventory | Below |
 | Claude assumptions and deviations | Below |

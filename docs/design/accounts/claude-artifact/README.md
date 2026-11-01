@@ -5,7 +5,7 @@
 | Creator | Claude, for story [S22 #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56) |
 | Reviewer | Deepak Ravikumar (R02, [#8](https://github.com/ddk220-light/MyBookshelf-web/issues/8)) |
 | Input packet | v0.2, commit `5056de00bc1091fd11a8b49cf358e2594c37a49e`, approved at R01 on 2026-11-01 |
-| Artifact | https://claude.ai/artifact/4wk6xx8eN6JZdFz95uM1d8, version 3 (`1793517848-1a98`) |
+| Artifact | https://claude.ai/artifact/4wk6xx8eN6JZdFz95uM1d8, version 4 (`1793518146-c9ad`) |
 | Artifact version | 0.2 |
 
 The canvas is private until the owner shares it from its Share menu.
