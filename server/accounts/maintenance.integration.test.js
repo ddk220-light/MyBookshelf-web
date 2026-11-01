@@ -5,6 +5,7 @@ import { Pool } from "pg";
 import request from "supertest";
 import { createApplication } from "../application.js";
 import { createJobMiddleware } from "../jobs/middleware.js";
+import { createAccountHealthMiddleware } from "../jobs/health.js";
 import { migrate } from "../db/migrate.js";
 import { prepareTestRoles, testRoleURL } from "./test-database.js";
 
@@ -48,6 +49,56 @@ test(
       ACCOUNTS_JOB_SECRET: secret,
       CRON_SECRET: secret,
     };
+    const monitoredEnv = {
+      ...env,
+      ACCOUNTS_READING_DATABASE_URL: "synthetic-configured",
+      RESEND_API_KEY: "synthetic-configured",
+      ACCOUNTS_MAIL_FROM: "accounts@example.test",
+      ACCOUNTS_DELETION_LEDGER_READ_WRITE_TOKEN: "synthetic-configured",
+    };
+    const monitored = createApplication({
+      accountHealth: createAccountHealthMiddleware({ env: monitoredEnv }),
+    });
+    const healthPath = "/api/account/health";
+    assert.equal(
+      (await request(monitored).get(healthPath)).status,
+      503,
+      "absent successful run is unavailable",
+    );
+    await isolated.query(
+      "INSERT INTO account_job_health(name,last_started,last_succeeded) VALUES('account-maintenance',now(),now()-interval '16 minutes')",
+    );
+    assert.equal(
+      (await request(monitored).get(healthPath)).status,
+      503,
+      "stale worker is unavailable",
+    );
+    await isolated.query("UPDATE account_job_health SET last_succeeded=now()");
+    const ready = await request(monitored).get(healthPath);
+    assert.equal(ready.status, 200);
+    assert.deepEqual(ready.body, { status: "ready" });
+    assert.equal(ready.headers["cache-control"], "private, no-store");
+    assert.equal(ready.headers["x-robots-tag"], "noindex");
+    assert.equal((await request(monitored).post(healthPath)).status, 405);
+    const privileged = createApplication({
+      accountHealth: createAccountHealthMiddleware({
+        env: { ...monitoredEnv, ACCOUNTS_WORKER_DATABASE_URL: target.href },
+      }),
+    });
+    assert.equal(
+      (await request(privileged).get(healthPath)).status,
+      503,
+      "administrator must not be used by monitor",
+    );
+    const missing = createApplication({
+      accountHealth: createAccountHealthMiddleware({ env }),
+    });
+    assert.equal(
+      (await request(missing).get(healthPath)).status,
+      503,
+      "missing mail is unavailable even with a recent success",
+    );
+    await isolated.query("DELETE FROM account_job_health");
     const app = createApplication({ jobs: createJobMiddleware({ env }) });
     const path = "/api/internal/account-jobs";
     assert.equal((await request(app).get(path)).status, 403);
