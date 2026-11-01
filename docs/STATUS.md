@@ -48,6 +48,12 @@ The owner authorized the free-content merge/deployment on 2026-11-01. Its
 production project/domain and rollback deployment. PR #110 now targets `main`
 and integrates the account production baseline at `7ab9d89`. Actual deployment
 and hosted checks are recorded in [#127](https://github.com/ddk220-light/MyBookshelf-web/issues/127).
+The release is now merged at `1c16815` and deployed on `mybookshelf.cloud` with
+four book sources enabled; live papers remain disabled pending Redis. The owner
+then reported irrelevant free-book results and the misleading paper-outage UI.
+The fix is on `research/free-content-discovery-relevance` in the same worktree,
+tracked by [#154](https://github.com/ddk220-light/MyBookshelf-web/issues/154).
+Read [search relevance and verification](research/free-content/SEARCH_RELEVANCE.md).
 The following older release observations are historical checkpoints.
 
 - Reviewed preview: https://mybookshelf-jh0o69edr-ddk220.vercel.app/,
@@ -159,9 +165,9 @@ only. Existing production resources/Git connection remain unchanged.
 ## Resume this free-content branch
 
 1. Use `/workspace/MyBookshelf-web-free-sources-implementation` on
-   `research/free-content-discovery-implementation`, based on approved artifacts
-   at `760863a`. Keep its [draft PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110)
-   based on `main` for the authorized release. Preserve other worktrees.
+   `research/free-content-discovery-relevance`, based on released main `1c16815`.
+   [PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110) is merged.
+   Preserve other worktrees and use #154 for the relevance/disabled-state repair.
 2. Read [implementation/story state](research/free-content/IMPLEMENTATION.md),
    [operations](research/free-content/OPERATIONS.md) and
    [validation](research/free-content/VALIDATION.md). Existing native tasks belong

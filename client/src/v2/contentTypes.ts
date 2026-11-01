@@ -8,6 +8,7 @@ export type ContentItem = {
   collections?:string[];publisher?:string;readingLevel?:{publisher:string;label:string};originalLanguage?:string;
   access: 'free_full_text' | 'free_account_required' | 'unknown';
   match?: { scheme: string; value: string };
+  searchMatch?: { field: 'title' | 'contributor' | 'subject'; value: string };
   locations: Array<{ id: string; host: string; landingUrl: string; readerUrl?: string; access: string; version?:string;
     license?: { id?: string; statement?: string; url?: string }; rightsJurisdiction?: string;
     evidence: { sourceId: string; field: string; observedAt: string } }>;

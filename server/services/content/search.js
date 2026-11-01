@@ -86,7 +86,7 @@ export function createContentService({env=process.env,local,paperAdapter=createE
         return local.search(input);
       }
       const chosen=selected(query);let states={};
-      if(!chosen.length)throw error('CONTENT_DISABLED','Paper search is not connected yet.',503,sourceRows(chosen,states,query));
+      if(!chosen.some(enabled))throw error('CONTENT_DISABLED','Paper search is not connected yet.',503,sourceRows(chosen,states,query));
       try{shared();}catch(e){e.sources=sourceRows(chosen,Object.fromEntries(chosen.map(id=>[id,{status:'unavailable'}])),query);throw e;}
       const eligible=chosen.filter(id=>enabled(id)&&policy(id)&&(!query.languages.length||id==='openalex'));
       if(!eligible.length)throw error(query.languages.length?'CONTENT_FILTER_UNSUPPORTED':'CONTENT_UNAVAILABLE',

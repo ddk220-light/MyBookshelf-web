@@ -108,6 +108,24 @@ it('the unpublished children collection reports its review gate even with no sea
   expect(calls[calls.length-1][0]).toBe('');expect(calls[calls.length-1][2]).toMatchObject({collection:'children'});
 });
 
+it('disabled paper search offers free books with the same query instead of an outage retry',async()=>{
+  vi.mocked(contentApi.search).mockRejectedValue(new PublicApiError({code:'CONTENT_DISABLED',status:503,
+    message:'Paper search is not connected yet.',sources:[{id:'arxiv',status:'disabled',returned:0}]}));
+  mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=Mathematics');
+  await screen.findByRole('heading',{name:'Paper search isn’t enabled yet'});
+  expect(screen.getByRole('link',{name:'Search free books instead'})).toHaveAttribute('href','/app/search?scope=free&q=Mathematics');
+  expect(screen.queryByRole('button',{name:'Try again'})).not.toBeInTheDocument();
+  expect(screen.queryByText('Free-reading sources aren’t answering')).not.toBeInTheDocument();
+});
+
+it('a subject-only result explains its supplied catalog match',async()=>{
+  vi.mocked(contentApi.search).mockResolvedValue({...page,items:[{...item,kind:'learning_resource',title:'Synthetic statistics workbook',
+    subjects:['Mathematics'],searchMatch:{field:'subject',value:'Mathematics'}}]});
+  mount(<ContentSearchPage scope="free"/>,'/app/search?scope=free&q=Mathematics');
+  await screen.findByRole('heading',{name:'Synthetic statistics workbook'});
+  expect(screen.getByText('Subject: Mathematics')).toBeInTheDocument();
+});
+
 it('pilot fixtures retain script, original credits and publisher levels while language filters change',async()=>{
   const story:ContentItem={...item,key:'fcd:v1:storyweaver:7777772',kind:'book',title:'हिन्दी परीक्षण कहानी',languages:['hi'],collections:['children'],
     publisher:'Fixture publisher',readingLevel:{publisher:'Fixture publisher',label:'Publisher level one'},
