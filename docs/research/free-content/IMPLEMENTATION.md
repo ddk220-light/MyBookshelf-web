@@ -60,8 +60,8 @@ into book-edition identity. No account feature is part of this delivery.
 
 | Story | Tasks | State |
 | --- | --- | --- |
-| FCD01 contracts | [#75](https://github.com/ddk220-light/MyBookshelf-web/issues/75), [#76](https://github.com/ddk220-light/MyBookshelf-web/issues/76) | Implementing |
-| FCD02 Gutenberg | Publish tasks when FCD01 is verified | Next |
+| FCD01 contracts | [#75](https://github.com/ddk220-light/MyBookshelf-web/issues/75), [#76](https://github.com/ddk220-light/MyBookshelf-web/issues/76) | Complete: five contract tests passed |
+| FCD02 Gutenberg | [#78](https://github.com/ddk220-light/MyBookshelf-web/issues/78), [#79](https://github.com/ddk220-light/MyBookshelf-web/issues/79) | Local API/import implemented; regression verification in progress |
 | FCD03 Europe PMC | Publish after local slice | Planned |
 | FCD04 UI/shelf | Uses approved free-reading boards and above shelf decision | Planned |
 | FCD05 expanded sources | Per-source contracts and enablement gates | Planned |
