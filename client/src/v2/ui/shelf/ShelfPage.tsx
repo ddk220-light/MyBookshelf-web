@@ -10,9 +10,11 @@ import { exampleBooks } from '../../exampleBooks';
 import { readBookLookup, readCachedAvailability, readReaderPreferences, writeReaderPreferences, type ReaderPreferences } from '../../readerState';
 import type { RecentBook } from '../../types';
 import { SavedContentCard } from '../content/ContentResult';
+import {useAccountSession} from '../../auth/AccountSessionProvider';
 
 export function ShelfPage() {
-  const { library, loadingLibrary, libraryError, retryLibrary, state, clearRecentBooks, removeRecentBook, unsaveBook, unsaveContent, recoveryMode, reportStorageFailure } = useLibrary();
+  const { library, loadingLibrary, libraryError, retryLibrary, state, clearRecentBooks, removeRecentBook, unsaveBook, unsaveContent, recoveryMode, reportStorageFailure,pending,historyEnabled,mutationError,retryMutation } = useLibrary();
+  const {session}=useAccountSession();
   const [preferences, setPreferences] = useState(readReaderPreferences);
   const [editing, setEditing] = useState(false);
   const [clearing, setClearing] = useState(false);
@@ -45,7 +47,7 @@ export function ShelfPage() {
               {editing && <button className="text-button" disabled={recoveryMode} aria-label={'Remove ' + book.title + ' from saved books'} onClick={() => unsaveBook(book.bookKey)}>Remove</button>}</li>;
           })}
         </ul>}
-        {content.length > 0 && <section aria-labelledby="saved-content-heading"><h2 id="saved-content-heading">Free books and papers</h2><ul className="saved-content-list">{content.map(item=><li key={item.contentKey}><SavedContentCard item={item} editing={editing} disabled={recoveryMode} onRemove={unsaveContent}/></li>)}</ul></section>}
+        {content.length > 0 && <section aria-labelledby="saved-content-heading"><h2 id="saved-content-heading">Free books and papers</h2><ul className="saved-content-list">{content.map(item=><li key={item.contentKey}><SavedContentCard item={item} editing={editing} disabled={recoveryMode||!unsaveContent} onRemove={key=>void unsaveContent?.(key)}/></li>)}</ul></section>}
         {!books.length && !content.length && <div className="shelf-start"><h2>Start your shelf</h2><p>Save the books you want to read.</p><Link className="button-link" to="/app/search">Find a book</Link>
           <ul className="shelf-examples">{exampleBooks.slice(0, 3).map(({ book }) => <li key={book.bookKey}><Link to={'/app/books/' + encodeURIComponent(book.bookKey)} state={{ from: 'shelf', book }}><Cover book={book} /><span>{book.title}</span></Link></li>)}</ul></div>}
         <DogAnimation pose="sit" className="shelf-bucky" />
@@ -53,15 +55,16 @@ export function ShelfPage() {
       <aside className="reader-shelf-side">
         {library && <div className="shelf-side-library"><h2>Your library</h2><LibraryCard library={library} compact selected /><Link className="text-link" to="/app/libraries" state={{ after: '/app/shelf' }}>Change library</Link></div>}
         <section className="reader-recent" aria-labelledby="recent-heading"><div className="section-heading"><h2 id="recent-heading">Recently viewed</h2>{state.recentBooks.length > 0 && <button className="text-button" onClick={() => setEditing(!editing)}>{editing ? 'Done' : 'Edit'}</button>}</div>
+          {session.status==='authenticated'&&!historyEnabled&&<p className="muted">Recently viewed is paused. <Link to="/app/settings/account">Manage history</Link></p>}
           {state.recentBooks.length ? <ul>{state.recentBooks.slice(0, editing ? 50 : 8).map(book => <li key={book.bookKey}><BookCard book={book} source="direct" />
             {editing && <button className="text-button" disabled={recoveryMode} aria-label={'Remove ' + book.title + ' from recent books'} onClick={() => removeRecentBook(book.bookKey)}>Remove</button>}</li>)}</ul> : <p className="muted">Books you open appear here.</p>}
           {editing && state.recentBooks.length > 0 && <button className="text-button" disabled={recoveryMode} onClick={() => setClearing(true)}>Clear recent books</button>}
         </section>
-        <p className="shelf-local-note">Your shelf is kept in this browser.</p>
+        <p className="shelf-local-note">{session.status==='authenticated'?'Your private account shelf syncs after confirmation.':'Your shelf is kept in this browser.'}</p>
       </aside>
     </div>
     <ConfirmDialog open={clearing} title="Clear recently viewed books?" body={<p>Your saved shelf stays. This cannot be undone.</p>}
-      confirmLabel="Clear recent books" onConfirm={() => { clearRecentBooks(); setClearing(false); }} onCancel={() => setClearing(false)} />
+      confirmLabel="Clear recent books" pending={pending} error={mutationError} onConfirm={async() => { if(await (retryMutation??clearRecentBooks)())setClearing(false); }} onCancel={() => setClearing(false)} />
   </section>;
 }
 

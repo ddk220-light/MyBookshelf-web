@@ -13,14 +13,39 @@ export type ReaderPreferences = {
 const defaults: ReaderPreferences = { version: 1, shelfView: 'shelf', shelfSort: 'recent' };
 // Optional records never overwrite the original shelf. Failed writes still work in this session.
 const session = new Map<string, string>();
+let identityScope: string | null = null;
+// Unknown/private identities never read or write a guest's derived book caches.
+export function setReaderIdentityScope(scope: string | null): void {
+  if(scope===identityScope)return;
+  const previous=identityScope;
+  session.clear();identityScope=scope;
+  // Unknown scopes cannot read a guest cache. A normal guest bootstrap should
+  // preserve its public library display name and prior availability summaries.
+  if((previous===null&&scope==='checking')||(previous==='checking'&&scope===null))return;
+  for(const key of [AVAILABILITY_CACHE_KEY,LOOKUP_PREFERENCES_KEY])try{browserStorage()?.removeItem(key);}catch{/* Memory is already isolated. */}
+  try {
+    const storage=browserStorage(),raw=JSON.parse(storage?.getItem(READER_PREFERENCES_KEY)||'null') as Partial<ReaderPreferences>|null;
+    if(raw?.version===1)storage?.setItem(READER_PREFERENCES_KEY,JSON.stringify({version:1,shelfView:raw.shelfView,shelfSort:raw.shelfSort}));
+  }catch{/* No private summary is read in the new scope. */}
+}
 function read(key: string, maximum: number): unknown {
   try {
-    const value = session.get(key) ?? browserStorage()?.getItem(key);
-    return value && value.length <= maximum ? JSON.parse(value) : null;
+    const value = session.get(key) ?? (identityScope&&key!==READER_PREFERENCES_KEY?null:browserStorage()?.getItem(key));
+    const parsed=value && value.length <= maximum ? JSON.parse(value) : null;
+    if(identityScope&&key===READER_PREFERENCES_KEY&&!session.has(key))return parsed?.version===1?{version:1,shelfView:parsed.shelfView,shelfSort:parsed.shelfSort}:null;
+    return parsed;
   } catch { return null; }
 }
 function write(key: string, value: unknown): boolean {
   const json = JSON.stringify(value);
+  if(identityScope){
+    session.set(key,json);
+    if(key===READER_PREFERENCES_KEY){
+      const prefs=value as ReaderPreferences;
+      try{browserStorage()?.setItem(key,JSON.stringify({version:1,shelfView:prefs.shelfView,shelfSort:prefs.shelfSort}));}catch{/* Device presentation only. */}
+    }
+    return true;
+  }
   try {
     const storage = browserStorage();
     if (!storage) { session.set(key, json); return false; }

@@ -9,9 +9,12 @@ import { LibraryCard } from '../library/LibraryCard';
 import { useDogAnimation } from '../DogAnimation';
 import { uiMessages as m } from '../../uiMessages';
 import { CopyLibraryLink } from '../library/CopyLibraryLink';
+import {AccountSummary} from '../account/AccountSummary';
+import {useAccountSession} from '../../auth/AccountSessionProvider';
 
 export function SettingsPage() {
-  const { library, state, loadingLibrary, libraryError, retryLibrary, clearSavedBooks, recoveryMode } = useLibrary();
+  const { library, state, loadingLibrary, libraryError, retryLibrary, clearSavedBooks, recoveryMode,pending,mutationError,retryMutation } = useLibrary();
+  const {session}=useAccountSession();
   const { light, preference, setLight } = useReadingLight();
   const { enabled, setEnabled } = useDogAnimation();
   const links = getAppStoreLinks();
@@ -20,6 +23,7 @@ export function SettingsPage() {
 
   return <section className="page-section settings-page">
     <header className="page-heading"><h1>{m.settings}</h1></header>
+    <AccountSummary/>
 
     <section aria-labelledby="settings-library">
       <h2 id="settings-library" className="settings-label">Your library</h2>
@@ -44,7 +48,7 @@ export function SettingsPage() {
 
     <section className="prose" id="privacy" aria-labelledby="settings-privacy">
       <h2 id="settings-privacy" className="settings-label">Privacy</h2>
-      <p>Your shelf is saved in this browser. It doesn’t sync across devices, and clearing browser data removes it.</p>
+      <p>{session.status==='authenticated'?'Your account library and saved books are private and sync after confirmation. You control whether recently viewed books are recorded.':'Your guest books are saved in this browser. They don’t sync across devices, and clearing browser data removes them.'}</p>
       <a className="text-link" href="/privacy#website">Privacy policy</a>
     </section>
 
@@ -75,7 +79,9 @@ export function SettingsPage() {
       title={clearLabel+'?'}
       body={<p>{state.savedContent.length?'Your saved library books, free books and papers will be removed from this browser. Your viewed book history will stay. This cannot be undone.':'Your saved shelf will be emptied. This cannot be undone.'}</p>}
       confirmLabel={clearLabel}
-      onConfirm={() => { clearSavedBooks(); setConfirming(false); }}
+      pending={pending}
+      error={mutationError}
+      onConfirm={async() => { if(await (retryMutation??clearSavedBooks)())setConfirming(false); }}
       onCancel={() => setConfirming(false)}
     />
   </section>;

@@ -52,9 +52,9 @@ export function LibrariesPage() {
     setParams(next, { state: location.state });
   };
   const closeDetail = () => { const next = new URLSearchParams(params); next.delete('library'); setParams(next, { replace: true, state: location.state }); };
-  const choose = (library: PublicLibrary) => {
+  const choose = async(library: PublicLibrary) => {
     if (recoveryMode) return;
-    selectLibrary(library);
+    if(await selectLibrary(library)===false)return;
     const after = routeState?.after;
     navigate(bookReturn || (after === '/app/search' || after === '/app/shelf' || after === '/app/settings' || after?.startsWith('/app/books/') ? after : '/app/search'),
       bookReturn ? { state: { ...routeState?.bookNavigation, ...(book ? { book } : {}) } } : undefined);

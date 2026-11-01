@@ -88,6 +88,9 @@ function json(route, status, body) {
 }
 
 export async function installPublicV2Fixture(target, options = {}) {
+  // Public fixtures represent an explicitly verified guest session. Account
+  // journeys use the real local API harness instead of this fixture.
+  await target.route('**/api/account/session', route=>route.fulfill({json:{status:'guest'}}));
   // Keep fixture-based journeys independent of third-party cover hosts.
   // Cover-specific tests register their own later route overrides.
   const missingCover = route => route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>' });

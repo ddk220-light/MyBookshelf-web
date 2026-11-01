@@ -3,6 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 test.describe('free-content discovery',()=>{
   test.skip(process.env.FREE_CONTENT_E2E!=='true','Build with VITE_CONTENT_DISCOVERY_ENABLED=true for these journeys');
+  test.beforeEach(async({page})=>{await page.route('**/api/account/session',route=>route.fulfill({json:{status:'guest'}}));});
   const fixture={key:'fcd:v1:europepmc:MED:123',kind:'article',title:'Synthetic browser flow fixture',contributors:[{name:'Test Author',role:'author'}],identifiers:[],languages:['en'],subjects:[],relations:[],access:'free_full_text',
     locations:[{id:'oa',host:'Europe PMC',landingUrl:'https://europepmc.org/articles/PMC123',readerUrl:'https://europepmc.org/articles/PMC123',access:'free_full_text',evidence:{sourceId:'europepmc',field:'OA location',observedAt:'2026-11-01T00:00:00Z'}}],
     readingActions:[{locationId:'oa',label:'Read at Europe PMC',url:'https://europepmc.org/articles/PMC123',downloads:[]}],
@@ -30,6 +31,7 @@ test.describe('free-content discovery',()=>{
     await expect(page.getByRole('link',{name:/Synthetic browser flow fixture/})).toBeVisible();
     await page.getByRole('button',{name:'Edit',exact:true}).click();
     await page.getByRole('button',{name:`Remove ${fixture.title} from shelf`}).click();
+    await expect(page.locator('.saved-content-card')).toHaveCount(0);
     const state=await page.evaluate(()=>JSON.parse(localStorage.getItem('mybookshelf.anonymous-web.v1')));
     expect(state.version).toBe(2);expect(state.savedContent).toHaveLength(0);expect(state.savedBooks[0].title).toBe('Legacy shelf fixture');
   });
@@ -56,6 +58,7 @@ test.describe('free-content discovery',()=>{
     await page.getByRole('button',{name:'Clear saved books and papers',exact:true}).click();
     const dialog=page.getByRole('dialog');await expect(dialog).toContainText('Your viewed book history will stay.');
     await dialog.getByRole('button',{name:'Clear saved books and papers',exact:true}).click();
+    await expect(dialog).not.toBeVisible();
     const state=await page.evaluate(()=>JSON.parse(localStorage.getItem('mybookshelf.anonymous-web.v1')));
     expect(state.savedBooks).toEqual([]);expect(state.savedContent).toEqual([]);expect(state.recentBooks[0].title).toBe('Legacy viewed fixture');
   });

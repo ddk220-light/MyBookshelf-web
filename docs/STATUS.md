@@ -1,10 +1,20 @@
 # MyBookshelf web handoff
 
-Updated 2026-11-01 for free-content implementation. Active repository:
+Updated 2026-11-01. Active repository:
 **https://github.com/ddk220-light/MyBookshelf-web**, default branch `main`.
 The owner has chosen to do all future web work in this repository. Build, test,
 plan and implement here directly. Do not depend on the previous private checkout
 or copy its Git history/native applications into this repository.
+
+**Current account rollout:** the owner authorized production completion. Source
+`c17a757` is deployed at `https://mybookshelf.cloud`; account entry remains disabled
+while production Resend setup and live release checks are unfinished. Dedicated
+production Neon/private deletion storage, migrations, roles and a hosted logical
+restore drill are now verified. The active repair branch is
+`codex/account-signup-availability`. Read the
+[current production record](accounts/PRODUCTION_ROLLOUT.md) before the older dated
+release observations below. Project tasks #147–150 stay open until real production
+activation and workflow checks pass.
 
 ## What is implemented
 
@@ -31,6 +41,13 @@ the intentional differences and [the reference boards](design/2026-10-mobile/ind
 are available here without the private branch.
 
 ## Release state: recheck before changing production
+
+The owner authorized the free-content merge/deployment on 2026-11-01. Its
+[release record](research/free-content/RELEASE.md) identifies the existing
+production project/domain and rollback deployment. PR #110 now targets `main`
+and integrates the account production baseline at `7ab9d89`. Actual deployment
+and hosted checks are recorded in [#127](https://github.com/ddk220-light/MyBookshelf-web/issues/127).
+The following older release observations are historical checkpoints.
 
 - Reviewed preview: https://mybookshelf-jh0o69edr-ddk220.vercel.app/,
   deployment `dpl_4WuSysFWU4wQhHqNhEGksvU7W9FA`, application commit
@@ -106,38 +123,44 @@ shared Redis REST credentials and explicit budget configuration; no hosted store
 has been provisioned. The local Gutenberg snapshot needs daily refresh because
 positive access evidence expires after 24 hours. A reviewed daily refresh workflow
 is implemented; it becomes schedulable only when merged onto the default branch.
-It proposes a draft metadata PR, runs CI and retains production flags. No production
-enablement or promotion has been performed.
+It proposes a draft metadata PR and runs CI. Production enablement and verification
+for the owner's authorized release are tracked in the [release record](research/free-content/RELEASE.md).
 
-## Account work: architecture chosen, implementation not started
+## Account work: implemented; staging release exits pending
 
-The owner requested secure signup with name/email/password, verification,
-sign-in, password recovery, sign-out, Google and Apple, and synchronization of
-library preference, saved books and viewed books. Anonymous use should continue.
+Deepak approved the document packet and Claude canvas v4 at R02 (`36a1436`),
+then authorized progressive story/task implementation. Feature code in
+[PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57) now includes
+email/password, Google/Apple protocol and method management, verified email
+change, private library/shelf/history, explicit guest import, identity-isolated
+UI, streaming export, durable deletion, independent restore suppression and
+bounded maintenance tooling. See [implementation](accounts/IMPLEMENTATION.md),
+[validation](accounts/VALIDATION.md) and [operations](accounts/OPERATIONS.md).
 
-Direction: Better Auth in the existing Express API, managed Postgres (Neon is
-preferred), transactional email, secure server sessions and private owner-scoped
-reading data. The architecture is in
-[the foundation analysis](plans/2026-10-31-accounts-social-foundation.md).
-PRD/UX/engineering/UI specifications must settle the remaining implementation
-choices before schema and API work begins. No database, OAuth client, mail service,
-account UI or account persistence has been provisioned/implemented by this work.
+Node 22 checks include 514 server tests with actual local Postgres roles and
+143 client tests, type checking, production build and zero audit findings.
+Browser and hosted evidence are dated in VALIDATION.md; controlled provider/mail
+transports do not prove live delivery. Guest/public behavior and exact catalog
+identities remain required contracts.
 
-Book identities reuse Open Library work/edition IDs, normalized ISBNs and existing
-catalog keys. A small `book_refs` store supports relationships; do not build a
-new universal catalog or fuzzy work-matching engine. Unresolved references remain
-saveable. See [existing discovery behavior](work-aware-search.md).
+The subsequent [account screen review](accounts/SCREEN_REVIEW.md) fixes form/card
+layout, field/focus errors and failed clear/import retries, adds paired artifact
+captures, and checks narrow/zoomed layouts in three lights. The owner's phone-type
+review sets account headings to 28px with 16px body/input text. Default-size images
+and enlarged-text stress images are labelled separately in the gallery.
 
-Reviews, comments, follows, favorites, reading statuses, lists and activity are
-future discovery scope. **They still need requirements and definitions**, including
-privacy, moderation, work identity, deletion and acceptance criteria.
+Isolated staging uses `mybookshelf-accounts-staging` in iad1, Neon and a separate
+private deletion ledger. Real staging migration checksums 001–011 match the repo;
+private ledger writes/reads/encrypted cleanup and anonymous-read denial pass.
+Runtime credentials are Preview/account-settings only, administrator Development
+only. Existing production resources/Git connection remain unchanged.
 
 ## Resume this free-content branch
 
 1. Use `/workspace/MyBookshelf-web-free-sources-implementation` on
    `research/free-content-discovery-implementation`, based on approved artifacts
    at `760863a`. Keep its [draft PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110)
-   based on `research/free-content-discovery`. Preserve other worktrees.
+   based on `main` for the authorized release. Preserve other worktrees.
 2. Read [implementation/story state](research/free-content/IMPLEMENTATION.md),
    [operations](research/free-content/OPERATIONS.md) and
    [validation](research/free-content/VALIDATION.md). Existing native tasks belong
@@ -150,7 +173,23 @@ privacy, moderation, work identity, deletion and acceptance criteria.
    Keep the bounded Gutenberg subset/OTL export coverage explicit. Account work
    has its own branch/project; its historical planning section above is context.
 
-## Historical repository handoff verification (2026-10-31)
+## Account release context
+The owner subsequently instructed: Resend only for production; keep Google/Apple
+disabled and add their credentials later. These are deliberate activation deferrals,
+not current staging setup requests. Live staging capabilities confirm all three
+methods remain disabled. The GitHub workflow is an optional staging scheduler;
+its Actions-secret HTTP 403 does not require a permission change to finish coding.
+See [current rollout choices](accounts/OPERATIONS.md#owners-current-rollout-choices).
+Production still needs real mail, active cleanup/alerts, hosted backup/restore,
+retention proof and final accessibility/operator/R03 review before account enablement.
+Provider-specific live checks apply before those methods are enabled later.
+
+Worktree: `/workspace/worktrees/MyBookshelf-web-account-settings`, branch
+`account-settings`. The existing
+[project](https://github.com/users/ddk220-light/projects/3) tracks epics, stories,
+progressively linked tasks and remaining validation.
+
+## This handoff's verification
 
 The public repo matched the latest reviewed web export. An additional startup
 audit found and fixed its missing local environment loader; a real-server smoke

@@ -1,0 +1,15 @@
+# Disposable local database only. Never use these test credentials in hosting.
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: local-account-tests
+      POSTGRES_DB: accounts_test
+    ports:
+      - '127.0.0.1:55432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d accounts_test']
+      interval: 2s
+      timeout: 2s
+      retries: 20

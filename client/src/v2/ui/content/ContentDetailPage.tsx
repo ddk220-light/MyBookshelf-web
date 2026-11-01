@@ -17,6 +17,7 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
   const [error,setError]=useState<string|null>(null);
   const [retry,setRetry]=useState(0);
   const [notice,setNotice]=useState<string|null>(null);
+  const [saving,setSaving]=useState(false);
   const {library,state,saveContent,unsaveContent,recoveryMode}=useLibrary();
   useEffect(()=>{
     const controller=new AbortController();setItem(null);setError(null);setNotice(null);
@@ -37,15 +38,18 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
   const languages=item.languages.filter(language=>language!=='und').map(language=>{
     try{return new Intl.DisplayNames(['en'],{type:'language'}).of(language)||language;}catch{return language;}
   });
-  function save(){
-    if(!item)return;
-    if(saved){unsaveContent(item.key);setNotice('Removed from your shelf.');return;}
-    const result=saveContent(item);
-    setNotice(result==='full'?'Your shelf holds 100 items. Remove one to save this.':result==='recovery'?'Your shelf needs attention before this can be saved.':'Saved to your shelf in this browser.');
+  async function save(){
+    if(!item||!saveContent||!unsaveContent||saving)return;
+    setSaving(true);
+    try{
+      if(saved){setNotice(await unsaveContent(item.key)?'Removed from your shelf.':'Your shelf could not be changed. Try again.');return;}
+      const result=await saveContent(item);
+      setNotice(result==='full'?'Your shelf holds 100 items. Remove one to save this.':result==='recovery'?'Your shelf needs attention before this can be saved.':result==='failed'?'This item could not be saved. Try again.':'Saved to your shelf in this browser.');
+    }finally{setSaving(false);}
   }
   return <section className="content-detail">
     <div className="content-toolbar"><Link className="back-link" to={back}>← {back==='/app/shelf'?'Shelf':back.includes('/app/books/')?'Book':back.includes('scope=papers')?'Papers':'Search'}</Link>
-      <button className={'content-save'+(saved?' is-saved':'')} aria-label={saved?'Saved':'Save to shelf'} title={saved?'Remove from shelf':'Save to shelf'} aria-pressed={saved} disabled={recoveryMode} onClick={save}><BookmarkIcon/></button></div>
+      <button className={'content-save'+(saved?' is-saved':'')} aria-label={saved?'Saved':'Save to shelf'} title={saved?'Remove from shelf':'Save to shelf'} aria-pressed={saved} aria-busy={saving} disabled={recoveryMode||saving||!saveContent} onClick={()=>void save()}><BookmarkIcon/></button></div>
     <div className="content-detail-heading">{['book','learning_resource'].includes(item.kind)&&<ContentCover title={item.title} kind={item.kind}/>}<div>
       {!['book','learning_resource'].includes(item.kind)&&<p className={'content-kind'+(item.kind==='preprint'?' content-preprint':'')}>{kindLabel(item.kind)}{item.version?' · '+item.version:''}</p>}
       <h1 lang={item.languages[0]!=='und'?item.languages[0]:undefined}>{item.title}</h1>
@@ -57,6 +61,7 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
       {item.container&&<p className="content-record">{item.container.title}</p>}
     </div></div>
     {notice&&<p role="status">{notice}</p>}
+    {!saveContent&&<p className="content-record">Free books and papers can be saved in browser-only mode. They do not sync to an account yet.</p>}
     {primary&&!primary.requiresAccount&&<p className="content-access access-free"><span aria-hidden="true">● </span>Free to read{primaryLocation?.readerUrl?' online':''}</p>}
     {primary?.requiresAccount&&<p className="content-access access-free">Free account required at {primaryLocation?.host||'the source'}. Sign in there to read this book.</p>}
     {primary&&safeSource(primary.url)?<a className="button-link content-read" href={safeSource(primary.url)} target="_blank" rel="noopener noreferrer" aria-label={`${primary.label}${primary.requiresAccount?' · free account required':''} (opens ${primaryLocation?.host||'source'})`}>{primary.label} <ExternalLinkIcon/></a>

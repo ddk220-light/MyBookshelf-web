@@ -1,10 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import { HTML_SECURITY_POLICY } from '../shared/security-policy.mjs';
 
 import { createPublicV2Router } from './public-v2/router.js';
-import { HTML_SECURITY_POLICY } from '../shared/html-security-policy.mjs';
-export { HTML_SECURITY_POLICY };
 
 export const LEGACY_API_RETIRED = Object.freeze({
   error: Object.freeze({
@@ -19,6 +18,9 @@ const PUBLIC_API_NOT_FOUND = Object.freeze({
     message: 'This public catalog endpoint does not exist.',
   }),
 });
+
+// Open Library can redirect older covers through Internet Archive's ZIP image service.
+export { HTML_SECURITY_POLICY } from '../shared/security-policy.mjs';
 
 function legacyCookieOptions() {
   return {
@@ -56,7 +58,7 @@ function setStaticHeaders(res, filePath) {
   }
 }
 
-export function createAnonymousApp({ clientDist, publicRouter = createPublicV2Router() } = {}) {
+export function createAnonymousApp({ clientDist, publicRouter = createPublicV2Router(), accounts } = {}) {
   const app = express();
   const publicCorsOrigin = process.env.NODE_ENV === 'production' ? false : true;
 
@@ -80,6 +82,8 @@ export function createAnonymousApp({ clientDist, publicRouter = createPublicV2Ro
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
+
+  if (accounts) app.use(accounts);
 
   // All pre-anonymous APIs and legacy image uploads are deliberately inert.
   // These handlers are mounted before static files and never parse cookies.

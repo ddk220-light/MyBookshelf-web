@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { publicApi } from '../../api';
 import { useCatalogMetadata } from '../../catalogMetadata';
@@ -35,6 +35,8 @@ export function useBookScreen() {
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [announcement, setAnnouncement] = useState('');
+  const [saving,setSaving]=useState(false);
+  const opened=useRef<string|null>(null);
   useEffect(() => {
     let active = true;
     setBook(supplied); setError(null); setAvailability(null); setAvailabilityError(null); setAnnouncement('');
@@ -42,12 +44,25 @@ export function useBookScreen() {
     publicApi.resolveBook(bookKey).then(resolved => {
       if (!active) return;
       const result = resolved.metadataStatus && supplied ? { ...supplied, metadataStatus: resolved.metadataStatus } : resolved;
-      setBook(result); rememberBook(result, sourceFromLocation(navigation));
+      setBook(result);
     }).catch(failure => { if (active && !supplied) setError(messageFor(failure, 'Book details could not load.')); });
     return () => { active = false; };
     // Navigation state and URL preferences do not change the selected book's identity.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookKey, rememberBook]);
+  }, [bookKey]);
+  useEffect(()=>{
+    if(!book?.bookKey||libraryState.loadingAccount)return;
+    const key=book.bookKey;
+    const record=()=>{if(document.visibilityState==='visible'&&opened.current!==key){opened.current=key;void rememberBook(book,sourceFromLocation(navigation));}};
+    record();document.addEventListener('visibilitychange',record);
+    return()=>document.removeEventListener('visibilitychange',record);
+  },[book?.bookKey,rememberBook,libraryState.loadingAccount]);
+  useEffect(()=>{
+    if(book&&opened.current===book.bookKey&&libraryState.updateRecentDisplay)void libraryState.updateRecentDisplay(withCatalogTitle(book,availability));
+    // Display refinement preserves the original guest open time/source. Private
+    // history has no such callback, so metadata refresh cannot record a new view.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[book?.bookKey,book?.title,book?.authors.join('\u0000'),book?.coverUrl,book?.isbn13,book?.metadataStatus,availability?.catalogTitle,availability?.matchKind,availability?.freshness,availability?.errorCode,libraryState.updateRecentDisplay]);
   const availabilityBookKey = book?.bookKey, libraryId = library?.id;
   const lookupBookKey = exactIsbn && book?.isbn13 ? 'v1:isbn:' + book.isbn13 : availabilityBookKey;
   useEffect(() => {
@@ -68,26 +83,24 @@ export function useBookScreen() {
     });
     return () => { active = false; };
   }, [availabilityBookKey, lookupBookKey, libraryId, exactIsbn, selectedLanguage, attempt, reportStorageFailure]);
-  useEffect(() => {
-    if (!book) return;
-    const result = withCatalogTitle(book, availability);
-    if (result !== book) rememberBook(result, sourceFromLocation(navigation));
-  }, [book, availability, rememberBook, navigation]);
   const changePreference = (key: string, value: string) => {
     const next = new URLSearchParams(preferences);
     if (value) next.set(key, value); else next.delete(key);
     setPreferences(next, { replace: true, state: location.state });
   };
   const saved = Boolean(book && isSaved(state, book.bookKey));
-  const toggleSaved = () => {
-    if (!book) return;
-    if (saved) { libraryState.unsaveBook(book.bookKey); setAnnouncement(libraryState.recoveryMode ? 'Reload your saved shelf before making changes.' : 'Removed from your shelf'); }
-    else {
-      const result = libraryState.saveBook(withCatalogTitle(book, availability));
-      setAnnouncement(result === 'full' ? 'Your shelf is full. Remove a book before adding another.' : result === 'recovery' ? 'Reload your saved shelf before making changes.' : 'Saved to your shelf');
-    }
+  const toggleSaved = async() => {
+    if (!book||saving) return;
+    setSaving(true);setAnnouncement(saved?'Removing…':'Saving…');
+    try{
+      if (saved) {const removed=await libraryState.unsaveBook(book.bookKey);setAnnouncement(removed?'Removed from your shelf':'Couldn’t remove this book. Try again.');}
+      else {
+        const result = await libraryState.saveBook(withCatalogTitle(book, availability));
+        setAnnouncement(result === 'full' ? 'Your shelf is full. Remove a book before adding another.' : result === 'recovery' ? 'Reload your saved shelf before making changes.' : result==='failed'?'Couldn’t save this book. Try again.':'Saved to your shelf');
+      }
+    }finally{setSaving(false);}
   };
   return { ...libraryState, book: book && withCatalogTitle(book, availability), error, availability, availabilityError, exactIsbn, selectedLanguage,
-    from, backState: navigation?.searchState, saved, announcement, toggleSaved, changePreference, retryAvailability: () => setAttempt(count => count + 1),
+    from, backState: navigation?.searchState, saved, saving, announcement, toggleSaved, changePreference, retryAvailability: () => setAttempt(count => count + 1),
     libraryPath: '/app/libraries?book=' + encodeURIComponent(bookKey || ''), returnState: libraryReturn(location.pathname, location.search, { ...navigation, from, ...(book ? { book } : {}) }) };
 }

@@ -1,0 +1,508 @@
+/* Account surfaces follow Claude canvas v4 and load after shared reader CSS.
+   The smaller phone headings incorporate the owner's subsequent type review. */
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 28rem;
+  margin: 1.5rem auto 3rem;
+}
+.app-frame .account-page,
+.app-frame .account-settings-page {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.app-frame .account-page {
+  max-width: calc(28rem + 32px);
+  padding: 28px 16px 48px;
+}
+.account-page > .back-link {
+  margin-bottom: 16px;
+  font-size: 1rem;
+}
+.account-page .account-form {
+  margin: 0;
+  max-width: none;
+}
+.account-page .account-form h1 {
+  margin: 0;
+  font: 500 2rem/1.15 var(--serif);
+}
+.account-form p {
+  margin: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.account-form button,
+.account-form .button-link {
+  min-height: 48px;
+}
+.account-form .text-button,
+.account-form .text-link {
+  min-height: 44px;
+}
+.account-page .account-form > .text-link {
+  align-self: center;
+  text-align: center;
+}
+.account-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.account-field label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+.account-page .account-field input,
+.account-settings-page .account-field input {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0.7rem 0.8rem;
+  font: inherit;
+  font-size: 1rem;
+  border: 1px solid var(--reader-line);
+  border-radius: 12px;
+  background: var(--reader-fill);
+  color: var(--reader-ink);
+}
+.account-field small,
+.account-form .form-hint {
+  color: var(--reader-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.account-field .account-field-error {
+  color: var(--reader-error);
+  font-weight: 600;
+}
+.account-field input[aria-invalid="true"] {
+  border: 2px solid var(--reader-error);
+}
+.account-password {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.account-page .account-password input,
+.account-settings-page .account-password input {
+  flex: 1;
+  padding-right: 4.75rem;
+}
+.account-password button {
+  position: absolute;
+  right: 4px;
+  top: 2px;
+  min-width: 60px;
+  min-height: 44px;
+  padding-inline: 12px;
+  background: transparent;
+  color: var(--reader-accent);
+}
+.account-form :focus-visible {
+  outline: 3px solid var(--reader-ink);
+  outline-offset: 3px;
+}
+.account-error {
+  border: 1px solid var(--reader-line);
+  border-left: 4px solid var(--reader-error);
+  border-radius: 12px;
+  padding: 1rem;
+  color: var(--reader-ink);
+  background: var(--reader-surface);
+}
+.account-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 0;
+  line-height: 1.5;
+}
+.account-check input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 2px 0 0;
+}
+.account-entry-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+}
+.account-entry-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: underline;
+}
+.account-entry-footer button {
+  font: inherit;
+  padding-inline: 4px;
+}
+
+/* Provider controls use their approved brand variants, conditional on capability. */
+.account-providers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.account-providers:empty {
+  display: none;
+}
+.account-providers .provider-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 9rem;
+  gap: 10px;
+  min-height: 48px;
+  border: 1px solid #747775;
+  border-radius: 12px;
+  background: #fff;
+  color: #1f1f1f;
+  font:
+    500 0.9375rem Arial,
+    sans-serif;
+}
+.account-providers .provider-apple {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+.provider-button svg {
+  flex: none;
+}
+:root[data-reading-light="lamplight"] .account-providers .provider-google {
+  background: #131314;
+  color: #e3e3e3;
+  border-color: #8e918f;
+}
+:root[data-reading-light="lamplight"] .account-providers .provider-apple {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+/* Cards and rows retain a single column at every account-settings breakpoint. */
+.account-card {
+  padding: 18px;
+  border: 1px solid var(--reader-line);
+  border-radius: 14px;
+  background: var(--reader-surface);
+  overflow-wrap: anywhere;
+}
+.account-card h2 {
+  margin: 0 0 12px;
+}
+.account-card p {
+  line-height: 1.5;
+}
+.account-card .account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.app-frame .account-settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: calc(48rem + 32px);
+}
+.account-settings-page > .back-link {
+  align-self: flex-start;
+  margin-bottom: -12px;
+}
+.account-settings-page .page-heading {
+  margin: 0;
+}
+.account-settings-page h1 {
+  font-size: 2rem;
+  line-height: 1.15;
+}
+.account-settings-page .account-card,
+.settings-page > .account-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.account-settings-page .settings-label,
+.settings-page > .account-card h2 {
+  margin: 0;
+  font: 600 1.0625rem/1.3 var(--sans);
+  color: var(--reader-ink);
+}
+.account-settings-page .account-form {
+  max-width: none;
+  margin: 0;
+  gap: 12px;
+}
+.account-settings-page p,
+.settings-page > .account-card p {
+  margin: 0;
+  line-height: 1.5;
+}
+.settings-page > .account-card {
+  order: -2;
+  padding: 18px;
+  border-radius: 14px;
+}
+.settings-page > .account-card p {
+  font-size: 1rem;
+}
+.account-settings-page .account-card > button {
+  align-self: flex-start;
+}
+.account-name-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+.account-name-row input {
+  flex: 1;
+  min-width: 0;
+}
+.account-name-row button {
+  flex: none;
+  min-height: 48px;
+  padding-inline: 18px;
+  background: var(--reader-surface);
+  color: var(--reader-ink);
+  border: 1px solid var(--reader-line);
+}
+.account-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 52px;
+}
+.account-row + .account-row {
+  border-top: 1px solid var(--reader-line);
+  padding-top: 12px;
+}
+.account-stack {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 10rem;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.account-row > .text-button,
+.account-row > .text-link {
+  flex: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-size: 0.9375rem;
+}
+.account-methods,
+.account-devices {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.account-devices li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--reader-line);
+}
+.account-devices li:first-child {
+  padding-top: 0;
+}
+.account-history-row {
+  flex-wrap: nowrap;
+}
+.account-history-switch {
+  flex: 0 0 52px;
+  width: 52px;
+  min-width: 52px;
+  min-height: 44px;
+  padding: 6px 0;
+  background: transparent;
+  border: 0;
+}
+.account-history-switch span {
+  display: block;
+  position: relative;
+  width: 52px;
+  height: 32px;
+  border-radius: 16px;
+  background: var(--reader-muted);
+}
+.account-history-switch span::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--reader-surface);
+  transition: transform 0.15s;
+}
+.account-history-switch[aria-checked="true"] span {
+  background: var(--reader-accent);
+}
+.account-history-switch[aria-checked="true"] span::after {
+  transform: translateX(20px);
+  background: var(--reader-on);
+}
+.account-settings-footnote {
+  color: var(--reader-muted);
+  font-size: 0.875rem;
+}
+.account-pending-email {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--reader-line);
+  border-left: 4px solid var(--reader-out);
+  border-radius: 12px;
+}
+.account-settings-page .cream-dialog,
+.account-page .cream-dialog {
+  width: min(440px, calc(100% - 32px));
+  padding: 22px;
+  border-radius: 16px;
+}
+.account-settings-page .cream-dialog .button-destructive {
+  background: var(--reader-error);
+  color: #fff;
+  border-color: var(--reader-error);
+}
+:root[data-reading-light="lamplight"]
+  .account-settings-page
+  .cream-dialog
+  .button-destructive {
+  color: #2a0e0b;
+}
+
+/* Shared account status and navigation remain readable at enlarged text sizes. */
+.account-sync-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 1rem;
+  padding: 12px 16px;
+  border: 1px solid var(--reader-line);
+  border-radius: 12px;
+  background: var(--reader-surface);
+  font-size: 0.875rem;
+}
+.account-sync-notice button {
+  min-height: 44px;
+}
+.desktop-account {
+  display: none;
+  overflow-wrap: anywhere;
+}
+.tab-label {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  text-align: center;
+}
+@media (max-width: 1023px) {
+  .account-entry-mode .app-navigation .tab-bar {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  .app-frame .account-page {
+    max-width: calc(28rem + 96px);
+    padding: 44px 48px 64px;
+  }
+  .app-frame .account-settings-page {
+    max-width: calc(48rem + 96px);
+    padding: 44px 48px 64px;
+    margin-left: 0;
+  }
+  .desktop-account {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: auto 12px 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--reader-line);
+    font-size: 0.875rem;
+  }
+  .desktop-account strong {
+    font-size: 0.9375rem;
+  }
+  .app-navigation .desktop-support {
+    margin-top: 0;
+  }
+  .tab-label {
+    text-align: left;
+  }
+}
+@media (max-width: 480px) {
+  .account-page .account-form h1,
+  .account-settings-page h1 {
+    font-size: 1.75rem;
+  }
+  .app-frame .account-page {
+    padding-top: 20px;
+  }
+  .account-page > .back-link {
+    margin-bottom: 12px;
+  }
+  .account-settings-page .account-card {
+    padding: 16px;
+  }
+  .account-settings-page .settings-label {
+    font-size: 1rem;
+  }
+  .app-frame .account-settings-page {
+    gap: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-history-switch span::after {
+    transition: none;
+  }
+}
+@media (forced-colors: active) {
+  .account-error,
+  .account-card,
+  .account-sync-notice,
+  .account-pending-email {
+    border-color: CanvasText;
+  }
+  .account-form :focus-visible {
+    outline: 3px solid Highlight;
+  }
+  .account-field .account-field-error {
+    color: CanvasText;
+  }
+  .account-history-switch span {
+    border: 1px solid ButtonText;
+    background: Canvas;
+  }
+  .account-history-switch span::after {
+    background: ButtonText;
+  }
+  .account-history-switch[aria-checked="true"] span {
+    background: Highlight;
+  }
+  .account-history-switch[aria-checked="true"] span::after {
+    background: HighlightText;
+  }
+  :root[data-reading-light]
+    .account-settings-page
+    .cream-dialog
+    .button-destructive {
+    background: ButtonFace;
+    color: ButtonText;
+    border-color: ButtonText;
+  }
+}

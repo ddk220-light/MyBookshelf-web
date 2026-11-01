@@ -20,40 +20,44 @@ The previous task had network bindings for `VERCEL_TOKEN` at `api.vercel.com`,
 The owner subsequently added GitHub credentials to the saved environment; verify
 the new task's effective bindings rather than assuming this older list is current.
 
-## GitHub Projects blocker and how to resume
+## GitHub Projects access and current project
 
-Repository reads/pushes and issue creation worked as `ddk220-light`. The existing
-`GH_TOKEN` was an integration credential; Projects listing/creation returned
-`GraphQL: Resource not accessible by integration`. Repository access alone does
-not establish access to a user-owned Projects v2 board.
+Authenticated listing and project creation were verified on 2026-10-31 through
+GitHub's official Projects MCP endpoint:
+`https://api.githubcopilot.com/mcp/x/projects`.
+The current cloud environment binds `GH_PROJECT_TOKEN` to
+`api.githubcopilot.com`; preserve its proxy and TLS trust settings. A placeholder
+in the process environment is not evidence of a missing credential.
 
-The proposed separate credential is `GH_PROJECT_TOKEN`, a classic personal access
-token with `project` scope for this user-owned project, restricted as a Codex
-network secret to `api.github.com`. The public repository does not require adding
-the broad `repo` scope for this purpose. Scope/expiry/owner must be verified with
-the actual credential; presence of a variable is not an authorization check.
+The [Account Management project](https://github.com/users/ddk220-light/projects/3)
+and [index issue #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1)
+now exist with the published delivery backlog. Reuse them. The earlier
+`Resource not accessible by integration` error concerned the normal GitHub
+integration credential and does not describe this verified MCP connection.
 
-To test without changing the normal repository credential, run:
+The built-in GitHub connector handles repository issues. Projects tools are
+available from the separate official MCP service (`projects_get`, `projects_list`,
+`projects_write`). In this cloud environment, the existing helper at
+`/workspace/github-projects/client.py` speaks that protocol without saving tokens:
 
 ```sh
-GH_TOKEN="$GH_PROJECT_TOKEN" gh api user --jq .login
-GH_TOKEN="$GH_PROJECT_TOKEN" gh project list --owner ddk220-light --format json
+python3 /workspace/github-projects/client.py tools
+python3 /workspace/github-projects/client.py list ddk220-light
 ```
 
-Do this only after confirming the named variable is present; never print its
-value or run shell tracing. If read access succeeds, continue the already requested
-project/backlog creation and link the existing index issue. Preserve the normal
-repository credential for repository writes. If the variable is absent or access
-still fails, report the exact missing binding/permission without requesting the
-token in chat.
+These commands are read-only. Project mutations must match the requested work.
+Inspect the current tool schema and use exact returned IDs; check for existing
+projects/items before retrying a creation with an uncertain outcome. Repository
+APIs provide native sub-issue and blocked-by links not exposed by the built-in
+connector. Never send `GH_PROJECT_TOKEN` to a different destination or print it.
 
-The only account-planning issue currently created is
-[#1: Accounts and Social Reading](https://github.com/ddk220-light/MyBookshelf-web/issues/1).
-The native Project and child issues remain pending. Their outline is checked in
-at [the delivery backlog](../plans/2026-10-31-accounts-delivery-backlog.md).
+Readiness and capabilities can change between environments: inspect effective
+bindings and verify authenticated read access before diagnosing permissions.
+Do not infer Projects access from repository access alone, and do not request
+secrets in chat. [The delivery backlog](../plans/2026-10-31-accounts-delivery-backlog.md)
+records the current issues and review gates.
 
-References: [GitHub CLI Projects authentication](https://cli.github.com/manual/gh_project)
-and [user-owned Projects credentials](https://github.github.com/gh-aw/reference/auth-projects/#user-owned-projects).
+Reference: [GitHub remote MCP service](https://github.com/github/github-mcp-server/blob/main/docs/remote-server.md).
 
 ## Applying Codex environment changes
 
