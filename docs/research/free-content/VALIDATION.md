@@ -3,7 +3,7 @@
 Checks performed 2026-11-01 in the isolated free-content worktree using Node
 22.23.4. No hosted preview or production enablement is claimed.
 
-Latest local result: **530 server, 138 client, eight Python and 236 full
+Latest local result: **531 server, 138 client, eight Python and 236 full
 feature-enabled desktop/mobile Chromium checks passed**, plus typecheck,
 production build, SEO/deployment and pinned actionlint verification. Following
 the final reader/link fixes, the 12 reader-flow tests and 24 feature browser
@@ -104,8 +104,7 @@ configured OpenAlex key reported $1/day free allowance, $0.001 ordinary search
 and zero prepaid funds; runtime rechecks those conditions before dispatch.
 Operational limits and caveats are in [OPERATIONS.md](OPERATIONS.md).
 
-Forty focused backend tests and 135 client tests pass; the full server suite has
-525 passing tests. Real Redis verifies two-instance quotas, source-wide spacing,
+Paper-stage backend/client checks passed. Real Redis verifies two-instance quotas, source-wide spacing,
 429 cooldown, record caching and a 180 KB cache value. Search transport tests
 cover source progress, final commit/error and interrupted streams. The standard
 14 feature browser checks pass after the progress changes.
@@ -113,9 +112,9 @@ cover source progress, final commit/error and interrupted streams. The standard
 The [actual paper flow](evidence/2026-11-01/papers-live-flow.json) exercised a
 local API, actual Redis and official source metadata: 20 + 20 unique results,
 source progress, reader → save → reload → reopen, and versioned legacy arXiv
-lookup → reader. Native source pages were shared/cached from fresh checks; the
-captured first response took 261 ms with those cached native pages. This does
-not establish live-provider latency or hosted performance. No browser page errors
+lookup → reader. The latest first response took 2,468 ms across three sources;
+the next buffered page took 198 ms. This does
+not establish hosted performance or provider SLAs. No browser page errors
 were recorded. The test facade initially hit an OS argument-size limit; using
 stdin and adding the 180 KB check fixed the facade. The production REST protocol
 does not pass cache values through a command-line argument.

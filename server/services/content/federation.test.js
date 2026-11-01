@@ -67,3 +67,12 @@ test('a just-found version resolves from the shared record cache without another
   assert.equal((await service.resolve({key:paper.key})).item.key,paper.key);
   assert.equal(calls,1);
 });
+
+test('exact PMCID, legacy arXiv IDs and DOI searches choose sources that support those identifiers',async()=>{
+  for(const [text,expected] of [['PMC13712077',['europepmc']],['q-bio/0611053v1',['arxiv']],['10.5555/fixture',['openalex','europepmc','doaj']]]){
+    const calls=[];
+    const adapters=Object.fromEntries(['europepmc','doaj','arxiv','openalex'].map(id=>[id,{search:async()=>{calls.push(id);return {items:[],nextSourceCursor:null};}}]));
+    const service=createContentService({env,adapters,coordinatorFactory:()=>shared(),now:()=>now});
+    await service.search({...query,query:text});assert.deepEqual(calls.sort(),expected.sort());
+  }
+});

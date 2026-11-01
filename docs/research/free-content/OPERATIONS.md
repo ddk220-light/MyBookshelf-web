@@ -33,6 +33,9 @@ The planner selects at most three live providers. Biomedical terms prefer
 Europe PMC; general queries prefer the broad source and arXiv; DOAJ supplies
 OA journal coverage. Recognized arXiv identifiers select arXiv. Sources not
 chosen are explicit and can be searched independently from the source sheet.
+DOIs select DOI-capable indexes; PMCIDs select Europe PMC using its PMCID field,
+preserving the article's native MED identity. Bare versioned legacy arXiv IDs
+also route directly to arXiv.
 Language context is only supported by the broad adapter today; other paper
 sources report unsupported rather than silently ignoring it.
 

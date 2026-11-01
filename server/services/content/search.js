@@ -7,7 +7,7 @@ import {createOpenalexAdapter} from './openalex.js';
 import {createRedisCoordinator} from './coordinator.js';
 import {sourceSignal} from './sourceHttp.js';
 import {createChildrenService} from './children.js';
-import {CONTENT_POLICY_REVISION,parseContentSearch,parseContentResolve,readingActions,observedAccess} from './contracts.js';
+import {CONTENT_POLICY_REVISION,parseContentSearch,parseContentResolve,parseContentKey,normalizeDoi,readingActions,observedAccess} from './contracts.js';
 
 const hash=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 function error(code,message,status=503,sources){return Object.assign(new Error(message),{code,status,sources});}
@@ -38,7 +38,10 @@ export function createContentService({env=process.env,local=createLocalContentSe
   }
   function selected(query){
     if(query.sourceIds)return query.sourceIds;
-    if(/^arxiv:|^https?:\/\/arxiv\.org\/abs\//i.test(query.query)||/^\d{4}\.\d{4,5}(v\d+)?$/.test(query.query))return ['arxiv'];
+    const arxiv=query.query.replace(/^(?:arxiv:|https?:\/\/arxiv\.org\/abs\/)/i,'').trim();
+    if(parseContentKey('fcd:v1:arxiv:'+arxiv.replace('/',':')))return ['arxiv'];
+    if(/^PMC[1-9]\d*$/i.test(query.query))return ['europepmc'];
+    if(normalizeDoi(query.query))return ['openalex','europepmc','doaj'].filter(enabled);
     const bio=/malaria|biomed|clinical|medicine|health|cancer|genom|protein|disease/i.test(query.query);
     const order=bio?['europepmc','doaj','openalex','arxiv']:['openalex','arxiv','doaj','europepmc'];
     return order.filter(enabled).slice(0,3);

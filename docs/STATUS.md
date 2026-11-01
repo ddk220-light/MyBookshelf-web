@@ -88,7 +88,7 @@ The reviewed children's pilot and final hosted enablement are pending.
 The pilot's validation, filters, credits and translation identities are implemented;
 its manifest is deliberately empty until actual English/Hindi/Tamil metadata
 can be reviewed. See [the source review gate](research/free-content/CHILDREN_REVIEW.md).
-Final local checks: 530 server tests, 138 client tests, 236 full desktop/mobile
+Final local checks: 531 server tests, 138 client tests, 236 full desktop/mobile
 browser journeys, eight Python checks, typecheck/build/SEO/deployment and workflow
 lint pass. A final targeted reader check and 24 feature browser checks passed
 after link/rights fixes. All-source exact lookups and a 40-result real-paper flow

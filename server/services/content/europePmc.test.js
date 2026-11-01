@@ -23,7 +23,7 @@ test('Europe PMC maps per-location evidence without turning subscription DOI int
 test('literal user text cannot inject raw Europe PMC query grammar',()=>{
   assert.equal(europePmcQuery('https://doi.org/10.5555/TEST'),'DOI:"10.5555/test" AND OPEN_ACCESS:Y');
   assert.equal(europePmcQuery('malaria" OR OPEN_ACCESS:N'),'"malaria\\" OR OPEN_ACCESS:N" AND OPEN_ACCESS:Y');
-  assert.equal(europePmcQuery('PMC123'),'EXT_ID:"PMC123" AND SRC:PMC AND OPEN_ACCESS:Y');
+  assert.equal(europePmcQuery('PMC123'),'PMCID:"PMC123" AND OPEN_ACCESS:Y');
 });
 
 test('bounded adapter uses fixed origin and reports source-local paging without global totals',async()=>{

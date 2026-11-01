@@ -9,7 +9,7 @@ function quoted(value) { return '"'+value.replace(/\\/g,'\\\\').replace(/"/g,'\\
 export function europePmcQuery(query) {
   const doi = normalizeDoi(query);
   if (doi) return `DOI:${quoted(doi)} AND OPEN_ACCESS:Y`;
-  if (/^PMC\d+$/i.test(query)) return `EXT_ID:${quoted(query.toUpperCase())} AND SRC:PMC AND OPEN_ACCESS:Y`;
+  if (/^PMC\d+$/i.test(query)) return `PMCID:${quoted(query.toUpperCase())} AND OPEN_ACCESS:Y`;
   return `${quoted(query)} AND OPEN_ACCESS:Y`;
 }
 
