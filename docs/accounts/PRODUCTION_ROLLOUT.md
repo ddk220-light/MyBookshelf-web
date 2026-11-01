@@ -32,8 +32,8 @@ Track the remaining work in [Project 3](https://github.com/users/ddk220-light/pr
   healthy. Resend is not installed yet: its account/terms consent is pending.
   No successful production signup or delivered verification email is claimed.
 
-Deployment `dpl_7ok4pebofkXwk6hVq1S1wh5wxc5R` is READY at the canonical domain,
-source `c17a75771c85e030666ec859040592a162df51b9`, with account entry disabled.
+Deployment `dpl_4wkbMbk2ArfwkD9fU1j3FnCyfHNf` is READY at the canonical domain,
+source `7ab9d8967e17265c87b8c7e490fd50a295dba598`, with account entry disabled.
 The prior infrastructure redeploy captured configuration before the new cron
 secret had propagated and returned 403; redeploying after propagation resolved it.
 The persistent Vercel Git connection still points to the original repository;
@@ -56,9 +56,9 @@ plan documentation describes a six-hour history window and one manual snapshot;
 the actual project settings/snapshot inventory still require verification. Do not
 substitute plan metadata for that configuration check.
 
-## Signup and maintenance repairs
+## Verified signup and maintenance repairs
 
-The repair candidate checks session/service readiness before permitting account
+Merged [PR #151](https://github.com/ddk220-light/MyBookshelf-web/pull/151) checks session/service readiness before permitting account
 submissions, distinguishes disabled setup from an outage, checks email capability
 before signup/recovery, supports retry and preserves typed fields during startup.
 Unavailable accounts no longer advertise a working Create account action in
@@ -72,16 +72,48 @@ continue working. The regression follows native Settings → signup → validati
 double submit → check email → unverified sign-in → verification → sign-in/session.
 
 Maintenance no longer advances `last_succeeded` for unavailable services or overdue
-work. Such runs return 503. The candidate configures native Vercel Cron every five
-minutes using the production-only `CRON_SECRET`; actual scheduled runs and failure
-notification delivery remain to be verified after deployment.
+work. Such runs return 503. Native Vercel Cron is deployed every five minutes using
+the production-only `CRON_SECRET`. An actual scheduled run at 18:40:33 UTC advanced
+`last_started` while preserving the older success timestamp because mail remains
+unavailable. No manual invocation ran at that time. The
+[operations observation](evidence/production/live/operations-observation.json)
+records the active deployment/schedule and database observation.
+
+Actual production desktop/mobile HTTPS browser checks pass disabled-entry honesty,
+absence of active signup fields, guest continuation, horizontal layout and page
+errors. [HTTP checks](evidence/production/live/http-results.json) verify public
+health, `ACCOUNT_DISABLED`, private no-store/noindex, unauthenticated worker denial,
+the private app route and `.env` denial. See
+[browser evidence](evidence/production/live/browser-results.json) and the
+[production mobile screen](evidence/production/live/mobile-account-unavailable.png).
 
 Local checks use synthetic accounts, real loopback Postgres/API/cookies and a
 synthetic mail outbox. They do not prove Resend delivery. The client suite has
 152 passing tests; the server suite has 515 passing tests with zero skips,
 including isolated Postgres maintenance-failure coverage. Type checking, build,
-SEO and deployment checks pass. Browser evidence is updated as the final candidate
-is verified; CI must pass on the exact source before deployment.
+SEO and deployment checks pass. Both complete CI runs passed on tested source
+`41b626b9c4b792f8e71577228d0f21466086afee`:
+[push](https://github.com/ddk220-light/MyBookshelf-web/actions/runs/41336488573) and
+[PR](https://github.com/ddk220-light/MyBookshelf-web/actions/runs/41336512647).
+Each includes 318 public browser scenarios and 30 account journeys across desktop
+and mobile Chromium and WebKit, with the real API/Postgres and synthetic outbox.
+The merged/deployed application tree was compared with that tested candidate.
+
+## Independent production monitor (S20-C)
+
+[S20-C #152](https://github.com/ddk220-light/MyBookshelf-web/issues/152) adds
+`GET /api/account/health`, a no-store/noindex aggregate readiness check. It uses
+the restricted worker role, rejects privileged connections, requires configured
+mail/database/ledger secrets and a successful maintenance run within 15 minutes.
+It exposes only ready/unavailable, without account rows, queue contents, timestamps
+or credentials. Public catalog health stays independent.
+
+The read-only `account-production-health.yml` workflow calls that endpoint every
+five minutes, two minutes after normal worker boundaries, and fails the Actions
+job on unavailable or stale maintenance. It needs no app/cron credentials.
+GitHub delivery to the operator follows the owner's Actions notification settings;
+an actual notification email is not claimed until observed. Monitor deployment
+and live verification remain in progress with S20-C.
 
 ## Completion sequence
 
