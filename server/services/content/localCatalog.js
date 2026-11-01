@@ -7,6 +7,44 @@ function failure(code, message, status = 503) { return Object.assign(new Error(m
 function folded(value) { return value.normalize('NFKD').replace(/(\p{Script=Latin})\p{M}+/gu, '$1').normalize('NFC').replace(/[\u2018\u2019]/g, "'").toLocaleLowerCase(); }
 function hash(value) { return createHash('sha256').update(value).digest('hex'); }
 
+const wordCharacter = /[\p{L}\p{M}\p{N}]/u;
+function termMatch(text, term) {
+  let offset = text.indexOf(term);
+  while (offset !== -1) {
+    const before = offset ? Array.from(text.slice(0, offset)).at(-1) : '';
+    const after = Array.from(text.slice(offset + term.length))[0] || '';
+    if (!wordCharacter.test(before)) {
+      if (!wordCharacter.test(after)) return 2;
+      // Short queries such as AI or art must not match unrelated words.
+      if (Array.from(term).length >= 4) return 1;
+    }
+    offset = text.indexOf(term, offset + 1);
+  }
+  return 0;
+}
+function rankedMatch(row, terms, phrase) {
+  const fields = row.fields.map(field => ({...field, matches: terms.map(term => termMatch(field.text, term))}));
+  if (!terms.length || terms.some((_, index) => !fields.some(field => field.matches[index]))) return null;
+  const title = fields[0];
+  const titleCount = title.matches.filter(Boolean).length;
+  const candidates = fields.map(field => {
+    const count = field.matches.filter(Boolean).length;
+    if (!count) return {...field, score: 0};
+    const all = count === terms.length, exactWords = field.matches.every(match => match === 2);
+    let score;
+    if (field.field === 'title') {
+      score = field.text === phrase ? 10000 : all && exactWords && termMatch(field.text, phrase) === 2 ? 8000
+        : all ? exactWords ? 6000 : 5000 : 3000 * count / terms.length;
+      score += 100 * phrase.length / Math.max(phrase.length, field.text.length);
+    } else if (field.field === 'contributor') score = all ? 4500 : 1500 * count / terms.length;
+    else score = all ? field.text === phrase ? 2200 : 1800 : 1000 * count / terms.length;
+    return {...field, score};
+  }).sort((a,b) => b.score - a.score);
+  const best = candidates[0];
+  return {item: row.item, title: row.title, score: best.score + titleCount,
+    searchMatch: {field: best.field, value: best.value}};
+}
+
 const LOCAL_SOURCES = { gutenberg: { name: 'Project Gutenberg', kind: 'book' },
   'open-textbook-library': { name: 'Open Textbook Library', kind: 'learning_resource' },
   bookdash: { name: 'Book Dash', kind: 'book' },
@@ -56,9 +94,13 @@ export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
     }
     const records = valid.flatMap(data => data.records);
     byKey = new Map(records.map(item => [item.key, item]));
-    indexed = records.map(item => ({ item, title: folded(item.title),
-      text: folded([item.title, ...item.contributors.map(c => c.name), ...item.subjects].join(' ')) }));
-    catalog = { snapshots: valid, unavailable, revision: hash(JSON.stringify(valid.map(s => [s.sourceId, s.revision]))) };
+    indexed = records.map(item => ({ item, title: folded(item.title), fields: [
+      {field:'title', value:item.title},
+      ...item.contributors.map(c => ({field:'contributor',value:c.name})),
+      ...item.subjects.map(value => ({field:'subject',value})),
+    ].filter(field => typeof field.value === 'string').map(field => ({...field,text:folded(field.value)})) }));
+    // Invalidate old offsets when the ordering algorithm changes.
+    catalog = { snapshots: valid, unavailable, revision: hash(JSON.stringify(['title-relevance-v2',valid.map(s => [s.sourceId, s.revision])])) };
   }
   function present(item, context) {
     return { ...item, readingActions: readingActions(item, { ...context, now: now() }),
@@ -87,14 +129,16 @@ export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
       const chosen = Object.entries(LOCAL_SOURCES).filter(([,source]) => query.kinds.includes(source.kind)).map(([id]) => id);
       if (!chosen.length) throw failure('CONTENT_UNAVAILABLE', 'Paper search is not connected yet. Please try the free-book catalog.');
       if (!catalog.snapshots.some(source => chosen.includes(source.sourceId))) throw failure('CONTENT_UNAVAILABLE', 'The selected free-book catalogs are temporarily unavailable.');
-      const terms = folded(query.query).split(/\s+/);
-      const matching = indexed.filter(row => query.kinds.includes(row.item.kind) && terms.every(term => row.text.includes(term))
+      const phrase = folded(query.query).trim().replace(/\s+/g, ' ');
+      const terms = [...new Set(phrase.match(/[\p{L}\p{M}\p{N}]+(?:'[\p{L}\p{M}\p{N}]+|[+#]+)*/gu) || [])];
+      const matching = indexed.filter(row => query.kinds.includes(row.item.kind)
         && (!query.languages.length || row.item.languages.some(l => query.languages.includes(l))))
-        .sort((a,b) => Number(b.title === folded(query.query)) - Number(a.title === folded(query.query)) || a.title.localeCompare(b.title) || a.item.key.localeCompare(b.item.key));
+        .map(row => rankedMatch(row, terms, phrase)).filter(Boolean)
+        .sort((a,b) => b.score - a.score || a.title.localeCompare(b.title) || a.item.key.localeCompare(b.item.key));
       let hiddenUnclear = 0;
       const eligible = [];
-      for (const { item } of matching) {
-        const value = present(item, query);
+      for (const { item, searchMatch } of matching) {
+        const value = {...present(item, query),searchMatch};
         if (isReadableAccess(value.access) && (query.access !== 'free_full_text' || value.access === 'free_full_text')) eligible.push(value);
         else if (item.locations.some(l => ['unknown', 'metadata_only'].includes(observedAccess(l, { ...query, now: now() })))) {
           hiddenUnclear++;

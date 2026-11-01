@@ -38,6 +38,17 @@ test('missing, failed or non-shared coordinator prevents all live dispatch',asyn
   assert.equal(calls,0);
 });
 
+test('disabled paper sources stay disabled for keyword and explicit-ID searches without contacting Redis',async()=>{
+  let calls=0;
+  const service=createContentService({env:{...env,CONTENT_EUROPEPMC_ENABLED:'false'},
+    coordinatorFactory:()=>{calls++;throw Error('must not initialize');}});
+  for(const input of [{query:'Mathematics'},{query:'PMC123'},{query:'arxiv:2301.00001'},
+    {query:'10.1234/synthetic'},{query:'Mathematics',sourceIds:['europepmc']}]){
+    await assert.rejects(service.search({...query,...input}),e=>e.code==='CONTENT_DISABLED'&&e.sources.every(s=>s.status==='disabled'));
+  }
+  assert.equal(calls,0);
+});
+
 test('quota, queued and source outages remain explicit instead of zero matches',async()=>{
   for(const status of ['quota_exhausted','queued','throttled','timeout']){
     const service=createContentService({env,coordinatorFactory:()=>({shared:true,run:async()=>({status})})});

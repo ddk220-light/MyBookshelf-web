@@ -113,3 +113,39 @@ test('curly source apostrophes accept ordinary typed book queries without changi
   const found=service({loadSnapshot:()=>snapshot}).search({query:"Writer's"});
   assert.equal(found.items[0].key,record.key);assert.equal(found.items[0].title,'Writer’s Book');
 });
+
+test('title relevance precedes broad subject matches and explains the source field',()=>{
+  const records=[
+    {...item(1),title:'A Psychology Workbook',subjects:['Mathematics']},
+    {...item(2),title:'Understanding Mathematics',subjects:['Mathematics']},
+    {...item(3),title:'Mathematics',subjects:[]},
+    {...item(4),title:'Zoology',contributors:[{name:'Mathematics Institute',role:'author'}]},
+  ];
+  const make=()=>service({loadSnapshot:()=>({...data,records})});
+  const first=make().search({query:'Mathematics',limit:2});
+  assert.deepEqual(first.items.map(i=>i.title),['Mathematics','Understanding Mathematics']);
+  const next=make().search({query:'Mathematics',limit:2,cursor:first.nextCursor});
+  assert.deepEqual(next.items.map(i=>i.title),['Zoology','A Psychology Workbook']);
+  assert.deepEqual(next.items[1].searchMatch,{field:'subject',value:'Mathematics'});
+  assert.deepEqual(make().search({query:'Mathematics',limit:2,cursor:first.nextCursor}),next);
+});
+
+test('queries match words and deliberate prefixes rather than unrelated word interiors',()=>{
+  const records=[{...item(1),title:'Chair Design'},{...item(2),title:'AI for Beginners'},
+    {...item(3),title:'Cartography'},{...item(4),title:'Art and Artists'},
+    {...item(5),title:'Artificial Intelligence'}];
+  const api=service({loadSnapshot:()=>({...data,records,recordCount:records.length})});
+  assert.deepEqual(api.search({query:'AI'}).items.map(i=>i.title),['AI for Beginners']);
+  assert.deepEqual(api.search({query:'art'}).items.map(i=>i.title),['Art and Artists']);
+  assert.deepEqual(api.search({query:'begin'}).items.map(i=>i.title),['AI for Beginners']);
+  assert.equal(api.search({query:'not-in-this-catalog'}).items.length,0);
+});
+
+test('all query terms must match while author-title combinations and punctuation remain searchable',()=>{
+  const records=[{...item(1),title:'Number Theory: An Introduction',contributors:[{name:'Émilie Test',role:'author'}]},
+    {...item(2),title:'An Unrelated Introduction'},{...item(3),title:'C++ Essentials'},item(4)];
+  const api=service({loadSnapshot:()=>({...data,records})});
+  assert.deepEqual(api.search({query:'Emilie Number Theory'}).items.map(i=>i.key),['fcd:v1:gutenberg:1']);
+  assert.deepEqual(api.search({query:'Number Theory: An Introduction'}).items.map(i=>i.key),['fcd:v1:gutenberg:1']);
+  assert.deepEqual(api.search({query:'C++'}).items.map(i=>i.key),['fcd:v1:gutenberg:3']);
+});
