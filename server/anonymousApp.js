@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import { HTML_SECURITY_POLICY } from '../shared/security-policy.js';
 
 import { createPublicV2Router } from './public-v2/router.js';
 
@@ -19,7 +20,7 @@ const PUBLIC_API_NOT_FOUND = Object.freeze({
 });
 
 // Open Library can redirect older covers through Internet Archive's ZIP image service.
-export const HTML_SECURITY_POLICY = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://books.google.com https://books.googleusercontent.com https://covers.openlibrary.org https://archive.org/download/ https://*.us.archive.org/view_archive.php https://tile.openstreetmap.org data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'";
+export { HTML_SECURITY_POLICY } from '../shared/security-policy.js';
 
 function legacyCookieOptions() {
   return {

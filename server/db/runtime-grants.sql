@@ -16,3 +16,5 @@ DROP POLICY IF EXISTS auth_identity_service ON app_users;
 CREATE POLICY auth_identity_service ON app_users TO mybookshelf_auth USING (true) WITH CHECK (true);
 DROP POLICY IF EXISTS auth_settings_service ON user_settings;
 CREATE POLICY auth_settings_service ON user_settings TO mybookshelf_auth USING (true) WITH CHECK (true);
+GRANT SELECT, INSERT, UPDATE, DELETE ON account_rate_buckets TO mybookshelf_auth;
+REVOKE ALL ON account_rate_buckets FROM mybookshelf_reading;
