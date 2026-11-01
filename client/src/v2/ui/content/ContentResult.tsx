@@ -12,6 +12,7 @@ export function ContentCover({ title, kind }: { title: string; kind: string }) {
 export function ContentResult({ item, to, returnTo }: { item: ContentItem; to: string; returnTo: string }) {
   const authors = item.contributors.filter(c => c.role === 'author');
   const host = item.readingActions[0]?.label.replace(/^Read at /,'') || item.locations[0]?.host || 'Source';
+  const index=({gutenberg:'Project Gutenberg',europepmc:'Europe PMC',doaj:'DOAJ',arxiv:'arXiv',openalex:'Wide paper search','open-textbook-library':'Open Textbook Library'} as Record<string,string>)[item.provenance[0]?.sourceId];
   return <article className="content-result">
     {bookLike(item.kind) && <Link tabIndex={-1} aria-hidden="true" to={to} state={{returnTo}}><ContentCover title={item.title} kind={item.kind} /></Link>}
     <div>{!bookLike(item.kind)&&<p className="content-kind">{kindLabel(item.kind)}{item.version ? ` · ${item.version}` : ''}
@@ -20,7 +21,7 @@ export function ContentResult({ item, to, returnTo }: { item: ContentItem; to: s
       <p>{authors.slice(0,3).map(c=>c.name).join(', ')}{authors.length>3?` + ${authors.length-3}`:''}</p>
       {item.container && <p className="muted">{item.container.title}{item.publishedAt ? ' · '+item.publishedAt.slice(0,4):''}</p>}
       <p className={`content-access ${item.access === 'free_full_text' ? 'access-free' : 'access-unclear'}`}><span aria-hidden="true">{item.access === 'free_full_text'?'●':'○'}</span>{' '}
-        {item.access === 'free_full_text' ? `Free to read at ${host}` : 'Access unclear · check at the source'}</p>
+        {item.access === 'free_full_text' ? index&&index.toLowerCase()!==host.toLowerCase()?`Free · Found via ${index}, read at ${host}`:`Free to read at ${host}` : 'Access unclear · check at the source'}</p>
     </div>
   </article>;
 }

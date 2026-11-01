@@ -42,7 +42,7 @@ it('saves a paper, reloads the mixed shelf and removes it without losing a legac
 it('labels absent licence and opens only the supplied source action',async()=>{
   mount(<ContentDetail contentKey={item.key}/>);
   expect(await screen.findByText('Licence not stated.')).toBeInTheDocument();
-  const read=screen.getByRole('link',{name:'Read at Europe PMC ↗'});
+  const read=screen.getByRole('link',{name:'Read at Europe PMC (opens Europe PMC)'});
   expect(read).toHaveAttribute('href','https://europepmc.org/articles/PMC123');expect(read).toHaveAttribute('rel','noopener noreferrer');
 });
 
@@ -56,6 +56,32 @@ it('keeps textbook collection searches distinct and labels the catalog language 
   expect(calls[calls.length-1]?.[1]).toEqual(['learning_resource']);
   expect(screen.getByText(/does not supply languages/)).toBeInTheDocument();
   expect(screen.getByText(/1,909 records/)).toBeInTheDocument();
+});
+
+it('shows source progress then retries one failed source without losing the answered results',async()=>{
+  let answer:((value:ContentPage)=>void)|undefined;
+  const extra:ContentItem={...item,key:'fcd:v1:doaj:'+ 'b'.repeat(32),title:'Retried source fixture',provenance:[{...item.provenance[0],sourceId:'doaj'}]};
+  vi.mocked(contentApi.search).mockImplementation(async(_q,_k,options,_signal,progress)=>{
+    if(options?.retrySource)return {...page,items:[extra],sessionCursor:'retry-token',sources:[page.sources[0],{id:'doaj',status:'ok',returned:1}]};
+    progress?.({id:'doaj',status:'searching',returned:0});
+    return new Promise(resolve=>{answer=resolve;});
+  });
+  mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=progress-fixture');
+  expect(await screen.findByText('Searching…')).toBeInTheDocument();
+  answer!({...page,sessionCursor:'opaque-session-token',sources:[page.sources[0],{id:'doaj',status:'timeout',returned:0,retryable:true}]});
+  await screen.findByRole('heading',{name:item.title});
+  fireEvent.click(screen.getByRole('button',{name:'Try DOAJ again'}));
+  expect(await screen.findByRole('heading',{name:extra.title})).toBeInTheDocument();
+  expect(screen.getByRole('heading',{name:item.title})).toBeInTheDocument();
+  const calls=vi.mocked(contentApi.search).mock.calls;
+  expect(calls[calls.length-1][2]).toMatchObject({cursor:'opaque-session-token',retrySource:'doaj'});
+});
+
+it('a partial search with no readable items does not claim that every source found no free copy',async()=>{
+  vi.mocked(contentApi.search).mockResolvedValue({...page,items:[],sources:[page.sources[0],{id:'doaj',status:'timeout',returned:0}]});
+  mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=partial-empty-fixture');
+  await screen.findByText('Some sources could not answer. Other results are shown.');
+  expect(screen.queryByRole('heading',{name:'No verified free copy in these results'})).not.toBeInTheDocument();
 });
 
 it('shows unknown items only after explicit consent and keeps source states inspectable',async()=>{

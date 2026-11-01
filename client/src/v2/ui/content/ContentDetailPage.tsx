@@ -28,7 +28,8 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
   const saved=state.savedContent.some(value=>value.contentKey===item.key);
   const primary=item.readingActions.find(action=>item.locations.find(location=>location.id===action.locationId)?.readerUrl)||item.readingActions[0];
   const downloads=Array.from(new Map(item.readingActions.flatMap(action=>action.downloads).map(file=>[file.url,file])).values());
-  const rights=item.locations.find(location=>location.license)?.license;
+  const primaryLocation=item.locations.find(location=>location.id===primary?.locationId);
+  const rights=primaryLocation?.license;
   const source=item.provenance[0];
   function save(){
     if(!item)return;
@@ -45,15 +46,16 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
       <button className="content-save" aria-pressed={saved} disabled={recoveryMode} onClick={save}>{saved?'Saved':'Save to shelf'}</button>
     </div></div>
     {notice&&<p role="status">{notice}</p>}
-    {primary&&safeSource(primary.url)?<a className="button-link content-read" href={safeSource(primary.url)} target="_blank" rel="noopener noreferrer">{primary.label} ↗</a>
+    {primary&&safeSource(primary.url)?<a className="button-link content-read" href={safeSource(primary.url)} target="_blank" rel="noopener noreferrer" aria-label={`${primary.label} (opens ${primaryLocation?.host||'source'})`}>{primary.label} ↗</a>
       :<p className="content-access access-unclear">○ Access is unclear. Check the source for current reading options.</p>}
-    {downloads.length>0&&<div className="content-formats" aria-label="Available formats">{downloads.map(file=>safeSource(file.url)&&<a key={file.url} href={safeSource(file.url)} target="_blank" rel="noopener noreferrer">{formats[file.mimeType]||'Format'} ↗</a>)}</div>}
+    {downloads.length>0&&<div className="content-formats" aria-label="Available formats">{downloads.map(file=>safeSource(file.url)&&<a key={file.url} href={safeSource(file.url)} target="_blank" rel="noopener noreferrer" aria-label={`${formats[file.mimeType]||'Format'} (opens ${new URL(file.url).hostname})`}>{formats[file.mimeType]||'Format'} ↗</a>)}</div>}
     <section className="content-rights"><h2>Reading and rights</h2><p>{rights?.statement||rights?.id||'Licence not stated.'}</p>
+      {primaryLocation?.version&&<p>Version at this host: {primaryLocation.version}</p>}
       <p>Free to read does not always mean free to reuse. Check your country’s rules and the source’s terms.</p></section>
-    {item.relations.length>0&&<section><h2>Related versions</h2>{item.relations.map(relation=><p key={relation.targetKey}><Link to={'/app/read/'+encodeURIComponent(relation.targetKey)}>{relation.kind} · separate item</Link></p>)}</section>}
+    {item.relations.length>0&&<section><h2>Related versions</h2>{item.relations.map(relation=><p key={relation.targetKey||relation.targetUrl}>{relation.targetKey?<Link to={'/app/read/'+encodeURIComponent(relation.targetKey)}>{relation.kind} · separate item</Link>:relation.targetUrl&&safeSource(relation.targetUrl)?<a href={safeSource(relation.targetUrl)} target="_blank" rel="noopener noreferrer">{relation.kind} ↗</a>:relation.kind}</p>)}</section>}
     {['book','learning_resource'].includes(item.kind)&&<p className="content-library-link"><Link to={'/app/search?q='+encodeURIComponent(item.title+' '+item.contributors.filter(c=>c.role==='author').slice(0,1).map(c=>c.name).join(' '))}>
       Prefer print? {library?`Search ${library.name}`:'Search library books'}</Link><small>A title search may find a different edition.</small></p>}
-    {source&&<footer className="content-provenance">From {source.sourceId==='gutenberg'?'Project Gutenberg':source.sourceId==='open-textbook-library'?'Open Textbook Library':source.sourceId==='europepmc'?'Europe PMC':source.sourceId} · checked {new Date(source.retrievedAt).toLocaleDateString()}
+    {source&&<footer className="content-provenance">From {({gutenberg:'Project Gutenberg','open-textbook-library':'Open Textbook Library',europepmc:'Europe PMC',arxiv:'arXiv',doaj:'DOAJ',openalex:'Wide paper search'} as Record<string,string>)[source.sourceId]||source.sourceId} · checked {new Date(source.retrievedAt).toLocaleDateString()}
       {safeSource(source.recordUrl)&&<> · <a href={safeSource(source.recordUrl)} target="_blank" rel="noopener noreferrer">Source record ↗</a></>}</footer>}
   </section>;
 }

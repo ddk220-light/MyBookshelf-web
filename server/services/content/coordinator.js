@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 export const RESERVE = `
 local cached = redis.call('GET', KEYS[4])
 if cached then return {'cached', cached} end
+if redis.call('EXISTS', KEYS[7]) == 1 then return {'throttled', ''} end
 local clock = redis.call('TIME')
 local now = tonumber(clock[1]) * 1000 + math.floor(tonumber(clock[2]) / 1000)
 local day = math.floor(now / 86400000)
@@ -18,6 +19,8 @@ local minuteCount = 0
 if tonumber(redis.call('HGET', KEYS[2], 'period')) == minute then minuteCount = tonumber(redis.call('HGET', KEYS[2], 'count') or '0') end
 if minuteCount >= tonumber(ARGV[3]) then return {'throttled', ''} end
 if redis.call('ZCARD', KEYS[3]) >= tonumber(ARGV[4]) then return {'queued', ''} end
+if now < tonumber(redis.call('GET', KEYS[6]) or '0') then return {'queued', ''} end
+if tonumber(ARGV[6]) > 0 then redis.call('SET', KEYS[6], now + tonumber(ARGV[6]), 'PX', 120000) end
 redis.call('SET', KEYS[5], ARGV[1], 'PX', ARGV[5])
 redis.call('ZADD', KEYS[3], now + tonumber(ARGV[5]), ARGV[1])
 redis.call('PEXPIRE', KEYS[3], ARGV[5])
@@ -35,6 +38,10 @@ redis.call('DEL', KEYS[2])
 if ARGV[2] ~= '' then redis.call('SET', KEYS[3], ARGV[2], 'PX', ARGV[3]) end
 return 1
 `;
+const CACHE_RECORDS = `
+for i = 1, #KEYS do redis.call('SET', KEYS[i], ARGV[i], 'PX', 900000) end
+return #KEYS
+`;
 
 export function createRedisCoordinator({url=process.env.CONTENT_REDIS_REST_URL,
   token=process.env.CONTENT_REDIS_REST_TOKEN,fetchImpl=globalThis.fetch,
@@ -46,7 +53,7 @@ export function createRedisCoordinator({url=process.env.CONTENT_REDIS_REST_URL,
   if(!/^[a-zA-Z0-9:_-]{1,100}$/.test(namespace))throw new Error('CONTENT_COORDINATOR_CONFIG_INVALID');
   async function command(args) {
     try {
-      const response=await fetchImpl(url,{method:'POST',redirect:'error',signal:AbortSignal.timeout(1000),
+      const response=await fetchImpl(url,{method:'POST',redirect:'error',signal:AbortSignal.timeout(400),
         headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(args)});
       if(!response.ok || Number(response.headers.get('content-length'))>4*1024*1024)throw Error();
       const reader=response.body?.getReader();
@@ -62,11 +69,19 @@ export function createRedisCoordinator({url=process.env.CONTENT_REDIS_REST_URL,
     }catch{throw Object.assign(new Error('Shared content coordination is unavailable.'),{sourceStatus:'unavailable'});}
   }
   function keys(source,pageKey) {
-    if(source!=='europepmc'||!/^[a-f0-9]{64}$/.test(pageKey))throw Error('CONTENT_COORDINATOR_KEY_INVALID');
+    if(!['europepmc','doaj','arxiv','openalex','sessions'].includes(source)||!/^[a-f0-9]{64}$/.test(pageKey))throw Error('CONTENT_COORDINATOR_KEY_INVALID');
     const prefix=namespace+':{'+source+'}:';
-    return {daily:prefix+'daily',minute:prefix+'minute',active:prefix+'active',cache:prefix+'page:'+pageKey,lock:prefix+'lock:'+pageKey};
+    return {daily:prefix+'daily',minute:prefix+'minute',active:prefix+'active',cache:prefix+'page:'+pageKey,lock:prefix+'lock:'+pageKey,
+      spacing:prefix+'spacing',cooldown:prefix+'cooldown'};
   }
   return {shared:true,
+    async cache(source,entries){
+      if(!Array.isArray(entries)||entries.length>40)throw Error('CONTENT_RECORD_CACHE_INVALID');
+      if(!entries.length)return;
+      const values=entries.map(entry=>JSON.stringify(entry.value));
+      if(values.reduce((sum,value)=>sum+Buffer.byteLength(value),0)>1024*1024)throw Error('CONTENT_RECORD_CACHE_TOO_LARGE');
+      await command(['EVAL',CACHE_RECORDS,entries.length,...entries.map(entry=>keys(source,entry.key).cache),...values]);
+    },
     async get(source,pageKey) {
       const value=await command(['GET',keys(source,pageKey).cache]);
       return value?JSON.parse(value):null;
@@ -76,7 +91,9 @@ export function createRedisCoordinator({url=process.env.CONTENT_REDIS_REST_URL,
       if(!Number.isInteger(policy.dailyLimit)||policy.dailyLimit<1||!Number.isInteger(policy.perMinute)||policy.perMinute<1
         ||!Number.isInteger(policy.concurrency)||policy.concurrency<1||policy.concurrency>10) throw Error('CONTENT_BUDGET_INVALID');
       const lease=randomUUID();
-      const result=await command(['EVAL',RESERVE,5,k.daily,k.minute,k.active,k.cache,k.lock,lease,policy.dailyLimit,policy.perMinute,policy.concurrency,5000]);
+      const concurrency=source==='arxiv'?1:policy.concurrency;
+      const spacing=({arxiv:3000,doaj:500,openalex:100})[source]||0;
+      const result=await command(['EVAL',RESERVE,7,k.daily,k.minute,k.active,k.cache,k.lock,k.spacing,k.cooldown,lease,policy.dailyLimit,policy.perMinute,concurrency,5000,spacing]);
       if(result[0]==='cached')return {status:'ok',cached:true,page:JSON.parse(result[1])};
       if(result[0]!=='reserved')return {status:result[0]};
       let page;
@@ -88,6 +105,10 @@ export function createRedisCoordinator({url=process.env.CONTENT_REDIS_REST_URL,
         if(committed!==1)throw Error('CONTENT_LEASE_EXPIRED');
         return {status:'ok',cached:false,page};
       }catch(error){
+        if(error.sourceStatus==='throttled'&&Number.isFinite(error.retryAfterSeconds)){
+          const duration=Math.min(3600,Math.max(1,error.retryAfterSeconds))*1000;
+          await command(['SET',k.cooldown,'1','PX',duration]).catch(()=>{});
+        }
         await command(['EVAL',FINISH,3,k.active,k.lock,k.cache,lease,'',0]).catch(()=>{});
         throw error;
       }

@@ -22,7 +22,7 @@ test.describe('free-content discovery',()=>{
     await page.evaluate(()=>localStorage.setItem('mybookshelf.anonymous-web.v1',JSON.stringify({version:1,selectedLibraryId:null,recentBooks:[],savedBooks:[{bookKey:'v1:isbn:9780140328721',title:'Legacy shelf fixture',authors:['Legacy Author'],source:'direct',viewedAt:'2026-10-01T00:00:00Z'}]})));
     await page.reload();
     await page.getByRole('heading',{name:fixture.title}).getByRole('link').click();
-    await expect(page.getByRole('link',{name:'Read at Europe PMC ↗'})).toHaveAttribute('href','https://europepmc.org/articles/PMC123');
+    await expect(page.getByRole('link',{name:'Read at Europe PMC (opens Europe PMC)'})).toHaveAttribute('href','https://europepmc.org/articles/PMC123');
     await page.getByRole('button',{name:'Save to shelf'}).click();
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toHaveAttribute('aria-pressed','true');
     await page.getByRole('link',{name:'Shelf',exact:true}).click();await page.reload();

@@ -81,7 +81,9 @@ migration. The optional library bridge requires exact ISBN/work evidence.
 See [implementation decisions and story state](research/free-content/IMPLEMENTATION.md)
 and [validation](research/free-content/VALIDATION.md). Open Textbook Library is
 implemented with 1,909 real metadata records, combined catalog search and ISBN
-links. Other paper sources and the children's pilot are pending.
+links. DOAJ, arXiv and OpenAlex adapters, bounded multi-source paging, shared
+record caching, source progress and source-only retry are implemented and tested.
+The reviewed children's pilot and final hosted enablement are pending.
 
 Both client and backend flags default off. Live paper search additionally needs
 shared Redis REST credentials and explicit budget configuration; no hosted store

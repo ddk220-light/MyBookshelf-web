@@ -57,10 +57,7 @@ This workspace uses `/usr/bin/chromium` via
 
 - Hosted shared Redis REST binding and explicit per-source budgets; flags remain
   off without them. Local Gutenberg search requires no database.
-- DOAJ/arXiv/OpenAlex policy and adapter work;
-  reviewed real children's records with original credits and languages.
-- Per-source planner, bounded concurrent progress and source-specific retry;
-  current requests return one bounded response, not streaming results.
+- Reviewed real children's records with original credits and languages.
 - Automated reviewed catalog refresh before 24-hour access evidence expiry;
   stale evidence must remain unknown. Fresh host-link sampling and deletion checks.
 - Finish board-state coverage, source-specific retraction/version fixtures,
@@ -86,3 +83,31 @@ phone/desktop: search → resolve → supplied LibreTexts host link → save →
 download buttons appeared for the host's HTML landing page. There were no browser
 page errors or horizontal overflow. These are metadata and browser checks, not
 an exhaustive check of every publisher's outbound link.
+
+## Multi-source papers follow-up
+
+DOAJ, arXiv and OpenAlex now have bounded adapters, source-native identities and
+per-location access/licence handling. Fresh [policy observations](evidence/2026-11-01/source-policies.json)
+verify DOAJ's 2 RPS and arXiv's 3-second/single-connection aggregate rules. The
+configured OpenAlex key reported $1/day free allowance, $0.001 ordinary search
+and zero prepaid funds; runtime rechecks those conditions before dispatch.
+Operational limits and caveats are in [OPERATIONS.md](OPERATIONS.md).
+
+Forty focused backend tests and 135 client tests pass; the full server suite has
+525 passing tests. Real Redis verifies two-instance quotas, source-wide spacing,
+429 cooldown, record caching and a 180 KB cache value. Search transport tests
+cover source progress, final commit/error and interrupted streams. The standard
+14 feature browser checks pass after the progress changes.
+
+The [actual paper flow](evidence/2026-11-01/papers-live-flow.json) exercised a
+local API, actual Redis and official source metadata: 20 + 20 unique results,
+source progress, reader → save → reload → reopen, and versioned legacy arXiv
+lookup → reader. Native source pages were shared/cached from fresh checks; the
+captured first response took 261 ms with those cached native pages. This does
+not establish live-provider latency or hosted performance. No browser page errors
+were recorded. The test facade initially hit an OS argument-size limit; using
+stdin and adding the 180 KB check fixed the facade. The production REST protocol
+does not pass cache values through a command-line argument.
+
+Gates remain: hosted cache bindings/budgets, daily catalog refresh, actual
+children's pilot, final browser/host-link/preview validation. Flags stay off.
