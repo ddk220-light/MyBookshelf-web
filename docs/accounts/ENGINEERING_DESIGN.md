@@ -155,7 +155,10 @@ adapter. Requests never accept an owner ID. JSON responses are `private, no-stor
 with no CDN cache; private routes are noindex. Mutations require same-origin
 Origin/Referer validation plus CSRF token tied to session; reject absent/invalid
 browser proof. OAuth callbacks use their protocol's state validation, not the
-custom JSON CSRF handler. Ordinary payload limit 32KiB; import 256KiB.
+custom JSON CSRF handler. Ordinary payload limit 32KiB; import 2MiB. The import
+preview checks serialized UTF-8 size as well as item counts; oversize snapshots
+produce a clear limit error without changing or discarding local data. Test the
+largest supported key/metadata fixtures against the actual platform request cap.
 
 Errors: `{error:{code,message,requestId,retryAfterSeconds?}}`, with safe messages.
 Use 401 session missing/expired, 403 unverified/recent-auth/origin, 409 version or
