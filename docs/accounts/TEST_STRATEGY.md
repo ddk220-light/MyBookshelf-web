@@ -4,6 +4,13 @@ Version 0.2, 2026-11-01. D03. **Approved test plan.** Actual results and remaini
 in [VALIDATION.md](VALIDATION.md). A documentation review is not runtime validation. Requirements:
 [PRD](PRD.md). Contracts: [ENGINEERING_DESIGN.md](ENGINEERING_DESIGN.md).
 
+Owner rollout update, 2026-11-01: Resend is production-only and Google/Apple remain
+disabled until later configuration. Keep the protocol/unit/browser evidence below;
+real mail is verified during production setup before email-account enablement,
+and live provider/Safari/relay checks apply before each provider is enabled.
+The optional GitHub staging scheduler is not a requirement to finish coding.
+See [the current operations record](OPERATIONS.md#owners-current-rollout-choices).
+
 ## Test layers and fixtures
 
 Use existing client Vitest/Testing Library, server `node:test`/Supertest and

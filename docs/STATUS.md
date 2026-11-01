@@ -76,12 +76,15 @@ private ledger writes/reads/encrypted cleanup and anonymous-read denial pass.
 Runtime credentials are Preview/account-settings only, administrator Development
 only. Existing production resources/Git connection remain unchanged.
 
-R03 still needs live Google/Apple/mobile Safari and mail, active scheduler/alerts,
-hosted backup/restore and retention proof, assistive-technology/second-operator
-checks and owner release approval. Required provider secrets and Resend's explicit
-legal-policy consent are pending. Actions secret setup is blocked by HTTP 403
-with the available GitHub connection. Continue from these concrete exits;
-do not recreate provisioned resources or silently defer Apple.
+The owner subsequently instructed: Resend only for production; keep Google/Apple
+disabled and add their credentials later. These are deliberate activation deferrals,
+not current staging setup requests. Live staging capabilities confirm all three
+methods remain disabled. The GitHub workflow is an optional staging scheduler;
+its Actions-secret HTTP 403 does not require a permission change to finish coding.
+See [current rollout choices](accounts/OPERATIONS.md#owners-current-rollout-choices).
+Production still needs real mail, active cleanup/alerts, hosted backup/restore,
+retention proof and final accessibility/operator/R03 review before account enablement.
+Provider-specific live checks apply before those methods are enabled later.
 
 Worktree: `/workspace/worktrees/MyBookshelf-web-account-settings`, branch
 `account-settings`. The existing

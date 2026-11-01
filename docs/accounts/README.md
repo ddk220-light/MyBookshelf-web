@@ -28,6 +28,11 @@ R03 release acceptance remains pending. See [the implementation record](IMPLEMEN
 | [Delivery plan](DELIVERY_PLAN.md) | Epics, concrete tasks, estimates, owners and dependencies | [D05 #6](https://github.com/ddk220-light/MyBookshelf-web/issues/6) |
 | [Claude handoff](UI_ARTIFACT.md) | Brief and acceptance for the subsequent UI artifact | [S22 #56](https://github.com/ddk220-light/MyBookshelf-web/issues/56) |
 
+The owner later deferred Google/Apple activation and chose Resend for production
+only. The original approved decisions below remain the design history; current
+activation sequencing and conditional live checks are recorded in
+[OPERATIONS.md](OPERATIONS.md#owners-current-rollout-choices).
+
 ## Decisions for this review
 
 These decisions were accepted in R01 with no requested changes or exceptions.

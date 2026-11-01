@@ -2,8 +2,10 @@
 
 Updated 2026-11-01 UTC. Code candidate: `aa3b5bfd7f7720b2283d08b68ac6c1e7079e0bfc`, branch
 `account-settings`, [PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57).
-R02 approved documents/Claude canvas v4 at `36a1436`. **R03 is blocked on the
-external exits below; this is an implemented feature, not production approval.**
+R02 approved documents/Claude canvas v4 at `36a1436`. **R03 remains pending;
+this is an implemented feature, not production approval. The owner's later rollout
+choices defer Resend to production and keep Google/Apple disabled; see the current
+configuration record below.**
 
 ## Reproducible local checks
 
@@ -135,23 +137,28 @@ Native auth remains pinned to the reviewed Better Auth version.
   proving background application controls remain unreachable. Escape restoration,
   explicit consent and the complete deletion flow still pass on all three projects.
 
-## Blocking external exits and ownership
+## Current rollout choices and remaining live checks
 
-Deepak owns provider configuration, budget/legal consent and R03 approval.
+Deepak subsequently instructed: Resend only for production; Google/Apple disabled
+for now, with credentials added later. A fresh protected staging capabilities check
+returned HTTP 200 with `email:false`, `google:false`, `apple:false`.
 
-1. Provide Google and Apple server credentials in staging Preview/account-settings
-   through hosting secret settings and register the exact callbacks in
-   [OPERATIONS.md](OPERATIONS.md). No credentials should be pasted into chat.
-2. Explicitly settle the pending Resend terms/privacy consent, configure/verify the
-   staging sender domain and prove real verification/reset/security/relay mail.
-3. A GitHub administrator must configure the two staging scheduler secrets,
-   restrict its environment, enable the schedule on the default branch and verify
-   consecutive runs plus failure notifications. The available Actions public-key
-   endpoint returned HTTP 403; the checked-in workflow is currently inactive.
-4. Prove provider/manual backup lifetime is at most thirty days and run an isolated
-   hosted restore with independent ledger reconciliation and a second operator.
-5. Complete the remaining staged UI/accessibility/performance/logging checks,
-   identify the final tested deployment, resolve material defects and obtain R03.
+- No staging Resend setup or staging mail legal consent is requested. Local
+  controlled-mail tests remain valid automated evidence; real delivery must be
+  verified during production setup before enabling email accounts for readers.
+- Google/Apple code and protocol tests remain implemented. Real provider, mobile
+  Safari and relay checks are deferred until those methods are enabled; they are
+  not current staging activation prerequisites.
+- The optional GitHub staging scheduler remains inactive. Its secret API returned
+  403, but extra GitHub permission is not needed for coding or today's disabled
+  staging state. A tested production scheduler/alerts is still required for live
+  deletion deadlines and data expiry before accounts are enabled. GitHub Actions
+  is one scheduling option, not an application requirement.
+- Hosted backup lifetime (at most thirty days), isolated restore/second operator,
+  remaining UI/accessibility/performance/logging checks and final R03 acceptance
+  remain production exits. These require actual evidence, not a resource's plan name.
 
-No terms were accepted implicitly, Apple was not removed from scope, no production
-account infrastructure was provisioned, and no production rollout/merge occurred.
+These owner-directed activation deferrals supersede the earlier request to supply
+all provider/mail/scheduler prerequisites for staging now. No real terms were
+accepted, no verification bypass/test inbox was deployed, and production remains
+unchanged. See [OPERATIONS.md](OPERATIONS.md#owners-current-rollout-choices).

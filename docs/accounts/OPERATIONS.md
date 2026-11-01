@@ -5,6 +5,26 @@ Claude canvas v4 are approved. **R03 has not approved a production release.**
 Deepak is the release/configuration owner. A second operator has not yet followed
 this runbook; automated checks are recorded separately from that requirement.
 
+## Owner's current rollout choices
+
+Recorded 2026-11-01, following the implementation checkpoint:
+
+- Use Resend only for production. Do not provision a staging sender or request
+  staging mail-provider legal consent. Local automated tests continue to use their
+  existing synthetic outbox; this does not enable a hosted test inbox or bypass
+  email verification. Settle production mail consent/domain/delivery at production
+  setup, before enabling email accounts for readers.
+- Keep Google and Apple disabled for now; credentials and activation are deferred
+  by the owner. Retain the implementation and protocol tests. Complete each
+  provider's real login/relay/Safari checks before enabling that provider later.
+- The GitHub maintenance workflow was an optional staging scheduler. Its secret
+  permissions are not required to finish coding or to leave staging automation
+  inactive. Production still requires a tested scheduler and failure alerts before
+  real account data/deletions rely on it; select the production scheduler at setup.
+
+Live staging capabilities were checked after this instruction and report email,
+Google and Apple all disabled. Do not add credentials or turn these on implicitly.
+
 ## Environments and credentials
 
 Staging uses Vercel project `mybookshelf-accounts-staging`
@@ -107,23 +127,27 @@ its check. GitHub schedules run from the default branch, so the workflow must be
 present there before relying on scheduled execution. Enable failure notifications
 and verify consecutive runs and health timestamps before release.
 
-Actual scheduler activation remains pending. The current GitHub connection returned
-HTTP 403 for the Actions secrets public-key API, so it cannot securely install
-those environment secrets. Do not pass credentials as workflow inputs, commit them,
-disable deployment protection, or treat the checked-in workflow as a running job.
-Vercel preview deployments do not gain an active schedule from a production cron
-configuration. A trusted operator may run `tools/accounts/run-maintenance.mjs`
-with the two staging secrets supplied by their secret manager for staged validation.
+This optional staging schedule remains inactive. The current GitHub connection
+returned HTTP 403 for the Actions secrets public-key API. That restricts this
+particular scheduling option; no GitHub permission change is requested now.
+Do not pass credentials as workflow inputs, commit them, disable deployment
+protection, or treat the checked-in workflow as a running job. Native Vercel Cron
+runs on production deployments; validate the selected plan's supported frequency
+when setting up production maintenance. A trusted operator may run
+`tools/accounts/run-maintenance.mjs` with secrets supplied by their secret manager
+for controlled staging validation. Never rely on website visits to drive cleanup.
 
 ## Mail and identity providers
 
 Required server-only mail values: `RESEND_API_KEY`, `ACCOUNTS_MAIL_FROM`,
 `ACCOUNTS_JOB_SECRET`. Queued payloads use authenticated encryption; plaintext
 credentials/tokens never enter logs. Native protocol and outbox failure tests pass,
-but controlled outbox readers do not prove delivery. Resend legal-policy acceptance
-is pending an explicit owner answer; no terms have been accepted implicitly.
-Verify SPF/DKIM/DMARC, real verification/reset/security email, spam-folder behavior
-and Apple relay delivery before release.
+but controlled outbox readers do not prove delivery. The owner has chosen Resend
+for production only. No staging sender or provider installation is requested.
+Settle legal-policy acceptance and verify SPF/DKIM/DMARC and real verification,
+reset and security email during production setup before enabling email accounts.
+Verify Apple relay delivery when Apple sign-in is enabled later. No terms have
+been accepted implicitly.
 
 Google: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`; identity-only scopes
 `openid email profile`. Register the exact stable callback
@@ -165,8 +189,10 @@ back a database to revive a deleted identity or discard queued cleanup. Restore
 only into isolation with ledger reconciliation. Retain the last reviewed public
 production deployment as the production rollback target until R03 chooses a new one.
 
-R03 needs one identified tested commit/deployment, live Google/Apple (including
-Safari form POST/relay), real mail, active scheduler/alerts, hosted restore and
-backup-retention proof, final privacy/accessibility/public regression evidence,
-zero unresolved critical/high defects, and Deepak's explicit approval of that
-candidate. Local controlled transports and a provisioned resource are not those exits.
+R03 needs one identified tested commit/deployment, tested production mail and an
+active production scheduler/alerts before email accounts are enabled, hosted
+restore and backup-retention proof, final privacy/accessibility/public regression
+evidence, zero unresolved critical/high defects, and Deepak's explicit approval.
+Google/Apple activation is deferred by the owner; live provider/Safari/relay checks
+apply before those methods are enabled. Local controlled transports and a
+provisioned resource do not substitute for required live operational evidence.

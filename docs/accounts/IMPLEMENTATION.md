@@ -108,9 +108,12 @@ required live evidence; implementation is not equivalent to release approval.
 | S19 validation consolidation | #131, reusing existing T01–T06 #42–47 |
 | S20 operations | #132–133 |
 
-Outstanding external exits: real Google/Apple credentials and designated-account
-round trips (including mobile Safari/relay), explicit Resend legal-policy consent
-and real mail/domain delivery, scheduler secret access/activation/notifications,
-hosted backup-retention and isolated restore audit, real assistive-technology and
-second-operator evidence. These remain visible in VALIDATION.md and the project.
-No product scope, Apple requirement or R03 gate has been waived.
+Current owner-directed sequencing: Resend is production-only, Google/Apple remain
+disabled with credentials deferred, and the optional GitHub staging scheduler stays
+inactive. No extra GitHub secret permissions are needed to finish coding. See
+[the operational decision record](OPERATIONS.md#owners-current-rollout-choices).
+
+Before production account enablement, verify actual mail, active cleanup/alerts,
+hosted backup retention/restore, accessibility, second-operator evidence and R03.
+Before later Google/Apple activation, complete their live provider/Safari/relay
+checks. The implemented protocols remain available for that later configuration.
