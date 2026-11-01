@@ -90,3 +90,9 @@ direct HTML where available and otherwise uses the catalog landing page. Valid
 supplied EPUB/Kindle routes remain available; no file path is guessed. Download
 buttons use the primary location's formats/rights, one per MIME. Other reading
 locations show their own version/licence instead of inheriting the primary one.
+
+The web service must build with client dependencies alone. Its Vite config
+imports the dependency-free shared CSP module, not the Express application.
+`node tools/deployment/check-client-service-build.mjs` reproduces that boundary
+in a temporary installation; it excludes environment files, generated assets
+and existing node_modules. CI runs this alongside the full workspace checks.

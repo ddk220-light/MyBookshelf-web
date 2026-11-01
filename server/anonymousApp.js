@@ -3,6 +3,8 @@ import cors from 'cors';
 import path from 'path';
 
 import { createPublicV2Router } from './public-v2/router.js';
+import { HTML_SECURITY_POLICY } from '../shared/html-security-policy.mjs';
+export { HTML_SECURITY_POLICY };
 
 export const LEGACY_API_RETIRED = Object.freeze({
   error: Object.freeze({
@@ -17,9 +19,6 @@ const PUBLIC_API_NOT_FOUND = Object.freeze({
     message: 'This public catalog endpoint does not exist.',
   }),
 });
-
-// Open Library can redirect older covers through Internet Archive's ZIP image service.
-export const HTML_SECURITY_POLICY = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://books.google.com https://books.googleusercontent.com https://covers.openlibrary.org https://archive.org/download/ https://*.us.archive.org/view_archive.php https://tile.openstreetmap.org data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'";
 
 function legacyCookieOptions() {
   return {

@@ -161,3 +161,20 @@ are the Gutenberg mapping-version/link changes. The daily workflow passed
 actionlint 1.7.7 (release checksum verified), but has not executed on the default
 branch or created an automated refresh PR yet. Actual source captures were
 updated in all three reading lights with no page errors or horizontal overflow.
+
+## Isolated web-service build
+
+The automatic Vercel preview check exposed a pre-existing build coupling:
+Vite imported its CSP constant through the Express application module. The web
+service installs client dependencies separately, so that import failed with
+`ERR_MODULE_NOT_FOUND: express`. The failure was reproduced in a temporary
+client-only installation with 254 packages and no Express.
+
+The unchanged CSP now lives in `shared/html-security-policy.mjs`; both the API
+and Vite preview import it. The isolated production build passes without API
+dependencies. Ten existing header/SEO checks pass, and CI now runs
+`node tools/deployment/check-client-service-build.mjs` to preserve this boundary.
+The automatic deployment's project settings were inspected read-only; the fix is
+contained in this branch's source. Final deployment/CI status is recorded on
+[PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110) and task
+[#134](https://github.com/ddk220-light/MyBookshelf-web/issues/134).
