@@ -5,6 +5,7 @@ export type ContentItem = {
   key: string; kind: ContentKind; title: string; contributors: Array<{ name: string; role: string }>;
   identifiers: Array<{ scheme: string; value: string }>; languages: string[]; subjects: string[];
   publishedAt?: string; version?: string; container?: { title: string }; flags?: string[];
+  collections?:string[];publisher?:string;readingLevel?:{publisher:string;label:string};originalLanguage?:string;
   access: 'free_full_text' | 'unknown';
   match?: { scheme: string; value: string };
   locations: Array<{ id: string; host: string; landingUrl: string; readerUrl?: string; access: string; version?:string;
@@ -15,6 +16,6 @@ export type ContentItem = {
   readingActions: Array<{ locationId: string; label: string; url: string; downloads: Array<{ url: string; mimeType: string }> }>;
 };
 export type ContentPage = { items: ContentItem[]; nextCursor: string | null; hiddenUnclear: number;
-  coverage: string; sources: ContentSourceStatus[]; policyRevision: string;sessionCursor?:string };
+  coverage: string; sources: ContentSourceStatus[]; policyRevision: string;sessionCursor?:string;availableLevels?:string[] };
 export type SavedContent = { kind: 'content'; contentKey: string; itemKind: ContentKind;
   title: string; authors: string[]; host: string; savedAt: string };

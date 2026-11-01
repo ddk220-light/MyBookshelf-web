@@ -17,8 +17,9 @@ export function ContentResult({ item, to, returnTo }: { item: ContentItem; to: s
     {bookLike(item.kind) && <Link tabIndex={-1} aria-hidden="true" to={to} state={{returnTo}}><ContentCover title={item.title} kind={item.kind} /></Link>}
     <div>{!bookLike(item.kind)&&<p className="content-kind">{kindLabel(item.kind)}{item.version ? ` · ${item.version}` : ''}
       {item.flags?.includes('source_reports_retracted') && <span className="content-warning"> · Retraction listed by source</span>}</p>}
-      <h2><Link to={to} state={{returnTo}}>{item.title}</Link></h2>
+      <h2 lang={item.languages[0]!=='und'?item.languages[0]:undefined}><Link to={to} state={{returnTo}}>{item.title}</Link></h2>
       <p>{authors.slice(0,3).map(c=>c.name).join(', ')}{authors.length>3?` + ${authors.length-3}`:''}</p>
+      {item.readingLevel&&<><p className="content-kind">{item.readingLevel.publisher} · {item.readingLevel.label}</p>{item.contributors.filter(c=>['illustrator','translator'].includes(c.role)).map(c=><p key={c.role+':'+c.name} className="content-provenance">{c.role==='illustrator'?'Illustrated by':'Translated by'} {c.name}</p>)}</>}
       {item.container && <p className="muted">{item.container.title}{item.publishedAt ? ' · '+item.publishedAt.slice(0,4):''}</p>}
       <p className={`content-access ${item.access === 'free_full_text' ? 'access-free' : 'access-unclear'}`}><span aria-hidden="true">{item.access === 'free_full_text'?'●':'○'}</span>{' '}
         {item.access === 'free_full_text' ? index&&index.toLowerCase()!==host.toLowerCase()?`Free · Found via ${index}, read at ${host}`:`Free to read at ${host}` : 'Access unclear · check at the source'}</p>

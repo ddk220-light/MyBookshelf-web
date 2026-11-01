@@ -84,6 +84,32 @@ it('a partial search with no readable items does not claim that every source fou
   expect(screen.queryByRole('heading',{name:'No verified free copy in these results'})).not.toBeInTheDocument();
 });
 
+it('the unpublished children collection reports its review gate even with no search query',async()=>{
+  vi.mocked(contentApi.search).mockRejectedValue(new PublicApiError({code:'CONTENT_COLLECTION_UNAVAILABLE',status:503,message:'The reviewed children’s starter set is not ready yet.'}));
+  mount(<ContentSearchPage scope="free"/>,'/app/search?scope=free&collection=children');
+  expect(await screen.findByRole('heading',{name:'The starter set is still being checked'})).toBeInTheDocument();
+  expect(screen.queryByRole('heading',{name:'No verified free copy in these results'})).not.toBeInTheDocument();
+  const calls=vi.mocked(contentApi.search).mock.calls;
+  expect(calls[calls.length-1][0]).toBe('');expect(calls[calls.length-1][2]).toMatchObject({collection:'children'});
+});
+
+it('pilot fixtures retain script, original credits and publisher levels while language filters change',async()=>{
+  const story:ContentItem={...item,key:'fcd:v1:storyweaver:7777772',kind:'book',title:'हिन्दी परीक्षण कहानी',languages:['hi'],collections:['children'],
+    publisher:'Fixture publisher',readingLevel:{publisher:'Fixture publisher',label:'Publisher level one'},
+    contributors:[{name:'Fixture Author',role:'author'},{name:'Fixture Illustrator',role:'illustrator'},{name:'Fixture Translator',role:'translator'}]};
+  vi.mocked(contentApi.search).mockImplementation(async(_q,_k,options)=>({...page,availableLevels:['Publisher level one'],sources:[{id:'children-pilot',status:'ok',returned:1}],
+    items:[options?.languages?.[0]==='ta'?{...story,key:'fcd:v1:storyweaver:7777773',languages:['ta'],title:'தமிழ் சோதனைக் கதை'}:story]}));
+  mount(<ContentSearchPage scope="free"/>,'/app/search?scope=free&collection=children&q=pilot-ui-fixture');
+  expect(await screen.findByRole('heading',{name:story.title})).toHaveAttribute('lang','hi');
+  expect(screen.getByText('Illustrated by Fixture Illustrator')).toBeInTheDocument();
+  expect(screen.getByText('Translated by Fixture Translator')).toBeInTheDocument();
+  expect(screen.getByRole('option',{name:'Publisher level one'})).toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText('Language'),{target:{value:'ta'}});
+  expect(await screen.findByRole('heading',{name:'தமிழ் சோதனைக் கதை'})).toHaveAttribute('lang','ta');
+  fireEvent.change(screen.getByLabelText('Publisher level'),{target:{value:'Publisher level one'}});
+  await waitFor(()=>{const calls=vi.mocked(contentApi.search).mock.calls;expect(calls[calls.length-1][2]).toMatchObject({collection:'children',languages:['ta'],level:'Publisher level one'});});
+});
+
 it('shows unknown items only after explicit consent and keeps source states inspectable',async()=>{
   vi.mocked(contentApi.search).mockImplementation(async(_q,_k,options)=>({...page,hiddenUnclear:1,
     items:options?.includeUnclear?[item,{...item,key:'fcd:v1:europepmc:MED:124',title:'Unknown-access fixture',access:'unknown',readingActions:[]}]:[item]}));

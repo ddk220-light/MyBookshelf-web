@@ -14,6 +14,12 @@ Create each story's native tasks when reached; implement and verify before closi
   integer IDs; Europe PMC records include their source (`MED`, `PMC`, `PPR`).
   A DOI is an identifier, never an app key. Versions, translations, chapters and
   recordings retain distinct source-native keys. No fuzzy-title merge.
+- Reviewed StoryWeaver translations use distinct native story IDs. The pilot
+  requires English/Hindi/Tamil records with original credits, publisher levels
+  and per-record review evidence before enablement.
+- An omitted `kinds` searches books/learning resources. Paper searches supply
+  paper kinds explicitly. Mixed book/paper requests are reported unsupported;
+  the API never silently omits one requested scope.
 - Search and resolve both accept `country` (ISO alpha-2 or absent/unknown) and
   language context. An observation for one explicit country does not establish
   availability in another. Gutenberg's US rights statement is retained with a
@@ -65,8 +71,8 @@ into book-edition identity. No account feature is part of this delivery.
 | FCD03 Europe PMC | [#85](https://github.com/ddk220-light/MyBookshelf-web/issues/85), [#86](https://github.com/ddk220-light/MyBookshelf-web/issues/86) | Adapter and shared coordination implemented/tested; hosted Redis binding and budgets pending |
 | FCD04 UI/shelf | [#88](https://github.com/ddk220-light/MyBookshelf-web/issues/88), [#89](https://github.com/ddk220-light/MyBookshelf-web/issues/89), [#90](https://github.com/ddk220-light/MyBookshelf-web/issues/90), [#104](https://github.com/ddk220-light/MyBookshelf-web/issues/104) | Implemented; client, access, migration and desktop/mobile checks pass. Source progress and source-only retry now implemented |
 | FCD05 expanded sources | [#107](https://github.com/ddk220-light/MyBookshelf-web/issues/107): OTL [#108](https://github.com/ddk220-light/MyBookshelf-web/issues/108), [#109](https://github.com/ddk220-light/MyBookshelf-web/issues/109); planner [#112](https://github.com/ddk220-light/MyBookshelf-web/issues/112), DOAJ [#113](https://github.com/ddk220-light/MyBookshelf-web/issues/113), arXiv [#114](https://github.com/ddk220-light/MyBookshelf-web/issues/114), broad index [#115](https://github.com/ddk220-light/MyBookshelf-web/issues/115) | Code/protocol and actual-source checks pass; flags remain off pending hosted coordination/budget enablement |
-| FCD06 children's pilot | Requires actual reviewed records; board examples are fictional | Planned |
-| FCD07 final validation | Runtime/source/accessibility/regression evidence | Planned |
+| FCD06 children's pilot | [#120](https://github.com/ddk220-light/MyBookshelf-web/issues/120): source review [#121](https://github.com/ddk220-light/MyBookshelf-web/issues/121), UI/validation [#122](https://github.com/ddk220-light/MyBookshelf-web/issues/122) | Curation gate/UI implemented; publication blocked on real reviewed metadata. Official StoryWeaver requests returned 403; manifest remains empty |
+| FCD07 final validation | [#125](https://github.com/ddk220-light/MyBookshelf-web/issues/125): refresh [#126](https://github.com/ddk220-light/MyBookshelf-web/issues/126), verification [#127](https://github.com/ddk220-light/MyBookshelf-web/issues/127), handoff [#128](https://github.com/ddk220-light/MyBookshelf-web/issues/128) | In progress; full feature-enabled Chromium desktop/mobile suite passed 226 journeys before pilot additions |
 
 Paper protocol and operational decisions: [OPERATIONS.md](OPERATIONS.md).
 Implementation PR: [#110](https://github.com/ddk220-light/MyBookshelf-web/pull/110),

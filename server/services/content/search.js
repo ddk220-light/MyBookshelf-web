@@ -6,6 +6,7 @@ import {createArxivAdapter} from './arxiv.js';
 import {createOpenalexAdapter} from './openalex.js';
 import {createRedisCoordinator} from './coordinator.js';
 import {sourceSignal} from './sourceHttp.js';
+import {createChildrenService} from './children.js';
 import {CONTENT_POLICY_REVISION,parseContentSearch,parseContentResolve,readingActions,observedAccess} from './contracts.js';
 
 const hash=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -17,9 +18,10 @@ const SOURCES={europepmc:{name:'Europe PMC',env:'EUROPEPMC',initial:'*',scope:'B
 const sessionPolicy={dailyLimit:1000000,perMinute:10000,concurrency:10};
 
 export function createContentService({env=process.env,local=createLocalContentService(),paperAdapter=createEuropePmcAdapter(),
-  adapters={},coordinatorFactory=()=>createRedisCoordinator(),now=()=>Date.now()}={}){
+  adapters={},children,coordinatorFactory=()=>createRedisCoordinator(),now=()=>Date.now()}={}){
   const providers={europepmc:paperAdapter,doaj:createDoajAdapter(),arxiv:createArxivAdapter(),openalex:createOpenalexAdapter(),...adapters};
   let coordinator;
+  const pilot=children||createChildrenService({enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&env.CONTENT_CHILDREN_ENABLED==='true',cursorSecret:env.CONTENT_CURSOR_SECRET,now});
   function policy(id){
     const prefix='CONTENT_'+SOURCES[id].env;
     const dailyLimit=Number(env[prefix+'_DAILY_LIMIT']),perMinute=Number(env[prefix+'_PER_MINUTE']);
@@ -72,7 +74,9 @@ export function createContentService({env=process.env,local=createLocalContentSe
     locate(input){return local.locate(input);},
     async search(input,{onSource=()=>{},signal}={}){
       const query=parseContentSearch(input);
+      if(query.collection==='children')return pilot.search(input);
       if(query.kinds.includes('book')||query.kinds.includes('learning_resource')){
+        if(query.kinds.some(kind=>!['book','learning_resource'].includes(kind)))throw error('CONTENT_FILTER_UNSUPPORTED','Choose free books or paper kinds for this search.',400);
         if(query.sourceIds||query.retrySource)throw error('CONTENT_FILTER_UNSUPPORTED','Paper source filters do not apply to book search.',400);
         return local.search(input);
       }
@@ -149,6 +153,7 @@ export function createContentService({env=process.env,local=createLocalContentSe
     },
     async resolve(input){
       const request=parseContentResolve(input),id=request.parsed.sourceId;
+      if(id==='storyweaver')return pilot.resolve(input);
       if(!SOURCES[id])return local.resolve(input);
       shared();
       if(!enabled(id)||!policy(id))throw error('CONTENT_DISABLED','This paper source is not connected yet.');

@@ -111,3 +111,18 @@ does not pass cache values through a command-line argument.
 
 Gates remain: hosted cache bindings/budgets, daily catalog refresh, actual
 children's pilot, final browser/host-link/preview validation. Flags stay off.
+
+## Children's curation gate
+
+The empty production manifest is intentional. Five additional backend tests
+verify that missing languages, translator/illustrator roles, licence, review
+evidence, exact host links and unexpected text fields prevent publication.
+Synthetic metadata exercises Hindi/Tamil search, publisher-level filters,
+translation identities, signed paging and stale-access downgrades. There are
+45 passing focused backend checks and 137 passing client tests after this slice.
+Real publication remains blocked as recorded in [CHILDREN_REVIEW.md](CHILDREN_REVIEW.md).
+
+The full existing+feature browser suite passed **226** desktop/mobile Chromium
+journeys with the main feature flag enabled before pilot controls were added.
+Existing library/camera/shelf behavior also works with the new Search scopes
+visible. The CI lane should run both flags-off and flags-on paths.

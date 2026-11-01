@@ -40,8 +40,9 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
   return <section className="content-detail">
     <Link className="back-link" to={back}>← Back</Link>
     <div className="content-detail-heading"><ContentCover title={item.title} kind={item.kind}/><div>
-      <p className="content-kind">{kindLabel(item.kind)}{item.version?' · '+item.version:''}</p><h1>{item.title}</h1>
+      <p className="content-kind">{kindLabel(item.kind)}{item.version?' · '+item.version:''}</p><h1 lang={item.languages[0]!=='und'?item.languages[0]:undefined}>{item.title}</h1>
       <p>{item.contributors.filter(c=>c.role==='author').map(c=>c.name).join(', ')}</p>
+      {item.readingLevel&&<><p>{item.readingLevel.publisher} · {item.readingLevel.label} (as the publisher labels it)</p>{item.contributors.filter(c=>c.role!=='author').map(c=><p key={c.role+':'+c.name}>{c.role}: {c.name}</p>)}</>}
       {item.container&&<p className="muted">{item.container.title}</p>}
       <button className="content-save" aria-pressed={saved} disabled={recoveryMode} onClick={save}>{saved?'Saved':'Save to shelf'}</button>
     </div></div>

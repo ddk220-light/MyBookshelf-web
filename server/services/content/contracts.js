@@ -1,7 +1,7 @@
 import { isIP } from 'node:net';
 import ISBN from 'isbn3';
 
-export const CONTENT_POLICY_REVISION = '2026-11-01.2';
+export const CONTENT_POLICY_REVISION = '2026-11-01.3';
 export const CONTENT_KINDS = ['book', 'chapter', 'article', 'preprint', 'thesis', 'report', 'learning_resource', 'audiobook', 'other'];
 export const SOURCE_STATUSES = ['ok', 'not_selected', 'disabled', 'unsupported', 'timeout', 'unavailable', 'throttled', 'quota_exhausted', 'queued'];
 const EPMC_SOURCES = new Set(['MED', 'PMC', 'PPR', 'AGR', 'CBA', 'HIR', 'CTX', 'ETH', 'PAT']);
@@ -24,6 +24,8 @@ export function parseContentKey(value) {
   if (pg) return { sourceId: 'gutenberg', recordId: pg[1] };
   const textbook = /^fcd:v1:open-textbook-library:([1-9]\d{0,8})$/.exec(value);
   if (textbook) return { sourceId: 'open-textbook-library', recordId: textbook[1] };
+  const story = /^fcd:v1:storyweaver:([1-9]\d{0,8})$/.exec(value);
+  if (story) return { sourceId: 'storyweaver', recordId: story[1] };
   const doaj = /^fcd:v1:doaj:([a-f0-9]{32})$/.exec(value);
   if (doaj) return { sourceId: 'doaj', recordId: doaj[1] };
   const openalex = /^fcd:v1:openalex:(W[1-9]\d{0,14})$/.exec(value);
@@ -94,9 +96,11 @@ function languageContext(body) {
 }
 
 export function parseContentSearch(input) {
-  const body = object(input, ['query', 'kinds', 'languages', 'access', 'country', 'cursor', 'limit', 'includeUnclear', 'sourceIds', 'retrySource']);
-  if (typeof body.query !== 'string' || !body.query.trim() || body.query.length > 300 || /[\u0000-\u001f]/.test(body.query)) throw new ContentValidationError();
-  const kinds = body.kinds ?? ['book', 'article', 'preprint'];
+  const body = object(input, ['query', 'kinds', 'languages', 'access', 'country', 'cursor', 'limit', 'includeUnclear', 'sourceIds', 'retrySource','collection','level']);
+  if(body.collection!=null&&body.collection!=='children')throw new ContentValidationError();
+  if(body.level!=null&&(body.collection!=='children'||typeof body.level!=='string'||!body.level.trim()||body.level.length>100))throw new ContentValidationError();
+  if (typeof body.query !== 'string' || (!body.query.trim()&&body.collection!=='children') || body.query.length > 300 || /[\u0000-\u001f]/.test(body.query)) throw new ContentValidationError();
+  const kinds = body.kinds ?? ['book', 'learning_resource'];
   if (!Array.isArray(kinds) || !kinds.length || kinds.length > CONTENT_KINDS.length || kinds.some(k => !CONTENT_KINDS.includes(k))) throw new ContentValidationError();
   const limit = body.limit ?? 20;
   if (!Number.isInteger(limit) || limit < 1 || limit > 40 || (body.access != null && body.access !== 'free_full_text')) throw new ContentValidationError();
@@ -107,7 +111,8 @@ export function parseContentSearch(input) {
   if(body.retrySource!=null&&(!paperSources.includes(body.retrySource)||!body.cursor))throw new ContentValidationError();
   return { query: body.query.trim().normalize('NFC'), kinds: [...new Set(kinds)], ...languageContext(body),
     access: 'free_full_text', limit, cursor: body.cursor || null, includeUnclear: body.includeUnclear === true,
-    sourceIds:body.sourceIds?[...new Set(body.sourceIds)]:null,retrySource:body.retrySource||null };
+    sourceIds:body.sourceIds?[...new Set(body.sourceIds)]:null,retrySource:body.retrySource||null,
+    collection:body.collection||null,level:body.level||null };
 }
 
 export function parseContentResolve(input) {
