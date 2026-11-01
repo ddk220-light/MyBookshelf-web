@@ -3,11 +3,13 @@
 Checks performed 2026-11-01 in the isolated free-content worktree using Node
 22.23.4. No hosted preview or production enablement is claimed.
 
-Latest local result after the owner’s free-account clarification and Book Dash:
-**537 server tests (real Redis, no skips), 141 client tests, 12 Python checks and
-238 complete feature-enabled desktop/mobile browser journeys passed**. Typecheck,
-production build, SEO/deployment, isolated client-only build and pinned actionlint
-checks passed. The focused feature browser file passed 26 journeys. CI on
+Latest local UI review: **537 server tests (real Redis, no skips), 141 client
+tests, 262 broad feature-enabled desktop/mobile browser journeys and 50 focused
+feature journeys passed**. All **84 board-state/theme/device captures** pass axe
+and overflow checks. See the [screen review and comparison gallery](UI_REVIEW.md).
+Typecheck, production build and SEO/deployment checks pass. The unchanged importers
+previously passed 12 Python checks; isolated client-only build and pinned actionlint
+also passed in the preceding source-expansion checkpoint. CI on
 [PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110) also runs WebKit
 and both disabled/enabled feature paths; consult the PR for the current head.
 Hosted enablement and first scheduled refresh execution remain release checks.

@@ -90,10 +90,11 @@ with exact current credits, levels and original-story relations. The owner has
 accepted free source login; cards and reader actions disclose that requirement.
 Post-login reading has not been tested. Source research and curation belong to
 Codex; no owner-supplied feed or metadata is pending. See [the source review gate](research/free-content/CHILDREN_REVIEW.md).
-Latest local checks: 537 server tests, 141 client tests, 238 full desktop/mobile
-browser journeys, 12 Python checks, typecheck/build/SEO/deployment and workflow
-lint pass. A final targeted reader check and 24 feature browser checks passed
-after link/rights fixes. All-source exact lookups and a 40-result real-paper flow
+Latest UI review: 537 server tests, 141 client tests, 262 broad desktop/mobile
+browser journeys, 50 final feature browser checks and 84 board/theme/device
+captures pass, with typecheck/build/SEO/deployment. See the [screen comparison](research/free-content/UI_REVIEW.md).
+The unchanged importers previously passed 12 Python checks; workflow lint passed.
+All-source exact lookups and a 40-result real-paper flow
 also passed locally with actual Redis; this is separate from hosted enablement.
 
 Book Dash now adds 30 real English-language editions with original creator roles

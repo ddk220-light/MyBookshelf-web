@@ -92,3 +92,19 @@ real 30-English-edition subset preserves native IDs and source credits without
 invented reading levels. Live refresh retained all keys; the anonymous original
 reader and app flows passed. The [expanded source inventory](ADDITIONAL_SOURCES.md)
 records other current candidates and their concrete gaps.
+
+## FCD07-D: compare and repair the approved UI
+
+Task [#146](https://github.com/ddk220-light/MyBookshelf-web/issues/146) under
+FCD07 adds the [screen review](UI_REVIEW.md) and a reproducible comparison gallery
+for all fourteen boards on phone/desktop in Daylight, Lamplight and Ink. The UI
+now aligns browse/header spacing, compact result rows/pills, bookmark/detail
+controls, formats/rights, children's cards, loading/empty/failure/limit states,
+source coverage and the desktop selected pane. Recent searches use bounded
+same-tab memory; source-account books retain the owner's disclosure requirement.
+
+537 server tests with real Redis/no skips, 141 client tests, 262 broad browser
+journeys, 50 final feature journeys and 84 axe/overflow capture checks pass, with
+typecheck/build/SEO/deployment. The actual Tamil StoryWeaver and Book Dash app
+flows pass again through save/reload/reopen. Source data and hosted release gates
+are unchanged. Consult the PR for CI at the current commit.

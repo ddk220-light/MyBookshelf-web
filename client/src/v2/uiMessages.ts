@@ -1,5 +1,16 @@
 // Reader-facing copy for the public web app. Keep complete messages together
 // so navigation, empty states and catalog guidance can be translated later.
+export const contentMessages = {
+  startIntro: 'Books and stories you can read online today, at the site that hosts them. Nothing to borrow, no card needed. Reuse rights differ by item.',
+  papersIntro: 'Research papers you can read at the original source. Search by title, author, DOI or arXiv ID. Reuse rights differ by item.',
+  loading: 'Results appear as each source answers. We stop waiting after 5 seconds.',
+  unclear: 'They may be previews, loans or scans we couldn’t confirm. They’re left out of Free to read.',
+  quotaTitle: 'Wide paper search is at today’s limit',
+  quotaDetail: 'It resets tomorrow. Until then, results come from the specialist sources, which cover fewer subjects.',
+  sourceAccount: 'These books are free to read after signing in at the source.',
+  rights: 'Free to read does not always mean free to reuse. Check your country’s rules and the source’s terms.',
+  noHost: 'MyBookshelf doesn’t host or download the book.',
+};
 export const uiMessages = {
   appNavigation: 'App navigation', homeLabel: 'MyBookshelf home', skipToContent: 'Skip to content',
   supportLabel: 'Open MyBookshelf support', helpSupport: 'Help & support',

@@ -43,7 +43,7 @@ test.describe('free-content discovery',()=>{
     await page.keyboard.press('Tab');
     expect(await page.evaluate(()=>document.querySelector('dialog[open]')?.contains(document.activeElement))).toBe(true);
     await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(trigger).toBeFocused();
-    await expect(page.getByText('Wide paper search is at today’s limit. Other source results are shown.')).toBeVisible();
+    await expect(page.getByRole('heading',{name:'Wide paper search is at today’s limit'})).toBeVisible();
   });
   test('clearing a mixed shelf names books and papers and preserves viewed history',async({page})=>{
     await mock(page);await page.goto('/app/search?scope=papers&q=clear-fixture');
@@ -103,7 +103,7 @@ test.describe('free-content discovery',()=>{
     });
     await page.goto('/app/search?scope=free&collection=children');
     await expect(page.getByRole('heading',{name:'हिन्दी परीक्षण कहानी'})).toHaveAttribute('lang','hi');
-    await page.getByLabel('Language',{exact:true}).selectOption('ta');
+    await page.getByRole('button',{name:'தமிழ்',exact:true}).click();
     await expect(page.getByRole('heading',{name:'தமிழ் சோதனைக் கதை'})).toHaveAttribute('lang','ta');
     await expect(page.getByText('Illustrated by Fixture Illustrator')).toBeVisible();
     await expect(page.getByText('Translated by Fixture Translator')).toBeVisible();

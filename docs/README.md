@@ -27,6 +27,7 @@ retired authentication and unrelated research archives are outside its scope.
 
 Implementation is in PR #110 on `research/free-content-discovery-implementation`;
 source flags still default off. See [implementation](research/free-content/IMPLEMENTATION.md),
+[screen comparison and visual fixes](research/free-content/UI_REVIEW.md),
 [children’s review](research/free-content/CHILDREN_REVIEW.md) and
 [additional sources](research/free-content/ADDITIONAL_SOURCES.md). The original unpushed
 research was reconstructed from its conversation after an environment replacement;

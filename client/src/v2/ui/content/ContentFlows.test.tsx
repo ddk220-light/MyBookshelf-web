@@ -95,7 +95,7 @@ it('shows source progress then retries one failed source without losing the answ
 it('a partial search with no readable items does not claim that every source found no free copy',async()=>{
   vi.mocked(contentApi.search).mockResolvedValue({...page,items:[],sources:[page.sources[0],{id:'doaj',status:'timeout',returned:0}]});
   mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=partial-empty-fixture');
-  await screen.findByText('Some sources could not answer. Other results are shown.');
+  await screen.findByRole('heading',{name:'DOAJ didn’t answer in time'});
   expect(screen.queryByRole('heading',{name:'No verified free copy in these results'})).not.toBeInTheDocument();
 });
 
@@ -119,7 +119,7 @@ it('pilot fixtures retain script, original credits and publisher levels while la
   expect(screen.getByText('Illustrated by Fixture Illustrator')).toBeInTheDocument();
   expect(screen.getByText('Translated by Fixture Translator')).toBeInTheDocument();
   expect(screen.getByRole('option',{name:'Publisher level one'})).toBeInTheDocument();
-  fireEvent.change(screen.getByLabelText('Language'),{target:{value:'ta'}});
+  fireEvent.click(screen.getByRole('button',{name:'தமிழ்'}));
   expect(await screen.findByRole('heading',{name:'தமிழ் சோதனைக் கதை'})).toHaveAttribute('lang','ta');
   fireEvent.change(screen.getByLabelText('Publisher level'),{target:{value:'Publisher level one'}});
   await waitFor(()=>{const calls=vi.mocked(contentApi.search).mock.calls;expect(calls[calls.length-1][2]).toMatchObject({collection:'children',languages:['ta'],level:'Publisher level one'});});
@@ -148,7 +148,7 @@ it('source outage is an alert rather than a zero-result claim',async()=>{
 it('wide-index daily limit keeps specialist results and avoids provider branding',async()=>{
   vi.mocked(contentApi.search).mockResolvedValue({...page,sources:[...page.sources,{id:'openalex',status:'quota_exhausted',returned:0}]});
   mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=quota-fixture');
-  expect(await screen.findByText('Wide paper search is at today’s limit. Other source results are shown.')).toBeInTheDocument();
+  expect(await screen.findByRole('heading',{name:'Wide paper search is at today’s limit'})).toBeInTheDocument();
   expect(screen.getByRole('heading',{name:item.title})).toBeInTheDocument();expect(screen.queryByText(/OpenAlex/)).not.toBeInTheDocument();
 });
 
