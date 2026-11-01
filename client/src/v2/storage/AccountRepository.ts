@@ -32,6 +32,7 @@ export class AccountRepository {
   pending: Pending | null = null;
   private loadPromise: Promise<ReadingSnapshot> | null = null;
   private controller = new AbortController();
+  private readGeneration = 0;
   private imports = new Map<string, Record<string, unknown>>();
   constructor(
     private session: () => AccountSession,
@@ -57,6 +58,7 @@ export class AccountRepository {
     this.guard();
     const result = await accountRequest<T>(path, {
       ...options,
+      identity: this.session().user?.id,
       csrf: this.session().csrfToken,
       signal: AbortSignal.any([
         this.controller.signal,
@@ -68,6 +70,7 @@ export class AccountRepository {
   }
   loadSnapshot(): Promise<ReadingSnapshot> {
     if (this.loadPromise) return this.loadPromise;
+    const generation = this.readGeneration;
     const run = async () => {
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
@@ -79,6 +82,12 @@ export class AccountRepository {
             this.request<{ books: CloudBook[] } & Versions>("/history"),
           ]);
           const books = [...first.books];
+          if (summary.profile.id !== this.session().user?.id)
+            throw new AccountApiError(
+              "IDENTITY_CHANGED",
+              "Your account changed. Refresh to continue.",
+              409,
+            );
           let cursor = first.nextCursor;
           if (
             summary.shelfRevision !== first.shelfRevision ||
@@ -113,6 +122,11 @@ export class AccountRepository {
             recent: recent.books,
           };
           this.guard();
+          if (generation !== this.readGeneration)
+            throw new AccountApiError(
+              "STALE_READ",
+              "Your account has a newer confirmed change.",
+            );
           this.snapshot = snapshot;
           return snapshot;
         } catch (error) {
@@ -176,6 +190,8 @@ export class AccountRepository {
         body: pending.body,
       });
       this.pending = null;
+      this.readGeneration++;
+      this.loadPromise = null;
       return result;
     } catch (error) {
       if (

@@ -15,6 +15,7 @@ export function authOptions({ pool, config, sendVerificationEmail, sendResetPass
       expiresIn: 24 * 60 * 60, sendVerificationEmail: sendVerificationEmail ?? mailUnavailable },
     session: { expiresIn: 7 * 86400, updateAge: 86400, freshAge: 5 * 60, cookieCache: { enabled: false } },
     account: { encryptOAuthTokens: true, accountLinking: { enabled: true, disableImplicitLinking: true } },
+    user:{changeEmail:{enabled:true,updateEmailWithoutVerification:false}},
     advanced: { cookiePrefix: 'mybookshelf_auth', useSecureCookies: config.secureCookies,
       defaultCookieAttributes: { httpOnly: true, sameSite: 'lax', path: '/' } },
     rateLimit: { enabled: true, storage: 'database', window: 60, max: 60 },

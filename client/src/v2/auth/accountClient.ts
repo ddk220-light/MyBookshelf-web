@@ -14,6 +14,7 @@ export async function accountRequest<T>(
     method?: string;
     body?: unknown;
     csrf?: string;
+    identity?: string;
     signal?: AbortSignal;
   } = {},
 ): Promise<T> {
@@ -28,6 +29,7 @@ export async function accountRequest<T>(
           ? { "Content-Type": "application/json" }
           : {}),
         ...(options.csrf ? { "X-Account-CSRF": options.csrf } : {}),
+        ...(options.identity ? { "X-Account-Identity": options.identity } : {}),
       },
       ...(options.body !== undefined
         ? { body: JSON.stringify(options.body) }

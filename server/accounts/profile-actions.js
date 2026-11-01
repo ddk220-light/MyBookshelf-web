@@ -30,10 +30,22 @@ export function createProfileActions({ auth, pool }) {
           const accounts = await context.internalAdapter.findAccounts(
             identity.authUserId,
           );
+          const pending = await adapter.findOne({
+            model: "accountChallenge",
+            where: [
+              { field: "authUserId", value: identity.authUserId },
+              { field: "purpose", value: "email-change" },
+              { field: "expiresAt", operator: "gt", value: new Date() },
+              { field: "usedAt", value: null },
+            ],
+          });
           return {
             name: user.name,
             email: user.email,
             profileRevision: Number(app.profileRevision),
+            pendingEmail: pending
+              ? { email: pending.targetEmail, expiresAt: pending.expiresAt }
+              : null,
             methods: accounts
               .filter((a) =>
                 ["credential", "google", "apple"].includes(a.providerId),

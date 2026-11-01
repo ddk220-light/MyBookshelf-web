@@ -118,6 +118,19 @@ export function AccountNotice() {
         </button>
       </div>
     );
+  if (session.sessionEnded)
+    return (
+      <div className="account-sync-notice" role="status">
+        <span>
+          You’ve been signed out. Sign in to see your account shelf, or continue
+          with this browser’s shelf.
+        </span>
+        <Link to="/app/account/sign-in">Sign in</Link>
+        <button className="text-button" onClick={() => void refresh()}>
+          Continue as guest
+        </button>
+      </div>
+    );
   if (library.loadingAccount)
     return (
       <div className="account-sync-notice" role="status">

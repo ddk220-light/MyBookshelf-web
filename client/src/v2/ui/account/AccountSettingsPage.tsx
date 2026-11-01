@@ -10,12 +10,13 @@ import { accountRequest, AccountApiError } from "../../auth/accountClient";
 import { useAccountSession } from "../../auth/AccountSessionProvider";
 import { useLibrary } from "../../context";
 import { ConfirmDialog } from "../ConfirmDialog";
-import { PasswordField } from "./AccountPages";
+import { PasswordField, EmailField } from "./AccountPages";
 
 type Profile = {
   name: string;
   email: string;
   profileRevision: number;
+  pendingEmail?: { email: string; expiresAt: string } | null;
   methods: Array<{
     provider: "password" | "google" | "apple";
     usable: boolean;
@@ -29,7 +30,7 @@ type Device = {
   expiresAt: string;
 };
 type Sensitive = {
-  action: "password-change" | "session-revoke" | "signout-all";
+  action: "password-change" | "session-revoke" | "signout-all" | "email-change";
   target?: string;
   label: string;
 };
@@ -54,8 +55,12 @@ export function AccountSettingsPage() {
   const load = useCallback(async () => {
     try {
       const [profile, devices] = await Promise.all([
-        accountRequest<Profile>("/profile"),
-        accountRequest<{ sessions: Device[] }>("/sessions"),
+        accountRequest<Profile>("/profile", {
+          identity: sessionRef.current.user?.id,
+        }),
+        accountRequest<{ sessions: Device[] }>("/sessions", {
+          identity: sessionRef.current.user?.id,
+        }),
       ]);
       if (alive.current) {
         setProfile(profile);
@@ -69,7 +74,10 @@ export function AccountSettingsPage() {
             ? failure.message
             : "Couldn’t load account settings.",
         );
-      if (failure instanceof AccountApiError && failure.status === 401)
+      if (
+        failure instanceof AccountApiError &&
+        (failure.status === 401 || failure.code === "IDENTITY_CHANGED")
+      )
         account.invalidate();
     }
   }, [account.invalidate]);
@@ -112,7 +120,7 @@ export function AccountSettingsPage() {
         password.current = action.action === "password-change" ? value : "";
         setProof(result);
       }
-      await account.refresh();
+      await account.refresh(true);
       await load();
     } catch (failure) {
       if (alive.current)
@@ -137,9 +145,11 @@ export function AccountSettingsPage() {
       const path =
         action.action === "password-change"
           ? "/password"
-          : action.action === "session-revoke"
-            ? "/sessions/revoke"
-            : "/sign-out-all";
+          : action.action === "email-change"
+            ? "/email-change"
+            : action.action === "session-revoke"
+              ? "/sessions/revoke"
+              : "/sign-out-all";
       await accountRequest(path, {
         method: "POST",
         csrf: proof.csrfToken,
@@ -150,9 +160,16 @@ export function AccountSettingsPage() {
                 currentPassword: password.current,
                 proof: proof.proof,
               }
-            : action.action === "session-revoke"
-              ? { sessionId: action.target, proof: proof.proof }
-              : { proof: proof.proof },
+            : action.action === "email-change"
+              ? {
+                  newEmail: String(
+                    new FormData(event.currentTarget).get("email") || "",
+                  ),
+                  proof: proof.proof,
+                }
+              : action.action === "session-revoke"
+                ? { sessionId: action.target, proof: proof.proof }
+                : { proof: proof.proof },
       });
       if (!alive.current) return;
       password.current = "";
@@ -161,11 +178,13 @@ export function AccountSettingsPage() {
       setNotice(
         action.action === "password-change"
           ? "Password updated. Other devices were signed out."
-          : action.action === "session-revoke"
-            ? "Signed out that device."
-            : "Signed out all devices.",
+          : action.action === "email-change"
+            ? "Check your new address. Your current email stays valid until you confirm the change."
+            : action.action === "session-revoke"
+              ? "Signed out that device."
+              : "Signed out all devices.",
       );
-      await account.refresh();
+      await account.refresh(action.action === "password-change");
       await load();
       library.reloadShelf();
       if (action.action === "signout-all")
@@ -278,6 +297,56 @@ export function AccountSettingsPage() {
               <p>
                 Email: <strong>{profile.email}</strong>
               </p>
+              <button
+                type="button"
+                className="button-quiet"
+                disabled={busy}
+                onClick={() =>
+                  begin({ action: "email-change", label: "Change email" })
+                }
+              >
+                Change email
+              </button>
+              {profile.pendingEmail && (
+                <div className="account-card">
+                  <p>
+                    Waiting for confirmation at{" "}
+                    <strong>{profile.pendingEmail.email}</strong>. The link
+                    expires{" "}
+                    {new Date(profile.pendingEmail.expiresAt).toLocaleString()}.
+                  </p>
+                  <button
+                    type="button"
+                    className="text-button"
+                    disabled={busy}
+                    onClick={async () => {
+                      setBusy(true);
+                      setError("");
+                      try {
+                        await accountRequest("/email-change/cancel", {
+                          method: "POST",
+                          body: {},
+                          csrf: sessionRef.current.csrfToken,
+                        });
+                        await load();
+                        setNotice(
+                          "Email change cancelled. Your current address is unchanged.",
+                        );
+                      } catch (failure) {
+                        setError(
+                          failure instanceof Error
+                            ? failure.message
+                            : "Couldn’t cancel this change.",
+                        );
+                      } finally {
+                        if (alive.current) setBusy(false);
+                      }
+                    }}
+                  >
+                    Cancel email change
+                  </button>
+                </div>
+              )}
             </form>
           </section>
           <section aria-labelledby="login-methods">
@@ -469,6 +538,14 @@ function AccountActionDialog({
               it happens.
             </p>
             <PasswordField />
+          </>
+        ) : action.action === "email-change" ? (
+          <>
+            <p>
+              We’ll verify the new address before changing your login email and
+              notify your current address now.
+            </p>
+            <EmailField label="New email" />
           </>
         ) : action.action === "password-change" ? (
           <PasswordField

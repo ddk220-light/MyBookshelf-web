@@ -119,6 +119,7 @@ describe("private reading repository", () => {
     await expect(repo.retry()).resolves.toMatchObject({ status: "saved" });
     expect(writes[0].body).toBe(writes[1].body);
     expect(writes[0].headers["X-Account-CSRF"]).toBe("synthetic-csrf");
+    expect(writes[0].headers["X-Account-Identity"]).toBe("owner-a");
     expect(repo.pending).toBeNull();
     expect(localStorage.length).toBe(0);
     repo.dispose();
@@ -150,4 +151,81 @@ describe("private reading repository", () => {
       readCachedAvailability("private-library", "private-book"),
     ).toBeNull();
   });
+});
+
+it("a pre-mutation focus refresh cannot overwrite a newer confirmed shelf", async () => {
+  let stall = false,
+    changed = false,
+    release: (value: Response) => void = () => {};
+  const added = {
+    bookKey: "v1:isbn:9780262033848",
+    title: "New private book",
+    authors: [],
+    referenceId: "test-reference",
+    savedAt: new Date().toISOString(),
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (path: string, options: RequestInit) => {
+      if (options.method === "PUT") {
+        changed = true;
+        return response({ status: "saved" });
+      }
+      if (path.startsWith("/api/account/books")) {
+        if (stall)
+          return new Promise<Response>((resolve) => {
+            release = resolve;
+          });
+        return response({
+          ...versions,
+          shelfRevision: changed ? 1 : 0,
+          books: changed ? [added] : [],
+          nextCursor: null,
+        });
+      }
+      return response(
+        path.endsWith("/state")
+          ? { ...summary, shelfRevision: changed ? 1 : 0 }
+          : reads(path),
+      );
+    }),
+  );
+  const repo = new AccountRepository(
+    () => session,
+    () => true,
+  );
+  await repo.loadSnapshot();
+  stall = true;
+  const stale = repo.loadSnapshot();
+  const discarded = expect(stale).rejects.toMatchObject({ code: "STALE_READ" });
+  await repo.saveBook(added);
+  stall = false;
+  await repo.loadSnapshot();
+  release(response({ ...versions, books: [], nextCursor: null }));
+  await discarded;
+  expect(repo.snapshot?.books[0].bookKey).toBe(added.bookKey);
+  repo.dispose();
+});
+
+it("rejects a server snapshot for a different cookie identity before caching it", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (path: string) =>
+      response(
+        path.endsWith("/state")
+          ? { ...summary, profile: { ...summary.profile, id: "owner-b" } }
+          : reads(path),
+      ),
+    ),
+  );
+  const repo = new AccountRepository(
+    () => session,
+    () => true,
+  );
+  await expect(repo.loadSnapshot()).rejects.toMatchObject({
+    code: "IDENTITY_CHANGED",
+    status: 409,
+  });
+  expect(repo.snapshot).toBeNull();
+  repo.dispose();
 });

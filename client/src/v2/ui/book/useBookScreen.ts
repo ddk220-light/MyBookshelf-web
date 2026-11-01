@@ -51,12 +51,12 @@ export function useBookScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookKey]);
   useEffect(()=>{
-    if(!book?.bookKey)return;
+    if(!book?.bookKey||libraryState.loadingAccount)return;
     const key=book.bookKey;
     const record=()=>{if(document.visibilityState==='visible'&&opened.current!==key){opened.current=key;void rememberBook(book,sourceFromLocation(navigation));}};
     record();document.addEventListener('visibilitychange',record);
     return()=>document.removeEventListener('visibilitychange',record);
-  },[book?.bookKey,rememberBook]);
+  },[book?.bookKey,rememberBook,libraryState.loadingAccount]);
   const availabilityBookKey = book?.bookKey, libraryId = library?.id;
   const lookupBookKey = exactIsbn && book?.isbn13 ? 'v1:isbn:' + book.isbn13 : availabilityBookKey;
   useEffect(() => {

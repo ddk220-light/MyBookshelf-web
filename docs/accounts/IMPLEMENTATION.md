@@ -42,7 +42,7 @@ concurrent identity provisioning, deleting identities, origin checks and account
 outage isolation. These tests are included in the server test command and CI,
 which now provisions a disposable Postgres service.
 
-Full server suite at this checkpoint: 503 passing. Client suite: 120 passing after compatible
+Full server suite at this checkpoint: 504 passing. Client suite: 120 passing after compatible
 security maintenance (Vite 6.4.5, Vitest 4.1.12 and patched transitive packages).
 Dependency audit: zero findings at this checkpoint. No claim of final browser,
 real-provider, real-mail or release validation is made.
@@ -92,12 +92,13 @@ Current verification also covers password-proof rotation, atomic notification
 failure rollback with token/session preservation, concurrent library edits,
 operation receipts, private metadata, long valid VPL identities, microsecond
 pagination, the 1,000-book boundary, history opt-in/pause/expiry/trim and late writes.
-Production build passes. The new client has 127 passing tests, including delayed identity responses,
+Production build passes. The new client has 131 passing tests, including delayed identity responses,
 retry request identity, cache isolation, compare-before-remove import cleanup,
-uncertain sign-out, initial-form preservation and scanner-safe links. Six real
-loopback browser→API→Postgres journeys pass on Chromium desktop/mobile in all three
-lights, including signup/verification/sign-in/profile/sign-out and account-settings
-axe checks. Mail transport in those journeys is an explicitly synthetic outbox
+uncertain sign-out, initial-form preservation and scanner-safe links. Twelve real
+loopback browser→API→Postgres journeys pass on Chromium desktop/mobile, covering
+all three lights, signup/verification/sign-in/profile/sign-out, explicit import
+and copy cleanup, history opt-in, two-device refresh/revocation, email change and
+account switching, with account-settings axe checks. Mail transport in those journeys is an explicitly synthetic outbox
 reader; this is not real delivery/provider evidence.
 
 Atomic guest import and the asynchronous account/guest client repositories are
@@ -111,7 +112,23 @@ The local browser harness refuses non-loopback/non-test databases and is absent
 from deployed entry points.
 
 S16 #101, S18 #102–103, S17 #105 and S21 #106 are published and linked.
-Next: verified email changes, Google/Apple and explicit method management, then
+Verified email change now uses the pinned library’s public token issuer with
+random per-message IDs, a 30-minute owner/session-bound application challenge,
+explicit scanner-safe continuation, pending cancellation and atomic old-address
+notices. Tests prove rollback of token/email/session changes on notice failure,
+expiry, same-second cancelled-link replay and collisions. Schema 006 and 007 are
+applied to staging. The latter adds a narrowly granted boolean session recheck
+under the existing owner lock; it avoids leasing an auth connection while the
+reading transaction holds that lock. The reading role still cannot select auth
+tables or tokens.
+
+Private reading requests carry a reject-only `X-Account-Identity` precondition;
+the server continues to derive ownership from the verified cookie. The client
+rejects stale reads begun before a confirmed mutation. Explicit sign-in revokes
+the former current-browser session and publishes the new identity before private
+navigation; old sign-out responses cannot replace that identity.
+
+Next: Google/Apple and explicit method management, then
 export/deletion, retention/restore and remaining browser/release evidence. Real Google/Apple configuration and mail-domain delivery
 must be proved before account release. Resend's initial legal-policy acceptance
 was presented to the owner and remains pending; no terms were accepted implicitly.

@@ -11,6 +11,7 @@ import { accountRequest } from "./accountClient";
 import { setReaderIdentityScope } from "../readerState";
 import { clearSearchMemory } from "../searchMemory";
 import { clearCatalogMetadata } from "../catalogMetadata";
+import { flushSync } from "react-dom";
 import { resetLibrarySearchSession } from "../ui/library/useLibraryDiscovery";
 
 export type AccountUser = {
@@ -31,6 +32,7 @@ export type AccountSession = {
   csrfToken?: string;
   epoch: number;
   logoutPending?: boolean;
+  sessionEnded?: boolean;
 };
 type SessionReply = {
   status: "guest" | "unverified" | "authenticated" | "unavailable";
@@ -39,17 +41,19 @@ type SessionReply = {
 };
 type SessionContext = {
   session: AccountSession;
-  refresh: (explicitSignin?: boolean) => Promise<void>;
+  refresh: (explicitSignin?: boolean) => Promise<AccountSession>;
   signOut: () => Promise<boolean>;
   continueGuest: () => void;
   invalidate: () => void;
+  prepareSignIn: () => void;
 };
 const fallback: SessionContext = {
   session: { status: "guest", epoch: 0 },
-  refresh: async () => {},
+  refresh: async () => ({ status: "guest", epoch: 0 }),
   signOut: async () => true,
   continueGuest: () => {},
   invalidate: () => {},
+  prepareSignIn: () => {},
 };
 const Context = createContext<SessionContext>(fallback);
 export const useAccountSession = () => useContext(Context);
@@ -73,10 +77,10 @@ function writeOverride(value: boolean) {
       /* The active tab still remains locked. */
     }
 }
-function broadcast(guestOverride: boolean) {
+function broadcast(guestOverride: boolean, sender: string) {
   try {
     const channel = new BroadcastChannel(EVENT);
-    channel.postMessage({ type: "invalidate", guest: guestOverride });
+    channel.postMessage({ type: "invalidate", guest: guestOverride, sender });
     channel.close();
   } catch {
     /* Storage/focus fallback below. */
@@ -102,6 +106,11 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     guestLock = useRef(override()),
     pending = useRef<Promise<void> | null>(null);
   const logoutCsrf = useRef<string>();
+  const logoutController = useRef<AbortController | null>(null),
+    sessionController = useRef<AbortController | null>(null);
+  const tabId = useRef(crypto.randomUUID());
+  const lostIdentity = useRef(false),
+    endNotice = useRef(false);
   const publish = useCallback((reply: Omit<AccountSession, "epoch">) => {
     const changed = key(reply) !== key(current.current),
       epoch = current.current.epoch + (changed ? 1 : 0);
@@ -111,23 +120,63 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
       clearCatalogMetadata();
       resetLibrarySearchSession();
     }
-    const next = { ...reply, epoch };
+    if (
+      current.current.status === "authenticated" &&
+      reply.status === "unavailable"
+    )
+      lostIdentity.current = true;
+    if (
+      reply.status === "guest" &&
+      (current.current.status === "authenticated" || lostIdentity.current)
+    )
+      endNotice.current = true;
+    if (
+      reply.status === "authenticated" ||
+      reply.status === "signout-unconfirmed"
+    ) {
+      lostIdentity.current = false;
+      endNotice.current = false;
+    }
+    const next = {
+      ...reply,
+      epoch,
+      ...(reply.status === "guest" && endNotice.current
+        ? { sessionEnded: true }
+        : {}),
+    };
+    const privateTransition =
+      changed &&
+      (current.current.status === "authenticated" ||
+        next.status === "authenticated");
     current.current = next;
-    setSession(next);
+    // Complete a private identity transition before a caller navigates or
+    // handles another acknowledgement using the former view.
+    if (privateTransition) flushSync(() => setSession(next));
+    else setSession(next);
   }, []);
   const refresh = useCallback(
     async (explicitSignin = false) => {
       if (explicitSignin) {
+        logoutController.current?.abort();
+        sessionController.current?.abort();
         guestLock.current = false;
         writeOverride(false);
         request.current++;
         pending.current = null;
       }
-      if (pending.current) return pending.current;
+      if (pending.current) return pending.current.then(() => current.current);
       const version = ++request.current;
+      sessionController.current?.abort();
+      const controller = new AbortController();
+      sessionController.current = controller;
       const run = async () => {
         try {
-          const reply = await accountRequest<SessionReply>("/session");
+          const reply = await accountRequest<SessionReply>("/session", {
+            signal: AbortSignal.any([
+              controller.signal,
+              AbortSignal.timeout(15000),
+            ]),
+          });
           if (version !== request.current) return;
           if (guestLock.current) {
             if (reply.status === "guest") {
@@ -151,7 +200,7 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
                   guestLock.current = false;
                   writeOverride(false);
                   publish({ status: "guest" });
-                  broadcast(false);
+                  broadcast(false, tabId.current);
                 }
               } catch {
                 if (version === request.current)
@@ -161,7 +210,7 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
             return;
           }
           publish(reply);
-          if (explicitSignin) broadcast(false);
+          if (explicitSignin) broadcast(false, tabId.current);
         } catch {
           if (version === request.current)
             publish(
@@ -177,17 +226,25 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
         await promise;
       } finally {
         if (pending.current === promise) pending.current = null;
+        if (sessionController.current === controller)
+          sessionController.current = null;
       }
+      return current.current;
     },
     [publish],
   );
   const continueGuest = useCallback(() => {
+    const serverMayBeActive =
+      current.current.status !== "guest" ||
+      Boolean(current.current.logoutPending);
+    lostIdentity.current = false;
+    endNotice.current = false;
     request.current++;
     pending.current = null;
     guestLock.current = true;
     writeOverride(true);
-    publish({ status: "guest", logoutPending: true });
-    broadcast(true);
+    publish({ status: "guest", logoutPending: serverMayBeActive });
+    broadcast(true, tabId.current);
   }, [publish]);
   const invalidate = useCallback(() => {
     request.current++;
@@ -195,25 +252,47 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     publish({ status: "unavailable" });
     void refresh();
   }, [publish, refresh]);
+  const prepareSignIn = useCallback(() => {
+    logoutController.current?.abort();
+    sessionController.current?.abort();
+    request.current++;
+    pending.current = null;
+  }, []);
   const signOut = useCallback(async () => {
     const csrf = current.current.csrfToken ?? logoutCsrf.current;
     logoutCsrf.current = csrf;
-    request.current++;
+    const version = ++request.current;
+    logoutController.current?.abort();
+    const controller = new AbortController();
+    logoutController.current = controller;
     pending.current = null;
     guestLock.current = true;
     writeOverride(true);
     publish({ status: "signout-unconfirmed" });
-    broadcast(true);
+    broadcast(true, tabId.current);
     try {
-      await accountRequest("/sign-out", { method: "POST", body: {}, csrf });
+      await accountRequest("/sign-out", {
+        method: "POST",
+        body: {},
+        csrf,
+        signal: AbortSignal.any([
+          controller.signal,
+          AbortSignal.timeout(15000),
+        ]),
+      });
+      if (version !== request.current) return false;
       guestLock.current = false;
       writeOverride(false);
       publish({ status: "guest" });
-      broadcast(false);
+      broadcast(false, tabId.current);
       return true;
     } catch {
+      if (version !== request.current) return false;
       publish({ status: "signout-unconfirmed" });
       return false;
+    } finally {
+      if (logoutController.current === controller)
+        logoutController.current = null;
     }
   }, [publish]);
   useEffect(() => {
@@ -232,6 +311,7 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     try {
       channel = new BroadcastChannel(EVENT);
       channel.onmessage = (event) => {
+        if (event.data?.sender === tabId.current) return;
         guestLock.current =
           event.data?.type === "invalidate" &&
           typeof event.data.guest === "boolean"
@@ -249,6 +329,8 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     document.addEventListener("visibilitychange", focus);
     window.addEventListener("storage", changed);
     return () => {
+      sessionController.current?.abort();
+      logoutController.current?.abort();
       request.current++;
       pending.current = null;
       channel?.close();
@@ -261,7 +343,14 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
   }, [refresh, invalidate]);
   return (
     <Context.Provider
-      value={{ session, refresh, signOut, continueGuest, invalidate }}
+      value={{
+        session,
+        refresh,
+        signOut,
+        continueGuest,
+        invalidate,
+        prepareSignIn,
+      }}
     >
       {children}
     </Context.Provider>

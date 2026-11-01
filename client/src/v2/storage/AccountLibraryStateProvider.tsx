@@ -49,8 +49,15 @@ export function AccountLibraryStateProvider({
   const fail = useCallback(
     (error: unknown) => {
       if (!active.current) return;
-      if (error instanceof AccountApiError && error.code === "IDENTITY_CHANGED")
+      if (error instanceof AccountApiError && error.code === "STALE_READ")
         return;
+      if (
+        error instanceof AccountApiError &&
+        error.code === "IDENTITY_CHANGED"
+      ) {
+        if (error.status === 409) account.invalidate();
+        return;
+      }
       setNotice(
         error instanceof Error
           ? error.message

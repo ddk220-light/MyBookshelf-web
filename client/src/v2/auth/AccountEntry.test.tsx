@@ -91,9 +91,7 @@ it("removes a verification token from the URL, preserves it through bootstrap an
   );
   expect(posts).toEqual([]);
   await act(async () => finish(response({ status: "guest" })));
-  fireEvent.click(
-    screen.getByRole("button", { name: "Verify email" }),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Verify email" }));
   expect(
     await screen.findByRole("heading", { name: "Email verified" }),
   ).toBeInTheDocument();

@@ -86,8 +86,8 @@ const app = createApplication({
         }
         const job = (
           await admin.query(
-            `SELECT j.payload FROM account_mail_jobs j JOIN "user" u ON u.id=j."authUserId" WHERE u.email=$1 AND j.kind='verify' AND j.status='queued' AND j."expiresAt">now() ORDER BY j."createdAt" DESC LIMIT 1`,
-            [email],
+            `SELECT j.payload FROM account_mail_jobs j JOIN "user" u ON u.id=j."authUserId" WHERE u.email=$1 AND j.kind=$2 AND j.status='queued' AND j."expiresAt">now() ORDER BY j."createdAt" DESC LIMIT 1`,
+            [email, req.body.kind === "newEmail" ? "newEmail" : "verify"],
           )
         ).rows[0];
         if (!job) return res.sendStatus(404);

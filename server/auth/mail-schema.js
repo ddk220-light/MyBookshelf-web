@@ -20,6 +20,8 @@ export const accountMailSchema = {
       digest: { type: 'string', required: true, unique: true },
       authUserId: { type: 'string', required: true, index: true },
       purpose: { type: 'string', required: true },
+      sessionId: { type:'string',required:false,references:{model:'session',field:'id',onDelete:'cascade'} },
+      targetEmail: { type:'string',required:false },
       expiresAt: { type: 'date', required: true },
       usedAt: { type: 'date', required: false },
       createdAt: { type: 'date', required: true },

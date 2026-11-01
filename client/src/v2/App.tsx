@@ -2,7 +2,7 @@ import {useLayoutEffect,useRef} from 'react';
 import { Link, Navigate, Route, Routes,useLocation,useNavigate } from 'react-router-dom';
 import {AccountSessionProvider,useAccountSession} from './auth/AccountSessionProvider';
 import {LinkTokenProvider} from './auth/LinkTokenProvider';
-import {SignInPage,VerifyPage,RecoveryPage,ImportPage} from './ui/account/AccountPages';
+import {SignInPage,VerifyPage,RecoveryPage,ImportPage,EmailChangePage} from './ui/account/AccountPages';
 import './ui/account/account.css';
 import {AccountSettingsPage} from './ui/account/AccountSettingsPage';
 import { LibraryStateProvider } from './context';
@@ -31,10 +31,10 @@ export function AnonymousWebApp() {
 function IdentityApp(){
   const {session}=useAccountSession(),navigate=useNavigate(),location=useLocation();
   const prior=useRef<string|null>(null),current=session.status==='authenticated'?session.user?.id||null:null;
-  const redirect=prior.current!==null&&prior.current!==current;
+  const entryMode=/^\/app\/account\/(sign-in|sign-up|verify|forgot-password|reset-password|email-change|return|complete-profile)$/.test(location.pathname);
+  const redirect=prior.current!==null&&prior.current!==current&&!entryMode;
   useLayoutEffect(()=>{if(redirect)navigate('/app/shelf',{replace:true,state:null});prior.current=current;},[current,redirect,navigate,location.pathname]);
   if(redirect)return <p role="status">Updating your account…</p>;
-  const entryMode=/^\/app\/account\/(sign-in|sign-up|verify|forgot-password|reset-password)$/.test(location.pathname);
   return <LibraryStateProvider key={entryMode?'account-entry':session.epoch} entryMode={entryMode}><AppFrame><Routes>
     <Route path="/app/libraries" element={<LibrariesPage />} />
     <Route path="/select/:slug" element={<SelectLibraryPage />} />
@@ -49,6 +49,7 @@ function IdentityApp(){
     <Route path="/app/account/verify" element={<VerifyPage/>}/>
     <Route path="/app/account/forgot-password" element={<RecoveryPage key="forgot"/>}/>
     <Route path="/app/account/reset-password" element={<RecoveryPage key="reset" reset/>}/>
+    <Route path="/app/account/email-change" element={<EmailChangePage/>}/>
     <Route path="/app/account/import" element={<ImportPage/>}/>
     <Route path="/app/books/:bookKey" element={<BookPage />} />
     <Route path="/find" element={<Navigate to="/app/search" replace />} />

@@ -102,11 +102,11 @@ export function PasswordField({
     </div>
   );
 }
-export function EmailField() {
+export function EmailField({ label = "Email" }: { label?: string } = {}) {
   const id = useId();
   return (
     <div className="account-field">
-      <label htmlFor={id}>Email</label>
+      <label htmlFor={id}>{label}</label>
       <input
         id={id}
         name="email"
@@ -119,7 +119,7 @@ export function EmailField() {
   );
 }
 export function SignInPage({ signup = false }: { signup?: boolean }) {
-  const { refresh, continueGuest } = useAccountSession(),
+  const { refresh, continueGuest, prepareSignIn } = useAccountSession(),
     navigate = useNavigate(),
     location = useLocation();
   const [busy, setBusy] = useState(false),
@@ -142,6 +142,7 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
     setBusy(true);
     setError("");
     setEmail(address);
+    if (!signup) prepareSignIn();
     try {
       const result = await accountRequest<{ returnTo?: string }>(
         signup ? "/sign-up" : "/sign-in",
@@ -166,6 +167,13 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
         return;
       }
       // Session publication deliberately remounts private screens. No email is put in history state.
+      const checked = await refresh(true);
+      if (!alive.current) return;
+      if (checked.status !== "authenticated")
+        throw new AccountApiError(
+          "ACCOUNT_UNAVAILABLE",
+          "Couldn’t check your account. Try again or continue using this browser.",
+        );
       const destination = safeAccountReturn(result.returnTo || null),
         guest = readAnonymousWebStateWithStatus().state;
       navigate(
@@ -176,7 +184,6 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
           : destination,
         { replace: true, state: null },
       );
-      await refresh(true);
     } catch (failure) {
       if (alive.current) {
         setError(
@@ -449,6 +456,13 @@ export function ImportPage() {
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [done, setDone] = useState("");
+  const alive = useRef(true);
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
   const bytes = new TextEncoder().encode(
     JSON.stringify(frozen.state),
   ).byteLength;
@@ -464,14 +478,16 @@ export function ImportPage() {
         history,
         deviceLibrary ? "use-device" : "keep-account",
       );
-      if (!result) return;
+      if (!result || !alive.current) return;
       let suffix = "Your copy in this browser is unchanged.";
       if (remove) {
         const retained = history
           ? await accountRequest<{ books: Array<{ bookKey: string }> }>(
               "/history",
+              { identity: session.user?.id },
             )
           : { books: [] };
+        if (!alive.current) return;
         const cleaned = removeAcknowledgedDeviceCopy(frozen.state, {
           includeHistory: history,
           deviceLibrary,
@@ -485,13 +501,14 @@ export function ImportPage() {
         `${result.savedAdded} saved books imported. ${result.historyAccepted} recent books accepted${result.historyExpired ? `; ${result.historyExpired} older entries skipped` : ""}. ${suffix}`,
       );
     } catch (failure) {
-      setError(
-        failure instanceof Error
-          ? failure.message
-          : "Import could not finish. Your device copy is unchanged.",
-      );
+      if (alive.current)
+        setError(
+          failure instanceof Error
+            ? failure.message
+            : "Import could not finish. Your device copy is unchanged.",
+        );
     } finally {
-      setBusy(false);
+      if (alive.current) setBusy(false);
     }
   };
   if (session.status !== "authenticated")
@@ -584,6 +601,74 @@ export function ImportPage() {
           >
             Keep them here for now
           </button>
+        </>
+      )}
+    </AccountForm>
+  );
+}
+
+export function EmailChangePage() {
+  const token = useLinkToken(),
+    account = useAccountSession(),
+    [busy, setBusy] = useState(false),
+    [done, setDone] = useState(false),
+    [error, setError] = useState("");
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      await accountRequest("/email-change/confirm", {
+        method: "POST",
+        body: { token },
+      });
+      setDone(true);
+      await account.refresh(true);
+    } catch (failure) {
+      setError(
+        failure instanceof Error
+          ? failure.message
+          : "Couldn’t confirm this email change.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <AccountForm
+      title={done ? "Email updated" : "Confirm your new email"}
+      busy={busy}
+      error={error}
+      onSubmit={(event) => void submit(event)}
+    >
+      {done ? (
+        <>
+          <p>
+            Your new email is verified and your other signed-in devices were
+            signed out. We sent a security notice to your previous address.
+          </p>
+          <Link className="button-link" to="/app/settings/account" replace>
+            Go to your account
+          </Link>
+        </>
+      ) : (
+        <>
+          <p>
+            Your login email changes only when you continue. Other signed-in
+            devices will be signed out.
+          </p>
+          {token ? (
+            <button disabled={busy}>
+              {busy ? "Confirming…" : "Confirm new email"}
+            </button>
+          ) : (
+            <p>
+              This link is missing or was already opened here. Request a new
+              change from account settings.
+            </p>
+          )}
+          <Link to="/app/settings/account">Back to your account</Link>
         </>
       )}
     </AccountForm>

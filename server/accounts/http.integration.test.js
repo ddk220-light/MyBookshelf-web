@@ -132,6 +132,15 @@ test(
     assert.ok(session.csrfToken);
     assert.ok(!("sessionId" in session));
     assert.ok(!JSON.stringify(session).includes('token"'));
+    const changedView = await fetch(base + "/api/account/books", {
+      headers: {
+        Origin: env.BETTER_AUTH_URL,
+        Cookie: cookie,
+        "X-Account-Identity": randomUUID(),
+      },
+    });
+    assert.equal(changedView.status, 409);
+    assert.equal((await changedView.json()).error.code, "IDENTITY_CHANGED");
     response = await request(
       "/library",
       "PUT",
