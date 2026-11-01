@@ -10,17 +10,18 @@ function hash(value) { return createHash('sha256').update(value).digest('hex'); 
 const wordCharacter = /[\p{L}\p{M}\p{N}]/u;
 function termMatch(text, term) {
   let offset = text.indexOf(term);
+  let prefix = false;
   while (offset !== -1) {
     const before = offset ? Array.from(text.slice(0, offset)).at(-1) : '';
     const after = Array.from(text.slice(offset + term.length))[0] || '';
     if (!wordCharacter.test(before)) {
       if (!wordCharacter.test(after)) return 2;
       // Short queries such as AI or art must not match unrelated words.
-      if (Array.from(term).length >= 4) return 1;
+      if (Array.from(term).length >= 4) prefix = true;
     }
     offset = text.indexOf(term, offset + 1);
   }
-  return 0;
+  return prefix ? 1 : 0;
 }
 function rankedMatch(row, terms, phrase) {
   const fields = row.fields.map(field => ({...field, matches: terms.map(term => termMatch(field.text, term))}));

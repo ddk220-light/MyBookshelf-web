@@ -133,11 +133,13 @@ test('title relevance precedes broad subject matches and explains the source fie
 test('queries match words and deliberate prefixes rather than unrelated word interiors',()=>{
   const records=[{...item(1),title:'Chair Design'},{...item(2),title:'AI for Beginners'},
     {...item(3),title:'Cartography'},{...item(4),title:'Art and Artists'},
-    {...item(5),title:'Artificial Intelligence'}];
+    {...item(5),title:'Artificial Intelligence'},
+    {...item(6),title:'Mathematics and Math'},{...item(7),title:'Mathematical Concepts'}];
   const api=service({loadSnapshot:()=>({...data,records,recordCount:records.length})});
   assert.deepEqual(api.search({query:'AI'}).items.map(i=>i.title),['AI for Beginners']);
   assert.deepEqual(api.search({query:'art'}).items.map(i=>i.title),['Art and Artists']);
   assert.deepEqual(api.search({query:'begin'}).items.map(i=>i.title),['AI for Beginners']);
+  assert.deepEqual(api.search({query:'math'}).items.map(i=>i.title),['Mathematics and Math','Mathematical Concepts']);
   assert.equal(api.search({query:'not-in-this-catalog'}).items.length,0);
 });
 
