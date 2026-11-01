@@ -10,9 +10,10 @@ retired authentication and unrelated research archives are outside its scope.
 - [Architecture and data structure](plans/2026-10-31-accounts-social-foundation.md):
   open-source auth options, Better Auth/Postgres recommendation, private reading
   data, account lifecycle, existing book identities and security boundaries.
-- [Delivery backlog](plans/2026-10-31-accounts-delivery-backlog.md): the five initial
-  definition tasks, seven epics, twenty account stories and seven future
-  discovery stories. Only the GitHub index issue exists so far.
+- [Delivery backlog](plans/2026-10-31-accounts-delivery-backlog.md): the published
+  project, five definition tasks, owner review gates, seven epics, 21 account
+  stories, early prerequisites and final validation. Seven social discovery
+  stories remain outside the account release.
 - [Work-aware search](work-aware-search.md): how the current code already uses
   Open Library works, editions, ISBNs and catalog records; limits of grouping.
 
@@ -35,7 +36,7 @@ retired authentication and unrelated research archives are outside its scope.
 
 ## Development and handoff
 
-- [Credential setup and current Projects blocker](development/credentials.md).
+- [Credential setup and verified Projects MCP access](development/credentials.md).
 - [Repository completeness audit](development/2026-10-31-repository-handoff.md).
 - [Root README](../README.md), [agent instructions](../AGENTS.md),
   [contributions](../CONTRIBUTING.md), [security](../SECURITY.md),

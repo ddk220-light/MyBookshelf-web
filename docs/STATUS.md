@@ -79,22 +79,42 @@ privacy, moderation, work identity, deletion and acceptance criteria.
 ## Resume in this order
 
 1. Read this handoff, the foundation analysis and
-   [the delivery backlog](plans/2026-10-31-accounts-delivery-backlog.md).
-2. Verify the newly configured GitHub Projects credential in the new environment,
-   using [the credential notes](development/credentials.md). Do not expose its value.
-3. Continue from the existing [GitHub planning index issue #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1).
-   The native GitHub Project and child issues have **not** been created. Create
-   them from the checked-in backlog once access works, linking epics/stories and
-   marking future expansion as needing requirements. Avoid duplicate index issues.
-4. Start with the five requested tasks: PRD, UX design, engineering implementation
-   plan, UI implementation plan, then detailed task decomposition for each story.
-   This handoff preserves the outline; it does not mark those deliverables done.
+   [delivery backlog](plans/2026-10-31-accounts-delivery-backlog.md).
+2. Open the [Account Management project](https://github.com/users/ddk220-light/projects/3)
+   and [planning index #1](https://github.com/ddk220-light/MyBookshelf-web/issues/1).
+   The native board and 54 child issues now exist. Reuse them.
+3. Start [D01: write the PRD](https://github.com/ddk220-light/MyBookshelf-web/issues/2).
+   [R01 / #7](https://github.com/ddk220-light/MyBookshelf-web/issues/7) records the
+   owner's PRD review. D02–D05 then produce UX, engineering/test, UI and detailed
+   delivery specifications. Their artifacts have not yet been written.
+4. Present the concrete versioned packet for
+   [R02 / #8](https://github.com/ddk220-light/MyBookshelf-web/issues/8). Implementation
+   and provisioning wait for explicit owner approval. No approval is recorded yet.
+5. Build with focused tests, then complete final T01–T06 validation and operations
+   readiness. [R03 / #9](https://github.com/ddk220-light/MyBookshelf-web/issues/9)
+   reviews the tested release before L01 production rollout.
 
-The prior chat paused backlog publication to resolve credentials. Its existing
-integration could access the repository and create issues, but Projects requests
-failed with `Resource not accessible by integration`. The newly added secret did
-not appear in that task's running secret bindings. This is a task/configuration
-observation, not proof that the saved environment was configured incorrectly.
+GitHub Projects access now works through the official Projects MCP service using
+the configured `GH_PROJECT_TOKEN` binding at `api.githubcopilot.com`. The earlier
+integration-credential failure is historical; see the updated
+[credential notes](development/credentials.md). Project creation did not provision
+account services or implement features. Social discovery remains future scope.
+
+The working branch is `account-settings`, with worktree
+`/workspace/worktrees/MyBookshelf-web-account-settings` in this environment.
+
+## Account project publication verification
+
+Verified 55 unique project items, including the existing roadmap, with all items
+at Todo. The 54 new issues have kind/stage labels and native parents; 111 explicit
+blocked-by links encode the plan. Owner-review, core-sync, final-validation and
+rollout dependency sets were read back and checked. The project has an All work
+table plus six focused views, with labels, parent issues and sub-issue progress
+visible. All account implementation paths reach R02; rollout reaches R03.
+
+Documentation links, dependency acyclicity and whitespace checks passed. This was
+planning publication only; application tests were not rerun and no account
+feature or design deliverable is marked complete.
 
 ## This handoff's verification
 
