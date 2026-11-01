@@ -120,14 +120,13 @@ Lamplight and Ink, with a 200% page-zoom view for phones. The `Emails` board cov
 
    Check the final assets against each provider's current guidelines at
    implementation.
-4. **Emails E8 and E10 are proposals beyond the PRD.**
+4. **Emails E8 and E10: kept (owner decision, 2026-11-01).** These are now in
+   PRD AC-07 and AC-08, marked as a change after R01 for R02.
    - **E8:** a notice to the current address when an email change is
-     requested. The PRD requires a notice; this adds one at request time as
-     well as at completion (E9).
-   - **E10:** security notices when a sign-in method is connected,
-     disconnected or a password is first set.
+     requested, in addition to the notice when it completes (E9).
+   - **E10:** security notices when a sign-in method is connected or
+     disconnected, or a first password is set.
 
-   Accept or drop both at R02.
 5. **Apple without a name:** returning from Apple always goes to "Add your
    name", because Apple shares the name only on first authorization.
 6. **Dialog focus:** the canvas can't trap or restore focus. The structure

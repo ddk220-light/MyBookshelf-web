@@ -40,8 +40,8 @@ Free-content discovery is separate research and is not part of this release.
 | AC-04 | Password recovery always returns the same public message. Reset links expire after 30 minutes and succeed once. Reset revokes every existing session and returns to sign-in. Password change requires recent authentication, revokes other sessions and rotates the current one. Social-only users can add a password after recent provider authentication plus verified email ownership. | S06, S16, S17 | T01, T02 |
 | AC-05 | Sign out revokes the current session; session settings can revoke another session or all sessions. The UI reports server failure truthfully. Cross-tab account content clears on identity change; a cached response from account A never renders for B. | S07, S17, S18 | T02, T03 |
 | AC-06 | Google and Apple sign-in succeed on stable staging, including mobile Safari. Cancellation, missing profile data and existing-account collisions have recovery paths. Ask for a private name if unavailable; respect Apple relay email. Provider identity alone never silently joins an existing email account. | S08, S09, S16 | T01, T02 |
-| AC-07 | Link/unlink is an explicit settings flow with recent authentication and proof of the linked provider. A provider already owned by another account cannot be transferred. Concurrent unlinks cannot remove the final usable login method. Email-password counts as usable only with a verified email and configured password. | S10, S17 | T01, T02 |
-| AC-08 | Private name edits validate and persist across devices. Email changes verify the new address before replacing the old login address, notify the old address and revoke other sessions. Collision/expired/replayed verification leaves the original address valid. Google/Apple subjects remain unchanged. | S21, S17 | T01, T02 |
+| AC-07 | Link/unlink is an explicit settings flow with recent authentication and proof of the linked provider. A provider already owned by another account cannot be transferred. Concurrent unlinks cannot remove the final usable login method. Email-password counts as usable only with a verified email and configured password. Connecting or disconnecting a provider, or setting a first password, emails a security notice to the account's verified address. | S10, S17 | T01, T02 |
+| AC-08 | Private name edits validate and persist across devices. Email changes notify the old address when the change is requested and again when it completes, verify the new address before replacing the old login address, and revoke other sessions. Collision/expired/replayed verification leaves the original address valid. Google/Apple subjects remain unchanged. | S21, S17 | T01, T02 |
 | AC-09 | A valid directory library ID syncs to a second device. Only one library is selected. A removed library prompts selection without guessing a replacement. A concurrent preference edit returns a conflict instead of overwriting an unseen choice. | S11, S18 | T03 |
 | AC-10 | Save/remove use exact existing book references, including unresolved catalog records; similar titles/editions are never merged. Accounts allow 1,000 saves. Save time differs from view time. Acknowledged mutations appear after refresh/focus on another device. Remove has a 10-second conditional undo; clear-all requires confirmation and prevents older writes/undo from resurrecting books. | S12, S18 | T03 |
 | AC-11 | Account history is off until opted in. When on, retain newest 50 distinct references with server-confirmed views from the last 30 days. Pause prevents subsequent writes, remove deletes an entry, and clear invalidates in-flight history writes. Previously stored history remains visible while paused until removed or expired. Background refresh, prefetch and merely listing a book do not count as views. | S13, S17, S18 | T03 |
@@ -53,6 +53,13 @@ Free-content discovery is separate research and is not part of this release.
 | AC-17 | Release evidence identifies a single tested commit/deployment, real mail/provider results, migration/restore/deletion drills, privacy text and rollback owner. No critical/high defects remain. Deepak approves that candidate at R03 before production rollout. | S19, S20, L01 | T01–T06 |
 
 ## Behavioral decisions
+
+**Change after R01 (owner decision, 2026-11-01, for R02):** AC-07 and AC-08 add
+two security emails from Claude's S22 artifact. One goes to the current address
+when an email change is requested (E8). The other is a notice when a sign-in
+method is connected or disconnected, or a first password is set (E10). Both
+send only to the account's verified address and never reveal the new address
+in full.
 
 DEC-01–10 in the review hub are normative proposals for v1. Additional details:
 
