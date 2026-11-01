@@ -19,8 +19,55 @@ const json = (data: unknown) =>
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  vi.useRealTimers();
   localStorage.clear();
   sessionStorage.clear();
+});
+
+it("bounds automatic status checks while preserving a manual check for delayed cleanup", async () => {
+  vi.useFakeTimers();
+  let statusChecks = 0;
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (path: string) => {
+      if (path.endsWith("/session")) return json({ status: "guest" });
+      if (path.endsWith("/deletion/status")) statusChecks++;
+      return json({ status: "accepted" });
+    }),
+  );
+  render(
+    <MemoryRouter initialEntries={["/submit"]}>
+      <AccountSessionProvider>
+        <DeletionReceiptProvider>
+          <Routes>
+            <Route path="/submit" element={<Submit />} />
+            <Route
+              path="/app/account/deletion"
+              element={<DeletionStatusPage />}
+            />
+          </Routes>
+        </DeletionReceiptProvider>
+      </AccountSessionProvider>
+    </MemoryRouter>,
+  );
+  await act(async () => {
+    fireEvent.click(screen.getByRole("button", { name: "Confirm deletion" }));
+  });
+  for (let step = 0; step < 15; step++)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5000);
+    });
+  expect(statusChecks).toBe(12);
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(60000);
+  });
+  expect(statusChecks).toBe(12);
+  await act(async () => {
+    fireEvent.click(
+      screen.getByRole("button", { name: "Check deletion status" }),
+    );
+  });
+  expect(statusChecks).toBe(13);
 });
 
 it("does not replace a newer deletion receipt with an older account response", async () => {

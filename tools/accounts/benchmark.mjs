@@ -137,10 +137,14 @@ try {
     sorted = timings.sort((a, b) => a - b),
     percentile = (p) =>
       Number(sorted[Math.ceil(sorted.length * p) - 1].toFixed(1));
-  const hashStarted=performance.now();
-  const hashes=await Promise.allSettled(Array.from({length:20},()=>passwordBudget.hash('x'.repeat(128))));
-  const hashRejected=hashes.filter(result=>result.status==='rejected');
-  assert.ok(hashRejected.every(result=>result.reason.code==='PASSWORD_BUSY'));
+  const hashStarted = performance.now();
+  const hashes = await Promise.allSettled(
+    Array.from({ length: 20 }, () => passwordBudget.hash("x".repeat(128))),
+  );
+  const hashRejected = hashes.filter((result) => result.status === "rejected");
+  assert.ok(
+    hashRejected.every((result) => result.reason.code === "PASSWORD_BUSY"),
+  );
   console.log(
     JSON.stringify({
       syntheticLocalOnly: true,
@@ -154,8 +158,15 @@ try {
       elapsedMs: Math.round(elapsedMs),
       initializationMs: Math.round(coldMs),
       processPeakRSSMiB: Math.round(peakRSS / 1024 / 1024),
-      processLifetimeMaxRSSMiB:Math.round(process.resourceUsage().maxRSS/1024),
-      passwordBurst:{attempted:20,completed:hashes.length-hashRejected.length,rejectedBusy:hashRejected.length,elapsedMs:Math.round(performance.now()-hashStarted)},
+      processLifetimeMaxRSSMiB: Math.round(
+        process.resourceUsage().maxRSS / 1024,
+      ),
+      passwordBurst: {
+        attempted: 20,
+        completed: hashes.length - hashRejected.length,
+        rejectedBusy: hashRejected.length,
+        elapsedMs: Math.round(performance.now() - hashStarted),
+      },
       runtimePoolLimitPerRole: 4,
       notes:
         "HTTP/API/real-role Postgres; excludes provider redirects, mail delivery and hosted cold starts. Pool wait is included in request latency, not separately instrumented.",

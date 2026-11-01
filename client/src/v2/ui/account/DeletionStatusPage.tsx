@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useDeletionReceipt } from "../../auth/DeletionReceiptProvider";
 import { AccountForm } from "./AccountPages";
 export function DeletionStatusPage() {
   const { receipt, check } = useDeletionReceipt();
+  const automatic = useRef({ operationId: "", attempts: 0 });
   useEffect(() => {
     if (
       !receipt ||
@@ -11,7 +12,13 @@ export function DeletionStatusPage() {
       !["pending", "accepted"].includes(receipt.status)
     )
       return;
-    const timer = setTimeout(() => void check(), 5000);
+    if (automatic.current.operationId !== receipt.operationId)
+      automatic.current = { operationId: receipt.operationId, attempts: 0 };
+    if (automatic.current.attempts >= 12) return;
+    const timer = setTimeout(() => {
+      automatic.current.attempts++;
+      void check();
+    }, 5000);
     return () => clearTimeout(timer);
   }, [receipt, check]);
   return (
