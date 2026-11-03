@@ -1,5 +1,26 @@
 # Free-content source operations
 
+## Current free live profile — 2026-11-03
+
+Use [SIMPLE_LIVE_PLAN.md](SIMPLE_LIVE_PLAN.md). Paper search needs no Redis,
+stored search session, shared cache or per-source application budget variables.
+Keep `CONTENT_DISCOVERY_ENABLED=true` and the existing `CONTENT_CURSOR_SECRET`.
+`CONTENT_EUROPEPMC_ENABLED=true` enables public biomedical search;
+`CONTENT_OPENALEX_ENABLED=true` additionally requires server-only
+`OPENALEX_API_KEY`. Its free allowance and zero prepaid funds are checked before
+each request. No paid fallback is allowed.
+
+One source is queried at a time. Signed native cursors support Show more across
+process restarts without server state. Replaying makes another live request;
+live indexes can change. Source throttles/timeouts remain explicit. Direct
+arXiv/DOAJ automation is deferred; use their source website search links.
+
+No new datastore or account resource is provisioned. The older shared profile
+below is historical and no longer blocks the current paper release. Catalog
+refresh/access evidence requirements remain in force.
+
+## Historical shared-store profile (superseded)
+
 All flags default off. No hosted Redis service or production deployment has
 been created by this implementation. Gutenberg, Open Textbook Library and Book Dash use
 bundled metadata and require no database. The reviewed StoryWeaver set also

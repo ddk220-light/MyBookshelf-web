@@ -1,5 +1,11 @@
 # Free-content discovery architecture
 
+**Current decision (2026-11-03):** the owner requested the
+[simple free live plan](SIMPLE_LIVE_PLAN.md). One source is queried live per
+request, with signed provider paging and no data-store prerequisite. That plan
+supersedes the shared cache/quota/session design below, which is retained as
+historical scaling research rather than a launch requirement.
+
 Implementation update (2026-11-01): the delivered bounded catalogs use bundled,
 read-only metadata and local search; PostgreSQL is not a prerequisite for this
 release. Shared Redis coordinates live paper sources. The owner has accepted

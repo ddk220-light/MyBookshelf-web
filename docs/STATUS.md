@@ -1,6 +1,14 @@
 # MyBookshelf web handoff
 
-Updated 2026-11-01. Active repository:
+**Current free-content direction, 2026-11-03:** the owner requested a simpler
+free live implementation with no datastore until a specific need is proven.
+Use [the active plan](research/free-content/SIMPLE_LIVE_PLAN.md) / #156 on
+`research/free-content-discovery-live` in the existing free-content worktree.
+Replace Redis/federated sessions with one live source and signed provider paging;
+retain provider cost/access rules. Older Redis release gates below are superseded.
+Do not provision storage or change existing account resources/security.
+
+Updated 2026-11-03. Active repository:
 **https://github.com/ddk220-light/MyBookshelf-web**, default branch `main`.
 The owner has chosen to do all future web work in this repository. Build, test,
 plan and implement here directly. Do not depend on the previous private checkout

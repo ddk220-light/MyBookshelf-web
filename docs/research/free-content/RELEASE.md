@@ -1,5 +1,12 @@
 # Free-content production release
 
+**Current revision (2026-11-03):** the owner authorized the
+[simple free live plan](SIMPLE_LIVE_PLAN.md), #156. Release/hosted verification is
+tracked in #159. Europe PMC/OpenAlex can run directly with no data store; the
+blanket Redis gate is superseded. This release must retain verified free-budget
+guards and existing account settings. The November 1 evidence below records the
+initial book release, rather than the current paper prerequisites.
+
 The owner authorized merging the free-content implementation with production
 `main` and deploying it on 2026-11-01 (America/Los_Angeles). The release uses
 [PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110), retargeted to

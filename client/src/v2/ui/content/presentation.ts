@@ -16,6 +16,7 @@ export function primaryReadingAction(item: ContentItem) {
 }
 export function sourceName(source: ContentSourceStatus) { return sourceNames[source.id] || source.name || source.id; }
 export function sourceStatus(source: ContentSourceStatus) {
+  if(source.status==='disabled'&&safeSource(source.searchUrl))return 'Search on source website';
   return ({ ok: `${source.returned} shown`, empty: '0 shown', searching: 'Searching…', disabled: 'Not connected yet',
     not_selected: 'Not searched this time', queued: 'Waiting its turn', timeout: 'Timed out', throttled: 'Please try later',
     quota_exhausted: 'At today’s limit', unavailable: 'Could not answer', unsupported: 'Filter not supported',

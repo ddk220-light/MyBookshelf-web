@@ -3,6 +3,7 @@ import test from 'node:test';
 import request from 'supertest';
 import { createAnonymousApp } from '../anonymousApp.js';
 import { createPublicV2Router } from './router.js';
+import { createContentService } from '../services/content/search.js';
 
 test('content errors stay distinct from circulation errors and preserve public headers', async () => {
   const content={search:()=>{throw Object.assign(Error('The content request is invalid.'),{code:'CONTENT_INVALID_REQUEST'});},resolve:()=>{throw Error('internal secret');}};
@@ -36,4 +37,20 @@ test('streaming source progress ends with one committed result or an explicit er
   const failed=failure.text.trim().split('\n').map(line=>JSON.parse(line));
   assert.equal(failed[1].type,'error');assert.equal(failed[1].status,503);assert.equal(failed[1].sources[0].status,'timeout');
   assert.equal(failed.some(e=>e.type==='result'),false);
+});
+
+test('real content routing searches and resolves live without a database, Redis or application quota variables',async()=>{
+  const now=Date.parse('2026-11-03T14:00:00Z');let calls=0;
+  const item={key:'fcd:v1:europepmc:MED:123',kind:'article',title:'Synthetic no-store HTTP fixture',languages:['en'],contributors:[],
+    provenance:[{sourceId:'europepmc'}],locations:[{id:'oa',host:'Europe PMC',landingUrl:'https://europepmc.org/articles/PMC123',access:'free_full_text',
+      evidence:{sourceId:'europepmc',field:'explicit OA location',observedAt:new Date(now).toISOString()}}]};
+  const content=createContentService({env:{CONTENT_DISCOVERY_ENABLED:'true',CONTENT_EUROPEPMC_ENABLED:'true',CONTENT_CURSOR_SECRET:'synthetic-http-live-secret-at-least-32-chars'},
+    now:()=>now,paperAdapter:{search:async()=>{calls++;return {items:[item]};}}});
+  const app=createAnonymousApp({publicRouter:createPublicV2Router({content})});
+  const response=await request(app).post('/api/v2/content/search').set('Accept','application/x-ndjson').send({query:'malaria',kinds:['article']});
+  const events=response.text.trim().split('\n').map(JSON.parse),result=events.find(e=>e.type==='result').result;
+  assert.equal(result.searchMode,'live');assert.equal(result.items[0].key,item.key);
+  assert.equal(response.headers['cache-control'],'no-store');assert.equal(response.headers['set-cookie'],undefined);
+  const resolved=await request(app).post('/api/v2/content/resolve').send({key:item.key});
+  assert.equal(resolved.body.item.readingActions.length,1);assert.equal(calls,2);
 });

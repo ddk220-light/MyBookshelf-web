@@ -54,7 +54,7 @@ export function mapEuropePmc(record, observedAt) {
 export function createEuropePmcAdapter({fetchImpl=globalThis.fetch, now=()=>Date.now(),
   contact='deepakdhanavel@gmail.com'}={}) {
   return {async search(query,{sourceCursor='*',signal,exactRecord}={}) {
-    // Cursor comes only from trusted server coordination, never a URL supplied
+    // Cursor comes only from a verified server-signed token, never a URL supplied
     // by the reader. It is still bounded before constructing this fixed-origin URL.
     if (typeof sourceCursor !== 'string' || sourceCursor.length > 1500) throw sourceError('unavailable');
     const url = new URL(EUROPE_PMC_SEARCH);
@@ -66,7 +66,7 @@ export function createEuropePmcAdapter({fetchImpl=globalThis.fetch, now=()=>Date
     url.search = new URLSearchParams({query:providerQuery,format:'json',resultType:'core',
       pageSize:String(query.limit),cursorMark:sourceCursor,email:contact}).toString();
     try {
-      const timeout = AbortSignal.timeout(3500);
+      const timeout = AbortSignal.timeout(8000);
       const response = await fetchImpl(url,{redirect:'error',signal:signal?AbortSignal.any([signal,timeout]):timeout,
         headers:{Accept:'application/json','User-Agent':`MyBookshelf/1.0 (non-commercial; mailto:${contact})`}});
       if (response.status === 429) throw sourceError('throttled',Math.min(3600,Math.max(1,Number(response.headers.get('retry-after'))||60)));

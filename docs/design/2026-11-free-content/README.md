@@ -1,5 +1,11 @@
 # Free reading: UI boards and implementation handoff
 
+2026-11-03 behavior revision: follow the owner's
+[simple live plan](../../research/free-content/SIMPLE_LIVE_PLAN.md). Reuse these
+approved visual styles with one live source per paper search, source switching,
+and outbound website searches for deferred connectors. The earlier multi-source
+cache/budget/session behavior is historical, rather than a storage prerequisite.
+
 Status: **approved UI reference; implementation in progress.** Dated 2026-11-01.
 Current decisions, implemented slices and remaining gates are in
 [the implementation record](../../research/free-content/IMPLEMENTATION.md).

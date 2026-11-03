@@ -7,7 +7,7 @@ export function clean(value, limit=500) {
   return typeof value==='string'?value.replace(/<[^>]*>/g,'').replace(/[\u0000-\u001f]/g,' ').trim().slice(0,limit):'';
 }
 export function sourceSignal(signal) {
-  const timeout=AbortSignal.timeout(2500);
+  const timeout=AbortSignal.timeout(8000);
   return signal?AbortSignal.any([signal,timeout]):timeout;
 }
 export async function sourceText(fetchImpl,url,{signal,accept='application/json',maxBytes=2*1024*1024}={}) {
