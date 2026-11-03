@@ -117,7 +117,7 @@ export function parseContentSearch(input) {
   if (!Array.isArray(kinds) || !kinds.length || kinds.length > CONTENT_KINDS.length || kinds.some(k => !CONTENT_KINDS.includes(k))) throw new ContentValidationError();
   const limit = body.limit ?? 20;
   if (!Number.isInteger(limit) || limit < 1 || limit > 40 || (body.access != null && !['free','free_full_text'].includes(body.access))) throw new ContentValidationError();
-  if (body.cursor != null && (typeof body.cursor !== 'string' || body.cursor.length > 2048)) throw new ContentValidationError();
+  if (body.cursor != null && (typeof body.cursor !== 'string' || body.cursor.length > 4096)) throw new ContentValidationError();
   if (body.includeUnclear != null && typeof body.includeUnclear !== 'boolean') throw new ContentValidationError();
   const paperSources=['europepmc','doaj','arxiv','openalex'];
   if(body.sourceIds!=null&&(!Array.isArray(body.sourceIds)||!body.sourceIds.length||body.sourceIds.length>3||body.sourceIds.some(id=>!paperSources.includes(id))))throw new ContentValidationError();

@@ -42,9 +42,9 @@ export function createOpenalexAdapter({fetchImpl=globalThis.fetch,now=()=>Date.n
     const rate=budget?.rate_limit,cost=rate?.endpoint_costs_usd?.search;
     // Fail closed if policy changes or prepaid money could be consumed. The
     // adapter only uses ordinary search/singleton endpoints, never paid content.
-    if(typeof rate?.daily_budget_usd!=='number'||rate.daily_budget_usd<=0||rate.daily_budget_usd>1
+    if(!Number.isFinite(rate?.daily_budget_usd)||rate.daily_budget_usd<=0||rate.daily_budget_usd>1
       ||rate.prepaid_balance_usd!==0||rate.prepaid_remaining_usd!==0||cost!==0.001)throw sourceError('unavailable');
-    if(typeof rate.daily_remaining_usd!=='number'||rate.daily_remaining_usd<cost)throw sourceError('quota_exhausted');
+    if(!Number.isFinite(rate.daily_remaining_usd)||rate.daily_remaining_usd<cost)throw sourceError('quota_exhausted');
     const url=new URL(exactRecord?'/works/'+exactRecord.recordId:'/works',ORIGIN);
     url.searchParams.set('api_key',apiKey);
     if(!exactRecord){

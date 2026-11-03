@@ -1,5 +1,12 @@
 # Free-content implementation contract and progress
 
+**FCD10 (2026-11-03):** the owner superseded mandatory Redis/federation with the
+[simple free live plan](SIMPLE_LIVE_PLAN.md), tracked in #156. Active branch:
+`research/free-content-discovery-live`, in the same free-content worktree.
+Historical shared-coordination tests and gates below describe the earlier
+version. Current release acceptance is direct source requests, stateless signed
+paging, verified free allowance, bounded errors and no new paid service/store.
+
 Owner approved the free-reading artifacts and authorized implementation in this
 chat on 2026-11-01 (America/Los_Angeles). Baseline: `760863a` on
 `research/free-content-discovery`. Active worktree:

@@ -126,6 +126,35 @@ it('a subject-only result explains its supplied catalog match',async()=>{
   expect(screen.getByText('Subject: Mathematics')).toBeInTheDocument();
 });
 
+it('live search explains single-source coverage and offers switching and source-website searches',async()=>{
+  vi.mocked(contentApi.search).mockResolvedValue({...page,searchMode:'live',sources:[page.sources[0],
+    {id:'openalex',status:'not_selected',returned:0},
+    {id:'arxiv',status:'disabled',returned:0,searchUrl:'https://arxiv.org/search/?query=live-source-fixture&searchtype=all'}]});
+  mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=live-source-fixture');
+  await screen.findByText(/Searching Europe PMC live/);
+  fireEvent.click(screen.getByRole('button',{name:'Sources'}));
+  expect(screen.getByRole('link',{name:'Search arXiv website (opens source website)'})).toHaveAttribute('href','https://arxiv.org/search/?query=live-source-fixture&searchtype=all');
+  fireEvent.click(screen.getByRole('link',{name:'Search it'}));
+  await waitFor(()=>{const calls=vi.mocked(contentApi.search).mock.calls;expect(calls[calls.length-1]?.[2]).toMatchObject({sourceIds:['openalex']});});
+});
+
+it('expired live paging offers a fresh search instead of reporting a source outage',async()=>{
+  vi.mocked(contentApi.search).mockRejectedValueOnce(new PublicApiError({code:'CONTENT_CURSOR_EXPIRED',status:409,message:'Search again to continue.'}));
+  mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=expired-live-fixture');
+  await screen.findByRole('heading',{name:'Start this search again'});
+  fireEvent.click(screen.getByRole('button',{name:'Search again'}));
+  await screen.findByRole('heading',{name:item.title});
+  const calls=vi.mocked(contentApi.search).mock.calls;expect(calls[calls.length-1]?.[2]?.cursor).toBeUndefined();
+});
+
+it('the selected source’s exhausted free allowance stays distinct from disabled/unselected sources',async()=>{
+  vi.mocked(contentApi.search).mockRejectedValue(new PublicApiError({code:'CONTENT_UNAVAILABLE',status:503,message:'The free allowance is used up.',
+    sources:[{id:'openalex',status:'quota_exhausted',returned:0},{id:'europepmc',status:'not_selected',returned:0},{id:'arxiv',status:'disabled',returned:0}]}));
+  mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=exhausted-live-fixture');
+  await screen.findByRole('heading',{name:'At today’s limit'});
+  expect(screen.queryByRole('heading',{name:'No verified free copy in these results'})).not.toBeInTheDocument();
+});
+
 it('pilot fixtures retain script, original credits and publisher levels while language filters change',async()=>{
   const story:ContentItem={...item,key:'fcd:v1:storyweaver:7777772',kind:'book',title:'हिन्दी परीक्षण कहानी',languages:['hi'],collections:['children'],
     publisher:'Fixture publisher',readingLevel:{publisher:'Fixture publisher',label:'Publisher level one'},

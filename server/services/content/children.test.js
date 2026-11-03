@@ -83,10 +83,10 @@ test('account review rejects unknown charges, contradictory access, wrong notice
   }
 });
 
-test('ordinary free-book search includes reviewed source-account stories independently of Redis',async()=>{
+test('ordinary free-book search includes reviewed source-account stories without contacting live providers',async()=>{
   const reviewed=readChildrenManifest();const reviewedNow=Math.max(...reviewed.records.map(record=>Date.parse(record.review.reviewedAt)));
-  const service=createContentService({env:{CONTENT_DISCOVERY_ENABLED:'true',CONTENT_CHILDREN_ENABLED:'true',CONTENT_CURSOR_SECRET:'test-free-book-search-without-redis-secret'},now:()=>reviewedNow,
-    coordinatorFactory:()=>{throw Error('Book discovery must not require Redis');}});
+  const service=createContentService({env:{CONTENT_DISCOVERY_ENABLED:'true',CONTENT_CHILDREN_ENABLED:'true',CONTENT_CURSOR_SECRET:'test-free-book-search-without-store-secret'},now:()=>reviewedNow,
+    paperAdapter:{search:()=>{throw Error('Book search must not contact live papers');}}});
   const result=await service.search({query:'குண்டு',access:'free',languages:['ta']});
   assert.equal(result.items.length,1);assert.equal(result.items[0].key,'fcd:v1:storyweaver:2252');
   assert.equal(result.items[0].access,'free_account_required');assert.equal(result.hiddenUnclear,0);

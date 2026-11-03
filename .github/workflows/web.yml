@@ -25,14 +25,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node tools/deployment/check-client-service-build.mjs
-      - run: docker run -d --name mybookshelf-free-content-test-redis redis:7-alpine
       - run: python -m unittest discover -s tools/content -v
       - run: node --test tools/content/*.test.mjs
       - run: npm run typecheck:client
       - run: npm run test:client
       - run: npm test --workspace=server
-        env:
-          CONTENT_REDIS_TEST_CONTAINER: mybookshelf-free-content-test-redis
       - run: npm run build
       - run: npm run test:seo
       - run: node --test tools/deployment/*.test.mjs

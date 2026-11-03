@@ -1,5 +1,10 @@
 # Free books and research discovery
 
+**Current implementation direction (2026-11-03):** use the
+[simple free live plan](SIMPLE_LIVE_PLAN.md), authorized by the owner. Live paper
+requests and signed provider cursors require no Redis/database. Shared-store
+requirements in the older research below are superseded for this release.
+
 Research date: **2026-10-31**. Implementation authorized 2026-11-01; see
 [story progress and contract decisions](IMPLEMENTATION.md) and [validation](VALIDATION.md).
 The research observations below remain historical evidence, separate from fresh implementation checks.

@@ -10,7 +10,7 @@ import { ContentResult } from './ContentResult';
 import { ContentDetail } from './ContentDetailPage';
 import { SearchIcon, OpenBookIcon, ShelfIcon } from '../icons';
 import { contentMessages as m } from '../../uiMessages';
-import { sourceName, sourceStatus } from './presentation';
+import { safeSource, sourceName, sourceStatus } from './presentation';
 import './content.css';
 
 const memory=new Map<string,{page:ContentPage;expires:number}>();
@@ -73,8 +73,10 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
   const account=page?.items.filter(item=>item.access==='free_account_required')||[];
   const unknown=page?.items.filter(item=>item.access==='unknown')||[];
   const disabled=error?.code==='CONTENT_DISABLED';
-  const disabledTitle=scope==='papers'?(onlySource?'This paper source isn’t enabled yet':'Paper search isn’t enabled yet'):'Free-book search isn’t enabled yet';
-  const errorTitle=disabled?disabledTitle:error?.code==='CONTENT_COLLECTION_UNAVAILABLE'?'The starter set is still being checked':sources.length&&sources.every(s=>s.status==='quota_exhausted')?'At today’s limit':'Free-reading sources aren’t answering';
+  const restartRequired=error?.code==='CONTENT_CURSOR_EXPIRED'||error?.code==='CONTENT_CURSOR_INVALID';
+  const disabledTitle=scope==='papers'?(onlySource||sources.some(s=>s.status==='not_selected')?'This paper source isn’t connected here':'Paper search isn’t enabled yet'):'Free-book search isn’t enabled yet';
+  const activeSources=sources.filter(s=>!['disabled','not_selected'].includes(s.status));
+  const errorTitle=disabled?disabledTitle:restartRequired?'Start this search again':error?.code==='CONTENT_COLLECTION_UNAVAILABLE'?'The starter set is still being checked':activeSources.length&&activeSources.every(s=>s.status==='quota_exhausted')?'At today’s limit':'Free-reading sources aren’t answering';
   const returnTo='/app/search?'+new URLSearchParams({scope,q:query,...children?{collection:'children'}:textbooks?{collection:'textbooks'}:{},...onlySource?{source:onlySource}:{}});
   const itemLink=(key:string)=>desktop?returnTo+'&item='+encodeURIComponent(key):'/app/read/'+encodeURIComponent(key);
   function submit(event:React.FormEvent){event.preventDefault();setUnclear(false);
@@ -103,10 +105,11 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
       {children&&<p className="content-coverage">Levels are as the publisher labels them; they do not imply an age.</p>}
       {textbooks&&<p className="content-coverage">Open textbooks · <Link to={'/app/search?scope=free&q='+encodeURIComponent(query)}>Search all free books</Link>. This catalog export does not supply languages; a language filter excludes those records.</p>}
       {busy&&<div className="content-loading" role="status"><p className="visually-hidden">Checking sources…</p><ul className="content-source-list">{progress.map(source=><li key={source.id}><span><span className={source.status==='ok'?'access-free':undefined} aria-hidden="true">{source.status==='ok'?'✓':source.status==='queued'?'–':'○'}</span>{' '}{sourceName(source)}</span><span>{source.status==='ok'?(source.returned?`${source.returned} found`:'Answered'):sourceStatus(source)}</span></li>)}</ul><p>{m.loading}</p><div className="content-skeletons" aria-hidden="true"><span/><span/><span/></div></div>}
-      {error&&<div className={'content-notice content-outage'+(disabled?' content-disabled':'')} role="alert">{disabled?<OpenBookIcon/>:<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="m3 3 18 18M2 8c5-5 15-5 20 0M5 12c3-3 11-3 14 0M8 16c2-2 6-2 8 0M12 20h.01"/></svg>}<h2>{errorTitle}</h2><p>{disabled&&scope==='papers'?'Free books and textbooks are available in Free to read.':error.message}</p>
-        {!disabled&&<p>This does not mean there is no free copy.</p>}<div className="content-outage-actions">{disabled?scope==='papers'&&<Link className="button-link" to={'/app/search?'+new URLSearchParams({scope:'free',q:query})}>Search free books instead</Link>:<button onClick={again}>Try again</button>}<Link className="button-link button-quiet" to={'/app/search?q='+encodeURIComponent(query)}>Search library books instead</Link></div>
+      {error&&<div className={'content-notice content-outage'+(disabled||restartRequired?' content-disabled':'')} role="alert">{disabled||restartRequired?<OpenBookIcon/>:<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="m3 3 18 18M2 8c5-5 15-5 20 0M5 12c3-3 11-3 14 0M8 16c2-2 6-2 8 0M12 20h.01"/></svg>}<h2>{errorTitle}</h2><p>{disabled&&scope==='papers'?'Choose a connected source in Sources, open a source website, or search free books.':error.message}</p>
+        {!disabled&&!restartRequired&&<p>This does not mean there is no free copy.</p>}<div className="content-outage-actions">{disabled?scope==='papers'&&<Link className="button-link" to={'/app/search?'+new URLSearchParams({scope:'free',q:query})}>Search free books instead</Link>:<button onClick={again}>{restartRequired?'Search again':'Try again'}</button>}<Link className="button-link button-quiet" to={'/app/search?q='+encodeURIComponent(query)}>Search library books instead</Link></div>
         {sources.length>0&&<button className="text-button" onClick={()=>setSourcesOpen(true)}>Sources</button>}</div>}
       {page&&<div className={'content-results-layout'+(desktop&&selected?' has-detail':'')}><div className="content-results">
+        {page.searchMode==='live'&&<p className="content-coverage">Searching {answered.map(sourceName).join(', ')||'the selected source'} live. One source per search; use Sources to switch. Results can change between pages.</p>}
         {interrupted.length>0&&<div className="content-notice"><h2>{interrupted.length===1?`${sourceName(interrupted[0])} ${interrupted[0].status==='timeout'?'didn’t answer in time':'could not answer'}`:'Some sources could not answer'}</h2><p>Other results are shown. These sources may have more matches.</p>{page.sessionCursor&&interrupted.filter(s=>s.retryable).map(source=><button className="text-button" key={source.id} disabled={busy} onClick={()=>void load(page.sessionCursor,source.id)}>Try {sourceName(source)} again</button>)}</div>}
         {page.sources.some(s=>s.id==='openalex'&&s.status==='quota_exhausted')&&<div className="content-notice"><h2>{m.quotaTitle}</h2><p>{m.quotaDetail}</p></div>}
         {page.sources.some(s=>s.freshness==='stale')&&<p className="content-notice">These source details need refreshing. Older reading links are marked unclear.</p>}
@@ -122,7 +125,7 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
         </div>{desktop&&selected&&<aside className="content-selected"><ContentDetail contentKey={selected} returnTo={returnTo}/></aside>}</div>
       }
     </>}
-    <Sheet open={sourcesOpen} title="Sources for this search" onClose={()=>setSourcesOpen(false)}><p className="content-coverage">For “{query}” in {scope==='papers'?'Papers':'Free to read'}. Counts describe the items loaded here.</p><ul className="content-source-list">{sources.map(source=><li key={source.id}><div><strong>{sourceName(source)}</strong>{source.scope&&<p className="content-coverage">{source.scope}</p>}</div><span>{sourceStatus(source)}</span>{source.status==='not_selected'&&scope==='papers'&&<Link to={'/app/search?'+new URLSearchParams({scope,q:query,source:source.id})} onClick={()=>setSourcesOpen(false)}>Search it</Link>}</li>)}</ul>
+    <Sheet open={sourcesOpen} title="Sources for this search" onClose={()=>setSourcesOpen(false)}><p className="content-coverage">For “{query}” in {scope==='papers'?'Papers':'Free to read'}. Counts describe the items loaded here.</p><ul className="content-source-list">{sources.map(source=><li key={source.id}><div><strong>{sourceName(source)}</strong>{source.scope&&<p className="content-coverage">{source.scope}</p>}</div><span>{sourceStatus(source)}</span>{source.status==='not_selected'&&scope==='papers'&&<Link to={'/app/search?'+new URLSearchParams({scope,q:query,source:source.id})} onClick={()=>setSourcesOpen(false)}>Search it</Link>}{scope==='papers'&&safeSource(source.searchUrl)&&<a href={safeSource(source.searchUrl)} target="_blank" rel="noopener noreferrer" aria-label={`Search ${sourceName(source)} website (opens source website)`}>Search website</a>}</li>)}</ul>
       <p>Sources can have different coverage. Counts describe the items loaded here.</p></Sheet>
   </section>;
 }

@@ -2,11 +2,11 @@
 // so navigation, empty states and catalog guidance can be translated later.
 export const contentMessages = {
   startIntro: 'Books and stories you can read online today, at the site that hosts them. Nothing to borrow, no card needed. Reuse rights differ by item.',
-  papersIntro: 'Research papers you can read at the original source. Search by title, author, DOI or arXiv ID. Reuse rights differ by item.',
+  papersIntro: 'Search one paper source live, then read at the original host. Use Sources to choose another collection. Reuse rights differ by item.',
   loading: 'Results appear as each source answers. We stop waiting after 5 seconds.',
   unclear: 'They may be previews, loans or scans we couldn’t confirm. They’re left out of Free to read.',
   quotaTitle: 'Wide paper search is at today’s limit',
-  quotaDetail: 'It resets tomorrow. Until then, results come from the specialist sources, which cover fewer subjects.',
+  quotaDetail: 'The source reports that its free allowance is exhausted. Choose another source or try again later.',
   sourceAccount: 'These books are free to read after signing in at the source.',
   rights: 'Free to read does not always mean free to reuse. Check your country’s rules and the source’s terms.',
   noHost: 'MyBookshelf doesn’t host or download the book.',

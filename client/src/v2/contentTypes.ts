@@ -1,6 +1,7 @@
 export type ContentKind = 'book' | 'chapter' | 'article' | 'preprint' | 'thesis' | 'report' | 'learning_resource' | 'audiobook' | 'other';
 export type ContentSourceStatus = { id: string; name?: string; status: string; returned: number;
-  scope?: string; complete?: boolean; catalogRecords?: number; freshness?: string; importedAt?: string; truncated?: boolean;retryable?:boolean };
+  scope?: string; complete?: boolean; catalogRecords?: number; freshness?: string; importedAt?: string; truncated?: boolean;retryable?:boolean;
+  searchUrl?:string;retryAfterSeconds?:number };
 export type ContentItem = {
   key: string; kind: ContentKind; title: string; contributors: Array<{ name: string; role: string }>;
   identifiers: Array<{ scheme: string; value: string }>; languages: string[]; subjects: string[];
@@ -17,6 +18,6 @@ export type ContentItem = {
   readingActions: Array<{ locationId: string; label: string; url: string; requiresAccount?:boolean; downloads: Array<{ url: string; mimeType: string }> }>;
 };
 export type ContentPage = { items: ContentItem[]; nextCursor: string | null; hiddenUnclear: number;
-  coverage: string; sources: ContentSourceStatus[]; policyRevision: string;sessionCursor?:string;availableLevels?:string[] };
+  coverage: string; sources: ContentSourceStatus[]; policyRevision: string;sessionCursor?:string;availableLevels?:string[];searchMode?:'live' };
 export type SavedContent = { kind: 'content'; contentKey: string; itemKind: ContentKind;
   title: string; authors: string[]; host: string; savedAt: string };
