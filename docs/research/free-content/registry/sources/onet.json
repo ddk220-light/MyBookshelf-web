@@ -1,0 +1,795 @@
+{
+  "schema_version": 1,
+  "id": "onet",
+  "name": "O*NET occupational data",
+  "homepage": "https://www.onetcenter.org/database.html",
+  "group": "G03",
+  "areas": [
+    "C13",
+    "C19",
+    "I01",
+    "I04",
+    "I06",
+    "I13",
+    "I17",
+    "I18",
+    "I20",
+    "I11",
+    "I10",
+    "I15"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "occupational-metadata-catalog",
+  "aliases": [
+    "O*NET",
+    "O*NET Database",
+    "O*NET OnLine"
+  ],
+  "operator": {
+    "name": "National Center for O*NET Development; sponsored by US Department of Labor, Employment and Training Administration (USDOL/ETA)",
+    "jurisdiction": "USA",
+    "evidence": [
+      {
+        "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "job_id": "2c4287b2ce3f4e414022",
+        "observed_at": "2026-11-05T04:34:16.650120+00:00"
+      },
+      {
+        "path": "runs/onet-contract-20261105/observations.jsonl",
+        "job_id": "f50bf6c2cfd163439221",
+        "observed_at": "2026-11-05T04:35:50.332993+00:00"
+      },
+      {
+        "path": "runs/onet-contract-20261105/observations.jsonl",
+        "job_id": "74fa4e2c5ba2dfa96e32",
+        "observed_at": "2026-11-05T04:35:54.216412+00:00"
+      },
+      {
+        "path": "examples/onet.access.jsonl",
+        "job_id": null,
+        "observed_at": "2026-11-05T04:36:42.537875+00:00"
+      }
+    ]
+  },
+  "capabilities": [
+    "Official versioned JSON export of 1,016 occupation codes, titles and descriptions; searchable locally without a key/account.",
+    "Occupation profiles are knowledge/reference metadata; this route does not supply job vacancies, courses, full manuals or country-specific certification rules."
+  ],
+  "query": {
+    "adapter": "onet-json",
+    "endpoint": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+    "method": "GET",
+    "authentication": "None for this documented public export; separate hosted Web Services are not used",
+    "cost": "Public CC BY 4.0 export; optional developer registration not required or submitted",
+    "catalog_version": "31.0",
+    "supported_modes": [
+      "exact_code",
+      "title_contains",
+      "title_or_description"
+    ],
+    "unsupported_modes": [
+      "job vacancies",
+      "full training manuals",
+      "salary estimates",
+      "India-local occupation equivalence",
+      "translation lookup",
+      "semantic relevance ranking"
+    ],
+    "paging": "One bounded 345,874-byte JSON export; deterministic local code-order slicing. No network page/offset contract claimed.",
+    "cases": [
+      {
+        "id": "farmers",
+        "intent": "Find the named occupation profile; not a manual or job vacancy",
+        "expected_ids": [
+          "11-9013.00"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Farmers"
+          }
+        }
+      },
+      {
+        "id": "carpenters",
+        "intent": "Find the named occupation profile; not a manual or job vacancy",
+        "expected_ids": [
+          "47-2031.00"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Carpenters"
+          }
+        }
+      },
+      {
+        "id": "machinists",
+        "intent": "Find the named occupation profile; not a manual or job vacancy",
+        "expected_ids": [
+          "51-4041.00"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Machinists"
+          }
+        }
+      },
+      {
+        "id": "logisticians",
+        "intent": "Find the named occupation profile; not a manual or job vacancy",
+        "expected_ids": [
+          "13-1081.00"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Logisticians"
+          }
+        }
+      },
+      {
+        "id": "nurses",
+        "intent": "Find the named occupation profile; not a manual or job vacancy",
+        "expected_ids": [
+          "29-1141.00"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Registered Nurses"
+          }
+        }
+      },
+      {
+        "id": "software",
+        "intent": "Find the named occupation profile; not a manual or job vacancy",
+        "expected_ids": [
+          "15-1252.00"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Software Developers"
+          }
+        }
+      },
+      {
+        "id": "accountants",
+        "intent": "Find the named occupation profile; not a manual or job vacancy",
+        "expected_ids": [
+          "13-2011.00"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Accountants"
+          }
+        }
+      },
+      {
+        "id": "electricians",
+        "intent": "Find the named occupation profile; not a manual or job vacancy",
+        "expected_ids": [
+          "47-2111.00"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Electricians"
+          }
+        }
+      },
+      {
+        "id": "food-scientists",
+        "intent": "Find the named occupation profile; not a manual or job vacancy",
+        "expected_ids": [
+          "19-1012.00"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Food Scientists"
+          }
+        }
+      },
+      {
+        "id": "pilots",
+        "intent": "Find the named occupation profile; not a manual or job vacancy",
+        "expected_ids": [
+          "53-2011.00"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Airline Pilots"
+          }
+        }
+      }
+    ]
+  },
+  "licensing": "O*NET 31.0 downloadable database content is CC BY 4.0. Credit USDOL/ETA, include version and license link, indicate changes and observe O*NET trademark/nonendorsement wording. Career exploration tools and other site content have separate licenses.",
+  "documentation": [
+    "https://www.onetcenter.org/database.html",
+    "https://www.onetcenter.org/license_db.html",
+    "https://www.onetcenter.org/dictionary/31.0/excel/occupation_data.html"
+  ],
+  "limitations": [
+    "US occupational taxonomy; English export, no tested India equivalence or regional availability guarantees.",
+    "One origin with many occupations and industry overlaps, not one origin per job or file format.",
+    "31.0 release metadata may contain older component data; occupation table dictionary says most recent content change was release 25.1.",
+    "Numeric request quota, real schema/deletion transitions and broad relevance remain open."
+  ],
+  "evidence": [
+    "runs/canonical-partners-onet-20261105/observations.jsonl",
+    "runs/onet-contract-20261105/observations.jsonl",
+    "examples/onet.access.jsonl",
+    "examples/onet.jsonl",
+    "examples/onet.benchmark.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T04:39:22.125515+00:00",
+  "next_action": "Retain the narrow occupation-profile search route; finish topical relevance, representative browser reading, update/taxonomy reconciliation and geography coverage. Other O*NET tables/languages need separate bounded review; no production import authorized.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "Official license identifies developer and sponsor; release, table and occupation code define the versioned identity.",
+      "facts": {
+        "operator": "National Center for O*NET Development; sponsored by US Department of Labor, Employment and Training Administration (USDOL/ETA)",
+        "native_key": "31.0:occupation_data:<O*NET-SOC code>",
+        "example": "31.0:occupation_data:29-1141.00",
+        "deduplication": "O*NET OnLine, My Next Move, Mi Próximo Paso and hosted Web Services are related views/services, not automatically additional origins."
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/onet-contract-20261105/observations.jsonl",
+        "examples/onet.access.jsonl",
+        "examples/onet.jsonl",
+        "examples/onet.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "2c4287b2ce3f4e414022",
+          "observed_at": "2026-11-05T04:34:16.650120+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "f50bf6c2cfd163439221",
+          "observed_at": "2026-11-05T04:35:50.332993+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "74fa4e2c5ba2dfa96e32",
+          "observed_at": "2026-11-05T04:35:54.216412+00:00"
+        },
+        {
+          "path": "examples/onet.access.jsonl",
+          "job_id": null,
+          "observed_at": "2026-11-05T04:36:42.537875+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "US occupation taxonomy across multiple industries; observed English title/description records.",
+      "facts": {
+        "jurisdiction": "USA",
+        "language_observed": "English",
+        "records": 1016,
+        "industry_candidates": [
+          "I01",
+          "I04",
+          "I06",
+          "I13",
+          "I17",
+          "I18",
+          "I20",
+          "I11",
+          "I10",
+          "I15"
+        ],
+        "India_gap": "No India-local taxonomy equivalence or reader network verification; no India supply claimed"
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/onet-contract-20261105/observations.jsonl",
+        "examples/onet.access.jsonl",
+        "examples/onet.jsonl",
+        "examples/onet.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "2c4287b2ce3f4e414022",
+          "observed_at": "2026-11-05T04:34:16.650120+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "f50bf6c2cfd163439221",
+          "observed_at": "2026-11-05T04:35:50.332993+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "74fa4e2c5ba2dfa96e32",
+          "observed_at": "2026-11-05T04:35:54.216412+00:00"
+        },
+        {
+          "path": "examples/onet.access.jsonl",
+          "job_id": null,
+          "observed_at": "2026-11-05T04:36:42.537875+00:00"
+        }
+      ],
+      "open_questions": [
+        "Measure taxonomy relevance and regional/language gaps; separately inspect official Spanish resources before claiming Spanish query support."
+      ]
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Exact official GET export path captured from the provider page; parsed records and actual local searches preserve occupation code and release.",
+      "facts": {
+        "adapter": "onet-json",
+        "endpoint": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+        "method": "GET",
+        "authentication": "None for this documented public export; separate hosted Web Services are not used",
+        "cost": "Public CC BY 4.0 export; optional developer registration not required or submitted",
+        "catalog_version": "31.0",
+        "supported_modes": [
+          "exact_code",
+          "title_contains",
+          "title_or_description"
+        ],
+        "unsupported_modes": [
+          "job vacancies",
+          "full training manuals",
+          "salary estimates",
+          "India-local occupation equivalence",
+          "translation lookup",
+          "semantic relevance ranking"
+        ],
+        "paging": "One bounded 345,874-byte JSON export; deterministic local code-order slicing. No network page/offset contract claimed.",
+        "cases": [
+          {
+            "id": "farmers",
+            "intent": "Find the named occupation profile; not a manual or job vacancy",
+            "expected_ids": [
+              "11-9013.00"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+              "local_query": {
+                "mode": "title_contains",
+                "text": "Farmers"
+              }
+            }
+          },
+          {
+            "id": "carpenters",
+            "intent": "Find the named occupation profile; not a manual or job vacancy",
+            "expected_ids": [
+              "47-2031.00"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+              "local_query": {
+                "mode": "title_contains",
+                "text": "Carpenters"
+              }
+            }
+          },
+          {
+            "id": "machinists",
+            "intent": "Find the named occupation profile; not a manual or job vacancy",
+            "expected_ids": [
+              "51-4041.00"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+              "local_query": {
+                "mode": "title_contains",
+                "text": "Machinists"
+              }
+            }
+          },
+          {
+            "id": "logisticians",
+            "intent": "Find the named occupation profile; not a manual or job vacancy",
+            "expected_ids": [
+              "13-1081.00"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+              "local_query": {
+                "mode": "title_contains",
+                "text": "Logisticians"
+              }
+            }
+          },
+          {
+            "id": "nurses",
+            "intent": "Find the named occupation profile; not a manual or job vacancy",
+            "expected_ids": [
+              "29-1141.00"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+              "local_query": {
+                "mode": "title_contains",
+                "text": "Registered Nurses"
+              }
+            }
+          },
+          {
+            "id": "software",
+            "intent": "Find the named occupation profile; not a manual or job vacancy",
+            "expected_ids": [
+              "15-1252.00"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+              "local_query": {
+                "mode": "title_contains",
+                "text": "Software Developers"
+              }
+            }
+          },
+          {
+            "id": "accountants",
+            "intent": "Find the named occupation profile; not a manual or job vacancy",
+            "expected_ids": [
+              "13-2011.00"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+              "local_query": {
+                "mode": "title_contains",
+                "text": "Accountants"
+              }
+            }
+          },
+          {
+            "id": "electricians",
+            "intent": "Find the named occupation profile; not a manual or job vacancy",
+            "expected_ids": [
+              "47-2111.00"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+              "local_query": {
+                "mode": "title_contains",
+                "text": "Electricians"
+              }
+            }
+          },
+          {
+            "id": "food-scientists",
+            "intent": "Find the named occupation profile; not a manual or job vacancy",
+            "expected_ids": [
+              "19-1012.00"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+              "local_query": {
+                "mode": "title_contains",
+                "text": "Food Scientists"
+              }
+            }
+          },
+          {
+            "id": "pilots",
+            "intent": "Find the named occupation profile; not a manual or job vacancy",
+            "expected_ids": [
+              "53-2011.00"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json",
+              "local_query": {
+                "mode": "title_contains",
+                "text": "Airline Pilots"
+              }
+            }
+          }
+        ]
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/onet-contract-20261105/observations.jsonl",
+        "examples/onet.access.jsonl",
+        "examples/onet.jsonl",
+        "examples/onet.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "2c4287b2ce3f4e414022",
+          "observed_at": "2026-11-05T04:34:16.650120+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "f50bf6c2cfd163439221",
+          "observed_at": "2026-11-05T04:35:50.332993+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "74fa4e2c5ba2dfa96e32",
+          "observed_at": "2026-11-05T04:35:54.216412+00:00"
+        },
+        {
+          "path": "examples/onet.access.jsonl",
+          "job_id": null,
+          "observed_at": "2026-11-05T04:36:42.537875+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "complete",
+      "summary": "O*NET 31.0 downloadable database content is CC BY 4.0. Credit USDOL/ETA, include version and license link, indicate changes and observe O*NET trademark/nonendorsement wording. Career exploration tools and other site content have separate licenses.",
+      "facts": {
+        "metadata_and_description_license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "version_required_in_attribution": "31.0",
+        "attribution": "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license. O*NET® is a trademark of USDOL/ETA.",
+        "modification_notice": "USDOL/ETA has not approved, endorsed, or tested modifications.",
+        "registration": "Optional developer registration; not submitted",
+        "scope": "Only this licensed database file; other tools/site licenses excluded"
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/onet-contract-20261105/observations.jsonl",
+        "examples/onet.access.jsonl",
+        "examples/onet.jsonl",
+        "examples/onet.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "2c4287b2ce3f4e414022",
+          "observed_at": "2026-11-05T04:34:16.650120+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "f50bf6c2cfd163439221",
+          "observed_at": "2026-11-05T04:35:50.332993+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "74fa4e2c5ba2dfa96e32",
+          "observed_at": "2026-11-05T04:35:54.216412+00:00"
+        },
+        {
+          "path": "examples/onet.access.jsonl",
+          "job_id": null,
+          "observed_at": "2026-11-05T04:36:42.537875+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "The complete occupation-description metadata file was delivered anonymously; no whole books/audio or personal/job-applicant records collected.",
+      "facts": {
+        "http": 200,
+        "account_required_for_export": false,
+        "representative": "29-1141.00 — Registered Nurses; full description present in JSON",
+        "web_services_auth": "Separate route, unused and unverified",
+        "bytes": 345874
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/onet-contract-20261105/observations.jsonl",
+        "examples/onet.access.jsonl",
+        "examples/onet.jsonl",
+        "examples/onet.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "2c4287b2ce3f4e414022",
+          "observed_at": "2026-11-05T04:34:16.650120+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "f50bf6c2cfd163439221",
+          "observed_at": "2026-11-05T04:35:50.332993+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "74fa4e2c5ba2dfa96e32",
+          "observed_at": "2026-11-05T04:35:54.216412+00:00"
+        },
+        {
+          "path": "examples/onet.access.jsonl",
+          "job_id": null,
+          "observed_at": "2026-11-05T04:36:42.537875+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify representative official browser occupation page without confusing metadata descriptions with practical training manuals."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct local title queries executed over a freshly captured official export; a name substring may match helpers/specialties as well as the main occupation.",
+      "facts": {
+        "examples": 10,
+        "ordering": "O*NET-SOC code, not semantic relevance",
+        "version": "31.0 distribution; occupation table last content update 25.1",
+        "crosswalks": "Unknown; do not map US codes to India jobs automatically"
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/onet-contract-20261105/observations.jsonl",
+        "examples/onet.access.jsonl",
+        "examples/onet.jsonl",
+        "examples/onet.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "2c4287b2ce3f4e414022",
+          "observed_at": "2026-11-05T04:34:16.650120+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "f50bf6c2cfd163439221",
+          "observed_at": "2026-11-05T04:35:50.332993+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "74fa4e2c5ba2dfa96e32",
+          "observed_at": "2026-11-05T04:35:54.216412+00:00"
+        },
+        {
+          "path": "examples/onet.access.jsonl",
+          "job_id": null,
+          "observed_at": "2026-11-05T04:36:42.537875+00:00"
+        }
+      ],
+      "open_questions": [
+        "Review five topical result sets and exact-code/version edge cases; profile matches do not establish training suitability."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "One policy-checked metadata request, bounded to 1 MiB. Documentation says quarterly database updates, primary annual update in Q3.",
+      "facts": {
+        "capture_sha256": "8eec5d2449c0b96a90fca0f67184b3bf76c15b3549c4f145adb48c3ae55f52f8",
+        "request_pacing_seconds": 3,
+        "numeric_quota": null,
+        "refresh": "Review new official releases; compare codes/schema/changes, retain prior versions, never replace failed export with empty catalog",
+        "schema_guard": "Reject wrong table/version, duplicate/malformed codes, missing titles/descriptions and oversized response"
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/onet-contract-20261105/observations.jsonl",
+        "examples/onet.access.jsonl",
+        "examples/onet.jsonl",
+        "examples/onet.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "2c4287b2ce3f4e414022",
+          "observed_at": "2026-11-05T04:34:16.650120+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "f50bf6c2cfd163439221",
+          "observed_at": "2026-11-05T04:35:50.332993+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "74fa4e2c5ba2dfa96e32",
+          "observed_at": "2026-11-05T04:35:54.216412+00:00"
+        },
+        {
+          "path": "examples/onet.access.jsonl",
+          "job_id": null,
+          "observed_at": "2026-11-05T04:36:42.537875+00:00"
+        }
+      ],
+      "open_questions": [
+        "Observe a real release/deletion change; inspect any published numeric allowance."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain query-verified occupation-reference candidate; full qualification and source activation approval remain false.",
+      "facts": {
+        "decision": "retain-limited-occupation-profile-search",
+        "activation_approved": false,
+        "next_action": "Retain the narrow occupation-profile search route; finish topical relevance, representative browser reading, update/taxonomy reconciliation and geography coverage. Other O*NET tables/languages need separate bounded review; no production import authorized."
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/onet-contract-20261105/observations.jsonl",
+        "examples/onet.access.jsonl",
+        "examples/onet.jsonl",
+        "examples/onet.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "2c4287b2ce3f4e414022",
+          "observed_at": "2026-11-05T04:34:16.650120+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "f50bf6c2cfd163439221",
+          "observed_at": "2026-11-05T04:35:50.332993+00:00"
+        },
+        {
+          "path": "runs/onet-contract-20261105/observations.jsonl",
+          "job_id": "74fa4e2c5ba2dfa96e32",
+          "observed_at": "2026-11-05T04:35:54.216412+00:00"
+        },
+        {
+          "path": "examples/onet.access.jsonl",
+          "job_id": null,
+          "observed_at": "2026-11-05T04:36:42.537875+00:00"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "f1277973934e66ee1006136955e0ff90f7f5ed63acdd9dc16f1fa61728f4c7fe",
+      "path": "docs/research/free-content/discovery/INDUSTRIES.md",
+      "line": 15,
+      "heading": "Group and tagging model",
+      "text": "Use `industryIds`, source-supplied occupation codes/titles, `taskTerms`, content\nkind, language, jurisdiction, publication/version date and equipment/process\ncontext. Keep locally supplied occupation labels; do not automatically equate\ndifferent countries' qualifications. The [O*NET database](https://www.onetcenter.org/database.html)\nand its [documented API](https://services.onetcenter.org/reference/start/overview)\ncan supply US role/task vocabulary. India's [National Classification of\nOccupations](https://www.dge.gov.in/national_classification_of_occupations) supplies\nanother classification. Neither is a universal collection of practical manuals.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "f1277973934e66ee1006136955e0ff90f7f5ed63acdd9dc16f1fa61728f4c7fe",
+      "path": "docs/research/free-content/discovery/INDUSTRIES.md",
+      "line": 142,
+      "heading": "Category-specific acceptance and evidence",
+      "text": "Before enablement, prove item-level topic/title retrieval and stable resolution,\nfree full-item access, source permissions and refresh behavior under the shared\nreview template. Neither an O*NET occupational match nor an NQR qualification\nmatch establishes that another provider has the requested manual. Identifier-only\nresolvers support discovery but do not count toward searchable-origin targets.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "f1277973934e66ee1006136955e0ff90f7f5ed63acdd9dc16f1fa61728f4c7fe",
+      "path": "docs/research/free-content/discovery/INDUSTRIES.md",
+      "line": 150,
+      "heading": "Documentation review limits",
+      "text": "This review inspected primary web documentation/catalog pages, not production\nAPI requests or a hundred sources per industry. O*NET explicitly documents an\nAPI and downloadable data; reuse that as vocabulary evidence only until the\nchosen integration is tested. The NQR migration notice was observed directly.\nFDA/FAA/OSHA/NIST, ROSA P, FAO/WHO/IMO and Bharat Skills pages were readable.\nIndia's ICAR, MSME, FSSAI, NHM and CERT-In discovery links also appeared in official\nsearch results; catalog/permissions checks remain necessary.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

@@ -336,6 +336,30 @@
       "heading": "Open Textbook Library follow-up",
       "text": "Six Python importer tests, 25 focused content/API tests (real Redis included),\n510 full server tests, 131 client tests and 14 feature browser checks pass.\nTypecheck and feature-enabled production build pass.\nThe [real textbook flow](evidence/2026-11-01/textbook-flow.json) verifies on\nphone/desktop: search → resolve → supplied LibreTexts host link → save → reload\n→ reopen, and exact source ISBN `9781946135100` → OTL record 4. No made-up file\ndownload buttons appeared for the host's HTML landing page. There were no browser\npage errors or horizontal overflow. These are metadata and browser checks, not\nan exhaustive check of every publisher's outbound link.",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 21,
+      "heading": "Behavior",
+      "text": "Ten new integrations are released behind `CONTENT_KNOWLEDGE_ENABLED=true`:\nGlobal Digital Library, LibriVox, Library of Congress digital books, Biodiversity\nHeritage Library's Internet Archive collection, African Minds, LSE Press,\nMattering Press, mediastudies.press, punctum books and Python 3.15 documentation.\nFive publisher catalogs share Thoth; this is not five separate API infrastructures.\nThe existing Gutenberg, Open Textbook Library, Book Dash and StoryWeaver snapshots\nand the existing OpenAlex/Europe PMC integrations are also selectable. With the\nexisting production flags, this gives 16 connected sources, not 16 fully audited\norigins or complete catalogs.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 40,
+      "heading": "Contracts and limits",
+      "text": "- One provider per server request; the browser coordinates the search. No Redis,\n  SQL, hosted cache, persisted session or new account/service.\n- Fixed-origin adapters bound response size, deadline and paging. Signed cursors\n  bind provider, query, types, language, page size and expiry; they work across\n  function restarts without storing query results. Changed indexes can change\n  pages; exact-key deduplication never merges similar titles or distinct editions.\n- The new transport serializes requests per host within an instance, spaces them\n  two seconds apart and honors 429 Retry-After. It has no automatic retries.\n  This courtesy is not a global request quota across Vercel instances.\n- Python's official compressed symbol inventory is bounded and cached for one\n  hour in process memory. Search is over symbol/section names, not arbitrary\n  full documentation text. Version and same-origin URL checks fail closed.\n- GDL uses its public content-search route and published WordPress REST book-ID\n  route for exact details. Word-level metadata checks reject substring noise\n  such as `Rain` matching only `Shakrain`. Its provider offset advances even when\n  inspected rows fail relevance, so filtering does not trap pagination.\n- Thoth searches active monographs/edited books in explicit publisher IDs. Exact\n  resolution verifies publisher membership and active status. Only canonical\n  digital links on reviewed publisher hosts become reading/download actions;\n  print, retail and unreviewed mirrors do not.\n- LoC requires `access_restricted=false`, digitization and an online resource for\n  free access. BHL searches only its biodiversity collection and excludes known\n  access-restricted items. Their content rights still vary by item.\n- LibriVox is title search and distinct recording identity. Its documented JSON\n  404 for no audiobooks is an empty result; other errors remain failures. US\n  public-domain statements do not claim worldwide rights.\n- Snapshot sources remain labelled incomplete/stale when appropriate. Unknown\n  access is hidden by default; an explicit checkbox reveals labelled results with a source record link; no old\n  observation is refreshed merely because a user searches it.\n- Existing OpenAlex free-allowance and zero-paid-balance checks remain unchanged.\n  No key is returned to the browser. No full books/audio are copied.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 74,
+      "heading": "Verification and release record",
+      "text": "Current live results, including source IDs and reading links, are in\n[evidence/knowledge-release-2026-11-05](evidence/knowledge-release-2026-11-05/).\nThe initial Python inventory parser failed on names containing spaces; it was\ncorrected against the actual Sphinx format. An initial LoC request timed out;\nsubsequent search, detail and paging passed. These are retained as failures, not\nrelabelled successes. Test failures caused by local socket permission were rerun\nwith loopback networking enabled; no application security setting was weakened.",
+      "status": "historical-context-needs-reconciliation"
     }
   ]
 }

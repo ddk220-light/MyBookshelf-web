@@ -155,3 +155,9 @@ instead of silently crossing to a route with unreviewed policy.
 ## 2026-11-05T04:31:47.556068+00:00 — partner outcomes and Census authentication
 
 All ten partner jobs are analyzed: one captured, seven skipped, two blocked/failed. Nal’ibali is a catalog candidate, not query-qualified. Census API examples now explicitly require a key for every data query; three policy/schema documents are captured, with no data call or account creation. Both catalog identities have partial eight-section dossiers and exact blockers. Canonical redirects are leads needing independent policy review; 403/503 hosts remain deferred. Existing observations and historical claims are retained.
+
+## 2026-11-05 — industry export and identity backfill
+
+Added O*NET 31.0: one public CC BY 4.0 JSON file, 1,016 occupations, ten distinct local query examples and eight benchmark/negative observations. Preserve occupation code plus release; the export is occupational reference metadata, not job vacancies or training manuals. No SQL or hosted database is used. Added primary-document dossiers for Abhilekh Patal, NQR, FoSTaC, OSHA, FDA guidance, NLS BARD and RePEc. BARD metadata is documented public but reading requires eligibility; RePEc discourages website scraping and requires separate commercial-use permission. No new account or outreach occurred.
+
+Merged current main into the research branch, preserving unrelated account work, and captured the independently authorized PR #179 release evidence. Its runtime enablement does not qualify registry dossiers. Four canonical partner destinations now return public pages after independently checking their robots policies; supported query/rights review remains open.

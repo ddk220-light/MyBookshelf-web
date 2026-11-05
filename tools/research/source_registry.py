@@ -69,7 +69,7 @@ def normalize(source, data, endpoint=None):
     if not isinstance(data, dict) or data.get('errors') or data.get('error'):
         raise ValueError('Provider returned an error or invalid object')
     adapter = source['query']['adapter']
-    if adapter in ('sphinx-inventory', 'otl-csv'):
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -201,6 +201,9 @@ def validate(registry=REGISTRY):
 
 def probe(source_id, case_ids=None):
     source = json.loads((REGISTRY / 'sources' / f'{source_id}.json').read_text())
+    if source['query']['adapter'] == 'onet-json':
+        from occupational_inventory import probe as probe_occupations
+        return probe_occupations(source, case_ids)
     if source['query']['adapter'] == 'otl-csv':
         from catalog_inventory import probe as probe_catalog
         return probe_catalog(source, case_ids)
