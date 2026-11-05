@@ -47,6 +47,7 @@ type SessionContext = {
   refresh: (explicitSignin?: boolean) => Promise<AccountSession>;
   signOut: () => Promise<boolean>;
   continueGuest: () => void;
+  captureAccessEnd: (identity: string) => (confirmed: boolean) => void;
   invalidate: () => void;
   prepareSignIn: () => void;
   beginProviderRedirect: () => void;
@@ -56,6 +57,7 @@ const fallback: SessionContext = {
   refresh: async () => ({ status: "guest", epoch: 0 }),
   signOut: async () => true,
   continueGuest: () => {},
+  captureAccessEnd: () => () => {},
   invalidate: () => {},
   prepareSignIn: () => {},
   beginProviderRedirect: () => {},
@@ -110,6 +112,8 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     request = useRef(0),
     guestLock = useRef(override()),
     pending = useRef<Promise<void> | null>(null);
+  const identityIntent = useRef(0),
+    accessEndLock = useRef<object | null>(null);
   const logoutCsrf = useRef<string>();
   const logoutController = useRef<AbortController | null>(null),
     sessionController = useRef<AbortController | null>(null);
@@ -120,6 +124,7 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     const changed = key(reply) !== key(current.current),
       epoch = current.current.epoch + (changed ? 1 : 0);
     if (changed) {
+      accessEndLock.current = null;
       setReaderIdentityScope(reply.status === "guest" ? null : key(reply));
       clearSearchMemory();
       clearCatalogMetadata();
@@ -162,6 +167,8 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(
     async (explicitSignin = false) => {
       if (explicitSignin) {
+        identityIntent.current++;
+        accessEndLock.current = null;
         logoutController.current?.abort();
         sessionController.current?.abort();
         guestLock.current = false;
@@ -254,6 +261,8 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     [publish],
   );
   const continueGuest = useCallback(() => {
+    identityIntent.current++;
+    accessEndLock.current = null;
     const serverMayBeActive =
       current.current.status !== "guest" ||
       Boolean(current.current.logoutPending);
@@ -270,13 +279,42 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     });
     broadcast(true, tabId.current);
   }, [publish]);
+  // Bind deletion acknowledgements to the identity and user intent that began
+  // the request. A late receipt must never hide a newer sign-in or release a
+  // privacy lock created by another operation.
+  const captureAccessEnd = useCallback((identity: string) => {
+    const intent = identityIntent.current,
+      ownsIdentity = current.current.user?.id === identity;
+    let lock: object | null = null;
+    return (confirmed: boolean) => {
+      if (!ownsIdentity || intent !== identityIntent.current) return;
+      if (lock) {
+        if (!confirmed || accessEndLock.current !== lock || current.current.status !== "guest") return;
+      } else if (current.current.user?.id !== identity) return;
+      sessionController.current?.abort();
+      request.current++;
+      pending.current = null;
+      lostIdentity.current = false;
+      endNotice.current = false;
+      guestLock.current = !confirmed;
+      writeOverride(!confirmed);
+      publish({status: "guest", logoutPending: !confirmed});
+      lock ??= {};
+      accessEndLock.current = confirmed ? null : lock;
+      broadcast(!confirmed, tabId.current);
+    };
+  }, [publish]);
   const invalidate = useCallback(() => {
+    identityIntent.current++;
+    accessEndLock.current = null;
     request.current++;
     pending.current = null;
     publish({ status: "unavailable" });
     void refresh();
   }, [publish, refresh]);
   const prepareSignIn = useCallback(() => {
+    identityIntent.current++;
+    accessEndLock.current = null;
     logoutController.current?.abort();
     sessionController.current?.abort();
     request.current++;
@@ -290,6 +328,8 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
     writeOverride(false);
   }, [prepareSignIn]);
   const signOut = useCallback(async () => {
+    identityIntent.current++;
+    accessEndLock.current = null;
     const csrf = current.current.csrfToken ?? logoutCsrf.current;
     logoutCsrf.current = csrf;
     const version = ++request.current;
@@ -379,6 +419,7 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
         refresh,
         signOut,
         continueGuest,
+        captureAccessEnd,
         invalidate,
         prepareSignIn,
         beginProviderRedirect,

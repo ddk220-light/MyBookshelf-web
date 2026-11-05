@@ -39,8 +39,7 @@ export function DeletionReceiptProvider({ children }: { children: ReactNode }) {
   const account = useAccountSession(),
     [receipt, setReceipt] = useState<Receipt | null>(null),
     current = useRef(receipt),
-    session = useRef(account.session);
-  session.current = account.session;
+    accessEnd = useRef<{ operationId: string; acknowledge: (confirmed: boolean) => void } | null>(null);
   const publish = (value: Receipt) => {
     current.current = value;
     setReceipt(value);
@@ -64,6 +63,9 @@ export function DeletionReceiptProvider({ children }: { children: ReactNode }) {
       busy: true,
       error: "",
     };
+    const acknowledge = account.captureAccessEnd(input.identity);
+    accessEnd.current = {operationId: value.operationId, acknowledge};
+    let accessEnded = false;
     publish(value);
     try {
       const reply = await accountRequest<Reply>("/deletion", {
@@ -77,6 +79,7 @@ export function DeletionReceiptProvider({ children }: { children: ReactNode }) {
           confirmation: "delete-account",
         },
       });
+      accessEnded = reply.accessEnded === true;
       if (current.current?.operationId === value.operationId)
         publish({
           ...value,
@@ -93,7 +96,7 @@ export function DeletionReceiptProvider({ children }: { children: ReactNode }) {
             "Couldn’t confirm the response. Check this request’s status before trying another deletion.",
         });
     } finally {
-      if (session.current.user?.id === input.identity) account.continueGuest();
+      if (current.current?.operationId === value.operationId) acknowledge(accessEnded);
     }
   };
   const check = async () => {
@@ -108,13 +111,16 @@ export function DeletionReceiptProvider({ children }: { children: ReactNode }) {
           receiptNonce: value.receiptNonce,
         },
       });
-      if (current.current?.operationId === value.operationId)
+      if (current.current?.operationId === value.operationId) {
+        if (reply.accessEnded && accessEnd.current?.operationId === value.operationId)
+          accessEnd.current.acknowledge(true);
         publish({
           ...value,
           status: reply.status,
           receiptNonce: reply.status === "cleaned" ? "" : value.receiptNonce,
           busy: false,
         });
+      }
     } catch {
       if (current.current?.operationId === value.operationId)
         publish({
