@@ -1,3 +1,9 @@
+## 2026-11-05: Python exact-symbol dossier checkpoint (latest)
+
+**86 records; 180 current examples across 18 catalogs; zero fully complete dossiers.** Python now has six complete analysis sections and two explicit partial sections. Ten current symbol queries re-passed against a retained 168,139-byte, 20,490-entry inventory. Six primary-document captures establish current policy and metadata contract; two anonymous WebKit readers passed desktop/mobile with exact anchors and no overflow/page errors. Two environment launch failures remain saved.
+
+Sixteen boundary/topic/cost/version observations preserve unsupported modes and strict exact matching. A 3.14 comparison finds 765 added and 57 absent native keys in 3.15; absence is not confirmed document deletion. Minor-version URLs are mutable (reader currently 3.15.2), so inventory hashes and observed patch labels matter. Country-specific reader proof, wider accessibility, accountable maintenance, refresh rehearsal and later-day reliability remain open. Research tools now check policy, stop redirects, retain hash-backed exports and reject duplicate/project/version drift. 47 tests and registry/evidence checks pass. No source activation changed.
+
 ## 2026-11-05: catalog reconciliation, OpenAlex queries and client leads (latest)
 
 **86 source records; 180 current verified examples across 18 catalogs; zero complete expanded dossiers.** This run reconciled twelve catalog identities, including NIST, FAO, WHO, FAA, CERT-In, SciELO, IndCat, LA Referencia, Wikimedia Commons, ACRIS, Book Sprints and Siyavula. Older mappings fell from 43 unresolved catalog identities/46 references to 33/34. Candidate identities are not qualified supply. ACRIS stays documentation-only: no personal property-owner, parcel or deed records were queried.

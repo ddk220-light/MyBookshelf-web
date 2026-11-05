@@ -77,12 +77,33 @@ class InventoryTests(unittest.TestCase):
             (directory / 'examples').mkdir()
             request = {'method': 'GET', 'url': 'https://docs.python.org/3.15/objects.inv', 'local_query': {'mode': 'exact_symbol', 'text': 'x'}}
             source = {'id': 'fixture', 'query': {'adapter': 'sphinx-inventory', 'endpoint': request['url'], 'version': '3.15', 'base_url': 'https://docs.python.org/3.15/', 'cases': [{'id': 'x', 'request': request, 'expected_ids': ['py:class:x']}]}}
-            with patch('sphinx_inventory.REGISTRY', directory), patch('sphinx_inventory.urllib.request.urlopen', side_effect=TimeoutError('Timed out')):
+            with patch('sphinx_inventory.REGISTRY', directory), patch('sphinx_inventory.LOCK_PATH', directory / 'lock'), patch('sphinx_inventory.robots', return_value=(None, {})), patch('sphinx_inventory.time.sleep'), patch('sphinx_inventory.request', side_effect=TimeoutError('Timed out')):
                 probe(source)
             row = json.loads((directory / 'examples/fixture.jsonl').read_text())
             self.assertEqual(row['verdict'], 'unverified')
             self.assertEqual(row['execution_mode'], 'metadata-import-failed')
             self.assertEqual(row['error'], 'Timed out')
+
+    def test_duplicate_identity_project_and_minor_version_escape_fail(self):
+        line = 'x py:class 1 library/x.html -\n'
+        with self.assertRaisesRegex(ValueError, 'Duplicate'):
+            parse_inventory(self.inventory(line * 2), 'https://docs.python.org/3.15/', '3.15')
+        with self.assertRaisesRegex(ValueError, 'project'):
+            parse_inventory(self.inventory(line), 'https://docs.python.org/3.15/', '3.15', 'Other project')
+        with self.assertRaisesRegex(ValueError, 'escaped'):
+            parse_inventory(self.inventory('x py:class 1 ../3.14/x.html -\n'), 'https://docs.python.org/3.15/', '3.15')
+
+    def test_policy_denial_does_not_request_export(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / 'examples').mkdir()
+            source = {'id': 'fixture', 'query': {'endpoint': 'https://docs.python.org/3.15/objects.inv', 'cases': []}}
+            with patch('sphinx_inventory.REGISTRY', root), patch('sphinx_inventory.LOCK_PATH', root / 'lock'), patch('sphinx_inventory.robots', return_value=(False, {'status': 403})), patch('sphinx_inventory.request') as request:
+                probe(source)
+            request.assert_not_called()
+            row = json.loads((root / 'examples/fixture.access.jsonl').read_text())
+            self.assertEqual(row['outcome'], 'blocked-or-failed')
+            self.assertIn('not requested', row['error'])
 
 
 if __name__ == '__main__':

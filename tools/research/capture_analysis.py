@@ -184,12 +184,14 @@ def evidence_run_audit(registry=REGISTRY):
 
 
 def inventory_capture_audit(registry=REGISTRY):
-    """Every retained JSON export needs a matching successful, hashed capture."""
+    """Every retained export needs a matching successful, hashed capture."""
     captures = []
     for path in (registry / 'examples').glob('*.access.jsonl'):
         captures.extend(json.loads(line) for line in path.read_text().splitlines() if line.strip())
     errors = []
-    for path in (registry / 'analysis/inventories').glob('*.json'):
+    for path in (registry / 'analysis/inventories').glob('*'):
+        if not path.is_file() or path.name == 'README.md':
+            continue
         name, sha = str(path.relative_to(registry)), digest(path.read_bytes())
         backed = any(row.get('inventory_path') == name and row.get('observed_at')
                      and row.get('http', {}).get('status') == 200
