@@ -2,8 +2,11 @@
 
 Planning draft, 2026-11-05. Owner request: a route to 100+ sources overall and,
 eventually, 100 qualified sources in each category, including international and
-India-specific coverage. This is a research and delivery plan, not a claim that
-those sources have been found or enabled.
+India-specific coverage. The owner accepted the content categories and requested
+a 20-industry group, detailed discovery methods for every group/category, and
+special treatment of US/India civic records, property records and geological maps.
+This revision incorporates six delegated research workstreams. It remains a plan;
+the linked documentation research does not establish enabled integrations.
 
 The [simple live plan](SIMPLE_LIVE_PLAN.md) remains the runtime baseline. This
 proposal adds no hosted database, paid search service, production change or source
@@ -20,6 +23,12 @@ Use 20 research categories: five core areas and 15 additions. Target 100 qualifi
 sources per category over successive research cycles. These are overlapping
 category memberships, potentially 2,000 memberships, not necessarily 2,000 unique
 sources or 2,000 custom integrations. Report the global unique count separately.
+
+Add **Industry and job knowledge** as a visible group with 20 industry tags. It is
+a second classification axis across those content categories. Track industry
+coverage independently and use the same 10 → 25 → 50 → 100 ladder as an eventual
+research aspiration for each industry. The same origin may support several
+industries and categories; these memberships never add to the global unique count.
 
 Keep four counts separate:
 
@@ -77,9 +86,81 @@ comes from and the technical route to investigate.
 | C15 Historical documents, manuscripts and archives | National/archive association directories, Library of Congress, Europeana and regional aggregators | National/state archives, university special collections and regional manuscript initiatives | Collection search/export with digitized-item links; IIIF may describe/view an item but does not itself prove catalog search |
 | C16 Art, museum and cultural-heritage resources | Europeana institution providers, museum open-access programs and cultural institution directories | National/state museums, cultural academies and university museums | Collection APIs/exports; item identity, captions, provenance and image/object rights; metadata-only objects excluded from usable-access totals |
 | C17 Newspapers, magazines and public-interest articles | National-library newspaper collections, nonprofit newsroom networks, openly accessible periodical publishers | Regional newspaper archives, independent public-interest publications and government magazines | Full-article search or permitted metadata/feed import; recent RSS alone does not establish historical coverage |
-| C18 Law, civics and public records | Official legal-publication portals, public legal-information networks, parliament and court directories | India Code, legislatures, gazettes and official court/public-record portals | Supported document search/export; jurisdiction, document number, amendment/version and free full-document access |
-| C19 Datasets, statistics, maps and atlases | re3data, national open-data directories, CKAN/Dataverse communities and public mapping institutions | data.gov.in discovery, MoSPI, census/statistical agencies, state data portals and public research data repositories | Dataset metadata search plus actual resource links; CKAN/Dataverse where advertised; metadata availability is not open data access |
+| C18 Law, civics and public records | Dedicated US/India playbook: laws, civic decisions, budgets, procurement, ownership/land records, permits and planning | Union/state/district/municipal records; parallel US federal/state/county/city discovery, detailed in P02–P05 below | Supported document/address/parcel search or export; authority, jurisdiction, document number, effective date and actual record access |
+| C19 Datasets, statistics, maps and atlases | Dedicated US/India playbook: geological, soil, hazard, topographic and historical maps; statistics, environment and infrastructure | National survey/statistical bodies, state agencies, local GIS and open-data portals, detailed in P05–P09 below | Distinguish catalog discovery, map viewing and feature/data queries; native layer/feature IDs, extent, CRS, scale and observation date |
 | C20 Educational podcasts, lectures and documentaries | University/broadcaster educational series, open-media catalogs and educational feed directories | Public educational broadcasters, universities, science communicators and regional-language teaching series | Public catalog/API or permitted feeds; item-level audio/video links, language, duration, transcript/caption availability and geographic restrictions |
+
+### Group-specific discovery playbooks
+
+The category table is the overview. Each linked playbook gives category-specific
+directories and documentation, global and local search recipes, likely retrieval
+routes, qualification tests, unresolved evidence and first research batches.
+
+| Research group | Category coverage | Detailed discovery plan |
+| --- | --- | --- |
+| Books and recorded books | C01, C02, C04, C05 | [Books and audio](discovery/BOOKS_AND_AUDIO.md) |
+| Scholarly research | C03, C06, C07 | [Articles, theses and preprints](discovery/SCHOLARLY_RESEARCH.md) |
+| Learning and technical knowledge | C09–C13 | [Learning and technical](discovery/LEARNING_AND_TECHNICAL.md) |
+| Language, culture and educational media | C14–C17, C20 | [Language, culture and media](discovery/LANGUAGE_CULTURE_MEDIA.md) |
+| Public information, civic records and maps | C08, C18, C19; P01–P09 | [US and India public records/maps](discovery/PUBLIC_RECORDS_AND_MAPS.md) |
+| Industry and job knowledge | I01–I20 across all relevant content categories | [Twenty industries](discovery/INDUSTRIES.md) |
+
+### Industry and job knowledge: first twenty industries
+
+Use `industry × occupation × task × jurisdiction × content kind` to guide
+discovery. For example, a construction supervisor searching concrete inspection
+needs local building requirements and applicable technical guidance; an
+agricultural worker searching soil suitability needs regional soil/terrain data
+as well as practical guides. Tags identify relevance; they do not establish
+professional suitability or current regulatory applicability by themselves.
+The visible group belongs within Search/browse and its filters, preserving the
+existing four main app tabs. Its eventual UI design must support task and
+jurisdiction context without treating every resource as a book.
+
+| ID | Industry | ID | Industry |
+| --- | --- | --- | --- |
+| I01 | Agriculture and horticulture | I11 | Energy, electricity and renewables |
+| I02 | Livestock, dairy, fisheries and aquaculture | I12 | Mining and mineral resources |
+| I03 | Forestry and timber | I13 | Transport, logistics and warehousing |
+| I04 | Construction and civil infrastructure | I14 | Maritime, ports and shipping |
+| I05 | Building operations and facilities | I15 | Aviation and aerospace |
+| I06 | Manufacturing, machining and fabrication | I16 | Water, sanitation, waste and environmental services |
+| I07 | Automotive and vehicle maintenance | I17 | Healthcare and care services |
+| I08 | Chemicals and pharmaceuticals | I18 | IT, telecom and cybersecurity |
+| I09 | Textiles, apparel and leather | I19 | Hospitality and tourism |
+| I10 | Food processing and food safety | I20 | Finance, insurance and accounting |
+
+An origin can expose textbooks, technical manuals, laws, datasets and courses
+under the same industry tag. Keep occupation/task labels distinct from industry:
+maintenance technicians and logistics workers operate in many industries. The
+industry playbook supplies separate entry points and query recipes for every row;
+additional industries can be added after the first coverage review.
+
+### Dedicated civic-record and maps coverage columns
+
+Maintain these explicit columns in the research coverage report, split by USA
+and India. They are subtracks of the existing categories, not extra source-count
+quotas. The [public-information playbook](discovery/PUBLIC_RECORDS_AND_MAPS.md)
+contains the actual country-specific directories and example local portals.
+
+| Coverage column | Parent | What a useful search must retrieve |
+| --- | --- | --- |
+| P01 Government/research reports | C08 | A report and edition/date from the responsible authority |
+| P02 Laws, rules and gazettes | C18 | A named/numbered instrument with jurisdiction and effective/version context |
+| P03 Civic decisions, budgets and procurement | C18 | An agenda, decision, budget, tender or award by body, topic, date or identifier |
+| P04 Property, ownership records and land rights | C18 | A public parcel/deed/land-rights record by permitted address, parcel or document query; record type and authority explicit |
+| P05 Building permits, zoning and planning | C18/C19 | A permit, planning document or applicable zone tied to a jurisdiction and location |
+| P06 Geological, soil and hazard maps | C19 | A relevant map/layer and its coverage, scale, survey date and retrievable representation |
+| P07 Topographic, land-cover and historical maps | C19 | A map sheet/layer by place, extent, subject and edition/date |
+| P08 Census, statistics and time series | C19 | A table/series by geography, variable, period and release |
+| P09 Environmental and infrastructure data | C19 | A dataset/layer or observation by topic, location, period and responsible body |
+
+For P04, distinguish assessed ownership, registered deeds, land-rights records
+and legal title; a match must retain the issuing authority's meaning. For P06/P07,
+map-viewing capability and queryable geographic features are separate capabilities.
+Capture geospatial fields and current/historical scope rather than presenting an
+old or generalized map as a precise current property boundary. Research uses
+catalog/schema examples; it does not require collecting personal ownership data.
 
 Do not force every new item into `book` or `article`. Current contracts already
 include audiobook, thesis, report and learning-resource kinds. Dataset, archive,
@@ -117,13 +198,22 @@ timed out; DOAJ/CORE documentation opens returned 403 in this research tool.
 Those remain leads, not verified integrations or evidence that the services are
 down. No source-search API qualification probes were run for this plan.
 
-## 4. International, India and regional-language research tracks
+## 4. International, USA, India and regional-language research tracks
 
 For each category's first **20 candidate slots**, aim for eight India-focused,
 eight cross-country/global and four local sources from other regions. This is a
 research allocation, not an admission quota. Rotate the last track across Africa,
 Latin America/Caribbean, Europe, East/Southeast Asia, the Middle East, Oceania and
 the rest of South Asia. Continue looking when a track has few qualified results.
+
+For government/public records and local maps, use a **USA/India split** instead:
+first investigate federal/union and state authorities, then county/district and
+city/municipal catalogs. Start with six US and six India origins spanning P01–P09
+inside the common research budget. Track unrepresented subtracks explicitly.
+Use official jurisdiction directories to expand coverage rather than assuming
+one national portal contains all local records. Industry research uses global
+professional networks plus separate US/India regulators, training bodies and
+extension services. Keep each local portal's supported queries and limits.
 
 India work proceeds by institution network, state/union territory and language,
 not just `.in` search results. Start with English, Hindi and Tamil; then expand
@@ -155,7 +245,14 @@ research; country/region can be an explicit preference in a future product desig
 2. **Seed ten candidates per category.** Use the row-specific directories above;
    target four India, four global and two other-region leads. This first pass
    produces up to 200 category memberships, deduplicated into a smaller origin
-   register. Inspect at least two promising origins per category in depth.
+   register. Add five candidate memberships per industry tag, up to another 100
+   memberships, and deduplicate all 300 across the shared origin register. A
+   source can satisfy both a content and industry research slot with evidence.
+   For civic/maps categories, use the US/India allocation above. Plan up to two
+   deep reviews per content category and one per industry, within a maximum of
+   **60 unique origins**; the twelve public-records/maps reviews are inside that cap.
+   Allocate overlaps first and record any coverage gaps rather than exceed the
+   cap to force every suggested slot into the same cycle.
 3. **Build an initial pool of 150–250 candidates per category in batches of 25.**
    Expand directory countries/subjects, follow publisher/provider/member links,
    and inspect official institutional sites. This pool size is a planning
@@ -201,7 +298,7 @@ A source qualifies only with evidence for **all** of the following:
 
 | Gate | Required evidence |
 | --- | --- |
-| Reproducible retrieval | An allowed machine route can retrieve matching item records for a topic/title and retrieve or reproduce a specific record using a stable source identifier. Record searched fields and tested scope. |
+| Reproducible retrieval | An allowed machine route can retrieve matching item records for the declared category-appropriate query: topic/title, address/parcel/document, geographic extent, or dataset variable/time/geography. It can retrieve or reproduce a specific record using a stable source identifier. Record supported fields and tested scope. |
 | Actual item access | At least one usable full item, not only a title/abstract/cover/snippet. Test a representative set, including the destination and any free registration path; per-result access still needs checking. |
 | Honest access class | Anonymous and free-account access are eligible and distinct. Free signup does not qualify subscription, institution-only, library-loan, preview or paid-trial content. Geographically limited free sources can qualify for their evidenced audience. |
 | Permission and cost | Current terms permit the chosen API/export/index/display use. Metadata reuse and content reading/reuse rights are recorded separately. Identify quotas, key requirements, free limits and paid-overage behavior. |
@@ -247,6 +344,15 @@ use a small, reproducible probe pack with source-derived expected records:
   for subject match, useful item type and accessible destination. Record
   title/subject/full-text matching limitations. Do not repeat the earlier
   Mathematics problem by accepting unrelated metadata as relevance evidence.
+- For public-record/geospatial sources, substitute five appropriate record/spatial
+  queries for unsupported keyword searches: jurisdiction + document number,
+  address/parcel, map-sheet name, bounding box, or variable + geography + period.
+  Test CRS/axis ordering, geographic boundaries, pagination/truncation and survey
+  versus publication/effective dates. A documented map viewer alone does not
+  establish feature queries, and an API error must never imply no ownership record.
+- For industry material, test role/task relevance, applicable country/standard,
+  revision date and evidence for each assigned industry tag. A shared regulator
+  catalog is one origin even when it spans all twenty industries.
 - Negative/gibberish queries, changed filters, punctuation and Unicode. Confirm
   empty results versus source failure. Check a second page or declare the fixed
   import scope; retain duplicates/versions correctly.
@@ -265,10 +371,11 @@ Suggested pilot acceptance targets, to calibrate before production: all five
 known eligible items are found in the declared searchable scope; at least four
 of the first five results are relevant on four of five topic queries; no known
 restricted item is labeled freely readable. A specialist source can declare
-exact-title-only capability, but must not be routed general topic queries or
-counted as topic-search coverage. Identifier-only resolvers are useful supporting
-services; they do not qualify toward the 100 searchable origins per category
-without a separate title/topic retrieval route. Small tests establish the declared sample,
+exact-title-only or structured-record/spatial capability, but must not be routed
+unsupported queries or counted as general topic-search coverage. A native public
+catalog that searches by parcel or document ID can qualify for that declared use.
+Identifier redirect services such as DOI resolvers remain supporting services;
+they do not themselves establish a searchable content catalog. Small tests establish the declared sample,
 not measured recall of the entire catalog. Track these capabilities separately.
 
 Before enabling an origin, add adapter contract/error/access tests, actual source
@@ -285,7 +392,9 @@ and run bounded local/repository checks within the existing free allowances.
 
 Build shared connector families only when multiple qualified candidates justify
 them: native/aggregator JSON search, OAI-PMH imports, CSV/JSON/MARC exports, OPDS,
-MediaWiki, repository APIs and later dataset/media feeds. Reuse transport and
+MediaWiki, repository APIs and later dataset/media/geospatial interfaces. Evaluate
+documented OGC/ArcGIS services with explicit catalog, map-view and feature-query
+capabilities; do not assume every deployment supports the same operations. Reuse transport and
 tests while retaining per-source mappings, policies and access rules. DSpace,
 EPrints or OJS software alone is not proof that a site's interface is enabled.
 
@@ -328,12 +437,12 @@ bounded first research cycle; it does not create thousands of speculative tasks.
 
 | Milestone / story | Deliverable | Exit condition |
 | --- | --- | --- |
-| M0: Taxonomy and research contract | This plan, category definitions, count rules and review template | Owner can review the scope, gates and staged targets before integration work |
-| M1: Candidate register and first survey | Ten leads/category, deduplicated; India/global/other-region and language gap tables | Up to 200 category memberships, actual unique count reported; discovery evidence and unknowns explicit |
-| M2: Feasibility pilot | Two deep reviews/category where candidates exist; shared 40-source maximum pilot; benchmark query pack | Every reviewed source has a qualified/deferred/rejected reason; conversion rate and first 10 integration recommendations |
+| M0: Taxonomy and research contract | Accepted content categories, twenty industry tags, six detailed playbooks, count rules and review template | Current revision incorporates owner direction on industries and US/India civic/maps coverage; implementation remains future work |
+| M1: Candidate register and first survey | Ten leads/content category plus five/industry; shared deduplicated register and country/language/occupation gaps | Up to 300 category/industry memberships; actual unique count and P01–P09 USA/India coverage reported |
+| M2: Feasibility pilot | Aim for two deep reviews/content category and one/industry, with overlaps and public-records allocation inside a 60-unique-origin cap | Every reviewed source has a qualified/deferred/rejected reason; geographic/industry gaps, conversion rate and first ten integration recommendations |
 | M3: First expansion release | Implement the highest-value qualified origins in batches of 3–5; expand current book coverage as well as adding sources | Each batch has supported retrieval, fresh access evidence, measured marginal coverage and end-to-end tests |
 | M4: 100 unique origins | Continue targeted discovery; reach 100 qualified unique origins, then enable them in independently verified batches | Report qualified and enabled counts separately; never label a research-only milestone as live coverage |
-| M5: Per-category ladder | Continue 10 → 25 → 50 → 100 per category, with replenishment from measured conversion rates | Category-by-category counts, shortages, supported query modes, regions and incremental useful coverage published |
+| M5: Per-category and industry ladder | Continue 10 → 25 → 50 → 100 per content category and selected industry cohorts, replenishing from measured conversion rates | Separate content/industry memberships, shortages, query modes, USA/India civic/maps coverage and globally unique totals published |
 | M6: Maintenance and consolidation | Broken-source triage, policy review, refresh validation, overlap review | Remove stale/unsupported counts; prioritize reliable useful coverage over a higher headline number |
 
 M1–M2 are an initial multi-week research effort for one implementer, not an
@@ -350,21 +459,27 @@ the current sources to avoid spending a sprint on mostly duplicate holdings.
 
 ## 10. Progress report and immediate next batch
 
-Use one row per category: candidates / deeply reviewed / qualified / enabled,
+Use one row per content category and a separate industry matrix: candidates / deeply reviewed / qualified / enabled,
 unique origins, connector routes, anonymous/free-account split, tested languages,
-India/local coverage, exact-only versus topic-search capability, rejection
+USA/India/local coverage, exact/topic/record/spatial capabilities, rejection
 reasons, evidence age and next batch. Also report global deduplicated totals,
 incremental readable items where measured, known-item recovery, topic relevance,
 reading-link success, latency and recurring maintenance effort. Raw source count
-alone is not the success metric.
+alone is not the success metric. P01–P09 get dedicated coverage columns per
+country/jurisdiction. Industry rows also show occupation/task coverage; do not
+count a source against an industry without relevant retrieved items.
 
-After review, begin M1 across all 20 categories so the wider scope is real. In M2,
-prioritize book/education/India opportunities: DOAB/OAPEN publisher coverage,
+The content categories are accepted. The next research cycle uses M1 across all
+20 categories and 20 industry tags with the six playbooks. In M2,
+prioritize book/education/India opportunities plus US/India public records/maps
+and practical industry documentation: DOAB/OAPEN publisher coverage,
 national/regional literature catalogs, school textbook bodies, children's
-publishers, thesis repositories and audiobook catalogs. Recheck existing source
+publishers, thesis repositories, audiobook catalogs, official civic/property
+catalogs, geological data and agriculture/construction/manufacturing/logistics
+guidance. Recheck existing source
 freshness first; new names do not solve an expired catalog or a three-item pilot.
 
-Deliver a research register, 40 or fewer completed reviews, an honest capability
+Deliver a research register, 60 or fewer distinct-origin completed reviews, an honest capability
 and geography matrix, and a ranked next-ten recommendation. Only then expand
 implementation stories for the first 3–5 integrations. This document is the plan
 for that work, not authorization to treat the candidate examples as enabled.

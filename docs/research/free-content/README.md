@@ -1,8 +1,10 @@
 # Free books and research discovery
 
 **Expansion planning (2026-11-05):** [100-source-per-category roadmap](EXPANSION_PLAN.md)
-defines 20 research categories, international/India discovery tracks, queryability
-gates and staged qualification/enablement. Use the [source review template](SOURCE_REVIEW_TEMPLATE.md)
+defines 20 content categories, a group of 20 industry tags, six detailed discovery
+playbooks, and dedicated USA/India civic-record, property and geological-map
+tracks. It includes queryability gates and staged qualification/enablement.
+Use the [source review template](SOURCE_REVIEW_TEMPLATE.md)
 for future candidates. It is a planning proposal; named leads are not enabled sources.
 
 **Current implementation direction (2026-11-03):** use the

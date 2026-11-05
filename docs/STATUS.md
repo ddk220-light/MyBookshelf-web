@@ -2,9 +2,13 @@
 
 **Free-content expansion proposal, 2026-11-05:** the owner requested a plan to
 find 100 searchable sources per category, including global and India/local
-coverage. [The plan](research/free-content/EXPANSION_PLAN.md) defines 20 categories,
-discovery methods, qualification gates, staged delivery and a reusable review
-template. It is documentation only on `research/free-content-discovery-expansion`
+coverage. The owner accepted those categories and requested industry/job knowledge
+and detailed USA/India civic, property and geological-map research tracks.
+[The revised plan](research/free-content/EXPANSION_PLAN.md) defines 20 content
+categories, 20 cross-cutting industry tags, six delegated category-specific
+discovery playbooks, qualification gates and a reusable review template.
+Draft [PR #161](https://github.com/ddk220-light/MyBookshelf-web/pull/161) carries
+the review packet. It is documentation only on `research/free-content-discovery-expansion`
 in `/workspace/MyBookshelf-web-free-content-expansion`; no candidate integrations
 are enabled by this proposal. The no-new-datastore runtime policy continues.
 The earlier live simplification was released through PR #160, main `82c6559`;

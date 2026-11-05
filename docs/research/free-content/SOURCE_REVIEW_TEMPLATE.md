@@ -10,6 +10,8 @@ research result. Do not copy this blank template into production source config.
 - Parent organization, aliases, mirrors and duplicate decision:
 - Discovery directory/query/referral and date:
 - Category IDs with representative item evidence (C01–C20):
+- Industry tags (I01–I20), occupation/role and task, each with item evidence:
+- Public-record/map subtracks (P01–P09), if applicable; USA/India jurisdiction:
 - Source country / local relevance / languages and scripts:
 - Catalog or explicit subset; known size versus sampled size:
 - Role: host, publisher catalog, index or resolver. Underlying origin attribution:
@@ -20,7 +22,8 @@ research result. Do not copy this blank template into production source config.
 
 - Route: live API / attributed aggregator / export-import / permitted harvesting:
 - Connector ID; supported interface/version; official documentation URL:
-- Search modes: topic, exact title, author, identifier; unsupported modes:
+- Search modes: topic, exact title, author, native record/document ID, address,
+  parcel, map sheet, geographic extent, dataset variable/time; unsupported modes:
 - Example request shape with credentials redacted; fixed allowed hosts:
 - Stable native ID, record resolution, pagination or import scope:
 - Relevant filters, result fields, declared completeness and aggregator lag:
@@ -30,6 +33,18 @@ research result. Do not copy this blank template into production source config.
   overage behavior; documented hard stop; no secret values:
 - Refresh, deleted/withdrawn items, expiry and failure behavior:
 - Build size/memory/refresh effort estimate for an import:
+
+## Industry, public-record and geospatial fields when applicable
+
+- Issuing authority; jurisdiction hierarchy; catalog/layer/dataset ID:
+- Native document/parcel/feature key; property record type (assessment, deed,
+  land rights, title); what the authority's record actually establishes:
+- Geographic extent, CRS/axis order, scale/resolution and geometry precision:
+- Survey/observation, publication, effective and revision dates, kept distinct:
+- Supported operations: catalog search / map viewing / feature query / download:
+- Pagination, result caps, extent limits and local service terms:
+- Industry/occupation/task relevance; equipment/model/software/standard revision:
+- Small non-personal schema/example evidence sufficient for this planning stage:
 
 ## Reader access
 
@@ -55,6 +70,9 @@ research result. Do not copy this blank template into production source config.
 | Free destination and restricted-item exclusions | | | |
 | Latency/payload; documented quota/error fixtures | | | |
 | Repeat shortlist check in another session | | | |
+| Relevant industry task, role, revision and jurisdiction | | | |
+| Native record/address/parcel query; authority and record type | | | |
+| Map/dataset query; CRS, extent, date, feature versus viewer behavior | | | |
 
 Store only small permitted metadata samples and reproducible request shapes.
 Distinguish documentation review, real source requests and mocked failure tests.
