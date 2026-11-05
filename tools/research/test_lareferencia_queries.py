@@ -1,5 +1,7 @@
 import hashlib
 import json
+import tempfile
+from pathlib import Path
 import unittest
 from lareferencia_queries import parse,query_url,assess,evidence_json
 KEY='ES_'+'a'*32
@@ -13,6 +15,14 @@ class LAReferenciaTests(unittest.TestCase):
   self.assertEqual(json.loads(encoded),value)
   self.assertIn('\\u0045S_',encoded)
   self.assertEqual(json.loads(evidence_json(json.loads(encoded))),value)
+ def test_dossier_index_rewrite_preserves_public_id_representation(self):
+  from capture_analysis import write_json
+  with tempfile.TemporaryDirectory() as tmp:
+   p=Path(tmp)/'sources/la-referencia.json';p.parent.mkdir()
+   value={'id':'la-referencia','expected_ids':[KEY]}
+   write_json(p,value)
+   self.assertEqual(json.loads(p.read_text()),value)
+   self.assertIn('\\u0045S_',p.read_text())
  def test_native_identity_session_removed_provider_retained(self):
   r=parse(body(),query_url('water'))['results'][0];self.assertEqual(r['id'],KEY);self.assertNotIn('?sid',r['landing_page']);self.assertEqual(r['provider_item_links'],['https://provider.example/handle/1']);self.assertFalse(r['reader_access_verified'])
  def test_query_echo_native_identity_and_page_fail_closed(self):

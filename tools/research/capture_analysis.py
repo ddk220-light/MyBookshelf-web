@@ -26,7 +26,14 @@ def digest(data):
 
 
 def write_json(path, data):
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
+    if path.parent.name == 'sources' and data.get('id') == 'la-referencia':
+        # Indexing refreshes source dossiers; preserve the public-ID storage
+        # representation used by this provider's query collector.
+        from lareferencia_queries import evidence_json
+        serialized = evidence_json(data, ensure_ascii=False, indent=2)
+    else:
+        serialized = json.dumps(data, ensure_ascii=False, indent=2)
+    path.write_text(serialized + '\n')
 
 
 def input_paths():
