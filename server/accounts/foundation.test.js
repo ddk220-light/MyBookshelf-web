@@ -4,6 +4,7 @@ import request from 'supertest';
 import { createApplication } from '../application.js';
 import { createAccountMiddleware } from './middleware.js';
 import { readAccountConfig, AccountConfigurationError } from './config.js';
+import { APIError } from 'better-auth/api';
 
 const enabled = { ACCOUNTS_ENABLED: 'true', ACCOUNTS_ENVIRONMENT: 'development', BETTER_AUTH_URL: 'http://localhost:3000',
   BETTER_AUTH_SECRET: 'test-only-account-secret-with-more-than-32-characters', ACCOUNTS_AUTH_DATABASE_URL: 'postgres://test:test@localhost/accounts_test' };
@@ -55,4 +56,23 @@ test('sensitive raw routes remain gated; origin rejects precede database work', 
   assert.equal((await request(app).get('/api/account/session').set('Origin', 'https://attacker.test')).status, 403);
   assert.equal(calls, 0);
   assert.deepEqual((await request(app).get('/api/account/session').set('Origin', enabled.BETTER_AUTH_URL)).body, { status: 'guest' });
+});
+
+test('native forbidden errors distinguish verification, recent auth and other denials', async () => {
+  for(const [native,expected] of [
+    ['EMAIL_NOT_VERIFIED','VERIFY_EMAIL_REQUIRED'],
+    ['SESSION_NOT_FRESH','RECENT_AUTH_REQUIRED'],
+    ['OTHER_NATIVE_DENIAL','ACCOUNT_FORBIDDEN'],
+  ]) {
+    const app=createApplication({accounts:createAccountMiddleware({env:enabled,
+      initialize:async()=>({session:async()=>{
+        throw APIError.fromStatus('FORBIDDEN',{code:native,message:'Private native error details'});
+      }}),
+    })});
+    const response=await request(app).get('/api/account/session');
+    assert.equal(response.status,403);
+    assert.equal(response.body.error.code,expected);
+    assert.ok(!response.text.includes('Private native error details'));
+    if(native!=='EMAIL_NOT_VERIFIED')assert.doesNotMatch(response.body.error.message,/verify your email/i);
+  }
 });
