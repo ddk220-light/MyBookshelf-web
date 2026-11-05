@@ -93,10 +93,13 @@ def normalize(source, data, endpoint=None):
     adapter = source['query']['adapter']
     if adapter == 'met-collection':
         oid = data.get('objectID')
-        if isinstance(oid, bool) or not isinstance(oid, int) or oid <= 0 or not data.get('title'):
+        if (isinstance(oid, bool) or not isinstance(oid, int) or oid <= 0
+                or not isinstance(data.get('title'), str) or not data['title'].strip()):
             raise ValueError('Invalid Met object identity/title')
         image_url = data.get('primaryImage')
-        if data.get('isPublicDomain') is not True or not isinstance(image_url, str) or not image_url.startswith('https://'):
+        parsed_image = urllib.parse.urlsplit(image_url) if isinstance(image_url, str) else None
+        if (data.get('isPublicDomain') is not True or parsed_image is None
+                or parsed_image.scheme != 'https' or not parsed_image.hostname):
             raise ValueError('Object is outside the public-domain image subset')
         return [{'id': str(oid), 'title': data['title'], 'accession_number': data.get('accessionNumber'),
                  'artist': data.get('artistDisplayName'), 'object_date': data.get('objectDate'),
@@ -304,6 +307,9 @@ def validate(registry=REGISTRY):
 
 def probe(source_id, case_ids=None):
     source = json.loads((REGISTRY / 'sources' / f'{source_id}.json').read_text())
+    if source['query']['adapter'] == 'met-collection':
+        from met_collection import probe as probe_met
+        return probe_met(source, case_ids)
     if source['query']['adapter'] == 'openalex':
         from openalex_metadata import probe as probe_openalex
         return probe_openalex(source, case_ids)

@@ -374,7 +374,9 @@
       "missing_object_http_status": 404,
       "initial_subset_failures": 10,
       "passing_native_objects": 15
-    }
+    },
+    "replay_command": "python tools/research/source_registry.py probe metmuseum --case object-38160",
+    "replay_policy": "Research-only native-object GETs: exclusive writer lock, per-host robots gate, serial >=3 seconds, 256KiB metadata cap, no automatic redirects or image fetching; stop on policy/HTTP/provider errors. Use only on a useful verification trigger."
   },
   "licensing": "Selected collection metadata CC0, including records for copyrighted objects. OA-designated/public-domain images CC0 separately; other materials remain restricted. Trademark, third-party and endorsement exceptions retained.",
   "documentation": [
@@ -3248,11 +3250,13 @@
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "All requests serial and paced with robots checks; no auth, paid account or access bypass. One original image cap stopped unbounded content capture; the explicitly published web representation was checked separately.",
+      "summary": "All requests serial and paced with robots checks; no auth, paid account or access bypass. One original image cap stopped unbounded content capture; the explicitly published web representation was checked separately. The checked-in Met replay command now applies the same exclusive lease, robots gate, pacing and no-redirect behavior, stores rejection metadata, and never fetches images. Four offline policy/lock/redirect/subset tests pass; these are tooling evidence, not fresh provider requests.",
       "facts": {
         "research_owner": "This completion program under issues164/170",
         "refresh_trigger": "Changed API policy/version, metadataDate/hash or OA flag; no automatic import",
-        "runtime_activation": false
+        "runtime_activation": false,
+        "replay_implementation": "tools/research/met_collection.py",
+        "replay_tests": "tools/research/test_met_collection.py"
       },
       "evidence": [
         "runs/museum-collection-contract-20261105ad/observations.jsonl",
