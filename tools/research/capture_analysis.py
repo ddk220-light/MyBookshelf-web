@@ -253,6 +253,8 @@ def audit():
         memberships.setdefault(area['id'], {'candidate_source_ids': [], 'query_example_source_ids': [], 'qualified_source_ids': []})
     leads = json.loads((REGISTRY / 'discovery-links.json').read_text())['leads']
     unresolved = [l['id'] for l in leads if l['state'] == 'untriaged']
+    discovery_followups = [{key: lead.get(key) for key in ('id', 'url', 'kind', 'next_action')}
+                           for lead in leads if lead.get('followup_state') == 'open']
     unmapped = [{'lead_id': l['id'], 'url': l['url'], 'suggested_entity_id': l.get('suggested_entity_id')}
                 for l in leads if l.get('kind') == 'catalog' and not l.get('source_id')]
     missing_sources = [l['id'] for l in leads if l.get('source_id') and l['source_id'] not in source_gaps]
@@ -326,6 +328,7 @@ def audit():
         'query_verified_sources': sum(v['passing_examples'] >= 10 for v in source_gaps.values()),
         'verified_examples': sum(v['passing_examples'] for v in source_gaps.values()),
         'untriaged_link_ids': unresolved, 'unresolved_entity_mappings': unmapped,
+        'open_discovery_followups': discovery_followups,
         'named_entity_lead_count': len(entity_leads), 'unresolved_named_entity_count': len(unresolved_names),
         'named_entity_review_complete': named_complete, 'documentation_runs': run_audits,
         'source_gaps': source_gaps, 'area_coverage': memberships,
@@ -333,7 +336,7 @@ def audit():
         'completion_note': 'Even a full current inventory does not automatically satisfy 100-origin targets or USA/India jurisdiction coverage. Owner acceptance or target evidence is required separately.'}
     # Never automatically close a goal whose expansion/coverage targets remain open.
     goal = json.loads((REGISTRY / 'goal.json').read_text())
-    result['goal_complete'] = (result['goal_complete'] and not unmapped
+    result['goal_complete'] = (result['goal_complete'] and not unmapped and not discovery_followups
                                and coverage['named_entity_review_complete']
                                and all(c['status'] == 'accounted' for c in jurisdiction_cells)
                                and all(m['state'] == 'complete' for m in goal['milestones']))

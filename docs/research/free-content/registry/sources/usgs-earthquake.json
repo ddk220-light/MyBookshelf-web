@@ -1,0 +1,442 @@
+{
+  "schema_version": 1,
+  "id": "usgs-earthquake",
+  "name": "USGS Earthquake Catalog",
+  "aliases": [
+    "USGS earthquake catalog",
+    "FDSN event web service"
+  ],
+  "homepage": "https://earthquake.usgs.gov/fdsnws/event/1/",
+  "group": "G04",
+  "areas": [
+    "C19",
+    "P06",
+    "P09"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "scientific-event-catalog",
+  "operator": "US Geological Survey, Earthquake Hazards Program",
+  "operator_family": "USGS",
+  "deduplication": "One event catalog across contributing networks, formats and mirrors. Shared USGS operator with National Map; do not add independent publisher counts per API/network.",
+  "languages": {
+    "observed_metadata": [
+      "en"
+    ],
+    "other_language_search": "unsupported"
+  },
+  "jurisdiction": {
+    "operator": "USA",
+    "data_scope": "global seismic events; tested USA/India regions",
+    "country_access": "managed cloud vantage only, no geolocation guarantee"
+  },
+  "capabilities": [
+    "Historical earthquake lookup by UTC time, magnitude and geographic bounds.",
+    "Exact native event ID and revised-record timestamp supplied.",
+    "Local GeoJSON interpretation preserves [longitude, latitude, depth_km]; coordinates are not cadastral boundaries."
+  ],
+  "query": {
+    "adapter": "usgs-events",
+    "endpoint": "https://earthquake.usgs.gov/fdsnws/event/1/query",
+    "authentication": "none for these public documented requests",
+    "cost": "No key/account/paid service used; no numeric quota or unlimited-use claim.",
+    "research_pause_seconds": 3,
+    "paging": "Documented limit and offset, offset starts at 1; mutable records require duplicate/version checks.",
+    "unsupported_modes": [
+      "full_text",
+      "topic",
+      "author",
+      "free_books",
+      "geological_map_layers",
+      "property_ownership",
+      "legal_jurisdiction_filter"
+    ],
+    "cases": [
+      {
+        "id": "usa-alaska-1964",
+        "intent": "USA: 1964 Alaska earthquake, event location within Alaska bounding rectangle",
+        "request": {
+          "method": "GET",
+          "params": {
+            "endtime": "1964-03-29",
+            "format": "geojson",
+            "limit": 1,
+            "maxlatitude": 72,
+            "maxlongitude": -130,
+            "minlatitude": 50,
+            "minlongitude": -170,
+            "minmagnitude": 7,
+            "orderby": "magnitude",
+            "starttime": "1964-03-27"
+          },
+          "url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+        },
+        "expected_ids": [
+          "official19640328033616_30"
+        ]
+      },
+      {
+        "id": "usa-loma-prieta-1989",
+        "intent": "USA: 1989 Loma Prieta earthquake, California bounding rectangle",
+        "request": {
+          "method": "GET",
+          "params": {
+            "endtime": "1989-10-19",
+            "format": "geojson",
+            "limit": 1,
+            "maxlatitude": 39,
+            "maxlongitude": -120,
+            "minlatitude": 35,
+            "minlongitude": -124,
+            "minmagnitude": 6,
+            "orderby": "magnitude",
+            "starttime": "1989-10-17"
+          },
+          "url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+        },
+        "expected_ids": [
+          "nc216859"
+        ]
+      },
+      {
+        "id": "usa-northridge-1994",
+        "intent": "USA: 1994 Northridge earthquake, southern California bounding rectangle",
+        "request": {
+          "method": "GET",
+          "params": {
+            "endtime": "1994-01-18",
+            "format": "geojson",
+            "limit": 1,
+            "maxlatitude": 36,
+            "maxlongitude": -117,
+            "minlatitude": 33,
+            "minlongitude": -120,
+            "minmagnitude": 6,
+            "orderby": "magnitude",
+            "starttime": "1994-01-17"
+          },
+          "url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+        },
+        "expected_ids": [
+          "ci3144585"
+        ]
+      },
+      {
+        "id": "usa-ridgecrest-2019",
+        "intent": "USA: July 2019 Ridgecrest earthquake, California bounding rectangle",
+        "request": {
+          "method": "GET",
+          "params": {
+            "endtime": "2019-07-07",
+            "format": "geojson",
+            "limit": 1,
+            "maxlatitude": 37,
+            "maxlongitude": -116,
+            "minlatitude": 34,
+            "minlongitude": -119,
+            "minmagnitude": 6,
+            "orderby": "magnitude",
+            "starttime": "2019-07-06"
+          },
+          "url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+        },
+        "expected_ids": [
+          "ci38457511"
+        ]
+      },
+      {
+        "id": "usa-virginia-2011",
+        "intent": "USA: August 2011 Virginia earthquake, eastern USA bounding rectangle",
+        "request": {
+          "method": "GET",
+          "params": {
+            "endtime": "2011-08-24",
+            "format": "geojson",
+            "limit": 1,
+            "maxlatitude": 40,
+            "maxlongitude": -75,
+            "minlatitude": 36,
+            "minlongitude": -80,
+            "minmagnitude": 5,
+            "orderby": "magnitude",
+            "starttime": "2011-08-23"
+          },
+          "url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+        },
+        "expected_ids": [
+          "se609212"
+        ]
+      },
+      {
+        "id": "india-gujarat-2001",
+        "intent": "India: January 2001 Gujarat earthquake, regional rectangle",
+        "request": {
+          "method": "GET",
+          "params": {
+            "endtime": "2001-01-27",
+            "format": "geojson",
+            "limit": 1,
+            "maxlatitude": 25,
+            "maxlongitude": 72,
+            "minlatitude": 22,
+            "minlongitude": 68,
+            "minmagnitude": 6,
+            "orderby": "magnitude",
+            "starttime": "2001-01-26"
+          },
+          "url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+        },
+        "expected_ids": [
+          "usp000a8ds"
+        ]
+      },
+      {
+        "id": "india-latur-1993",
+        "intent": "India: September 1993 Latur earthquake, regional rectangle",
+        "request": {
+          "method": "GET",
+          "params": {
+            "endtime": "1993-10-01",
+            "format": "geojson",
+            "limit": 1,
+            "maxlatitude": 20,
+            "maxlongitude": 78,
+            "minlatitude": 17,
+            "minlongitude": 75,
+            "minmagnitude": 5.5,
+            "orderby": "magnitude",
+            "starttime": "1993-09-29"
+          },
+          "url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+        },
+        "expected_ids": [
+          "usp000618c"
+        ]
+      },
+      {
+        "id": "india-jabalpur-1997",
+        "intent": "India: May 1997 Jabalpur earthquake, regional rectangle",
+        "request": {
+          "method": "GET",
+          "params": {
+            "endtime": "1997-05-23",
+            "format": "geojson",
+            "limit": 1,
+            "maxlatitude": 25,
+            "maxlongitude": 82,
+            "minlatitude": 21,
+            "minlongitude": 78,
+            "minmagnitude": 5.5,
+            "orderby": "magnitude",
+            "starttime": "1997-05-21"
+          },
+          "url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+        },
+        "expected_ids": [
+          "usp00082nd"
+        ]
+      },
+      {
+        "id": "india-chamoli-1999",
+        "intent": "India: March 1999 Chamoli earthquake, Himalayan rectangle, not a political boundary filter",
+        "request": {
+          "method": "GET",
+          "params": {
+            "endtime": "1999-03-30",
+            "format": "geojson",
+            "limit": 1,
+            "maxlatitude": 32,
+            "maxlongitude": 81,
+            "minlatitude": 29,
+            "minlongitude": 77,
+            "minmagnitude": 6,
+            "orderby": "magnitude",
+            "starttime": "1999-03-28"
+          },
+          "url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+        },
+        "expected_ids": [
+          "usp00095cb"
+        ]
+      },
+      {
+        "id": "india-sikkim-2011",
+        "intent": "India-region: September 2011 Sikkim earthquake, border-area rectangle, not a jurisdiction claim",
+        "request": {
+          "method": "GET",
+          "params": {
+            "endtime": "2011-09-19",
+            "format": "geojson",
+            "limit": 1,
+            "maxlatitude": 29,
+            "maxlongitude": 90,
+            "minlatitude": 26,
+            "minlongitude": 87,
+            "minmagnitude": 6,
+            "orderby": "magnitude",
+            "starttime": "2011-09-18"
+          },
+          "url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+        },
+        "expected_ids": [
+          "usp000j88b"
+        ]
+      }
+    ],
+    "empty_error_observations": {
+      "empty": "Observed HTTP200 GeoJSON FeatureCollection with empty features for historical regional minmagnitude=9.9; documentation describes nodata 204/404. Do not hardcode emptiness to a single status.",
+      "invalid": "HTTP400 for minlatitude=91, diagnostic retained; no empty/success conversion.",
+      "paging": "offset=1 vs offset=2 with orderby=time-asc returned ci38443183 then ci38450263; fixed filters and origin times retained."
+    }
+  },
+  "licensing": "Official documentation expressly describes a programmatic interface and public GET methods. Anonymous requests use no credentials, accounts or paid service. The response contains event metadata and URLs, not an item-specific license. Do not infer all contributor products/photos/maps are public domain or copy full ancillary products. Current redistribution/attribution conditions and quotas need policy evidence.",
+  "documentation": [
+    "https://earthquake.usgs.gov/fdsnws/event/1/",
+    "https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php"
+  ],
+  "limitations": [
+    "Declared sample: ten preselected historical time/rectangle queries, five USA regions and five India regions. English metadata/place labels; scientific coordinates and UTC times. A bounding rectangle is not a political boundary filter. Some supplied Indian place names contain question-mark transliteration artifacts; preserve raw text and coordinates, do not silently correct titles. This does not establish full geographic or small-earthquake completeness.",
+    "Scientific estimates and preferred event IDs may be revised; preserve observed update time and capture date.",
+    "Ten event queries do not establish whole-catalog coverage or a fully qualified source.",
+    "Human-readable event page passed a limited mobile text check; map basemap was not rendered at screenshot capture. Official feed lifecycle link is currently 404."
+  ],
+  "evidence": [
+    "runs/usgs-earthquake-contract-20261105g/observations.jsonl",
+    "examples/usgs-earthquake.scouting.jsonl",
+    "examples/usgs-earthquake.jsonl",
+    "examples/usgs-earthquake.benchmark.jsonl",
+    "examples/usgs-earthquake.relevance.jsonl",
+    "runs/event-lifecycle-industry-followup-20261105h/observations.jsonl",
+    "docs/research/free-content/evidence/2026-11-05-usgs/reader-observations.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T07:16:37.551505+00:00",
+  "next_action": "Capture feed lifecycle and applicable rights through allowed official routes; finish human-readable access and revision/deletion/maintenance gates. Ten current examples and boundary checks pass; no activation.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "Official USGS Earthquake Catalog / FDSN event service. Preserve preferred native event ID, contributing network/code, associated IDs, origin time and updated timestamp. Contributing networks and duplicate IDs do not become separate origins. USGS National Map is a separate catalog with a shared agency; no claim of two independent USGS operators.",
+      "evidence": [
+        "runs/usgs-earthquake-contract-20261105g/observations.jsonl",
+        "examples/usgs-earthquake.scouting.jsonl",
+        "examples/usgs-earthquake.jsonl",
+        "examples/usgs-earthquake.benchmark.jsonl",
+        "examples/usgs-earthquake.relevance.jsonl",
+        "runs/event-lifecycle-industry-followup-20261105h/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-usgs/reader-observations.jsonl"
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "complete",
+      "summary": "Declared sample: ten preselected historical time/rectangle queries, five USA regions and five India regions. English metadata/place labels; scientific coordinates and UTC times. A bounding rectangle is not a political boundary filter. Some supplied Indian place names contain question-mark transliteration artifacts; preserve raw text and coordinates, do not silently correct titles. This does not establish full geographic or small-earthquake completeness.",
+      "evidence": [
+        "runs/usgs-earthquake-contract-20261105g/observations.jsonl",
+        "examples/usgs-earthquake.scouting.jsonl",
+        "examples/usgs-earthquake.jsonl",
+        "examples/usgs-earthquake.benchmark.jsonl",
+        "examples/usgs-earthquake.relevance.jsonl",
+        "runs/event-lifecycle-industry-followup-20261105h/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-usgs/reader-observations.jsonl"
+      ],
+      "open_questions": []
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "GET https://earthquake.usgs.gov/fdsnws/event/1/query with format=geojson, starttime/endtime ISO8601 UTC, min/max latitude/longitude, minmagnitude, orderby=magnitude, limit=1. Docs support exact eventid, offset starting at 1, updatedafter, count and named formats. Sample parser preserves GeoJSON longitude/latitude/depth-km axis order and native ID/update metadata. Only ten bounded historical searches currently tested; no text/title/author search, maps/layers or property records.",
+      "evidence": [
+        "runs/usgs-earthquake-contract-20261105g/observations.jsonl",
+        "examples/usgs-earthquake.scouting.jsonl",
+        "examples/usgs-earthquake.jsonl",
+        "examples/usgs-earthquake.benchmark.jsonl",
+        "examples/usgs-earthquake.relevance.jsonl",
+        "runs/event-lifecycle-industry-followup-20261105h/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-usgs/reader-observations.jsonl"
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Official documentation expressly describes a programmatic interface and public GET methods. Anonymous requests use no credentials, accounts or paid service. The response contains event metadata and URLs, not an item-specific license. Do not infer all contributor products/photos/maps are public domain or copy full ancillary products. Current redistribution/attribution conditions and quotas need policy evidence.",
+      "evidence": [
+        "runs/usgs-earthquake-contract-20261105g/observations.jsonl",
+        "examples/usgs-earthquake.scouting.jsonl",
+        "examples/usgs-earthquake.jsonl",
+        "examples/usgs-earthquake.benchmark.jsonl",
+        "examples/usgs-earthquake.relevance.jsonl",
+        "runs/event-lifecycle-industry-followup-20261105h/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-usgs/reader-observations.jsonl"
+      ],
+      "open_questions": [
+        "Capture the current applicable USGS/data-contributor metadata-reuse policy via a permitted official route.",
+        "Distinguish core event metadata rights from contributed seismic products and reader media; numeric quota/SLA remains unknown."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Anonymous core scientific data and exact event Feature were retrieved. A fresh 390×844 WebKit session rendered the Gujarat event page with matching native event, 2001-01-26 UTC time, 23.419°N/70.232°E and 16 km depth, no login prompt, one main landmark, keyboard focus and no page errors/overflow. The screenshot was visually reviewed: text is readable but the map basemap is a gray placeholder at capture. Map rendering, full accessibility, other-country vantage and contributed-product rights remain unverified; no scientific product files or citizen reports fetched.",
+      "evidence": [
+        "runs/usgs-earthquake-contract-20261105g/observations.jsonl",
+        "examples/usgs-earthquake.scouting.jsonl",
+        "examples/usgs-earthquake.jsonl",
+        "examples/usgs-earthquake.benchmark.jsonl",
+        "examples/usgs-earthquake.relevance.jsonl",
+        "runs/event-lifecycle-industry-followup-20261105h/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-usgs/reader-observations.jsonl"
+      ],
+      "open_questions": [
+        "Verify rendered maps and wider accessibility before treating the outbound page as a tested map viewer.",
+        "Record applicable metadata/product rights and country availability; a cloud response is not proof of every country."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "complete",
+      "summary": "Ten independent replay queries matched saved native IDs. All ten scouting records passed declared longitude, latitude, UTC time, magnitude and earthquake-type checks. Exact Gujarat ID resolves to a full GeoJSON Feature (77,109 bytes with associated product metadata; no product files fetched). Fixed time-ascending Ridgecrest pages with offsets 1 and 2 returned different IDs in order. Changed magnitude returned HTTP200 FeatureCollection with zero features, despite documented nodata default 204; observed format behavior takes precedence. Invalid minlatitude=91 returned HTTP400 with bounded diagnostic, not an empty success. Raw Indian place transliteration artifacts remain unchanged. Ten sampled event queries do not measure global catalog recall.",
+      "evidence": [
+        "runs/usgs-earthquake-contract-20261105g/observations.jsonl",
+        "examples/usgs-earthquake.scouting.jsonl",
+        "examples/usgs-earthquake.jsonl",
+        "examples/usgs-earthquake.benchmark.jsonl",
+        "examples/usgs-earthquake.relevance.jsonl",
+        "runs/event-lifecycle-industry-followup-20261105h/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-usgs/reader-observations.jsonl"
+      ],
+      "open_questions": []
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Research cap two records/request and 256 KiB, 20 s request timeout, serial robots-aware minimum-three-second pacing, no automatic retries or redirect following. Docs recommend real-time feeds for live displays; this use is bounded historical lookup. Keep observed update timestamp; revisable catalog is not an immutable historical fact snapshot. Officially linked feed lifecycle policy returned HTTP404, retained as a broken policy link. The event-term documentation redirects to the already captured GeoJSON summary contract; it adds no new lifecycle assurance. Do not invent a refresh/deletion policy from a live endpoint.",
+      "evidence": [
+        "runs/usgs-earthquake-contract-20261105g/observations.jsonl",
+        "examples/usgs-earthquake.scouting.jsonl",
+        "examples/usgs-earthquake.jsonl",
+        "examples/usgs-earthquake.benchmark.jsonl",
+        "examples/usgs-earthquake.relevance.jsonl",
+        "runs/event-lifecycle-industry-followup-20261105h/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-usgs/reader-observations.jsonl"
+      ],
+      "open_questions": [
+        "Find a current operator-published lifecycle/revision/deletion policy; the documented feed-policy URL is HTTP404.",
+        "Define responsible maintainer and later-day availability/revision checks.",
+        "Honor existing robots/access hold for www.usgs.gov policy host until a useful recovery/access trigger; current successful earthquake.usgs.gov queries do not clear that different host."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Candidate for C19 scientific datasets and P06/P09 hazard/environmental information. Not geological-map coverage or legal boundary/ownership evidence. No source activation. Continue public policy/access and query benchmarks before any qualification.",
+      "evidence": [
+        "runs/usgs-earthquake-contract-20261105g/observations.jsonl",
+        "examples/usgs-earthquake.scouting.jsonl",
+        "examples/usgs-earthquake.jsonl",
+        "examples/usgs-earthquake.benchmark.jsonl",
+        "examples/usgs-earthquake.relevance.jsonl",
+        "runs/event-lifecycle-industry-followup-20261105h/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-usgs/reader-observations.jsonl"
+      ],
+      "open_questions": [
+        "Finish the rights, reader, reliability and lifecycle gates; retain unsupported modes and country limitations."
+      ]
+    }
+  },
+  "analysis_refs": []
+}

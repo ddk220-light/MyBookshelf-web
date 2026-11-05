@@ -27,7 +27,10 @@ The app's native chat Goal control is not exposed in this environment. A saved
 goal file or an enabled schedule must not be described as activating that feature.
 The available immediate scheduler endpoint returned HTTP 404 on both attempts.
 
-Actual pending work can run immediately with:
+The original 153-job queue is complete. Do not restart it to represent progress
+on the broader goal. Analyze its observations and continue from `goal.json` and
+the completion audit. Only if a restored checkpoint has unfinished queue IDs,
+and no active writer owns the lease, resume that existing queue with:
 
 ```sh
 python -u tools/research/run_source_reviews.py source-evidence-20261105 --publish
@@ -73,7 +76,8 @@ continue source qualification; do not close the whole goal.
 - `completion-audit.json`: missing captures, unresolved dossiers, untriaged leads
   and candidate/query-verified/qualified memberships for all 49 areas.
 
-Source `evidence` paths are relative to this registry directory. Documentation
+Source `evidence` paths are relative to this registry directory, or explicitly
+repository-relative for shared browser evidence. Documentation
 URLs are primary references, not a claim that every policy has completed review.
 Deferred records explicitly identify the missing evidence.
 Imported catalog records may describe already deployed sources. Their `enabled`
@@ -115,6 +119,7 @@ python -m unittest discover -s tools/research -p 'test_*.py' -v
 python tools/research/source_registry.py probe gdl
 python tools/research/source_registry.py probe gdl --case known-title-01
 python tools/research/source_registry.py probe python-docs
+python tools/research/source_registry.py probe usgs-earthquake
 python tools/research/capture_analysis.py capture
 python tools/research/capture_analysis.py index
 python tools/research/capture_analysis.py audit
@@ -129,7 +134,19 @@ The probe is a developer research utility, not an application search adapter.
 For `python-docs`, one official Sphinx metadata inventory is downloaded and ten
 distinct exact-symbol searches execute locally. The evidence labels this mode;
 it does not claim ten live full-text API searches. Version and anchor identities
-are retained, and a changed inventory version fails validation.
+are retained, and a changed inventory version fails validation. Raw compressed
+metadata exports are hash-backed in `analysis/inventories`; the PSF notice is in
+`analysis/legal-notices`. A minor-version URL can change between builds, so the
+inventory hash and observed patch label distinguish snapshots.
+
+For `usgs-earthquake`, the documented FDSN service supports bounded time/region/
+magnitude queries and exact event IDs. The research probe requests at most two
+records, observes robots and serial pacing, and preserves longitude/latitude/
+depth and origin/update timestamps. Scouting, empty/invalid/paging observations
+and spatial relevance checks stay separate from the ten current cases. This
+does not establish geological-map layers, item redistribution rights or full
+source qualification. Gateway follow-ups and identity blockers remain explicit
+in the audit and `analysis/identity-blockers.jsonl`.
 
 For `open-textbook-library`, a documented CC0 CSV export supports actual local
 title/subject searches. Its book URLs remain metadata-reported until reader access

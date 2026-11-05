@@ -117,7 +117,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru'):
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -264,6 +264,9 @@ def probe(source_id, case_ids=None):
     if source['query']['adapter'] == 'sphinx-inventory':
         from sphinx_inventory import probe as probe_inventory
         return probe_inventory(source, case_ids)
+    if source['query']['adapter'] == 'usgs-events':
+        from usgs_events import probe as probe_events
+        return probe_events(source, case_ids)
     for case in source['query']['cases']:
         if case_ids and case['id'] not in case_ids:
             continue
