@@ -1,0 +1,92 @@
+{
+  "observed_at": "2026-11-05T20:19:18.464903+00:00",
+  "url": "https://api.core.ac.uk/swagger/v3.json",
+  "capture_evidence": "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+  "response_sha256": "730e570652e571256f616859e6fcbff472d1fc211c2f3eb691259ebb7cf8197b",
+  "published_search_operation": {
+    "get": {
+      "tags": [
+        "Search"
+      ],
+      "summary": "Search through all CORE entities",
+      "description": "The CORE API search allows you to perform comprehensive searches across multiple entities, \n            including <b>works</b>, <b>outputs</b>, <b>data-providers</b>, and <b>journals</b>.",
+      "operationId": "get_global_all_entities_search",
+      "parameters": [
+        {
+          "name": "entityType",
+          "in": "path",
+          "description": "Type of the entity",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "works",
+              "outputs",
+              "data-providers",
+              "journals"
+            ]
+          }
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "description": "Search query (use specific fields like doi, title, authors, etc.)",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "description": "The offset from the result set where you want the result to start. Needed for pagination.",
+          "schema": {
+            "type": "integer",
+            "default": 0
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "description": "The maximum size of your search results. The result set may be smaller than the limit.",
+          "schema": {
+            "type": "integer",
+            "default": 10
+          }
+        },
+        {
+          "name": "stats",
+          "in": "query",
+          "description": "If set to true the search results will include statistics related to the entity. This property has an impact on the response speed.",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Contains the entities matching the search query.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "global_security_declaration": [
+    {
+      "api_key_query": []
+    },
+    {
+      "api_key_header": []
+    }
+  ],
+  "public_ui_documentation": "https://api.core.ac.uk/docs/v3",
+  "anonymous_limits_from_live_docs": "100tokens/day, maximum10/minute; simple queries normally1token. Human documentation explicitly permits anonymous access despite global Swagger security declaration.",
+  "historical_limits_superseded": "Imported5single requests/10seconds is historical; current token limits govern this checkpoint."
+}

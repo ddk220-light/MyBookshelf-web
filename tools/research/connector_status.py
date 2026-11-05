@@ -15,6 +15,10 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'core-public': 'Live anonymous CORE work-title search, first1 native work with underlying output/provider IDs; no full text or reader guarantee',
+    'doaj-public': 'Live public article title-field search, first3 native article IDs; page2/empty tested, no full-text or broad-topic ranking guarantee',
+    'who-publications-ui': 'Browser-only live WHO publication keyword filter, first50 native item URLs; selected website catalog, not full IRIS holdings',
+    'fostac-manuals': 'Local title-token search over13 linked advanced food-safety manuals; no PPT/full-text/training enrollment or download validation',
     'libretexts-ui': 'Browser-only live Commons Books keyword search, first24 native library/page IDs; Load more tested, full-text and edition identity not inferred',
     'nptel-catalog': 'Local title-token search over3482 unambiguous course IDs from the published catalog; semester/version and lecture text not searched',
     'booksprints-catalog': 'Local title-token search over139 published sample catalog entries; entries may be projects/series, full-book access not assumed',

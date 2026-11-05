@@ -9,7 +9,7 @@
     "C13",
     "I17"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -41,14 +41,167 @@
   },
   "aliases": [],
   "capabilities": [
-    "WHO publication listings link guidelines, journals, regional offices and IRIS repository copies; print orders coexist with online publication links."
+    "Live public WHO Publications keyword filter through its published browser UI; first50 visible metadata records, native item URL identifiers and displayed dates retained. This is the selected WHO website catalog, not all IRIS holdings."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown; no query executed",
-    "request_shape_verified": false
+    "adapter": "who-publications-ui",
+    "endpoint": "https://www.who.int/publications/i",
+    "cases": [
+      {
+        "id": "publication-malaria",
+        "intent": "Search public WHO publication keyword form: malaria",
+        "expected_ids": [
+          "9789292800260"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.who.int/publications/i",
+          "ui_query": {
+            "text": "malaria",
+            "selector": "#global-filter"
+          }
+        }
+      },
+      {
+        "id": "publication-tuberculosis",
+        "intent": "Search public WHO publication keyword form: tuberculosis",
+        "expected_ids": [
+          "9789240125421"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.who.int/publications/i",
+          "ui_query": {
+            "text": "tuberculosis",
+            "selector": "#global-filter"
+          }
+        }
+      },
+      {
+        "id": "publication-diabetes",
+        "intent": "Search public WHO publication keyword form: diabetes",
+        "expected_ids": [
+          "9789290222255"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.who.int/publications/i",
+          "ui_query": {
+            "text": "diabetes",
+            "selector": "#global-filter"
+          }
+        }
+      },
+      {
+        "id": "publication-nutrition",
+        "intent": "Search public WHO publication keyword form: nutrition",
+        "expected_ids": [
+          "9789240122703"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.who.int/publications/i",
+          "ui_query": {
+            "text": "nutrition",
+            "selector": "#global-filter"
+          }
+        }
+      },
+      {
+        "id": "publication-vaccines",
+        "intent": "Search public WHO publication keyword form: vaccines",
+        "expected_ids": [
+          "9789240123533"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.who.int/publications/i",
+          "ui_query": {
+            "text": "vaccines",
+            "selector": "#global-filter"
+          }
+        }
+      },
+      {
+        "id": "publication-cholera",
+        "intent": "Search public WHO publication keyword form: cholera",
+        "expected_ids": [
+          "9789240122062"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.who.int/publications/i",
+          "ui_query": {
+            "text": "cholera",
+            "selector": "#global-filter"
+          }
+        }
+      },
+      {
+        "id": "publication-dengue",
+        "intent": "Search public WHO publication keyword form: dengue",
+        "expected_ids": [
+          "who-wer10140-285-289"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.who.int/publications/i",
+          "ui_query": {
+            "text": "dengue",
+            "selector": "#global-filter"
+          }
+        }
+      },
+      {
+        "id": "publication-mental-health",
+        "intent": "Search public WHO publication keyword form: mental health",
+        "expected_ids": [
+          "B09940"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.who.int/publications/i",
+          "ui_query": {
+            "text": "mental health",
+            "selector": "#global-filter"
+          }
+        }
+      },
+      {
+        "id": "publication-nursing",
+        "intent": "Search public WHO publication keyword form: nursing",
+        "expected_ids": [
+          "9789240122369"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.who.int/publications/i",
+          "ui_query": {
+            "text": "nursing",
+            "selector": "#global-filter"
+          }
+        }
+      },
+      {
+        "id": "publication-water",
+        "intent": "Search public WHO publication keyword form: water",
+        "expected_ids": [
+          "B09880"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.who.int/publications/i",
+          "ui_query": {
+            "text": "water",
+            "selector": "#global-filter"
+          }
+        }
+      }
+    ],
+    "authentication": "Anonymous published browser form; no key/login/payment.",
+    "request_shape_verified": true,
+    "request_verification_kind": "published browser interaction, not an API contract",
+    "search_result_page_size_observed": 50
   },
   "documentation": [
     "https://www.who.int/publications",
@@ -59,19 +212,31 @@
     "https://iris.who.int/help",
     "https://iris.who.int/about"
   ],
-  "licensing": "WHO website copyright terms allow attributed extracts for research/private study, not sale or commercial use. Substantial reproduction/translation and other uses need permission. WHO publication Open Access policy is separate and must be checked per item.",
+  "licensing": "Existing WHO publication/website policies retained: item-level NC, third-party and version conditions differ. Only bounded public search metadata tested; no blanket content reuse claim.",
   "limitations": [
-    "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
-    "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
+    "IRIS /search is disallowed by current robots; no IRIS query sent. Main WHO publication form is separately permitted.",
+    "Browser UI only; no hidden API replay. Raw stale-results attempts retained; recovery reloads the UI and waits for changed relevant cards.",
+    "Some displayed titles are abbreviated; native URLs, not truncated titles or assumed ISBNs, define identity.",
+    "No publication/PDF downloads; free full-item reading, item license and version checks remain separate.",
+    "No successful pagination test claimed; first-page scope only."
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/retrieval-doc-links-20261105b/observations.jsonl",
     "runs/retrieval-contracts-20261105b/observations.jsonl",
-    "runs/licensing-and-partners-20261105b/observations.jsonl"
+    "runs/licensing-and-partners-20261105b/observations.jsonl",
+    "runs/fostac-course-catalogs-20261105dw/observations.jsonl",
+    "runs/who-public-search-20261105dx/observations.jsonl",
+    "runs/who-title-query-20261105dz/observations.jsonl",
+    "examples/who-publications.access.jsonl",
+    "examples/who-publications.ui-inspection.jsonl",
+    "examples/who-publications.search-inspection.jsonl",
+    "examples/who-publications.browser.jsonl",
+    "examples/who-publications.jsonl",
+    "examples/who-publications.boundaries.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T06:10:18.811416+00:00",
-  "next_action": "Review IRIS and WHO terms, establish permitted query/export and publication-version identifiers, and separate free online reading from book-order prices and translation rights.",
+  "last_reviewed_at": "2026-11-05T20:10:48.595398+00:00",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -165,44 +330,42 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documented catalog capabilities retained; exact executed machine contract remains open.",
+      "summary": "Live public WHO Publications keyword filter through its published browser UI; first50 visible metadata records, native item URL identifiers and displayed dates retained. This is the selected WHO website catalog, not all IRIS holdings.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "cases": [],
-        "authentication": "Unknown; no query executed",
-        "request_shape_verified": false,
-        "IRIS_help_about": "Both linked official pages returned HTTP 200 with only DSpace text in the bounded capture; no API/export contract established. Do not infer server API endpoints from the framework name."
+        "adapter": "who-publications-ui",
+        "endpoint": "https://www.who.int/publications/i",
+        "cases": [
+          "publication-malaria",
+          "publication-tuberculosis",
+          "publication-diabetes",
+          "publication-nutrition",
+          "publication-vaccines",
+          "publication-cholera",
+          "publication-dengue",
+          "publication-mental-health",
+          "publication-nursing",
+          "publication-water"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live public WHO Publications keyword filter through its published browser UI; first50 visible metadata records, native item URL identifiers and displayed dates retained. This is the selected WHO website catalog, not all IRIS holdings.",
+        "authentication": "Anonymous published browser form; no key/login/payment.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl",
-        "runs/retrieval-contracts-20261105b/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "2f8ab69330407c6db603",
-          "observed_at": "2026-11-05T02:26:12.947045+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "2f8ab69330407c6db603",
-          "observed_at": "2026-11-05T05:44:11.173084+00:00"
-        },
-        {
-          "path": "runs/retrieval-contracts-20261105b/observations.jsonl",
-          "job_id": "3f79aedb93a7976b8724",
-          "observed_at": "2026-11-05T05:49:00.439245+00:00"
-        },
-        {
-          "path": "runs/retrieval-contracts-20261105b/observations.jsonl",
-          "job_id": "08d5b9d64860ab8a59fc",
-          "observed_at": "2026-11-05T05:49:15.610195+00:00"
-        }
+        "runs/fostac-course-catalogs-20261105dw/observations.jsonl",
+        "runs/who-public-search-20261105dx/observations.jsonl",
+        "runs/who-title-query-20261105dz/observations.jsonl",
+        "examples/who-publications.access.jsonl",
+        "examples/who-publications.ui-inspection.jsonl",
+        "examples/who-publications.search-inspection.jsonl",
+        "examples/who-publications.browser.jsonl",
+        "examples/who-publications.jsonl",
+        "examples/who-publications.boundaries.jsonl"
       ],
       "open_questions": [
-        "Obtain supported public request shapes and verify ten distinct native-ID examples plus paging/empty/error behavior."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
@@ -221,13 +384,23 @@
           "third_party_material": "Originating publisher permission may be needed; site-wide/publication label does not clear every component.",
           "commercial": "WHO publication commercial reuse requires permission; no outreach submitted.",
           "classification_exception": "ICD/ICF/ICHI have separate CC BY-ND 3.0 IGO terms, with registered API. Separate service lead, no account or classification queries."
-        }
+        },
+        "current_query_full_content_downloaded": false
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl",
         "runs/retrieval-doc-links-20261105b/observations.jsonl",
         "runs/retrieval-contracts-20261105b/observations.jsonl",
-        "runs/licensing-and-partners-20261105b/observations.jsonl"
+        "runs/licensing-and-partners-20261105b/observations.jsonl",
+        "runs/fostac-course-catalogs-20261105dw/observations.jsonl",
+        "runs/who-public-search-20261105dx/observations.jsonl",
+        "runs/who-title-query-20261105dz/observations.jsonl",
+        "examples/who-publications.access.jsonl",
+        "examples/who-publications.ui-inspection.jsonl",
+        "examples/who-publications.search-inspection.jsonl",
+        "examples/who-publications.browser.jsonl",
+        "examples/who-publications.jsonl",
+        "examples/who-publications.boundaries.jsonl"
       ],
       "observation_refs": [
         {
@@ -308,127 +481,80 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No current query assertions; observed listing identities are not passing examples.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "positive_examples": 0,
-        "native_identity_samples": [
-          "9789240126220",
-          "B09964",
-          "9789240123496"
-        ],
-        "version_caution": "Version and overlap unresolved",
-        "version_examples": [
-          "Tuberculosis mutation catalogue web annex B/C, 3rd edition — preserve annex versus parent publication and edition",
-          "WHO TB diagnosis guidelines web annex C, 2nd edition — not interchangeable with the main guideline",
-          "EUR/RC76(1) governing-body decision has distinct publication, acceptance and online dates"
-        ]
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live public WHO Publications keyword filter through its published browser UI; first50 visible metadata records, native item URL identifiers and displayed dates retained. This is the selected WHO website catalog, not all IRIS holdings.",
+        "empty_and_boundary_evidence": "examples/who-publications.boundaries.jsonl"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl",
-        "runs/retrieval-contracts-20261105b/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "2f8ab69330407c6db603",
-          "observed_at": "2026-11-05T02:26:12.947045+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "2f8ab69330407c6db603",
-          "observed_at": "2026-11-05T05:44:11.173084+00:00"
-        },
-        {
-          "path": "runs/retrieval-contracts-20261105b/observations.jsonl",
-          "job_id": "3f79aedb93a7976b8724",
-          "observed_at": "2026-11-05T05:49:00.439245+00:00"
-        },
-        {
-          "path": "runs/retrieval-contracts-20261105b/observations.jsonl",
-          "job_id": "08d5b9d64860ab8a59fc",
-          "observed_at": "2026-11-05T05:49:15.610195+00:00"
-        }
+        "runs/fostac-course-catalogs-20261105dw/observations.jsonl",
+        "runs/who-public-search-20261105dx/observations.jsonl",
+        "runs/who-title-query-20261105dz/observations.jsonl",
+        "examples/who-publications.access.jsonl",
+        "examples/who-publications.ui-inspection.jsonl",
+        "examples/who-publications.search-inspection.jsonl",
+        "examples/who-publications.browser.jsonl",
+        "examples/who-publications.jsonl",
+        "examples/who-publications.boundaries.jsonl"
       ],
       "open_questions": [
-        "Test known-item and topical relevance, negative queries and native identities without counting documentation samples as examples."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Original policy-checked documentation captures retained; current restrictions can supersede earlier reachability.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "numeric_quota": null,
-        "bulk_content_downloaded": false,
-        "current_restriction": "Supported query allowance/limits still unresolved"
+        "limits": [
+          "IRIS /search is disallowed by current robots; no IRIS query sent. Main WHO publication form is separately permitted.",
+          "Browser UI only; no hidden API replay. Raw stale-results attempts retained; recovery reloads the UI and waits for changed relevant cards.",
+          "Some displayed titles are abbreviated; native URLs, not truncated titles or assumed ISBNs, define identity.",
+          "No publication/PDF downloads; free full-item reading, item license and version checks remain separate.",
+          "No successful pagination test claimed; first-page scope only."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl",
-        "runs/retrieval-contracts-20261105b/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "2f8ab69330407c6db603",
-          "observed_at": "2026-11-05T02:26:12.947045+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "2f8ab69330407c6db603",
-          "observed_at": "2026-11-05T05:44:11.173084+00:00"
-        },
-        {
-          "path": "runs/retrieval-contracts-20261105b/observations.jsonl",
-          "job_id": "3f79aedb93a7976b8724",
-          "observed_at": "2026-11-05T05:49:00.439245+00:00"
-        },
-        {
-          "path": "runs/retrieval-contracts-20261105b/observations.jsonl",
-          "job_id": "08d5b9d64860ab8a59fc",
-          "observed_at": "2026-11-05T05:49:15.610195+00:00"
-        }
+        "runs/fostac-course-catalogs-20261105dw/observations.jsonl",
+        "runs/who-public-search-20261105dx/observations.jsonl",
+        "runs/who-title-query-20261105dz/observations.jsonl",
+        "examples/who-publications.access.jsonl",
+        "examples/who-publications.ui-inspection.jsonl",
+        "examples/who-publications.search-inspection.jsonl",
+        "examples/who-publications.browser.jsonl",
+        "examples/who-publications.jsonl",
+        "examples/who-publications.boundaries.jsonl"
       ],
       "open_questions": [
-        "Verify allowed machine route, refresh/delete/version semantics and provider backoff requirements."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Candidate/deferred triage only; no runtime activation or qualification.",
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Review IRIS and WHO terms, establish permitted query/export and publication-version identifiers, and separate free online reading from book-order prices and translation rights.",
-        "activation_approved": false
+        "decision": "working-query-scope-verified",
+        "reason": "Live public WHO Publications keyword filter through its published browser UI; first50 visible metadata records, native item URL identifiers and displayed dates retained. This is the selected WHO website catalog, not all IRIS holdings.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl",
-        "runs/retrieval-contracts-20261105b/observations.jsonl"
+        "runs/fostac-course-catalogs-20261105dw/observations.jsonl",
+        "runs/who-public-search-20261105dx/observations.jsonl",
+        "runs/who-title-query-20261105dz/observations.jsonl",
+        "examples/who-publications.access.jsonl",
+        "examples/who-publications.ui-inspection.jsonl",
+        "examples/who-publications.search-inspection.jsonl",
+        "examples/who-publications.browser.jsonl",
+        "examples/who-publications.jsonl",
+        "examples/who-publications.boundaries.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "2f8ab69330407c6db603",
-          "observed_at": "2026-11-05T02:26:12.947045+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "2f8ab69330407c6db603",
-          "observed_at": "2026-11-05T05:44:11.173084+00:00"
-        },
-        {
-          "path": "runs/retrieval-contracts-20261105b/observations.jsonl",
-          "job_id": "3f79aedb93a7976b8724",
-          "observed_at": "2026-11-05T05:49:00.439245+00:00"
-        },
-        {
-          "path": "runs/retrieval-contracts-20261105b/observations.jsonl",
-          "job_id": "08d5b9d64860ab8a59fc",
-          "observed_at": "2026-11-05T05:49:15.610195+00:00"
-        }
-      ],
-      "open_questions": []
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
     }
   },
   "analysis_refs": []

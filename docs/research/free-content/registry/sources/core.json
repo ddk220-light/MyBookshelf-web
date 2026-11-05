@@ -9,35 +9,161 @@
     "C06",
     "C07"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
   "capabilities": [
-    "Imported historical retrieval analysis: v3 `/search/works?q=...`; works/outputs/source/download URLs. [Service](https://core.ac.uk/services/api), [docs](https://api.core.ac.uk/docs/v3)"
+    "Live documented anonymous work title search withlimit1, native work IDs, output IDs and provider attribution. Ten distinct works verified; offset1 and explicit empty results tested."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
+    "adapter": "core-public",
+    "endpoint": "https://api.core.ac.uk/v3/search/works/",
+    "cases": [
+      {
+        "id": "work-title-01",
+        "intent": "Public CORE work title search: title:\"agriculture\"",
+        "expected_ids": [
+          "58859476"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22agriculture%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-02",
+        "intent": "Public CORE work title search: title:\"construction safety\"",
+        "expected_ids": [
+          "255522362"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22construction+safety%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-03",
+        "intent": "Public CORE work title search: title:\"manufacturing\"",
+        "expected_ids": [
+          "254754854"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22manufacturing%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-04",
+        "intent": "Public CORE work title search: title:\"logistics\"",
+        "expected_ids": [
+          "312376300"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22logistics%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-05",
+        "intent": "Public CORE work title search: title:\"nursing\"",
+        "expected_ids": [
+          "216648785"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22nursing%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-06",
+        "intent": "Public CORE work title search: title:\"linguistics\"",
+        "expected_ids": [
+          "115782493"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22linguistics%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-07",
+        "intent": "Public CORE work title search: title:\"astronomy\"",
+        "expected_ids": [
+          "265365590"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22astronomy%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-08",
+        "intent": "Public CORE work title search: title:\"ecology\"",
+        "expected_ids": [
+          "262666396"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22ecology%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-09",
+        "intent": "Public CORE work title search: title:\"education\"",
+        "expected_ids": [
+          "264529647"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22education%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-10",
+        "intent": "Public CORE work title search: title:\"mathematics\"",
+        "expected_ids": [
+          "112117851"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22mathematics%22&limit=1&offset=0"
+        }
+      }
+    ],
     "historical_contract": "v3 `/search/works?q=...`; works/outputs/source/download URLs. [Service](https://core.ac.uk/services/api), [docs](https://api.core.ac.uk/docs/v3)",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "authentication": "Anonymous API; currentdocs100tokens/day,max10/minute.",
+    "request_shape_verified": true,
+    "request_verification_kind": "documented anonymous GET work search",
+    "page_size": 1,
+    "anonymous_tokens_per_day": 100,
+    "anonymous_tokens_per_minute": 10
   },
-  "licensing": "Reconcile copies and distinguish work from output; verify location access. Metadata/full-text rights are not one license.",
+  "licensing": "Public anonymous API access is documented and tested for bounded research metadata. Original publication and metadata reuse rights remain separate; no full-text redistribution or commercial-service permission inferred.",
   "documentation": [
     "https://core.ac.uk/services/api",
     "https://api.core.ac.uk/docs/v3"
   ],
   "limitations": [
-    "Anonymous sample worked. Reviewed page described free unregistered access subject to terms; five single requests or one batch/10 sec; faster registered/enterprise access may cost and eligibility matters. **Medium / P1**, useful for theses.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "Current published anonymous allowance100tokens/day and maximum10/minute; this run uses7.5second serial pacing for simple queries. No account/trial/payment.",
+    "Only first result sampled per query; broad words such as ecology can mean organizational ecology, not necessarily biological ecology.",
+    "FullText field contains provider placeholder Not available for public API users.; no body/article download used. Unexpected real fullText stops collector.",
+    "Work IDs and underlying repository output IDs remain distinct; one provider/index is one connector, not an origin per repository/language/record.",
+    "Current Swagger declares global API-key security, but the rendered documentation explicitly permits anonymous access and current requests returned200. Do not extend this finding to all endpoints."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+    "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+    "analysis/external/core-query-contract-20261105.json",
+    "examples/core.scouting.jsonl",
+    "examples/core.raw-queries.jsonl",
+    "examples/core.jsonl",
+    "examples/core.boundaries.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T20:19:18.465438+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -84,36 +210,62 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Live documented anonymous work title search withlimit1, native work IDs, output IDs and provider attribution. Ten distinct works verified; offset1 and explicit empty results tested.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Imported historical retrieval analysis: v3 `/search/works?q=...`; works/outputs/source/download URLs. [Service](https://core.ac.uk/services/api), [docs](https://api.core.ac.uk/docs/v3)"
+        "adapter": "core-public",
+        "endpoint": "https://api.core.ac.uk/v3/search/works/",
+        "cases": [
+          "work-title-01",
+          "work-title-02",
+          "work-title-03",
+          "work-title-04",
+          "work-title-05",
+          "work-title-06",
+          "work-title-07",
+          "work-title-08",
+          "work-title-09",
+          "work-title-10"
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live documented anonymous work title search withlimit1, native work IDs, output IDs and provider attribution. Ten distinct works verified; offset1 and explicit empty results tested.",
+        "authentication": "Anonymous API; currentdocs100tokens/day,max10/minute.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "analysis/external/core-query-contract-20261105.json",
+        "examples/core.scouting.jsonl",
+        "examples/core.raw-queries.jsonl",
+        "examples/core.jsonl",
+        "examples/core.boundaries.jsonl"
       ],
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Public anonymous API access is documented and tested for bounded research metadata. Original publication and metadata reuse rights remain separate; no full-text redistribution or commercial-service permission inferred.",
       "facts": {
-        "license_notes": "Reconcile copies and distinguish work from output; verify location access. Metadata/full-text rights are not one license.",
-        "authentication_notes": "See historical notes; current contract must be reconciled with newer evidence.",
-        "cost_notes": null,
-        "terms_review": "pending current reconciliation"
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous API; currentdocs100tokens/day,max10/minute.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "analysis/external/core-query-contract-20261105.json",
+        "examples/core.scouting.jsonl",
+        "examples/core.raw-queries.jsonl",
+        "examples/core.jsonl",
+        "examples/core.boundaries.jsonl"
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -135,49 +287,73 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "limitations": [
-          "Anonymous sample worked. Reviewed page described free unregistered access subject to terms; five single requests or one batch/10 sec; faster registered/enterprise access may cost and eligibility matters. **Medium / P1**, useful for theses.",
-          "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
-        ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live documented anonymous work title search withlimit1, native work IDs, output IDs and provider attribution. Ten distinct works verified; offset1 and explicit empty results tested.",
+        "empty_and_boundary_evidence": "examples/core.boundaries.jsonl"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "analysis/external/core-query-contract-20261105.json",
+        "examples/core.scouting.jsonl",
+        "examples/core.raw-queries.jsonl",
+        "examples/core.jsonl",
+        "examples/core.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "limits": [
+          "Current published anonymous allowance100tokens/day and maximum10/minute; this run uses7.5second serial pacing for simple queries. No account/trial/payment.",
+          "Only first result sampled per query; broad words such as ecology can mean organizational ecology, not necessarily biological ecology.",
+          "FullText field contains provider placeholder Not available for public API users.; no body/article download used. Unexpected real fullText stops collector.",
+          "Work IDs and underlying repository output IDs remain distinct; one provider/index is one connector, not an origin per repository/language/record.",
+          "Current Swagger declares global API-key security, but the rendered documentation explicitly permits anonymous access and current requests returned200. Do not extend this finding to all endpoints."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "analysis/external/core-query-contract-20261105.json",
+        "examples/core.scouting.jsonl",
+        "examples/core.raw-queries.jsonl",
+        "examples/core.jsonl",
+        "examples/core.boundaries.jsonl"
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "working-query-scope-verified",
+        "reason": "Live documented anonymous work title search withlimit1, native work IDs, output IDs and provider attribution. Ten distinct works verified; offset1 and explicit empty results tested.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "analysis/external/core-query-contract-20261105.json",
+        "examples/core.scouting.jsonl",
+        "examples/core.raw-queries.jsonl",
+        "examples/core.jsonl",
+        "examples/core.boundaries.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Production activation has not been requested by this task."
       ]
     }
   },

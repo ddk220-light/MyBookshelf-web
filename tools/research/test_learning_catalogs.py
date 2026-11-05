@@ -15,6 +15,23 @@ def catalog(*cards):
 
 
 class LearningCatalogTests(unittest.TestCase):
+    def test_fostac_only_linked_manuals_not_courses_or_slides(self):
+        body = b'<ol class="cours"><li>Advance Manufacturing - Fish<ul><li><a href="/doc/Fish Manual.pdf">Training manual</a></li><li><a href="/doc/Fish.ppt">PPT</a></li></ul></li><li>Advance Organic food</li></ol>'
+        rows = parse(body, 'fostac-manuals')['results']
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['id'], 'https://fostac.fssai.gov.in/doc/Fish%20Manual.pdf')
+        self.assertEqual(rows[0]['title'], 'Advance Manufacturing - Fish')
+        self.assertIsNone(rows[0]['language'])
+        self.assertFalse(rows[0]['reading_access_verified'])
+        with self.assertRaises(ValueError):
+            parse(body.replace(b'/doc/Fish Manual.pdf', b'https://other.org/doc/Fish.pdf'), 'fostac-manuals')
+
+    def test_fostac_language_links_remain_distinct(self):
+        body = b'<ol class="cours"><li>Advance Catering<ul><li><a href="/doc/Hindi.pdf">Hindi</a><a href="/doc/English.pdf">English</a></li></ul></li></ol>'
+        rows = parse(body, 'fostac-manuals')['results']
+        self.assertEqual([r['language'] for r in rows], ['hi', 'en'])
+        self.assertEqual(len(search(rows, {'mode':'title_tokens','text':'catering hindi'})), 1)
+
     def test_same_title_distinct_ids_and_exact_duplicates(self):
         p = parse(catalog(course(), course('101101080'), course()), 'nptel-catalog')
         self.assertEqual(p['visible_catalog_rows'], 3)

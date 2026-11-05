@@ -1,4 +1,4 @@
-"""Research-only title lookup in published NPTEL and Book Sprints HTML catalogs.
+"""Research-only title lookup in published NPTEL, Book Sprints and FoSTaC HTML catalogs.
 
 Only rendered catalog metadata is imported. No private API, course video, book
 PDF, registration, certification or media request is made.
@@ -10,14 +10,15 @@ import json
 from pathlib import Path
 import re
 import time
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin, urlsplit, quote
 
 from publication_catalogs import Tree, Node
 from run_source_reviews import now, pacing_seconds, request, robots
 from source_registry import REGISTRY, USER_AGENT, evaluate
 
 ENDPOINTS = {'nptel-catalog': 'https://nptel.ac.in/courses',
-             'booksprints-catalog': 'https://www.booksprints.net/book/'}
+             'booksprints-catalog': 'https://www.booksprints.net/book/',
+             'fostac-manuals': 'https://fostac.fssai.gov.in/advance.jsp'}
 LIMIT = 8 * 1024 * 1024
 
 
@@ -72,6 +73,28 @@ def parse(body, adapter):
                          'look_inside_badge': bool(item.nodes(lambda n: n.has_class('book__look-inside'))),
                          'identity_scope': 'Publisher catalog entry; may describe a series/project, not a guaranteed single edition',
                          'reading_access_verified': False})
+    elif adapter == 'fostac-manuals':
+        catalog = one(root.nodes(lambda n: n.tag == 'ol' and n.has_class('cours')), 'advanced course manual list')
+        for item in [n for n in catalog.children if isinstance(n, Node) and n.tag == 'li']:
+            title = ' '.join(' '.join(n for n in item.children if isinstance(n, str)).split())
+            if not title.startswith('Advance '):
+                raise ValueError('Changed course heading schema')
+            for link in item.nodes(lambda n: n.tag == 'a'):
+                href = link.attrs.get('href', '')
+                if not href.lower().endswith('.pdf'):
+                    continue
+                url = urlsplit(urljoin(ENDPOINTS[adapter], href))
+                if url.scheme != 'https' or url.netloc != 'fostac.fssai.gov.in' or not url.path.startswith('/doc/') or url.query or url.fragment:
+                    raise ValueError('Unexpected native training-manual URL')
+                native = 'https://fostac.fssai.gov.in' + quote(url.path, safe='/%&')
+                language = {'Hindi':'hi','English':'en'}.get(link.text())
+                if link.text() not in ('Hindi', 'English', 'Training manual'):
+                    raise ValueError('Unexpected training-manual label')
+                rows.append({'id':native, 'title':title + (' — ' + link.text() if language else ''),
+                             'course_title':title, 'language':language, 'landing_page':ENDPOINTS[adapter],
+                             'listed_document_url':native, 'raw_native_href':href,
+                             'listed_version_filename':url.path.rsplit('/',1)[1],
+                             'reading_access_verified':False})
     else:
         raise ValueError('Unsupported catalog')
     if not rows or len(rows) > 10000:

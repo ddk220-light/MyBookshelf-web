@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Free-knowledge connector research, 2026-11-05T20:20:37.648859+00:00:**49 Working,62 Blocked/failed,23 Still checking of134;525passing examples. Seven connectors gain working scoped searches this run; four blockers assessed.221research tests pass. Read [per-connector status](research/free-content/registry/connector-status.csv) and [goal](research/free-content/registry/goal.json). Hourly completion enabled; research only.
+
 **Free-knowledge connector research, 2026-11-05T19:56:22.607735+00:00:**45 Working,59 Blocked/failed,30 Still checking of134;485passing examples. NPTEL, Book Sprints and LibreTexts searches now verified; DIKSHA Library requires login.210research tests pass. See [connector status](research/free-content/registry/connector-status.csv) and [goal](research/free-content/registry/goal.json). Hourly task enabled; research only.
 
 **Free-knowledge connector research, 2026-11-05T19:22:07.398727+00:00:** 42 Working, 58 Blocked/failed, 34 Still checking of 134; 455 passing examples. Crossref, National Gallery of Art, bioRxiv/medRxiv, PMC OAI and FAO now have ten current query examples each. arXiv and Abhilekh Patal are deferred on recorded policy/access problems. Hourly task enabled. See [connector status](research/free-content/registry/connector-status.csv) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.

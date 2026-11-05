@@ -8,7 +8,7 @@
   "areas": [
     "C03"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -17,10 +17,11 @@
   ],
   "query": {
     "adapter": "unproven",
-    "endpoint": null,
+    "endpoint": "https://api.semanticscholar.org/graph/v1/paper/search",
     "cases": [],
     "historical_contract": "Graph `/graph/v1/paper/search?query=...&fields=...`; DOI, citations, `openAccessPdf`. [API](https://www.semanticscholar.org/product/api)",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "authentication": "Most Graph endpoints documented public without a key; shared unauthenticated limits apply; current requests429.",
+    "request_shape_verified": false
   },
   "licensing": "Host PDF when supplied; record page is not necessarily full text. Citation graph optional.",
   "documentation": [
@@ -31,11 +32,16 @@
     "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+    "runs/scholarly-api-specs-20261105eb/observations.jsonl",
+    "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+    "runs/semantic-query-scout-20261105ed/observations.jsonl",
+    "runs/semantic-paced-retry-20261105ee/observations.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T20:17:50.263491+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Pause this provider until shared anonymous capacity recovers or an already-authorized API key is available. No new account/key request or paid service. Continue other connectors; do not repeat the same failing batch every hour.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -164,17 +170,22 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Anonymous public paper-search requests return HTTP429 (rate limited), including one paced retry; exact provider-side cause unknown.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "deferred",
+        "blocker": "Anonymous public paper-search requests return HTTP429 (rate limited), including one paced retry; exact provider-side cause unknown.",
+        "next_action": "Pause this provider until shared anonymous capacity recovers or an already-authorized API key is available. No new account/key request or paid service. Continue other connectors; do not repeat the same failing batch every hour.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-api-specs-20261105eb/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "runs/semantic-query-scout-20261105ed/observations.jsonl",
+        "runs/semantic-paced-retry-20261105ee/observations.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Exact cause of provider-side rate throttling is not exposed."
       ]
     }
   },
@@ -211,5 +222,21 @@
       "text": "1. Verify **`OPENALEX_API_KEY`** in the backend. The replacement environment reports the variable configured; no authenticated OpenAlex request was made during this repository transfer. At the research date the free account included $1/day of API usage, roughly 1,000 ordinary search requests before caching. Disable paid overages unless deliberately budgeted.\n2. Choose a real **application contact email** for request identification and, if enabled, Unpaywall's required `email` parameter. No email was invented, registered, or sent during this work.\n3. Optional later: Semantic Scholar, BHL and Europeana keys; CORE upgrade/eligibility confirmation. Standard Ebooks feed access and children's/OER catalog feeds need provider-specific arrangements.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "Anonymous public paper-search requests return HTTP429 (rate limited), including one paced retry; exact provider-side cause unknown.",
+    "attempt": "Read current public API page and published Graph specification; queried quantum withlimit3 metadata fields; retried once after90.3seconds.",
+    "result": "Both real requests HTTP429; no paper results. Provider docs describe shared unauthenticated throttling; no Retry-After header recorded.",
+    "decision": "wait-for-rate-capacity-or-authorized-key",
+    "next_action": "Pause this provider until shared anonymous capacity recovers or an already-authorized API key is available. No new account/key request or paid service. Continue other connectors; do not repeat the same failing batch every hour.",
+    "retry_trigger": "Documented service recovery/quota change or authorized existing key; current unchanged anonymous limit is not a retry trigger.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+      "runs/scholarly-api-specs-20261105eb/observations.jsonl",
+      "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+      "runs/semantic-query-scout-20261105ed/observations.jsonl",
+      "runs/semantic-paced-retry-20261105ee/observations.jsonl"
+    ]
+  }
 }

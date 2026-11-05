@@ -12,7 +12,7 @@
     "I11",
     "I18"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -47,10 +47,12 @@
     "Per-item rights, reading/access, versions and machine-query limits require separate checks."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/industry-native-catalogs-20261105dv/observations.jsonl",
+    "runs/nqr-successor-review-20261105dy/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T04:35:25.129476+00:00",
-  "next_action": "Review NCVET/NQR query/export and rights documentation; keep qualifications, curricula and certifications distinct, with native qualification/version IDs.",
+  "last_reviewed_at": "2026-11-05T20:02:11.010672+00:00",
+  "next_action": "Wait for usable robots/access on the original or officially documented successor; no anonymous qualification query established on either.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -246,26 +248,34 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Explicit candidate/deferred triage; unresolved evidence remains open.",
+      "status": "partial",
+      "summary": "The robots policy URL returns access denied (HTTP403).",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Review NCVET/NQR query/export and rights documentation; keep qualifications, curricula and certifications distinct, with native qualification/version IDs.",
-        "qualification": false,
+        "decision": "deferred",
+        "blocker": "The robots policy URL returns access denied (HTTP403).",
+        "next_action": "Provider restores permitted access or publishes a separately documented public export; do not change hosts to evade the denial.",
         "activation_approved": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/industry-native-catalogs-20261105dv/observations.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "0276a4324afe977e17c0",
-          "observed_at": "2026-11-05T02:26:38.082603+00:00"
-        }
-      ],
-      "open_questions": []
+      "open_questions": [
+        "Search contract remains unverified; policy/access recovery needed before queries."
+      ]
     }
   },
-  "analysis_refs": []
+  "analysis_refs": [],
+  "recovery": {
+    "reason": "The robots policy URL returns access denied (HTTP403).",
+    "attempt": "Read existing primary-document evidence and attempted fresh policy preflight before catalog query. Followed the officially announced migration to kaushalverse.ncvet.gov.in/homepage/repository (captured NQR notice), not an inferred mirror.",
+    "result": "Current robots HTTP403,33bytes; catalog/search request skipped. Earlier homepage capture is historical reachability, not current search proof. The successor robots URL returnedHTTP200 HTML2439bytes, not a usable robots policy; repository request skipped.",
+    "decision": "wait-for-policy-access-recovery",
+    "next_action": "Wait for usable robots/access on the original or officially documented successor; no anonymous qualification query established on either.",
+    "retry_trigger": "Provider restores permitted access or publishes a separately documented public export; do not change hosts to evade the denial.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/industry-native-catalogs-20261105dv/observations.jsonl",
+      "runs/nqr-successor-review-20261105dy/observations.jsonl"
+    ]
+  }
 }
