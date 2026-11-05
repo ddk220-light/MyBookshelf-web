@@ -5,11 +5,36 @@ from unittest.mock import patch
 import zlib
 import json
 
-from capture_analysis import paragraphs, snapshot, source_mentions
+from capture_analysis import paragraphs, snapshot, source_mentions, dossier_gaps, evidence_run_audit
 from sphinx_inventory import local_search, parse_inventory, probe
 
 
 class CorpusTests(unittest.TestCase):
+    def test_complete_label_cannot_hide_questions_missing_files_or_historical_only_claims(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            registry = Path(tmp)
+            (registry / 'analysis').mkdir()
+            (registry / 'analysis/documents.jsonl').write_text('{"captured_at":"today","content":"old claim"}\n')
+            section = {'status': 'complete', 'summary': 'Claim', 'evidence': ['analysis/documents.jsonl'], 'open_questions': []}
+            source = {'dossier': {'query_contract': section}}
+            self.assertIn('query_contract', dossier_gaps(source, registry))
+            section['evidence'] = ['missing.jsonl']
+            self.assertIn('query_contract', dossier_gaps(source, registry))
+            (registry / 'current.jsonl').write_text('{"observed_at":"today","http":{"status":200}}\n')
+            section['evidence'] = ['current.jsonl']
+            section['open_questions'] = ['Is this actually supported?']
+            self.assertIn('query_contract', dossier_gaps(source, registry))
+
+    def test_missing_document_capture_hash_fails_the_evidence_audit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            registry = Path(tmp)
+            run = registry / 'runs/check'
+            run.mkdir(parents=True)
+            (run / 'queue.json').write_text('{"jobs":[{"id":"a"}]}')
+            (run / 'observations.jsonl').write_text('{"job_id":"a","outcome":"captured","http":{"status":200},"robots_evidence":{"status":404}}\n')
+            _, errors = evidence_run_audit(registry)
+            self.assertTrue(any('Missing capture hash' in e for e in errors))
+
     def test_snapshot_is_lossless_and_changes_identity_when_evidence_changes(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / 'review.md'
