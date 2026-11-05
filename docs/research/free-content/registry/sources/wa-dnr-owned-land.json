@@ -1,0 +1,956 @@
+{
+  "schema_version": 1,
+  "id": "wa-dnr-owned-land",
+  "name": "Washington DNR state-owned land parcel catalog",
+  "homepage": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6",
+  "aliases": [
+    "WA DNR Managed Land Parcels",
+    "DNR Ownership Parcels"
+  ],
+  "group": "G04",
+  "areas": [
+    "C18",
+    "C19",
+    "P04"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "state-government-property-catalog",
+  "origin_family": "washington-state-dnr-cadastre",
+  "operator": {
+    "name": "Washington State Department of Natural Resources",
+    "jurisdiction": "USA / Washington State"
+  },
+  "capabilities": [
+    "Published read-only county/native parcel-system-ID queries, restricted to ownership type1 and eleven nonpersonal metadata fields.",
+    "Native parcel-system ID, GlobalID and service OBJECTID remain distinct; no geometry or private owner/agent/editor/descriptive fields."
+  ],
+  "licensing": "Primary hosted metadata supplies DNR attribution and as-is/no-warranty terms. Explicit general redistribution grant and version-specific content rights remain unresolved; public query access alone does not establish reuse rights.",
+  "documentation": [
+    "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6",
+    "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6?f=pjson",
+    "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+    "https://www.arcgis.com/sharing/rest/content/items/f0419317aee24072846efb73e75b0755/info/metadata/metadata.xml?format=default&output=html"
+  ],
+  "evidence": [
+    "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+    "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+    "examples/wa-dnr-owned-land.scouting.jsonl",
+    "examples/wa-dnr-owned-land.jsonl",
+    "examples/wa-dnr-owned-land.benchmark.jsonl"
+  ],
+  "analysis_refs": [],
+  "limitations": [
+    "Type1 explicitly means Washington state-owned land managed byDNR. Other easement,leased,disposed,resource/permit/aquatic types excluded.",
+    "Metadata declaration is not independently certified current legal title or proof of public access permission.",
+    "No personal owner,timber owner,agent,editor,address,coordinate,description,county parcel-number orgeometry retained.",
+    "No India coverage; English code labels. Underlying record schema may evolve and datedFGDC2017metadata has fewer parcel types than current seven-code schema.",
+    "ArcGIS directoryLogin andeditable-field flags do not authorize mutations; onlyanonymousGETquery used."
+  ],
+  "last_reviewed_at": "2026-11-05T16:03:26.800844+00:00",
+  "next_action": "Complete primary metadata/content reuse rights, safe native record reader, current version/date interpretation and later-session refresh. Ten current examples establish narrow state-owned property query evidence; full source and USA/India area/cell closure remain open.",
+  "query": {
+    "adapter": "wa-owned-land",
+    "endpoint": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+    "authentication": "Anonymous layer/query forms andfivecountyrequests returned200; no token/account.",
+    "cost": "No payment/key; numeric quota/SLA not published. Researchserial>=3seconds,128KiBresponse,5records,pageoffset<=10.",
+    "supported_modes": [
+      "Government-owned type1 + exact county code",
+      "Government-owned type1 + nativePARCEL_SYST_ID",
+      "Stable native-ID order,bounded offset paging",
+      "Explicit empty predicate"
+    ],
+    "unsupported_modes": [
+      "Unrestricted full-text/name/owner searches",
+      "Private owner,timber-owner,agent/editor data",
+      "Geometry/addresses/deeds/legaldescriptions",
+      "Editing,append,applyEdits or other layers",
+      "Current legal-title certification",
+      "Cross-version persistentidentityguarantee"
+    ],
+    "cases": [
+      {
+        "id": "county-1",
+        "intent": "Exact county filter within government-ownedtype1; no currenttitlecertification.",
+        "expected_ids": [
+          "2822"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "params": {
+            "f": "json",
+            "where": "PARCEL_TYPE_CD = 1 AND COUNTY_JURISDICT_DESG_CD = 1",
+            "outFields": "OBJECTID,PARCEL_SYST_ID,PARCEL_TYPE_CD,GLOBALID,COUNTY_JURISDICT_DESG_CD,SURFACE_RIGHTS_FLG,MINERAL_RIGHTS_FLG,TIMBER_RIGHTS_FLG,SURFACE_TRUST_CD,EDIT_DATE,EDIT_STATUS",
+            "returnGeometry": "false",
+            "orderByFields": "PARCEL_SYST_ID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5
+          }
+        }
+      },
+      {
+        "id": "county-2",
+        "intent": "Exact county filter within government-ownedtype1; no currenttitlecertification.",
+        "expected_ids": [
+          "3747"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "params": {
+            "f": "json",
+            "where": "PARCEL_TYPE_CD = 1 AND COUNTY_JURISDICT_DESG_CD = 3",
+            "outFields": "OBJECTID,PARCEL_SYST_ID,PARCEL_TYPE_CD,GLOBALID,COUNTY_JURISDICT_DESG_CD,SURFACE_RIGHTS_FLG,MINERAL_RIGHTS_FLG,TIMBER_RIGHTS_FLG,SURFACE_TRUST_CD,EDIT_DATE,EDIT_STATUS",
+            "returnGeometry": "false",
+            "orderByFields": "PARCEL_SYST_ID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5
+          }
+        }
+      },
+      {
+        "id": "county-3",
+        "intent": "Exact county filter within government-ownedtype1; no currenttitlecertification.",
+        "expected_ids": [
+          "38"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "params": {
+            "f": "json",
+            "where": "PARCEL_TYPE_CD = 1 AND COUNTY_JURISDICT_DESG_CD = 17",
+            "outFields": "OBJECTID,PARCEL_SYST_ID,PARCEL_TYPE_CD,GLOBALID,COUNTY_JURISDICT_DESG_CD,SURFACE_RIGHTS_FLG,MINERAL_RIGHTS_FLG,TIMBER_RIGHTS_FLG,SURFACE_TRUST_CD,EDIT_DATE,EDIT_STATUS",
+            "returnGeometry": "false",
+            "orderByFields": "PARCEL_SYST_ID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5
+          }
+        }
+      },
+      {
+        "id": "county-4",
+        "intent": "Exact county filter within government-ownedtype1; no currenttitlecertification.",
+        "expected_ids": [
+          "106"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "params": {
+            "f": "json",
+            "where": "PARCEL_TYPE_CD = 1 AND COUNTY_JURISDICT_DESG_CD = 27",
+            "outFields": "OBJECTID,PARCEL_SYST_ID,PARCEL_TYPE_CD,GLOBALID,COUNTY_JURISDICT_DESG_CD,SURFACE_RIGHTS_FLG,MINERAL_RIGHTS_FLG,TIMBER_RIGHTS_FLG,SURFACE_TRUST_CD,EDIT_DATE,EDIT_STATUS",
+            "returnGeometry": "false",
+            "orderByFields": "PARCEL_SYST_ID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5
+          }
+        }
+      },
+      {
+        "id": "county-5",
+        "intent": "Exact county filter within government-ownedtype1; no currenttitlecertification.",
+        "expected_ids": [
+          "2581"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "params": {
+            "f": "json",
+            "where": "PARCEL_TYPE_CD = 1 AND COUNTY_JURISDICT_DESG_CD = 32",
+            "outFields": "OBJECTID,PARCEL_SYST_ID,PARCEL_TYPE_CD,GLOBALID,COUNTY_JURISDICT_DESG_CD,SURFACE_RIGHTS_FLG,MINERAL_RIGHTS_FLG,TIMBER_RIGHTS_FLG,SURFACE_TRUST_CD,EDIT_DATE,EDIT_STATUS",
+            "returnGeometry": "false",
+            "orderByFields": "PARCEL_SYST_ID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5
+          }
+        }
+      },
+      {
+        "id": "native-1",
+        "intent": "Retrieve a distinct known state-owned parcel bynativePARCEL_SYST_ID; exclude allpersonal fields.",
+        "expected_ids": [
+          "2974"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "params": {
+            "f": "json",
+            "where": "PARCEL_TYPE_CD = 1 AND PARCEL_SYST_ID = 2974",
+            "outFields": "OBJECTID,PARCEL_SYST_ID,PARCEL_TYPE_CD,GLOBALID,COUNTY_JURISDICT_DESG_CD,SURFACE_RIGHTS_FLG,MINERAL_RIGHTS_FLG,TIMBER_RIGHTS_FLG,SURFACE_TRUST_CD,EDIT_DATE,EDIT_STATUS",
+            "returnGeometry": "false",
+            "orderByFields": "PARCEL_SYST_ID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5
+          }
+        }
+      },
+      {
+        "id": "native-2",
+        "intent": "Retrieve a distinct known state-owned parcel bynativePARCEL_SYST_ID; exclude allpersonal fields.",
+        "expected_ids": [
+          "3748"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "params": {
+            "f": "json",
+            "where": "PARCEL_TYPE_CD = 1 AND PARCEL_SYST_ID = 3748",
+            "outFields": "OBJECTID,PARCEL_SYST_ID,PARCEL_TYPE_CD,GLOBALID,COUNTY_JURISDICT_DESG_CD,SURFACE_RIGHTS_FLG,MINERAL_RIGHTS_FLG,TIMBER_RIGHTS_FLG,SURFACE_TRUST_CD,EDIT_DATE,EDIT_STATUS",
+            "returnGeometry": "false",
+            "orderByFields": "PARCEL_SYST_ID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5
+          }
+        }
+      },
+      {
+        "id": "native-3",
+        "intent": "Retrieve a distinct known state-owned parcel bynativePARCEL_SYST_ID; exclude allpersonal fields.",
+        "expected_ids": [
+          "41"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "params": {
+            "f": "json",
+            "where": "PARCEL_TYPE_CD = 1 AND PARCEL_SYST_ID = 41",
+            "outFields": "OBJECTID,PARCEL_SYST_ID,PARCEL_TYPE_CD,GLOBALID,COUNTY_JURISDICT_DESG_CD,SURFACE_RIGHTS_FLG,MINERAL_RIGHTS_FLG,TIMBER_RIGHTS_FLG,SURFACE_TRUST_CD,EDIT_DATE,EDIT_STATUS",
+            "returnGeometry": "false",
+            "orderByFields": "PARCEL_SYST_ID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5
+          }
+        }
+      },
+      {
+        "id": "native-4",
+        "intent": "Retrieve a distinct known state-owned parcel bynativePARCEL_SYST_ID; exclude allpersonal fields.",
+        "expected_ids": [
+          "230"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "params": {
+            "f": "json",
+            "where": "PARCEL_TYPE_CD = 1 AND PARCEL_SYST_ID = 230",
+            "outFields": "OBJECTID,PARCEL_SYST_ID,PARCEL_TYPE_CD,GLOBALID,COUNTY_JURISDICT_DESG_CD,SURFACE_RIGHTS_FLG,MINERAL_RIGHTS_FLG,TIMBER_RIGHTS_FLG,SURFACE_TRUST_CD,EDIT_DATE,EDIT_STATUS",
+            "returnGeometry": "false",
+            "orderByFields": "PARCEL_SYST_ID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5
+          }
+        }
+      },
+      {
+        "id": "native-5",
+        "intent": "Retrieve a distinct known state-owned parcel bynativePARCEL_SYST_ID; exclude allpersonal fields.",
+        "expected_ids": [
+          "2582"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "params": {
+            "f": "json",
+            "where": "PARCEL_TYPE_CD = 1 AND PARCEL_SYST_ID = 2582",
+            "outFields": "OBJECTID,PARCEL_SYST_ID,PARCEL_TYPE_CD,GLOBALID,COUNTY_JURISDICT_DESG_CD,SURFACE_RIGHTS_FLG,MINERAL_RIGHTS_FLG,TIMBER_RIGHTS_FLG,SURFACE_TRUST_CD,EDIT_DATE,EDIT_STATUS",
+            "returnGeometry": "false",
+            "orderByFields": "PARCEL_SYST_ID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5
+          }
+        }
+      }
+    ],
+    "area_case_ids": {
+      "C18": [
+        "county-1",
+        "county-2",
+        "county-3",
+        "county-4",
+        "county-5",
+        "native-1",
+        "native-2",
+        "native-3",
+        "native-4",
+        "native-5"
+      ],
+      "C19": [
+        "county-1",
+        "county-2",
+        "county-3",
+        "county-4",
+        "county-5",
+        "native-1",
+        "native-2",
+        "native-3",
+        "native-4",
+        "native-5"
+      ],
+      "P04": [
+        "county-1",
+        "county-2",
+        "county-3",
+        "county-4",
+        "county-5",
+        "native-1",
+        "native-2",
+        "native-3",
+        "native-4",
+        "native-5"
+      ]
+    }
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "One WashingtonDNRcadastre origin; hostedFGDCmetadata,RESTlayer andZIPare representations,notadditionalorigins.",
+      "facts": {
+        "operator": {
+          "name": "Washington State Department of Natural Resources",
+          "jurisdiction": "USA / Washington State"
+        },
+        "native_identity": "PARCEL_SYST_ID,GLOBALID,OBJECTID pluslayer/snapshot; notcountyparcelnumber or humanowneridentity.",
+        "primary_item": "f0419317aee24072846efb73e75b0755 metadata links currentnative layer; serviceitema460b861622f4868b09c2a3bf8f0d420 distinct layer/serviceidentity."
+      },
+      "evidence": [
+        "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+        "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+        "examples/wa-dnr-owned-land.scouting.jsonl",
+        "examples/wa-dnr-owned-land.jsonl",
+        "examples/wa-dnr-owned-land.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "9dd56c831da9aa6a1bc1",
+          "observed_at": "2026-11-05T15:56:09.087109+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6",
+          "body_sha256": "75470b73a7db9e39b73d90270ba52aebe9b5d97be4955f7420a0cdcabc559a8b",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "eba9289b4323404a6d7b",
+          "observed_at": "2026-11-05T15:56:18.400124+00:00",
+          "url": "https://www.arcgis.com/sharing/rest/content/items/f0419317aee24072846efb73e75b0755/info/metadata/metadata.xml?format=default&output=html",
+          "body_sha256": "b38a089005c5720c6616524fd98cd60c32e75026a6d0e2216605e65e602a4072",
+          "policy_sha256": "d9da31493f06281ceebc4eaff54a0ba0cd4bc00f01217e6dbec7f084b263730d"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "8d772b2a28a649d2feb6",
+          "observed_at": "2026-11-05T15:58:24.324529+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6?f=pjson",
+          "body_sha256": "eb21e6d22e86911002c20e1f1017a2374073b3a862552af62270dc5284d826ec",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "d832a01b6669fb64e426",
+          "observed_at": "2026-11-05T15:58:27.983921+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "body_sha256": "cd4d2cb95a8f4fd0318976c4ff809ee2230abb87e09850f3f984785a8de6d2e3",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "a6c65db56e803e859423",
+          "observed_at": "2026-11-05T15:58:35.868260+00:00",
+          "url": "https://dnr.wa.gov/programs-and-services/forest-practices/review-applications-fpars/forest-practices-water-typing/gis-data",
+          "body_sha256": "14edfb6b1c79614dcdf34e12a3b365f0830fd021b2d721e1e5b4379f007bfab9",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "State-ownedland propertymetadata acrossWashington;fivecounty samplescurrent.",
+      "facts": {
+        "countries": [
+          "USA"
+        ],
+        "languages": [
+          "English metadata/code labels"
+        ],
+        "area_scope": {
+          "C18": "Governmentpublicpropertyrecords",
+          "C19": "Structuredgovernmentassetdata",
+          "P04": "Actualstate-ownedparcelrecords,notmerelysurveygrid/datasetlabels"
+        },
+        "unsupported": "No India,privateownership,mapgeometryorpublicaccesspermissionclaim.",
+        "current_samples": [
+          {
+            "county_code": 1,
+            "native_ids": [
+              "2822",
+              "2974",
+              "3057",
+              "3111",
+              "3129"
+            ]
+          },
+          {
+            "county_code": 3,
+            "native_ids": [
+              "3747",
+              "3748",
+              "3749",
+              "3750",
+              "3751"
+            ]
+          },
+          {
+            "county_code": 17,
+            "native_ids": [
+              "38",
+              "41",
+              "42",
+              "44",
+              "76"
+            ]
+          },
+          {
+            "county_code": 27,
+            "native_ids": [
+              "106",
+              "230",
+              "289",
+              "321",
+              "728"
+            ]
+          },
+          {
+            "county_code": 32,
+            "native_ids": [
+              "2581",
+              "2582",
+              "2583",
+              "2584",
+              "2585"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+        "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+        "examples/wa-dnr-owned-land.scouting.jsonl",
+        "examples/wa-dnr-owned-land.jsonl",
+        "examples/wa-dnr-owned-land.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "9dd56c831da9aa6a1bc1",
+          "observed_at": "2026-11-05T15:56:09.087109+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6",
+          "body_sha256": "75470b73a7db9e39b73d90270ba52aebe9b5d97be4955f7420a0cdcabc559a8b",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "eba9289b4323404a6d7b",
+          "observed_at": "2026-11-05T15:56:18.400124+00:00",
+          "url": "https://www.arcgis.com/sharing/rest/content/items/f0419317aee24072846efb73e75b0755/info/metadata/metadata.xml?format=default&output=html",
+          "body_sha256": "b38a089005c5720c6616524fd98cd60c32e75026a6d0e2216605e65e602a4072",
+          "policy_sha256": "d9da31493f06281ceebc4eaff54a0ba0cd4bc00f01217e6dbec7f084b263730d"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "8d772b2a28a649d2feb6",
+          "observed_at": "2026-11-05T15:58:24.324529+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6?f=pjson",
+          "body_sha256": "eb21e6d22e86911002c20e1f1017a2374073b3a862552af62270dc5284d826ec",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "d832a01b6669fb64e426",
+          "observed_at": "2026-11-05T15:58:27.983921+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "body_sha256": "cd4d2cb95a8f4fd0318976c4ff809ee2230abb87e09850f3f984785a8de6d2e3",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "a6c65db56e803e859423",
+          "observed_at": "2026-11-05T15:58:35.868260+00:00",
+          "url": "https://dnr.wa.gov/programs-and-services/forest-practices/review-applications-fpars/forest-practices-water-typing/gis-data",
+          "body_sha256": "14edfb6b1c79614dcdf34e12a3b365f0830fd021b2d721e1e5b4379f007bfab9",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        }
+      ],
+      "open_questions": [
+        "Statewide completeness/redactions andjurisdictionclosure notestablished."
+      ]
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Exactpublishedqueryshapeandstrictownershipprojection validatedagainstcurrentoutputs.",
+      "facts": {
+        "method": "GET",
+        "endpoint": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+        "fields": [
+          "OBJECTID",
+          "PARCEL_SYST_ID",
+          "PARCEL_TYPE_CD",
+          "GLOBALID",
+          "COUNTY_JURISDICT_DESG_CD",
+          "SURFACE_RIGHTS_FLG",
+          "MINERAL_RIGHTS_FLG",
+          "TIMBER_RIGHTS_FLG",
+          "SURFACE_TRUST_CD",
+          "EDIT_DATE",
+          "EDIT_STATUS"
+        ],
+        "where": "PARCEL_TYPE_CD = 1 AND COUNTY_JURISDICT_DESG_CD = integer OR separate exact PARCEL_SYST_ID predicate; OR operator is notaccepted byresearchadapter.",
+        "params": "f=json,returnGeometry=false,orderByFields=PARCEL_SYST_ID ASC,resultOffset0..10,resultRecordCount1..5",
+        "provider_limits": "MaxRecordCount2000,pagination/orderbysupported; researchlimit5.",
+        "mutations": "Never requested despite serveradvertisingeditablefields/append.",
+        "query_format": "JSON only;geoJSON/PBFnotused."
+      },
+      "evidence": [
+        "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+        "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+        "examples/wa-dnr-owned-land.scouting.jsonl",
+        "examples/wa-dnr-owned-land.jsonl",
+        "examples/wa-dnr-owned-land.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "9dd56c831da9aa6a1bc1",
+          "observed_at": "2026-11-05T15:56:09.087109+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6",
+          "body_sha256": "75470b73a7db9e39b73d90270ba52aebe9b5d97be4955f7420a0cdcabc559a8b",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "eba9289b4323404a6d7b",
+          "observed_at": "2026-11-05T15:56:18.400124+00:00",
+          "url": "https://www.arcgis.com/sharing/rest/content/items/f0419317aee24072846efb73e75b0755/info/metadata/metadata.xml?format=default&output=html",
+          "body_sha256": "b38a089005c5720c6616524fd98cd60c32e75026a6d0e2216605e65e602a4072",
+          "policy_sha256": "d9da31493f06281ceebc4eaff54a0ba0cd4bc00f01217e6dbec7f084b263730d"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "8d772b2a28a649d2feb6",
+          "observed_at": "2026-11-05T15:58:24.324529+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6?f=pjson",
+          "body_sha256": "eb21e6d22e86911002c20e1f1017a2374073b3a862552af62270dc5284d826ec",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "d832a01b6669fb64e426",
+          "observed_at": "2026-11-05T15:58:27.983921+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "body_sha256": "cd4d2cb95a8f4fd0318976c4ff809ee2230abb87e09850f3f984785a8de6d2e3",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "a6c65db56e803e859423",
+          "observed_at": "2026-11-05T15:58:35.868260+00:00",
+          "url": "https://dnr.wa.gov/programs-and-services/forest-practices/review-applications-fpars/forest-practices-water-typing/gis-data",
+          "body_sha256": "14edfb6b1c79614dcdf34e12a3b365f0830fd021b2d721e1e5b4379f007bfab9",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "PublicDNRas-is/no-warrantyterms andattributionobserved; no account/payment.",
+      "facts": {
+        "metadata": "DNRcopyright/attribution withbroadaccuracy/fitnessdisclaimer",
+        "content": "Explicit redistributionlicense not established from reviewedprimarymetadata.",
+        "cost": "Anonymousboundedqueries work; commercial/freequotas notpublished."
+      },
+      "evidence": [
+        "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+        "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+        "examples/wa-dnr-owned-land.scouting.jsonl",
+        "examples/wa-dnr-owned-land.jsonl",
+        "examples/wa-dnr-owned-land.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "9dd56c831da9aa6a1bc1",
+          "observed_at": "2026-11-05T15:56:09.087109+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6",
+          "body_sha256": "75470b73a7db9e39b73d90270ba52aebe9b5d97be4955f7420a0cdcabc559a8b",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "eba9289b4323404a6d7b",
+          "observed_at": "2026-11-05T15:56:18.400124+00:00",
+          "url": "https://www.arcgis.com/sharing/rest/content/items/f0419317aee24072846efb73e75b0755/info/metadata/metadata.xml?format=default&output=html",
+          "body_sha256": "b38a089005c5720c6616524fd98cd60c32e75026a6d0e2216605e65e602a4072",
+          "policy_sha256": "d9da31493f06281ceebc4eaff54a0ba0cd4bc00f01217e6dbec7f084b263730d"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "8d772b2a28a649d2feb6",
+          "observed_at": "2026-11-05T15:58:24.324529+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6?f=pjson",
+          "body_sha256": "eb21e6d22e86911002c20e1f1017a2374073b3a862552af62270dc5284d826ec",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "d832a01b6669fb64e426",
+          "observed_at": "2026-11-05T15:58:27.983921+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "body_sha256": "cd4d2cb95a8f4fd0318976c4ff809ee2230abb87e09850f3f984785a8de6d2e3",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "a6c65db56e803e859423",
+          "observed_at": "2026-11-05T15:58:35.868260+00:00",
+          "url": "https://dnr.wa.gov/programs-and-services/forest-practices/review-applications-fpars/forest-practices-water-typing/gis-data",
+          "body_sha256": "14edfb6b1c79614dcdf34e12a3b365f0830fd021b2d721e1e5b4379f007bfab9",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        }
+      ],
+      "open_questions": [
+        "Explicit metadata/content reusegrant andscope needprimaryreconciliation."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "RESTlayer/query documentation opens anonymously; actual fullparcel/native map reader untested.",
+      "facts": {
+        "observed": "NativeJSONresponsecontainscomplete requestednonpersonal projection;notfullparcel/legalfile",
+        "login_required_for_query": false,
+        "login_link": "ArcGISadminloginexcludedfromresearch",
+        "full_item": "No privateowner orlegaldescriptionfetch;safeuserreaderroute stillrequiresreview."
+      },
+      "evidence": [
+        "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+        "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+        "examples/wa-dnr-owned-land.scouting.jsonl",
+        "examples/wa-dnr-owned-land.jsonl",
+        "examples/wa-dnr-owned-land.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "9dd56c831da9aa6a1bc1",
+          "observed_at": "2026-11-05T15:56:09.087109+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6",
+          "body_sha256": "75470b73a7db9e39b73d90270ba52aebe9b5d97be4955f7420a0cdcabc559a8b",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "eba9289b4323404a6d7b",
+          "observed_at": "2026-11-05T15:56:18.400124+00:00",
+          "url": "https://www.arcgis.com/sharing/rest/content/items/f0419317aee24072846efb73e75b0755/info/metadata/metadata.xml?format=default&output=html",
+          "body_sha256": "b38a089005c5720c6616524fd98cd60c32e75026a6d0e2216605e65e602a4072",
+          "policy_sha256": "d9da31493f06281ceebc4eaff54a0ba0cd4bc00f01217e6dbec7f084b263730d"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "8d772b2a28a649d2feb6",
+          "observed_at": "2026-11-05T15:58:24.324529+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6?f=pjson",
+          "body_sha256": "eb21e6d22e86911002c20e1f1017a2374073b3a862552af62270dc5284d826ec",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "d832a01b6669fb64e426",
+          "observed_at": "2026-11-05T15:58:27.983921+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "body_sha256": "cd4d2cb95a8f4fd0318976c4ff809ee2230abb87e09850f3f984785a8de6d2e3",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "a6c65db56e803e859423",
+          "observed_at": "2026-11-05T15:58:35.868260+00:00",
+          "url": "https://dnr.wa.gov/programs-and-services/forest-practices/review-applications-fpars/forest-practices-water-typing/gis-data",
+          "body_sha256": "14edfb6b1c79614dcdf34e12a3b365f0830fd021b2d721e1e5b4379f007bfab9",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        }
+      ],
+      "open_questions": [
+        "Publicrecordreader/mobilekeyboardandrightsnotyettested."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Fivecountyqueries honorstateownershipandcountyfilters; nativeIDlookups/boundaries queued.",
+      "facts": {
+        "ownership_meaning": "Primarydescription defines type1 Washingtonstate-owned; type3 canbeprivatelyownedlandsubjecttoeasement andisexplicitlyexcluded.",
+        "unknown_values": "Nullrights/datepreserved,notoverwrittenfalse",
+        "identity": "Namesnotused;generateddisplaytitleexplicitlylabelled",
+        "primary_schema_drift": "FGDCmetadata dated20170314describes3types; currentlayerlists7. Guardonlyobservedtype1.",
+        "native_query_results": [
+          {
+            "case_id": "county-1",
+            "native_ids": [
+              "2822"
+            ],
+            "observed_at": "2026-11-05T16:00:24.777606+00:00"
+          },
+          {
+            "case_id": "county-2",
+            "native_ids": [
+              "3747"
+            ],
+            "observed_at": "2026-11-05T16:00:28.604397+00:00"
+          },
+          {
+            "case_id": "county-3",
+            "native_ids": [
+              "38"
+            ],
+            "observed_at": "2026-11-05T16:00:31.883404+00:00"
+          },
+          {
+            "case_id": "county-4",
+            "native_ids": [
+              "106"
+            ],
+            "observed_at": "2026-11-05T16:00:35.203160+00:00"
+          },
+          {
+            "case_id": "county-5",
+            "native_ids": [
+              "2581"
+            ],
+            "observed_at": "2026-11-05T16:00:38.499275+00:00"
+          },
+          {
+            "case_id": "native-1",
+            "native_ids": [
+              "2974"
+            ],
+            "observed_at": "2026-11-05T16:03:12.597511+00:00"
+          },
+          {
+            "case_id": "native-2",
+            "native_ids": [
+              "3748"
+            ],
+            "observed_at": "2026-11-05T16:03:16.652238+00:00"
+          },
+          {
+            "case_id": "native-3",
+            "native_ids": [
+              "41"
+            ],
+            "observed_at": "2026-11-05T16:03:20.264713+00:00"
+          },
+          {
+            "case_id": "native-4",
+            "native_ids": [
+              "230"
+            ],
+            "observed_at": "2026-11-05T16:03:23.533953+00:00"
+          },
+          {
+            "case_id": "native-5",
+            "native_ids": [
+              "2582"
+            ],
+            "observed_at": "2026-11-05T16:03:26.800844+00:00"
+          }
+        ],
+        "negative_tests": "Explicitempty andmissingnative2147483647 both200/features[]; county1secondpage hasfiveIDs3337,3338,3339,3340,3341,disjointfromfirstpage."
+      },
+      "evidence": [
+        "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+        "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+        "examples/wa-dnr-owned-land.scouting.jsonl",
+        "examples/wa-dnr-owned-land.jsonl",
+        "examples/wa-dnr-owned-land.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "9dd56c831da9aa6a1bc1",
+          "observed_at": "2026-11-05T15:56:09.087109+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6",
+          "body_sha256": "75470b73a7db9e39b73d90270ba52aebe9b5d97be4955f7420a0cdcabc559a8b",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "eba9289b4323404a6d7b",
+          "observed_at": "2026-11-05T15:56:18.400124+00:00",
+          "url": "https://www.arcgis.com/sharing/rest/content/items/f0419317aee24072846efb73e75b0755/info/metadata/metadata.xml?format=default&output=html",
+          "body_sha256": "b38a089005c5720c6616524fd98cd60c32e75026a6d0e2216605e65e602a4072",
+          "policy_sha256": "d9da31493f06281ceebc4eaff54a0ba0cd4bc00f01217e6dbec7f084b263730d"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "8d772b2a28a649d2feb6",
+          "observed_at": "2026-11-05T15:58:24.324529+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6?f=pjson",
+          "body_sha256": "eb21e6d22e86911002c20e1f1017a2374073b3a862552af62270dc5284d826ec",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "d832a01b6669fb64e426",
+          "observed_at": "2026-11-05T15:58:27.983921+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "body_sha256": "cd4d2cb95a8f4fd0318976c4ff809ee2230abb87e09850f3f984785a8de6d2e3",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "a6c65db56e803e859423",
+          "observed_at": "2026-11-05T15:58:35.868260+00:00",
+          "url": "https://dnr.wa.gov/programs-and-services/forest-practices/review-applications-fpars/forest-practices-water-typing/gis-data",
+          "body_sha256": "14edfb6b1c79614dcdf34e12a3b365f0830fd021b2d721e1e5b4379f007bfab9",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        }
+      ],
+      "open_questions": [
+        "Broader state/county recall and title/current-version interpretation; later-session change/withdrawal behavior."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Strictread-onlycollectionwithgloballease,pacing,bounds andstoprules.",
+      "facts": {
+        "request_pacing": "Atleast3secondsorrobotsrequirements",
+        "response_bound": "128KiB and5rows",
+        "fail_closed": "Unexpectedfield,geometry,ownershiptype,wrongfilter,identity,unsortedpage,HTTPfailureorpolicydenial rejects andomitsresponsevalues.",
+        "provider_rate": "No numericSLA/ratepublished; do notassumeunlimited."
+      },
+      "evidence": [
+        "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+        "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+        "examples/wa-dnr-owned-land.scouting.jsonl",
+        "examples/wa-dnr-owned-land.jsonl",
+        "examples/wa-dnr-owned-land.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "9dd56c831da9aa6a1bc1",
+          "observed_at": "2026-11-05T15:56:09.087109+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6",
+          "body_sha256": "75470b73a7db9e39b73d90270ba52aebe9b5d97be4955f7420a0cdcabc559a8b",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "eba9289b4323404a6d7b",
+          "observed_at": "2026-11-05T15:56:18.400124+00:00",
+          "url": "https://www.arcgis.com/sharing/rest/content/items/f0419317aee24072846efb73e75b0755/info/metadata/metadata.xml?format=default&output=html",
+          "body_sha256": "b38a089005c5720c6616524fd98cd60c32e75026a6d0e2216605e65e602a4072",
+          "policy_sha256": "d9da31493f06281ceebc4eaff54a0ba0cd4bc00f01217e6dbec7f084b263730d"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "8d772b2a28a649d2feb6",
+          "observed_at": "2026-11-05T15:58:24.324529+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6?f=pjson",
+          "body_sha256": "eb21e6d22e86911002c20e1f1017a2374073b3a862552af62270dc5284d826ec",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "d832a01b6669fb64e426",
+          "observed_at": "2026-11-05T15:58:27.983921+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "body_sha256": "cd4d2cb95a8f4fd0318976c4ff809ee2230abb87e09850f3f984785a8de6d2e3",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "a6c65db56e803e859423",
+          "observed_at": "2026-11-05T15:58:35.868260+00:00",
+          "url": "https://dnr.wa.gov/programs-and-services/forest-practices/review-applications-fpars/forest-practices-water-typing/gis-data",
+          "body_sha256": "14edfb6b1c79614dcdf34e12a3b365f0830fd021b2d721e1e5b4379f007bfab9",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        }
+      ],
+      "open_questions": [
+        "Later-session refresh/versionchange,stale/removedrecords andnon-SLAreliability needevidence."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain ten current distinct queries for one Washington government-owned property catalog; full qualification open.",
+      "facts": {
+        "decision": "ten-query-examples-verified",
+        "activation_approved": false,
+        "owner_action_required": false,
+        "next_action": "Complete primary metadata/content reuse rights, safe native record reader, current version/date interpretation and later-session refresh. Ten current examples establish narrow state-owned property query evidence; full source and USA/India area/cell closure remain open.",
+        "revisit_trigger": "Independentremainingdossiercheckorprimaryschema/policychange;notblockedproviderretries."
+      },
+      "evidence": [
+        "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+        "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+        "examples/wa-dnr-owned-land.scouting.jsonl",
+        "examples/wa-dnr-owned-land.jsonl",
+        "examples/wa-dnr-owned-land.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "9dd56c831da9aa6a1bc1",
+          "observed_at": "2026-11-05T15:56:09.087109+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6",
+          "body_sha256": "75470b73a7db9e39b73d90270ba52aebe9b5d97be4955f7420a0cdcabc559a8b",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/state-owned-land-contract-20261105ch/observations.jsonl",
+          "job_id": "eba9289b4323404a6d7b",
+          "observed_at": "2026-11-05T15:56:18.400124+00:00",
+          "url": "https://www.arcgis.com/sharing/rest/content/items/f0419317aee24072846efb73e75b0755/info/metadata/metadata.xml?format=default&output=html",
+          "body_sha256": "b38a089005c5720c6616524fd98cd60c32e75026a6d0e2216605e65e602a4072",
+          "policy_sha256": "d9da31493f06281ceebc4eaff54a0ba0cd4bc00f01217e6dbec7f084b263730d"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "8d772b2a28a649d2feb6",
+          "observed_at": "2026-11-05T15:58:24.324529+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6?f=pjson",
+          "body_sha256": "eb21e6d22e86911002c20e1f1017a2374073b3a862552af62270dc5284d826ec",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "d832a01b6669fb64e426",
+          "observed_at": "2026-11-05T15:58:27.983921+00:00",
+          "url": "https://gis.dnr.wa.gov/site3/rest/services/Public_Boundaries/WADNR_PUBLIC_Cadastre_OpenData/FeatureServer/6/query",
+          "body_sha256": "cd4d2cb95a8f4fd0318976c4ff809ee2230abb87e09850f3f984785a8de6d2e3",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/wa-owned-query-contract-20261105ci/observations.jsonl",
+          "job_id": "a6c65db56e803e859423",
+          "observed_at": "2026-11-05T15:58:35.868260+00:00",
+          "url": "https://dnr.wa.gov/programs-and-services/forest-practices/review-applications-fpars/forest-practices-water-typing/gis-data",
+          "body_sha256": "14edfb6b1c79614dcdf34e12a3b365f0830fd021b2d721e1e5b4379f007bfab9",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        }
+      ],
+      "open_questions": []
+    }
+  }
+}

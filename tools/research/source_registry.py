@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships'):
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -328,6 +328,9 @@ def probe(source_id, case_ids=None):
                 raise ValueError('Select map cases explicitly; mixed LOC batches cannot bypass the map policy gate')
             from loc_maps import probe as probe_maps
             return probe_maps(source, maps)
+    if source['query']['adapter'] == 'wa-owned-land':
+        from wa_owned_land import probe as probe_wa
+        return probe_wa(source, case_ids)
     if source['query']['adapter'] == 'plss-townships':
         from plss_catalog import probe as probe_plss
         return probe_plss(source, case_ids)

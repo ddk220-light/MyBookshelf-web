@@ -11,7 +11,7 @@
   ],
   "state": "ten-query-examples-verified",
   "enabled": false,
-  "full_qualification_complete": false,
+  "full_qualification_complete": true,
   "record_kind": "public-regulation-document-catalog",
   "operator": {
     "name": "Office of the Federal Register/NARA and US Government Publishing Office",
@@ -42,16 +42,19 @@
     "runs/federal-remaining-readers-20261105bx/observations.jsonl",
     "examples/federal-register.lifecycle.jsonl",
     "examples/federal-register.refresh.jsonl",
-    "docs/research/free-content/evidence/2026-11-05-federal-lifecycle/reader-observations.jsonl"
+    "docs/research/free-content/evidence/2026-11-05-federal-lifecycle/reader-observations.jsonl",
+    "docs/research/free-content/evidence/2026-11-05-federal-access/reader-observations.jsonl"
   ],
   "limitations": [
     "One FR origin represented in FederalRegister.gov and GovInfo official editions; not two independent copies of the same legal publication.",
     "Informational HTML/XML is not the official edition or independent proof a rule is currently in force.",
     "Research parser deliberately supports the tested modern four-digit document-number family plus C-number correction prefixes; legacy two-digit IDs remain outside this adapter.",
-    "USA federal/English subset; India and other legal jurisdictions not covered."
+    "USA federal/English subset; India and other legal jurisdictions not covered.",
+    "Native correction-table expansion is outside keyboard Tab order; modal Escape returns BODY, header semantics and hidden skip-link limitations remain. Pointer/touch opening plus horizontal wheel scrolling and official PDF are observed alternatives, not full accessibility certification.",
+    "Official PDF page extracts can include adjacent regulations and text extraction can corrupt chemical notation; preserve native IDs/page boundaries and official visual rendering."
   ],
-  "last_reviewed_at": "2026-11-05T15:03:30.226790+00:00",
-  "next_action": "Resolve or explicitly qualify the remaining mobile correction-table expansion/keyboard and official-edition reader limitations. Seven other sections complete; no full qualification credit yet.",
+  "last_reviewed_at": "2026-11-05T15:52:26.741346+00:00",
+  "next_action": "Maintain scoped2024 publication-metadata qualification; monitor published API/policy/correction changes. Preserve documented native-reader accessibility limitations and distinguish official PDF from informational HTML. No activation approval or current-law claim.",
   "analysis_refs": [],
   "dossier": {
     "identity_and_duplicates": {
@@ -699,8 +702,8 @@
       "open_questions": []
     },
     "reader_access": {
-      "status": "partial",
-      "summary": "Two native HTML rule pages and one complete small official PDF are accessible anonymously. Desktop/mobile browser observations and the mobile layout limitation are preserved.",
+      "status": "complete",
+      "summary": "Anonymous HTML and official PDF access verified for the scoped 2024 publication catalog. Native table touch/pointer expansion and horizontal wheel scrolling work; keyboard-only expansion, header semantics and focus restoration have recorded limitations. Completion means characterized scoped access, not universal accessibility conformance.",
       "facts": {
         "reader_observations": [
           {
@@ -729,7 +732,7 @@
         "network_vantage": "Managed cloud, physical country unverified.",
         "login_required_observed": false,
         "later_session_readers": "Four fresh WebKit contexts: FDA desktop, FSIS mobile, correction mobile, HHS withdrawal desktop; native ID visible, no visible password fields. Four screenshots visually reviewed.",
-        "mobile_overflow": "Document width391 at viewport390 for FSIS/correction; desktop1280 fits. Decorative5000px extender is clipped and does not imply5000px document width. Correction tables exceed mobile content width; focused table scroll/keyboard diagnosis still open.",
+        "mobile_overflow": "Document391px at390px viewport; expanded native table has horizontal auto overflow. Touch opens it; wheel gesture reveals rightmost Other column. Keyboard-only expansion remains unsupported in observed native control.",
         "keyboard": "First ten stops sampled: desktop starts Home/Sections navigation; mobile Toggle Navigation Menu/Home. This is not proof of screen-reader usability.",
         "remaining_destinations": "Eight remaining native HTML URLs return200, native title/document metadata visible. Three long responses hit512KiB capture bound; never claim those are complete retained full texts.",
         "accessibility_policy": "Provider says designed using Section508/W3C guidelines; this is a provider statement, not independent conformance certification.",
@@ -737,9 +740,36 @@
           "native_id": "C1-2024-01530",
           "result": "First visible correction table453.84px in280px wrapper with overflow-x:hidden and tabIndex-1. No auto/scroll ancestor found. Cells appear in the accessibility tree but header row is ordinary cells, not header semantics.",
           "skip_link": "Skip to Content exists but display:none, zero rectangle; not in sampled keyboard sequence.",
-          "visual_review": "Mobile correction-table screenshot shows clipped right-hand columns and an expand icon. Icon activation/keyboard semantics and official-PDF alternative remain to be tested.",
+          "visual_review": "Initial clipping preserved; follow-up touch expansion and horizontal wheel scrolling expose the full header. Keyboard Tab skips span control; official two-page correction PDF also verified.",
           "limitation": "DOM scroll test was diagnostic, not a user gesture or screen-reader test."
-        }
+        },
+        "table_expander": {
+          "native_id": "C1-2024-01530",
+          "control": "span.expand-table-link, no button role or tabindex; preceding CFR link Tab moves directly to the following CFR link in desktop/mobile WebKit.",
+          "touch_and_pointer": "Both open native modal; no account/password needed.",
+          "horizontal_gesture": "At390px viewport, actual Playwright mouse.wheel(600,0) moved native scroll pane125px; last Other column right359.34px lies within pane right369.5px. Touch activation tested; finger-swipe scrolling not independently tested.",
+          "closing": "Escape closes modal in both viewports; focus returns BODY rather than invoking control.",
+          "known_accessibility_barriers": [
+            "Expansion icon outside keyboard tab sequence",
+            "Native table header cells are td, not th",
+            "Skip-to-content link hidden in sampled layout",
+            "Modal close icon is a span; Escape works",
+            "No claim of accessible chemical notation or screen-reader conformance"
+          ],
+          "screenshots": [
+            "evidence/2026-11-05-federal-access/mobile-correction-expanded-interaction.png",
+            "evidence/2026-11-05-federal-access/mobile-correction-expanded-horizontal-gesture.png",
+            "evidence/2026-11-05-federal-access/desktop-correction-expanded-interaction.png"
+          ]
+        },
+        "official_correction_pdf": {
+          "path": "evidence/2026-11-05-federal-access/C1-2024-01530-official.pdf",
+          "access": "Anonymous HTTP200, complete bounded PDF; two pages rendered and visually reviewed.",
+          "identity": "Printed7624–7625; footer FR Doc.C1–2024–01530. Prose parent2024–1530 omits leading zero; canonical API parent2024-01530 retained.",
+          "boundaries": "First page begins with preceding2024–02085; second page continues after correction footer with Chlorpyrifos; Reinstatement of Tolerances. PDF pages are not pure single-record text.",
+          "text_extraction": "Layout extraction retains content but chemical superscripts/minus glyphs can degrade (e.g. Cl¥); use visual official PDF for those tables, not unreviewed extracted plain text."
+        },
+        "scope_limits": "Desktop/mobile browser, DOM/keyboard/touch/pointer observations and two complete short official PDFs. No full accessibility certification, assistive-device test, all-country availability, current legal effect or third-party-standard access claim."
       },
       "evidence": [
         "runs/law-media-contract-20261105al/observations.jsonl",
@@ -755,7 +785,8 @@
         "runs/federal-remaining-readers-20261105bx/observations.jsonl",
         "examples/federal-register.lifecycle.jsonl",
         "examples/federal-register.refresh.jsonl",
-        "docs/research/free-content/evidence/2026-11-05-federal-lifecycle/reader-observations.jsonl"
+        "docs/research/free-content/evidence/2026-11-05-federal-lifecycle/reader-observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-federal-access/reader-observations.jsonl"
       ],
       "observation_refs": [
         {
@@ -869,12 +900,44 @@
           "url": "https://www.federalregister.gov/documents/2024/12/11/2024-28802/hazardous-waste-generator-improvements-rule-the-hazardous-waste-pharmaceuticals-rule-and-the",
           "body_sha256": "499ce486f5de739810390c1aa37e2c9aeb421d2eaf8d83aa4a73a9cd10a351ff",
           "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "docs/research/free-content/evidence/2026-11-05-federal-access/reader-observations.jsonl",
+          "observed_at": "2026-11-05T15:44:04.012Z",
+          "url": "https://www.federalregister.gov/documents/2024/02/05/C1-2024-01530/expedited-approval-of-alternative-test-procedures-for-the-analysis-of-contaminants-under-the-safe",
+          "label": "mobile-correction-expanded",
+          "body_sha256": "6af82f1eec3f85ea43684313bd499d5832192508f265625f7f87ba6fcfed0e2a"
+        },
+        {
+          "path": "docs/research/free-content/evidence/2026-11-05-federal-access/reader-observations.jsonl",
+          "observed_at": "2026-11-05T15:44:12.341Z",
+          "url": "https://www.federalregister.gov/documents/2024/02/05/C1-2024-01530/expedited-approval-of-alternative-test-procedures-for-the-analysis-of-contaminants-under-the-safe",
+          "label": "desktop-correction-expanded",
+          "body_sha256": "c92eadd61201f0e0b90a06eba740652d2de0a278b41d433a785a329d8acbd030"
+        },
+        {
+          "path": "docs/research/free-content/evidence/2026-11-05-federal-access/reader-observations.jsonl",
+          "observed_at": "2026-11-05T15:49:06.899Z",
+          "url": "https://www.federalregister.gov/documents/2024/02/05/C1-2024-01530/expedited-approval-of-alternative-test-procedures-for-the-analysis-of-contaminants-under-the-safe",
+          "label": "mobile-correction-expanded-interaction",
+          "body_sha256": "d82c567ea81953c57f5fe63880eb6c214ae340148f02c58bfd5489f66481cb1c"
+        },
+        {
+          "path": "docs/research/free-content/evidence/2026-11-05-federal-access/reader-observations.jsonl",
+          "observed_at": "2026-11-05T15:49:14.682Z",
+          "url": "https://www.federalregister.gov/documents/2024/02/05/C1-2024-01530/expedited-approval-of-alternative-test-procedures-for-the-analysis-of-contaminants-under-the-safe",
+          "label": "desktop-correction-expanded-interaction",
+          "body_sha256": "e4cf48b940840d2ae70773bf6879321de8b64e3591133e71113f8107690afa06"
+        },
+        {
+          "path": "docs/research/free-content/evidence/2026-11-05-federal-access/reader-observations.jsonl",
+          "observed_at": "2026-11-05T15:51:07.168Z",
+          "url": "https://www.federalregister.gov/documents/2024/02/05/C1-2024-01530/expedited-approval-of-alternative-test-procedures-for-the-analysis-of-contaminants-under-the-safe",
+          "label": "mobile-correction-expanded-horizontal-gesture",
+          "body_sha256": "61c8ec6e3932dbbe9da6b5816f7e2a096e261945453b6334bb91786dafff4b36"
         }
       ],
-      "open_questions": [
-        "Test native table expansion control by keyboard/touch and official PDF alternative; mobile wrapper clips right-hand columns and headers lack table-header semantics.",
-        "Characterize assistive-access limitations without claiming screen-reader or full WCAG conformance."
-      ]
+      "open_questions": []
     },
     "quality_and_relevance": {
       "status": "complete",
@@ -1201,13 +1264,14 @@
     },
     "decision_and_followup": {
       "status": "complete",
-      "summary": "Retain ten current-query examples for one scoped regulatory catalog, with full qualification still open.",
+      "summary": "Retain one complete, narrowly scoped2024 Federal Register publication catalog dossier with ten current distinct examples and explicit reader/current-law limitations. Research qualification does not approve production activation.",
       "facts": {
         "decision": "ten-query-examples-verified",
         "activation_approved": false,
         "owner_action_required": false,
-        "next_action": "Finish focused mobile correction-table/keyboard access characterization; other seven dossier sections now have evidence-backed scoped analysis. Preserve current-law, multilingual and incorporated-standards exclusions.",
-        "revisit_trigger": "Published API/policy change, source corrections or a specific remaining qualification check; no repeated access-denied requests."
+        "next_action": "Maintain scoped2024 publication-metadata qualification; monitor published API/policy/correction changes. Preserve documented native-reader accessibility limitations and distinguish official PDF from informational HTML. No activation approval or current-law claim.",
+        "revisit_trigger": "Published API/policy change, source corrections or a specific remaining qualification check; no repeated access-denied requests.",
+        "qualification_scope": "2024 English final-rule publication metadata, modern document IDs/corrections, anonymous informational HTML and official PDF access; documented keyboard-only table and assistive-access limitations."
       },
       "evidence": [
         "runs/law-media-contract-20261105al/observations.jsonl",
@@ -1223,7 +1287,8 @@
         "runs/federal-remaining-readers-20261105bx/observations.jsonl",
         "examples/federal-register.lifecycle.jsonl",
         "examples/federal-register.refresh.jsonl",
-        "docs/research/free-content/evidence/2026-11-05-federal-lifecycle/reader-observations.jsonl"
+        "docs/research/free-content/evidence/2026-11-05-federal-lifecycle/reader-observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-federal-access/reader-observations.jsonl"
       ],
       "observation_refs": [
         {
