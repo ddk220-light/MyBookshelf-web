@@ -66,6 +66,8 @@ The earlier live simplification was released through PR #160, main `82c6559`;
 [#159](https://github.com/ddk220-light/MyBookshelf-web/issues/159) records that
 release. Older Redis-dependent descriptions below are historical.
 
+**Cross-source knowledge search, 2026-11-05:** the owner authorized implementation and production release in the separate `feat/free-knowledge-search` worktree. [Release design and verification](research/free-content/KNOWLEDGE_RELEASE.md) records the new All knowledge view, ten additional supported integrations, independent source paging/errors, policy exclusions and hosted release state. The research registry completion goal continues separately; no candidate count is treated as proof of production readiness.
+
 **Current free-content direction, 2026-11-03:** the owner requested a simpler
 free live implementation with no datastore until a specific need is proven.
 Use [the active plan](research/free-content/SIMPLE_LIVE_PLAN.md) / #156 on
@@ -74,22 +76,23 @@ Replace Redis/federated sessions with one live source and signed provider paging
 retain provider cost/access rules. Older Redis release gates below are superseded.
 Do not provision storage or change existing account resources/security.
 
-Updated 2026-11-03. Active repository:
+Updated 2026-11-05. Active repository:
 **https://github.com/ddk220-light/MyBookshelf-web**, default branch `main`.
 The owner has chosen to do all future web work in this repository. Build, test,
 plan and implement here directly. Do not depend on the previous private checkout
 or copy its Git history/native applications into this repository.
 
-**Current account rollout:** the owner authorized production completion. Source
-`7ab9d89` is deployed at `https://mybookshelf.cloud`; account entry remains disabled
-while production Resend setup and live release checks are unfinished. Dedicated
-production Neon/private deletion storage, migrations, roles and a hosted logical
-restore drill are now verified. The active repair branch is
-`codex/account-production-health-monitor` (S20-C). The merged signup repair is
-PR #151. Read the
-[current production record](accounts/PRODUCTION_ROLLOUT.md) before the older dated
-release observations below. Project tasks #147–150 stay open until real production
-activation and workflow checks pass.
+**Current account rollout, 2026-11-05:** email accounts are enabled at
+`https://mybookshelf.cloud`. Real received-mail signup/verification/recovery,
+cross-device shelf/library sync, history consent, profile/email/password changes,
+export, session revocation and native-worker deletion cleanup have been exercised.
+Release acceptance found and repaired startup-verification, aged-session settings
+and deletion-confirmation defects (#163/#172/#175/#176). The existing Vercel project
+now connects to `MyBookshelf-web/main`. Google/Apple remain disabled by owner choice.
+Read the [release acceptance](accounts/RELEASE_ACCEPTANCE.md) and
+[current production record](accounts/PRODUCTION_ROLLOUT.md). Actual Neon history/
+snapshot settings and a second operator's restore exercise remain open; the full
+project is not declared complete. Preserve unrelated free-content work.
 
 ## What is implemented
 

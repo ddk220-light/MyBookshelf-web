@@ -1,131 +1,102 @@
 # Account production rollout
 
-Updated 2026-11-01 UTC. The owner instructed finishing the working account
-feature in production and testing the full workflow. That instruction authorizes
-the rollout; it does not turn unfinished checks into passing evidence.
+Updated 2026-11-05 UTC. **Email accounts are enabled and actual production
+workflows have been verified at https://mybookshelf.cloud.** The owner authorized
+production completion and deployment after clean checks. Google/Apple remain
+disabled; Resend is production only. See [release acceptance](RELEASE_ACCEPTANCE.md)
+for source/deployment, full test results, real workflow observations, screenshots,
+privacy limits and remaining operational exits.
 
-**L01 is in progress. Production account creation is not yet enabled or proved.**
-Track the remaining work in [Project 3](https://github.com/users/ddk220-light/projects/3):
+The whole project remains open for actual Neon history/snapshot retention evidence
+and an independent operator's restore exercise. Follow
+[Project 3](https://github.com/users/ddk220-light/projects/3), especially
 [P01-C #147](https://github.com/ddk220-light/MyBookshelf-web/issues/147),
-[P02-B #148](https://github.com/ddk220-light/MyBookshelf-web/issues/148),
-[S20-B #149](https://github.com/ddk220-light/MyBookshelf-web/issues/149), and
-[L01-B #150](https://github.com/ddk220-light/MyBookshelf-web/issues/150).
+[S20-B #149](https://github.com/ddk220-light/MyBookshelf-web/issues/149),
+[S20-V #133](https://github.com/ddk220-light/MyBookshelf-web/issues/133) and
+[T06 #47](https://github.com/ddk220-light/MyBookshelf-web/issues/47).
+Production mail setup [#148](https://github.com/ddk220-light/MyBookshelf-web/issues/148)
+and health monitoring [#152](https://github.com/ddk220-light/MyBookshelf-web/issues/152)
+are complete. [L01-B #150](https://github.com/ddk220-light/MyBookshelf-web/issues/150)
+records the full activation workflow.
 
-## Actual production setup
+## Production configuration
 
-- Project `prj_AhxvPVIgw95iofXaWigVNSYF30iP`, team `ddk220`, existing Pro plan;
-  canonical origin `https://mybookshelf.cloud`, iad1.
-- Dedicated Neon `misty-cake-69893992`, resource `store_Y2EqcbZyTyIEwnbN`, existing
-  Free plan. It is separate from staging `bold-band-47854367`.
-- Independent private deletion ledger `store_Y1H9lYwwAobnvKnh`, production only.
+- Existing Pro project `prj_AhxvPVIgw95iofXaWigVNSYF30iP`, team `ddk220`, iad1;
+  canonical origin `https://mybookshelf.cloud`.
+- Dedicated production Neon `misty-cake-69893992`, store `store_Y2EqcbZyTyIEwnbN`,
+  existing Free plan; separate from staging `bold-band-47854367`.
+- Independent production private deletion ledger `store_Y1H9lYwwAobnvKnh`.
 - Migration administrator is Development/operator only. Deployed auth, reading
-  and worker credentials use separate nonowner, nonsuperuser, non-BYPASSRLS roles.
-  Production secrets remain in Vercel. Google/Apple remain disabled by owner choice.
-- All eleven migration checksums and seven forced-RLS tables were verified against
-  the actual production database. Role privilege checks and separate role logins
-  passed. See [schema evidence](evidence/production/schema-verification.json).
-- Real private Blob writes/reads, immutable request/completion, encrypted cleanup
-  and anonymous-read denial passed; synthetic objects were removed. See
-  [ledger evidence](evidence/production/ledger-verification.json).
-- Authenticated production maintenance reaches the database and private ledger.
-  Its response is **503**, with mail unavailable and deletion/provider queues
-  healthy. Resend is not installed yet: its account/terms consent is pending.
-  No successful production signup or delivered verification email is claimed.
+  and worker connections are separate nonowner, nonsuperuser, non-BYPASSRLS roles.
+  All eleven migration checksums and seven FORCE RLS tables were verified again
+  against production. No administrator is supplied to the deployed application.
+- `ACCOUNTS_ENABLED=true`; capability response exposes email true, Google/Apple
+  false. Private guest session 200 and aggregate health 200 ready.
+- Production sensitive Resend transport and authenticated sender
+  `MyBookshelf <accounts@mybookshelf.cloud>`. Received verification/recovery/security/
+  change emails work. After adding `_dmarc` TXT `v=DMARC1; p=none`, observed reset,
+  security and new-address messages pass SPF, DKIM and DMARC.
+- Native `/api/internal/account-jobs` Vercel Cron runs every five minutes.
+  Consecutive successes, sent/purged mail and actual fixture deletion cleanup
+  were observed. Unauthenticated maintenance is denied. Partial/overdue work
+  returns 503 and does not advance `last_succeeded`.
+- The independent `account-production-health.yml` workflow checks aggregate
+  readiness/freshness every five minutes without app secrets. Real earlier failure
+  notification reached the owner; subsequent monitor runs are green (#152).
+- The saved Vercel Git link now points to `ddk220-light/MyBookshelf-web/main`,
+  repo 1440561024. Readback verified the same project and unchanged build and
+  protection settings; domains, resources, environment variables and billing were
+  preserved. See [#173](https://github.com/ddk220-light/MyBookshelf-web/issues/173).
 
-Deployment `dpl_4wkbMbk2ArfwkD9fU1j3FnCyfHNf` is READY at the canonical domain,
-source `7ab9d8967e17265c87b8c7e490fd50a295dba598`, with account entry disabled.
-The prior infrastructure redeploy captured configuration before the new cron
-secret had propagated and returned 403; redeploying after propagation resolved it.
-The persistent Vercel Git connection still points to the original repository;
-these releases use the explicit `MyBookshelf-web` source reference.
+No secret values, mailbox aliases, one-use links or session cookies are included
+in this record. The [schema](evidence/production/schema-verification.json) and
+[ledger](evidence/production/ledger-verification.json) evidence remain applicable.
+
+## Release acceptance and fixes
+
+[RELEASE_ACCEPTANCE.md](RELEASE_ACCEPTANCE.md) is the current application release
+record. PRs #163, #172, #175 and #176 address defects reproduced during real acceptance:
+startup verification submission, settings after the five-minute freshness window,
+and contradictory deletion sign-out state/late response races. Repeat the affected
+flows against the checked deployment; do not sign in again to conceal an aged
+session failure. The report identifies actual clean CI and production repeats.
+
+Signup, deliberate single-use verification, recovery, import, profile/library/
+history/shelf synchronization, email/password changes, export, current/all-device
+sign-out and native-worker deletion cleanup are recorded with sanitized browser
+and scoped synthetic database evidence. The current production screens and actual
+Orca/Chromium accessibility equivalent complement the full earlier artifact matrix.
+No live external identity-provider or native iOS Safari result is claimed.
 
 ## Hosted restore evidence and limits
 
-At 18:21:52 UTC a coherent logical snapshot of synthetic auth/private reading rows
-was captured in a temporary isolated database on the production Neon project and
-restored into a second isolated database. The actual independent production Blob
-ledger suppressed a deleted synthetic identity and its reading rows, preserved an
-unrelated synthetic reader's books, invalidated restored sessions and replayed
-idempotently. Both temporary databases and the exact synthetic ledger records
-were removed. Runtime customer data was not copied or changed. See
+On 2026-11-01 at 18:21:52 UTC a coherent logical snapshot of synthetic auth/private
+reading rows was captured in a temporary isolated database on production Neon and
+restored into a second isolated database. The independent production Blob ledger
+suppressed a deleted synthetic identity/reading rows, preserved another synthetic
+reader's books, invalidated restored sessions and replayed idempotently. Both
+temporary databases and exact synthetic ledger objects were removed. Runtime
+customer data was not copied or changed. See
 [hosted restore evidence](evidence/production/hosted-restore-verification.json).
 
-This proves hosted logical restoration and suppression, not provider PITR or the
-actual configured backup/manual-snapshot retention. Neon's current public Free
-plan documentation describes a six-hour history window and one manual snapshot;
-the actual project settings/snapshot inventory still require verification. Do not
-substitute plan metadata for that configuration check.
+This proves hosted logical restoration/suppression. It does not prove native PITR
+or the actual history/manual-snapshot inventory and expiry. Free-plan metadata and
+public documentation are not substitutes for those settings. The owner has been
+given read-only steps: Vercel Storage → production account resource → Open in Neon →
+project `misty-cake-69893992` → history settings and Snapshots. Record the configured
+window and every snapshot's expiry, all <=30 days. No new token/paid plan is needed.
+A second operator has not followed [the restore runbook](OPERATIONS.md); that exit
+remains open separately from the completed engineering drill.
 
-## Verified signup and maintenance repairs
+## Recovery and historical records
 
-Merged [PR #151](https://github.com/ddk220-light/MyBookshelf-web/pull/151) checks session/service readiness before permitting account
-submissions, distinguishes disabled setup from an outage, checks email capability
-before signup/recovery, supports retry and preserves typed fields during startup.
-Unavailable accounts no longer advertise a working Create account action in
-Settings. Guest continuation preserves the actual browser shelf.
+Preserve the additive schema, accepted jobs and independent suppression ledger.
+Use the enabled rollback/forward-repair guidance in [release acceptance](RELEASE_ACCEPTANCE.md).
+A database restore stays isolated until external deletion suppression is complete.
+Do not reopen private traffic on reconciliation failure.
 
-A full browser workflow reproduced a mobile double-tap defect: after Create
-account collapsed the keyboard/reflowed the form, the gesture's second click hit
-Continue using this browser. Account forms now ignore the second pointer action
-of a double click on buttons/links; ordinary single clicks and keyboard activation
-continue working. The regression follows native Settings → signup → validation →
-double submit → check email → unverified sign-in → verification → sign-in/session.
-
-Maintenance no longer advances `last_succeeded` for unavailable services or overdue
-work. Such runs return 503. Native Vercel Cron is deployed every five minutes using
-the production-only `CRON_SECRET`. An actual scheduled run at 18:40:33 UTC advanced
-`last_started` while preserving the older success timestamp because mail remains
-unavailable. No manual invocation ran at that time. The
-[operations observation](evidence/production/live/operations-observation.json)
-records the active deployment/schedule and database observation.
-
-Actual production desktop/mobile HTTPS browser checks pass disabled-entry honesty,
-absence of active signup fields, guest continuation, horizontal layout and page
-errors. [HTTP checks](evidence/production/live/http-results.json) verify public
-health, `ACCOUNT_DISABLED`, private no-store/noindex, unauthenticated worker denial,
-the private app route and `.env` denial. See
-[browser evidence](evidence/production/live/browser-results.json) and the
-[production mobile screen](evidence/production/live/mobile-account-unavailable.png).
-
-Local checks use synthetic accounts, real loopback Postgres/API/cookies and a
-synthetic mail outbox. They do not prove Resend delivery. The client suite has
-152 passing tests; the server suite has 515 passing tests with zero skips,
-including isolated Postgres maintenance-failure coverage. Type checking, build,
-SEO and deployment checks pass. Both complete CI runs passed on tested source
-`41b626b9c4b792f8e71577228d0f21466086afee`:
-[push](https://github.com/ddk220-light/MyBookshelf-web/actions/runs/41336488573) and
-[PR](https://github.com/ddk220-light/MyBookshelf-web/actions/runs/41336512647).
-Each includes 318 public browser scenarios and 30 account journeys across desktop
-and mobile Chromium and WebKit, with the real API/Postgres and synthetic outbox.
-The merged/deployed application tree was compared with that tested candidate.
-
-## Independent production monitor (S20-C)
-
-[S20-C #152](https://github.com/ddk220-light/MyBookshelf-web/issues/152) adds
-`GET /api/account/health`, a no-store/noindex aggregate readiness check. It uses
-the restricted worker role, rejects privileged connections, requires configured
-mail/database/ledger secrets and a successful maintenance run within 15 minutes.
-It exposes only ready/unavailable, without account rows, queue contents, timestamps
-or credentials. Public catalog health stays independent.
-
-The read-only `account-production-health.yml` workflow calls that endpoint every
-five minutes, two minutes after normal worker boundaries, and fails the Actions
-job on unavailable or stale maintenance. It needs no app/cron credentials.
-GitHub delivery to the operator follows the owner's Actions notification settings;
-an actual notification email is not claimed until observed. Monitor deployment
-and live verification remain in progress with S20-C.
-
-## Completion sequence
-
-1. Finish Resend account/terms consent, provision production-only mail, verify
-   sender DNS and actual delivery. Keep Google/Apple disabled.
-2. Verify actual backup retention/snapshot inventory and the production schedule,
-   job freshness and failure notification route.
-3. Enable accounts and deploy the checked source. Use synthetic production smoke
-   identities and the actual mail transport to verify signup, verification,
-   sign-in, saved shelf, recovery, sign-out and deletion/cleanup. Remove fixtures.
-4. Check the live desktop/mobile UI and public regression boundaries. Record the
-   actual deployment, results and rollback target, then close the project items.
-
-Keep account entry disabled on a genuine prerequisite failure while public
-browsing continues. Do not present code deployment as completed account activation.
+The earlier `evidence/production/live/` files and Nov 1 observations describe the
+then-disabled account setup. They are dated historical evidence, superseded by
+`evidence/production/acceptance-2026-11-05/` for current enablement and workflows.
+Account-disabled code deployment alone was not feature completion; the live
+workflow checks in the current acceptance report establish the working feature.

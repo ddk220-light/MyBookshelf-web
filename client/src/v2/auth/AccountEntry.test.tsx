@@ -297,7 +297,11 @@ it("removes a verification token from the URL, preserves it through bootstrap an
     expect(screen.getByTestId("location")).not.toHaveTextContent("token="),
   );
   expect(posts).toEqual([]);
+  expect(screen.getByRole("button", { name: "Verify email" })).toBeDisabled();
+  fireEvent.submit(screen.getByRole("form", { name: "Verify your email" }));
+  expect(posts).toEqual([]);
   await act(async () => finish(response({ status: "guest" })));
+  expect(screen.getByRole("button", { name: "Verify email" })).toBeEnabled();
   fireEvent.click(screen.getByRole("button", { name: "Verify email" }));
   expect(
     await screen.findByRole("heading", { name: "Email verified" }),

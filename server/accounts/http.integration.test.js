@@ -23,7 +23,8 @@ test(
         url.pathname.endsWith("_test"),
     );
     const admin = new Pool({ connectionString }),
-      email = randomUUID() + "@example.test";
+      email = randomUUID() + "@example.test",
+      otherUserId = randomUUID();
     let service, server;
     t.after(async () => {
       if (server) await new Promise((resolve) => server.close(resolve));
@@ -40,6 +41,7 @@ test(
         [ids],
       );
       await admin.query('DELETE FROM "user" WHERE email=$1', [email]);
+      await admin.query('DELETE FROM "user" WHERE id=$1', [otherUserId]);
       await admin.end();
     });
     await migrate(admin);
@@ -132,6 +134,36 @@ test(
     assert.ok(session.csrfToken);
     assert.ok(!("sessionId" in session));
     assert.ok(!JSON.stringify(session).includes('token"'));
+    // A normal account visit can happen after Better Auth's five-minute
+    // freshness window. Reading device summaries must still work; revocation
+    // continues to require a separate, action-bound recent-auth proof.
+    await admin.query(
+      'UPDATE "session" SET "createdAt"=now()-interval \'6 minutes\' WHERE "userId"=$1',
+      [user.id],
+    );
+    await admin.query('INSERT INTO "user"(id,name,email,"emailVerified") VALUES($1,$2,$3,true)',
+      [otherUserId,"Other synthetic reader",randomUUID()+"@example.test"]);
+    for(const [owner,age,expiry] of [
+      [otherUserId,0,3600000],
+      [user.id,360000,-1000],
+      [user.id,31*86400000,3600000],
+    ])await admin.query('INSERT INTO "session"(id,token,"userId","createdAt","updatedAt","expiresAt") VALUES($1,$2,$3,$4,now(),$5)',
+      [randomUUID(),randomUUID(),owner,new Date(Date.now()-age),new Date(Date.now()+expiry)]);
+    response = await request("/sessions", "GET", undefined, cookie);
+    assert.equal(response.status, 200);
+    const deviceList = await response.json();
+    assert.equal(deviceList.sessions.length, 1);
+    assert.equal(deviceList.sessions[0].current, true);
+    assert.deepEqual(Object.keys(deviceList.sessions[0]).sort(),
+      ["createdAt", "current", "device", "expiresAt", "id"]);
+    assert.equal((await request("/sessions")).status, 401);
+    response = await request("/sign-out-all", "POST",
+      { proof: "unused-synthetic-proof-with-more-than-32-characters" },
+      cookie, session.csrfToken);
+    assert.equal(response.status, 403);
+    assert.equal((await response.json()).error.code, "RECENT_AUTH_REQUIRED");
+    assert.equal((await (await request("/session", "GET", undefined, cookie)).json()).status,
+      "authenticated");
     const changedView = await fetch(base + "/api/account/books", {
       headers: {
         Origin: env.BETTER_AUTH_URL,

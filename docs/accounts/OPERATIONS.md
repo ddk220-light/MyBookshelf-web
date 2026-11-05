@@ -2,7 +2,8 @@
 
 This is the runbook for the account implementation. R02 documents and Claude
 canvas v4 are approved. Deepak subsequently authorized production completion;
-the actual feature rollout is still in progress. Read
+email accounts are enabled and production workflows are verified. Final backup/
+operator acceptance remains open. Read
 [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) for current production resources,
 evidence and unfinished exits; the staging observations below are historical.
 Deepak is the release/configuration owner. A second operator has not yet followed
@@ -51,11 +52,13 @@ Private deletion ledger: `store_Gs9zkvOMQteZihLA`. Its separate read/write token
 `store_anEQSluYF2hXAEQT` is unused by v1: export streams an authenticated attachment,
 with no persistent export file or URL. Do not start retaining export copies.
 
-The existing production project's persistent Git connection remains on the older
-`MyBookshelf/main` repository. Explicit source-reference deployments now serve
-`MyBookshelf-web` at its existing domains. Dedicated production Neon and private
-ledger resources have since been provisioned under the owner's production
-instruction. See the current production record; do not reuse staging credentials.
+The existing production project's persistent Git connection now points to
+`ddk220-light/MyBookshelf-web/main` (repo 1440561024), verified on 2026-11-05.
+Dedicated production Neon and private ledger resources are separate from staging.
+Production uses Resend, native five-minute Vercel Cron and the independent public
+health monitor. Read [the release acceptance](RELEASE_ACCEPTANCE.md) for actual
+received-mail, cleanup and failure-notification evidence. Do not reuse staging
+credentials. The sections below retain the staging setup and common runbook.
 
 ## Migrations and restoration
 
@@ -87,11 +90,28 @@ Validate private/public behavior and job health before enabling the restored app
 
 The automated drill creates a separate disposable database, preserves an unrelated
 account's books, removes the suppressed account's rows and invalidates all restored
-sessions. A real provider-hosted restore and actual backup-retention audit remain
-release gates. The API reports the staging Neon plan as Free; that metadata alone
+sessions. The actual provider-hosted logical restore now passes (see production record);
+actual backup-retention audit and the second operator exercise remain release gates. The API reports the staging Neon plan as Free; that metadata alone
 does **not** prove its configured recovery/retention period. Obtain the provider's
 actual retention setting and ensure all provider/manual snapshots expire within
 30 days. Do not enable accounts if that guarantee is unverified or incompatible.
+
+### Outstanding operator evidence
+
+Record these in #147/#133 using safe values, not credentials:
+
+1. Open the production storage resource in Neon and record the configured history
+   window plus each manual snapshot's expiry (or an empty inventory). Repeat the
+   staging recovery-access audit in #67. The <=30-day requirement is unchanged.
+2. A second operator follows the isolation/restore steps above with synthetic
+   data only: snapshot A/B, delete A using the independent ledger, restore into an
+   isolated destination, run `node tools/accounts/restore.mjs`, and repeat it.
+3. Record operator name, UTC snapshot/run times, A absent, B's books retained,
+   restored sessions invalid, and identical safe results on the second run.
+   Remove the exact temporary databases and synthetic ledger fixtures afterward.
+4. Attach the sanitized result and close the associated audit tasks only when
+   observed. Existing engineering drill evidence can guide the operator; it does
+   not stand in for their independent exercise.
 
 ## Maintenance and overdue work
 
@@ -135,8 +155,9 @@ returned HTTP 403 for the Actions secrets public-key API. That restricts this
 particular scheduling option; no GitHub permission change is requested now.
 Do not pass credentials as workflow inputs, commit them, disable deployment
 protection, or treat the checked-in workflow as a running job. Native Vercel Cron
-runs on production deployments; validate the selected plan's supported frequency
-when setting up production maintenance. A trusted operator may run
+runs every five minutes on the existing production Pro plan. Consecutive successful
+runs, real cleanup and independent failure notification are verified in the release
+acceptance; the staging workflow remains inactive. A trusted operator may run
 `tools/accounts/run-maintenance.mjs` with secrets supplied by their secret manager
 for controlled staging validation. Never rely on website visits to drive cleanup.
 
@@ -147,10 +168,10 @@ Required server-only mail values: `RESEND_API_KEY`, `ACCOUNTS_MAIL_FROM`,
 credentials/tokens never enter logs. Native protocol and outbox failure tests pass,
 but controlled outbox readers do not prove delivery. The owner has chosen Resend
 for production only. No staging sender or provider installation is requested.
-Settle legal-policy acceptance and verify SPF/DKIM/DMARC and real verification,
-reset and security email during production setup before enabling email accounts.
-Verify Apple relay delivery when Apple sign-in is enabled later. No terms have
-been accepted implicitly.
+The owner completed production provider setup. Actual verification/reset/security/
+email-change delivery passes, including received SPF/DKIM/DMARC results; see the
+release acceptance. Verify Apple relay delivery when Apple sign-in is enabled later.
+No new provider/legal consent is requested for the email-account release.
 
 Google: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`; identity-only scopes
 `openid email profile`. Register the exact stable callback
@@ -173,7 +194,11 @@ Do not rotate `BETTER_AUTH_SECRET` or `ACCOUNTS_JOB_SECRET` without a planned
 migration of retained encrypted provider/job material and session/token invalidation.
 Retain decryption capability for every supported backup/retry window, or rewrap
 using supported library/encryption APIs before removing an old key. Verify this
-with an isolated drill. Replacing either value alone is not a supported rotation.
+with an isolated drill. The 2026-11-05 engineering recovery drill proves safe
+wrong-key failure, retained-key recovery, draining, explicit session/challenge
+invalidation and new-key mail in an actual temporary local database. It does not
+rotate hosted secrets or replace the independent operator exercise. Replacing
+either value alone is not a supported rotation.
 
 ## Logging, rollback and R03
 
@@ -190,7 +215,8 @@ sessions as needed, preserve the independent ledger, and continue deletion and
 retention workers. Public catalog browsing should remain available. Do not roll
 back a database to revive a deleted identity or discard queued cleanup. Restore
 only into isolation with ledger reconciliation. Retain the last reviewed public
-production deployment as the production rollback target until R03 chooses a new one.
+enabled production deployment as the rollback target identified in
+[release acceptance](RELEASE_ACCEPTANCE.md); preserve accepted writes and jobs.
 
 R03 needs one identified tested commit/deployment, tested production mail and an
 active production scheduler/alerts before email accounts are enabled, hosted

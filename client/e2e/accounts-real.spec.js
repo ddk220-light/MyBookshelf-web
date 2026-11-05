@@ -181,6 +181,16 @@ test("native signup navigation, validation, duplicate submit and verification le
       (await (await page.request.get("/api/account/session")).json()).status,
     ).toBe("authenticated");
     expect(submissions).toBe(1);
+    const aged = await request.post("/__accounts_test__/aged-session", {
+      data: { email },
+    });
+    expect(aged.ok()).toBeTruthy();
+    await page.goto("/app/settings/account");
+    await expect(page.getByLabel("Your name", { exact: true })).toHaveValue(
+      "Synthetic workflow reader",
+    );
+    await expect(page.getByRole("button", { name: "Sign out here", exact: true })).toBeVisible();
+    expect((await page.request.get("/api/account/sessions")).status()).toBe(200);
   } finally {
     await request.post("/__accounts_test__/cleanup", { data: { email } });
   }
@@ -870,6 +880,9 @@ test("private export downloads JSON; deletion can be cancelled, confirmed once a
         exact: false,
       }),
     ).toBeVisible();
+    await expect(page.getByText(/Server sign-out is still unconfirmed/)).toHaveCount(0);
+    await expect(page.getByText(/Sign in to see your account shelf/)).toHaveCount(0);
+    await expect(page.getByRole("button", {name: "Retry sign out", exact: true})).toHaveCount(0);
     expect(deletionPosts).toBe(1);
     expect(nonce).toHaveLength(43);
     const storage = await page.evaluate(() =>

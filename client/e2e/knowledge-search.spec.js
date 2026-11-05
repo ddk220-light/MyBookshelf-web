@@ -1,0 +1,30 @@
+import {test,expect} from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+const sources=[{id:'librivox',name:'LibriVox',scope:'Audiobooks',kinds:['audiobook'],languages:[],enabled:true,mode:'live'},{id:'lse-press',name:'LSE Press',scope:'Open scholarly books',kinds:['book'],languages:[],enabled:true,mode:'live'},{id:'gdl',name:'Global Digital Library',scope:'Children’s reading',kinds:['book'],languages:['en','hi','ta'],enabled:true,mode:'live'}];
+const fixture=(id=47)=>({key:`fcd:v1:librivox:${id}`,title:'Mathematics recording '+id,kind:'audiobook',contributors:[{name:'Fixture Author',role:'author'}],identifiers:[],languages:['en'],subjects:[],relations:[],access:'free_full_text',locations:[{id:'lv'+id,host:'LibriVox',readerUrl:'https://librivox.org/fixture/',landingUrl:'https://librivox.org/fixture/',access:'free_full_text',license:{statement:'US public domain; check local rights.'},evidence:{sourceId:'librivox',field:'fixture',observedAt:new Date().toISOString()}}],readingActions:[{locationId:'lv'+id,label:'Listen at LibriVox',url:'https://librivox.org/fixture/',downloads:[]}],provenance:[{sourceId:'librivox',sourceRecordId:String(id),recordUrl:'https://librivox.org/fixture/',retrievedAt:new Date().toISOString()}]});
+test.describe('All knowledge',()=>{
+ test.skip(process.env.FREE_CONTENT_E2E!=='true','Requires discovery UI build');
+ for(const light of ['daylight','lamplight','ink'])test(`partial results, source paging, listening and saving in ${light}`,async({page},info)=>{
+  await page.addInitScript(light=>localStorage.setItem('mybookshelf.appearance.v1',JSON.stringify({version:1,preference:light})),light);
+  await page.route('**/api/account/session',route=>route.fulfill({json:{status:'guest'}}));
+  await page.route('**/api/v2/content/sources',route=>route.fulfill({json:{sources}}));
+  const calls=[];await page.route('**/api/v2/content/search',route=>{const body=route.request().postDataJSON();calls.push(body);const id=body.sourceIds[0];
+   if(id==='lse-press')return route.fulfill({status:503,json:{error:{code:'CONTENT_UNAVAILABLE',message:'This source timed out. Other results remain available.'},sources:[{id,status:'timeout',returned:0}]}});
+   return route.fulfill({json:{items:id==='librivox'?[fixture(body.cursor?48:47)]:[],sources:[{id,status:'ok',returned:id==='librivox'?1:0}],nextCursor:id==='librivox'&&!body.cursor?'fixture-next':null,hiddenUnclear:0,coverage:'partial',policyRevision:'fixture'}});
+  });
+  await page.route('**/api/v2/content/resolve',route=>route.fulfill({json:{item:fixture()}}));
+  await page.goto('/app/search?scope=knowledge&q=mathematics');
+  await expect(page.getByRole('heading',{name:'Mathematics recording 47'})).toBeVisible();await expect(page.getByText('3 of 3 sources finished',{exact:false})).toBeVisible();
+  await expect(page.getByText('This source timed out. Other results remain available.')).toBeVisible();
+  await page.getByRole('button',{name:'Show more from LibriVox'}).click();await expect(page.getByRole('heading',{name:'Mathematics recording 48'})).toBeVisible();expect(calls.at(-1).cursor).toBe('fixture-next');
+  expect((await new AxeBuilder({page}).include('#main-content').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.getByRole('heading',{name:'Search',exact:true}).scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath(`knowledge-${light}.png`),fullPage:true});
+  await page.getByRole('heading',{name:'Mathematics recording 47'}).getByRole('link').click();await expect(page.getByRole('link',{name:'Listen at LibriVox (opens LibriVox)'})).toHaveAttribute('href','https://librivox.org/fixture/');
+  await page.getByRole('button',{name:'Save to shelf',exact:true}).click();await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
+  await page.goto('/app/search?scope=knowledge&q=mathematics');await page.getByRole('combobox',{name:'Source',exact:true}).selectOption('librivox');await expect(page.locator('.knowledge-source')).toHaveCount(1);expect(calls.at(-1).sourceIds).toEqual(['librivox']);
+  await page.setViewportSize({width:320,height:844});await page.evaluate(()=>document.documentElement.style.fontSize='200%');
+  const overflow=await page.locator('#main-content').evaluate(node=>({width:node.clientWidth,scroll:node.scrollWidth,elements:[...node.querySelectorAll('*')].filter(e=>e.scrollWidth>e.clientWidth+1).map(e=>({tag:e.tagName,class:e.className,width:e.clientWidth,scroll:e.scrollWidth,text:e.textContent?.slice(0,60)}))}));
+  expect(overflow.scroll,JSON.stringify(overflow)).toBeLessThanOrEqual(overflow.width);
+ });
+});

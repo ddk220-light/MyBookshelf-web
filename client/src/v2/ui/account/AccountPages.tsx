@@ -454,6 +454,7 @@ export function SignInPage({ signup = false }: { signup?: boolean }) {
   );
 }
 export function VerifyPage() {
+  const entryPending = useAccountEntryPending();
   const token = useLinkToken(),
     [busy, setBusy] = useState(false),
     [done, setDone] = useState(false),
@@ -465,7 +466,7 @@ export function VerifyPage() {
       error={error}
       onSubmit={(event) => {
         event.preventDefault();
-        if (busy) return;
+        if (busy || entryPending) return;
         setBusy(true);
         setError("");
         void accountRequest("/verify-email", {
@@ -496,7 +497,7 @@ export function VerifyPage() {
             Continue to confirm this email address. Opening this page does not
             use the link.
           </p>
-          <button disabled={busy}>
+          <button disabled={busy || entryPending}>
             {busy ? "Verifying…" : "Verify email"}
           </button>
         </>

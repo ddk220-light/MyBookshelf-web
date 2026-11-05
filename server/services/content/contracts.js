@@ -1,5 +1,6 @@
 import { isIP } from 'node:net';
 import ISBN from 'isbn3';
+import {ALL_CONTENT_SOURCES,KNOWLEDGE_SOURCES} from './knowledgeSources.js';
 
 export const CONTENT_POLICY_REVISION = '2026-11-01.4';
 export const CONTENT_KINDS = ['book', 'chapter', 'article', 'preprint', 'thesis', 'report', 'learning_resource', 'audiobook', 'other'];
@@ -13,13 +14,20 @@ export class ContentValidationError extends Error {
 
 export function contentKey(sourceId, recordId, recordSource) {
   const nativeId = sourceId === 'arxiv' ? recordId.replace('/', ':') : recordId;
-  const value = sourceId === 'europepmc' ? `fcd:v1:europepmc:${recordSource}:${recordId}` : `fcd:v1:${sourceId}:${nativeId}`;
+  const value = sourceId === 'europepmc' || KNOWLEDGE_SOURCES[sourceId]?.adapter === 'wiki' ? `fcd:v1:${sourceId}:${recordSource}:${recordId}` : `fcd:v1:${sourceId}:${nativeId}`;
   if (!parseContentKey(value)) throw new ContentValidationError('Invalid content identity.');
   return value;
 }
 
 export function parseContentKey(value) {
   if (typeof value !== 'string' || value.length > 200) return null;
+  const wiki = /^fcd:v1:(wikipedia|wikibooks|wikisource):(en|hi|ta):([1-9]\d{0,11})$/.exec(value);
+  if(wiki)return {sourceId:wiki[1],recordSource:wiki[2],recordId:wiki[3]};
+  const added = /^fcd:v1:([a-z-]+):([A-Za-z0-9_.-]{1,150})$/.exec(value);
+  if(added&&KNOWLEDGE_SOURCES[added[1]]){
+    const type=KNOWLEDGE_SOURCES[added[1]].adapter, id=added[2];
+    if(type==='thoth'&&/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(id)||['gdl','librivox'].includes(type)&&/^[1-9]\d{0,11}$/.test(id)||['loc','bhl'].includes(type)&&/^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/.test(id)||type==='python'&&/^[a-f0-9]{32}$/.test(id))return {sourceId:added[1],recordId:id};
+  }
   const pg = /^fcd:v1:gutenberg:([1-9]\d{0,8})$/.exec(value);
   if (pg) return { sourceId: 'gutenberg', recordId: pg[1] };
   const textbook = /^fcd:v1:open-textbook-library:([1-9]\d{0,8})$/.exec(value);
@@ -83,7 +91,7 @@ export function itemAccess(item, context) {
 export function readingActions(item, context) {
   return (item.locations || []).filter(location => isReadableAccess(observedAccess(location, context)))
     .sort((a,b) => Number(a.access === 'free_account_required') - Number(b.access === 'free_account_required')).map(location => ({
-    locationId: location.id, label: `Read at ${location.host || item.provenance?.[0]?.sourceId || 'source'}`,
+    locationId: location.id, label: `${item.kind==='audiobook'?'Listen':'Read'} at ${location.host || item.provenance?.[0]?.sourceId || 'source'}`,
     url: safeWebUrl(location.readerUrl || location.landingUrl),
     ...(location.access === 'free_account_required' ? {requiresAccount:true} : {}),
     downloads: (location.access === 'free_account_required' ? [] : location.downloads || []).flatMap(file => {
@@ -119,7 +127,7 @@ export function parseContentSearch(input) {
   if (!Number.isInteger(limit) || limit < 1 || limit > 40 || (body.access != null && !['free','free_full_text'].includes(body.access))) throw new ContentValidationError();
   if (body.cursor != null && (typeof body.cursor !== 'string' || body.cursor.length > 4096)) throw new ContentValidationError();
   if (body.includeUnclear != null && typeof body.includeUnclear !== 'boolean') throw new ContentValidationError();
-  const paperSources=['europepmc','doaj','arxiv','openalex'];
+  const paperSources=ALL_CONTENT_SOURCES;
   if(body.sourceIds!=null&&(!Array.isArray(body.sourceIds)||!body.sourceIds.length||body.sourceIds.length>3||body.sourceIds.some(id=>!paperSources.includes(id))))throw new ContentValidationError();
   if(body.retrySource!=null&&(!paperSources.includes(body.retrySource)||!body.cursor))throw new ContentValidationError();
   return { query: body.query.trim().normalize('NFC'), kinds: [...new Set(kinds)], ...languageContext(body),

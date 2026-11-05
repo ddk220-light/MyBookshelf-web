@@ -2,7 +2,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { readAccountConfig } from "../accounts/config.js";
 export function createJobMiddleware({ env = process.env } = {}) {
   let pool, maintenance;
-  return async (req, res, next) => {
+  const middleware = async (req, res, next) => {
     if (req.path !== "/api/internal/account-jobs") return next();
     res.set({
       "Cache-Control": "private, no-store",
@@ -119,4 +119,9 @@ export function createJobMiddleware({ env = process.env } = {}) {
       });
     }
   };
+  middleware.close = async () => {
+    await maintenance?.close();
+    await pool?.end();
+  };
+  return middleware;
 }

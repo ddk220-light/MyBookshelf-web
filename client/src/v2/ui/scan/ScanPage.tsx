@@ -14,11 +14,13 @@ import { uiMessages as m } from '../../uiMessages';
 import { ScanIcon, SearchIcon } from '../icons';
 import { Sheet } from '../Sheet';
 import { BookCard } from '../BookCard';
+import {KnowledgeSearchPage} from '../content/KnowledgeSearchPage';
 import { ContentSearchPage, SearchScopes } from '../content/ContentSearchPage';
 
 export function ScanPage() {
   const location = useLocation();
   const scope = new URLSearchParams(location.search).get('scope');
+  if (import.meta.env.VITE_CONTENT_DISCOVERY_ENABLED === 'true' && scope === 'knowledge') return <KnowledgeSearchPage/>;
   if (import.meta.env.VITE_CONTENT_DISCOVERY_ENABLED === 'true' && (scope === 'free' || scope === 'papers')) return <ContentSearchPage key={scope} scope={scope} />;
   return <LibraryScanPage />;
 }

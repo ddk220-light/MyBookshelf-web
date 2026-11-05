@@ -17,7 +17,7 @@ export function ContentResult({ item, to, returnTo, selected = false }: { item: 
   const host = item.locations.find(location => location.id === primary?.locationId)?.host || item.locations[0]?.host || 'Source';
   const index = sourceNames[item.provenance[0]?.sourceId];
   const formats = [...new Set((primary?.downloads || []).map(file => formatNames[file.mimeType]).filter(Boolean))];
-  const readableFormats = [bookLike(item.kind) ? 'Read online' : 'HTML', ...formats.filter(format => format !== 'HTML')];
+  const readableFormats = [item.kind==='audiobook'?'Listen online':bookLike(item.kind) ? 'Read online' : 'HTML', ...formats.filter(format => format !== 'HTML')];
   if (!item.locations.find(location => location.id === primary?.locationId)?.readerUrl) readableFormats.shift();
   return <article className={'content-result' + (selected ? ' is-selected' : '')}>
     {bookLike(item.kind) && <Link tabIndex={-1} aria-hidden="true" to={to} state={{returnTo}}><ContentCover title={item.title} kind={item.kind} unclear={item.access==='unknown'} /></Link>}
@@ -26,6 +26,7 @@ export function ContentResult({ item, to, returnTo, selected = false }: { item: 
       {item.flags?.includes('source_reports_correction') && <span className="content-kind content-warning">Correction listed by source</span>}</div>}
       <h2 lang={item.languages[0]!=='und'?item.languages[0]:undefined}><Link to={to} state={{returnTo}} aria-current={selected?'true':undefined}>{item.title}</Link></h2>
       <p className="content-authors">{authors.slice(0,3).map(c=>c.name).join(', ')}{authors.length>3?` + ${authors.length-3}`:''}</p>
+      {bookLike(item.kind)&&item.version&&<p className="content-record">{item.version}</p>}
       {item.searchMatch?.field==='subject'&&<p className="content-credit">Subject: {item.searchMatch.value}</p>}
       {item.readingLevel&&<p className="content-credit">{item.readingLevel.publisher} · {item.readingLevel.label}</p>}{item.contributors.filter(c=>['illustrator','translator'].includes(c.role)).map(c=><p key={c.role+':'+c.name} className="content-credit">{c.role==='illustrator'?'Illustrated by':'Translated by'} {c.name}</p>)}
       {item.collections?.includes('children')&&<p className="content-credit">{item.locations.find(location=>location.id===primary?.locationId)?.license?.id||'Licence not stated'}</p>}
