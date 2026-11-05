@@ -256,6 +256,7 @@ it("ends access without an unconfirmed sign-out warning after acknowledged delet
   await waitFor(() => expect(screen.getByTestId("receipt")).toHaveTextContent("accepted"));
   expect(readSession()).toMatchObject({status: "guest"});
   expect(readSession().logoutPending).not.toBe(true);
+  expect(readSession().sessionEnded).not.toBe(true);
   expect(localStorage.getItem("mybookshelf.local-guest-override.v1")).toBeNull();
 });
 
@@ -273,6 +274,7 @@ it("keeps lost-response protection until the same deletion receipt confirms acce
   fireEvent.click(screen.getByRole("button", {name: "Check receipt"}));
   await waitFor(() => expect(screen.getByTestId("receipt")).toHaveTextContent("accepted"));
   expect(readSession().logoutPending).not.toBe(true);
+  expect(readSession().sessionEnded).not.toBe(true);
   expect(localStorage.getItem("mybookshelf.local-guest-override.v1")).toBeNull();
 });
 

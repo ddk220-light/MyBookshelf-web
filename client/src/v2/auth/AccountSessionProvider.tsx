@@ -120,7 +120,7 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
   const tabId = useRef(crypto.randomUUID());
   const lostIdentity = useRef(false),
     endNotice = useRef(false);
-  const publish = useCallback((reply: Omit<AccountSession, "epoch">) => {
+  const publish = useCallback((reply: Omit<AccountSession, "epoch">, announceSessionEnd = true) => {
     const changed = key(reply) !== key(current.current),
       epoch = current.current.epoch + (changed ? 1 : 0);
     if (changed) {
@@ -135,7 +135,8 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
       reply.status === "unavailable"
     )
       lostIdentity.current = true;
-    if (
+    if (!announceSessionEnd) endNotice.current = false;
+    else if (
       reply.status === "guest" &&
       (current.current.status === "authenticated" || lostIdentity.current)
     )
@@ -299,7 +300,7 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
       endNotice.current = false;
       guestLock.current = !confirmed;
       writeOverride(!confirmed);
-      publish({status: "guest", logoutPending: !confirmed});
+      publish({status: "guest", logoutPending: !confirmed}, false);
       lock ??= {};
       accessEndLock.current = confirmed ? null : lock;
       broadcast(!confirmed, tabId.current);
