@@ -1,3 +1,21 @@
+## 2026-11-05T21:51:00.516961+00:00: Connector search checkpoint
+
+| Group | Working | Blocked/failed | Still checking | Total |
+|---|---:|---:|---:|---:|
+| Books, children’s books and audiobooks | 11 | 15 | 13 | 39 |
+| Learning and technical documentation | 9 | 6 | 0 | 15 |
+| Industry and job knowledge | 10 | 10 | 0 | 20 |
+| Government, maps and public data | 10 | 16 | 0 | 26 |
+| Research papers and scholarly sources | 10 | 12 | 0 | 22 |
+| Language, culture and media | 4 | 8 | 0 | 12 |
+| **Total** | **54** | **67** | **13** | **134** |
+
+Compared with the prior hourly report: +1 Working, +1 Blocked/failed, 2 fewer Still checking; 10 added passing examples.
+
+54 Working, 67 Blocked/failed, 13 Still checking of 134; 575 passing examples. This run's Working additions: govinfo. New blocked: world-bank-okr. Read connector-status.csv for tested search scopes and recovery actions. GovInfo API policy500 repeated after148seconds, but its documented browser title search works; a transient-zero UI test mistake was fixed and failed captures retained. World Bank OKR keyword search is robots-disallowed; no hidden API workaround. Continue unchecked book connectors, including documented title/author APIs and permitted metadata catalogs. Research only; hourly task stays enabled.
+
+Validation: 242 research tests and registry capture/index/audit/validation pass. No source activation or deployment. [Per-connector search scopes and recovery actions](connector-status.csv). State: intermediate-checkpoint.
+
 ## 2026-11-05T21:32:59.298196+00:00: Connector search checkpoint
 
 | Group | Working | Blocked/failed | Still checking | Total |

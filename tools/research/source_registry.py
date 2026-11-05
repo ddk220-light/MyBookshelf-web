@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog'):
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -349,6 +349,12 @@ def probe(source_id, case_ids=None):
     if source['query']['adapter'] == 'lareferencia-title':
         from lareferencia_queries import probe as probe_lareferencia
         return probe_lareferencia(source, case_ids)
+    if source['query']['adapter'] == 'govinfo-ui':
+        from govinfo_browser import probe as govinfo_probe
+        return govinfo_probe(source, case_ids)
+    if source['query']['adapter'] in ('gutendex-books', 'openlibrary-search', 'google-books-public'):
+        from book_queries import probe as book_probe
+        return book_probe(source, case_ids)
     if source['query']['adapter'] == 'msha-public-ui':
         from msha_browser import probe as msha_probe
         return msha_probe(source, case_ids)

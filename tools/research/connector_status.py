@@ -15,6 +15,10 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'govinfo-ui': 'Live public browser title-field search, first10 package/granule results; API-host failure is separate, no document/full-text download',
+    'gutendex-books': 'Live title/author word search, first32 Project Gutenberg ebook IDs reported public domain in USA; shared Gutenberg origin, no reading/territory guarantee',
+    'openlibrary-search': 'Live title search restricted to public-ebook works, first3 work IDs with matching edition IDs; no full-item reading guarantee',
+    'google-books-public': 'Live title search restricted to free Google ebooks, first3 native volume IDs with country/viewability metadata; full reading not tested',
     'core-public': 'Live anonymous CORE work-title search, first1 native work with underlying output/provider IDs; no full text or reader guarantee',
     'doaj-public': 'Live public article title-field search, first3 native article IDs; page2/empty tested, no full-text or broad-topic ranking guarantee',
     'who-publications-ui': 'Browser-only live WHO publication keyword filter, first50 native item URLs; selected website catalog, not full IRIS holdings',

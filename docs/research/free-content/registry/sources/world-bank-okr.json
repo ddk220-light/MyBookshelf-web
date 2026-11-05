@@ -8,7 +8,7 @@
   "areas": [
     "C08"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -27,15 +27,18 @@
     "https://openknowledge.worldbank.org/"
   ],
   "limitations": [
+    "The repository robots policy disallows its published keyword-search route; the FAQ returned only an app shell.",
     "Homepage retrieved; external search/bulk workflow not validated. **Medium/high / P2**.",
     "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/public-data-final-candidates-20261105en/observations.jsonl",
+    "runs/public-data-query-contracts-20261105eo/observations.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T21:49:34.745960+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Wait for a documented permitted catalog export/API or search-policy change. Reuse the saved homepage links when new documentation appears; do not replay hidden DSpace APIs or use a browser to bypass search policy.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -164,17 +167,19 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "The repository robots policy disallows its published keyword-search route; the FAQ returned only an app shell.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "blocked_or_failed",
+        "blocker": "The repository robots policy disallows its published keyword-search route; the FAQ returned only an app shell.",
+        "next_action": "Wait for a documented permitted catalog export/API or search-policy change. Reuse the saved homepage links when new documentation appears; do not replay hidden DSpace APIs or use a browser to bypass search policy.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/public-data-final-candidates-20261105en/observations.jsonl",
+        "runs/public-data-query-contracts-20261105eo/observations.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Supported queryability remains unresolved; no permanent unavailability claim."
       ]
     }
   },
@@ -195,5 +200,18 @@
       "text": "| Government, policy, organizational publications | Reports, policy papers, public documents | World Bank Open Knowledge Repository, Library of Congress, institutional repositories |",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "The repository robots policy disallows its published keyword-search route; the FAQ returned only an app shell.",
+    "attempt": "Read the current official homepage, checked its linked /search?query=agriculture route under current policy, then inspected the published FAQ.",
+    "result": "Homepage200 was truncated at512KiB and cannot establish a complete catalog. Search skipped under robots200 policy; FAQ200 was2372byte JavaScript shell with no documented permitted export. No search/API bypass or full-item downloads.",
+    "decision": "wait_for_documented_permitted_metadata_route",
+    "next_action": "Wait for a documented permitted catalog export/API or search-policy change. Reuse the saved homepage links when new documentation appears; do not replay hidden DSpace APIs or use a browser to bypass search policy.",
+    "retry_trigger": "Published permitted metadata export/API, usable FAQ/documentation, or changed search policy.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/public-data-final-candidates-20261105en/observations.jsonl",
+      "runs/public-data-query-contracts-20261105eo/observations.jsonl"
+    ]
+  }
 }

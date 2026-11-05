@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-11-05T21:40:54.581235+00:00",
+  "generated_at": "2026-11-05T21:51:00.471154+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by at least ten current passing examples in this registry. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
   "coverage_definition": "Queryability by group and connector, per owner clarification. Deeper research-quality checks remain separate.",
   "totals": {
     "total": 134,
-    "working": 53,
-    "blocked_or_failed": 66,
-    "still_checking": 15,
-    "not_working_verified": 81,
-    "assessed_or_deferred": 119,
-    "remaining_to_assess": 15,
-    "passing_query_examples": 565
+    "working": 54,
+    "blocked_or_failed": 67,
+    "still_checking": 13,
+    "not_working_verified": 80,
+    "assessed_or_deferred": 121,
+    "remaining_to_assess": 13,
+    "passing_query_examples": 575
   },
   "groups": [
     {
@@ -43,9 +43,9 @@
       "id": "G04",
       "name": "Government, maps and public data",
       "total": 26,
-      "working": 9,
-      "blocked_or_failed": 15,
-      "still_checking": 2
+      "working": 10,
+      "blocked_or_failed": 16,
+      "still_checking": 0
     },
     {
       "id": "G05",
@@ -1581,34 +1581,17 @@
     {
       "group_id": "G04",
       "group": "Government, maps and public data",
-      "connector_id": "govinfo",
-      "connector": "GovInfo",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "One GPO catalog across collections. Federal Register/CFR editions and package/granule records are distinct native items, not new origins. | No fresh item-query examples; policy/documentation observations are not successful catalog queries.",
-      "next_step_or_blocker": "Inspect current API documentation and bounded trial allowance; test packages vs granules, current vs historical editions, reader destinations and quotas. No production activation.",
-      "block_reason": "",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": "2026-11-05T03:19:01.955069+00:00",
-      "record": "sources/govinfo.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G04",
-      "group": "Government, maps and public data",
       "connector_id": "world-bank-okr",
       "connector": "World Bank Open Knowledge Repository",
-      "status": "still_checking",
+      "status": "blocked_or_failed",
       "passing_examples": 0,
       "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Homepage retrieved; external search/bulk workflow not validated. **Medium/high / P2**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
-      "next_step_or_blocker": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-      "block_reason": "",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": null,
+      "known_limitations": "The repository robots policy disallows its published keyword-search route; the FAQ returned only an app shell. | Homepage retrieved; external search/bulk workflow not validated. **Medium/high / P2**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
+      "next_step_or_blocker": "Wait for a documented permitted catalog export/API or search-policy change. Reuse the saved homepage links when new documentation appears; do not replay hidden DSpace APIs or use a browser to bypass search policy.",
+      "block_reason": "The repository robots policy disallows its published keyword-search route; the FAQ returned only an app shell.",
+      "last_attempt_and_result": "Read the current official homepage, checked its linked /search?query=agriculture route under current policy, then inspected the published FAQ. / Homepage200 was truncated at512KiB and cannot establish a complete catalog. Search skipped under robots200 policy; FAQ200 was2372byte JavaScript shell with no documented permitted export. No search/API bypass or full-item downloads.",
+      "recovery_decision": "wait_for_documented_permitted_metadata_route",
+      "last_reviewed_at": "2026-11-05T21:49:34.745960+00:00",
       "record": "sources/world-bank-okr.json",
       "production_activation_changed": false
     },
@@ -1678,6 +1661,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T15:52:26.741346+00:00",
       "record": "sources/federal-register.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G04",
+      "group": "Government, maps and public data",
+      "connector_id": "govinfo",
+      "connector": "GovInfo",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Live public browser title-field search, first10 package/granule results; API-host failure is separate, no document/full-text download",
+      "known_limitations": "API-host robots endpoint returned500 twice after148seconds; no API query was sent. Working status covers only the independently permitted public browser search. | Results contain near matches despite title-field query; selected proof items have literal title relevance. No complete recall or whole-document search guarantee. | Native package/granule IDs preserve congressional/edition/version distinctions. A package and its granules are not independent origins. | An initial UI wait mistook temporary zero-record loading labels for empty searches; five queries were repeated with a matching-title wait. Original captures retained. Empty-query and pagination proof remain open. | No full government publications or media were downloaded; third-party material rights remain collection/item-specific.",
+      "next_step_or_blocker": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+      "block_reason": "",
+      "last_attempt_and_result": "Retried API policy after148seconds, then used the independently documented public search URL. Fixed a premature-zero UI test and repeated affected topics. / Ten distinct browser title queries verified; both API500 policy responses and early UI failures preserved.",
+      "recovery_decision": "use_documented_public_browser_search",
+      "last_reviewed_at": "2026-11-05T21:50:51.668877+00:00",
+      "record": "sources/govinfo.json",
       "production_activation_changed": false
     },
     {

@@ -31,7 +31,7 @@
   ],
   "execution": {
     "batch_size": "Small checkpoints, not a completion quota. Continue productive independent work within each run budget; resume hourly without waiting for new user requests.",
-    "cursor": "53 Working, 66 Blocked/failed, 15 Still checking of 134; 565 passing examples. This run's Working additions: marad-data-reports, msha-digital-library, la-referencia, rit-scholarworks. New blocked: scielo, unpaywall, utrecht-repository, victoria-university-repository. Read connector-status.csv for actual supported scopes and recovery actions. MARAD searches11 published trade/report titles; MSHA uses the public guest form and native metadata product IDs, never display rank. Its title-click overlap was fixed; two nonsense-query timeouts remain open. Five culture/media recovery actions were clarified from saved evidence, not fresh requests. Continue unchecked scholarly connectors, then books and public data; blocked providers need a useful recovery trigger. Research only; hourly task stays enabled. RIT completed111 pages/11042 distinct thesis records with zero duplicate IDs; its page108 parser failure was corrected using the actual numbered next link. LA Referencia passed ten title queries and empty/page2 controls. Four newly deferred scholarly connectors are SciELO,Utrecht,Victoria andUnpaywall; read their concrete recovery records. Environment interruption delayed this checkpoint; all owned collectors exited. Next:G04 GovInfo/World Bank repository,then13G01 books connectors.",
+    "cursor": "54 Working, 67 Blocked/failed, 13 Still checking of 134; 575 passing examples. This run's Working additions: govinfo. New blocked: world-bank-okr. Read connector-status.csv for tested search scopes and recovery actions. GovInfo API policy500 repeated after148seconds, but its documented browser title search works; a transient-zero UI test mistake was fixed and failed captures retained. World Bank OKR keyword search is robots-disallowed; no hidden API workaround. Continue unchecked book connectors, including documented title/author APIs and permitted metadata catalogs. Research only; hourly task stays enabled.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
@@ -58,10 +58,10 @@
     },
     "completion_audit": "completion-audit.json",
     "last_checkpoint": {
-      "observed_at": "2026-11-05T21:32:59.298196+00:00",
+      "observed_at": "2026-11-05T21:51:00.516961+00:00",
       "source_records": 134,
-      "verified_examples": 565,
-      "query_verified_sources": 53,
+      "verified_examples": 575,
+      "query_verified_sources": 54,
       "source_dossiers_complete": 2,
       "captured_text_documents": 117,
       "indexed_binary_assets": 221,
@@ -78,40 +78,28 @@
       "civic_cells_accounted": 0,
       "civic_cells_total": 18,
       "open_gateway_url_followups": 82,
-      "documentation_runs": 155,
-      "documentation_jobs": 741,
+      "documentation_runs": 158,
+      "documentation_jobs": 753,
       "current_batch": {
         "new_working_connectors": [
-          "marad-data-reports",
-          "msha-digital-library",
-          "la-referencia",
-          "rit-scholarworks"
+          "govinfo"
         ],
         "new_blocked_connectors": [
-          "scielo",
-          "unpaywall",
-          "utrecht-repository",
-          "victoria-university-repository"
+          "world-bank-okr"
         ],
-        "new_verified_examples": 40,
+        "new_verified_examples": 10,
         "new_source_records": 0,
-        "still_checking_change": -8,
-        "research_tests": 233,
+        "still_checking_change": -2,
+        "research_tests": 242,
         "production_changed": false,
-        "older_blocker_actions_clarified": [
-          "dpla",
-          "lincs",
-          "museums-of-india",
-          "nasa-image-video-library",
-          "wikimedia-commons"
-        ]
+        "older_blocker_actions_clarified": []
       },
-      "validation": "Capture/index/audit, registry validation and 233 research tests pass; zero capture errors.",
+      "validation": "Capture/index/audit, registry validation and 242 research tests pass; zero capture errors.",
       "goal_complete": false,
-      "previous_saved_commit": "01b54744128b96a5c1e0dc20ea1d3034fd10ae7a",
+      "previous_saved_commit": "3d84f082246cb21b77aeba5bcd99d6c2e420b895",
       "backlog_archive": "analysis/external/github-backlog-current.json",
-      "backlog_update_state": "issues164-170 and PR161 updated and exact bodies readback-verified",
-      "research_commit": "815bd99fa62190b274602e40674ed6a0113ea5c8",
+      "backlog_update_state": "pending current-run final update/readback",
+      "research_commit": "3d84f082246cb21b77aeba5bcd99d6c2e420b895",
       "backlog_issues_updated": [
         164,
         165,
@@ -126,13 +114,13 @@
       "pending_corpus_entity_reviews": 126,
       "query_status": {
         "total": 134,
-        "working": 53,
-        "blocked_or_failed": 66,
-        "still_checking": 15,
-        "not_working_verified": 81,
-        "assessed_or_deferred": 119,
-        "remaining_to_assess": 15,
-        "passing_query_examples": 565
+        "working": 54,
+        "blocked_or_failed": 67,
+        "still_checking": 13,
+        "not_working_verified": 80,
+        "assessed_or_deferred": 121,
+        "remaining_to_assess": 13,
+        "passing_query_examples": 575
       }
     },
     "native_chat_goal": {
@@ -140,34 +128,32 @@
       "reason": "No native chat Goal control is exposed in the available tools; scheduler run-now returns HTTP 404. A saved goal and schedule are not the native feature."
     },
     "current_run": {
-      "state": "checkpointed-awaiting-next-scheduled-run",
-      "checkpoint_at": "2026-11-05T21:32:59.298196+00:00",
-      "writer": "this conversation; all collectors exited",
+      "state": "intermediate-checkpoint",
+      "checkpoint_at": "2026-11-05T21:51:00.516961+00:00",
+      "writer": "this conversation",
       "active_detached_worker": false,
       "scope": "research only",
-      "base_commit": "01b54744128b96a5c1e0dc20ea1d3034fd10ae7a",
-      "research_commit": "815bd99fa62190b274602e40674ed6a0113ea5c8",
-      "writer_lease": "Free lock and no matching non-zombie collector at21:30UTC; no detached worker.",
-      "environment_interruption": "Environment restarted between21:03 and21:30UTC; saved evidence survived and was revalidated.",
-      "backlog_verified_at": "2026-11-05 21:39:01 UTC"
+      "base_commit": "3d84f082246cb21b77aeba5bcd99d6c2e420b895",
+      "research_commit": "3d84f082246cb21b77aeba5bcd99d6c2e420b895",
+      "writer_lease": "All collectors for checkpoint are finished; verify lock/queues/PID/remote before another writer."
     },
     "coverage_audit": "coverage-audit.json",
     "next_actions": [
       {
         "priority": 1,
-        "task": "Next prioritize GovInfo and World Bank Open Knowledge Repository, the two unchecked G04 connectors; then the13 unchecked G01 books connectors. GovInfo has a documented DEMO_KEY trial to review without creating an account. Reuse saved evidence first."
+        "task": "Finish unchecked books/children/audio connectors through documented API/search/export routes. Reuse existing evidence; save failures and distinguish full-item access from metadata queryability."
       },
       {
         "priority": 2,
-        "task": "G01 unchecked: African Storybook,Book Dash,DOAB,Google Books,Gutendex,Internet Archive,Nalibali,OAPEN,Open Library,Project Gutenberg,Standard Ebooks,Storyberries,StoryWeaver. Test documented permitted query/export methods with saved native results."
+        "task": "Investigate blocked connectors only with a useful policy/access/recovery/documented-alternative trigger. Retry temporary failures with backoff; never bypass denied paths or create accounts."
       },
       {
         "priority": 3,
-        "task": "G02/G03/G05/G06 have no unchecked connectors. Pursue blocked sources only on useful recovery or documented permitted-alternative triggers; no blind policy/access retries. MSHA empty-result behavior remains unverified separately from its ten working searches."
+        "task": "Keep exact native work/edition/version IDs, scoped relevance and bounded page/empty/error observations. Gutendex and Project Gutenberg share a content origin; do not count the shared catalog as independent supply."
       },
       {
         "priority": 4,
-        "task": "Fetch and verify writer/lock/remote freshness. Validate evidence, refresh all status/goal counts consistently, push small research checkpoints, update164-170/PR and report all six groups every run."
+        "task": "Fetch and verify writer/lock/remote freshness. Validate evidence, refresh all status/goal counts, push small research checkpoints, update164-170/PR and report all six groups every run."
       }
     ],
     "last_dossier_run": {
@@ -1654,6 +1640,45 @@
         "named_entity_review": "pending; document capture is not entity extraction or query qualification"
       },
       {
+        "run_id": "public-data-final-candidates-20261105en",
+        "jobs": 2,
+        "observations": 2,
+        "local_input_failure_job_ids": [],
+        "remaining_job_ids": [],
+        "outcomes": {
+          "captured": 2,
+          "skipped": 0,
+          "blocked-or-failed": 0
+        },
+        "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+      },
+      {
+        "run_id": "public-data-query-contracts-20261105eo",
+        "jobs": 4,
+        "observations": 4,
+        "local_input_failure_job_ids": [],
+        "remaining_job_ids": [],
+        "outcomes": {
+          "captured": 2,
+          "skipped": 2,
+          "blocked-or-failed": 0
+        },
+        "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+      },
+      {
+        "run_id": "public-data-recovery-books-docs-20261105ep",
+        "jobs": 6,
+        "observations": 6,
+        "local_input_failure_job_ids": [],
+        "remaining_job_ids": [],
+        "outcomes": {
+          "captured": 5,
+          "skipped": 1,
+          "blocked-or-failed": 0
+        },
+        "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+      },
+      {
         "run_id": "publisher-identity-20261105o",
         "jobs": 5,
         "observations": 5,
@@ -3129,15 +3154,15 @@
     "original_status_reporter_enabled": false,
     "scheduled_task_snapshot": "scheduled-task.json",
     "connector_progress": {
-      "observed_at": "2026-11-05T21:32:59.298196+00:00",
+      "observed_at": "2026-11-05T21:51:00.516961+00:00",
       "total": 134,
-      "working": 53,
-      "blocked_or_failed": 66,
-      "still_checking": 15,
-      "not_working_verified": 81,
-      "assessed_or_deferred": 119,
-      "remaining_to_assess": 15,
-      "passing_query_examples": 565,
+      "working": 54,
+      "blocked_or_failed": 67,
+      "still_checking": 13,
+      "not_working_verified": 80,
+      "assessed_or_deferred": 121,
+      "remaining_to_assess": 13,
+      "passing_query_examples": 575,
       "groups": [
         {
           "id": "G01",
@@ -3167,9 +3192,9 @@
           "id": "G04",
           "name": "Government, maps and public data",
           "total": 26,
-          "working": 9,
-          "blocked_or_failed": 15,
-          "still_checking": 2
+          "working": 10,
+          "blocked_or_failed": 16,
+          "still_checking": 0
         },
         {
           "id": "G05",
@@ -3190,25 +3215,19 @@
       ],
       "previous_report": {
         "total": 134,
-        "working": 49,
-        "blocked_or_failed": 62,
-        "still_checking": 23,
-        "not_working_verified": 85,
-        "assessed_or_deferred": 111,
-        "remaining_to_assess": 23,
-        "passing_query_examples": 525
+        "working": 53,
+        "blocked_or_failed": 66,
+        "still_checking": 15,
+        "not_working_verified": 81,
+        "assessed_or_deferred": 119,
+        "remaining_to_assess": 15,
+        "passing_query_examples": 565
       },
       "new_working": [
-        "marad-data-reports",
-        "msha-digital-library",
-        "la-referencia",
-        "rit-scholarworks"
+        "govinfo"
       ],
       "new_blocked": [
-        "scielo",
-        "unpaywall",
-        "utrecht-repository",
-        "victoria-university-repository"
+        "world-bank-okr"
       ],
       "status_list": "connector-status.csv",
       "new_provider_errors_require_owner_action": false
@@ -3266,7 +3285,7 @@
       "blocked_or_failed": "Investigation deferred with a concrete access/policy/API/rights limitation; not a permanent outage claim.",
       "still_checking": "Known candidate without completed current query verification and not deferred."
     },
-    "remaining_definition": "15 Still checking connectors remain unassessed; 66 Blocked/failed have concrete recorded blockers. 81 lack working-query verification; blocked does not mean unchecked.",
+    "remaining_definition": "13 Still checking connectors remain unassessed; 67 Blocked/failed have concrete recorded blockers. 80 lack working-query verification; blocked does not mean unchecked.",
     "supported_scope_required": true,
     "deeper_dossier_and_geography_audits": "Retained as separate research-quality follow-up; do not describe them as the number of working search connectors.",
     "production_note": "Research-query verification does not imply activation in the app. Existing production state unchanged.",
@@ -3286,5 +3305,5 @@
     "blocker_reporting": "Give plain causes, changed/new blocked connectors, attempts and next decisions; group recurring reasons and link the full connector list.",
     "pause_when_provider_blocked": false
   },
-  "updated_at": "2026-11-05T21:32:59.298196+00:00"
+  "updated_at": "2026-11-05T21:51:00.516961+00:00"
 }

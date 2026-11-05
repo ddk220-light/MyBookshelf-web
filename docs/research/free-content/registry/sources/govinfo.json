@@ -11,7 +11,7 @@
     "P02",
     "P03"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -33,12 +33,153 @@
     ]
   },
   "capabilities": [
-    "Official search service supports field queries over publication packages/granules, relevance/date/title sorting and cursor pages; historical editions require explicit historical=true."
+    "Live documented public browser title-field searches over GPO package/granule publication records; first10 displayed results; selected native IDs and titles verified across ten topics."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": "https://api.govinfo.gov/search",
-    "cases": [],
+    "adapter": "govinfo-ui",
+    "endpoint": "https://www.govinfo.gov/app/search/",
+    "cases": [
+      {
+        "id": "title-01",
+        "intent": "Live browser title-field search: mathematics",
+        "expected_ids": [
+          "GOVPUB-ED-PURL-LPS117844"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Amathematics%22%2C%22offset%22%3A0%7D",
+          "ui_query": {
+            "text": "title:mathematics"
+          }
+        }
+      },
+      {
+        "id": "title-02",
+        "intent": "Live browser title-field search: agriculture",
+        "expected_ids": [
+          "STATUTE-105-Pg1818"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Aagriculture%22%2C%22offset%22%3A0%7D",
+          "ui_query": {
+            "text": "title:agriculture"
+          }
+        }
+      },
+      {
+        "id": "title-03",
+        "intent": "Live browser title-field search: construction",
+        "expected_ids": [
+          "GOVPUB-TD2-PURL-gpo120555"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Aconstruction%22%2C%22offset%22%3A0%7D",
+          "ui_query": {
+            "text": "title:construction"
+          }
+        }
+      },
+      {
+        "id": "title-04",
+        "intent": "Live browser title-field search: logistics",
+        "expected_ids": [
+          "GOVPUB-D5_400-PURL-LPS51381"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Alogistics%22%2C%22offset%22%3A0%7D",
+          "ui_query": {
+            "text": "title:logistics"
+          }
+        }
+      },
+      {
+        "id": "title-05",
+        "intent": "Live browser title-field search: mining",
+        "expected_ids": [
+          "GOVPUB-A13-PURL-gpo81941"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Amining%22%2C%22offset%22%3A0%7D",
+          "ui_query": {
+            "text": "title:mining"
+          }
+        }
+      },
+      {
+        "id": "title-06",
+        "intent": "Live browser title-field search: energy",
+        "expected_ids": [
+          "BILLS-112hr4480eh"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Aenergy%22%2C%22offset%22%3A0%7D",
+          "ui_query": {
+            "text": "title:energy"
+          }
+        }
+      },
+      {
+        "id": "title-07",
+        "intent": "Live browser title-field search: health",
+        "expected_ids": [
+          "STATUTE-106-Pg3469"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Ahealth%22%2C%22offset%22%3A0%7D",
+          "ui_query": {
+            "text": "title:health"
+          }
+        }
+      },
+      {
+        "id": "title-08",
+        "intent": "Live browser title-field search: water",
+        "expected_ids": [
+          "SERIALSET-05308_00_00-006-0774-0000"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Awater%22%2C%22offset%22%3A0%7D",
+          "ui_query": {
+            "text": "title:water"
+          }
+        }
+      },
+      {
+        "id": "title-09",
+        "intent": "Live browser title-field search: housing",
+        "expected_ids": [
+          "STATUTE-114-Pg2944"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Ahousing%22%2C%22offset%22%3A0%7D",
+          "ui_query": {
+            "text": "title:housing"
+          }
+        }
+      },
+      {
+        "id": "title-10",
+        "intent": "Live browser title-field search: education",
+        "expected_ids": [
+          "STATUTE-92-Pg2143"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Aeducation%22%2C%22offset%22%3A0%7D",
+          "ui_query": {
+            "text": "title:education"
+          }
+        }
+      }
+    ],
     "documented_request": {
       "method": "POST",
       "url": "https://api.govinfo.gov/search",
@@ -55,23 +196,47 @@
       },
       "authentication": "api.data.gov key; documentation offers DEMO_KEY for interactive initial trials"
     },
-    "authentication": "API key normally required; documented DEMO_KEY trial is distinct from permission/quota for ongoing service.",
-    "request_shape_verified": "documentation-only; never executed"
+    "authentication": "Anonymous public website search; no API key, account or payment.",
+    "request_shape_verified": true,
+    "documented_api_status": "blocked by API-host robots500; public browser search separately permitted",
+    "published_browser_search_urls": [
+      "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Amathematics%22%2C%22offset%22%3A0%7D",
+      "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Aagriculture%22%2C%22offset%22%3A0%7D",
+      "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Aconstruction%22%2C%22offset%22%3A0%7D",
+      "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Alogistics%22%2C%22offset%22%3A0%7D",
+      "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Amining%22%2C%22offset%22%3A0%7D",
+      "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Aenergy%22%2C%22offset%22%3A0%7D",
+      "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Ahealth%22%2C%22offset%22%3A0%7D",
+      "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Awater%22%2C%22offset%22%3A0%7D",
+      "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Ahousing%22%2C%22offset%22%3A0%7D",
+      "https://www.govinfo.gov/app/search/%7B%22query%22%3A%22title%3Aeducation%22%2C%22offset%22%3A0%7D"
+    ]
   },
-  "licensing": "Government publishing catalog with collection-specific records; do not infer all material copyright-free. Metadata/content terms and representative publication rights remain open.",
+  "licensing": "Official government publication metadata; this test does not establish blanket copyright waiver or third-party publication rights. Metadata indexing and content reading/reuse conditions remain separate.",
   "documentation": [
     "https://www.govinfo.gov/features/search-service-overview",
     "https://www.govinfo.gov/developers"
   ],
   "limitations": [
-    "One GPO catalog across collections. Federal Register/CFR editions and package/granule records are distinct native items, not new origins.",
-    "No fresh item-query examples; policy/documentation observations are not successful catalog queries."
+    "API-host robots endpoint returned500 twice after148seconds; no API query was sent. Working status covers only the independently permitted public browser search.",
+    "Results contain near matches despite title-field query; selected proof items have literal title relevance. No complete recall or whole-document search guarantee.",
+    "Native package/granule IDs preserve congressional/edition/version distinctions. A package and its granules are not independent origins.",
+    "An initial UI wait mistook temporary zero-record loading labels for empty searches; five queries were repeated with a matching-title wait. Original captures retained. Empty-query and pagination proof remain open.",
+    "No full government publications or media were downloaded; third-party material rights remain collection/item-specific."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/public-data-final-candidates-20261105en/observations.jsonl",
+    "runs/public-data-query-contracts-20261105eo/observations.jsonl",
+    "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+    "examples/govinfo.ui-inspection.jsonl",
+    "examples/govinfo.access.jsonl",
+    "examples/govinfo.browser.jsonl",
+    "examples/govinfo.jsonl",
+    "examples/govinfo.boundaries.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T03:19:01.955069+00:00",
-  "next_action": "Inspect current API documentation and bounded trial allowance; test packages vs granules, current vs historical editions, reader destinations and quotas. No production activation.",
+  "last_reviewed_at": "2026-11-05T21:50:51.668877+00:00",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "primary_document_observations": [
     {
       "path": "runs/source-evidence-20261105/observations.jsonl",
@@ -146,78 +311,64 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documented capabilities captured; no live query verified.",
+      "summary": "Live documented public browser title-field searches over GPO package/granule publication records; first10 displayed results; selected native IDs and titles verified across ten topics.",
       "facts": {
-        "request": {
-          "method": "POST",
-          "url": "https://api.govinfo.gov/search",
-          "json": {
-            "query": "federal API",
-            "pageSize": "2",
-            "offsetMark": "*",
-            "sorts": [
-              {
-                "field": "score",
-                "sortOrder": "DESC"
-              }
-            ]
-          },
-          "authentication": "api.data.gov key; documentation offers DEMO_KEY for interactive initial trials"
-        },
-        "authentication": "API key normally required; documented DEMO_KEY trial is distinct from permission/quota for ongoing service.",
-        "supported": "Official search service supports field queries over publication packages/granules, relevance/date/title sorting and cursor pages; historical editions require explicit historical=true.",
-        "unsupported": "No universal free reading, address/owner lookup or full-text completeness claim."
+        "adapter": "govinfo-ui",
+        "endpoint": "https://www.govinfo.gov/app/search/",
+        "cases": [
+          "title-01",
+          "title-02",
+          "title-03",
+          "title-04",
+          "title-05",
+          "title-06",
+          "title-07",
+          "title-08",
+          "title-09",
+          "title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live documented public browser title-field searches over GPO package/granule publication records; first10 displayed results; selected native IDs and titles verified across ten topics.",
+        "authentication": "Anonymous public website search; no API key, account or payment.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "d471a90db3c3dba84445",
-          "observed_at": "2026-11-05T02:24:28.636404+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "281915c94d05a08dd5fb",
-          "observed_at": "2026-11-05T02:21:00.792094+00:00"
-        }
+        "runs/public-data-final-candidates-20261105en/observations.jsonl",
+        "runs/public-data-query-contracts-20261105eo/observations.jsonl",
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/govinfo.ui-inspection.jsonl",
+        "examples/govinfo.access.jsonl",
+        "examples/govinfo.browser.jsonl",
+        "examples/govinfo.jsonl",
+        "examples/govinfo.boundaries.jsonl"
       ],
       "open_questions": [
-        "Execute supported bounded queries and verify native IDs, paging/empty/error/edition behavior once access conditions are met."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Government publishing catalog with collection-specific records; do not infer all material copyright-free. Metadata/content terms and representative publication rights remain open.",
+      "summary": "Official government publication metadata; this test does not establish blanket copyright waiver or third-party publication rights. Metadata indexing and content reading/reuse conditions remain separate.",
       "facts": {
-        "authentication": "API key normally required; documented DEMO_KEY trial is distinct from permission/quota for ongoing service.",
-        "published_limits": {
-          "max_page_size": 1000,
-          "paging": "offsetMark starts * then returned offsetMark",
-          "default_historical": false,
-          "published_numeric_rate_limit": "Not established by these saved documents",
-          "stability": "Saved feature article labels 2023 initial service public preview; current stability needs reconciliation."
-        },
-        "attribution": null
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous public website search; no API key, account or payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "d471a90db3c3dba84445",
-          "observed_at": "2026-11-05T02:24:28.636404+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "281915c94d05a08dd5fb",
-          "observed_at": "2026-11-05T02:21:00.792094+00:00"
-        }
+        "runs/public-data-final-candidates-20261105en/observations.jsonl",
+        "runs/public-data-query-contracts-20261105eo/observations.jsonl",
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/govinfo.ui-inspection.jsonl",
+        "examples/govinfo.access.jsonl",
+        "examples/govinfo.browser.jsonl",
+        "examples/govinfo.jsonl",
+        "examples/govinfo.boundaries.jsonl"
       ],
       "open_questions": [
-        "Review metadata/content licenses and representative object rights separately."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -247,83 +398,77 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No current item-query examples yet; names and documentation responses are not qualification.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "ten_examples": 0,
-        "versions": "Preserve issuing authority, dates, edition and native item/layer IDs"
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live documented public browser title-field searches over GPO package/granule publication records; first10 displayed results; selected native IDs and titles verified across ten topics.",
+        "empty_and_boundary_evidence": "examples/govinfo.boundaries.jsonl"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "d471a90db3c3dba84445",
-          "observed_at": "2026-11-05T02:24:28.636404+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "281915c94d05a08dd5fb",
-          "observed_at": "2026-11-05T02:21:00.792094+00:00"
-        }
+        "runs/public-data-final-candidates-20261105en/observations.jsonl",
+        "runs/public-data-query-contracts-20261105eo/observations.jsonl",
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/govinfo.ui-inspection.jsonl",
+        "examples/govinfo.access.jsonl",
+        "examples/govinfo.browser.jsonl",
+        "examples/govinfo.jsonl",
+        "examples/govinfo.boundaries.jsonl"
       ],
       "open_questions": [
-        "Collect five known-item/five topic observations plus ten passing examples and source-specific version/jurisdiction checks."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Published operating constraints captured with remaining scope kept explicit.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "max_page_size": 1000,
-        "paging": "offsetMark starts * then returned offsetMark",
-        "default_historical": false,
-        "published_numeric_rate_limit": "Not established by these saved documents",
-        "stability": "Saved feature article labels 2023 initial service public preview; current stability needs reconciliation."
+        "limits": [
+          "API-host robots endpoint returned500 twice after148seconds; no API query was sent. Working status covers only the independently permitted public browser search.",
+          "Results contain near matches despite title-field query; selected proof items have literal title relevance. No complete recall or whole-document search guarantee.",
+          "Native package/granule IDs preserve congressional/edition/version distinctions. A package and its granules are not independent origins.",
+          "An initial UI wait mistook temporary zero-record loading labels for empty searches; five queries were repeated with a matching-title wait. Original captures retained. Empty-query and pagination proof remain open.",
+          "No full government publications or media were downloaded; third-party material rights remain collection/item-specific."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "d471a90db3c3dba84445",
-          "observed_at": "2026-11-05T02:24:28.636404+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "281915c94d05a08dd5fb",
-          "observed_at": "2026-11-05T02:21:00.792094+00:00"
-        }
+        "runs/public-data-final-candidates-20261105en/observations.jsonl",
+        "runs/public-data-query-contracts-20261105eo/observations.jsonl",
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/govinfo.ui-inspection.jsonl",
+        "examples/govinfo.access.jsonl",
+        "examples/govinfo.browser.jsonl",
+        "examples/govinfo.jsonl",
+        "examples/govinfo.boundaries.jsonl"
       ],
       "open_questions": [
-        "Verify current route-level allowance and failure/refresh behavior before repeated automated use."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Retain for supported retrieval and item review; not qualified.",
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Inspect current API documentation and bounded trial allowance; test packages vs granules, current vs historical editions, reader destinations and quotas. No production activation.",
-        "revisit_trigger": "Current API/export contract and bounded reader evidence"
+        "decision": "working-query-scope-verified",
+        "reason": "Live documented public browser title-field searches over GPO package/granule publication records; first10 displayed results; selected native IDs and titles verified across ten topics.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/public-data-final-candidates-20261105en/observations.jsonl",
+        "runs/public-data-query-contracts-20261105eo/observations.jsonl",
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/govinfo.ui-inspection.jsonl",
+        "examples/govinfo.access.jsonl",
+        "examples/govinfo.browser.jsonl",
+        "examples/govinfo.jsonl",
+        "examples/govinfo.boundaries.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "d471a90db3c3dba84445",
-          "observed_at": "2026-11-05T02:24:28.636404+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "281915c94d05a08dd5fb",
-          "observed_at": "2026-11-05T02:21:00.792094+00:00"
-        }
-      ],
-      "open_questions": []
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
     }
   },
   "analysis_refs": [
@@ -359,5 +504,24 @@
       "text": "This was documentation research, not an API qualification run. Current official\nData.gov, GovInfo, USGS TNM, Census, USAGov, NYC and Tamil Nadu pages were readable;\ntheir documentation supports the proposed discovery routes, not an availability\nguarantee. Data.gov's current migration notice is especially important for future\nconnector selection. Keys, terms, quota settings and actual result samples still\nneed checking before implementation.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "API policy endpoint500; public browser alternative is allowed and works.",
+    "attempt": "Retried API policy after148seconds, then used the independently documented public search URL. Fixed a premature-zero UI test and repeated affected topics.",
+    "result": "Ten distinct browser title queries verified; both API500 policy responses and early UI failures preserved.",
+    "decision": "use_documented_public_browser_search",
+    "next_action": "Keep public title-search proof current; revisit API only on policy recovery. Verify page2 and a settled empty state separately.",
+    "retry_trigger": "API-host policy recovery or public UI schema change.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/public-data-final-candidates-20261105en/observations.jsonl",
+      "runs/public-data-query-contracts-20261105eo/observations.jsonl",
+      "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+      "examples/govinfo.ui-inspection.jsonl",
+      "examples/govinfo.access.jsonl",
+      "examples/govinfo.browser.jsonl",
+      "examples/govinfo.jsonl",
+      "examples/govinfo.boundaries.jsonl"
+    ]
+  }
 }
