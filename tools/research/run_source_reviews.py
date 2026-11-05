@@ -68,14 +68,14 @@ class ReviewRedirects(urllib.request.HTTPRedirectHandler):
         return None
 
 
-def request(url, limit=LIMIT, headers=None):
+def request(url, limit=LIMIT, headers=None, timeout=20):
     start = time.monotonic()
     result = {'requested_at': now(), 'url': url, 'status': None}
     body = b''
     try:
         req = urllib.request.Request(url, headers={'User-Agent': USER_AGENT, **(headers or {})})
         try:
-            response = urllib.request.build_opener(ReviewRedirects()).open(req, timeout=20)
+            response = urllib.request.build_opener(ReviewRedirects()).open(req, timeout=timeout)
         except urllib.error.HTTPError as exc:
             response = exc
         with response:

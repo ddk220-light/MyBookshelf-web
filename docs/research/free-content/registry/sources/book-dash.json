@@ -8,34 +8,159 @@
   "areas": [
     "C01"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
   "capabilities": [
-    "Imported historical retrieval analysis: [Current books catalog](https://bookdash.org/books/); curate or request export."
+    "Live keyword searches using the published Book Dash GET /books?s= form; ten literal-title matches with native book/variant landing-page IDs. Full stories and language-edition identity remain separate."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
+    "adapter": "bookdash-public",
+    "endpoint": "https://bookdash.org/books",
+    "cases": [
+      {
+        "id": "keyword-01",
+        "intent": "Public book keyword search with literal-title relevance: tree",
+        "expected_ids": [
+          "https://bookdash.org/books/a-very-important-tree/"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://bookdash.org/books?s=tree"
+        }
+      },
+      {
+        "id": "keyword-02",
+        "intent": "Public book keyword search with literal-title relevance: beautiful",
+        "expected_ids": [
+          "https://bookdash.org/books/a-beautiful-day/"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://bookdash.org/books?s=beautiful"
+        }
+      },
+      {
+        "id": "keyword-03",
+        "intent": "Public book keyword search with literal-title relevance: dancer",
+        "expected_ids": [
+          "https://bookdash.org/books/a-dancers-tale/"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://bookdash.org/books?s=dancer"
+        }
+      },
+      {
+        "id": "keyword-04",
+        "intent": "Public book keyword search with literal-title relevance: fish",
+        "expected_ids": [
+          "https://bookdash.org/books/a-fish-and-a-gift/"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://bookdash.org/books?s=fish"
+        }
+      },
+      {
+        "id": "keyword-05",
+        "intent": "Public book keyword search with literal-title relevance: mouse",
+        "expected_ids": [
+          "https://bookdash.org/books/a-house-for-mouse/"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://bookdash.org/books?s=mouse"
+        }
+      },
+      {
+        "id": "keyword-06",
+        "intent": "Public book keyword search with literal-title relevance: seed",
+        "expected_ids": [
+          "https://bookdash.org/books/a-tiny-seed/"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://bookdash.org/books?s=seed"
+        }
+      },
+      {
+        "id": "keyword-07",
+        "intent": "Public book keyword search with literal-title relevance: baby",
+        "expected_ids": [
+          "https://bookdash.org/books/baby-babble/"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://bookdash.org/books?s=baby"
+        }
+      },
+      {
+        "id": "keyword-08",
+        "intent": "Public book keyword search with literal-title relevance: bees",
+        "expected_ids": [
+          "https://bookdash.org/books/banzis-busy-bees/"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://bookdash.org/books?s=bees"
+        }
+      },
+      {
+        "id": "keyword-09",
+        "intent": "Public book keyword search with literal-title relevance: cat",
+        "expected_ids": [
+          "https://bookdash.org/books/catch-that-cat/"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://bookdash.org/books?s=cat"
+        }
+      },
+      {
+        "id": "keyword-10",
+        "intent": "Public book keyword search with literal-title relevance: umbrella",
+        "expected_ids": [
+          "https://bookdash.org/books/the-red-umbrella/"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://bookdash.org/books?s=umbrella"
+        }
+      }
+    ],
     "historical_contract": "[Current books catalog](https://bookdash.org/books/); curate or request export.",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "authentication": "Anonymous published website form; no API key, new account or payment.",
+    "request_shape_verified": true,
+    "published_form": {
+      "method": "GET",
+      "action": "/books",
+      "query_field": "s"
+    }
   },
-  "licensing": "Picture books/translations/source materials; verify each license/credits and screen reader vs print-ready download.",
+  "licensing": "Official catalog states all Book Dash books are CC BY4.0 and may be read, downloaded, printed, translated and shared with appropriate creator/Book Dash credit. Item-level link/access and third-party terms remain separate.",
   "documentation": [
     "https://bookdash.org/books/"
   ],
   "limitations": [
-    "The public WordPress book API and language taxonomy were verified on 2026-11-01; a pinned 30-English-edition subset is implemented with exact creator roles and public-gallery evidence. See [current source operations](ADDITIONAL_SOURCES.md). **Implemented bounded subset**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "The site searches beyond literal titles, so some returned books match contextual terms. Current positive proof selects literal-title results; recall/ranking are not fully qualified.",
+    "Native SASL and other variant URLs remain distinct. A displayed language count does not establish the actual translated edition IDs.",
+    "Empty nonsense search is confirmed by the explicit no-books message after a parser correction; original parser failure preserved. Pagination and language/theme filters are not yet tested.",
+    "No book PDFs, images, audio or source files downloaded. Public reading/CC BY statements captured from catalog, not independently tested for every item."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+    "runs/bookdash-title-queries-20261105es/observations.jsonl",
+    "runs/books-query-export-docs-20261105eq/observations.jsonl",
+    "analysis/external/bookdash-search-responses-20261105.json",
+    "examples/book-dash.jsonl",
+    "examples/book-dash.boundaries.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T22:01:53.852124+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -81,36 +206,60 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Live keyword searches using the published Book Dash GET /books?s= form; ten literal-title matches with native book/variant landing-page IDs. Full stories and language-edition identity remain separate.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Imported historical retrieval analysis: [Current books catalog](https://bookdash.org/books/); curate or request export."
+        "adapter": "bookdash-public",
+        "endpoint": "https://bookdash.org/books",
+        "cases": [
+          "keyword-01",
+          "keyword-02",
+          "keyword-03",
+          "keyword-04",
+          "keyword-05",
+          "keyword-06",
+          "keyword-07",
+          "keyword-08",
+          "keyword-09",
+          "keyword-10"
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live keyword searches using the published Book Dash GET /books?s= form; ten literal-title matches with native book/variant landing-page IDs. Full stories and language-edition identity remain separate.",
+        "authentication": "Anonymous published website form; no API key, new account or payment.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+        "runs/bookdash-title-queries-20261105es/observations.jsonl",
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "analysis/external/bookdash-search-responses-20261105.json",
+        "examples/book-dash.jsonl",
+        "examples/book-dash.boundaries.jsonl"
       ],
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Official catalog states all Book Dash books are CC BY4.0 and may be read, downloaded, printed, translated and shared with appropriate creator/Book Dash credit. Item-level link/access and third-party terms remain separate.",
       "facts": {
-        "license_notes": "Picture books/translations/source materials; verify each license/credits and screen reader vs print-ready download.",
-        "authentication_notes": "See historical notes; current contract must be reconciled with newer evidence.",
-        "cost_notes": null,
-        "terms_review": "pending current reconciliation"
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous published website form; no API key, new account or payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+        "runs/bookdash-title-queries-20261105es/observations.jsonl",
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "analysis/external/bookdash-search-responses-20261105.json",
+        "examples/book-dash.jsonl",
+        "examples/book-dash.boundaries.jsonl"
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -132,49 +281,69 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "limitations": [
-          "The public WordPress book API and language taxonomy were verified on 2026-11-01; a pinned 30-English-edition subset is implemented with exact creator roles and public-gallery evidence. See [current source operations](ADDITIONAL_SOURCES.md). **Implemented bounded subset**.",
-          "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
-        ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live keyword searches using the published Book Dash GET /books?s= form; ten literal-title matches with native book/variant landing-page IDs. Full stories and language-edition identity remain separate.",
+        "empty_and_boundary_evidence": "examples/book-dash.boundaries.jsonl"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+        "runs/bookdash-title-queries-20261105es/observations.jsonl",
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "analysis/external/bookdash-search-responses-20261105.json",
+        "examples/book-dash.jsonl",
+        "examples/book-dash.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "limits": [
+          "The site searches beyond literal titles, so some returned books match contextual terms. Current positive proof selects literal-title results; recall/ranking are not fully qualified.",
+          "Native SASL and other variant URLs remain distinct. A displayed language count does not establish the actual translated edition IDs.",
+          "Empty nonsense search is confirmed by the explicit no-books message after a parser correction; original parser failure preserved. Pagination and language/theme filters are not yet tested.",
+          "No book PDFs, images, audio or source files downloaded. Public reading/CC BY statements captured from catalog, not independently tested for every item."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+        "runs/bookdash-title-queries-20261105es/observations.jsonl",
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "analysis/external/bookdash-search-responses-20261105.json",
+        "examples/book-dash.jsonl",
+        "examples/book-dash.boundaries.jsonl"
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "working-query-scope-verified",
+        "reason": "Live keyword searches using the published Book Dash GET /books?s= form; ten literal-title matches with native book/variant landing-page IDs. Full stories and language-edition identity remain separate.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+        "runs/bookdash-title-queries-20261105es/observations.jsonl",
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "analysis/external/bookdash-search-responses-20261105.json",
+        "examples/book-dash.jsonl",
+        "examples/book-dash.boundaries.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Production activation has not been requested by this task."
       ]
     }
   },

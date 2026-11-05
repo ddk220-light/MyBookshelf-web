@@ -1,3 +1,21 @@
+## 2026-11-05T22:03:57.009963+00:00: Connector search checkpoint
+
+| Group | Working | Blocked/failed | Still checking | Total |
+|---|---:|---:|---:|---:|
+| Books, children’s books and audiobooks | 15 | 19 | 5 | 39 |
+| Learning and technical documentation | 9 | 6 | 0 | 15 |
+| Industry and job knowledge | 10 | 10 | 0 | 20 |
+| Government, maps and public data | 10 | 16 | 0 | 26 |
+| Research papers and scholarly sources | 10 | 12 | 0 | 22 |
+| Language, culture and media | 4 | 8 | 0 | 12 |
+| **Total** | **58** | **71** | **5** | **134** |
+
+Compared with the prior hourly report: +5 Working, +5 Blocked/failed, 10 fewer Still checking; 52 added passing examples.
+
+58 Working, 71 Blocked/failed, 5 Still checking of 134; 617 passing examples. This run's Working additions: book-dash, google-books, project-gutenberg, standard-ebooks, govinfo. New blocked: doab, gutendex, oapen, open-library, world-bank-okr. Read connector-status.csv for tested search scopes and recovery actions. GovInfo API policy500 repeated after148seconds, but its documented browser title search works; a transient-zero UI test mistake was fixed and failed captures retained. World Bank OKR keyword search is robots-disallowed; no hidden API workaround. Project Gutenberg searches its complete79712-row permitted metadata export; Standard Ebooks covers only15 free recent releases; Book Dash public keyword search works. Google Books works for bibliographic search only: free-ebook/full-view filters returned0 here. Gutendex has2 passing examples but remains intermittent after20/45second timeouts. Continue African Storybook, Nalibali, Storyberries, StoryWeaver and Internet Archive. Research only; hourly task stays enabled.
+
+Validation: 247 research tests and registry capture/index/audit/validation pass. No source activation or deployment. [Per-connector search scopes and recovery actions](connector-status.csv). State: intermediate-book-checkpoint.
+
 ## 2026-11-05T21:51:00.516961+00:00: Connector search checkpoint
 
 | Group | Working | Blocked/failed | Still checking | Total |

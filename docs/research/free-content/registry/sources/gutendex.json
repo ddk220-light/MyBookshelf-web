@@ -8,7 +8,7 @@
   "areas": [
     "C02"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -16,26 +16,59 @@
     "Imported historical retrieval analysis: JSON `/books/?search=...&languages=en&topic=...`; MIME filters, `next` pagination, `/books/{id}`. [Docs and source](https://gutendex.com/)"
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
+    "adapter": "gutendex-books",
+    "endpoint": "https://gutendex.com/books/",
+    "cases": [
+      {
+        "id": "mathematics",
+        "intent": "Intermittently successful title/author search: mathematics",
+        "expected_ids": [
+          "16713"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "mathematics",
+          "url": "https://gutendex.com/books/?search=mathematics&copyright=false&page=1"
+        }
+      },
+      {
+        "id": "algebra",
+        "intent": "Intermittently successful title/author search: algebra",
+        "expected_ids": [
+          "21154"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "algebra",
+          "url": "https://gutendex.com/books/?search=algebra&copyright=false&page=1"
+        }
+      }
+    ],
     "historical_contract": "JSON `/books/?search=...&languages=en&topic=...`; MIME filters, `next` pagination, `/books/{id}`. [Docs and source](https://gutendex.com/)",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "authentication": "Anonymous demo API; no account/key",
+    "request_shape_verified": true
   },
   "licensing": "`formats` map links to Gutenberg content; retain Gutenberg IDs and attribution.",
   "documentation": [
     "https://gutendex.com/"
   ],
   "limitations": [
+    "Search is intermittent: two terms returned relevant books, but other queries repeatedly exceeded20- and45-second limits.",
     "No public-demo key. Docs recommend self-hosting for long-term use. Public query timed out. Consider its implementation instead of writing an importer; do not depend on its demo in production. **Low prototype, medium self-hosted / P1 alternative**.",
     "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+    "examples/gutendex.scouting.jsonl",
+    "examples/gutendex.jsonl",
+    "examples/gutendex.boundaries.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T22:02:28.719287+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -164,17 +197,21 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Search is intermittent: two terms returned relevant books, but other queries repeatedly exceeded20- and45-second limits.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "blocked_or_failed",
+        "blocker": "Search is intermittent: two terms returned relevant books, but other queries repeatedly exceeded20- and45-second limits.",
+        "next_action": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/gutendex.scouting.jsonl",
+        "examples/gutendex.jsonl",
+        "examples/gutendex.boundaries.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Reliable supported search remains unresolved. Blocked is not a permanent absence claim."
       ]
     }
   },
@@ -203,5 +240,20 @@
       "text": "- An Open Library work returned `ebook_access: public` alongside many Internet Archive identifiers. That does not identify which edition is freely readable.\n- A HAL hit had a record URL and DOI but no `fileMain_s`: a repository hit is not necessarily full text.\n- Zenodo returned a dataset; item-type filtering is essential.\n- DOAJ supplied an older HTTP publisher URL; metadata alone does not prove the destination still works.\n- Semantic Scholar returned **429**, and Gutendex timed out. Those checks do not establish general service availability.\n- Some documentation URLs moved; corrected DOAB/OAPEN URLs appear in the catalog. Some sites returned only a JavaScript shell. NCERT/ERIC/OER Commons could not be fully inspected.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "Search is intermittent: two terms returned relevant books, but other queries repeatedly exceeded20- and45-second limits.",
+    "attempt": "Retried after multi-minute backoff; kept two successful responses; raised the overly short20second request timeout to45seconds for one further controlled attempt.",
+    "result": "Mathematics and algebra succeeded after earlier timeouts. Geometry still timed out at45seconds. The batch stops on transport/server/access errors. No bulk ebook downloads or new server setup.",
+    "decision": "retry_after_service_latency_recovery",
+    "next_action": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task.",
+    "retry_trigger": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+      "examples/gutendex.scouting.jsonl",
+      "examples/gutendex.jsonl",
+      "examples/gutendex.boundaries.jsonl"
+    ]
+  }
 }

@@ -8,35 +8,199 @@
   "areas": [
     "C02"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
   "capabilities": [
-    "Imported historical retrieval analysis: Import official CSV/RDF catalog into local search; PG ID as identity. Official OPDS supports discovery. [Catalog formats](https://www.gutenberg.org/ebooks/offline_catalogs.html), [automation policy](https://www.gutenberg.org/policy/robot_access.html)"
+    "Local title-token or native ebook-ID searches over all79712 records in the current officially permitted weekly Project Gutenberg CSV. Metadata only; ebook release dates are not print publication/edition dates."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
+    "adapter": "gutenberg-csv",
+    "endpoint": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+    "cases": [
+      {
+        "id": "title-01",
+        "intent": "Local exported metadata title search: mathematics",
+        "expected_ids": [
+          "8746"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "mathematics"
+          }
+        }
+      },
+      {
+        "id": "title-02",
+        "intent": "Local exported metadata title search: algebra",
+        "expected_ids": [
+          "10836"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "algebra"
+          }
+        }
+      },
+      {
+        "id": "title-03",
+        "intent": "Local exported metadata title search: geometry",
+        "expected_ids": [
+          "13702"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "geometry"
+          }
+        }
+      },
+      {
+        "id": "title-04",
+        "intent": "Local exported metadata title search: theoretical physics",
+        "expected_ids": [
+          "39017"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "theoretical physics"
+          }
+        }
+      },
+      {
+        "id": "title-05",
+        "intent": "Local exported metadata title search: elementary chemistry",
+        "expected_ids": [
+          "20848"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "elementary chemistry"
+          }
+        }
+      },
+      {
+        "id": "title-06",
+        "intent": "Local exported metadata title search: astronomy",
+        "expected_ids": [
+          "4065"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "astronomy"
+          }
+        }
+      },
+      {
+        "id": "title-07",
+        "intent": "Local exported metadata title search: systematic botany",
+        "expected_ids": [
+          "20390"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "systematic botany"
+          }
+        }
+      },
+      {
+        "id": "title-08",
+        "intent": "Local exported metadata title search: music",
+        "expected_ids": [
+          "1546"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "music"
+          }
+        }
+      },
+      {
+        "id": "title-09",
+        "intent": "Local exported metadata title search: poetry",
+        "expected_ids": [
+          "260"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "poetry"
+          }
+        }
+      },
+      {
+        "id": "title-10",
+        "intent": "Local exported metadata title search: mechanics",
+        "expected_ids": [
+          "7825"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "mechanics"
+          }
+        }
+      }
+    ],
     "historical_contract": "Import official CSV/RDF catalog into local search; PG ID as identity. Official OPDS supports discovery. [Catalog formats](https://www.gutenberg.org/ebooks/offline_catalogs.html), [automation policy](https://www.gutenberg.org/policy/robot_access.html)",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "authentication": "Public metadata export/feed; no account, API key or payment.",
+    "request_shape_verified": true,
+    "catalog_rows": 79712,
+    "export_response_sha256": "6bf36a85e7c8d9d65dd2496c458ff47186639aa2e3bcb0a7d9f63907e138ab2d",
+    "metadata_archive": "analysis/external/project-gutenberg-metadata-export-20261105.json"
   },
-  "licensing": "`https://www.gutenberg.org/ebooks/{id}`; metadata supplies HTML/EPUB/text format URLs. Public-domain status is generally US-specific; preserve per-record rights.",
+  "licensing": "Official robot-access policy grants catalog data to the public domain and explicitly permits machine-readable metadata. The waiver is catalog metadata; underlying ebook and territory conditions remain separate.",
   "documentation": [
     "https://www.gutenberg.org/ebooks/offline_catalogs.html",
     "https://www.gutenberg.org/policy/robot_access.html"
   ],
   "limitations": [
-    "No key. Use approved catalog distribution, not website search scraping. Docs mentioned OPDS2 testing and planned XML feed retirement in 2027. RDF sample worked. **Medium / P0**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "No human-facing Gutenberg search-page crawling; operator policy directs automated catalog use to metadata exports.",
+    "Current weekly snapshot; no live-upstream keyword search, translation/stemming or full-text search. Refresh and exact print editions require separate review.",
+    "One Gutenberg content origin; Gutendex is another connector over the same ebook IDs, not independent supply.",
+    "Metadata are public domain. Book rights can differ, and outside-USA readers must check local rights. No full ebook was downloaded.",
+    "Title tokens do not distinguish word senses: broad Botany matched Botany Bay, and Physics matched Physics and Politics. Those observations remain historical; current science examples use more precise title terms."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+    "runs/books-query-export-docs-20261105eq/observations.jsonl",
+    "analysis/external/project-gutenberg-metadata-export-20261105.json",
+    "examples/project-gutenberg.access.jsonl",
+    "examples/project-gutenberg.jsonl",
+    "examples/project-gutenberg.boundaries.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T22:00:14.783149+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -82,36 +246,60 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Local title-token or native ebook-ID searches over all79712 records in the current officially permitted weekly Project Gutenberg CSV. Metadata only; ebook release dates are not print publication/edition dates.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Imported historical retrieval analysis: Import official CSV/RDF catalog into local search; PG ID as identity. Official OPDS supports discovery. [Catalog formats](https://www.gutenberg.org/ebooks/offline_catalogs.html), [automation policy](https://www.gutenberg.org/policy/robot_access.html)"
+        "adapter": "gutenberg-csv",
+        "endpoint": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv",
+        "cases": [
+          "title-01",
+          "title-02",
+          "title-03",
+          "title-04",
+          "title-05",
+          "title-06",
+          "title-07",
+          "title-08",
+          "title-09",
+          "title-10"
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Local title-token or native ebook-ID searches over all79712 records in the current officially permitted weekly Project Gutenberg CSV. Metadata only; ebook release dates are not print publication/edition dates.",
+        "authentication": "Public metadata export/feed; no account, API key or payment.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "analysis/external/project-gutenberg-metadata-export-20261105.json",
+        "examples/project-gutenberg.access.jsonl",
+        "examples/project-gutenberg.jsonl",
+        "examples/project-gutenberg.boundaries.jsonl"
       ],
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Official robot-access policy grants catalog data to the public domain and explicitly permits machine-readable metadata. The waiver is catalog metadata; underlying ebook and territory conditions remain separate.",
       "facts": {
-        "license_notes": "`https://www.gutenberg.org/ebooks/{id}`; metadata supplies HTML/EPUB/text format URLs. Public-domain status is generally US-specific; preserve per-record rights.",
-        "authentication_notes": "See historical notes; current contract must be reconciled with newer evidence.",
-        "cost_notes": null,
-        "terms_review": "pending current reconciliation"
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Public metadata export/feed; no account, API key or payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "analysis/external/project-gutenberg-metadata-export-20261105.json",
+        "examples/project-gutenberg.access.jsonl",
+        "examples/project-gutenberg.jsonl",
+        "examples/project-gutenberg.boundaries.jsonl"
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -133,49 +321,69 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "limitations": [
-          "No key. Use approved catalog distribution, not website search scraping. Docs mentioned OPDS2 testing and planned XML feed retirement in 2027. RDF sample worked. **Medium / P0**.",
-          "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
-        ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Local title-token or native ebook-ID searches over all79712 records in the current officially permitted weekly Project Gutenberg CSV. Metadata only; ebook release dates are not print publication/edition dates.",
+        "empty_and_boundary_evidence": "examples/project-gutenberg.boundaries.jsonl"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "analysis/external/project-gutenberg-metadata-export-20261105.json",
+        "examples/project-gutenberg.access.jsonl",
+        "examples/project-gutenberg.jsonl",
+        "examples/project-gutenberg.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "limits": [
+          "No human-facing Gutenberg search-page crawling; operator policy directs automated catalog use to metadata exports.",
+          "Current weekly snapshot; no live-upstream keyword search, translation/stemming or full-text search. Refresh and exact print editions require separate review.",
+          "One Gutenberg content origin; Gutendex is another connector over the same ebook IDs, not independent supply.",
+          "Metadata are public domain. Book rights can differ, and outside-USA readers must check local rights. No full ebook was downloaded."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "analysis/external/project-gutenberg-metadata-export-20261105.json",
+        "examples/project-gutenberg.access.jsonl",
+        "examples/project-gutenberg.jsonl",
+        "examples/project-gutenberg.boundaries.jsonl"
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "working-query-scope-verified",
+        "reason": "Local title-token or native ebook-ID searches over all79712 records in the current officially permitted weekly Project Gutenberg CSV. Metadata only; ebook release dates are not print publication/edition dates.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "analysis/external/project-gutenberg-metadata-export-20261105.json",
+        "examples/project-gutenberg.access.jsonl",
+        "examples/project-gutenberg.jsonl",
+        "examples/project-gutenberg.boundaries.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Production activation has not been requested by this task."
       ]
     }
   },

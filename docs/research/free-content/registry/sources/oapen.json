@@ -8,7 +8,7 @@
   "areas": [
     "C04"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -27,15 +27,20 @@
     "https://oapen.org/librarians/metadata"
   ],
   "limitations": [
+    "Both documented metadata routes are blocked at policy preflight: export-host robots redirects to login; repository robots repeatedly times out.",
     "No key for feeds. Overlaps DOAB: reconcile DOI/handle/ISBN and retain both sources. Only OAI Identify tested. **Medium / P1**.",
     "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/books-query-export-docs-20261105eq/observations.jsonl",
+    "examples/oapen.access.jsonl",
+    "runs/bookdash-title-queries-20261105es/observations.jsonl",
+    "runs/final-children-docs-20261105et/observations.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T22:03:22.627602+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Wait for policy/host recovery, then retry a single documented KBART export or OAI metadata-format probe. No credentials/account creation or alternate hidden API.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -164,17 +169,21 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Both documented metadata routes are blocked at policy preflight: export-host robots redirects to login; repository robots repeatedly times out.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "blocked_or_failed",
+        "blocker": "Both documented metadata routes are blocked at policy preflight: export-host robots redirects to login; repository robots repeatedly times out.",
+        "next_action": "Wait for policy/host recovery, then retry a single documented KBART export or OAI metadata-format probe. No credentials/account creation or alternate hidden API.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "examples/oapen.access.jsonl",
+        "runs/bookdash-title-queries-20261105es/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Current queryability unresolved; login redirect on robots does not establish that the published export itself requires an account."
       ]
     }
   },
@@ -299,5 +308,20 @@
       "text": "- An Open Library work returned `ebook_access: public` alongside many Internet Archive identifiers. That does not identify which edition is freely readable.\n- A HAL hit had a record URL and DOI but no `fileMain_s`: a repository hit is not necessarily full text.\n- Zenodo returned a dataset; item-type filtering is essential.\n- DOAJ supplied an older HTTP publisher URL; metadata alone does not prove the destination still works.\n- Semantic Scholar returned **429**, and Gutendex timed out. Those checks do not establish general service availability.\n- Some documentation URLs moved; corrected DOAB/OAPEN URLs appear in the catalog. Some sites returned only a JavaScript shell. NCERT/ERIC/OER Commons could not be fully inspected.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "Both documented metadata routes are blocked at policy preflight: export-host robots redirects to login; repository robots repeatedly times out.",
+    "attempt": "Read current official metadata documentation; checked published KBART-books export and OAI ListMetadataFormats alternative; retried OAI policy after132seconds.",
+    "result": "Metadata documentation200 explicitly permits CC0/free feeds. memo.oapen.org/robots.txt302 goes to /login; library.oapen.org/robots.txt timed out twice at20seconds. Neither export nor OAI query was sent.",
+    "decision": "wait_for_policy_host_recovery",
+    "next_action": "Wait for policy/host recovery, then retry a single documented KBART export or OAI metadata-format probe. No credentials/account creation or alternate hidden API.",
+    "retry_trigger": "Usable policy endpoint or documented replacement public export.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/books-query-export-docs-20261105eq/observations.jsonl",
+      "examples/oapen.access.jsonl",
+      "runs/bookdash-title-queries-20261105es/observations.jsonl",
+      "runs/final-children-docs-20261105et/observations.jsonl"
+    ]
+  }
 }

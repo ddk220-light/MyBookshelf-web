@@ -8,7 +8,7 @@
   "areas": [
     "C02"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -28,15 +28,18 @@
     "https://openlibrary.org/dev/docs/api/search"
   ],
   "limitations": [
+    "Current robots policy disallows the documented /search.json query route.",
     "No key. Observed docs: 1 request/sec default, 3/sec with identifying User-Agent and contact. Cached user-driven discovery supported; high-traffic commercial backend use/bulk API harvesting discouraged. Use dumps/arrangement for scale. **Medium / P1 enrichment; already integrated**.",
     "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+    "examples/open-library.scouting.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T22:02:28.718279+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Revisit only on search-policy change or a documented practical allowed metadata export. No browser/private-API workaround.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -165,17 +168,19 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current robots policy disallows the documented /search.json query route.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "blocked_or_failed",
+        "blocker": "Current robots policy disallows the documented /search.json query route.",
+        "next_action": "Revisit only on search-policy change or a documented practical allowed metadata export. No browser/private-API workaround.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/open-library.scouting.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Reliable supported search remains unresolved. Blocked is not a permanent absence claim."
       ]
     }
   },
@@ -236,5 +241,18 @@
       "text": "- An Open Library work returned `ebook_access: public` alongside many Internet Archive identifiers. That does not identify which edition is freely readable.\n- A HAL hit had a record URL and DOI but no `fileMain_s`: a repository hit is not necessarily full text.\n- Zenodo returned a dataset; item-type filtering is essential.\n- DOAJ supplied an older HTTP publisher URL; metadata alone does not prove the destination still works.\n- Semantic Scholar returned **429**, and Gutendex timed out. Those checks do not establish general service availability.\n- Some documentation URLs moved; corrected DOAB/OAPEN URLs appear in the catalog. Some sites returned only a JavaScript shell. NCERT/ERIC/OER Commons could not be fully inspected.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "Current robots policy disallows the documented /search.json query route.",
+    "attempt": "Read the official Search API contract, including public-ebook filters and work/edition fields; checked a bounded title query under current policy.",
+    "result": "robots200 policy caused a skip; no search request was sent. API documentation alone is not query proof.",
+    "decision": "wait_for_permitted_search_or_export",
+    "next_action": "Revisit only on search-policy change or a documented practical allowed metadata export. No browser/private-API workaround.",
+    "retry_trigger": "Revisit only on search-policy change or a documented practical allowed metadata export. No browser/private-API workaround.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+      "examples/open-library.scouting.jsonl"
+    ]
+  }
 }

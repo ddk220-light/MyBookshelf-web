@@ -15,6 +15,10 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'bookdash-public': 'Live published keyword form returning native book/variant pages; literal-title examples verified, language counts are not translated edition IDs',
+    'gutenberg-csv': 'Local title-token/native ebook-ID search over the complete permitted weekly CSV; PG release date is not print edition date, no book downloads',
+    'standard-new-releases': 'Local title-token/native edition-URL search over the free latest15-release Atom feed only; full-catalog OPDS requires membership and is not tested',
+    'google-books-metadata': 'Live bibliographic title search, first3 native volume IDs and actual access flags; free-ebook/full-view filters returned zero here, so free-copy discovery is unverified',
     'govinfo-ui': 'Live public browser title-field search, first10 package/granule results; API-host failure is separate, no document/full-text download',
     'gutendex-books': 'Live title/author word search, first32 Project Gutenberg ebook IDs reported public domain in USA; shared Gutenberg origin, no reading/territory guarantee',
     'openlibrary-search': 'Live title search restricted to public-ebook works, first3 work IDs with matching edition IDs; no full-item reading guarantee',

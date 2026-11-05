@@ -8,7 +8,7 @@
   "areas": [
     "C04"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -27,15 +27,17 @@
     "https://doabooks.org/en/librarians/doab-metadata"
   ],
   "limitations": [
+    "The official documentation host served HTML at robots.txt, so its policy could not be established.",
     "No key for documented feeds. Harvesting is not interactive search. Identify, formats, ListRecords and one `xoai` record worked. **Medium / P1, first scholarly-book import**.",
     "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/books-query-export-docs-20261105eq/observations.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T22:02:28.718842+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Retry after the official policy endpoint recovers or a documented permitted export becomes available.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -164,17 +166,18 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "The official documentation host served HTML at robots.txt, so its policy could not be established.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "blocked_or_failed",
+        "blocker": "The official documentation host served HTML at robots.txt, so its policy could not be established.",
+        "next_action": "Retry after the official policy endpoint recovers or a documented permitted export becomes available.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/books-query-export-docs-20261105eq/observations.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Reliable supported search remains unresolved. Blocked is not a permanent absence claim."
       ]
     }
   },
@@ -347,5 +350,17 @@
       "text": "- An Open Library work returned `ebook_access: public` alongside many Internet Archive identifiers. That does not identify which edition is freely readable.\n- A HAL hit had a record URL and DOI but no `fileMain_s`: a repository hit is not necessarily full text.\n- Zenodo returned a dataset; item-type filtering is essential.\n- DOAJ supplied an older HTTP publisher URL; metadata alone does not prove the destination still works.\n- Semantic Scholar returned **429**, and Gutendex timed out. Those checks do not establish general service availability.\n- Some documentation URLs moved; corrected DOAB/OAPEN URLs appear in the catalog. Some sites returned only a JavaScript shell. NCERT/ERIC/OER Commons could not be fully inspected.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "The official documentation host served HTML at robots.txt, so its policy could not be established.",
+    "attempt": "Checked the existing official metadata documentation URL and validated the robots response type.",
+    "result": "robots200 was54147bytes of HTML instead of usable policy. Documentation/query calls skipped; no alternate hostname or hidden repository API used.",
+    "decision": "wait_for_usable_policy",
+    "next_action": "Retry after the official policy endpoint recovers or a documented permitted export becomes available.",
+    "retry_trigger": "Retry after the official policy endpoint recovers or a documented permitted export becomes available.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/books-query-export-docs-20261105eq/observations.jsonl"
+    ]
+  }
 }

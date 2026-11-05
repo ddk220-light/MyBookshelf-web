@@ -31,7 +31,7 @@
   ],
   "execution": {
     "batch_size": "Small checkpoints, not a completion quota. Continue productive independent work within each run budget; resume hourly without waiting for new user requests.",
-    "cursor": "54 Working, 67 Blocked/failed, 13 Still checking of 134; 575 passing examples. This run's Working additions: govinfo. New blocked: world-bank-okr. Read connector-status.csv for tested search scopes and recovery actions. GovInfo API policy500 repeated after148seconds, but its documented browser title search works; a transient-zero UI test mistake was fixed and failed captures retained. World Bank OKR keyword search is robots-disallowed; no hidden API workaround. Continue unchecked book connectors, including documented title/author APIs and permitted metadata catalogs. Research only; hourly task stays enabled.",
+    "cursor": "58 Working, 71 Blocked/failed, 5 Still checking of 134; 617 passing examples. This run's Working additions: book-dash, google-books, project-gutenberg, standard-ebooks, govinfo. New blocked: doab, gutendex, oapen, open-library, world-bank-okr. Read connector-status.csv for tested search scopes and recovery actions. GovInfo API policy500 repeated after148seconds, but its documented browser title search works; a transient-zero UI test mistake was fixed and failed captures retained. World Bank OKR keyword search is robots-disallowed; no hidden API workaround. Project Gutenberg searches its complete79712-row permitted metadata export; Standard Ebooks covers only15 free recent releases; Book Dash public keyword search works. Google Books works for bibliographic search only: free-ebook/full-view filters returned0 here. Gutendex has2 passing examples but remains intermittent after20/45second timeouts. Continue African Storybook, Nalibali, Storyberries, StoryWeaver and Internet Archive. Research only; hourly task stays enabled.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
@@ -58,12 +58,12 @@
     },
     "completion_audit": "completion-audit.json",
     "last_checkpoint": {
-      "observed_at": "2026-11-05T21:51:00.516961+00:00",
+      "observed_at": "2026-11-05T22:03:57.009963+00:00",
       "source_records": 134,
-      "verified_examples": 575,
-      "query_verified_sources": 54,
+      "verified_examples": 617,
+      "query_verified_sources": 58,
       "source_dossiers_complete": 2,
-      "captured_text_documents": 117,
+      "captured_text_documents": 120,
       "indexed_binary_assets": 221,
       "existing_links_triaged": 615,
       "new_untriaged_links": 0,
@@ -78,28 +78,36 @@
       "civic_cells_accounted": 0,
       "civic_cells_total": 18,
       "open_gateway_url_followups": 82,
-      "documentation_runs": 158,
-      "documentation_jobs": 753,
+      "documentation_runs": 162,
+      "documentation_jobs": 776,
       "current_batch": {
         "new_working_connectors": [
+          "book-dash",
+          "google-books",
+          "project-gutenberg",
+          "standard-ebooks",
           "govinfo"
         ],
         "new_blocked_connectors": [
+          "doab",
+          "gutendex",
+          "oapen",
+          "open-library",
           "world-bank-okr"
         ],
-        "new_verified_examples": 10,
+        "new_verified_examples": 52,
         "new_source_records": 0,
-        "still_checking_change": -2,
-        "research_tests": 242,
+        "still_checking_change": -10,
+        "research_tests": 247,
         "production_changed": false,
         "older_blocker_actions_clarified": []
       },
-      "validation": "Capture/index/audit, registry validation and 242 research tests pass; zero capture errors.",
+      "validation": "Capture/index/audit, registry validation and 247 research tests pass; zero capture errors.",
       "goal_complete": false,
       "previous_saved_commit": "3d84f082246cb21b77aeba5bcd99d6c2e420b895",
       "backlog_archive": "analysis/external/github-backlog-current.json",
       "backlog_update_state": "pending current-run final update/readback",
-      "research_commit": "3d84f082246cb21b77aeba5bcd99d6c2e420b895",
+      "research_commit": "d7f584a7341f742e7081a438873b46c1daf02a8c",
       "backlog_issues_updated": [
         164,
         165,
@@ -114,13 +122,13 @@
       "pending_corpus_entity_reviews": 126,
       "query_status": {
         "total": 134,
-        "working": 54,
-        "blocked_or_failed": 67,
-        "still_checking": 13,
-        "not_working_verified": 80,
-        "assessed_or_deferred": 121,
-        "remaining_to_assess": 13,
-        "passing_query_examples": 575
+        "working": 58,
+        "blocked_or_failed": 71,
+        "still_checking": 5,
+        "not_working_verified": 76,
+        "assessed_or_deferred": 129,
+        "remaining_to_assess": 5,
+        "passing_query_examples": 617
       }
     },
     "native_chat_goal": {
@@ -128,13 +136,13 @@
       "reason": "No native chat Goal control is exposed in the available tools; scheduler run-now returns HTTP 404. A saved goal and schedule are not the native feature."
     },
     "current_run": {
-      "state": "intermediate-checkpoint",
-      "checkpoint_at": "2026-11-05T21:51:00.516961+00:00",
+      "state": "intermediate-book-checkpoint",
+      "checkpoint_at": "2026-11-05T22:03:57.009963+00:00",
       "writer": "this conversation",
       "active_detached_worker": false,
       "scope": "research only",
       "base_commit": "3d84f082246cb21b77aeba5bcd99d6c2e420b895",
-      "research_commit": "3d84f082246cb21b77aeba5bcd99d6c2e420b895",
+      "research_commit": "d7f584a7341f742e7081a438873b46c1daf02a8c",
       "writer_lease": "All collectors for checkpoint are finished; verify lock/queues/PID/remote before another writer."
     },
     "coverage_audit": "coverage-audit.json",
@@ -257,6 +265,45 @@
         "outcomes": {
           "captured": 2,
           "skipped": 0,
+          "blocked-or-failed": 0
+        },
+        "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+      },
+      {
+        "run_id": "bookdash-standard-query-contracts-20261105er",
+        "jobs": 2,
+        "observations": 2,
+        "local_input_failure_job_ids": [],
+        "remaining_job_ids": [],
+        "outcomes": {
+          "captured": 2,
+          "skipped": 0,
+          "blocked-or-failed": 0
+        },
+        "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+      },
+      {
+        "run_id": "bookdash-title-queries-20261105es",
+        "jobs": 11,
+        "observations": 11,
+        "local_input_failure_job_ids": [],
+        "remaining_job_ids": [],
+        "outcomes": {
+          "captured": 10,
+          "skipped": 1,
+          "blocked-or-failed": 0
+        },
+        "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+      },
+      {
+        "run_id": "books-query-export-docs-20261105eq",
+        "jobs": 5,
+        "observations": 5,
+        "local_input_failure_job_ids": [],
+        "remaining_job_ids": [],
+        "outcomes": {
+          "captured": 4,
+          "skipped": 1,
           "blocked-or-failed": 0
         },
         "named_entity_review": "pending; document capture is not entity extraction or query qualification"
@@ -686,6 +733,19 @@
         "outcomes": {
           "captured": 8,
           "skipped": 0,
+          "blocked-or-failed": 0
+        },
+        "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+      },
+      {
+        "run_id": "final-children-docs-20261105et",
+        "jobs": 5,
+        "observations": 5,
+        "local_input_failure_job_ids": [],
+        "remaining_job_ids": [],
+        "outcomes": {
+          "captured": 4,
+          "skipped": 1,
           "blocked-or-failed": 0
         },
         "named_entity_review": "pending; document capture is not entity extraction or query qualification"
@@ -3154,23 +3214,23 @@
     "original_status_reporter_enabled": false,
     "scheduled_task_snapshot": "scheduled-task.json",
     "connector_progress": {
-      "observed_at": "2026-11-05T21:51:00.516961+00:00",
+      "observed_at": "2026-11-05T22:03:57.009963+00:00",
       "total": 134,
-      "working": 54,
-      "blocked_or_failed": 67,
-      "still_checking": 13,
-      "not_working_verified": 80,
-      "assessed_or_deferred": 121,
-      "remaining_to_assess": 13,
-      "passing_query_examples": 575,
+      "working": 58,
+      "blocked_or_failed": 71,
+      "still_checking": 5,
+      "not_working_verified": 76,
+      "assessed_or_deferred": 129,
+      "remaining_to_assess": 5,
+      "passing_query_examples": 617,
       "groups": [
         {
           "id": "G01",
           "name": "Books, children’s books and audiobooks",
           "total": 39,
-          "working": 11,
-          "blocked_or_failed": 15,
-          "still_checking": 13
+          "working": 15,
+          "blocked_or_failed": 19,
+          "still_checking": 5
         },
         {
           "id": "G02",
@@ -3224,16 +3284,23 @@
         "passing_query_examples": 565
       },
       "new_working": [
+        "book-dash",
+        "google-books",
+        "project-gutenberg",
+        "standard-ebooks",
         "govinfo"
       ],
       "new_blocked": [
+        "doab",
+        "gutendex",
+        "oapen",
+        "open-library",
         "world-bank-okr"
       ],
       "status_list": "connector-status.csv",
       "new_provider_errors_require_owner_action": false
     },
     "connector_priority_groups": [
-      "G04",
       "G01"
     ]
   },
@@ -3285,7 +3352,7 @@
       "blocked_or_failed": "Investigation deferred with a concrete access/policy/API/rights limitation; not a permanent outage claim.",
       "still_checking": "Known candidate without completed current query verification and not deferred."
     },
-    "remaining_definition": "13 Still checking connectors remain unassessed; 67 Blocked/failed have concrete recorded blockers. 80 lack working-query verification; blocked does not mean unchecked.",
+    "remaining_definition": "5 Still checking connectors remain unassessed; 71 Blocked/failed have concrete recorded blockers. 76 lack working-query verification; blocked does not mean unchecked.",
     "supported_scope_required": true,
     "deeper_dossier_and_geography_audits": "Retained as separate research-quality follow-up; do not describe them as the number of working search connectors.",
     "production_note": "Research-query verification does not imply activation in the app. Existing production state unchanged.",
@@ -3305,5 +3372,5 @@
     "blocker_reporting": "Give plain causes, changed/new blocked connectors, attempts and next decisions; group recurring reasons and link the full connector list.",
     "pause_when_provider_blocked": false
   },
-  "updated_at": "2026-11-05T21:51:00.516961+00:00"
+  "updated_at": "2026-11-05T22:03:57.009963+00:00"
 }
