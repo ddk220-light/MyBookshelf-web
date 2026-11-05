@@ -21,6 +21,29 @@ historical findings, contradictions, failed attempts and open questions. The
 completed analysis. A document import or ten passing queries does not close the
 whole source dossier or the expansion goal.
 
+## Immediate execution
+
+The app's native chat Goal control is not exposed in this environment. A saved
+goal file or an enabled schedule must not be described as activating that feature.
+The available immediate scheduler endpoint returned HTTP 404 on both attempts.
+
+Actual pending work can run immediately with:
+
+```sh
+python -u tools/research/run_source_reviews.py source-evidence-20261105 --publish
+```
+
+This resumable worker captures primary documentation from untriaged links and
+historical source candidates, observes robots rules and provider pacing, and
+stops requesting a host after access/rate denial. It writes real observations and
+a process heartbeat under `runs/source-evidence-20261105/`, and commits/pushes
+that directory every ten completed jobs and at the end. One lock prevents duplicate
+workers. Read `progress.json` and verify its PID/heartbeat before restarting.
+It is an evidence-collection phase of the larger research goal, not an AI agent
+that completes every source dossier. Captured pages and skipped/blocked URLs never
+count as verified search examples. After completion, analyze the observations and
+continue source qualification; do not close the whole goal.
+
 ## Files and evidence
 
 - `sources/<id>.json`: one catalog or publisher, capabilities, category/industry
