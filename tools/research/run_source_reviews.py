@@ -16,6 +16,7 @@ import urllib.request
 import urllib.robotparser
 
 from source_registry import REGISTRY, ROOT, USER_AGENT
+from jsonl_io import read_jsonl
 
 BRANCH = 'research/free-content-discovery-expansion'
 LIMIT = 512 * 1024
@@ -168,7 +169,7 @@ def run(run_id, do_publish=False):
         save(queue_path, {'created_at': now(), 'jobs': build_queue()})
     jobs = json.loads(queue_path.read_text())['jobs']
     output = directory / 'observations.jsonl'
-    existing = [json.loads(line) for line in output.read_text().splitlines()] if output.exists() else []
+    existing = read_jsonl(output)
     done = {row['job_id'] for row in existing}
     state = {'run_id': run_id, 'phase': 'primary-document-evidence', 'pid': os.getpid(),
              'started_at': now(), 'state': 'running', 'total': len(jobs), 'processed': len(done),

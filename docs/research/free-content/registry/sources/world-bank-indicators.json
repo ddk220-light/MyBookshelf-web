@@ -1,0 +1,1391 @@
+{
+  "schema_version": 1,
+  "id": "world-bank-indicators",
+  "name": "World Bank World Development Indicators",
+  "aliases": [
+    "World Development Indicators",
+    "WDI",
+    "World Bank Indicators API"
+  ],
+  "homepage": "https://data.worldbank.org/",
+  "group": "G04",
+  "areas": [
+    "C19",
+    "P08"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "national-statistics-indicator-catalog",
+  "operator": {
+    "name": "World Bank Group",
+    "jurisdiction": "International; national aggregates include USA and India"
+  },
+  "origin_family": "world-bank-group",
+  "capabilities": [
+    "Documented anonymous v2 indicator/source metadata and geography/annual-period numeric observation lookup.",
+    "Scoped research uses WDI source2,USA/India and five explicitly CC BY4.0-labelled indicators. Countries,years,indicators and API language views are not independent origins."
+  ],
+  "query": {
+    "adapter": "world-bank-indicators",
+    "endpoint": "https://api.worldbank.org/v2",
+    "authentication": "Official documentation says API keys/authentication no longer necessary; anonymous requests observed.",
+    "cost": "No API key/account/payment; no numeric request quota or SLA inferred. Research serial pacing>=3seconds.",
+    "research_pause_seconds": 3,
+    "supported_modes": [
+      "Native indicator/source lookup",
+      "Country+indicator+year filtering",
+      "Explicit source selection",
+      "Page/per_page result traversal",
+      "Footnotes where provided"
+    ],
+    "unsupported_modes": [
+      "Arbitrary keyword search across all knowledge",
+      "Personal/household microdata",
+      "Parcel/property-owner lookup",
+      "District/local geography from these national observations",
+      "Quarterly/monthly API modes in this annual-only adapter",
+      "Treating null data as zero",
+      "Unlicensed third-party dataset redistribution"
+    ],
+    "cases": [
+      {
+        "id": "sp-pop-totl-ind-2023",
+        "intent": "Retrieve a non-null2023 SP.POP.TOTL annual national observation forIND from WDI source2; preserve raw units/status/footnotes.",
+        "expected_ids": [
+          "2:SP.POP.TOTL:IND:2023"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/IND/indicator/SP.POP.TOTL",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        }
+      },
+      {
+        "id": "sp-pop-totl-usa-2023",
+        "intent": "Retrieve a non-null2023 SP.POP.TOTL annual national observation forUSA from WDI source2; preserve raw units/status/footnotes.",
+        "expected_ids": [
+          "2:SP.POP.TOTL:USA:2023"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/USA/indicator/SP.POP.TOTL",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        }
+      },
+      {
+        "id": "ny-gdp-mktp-cd-ind-2023",
+        "intent": "Retrieve a non-null2023 NY.GDP.MKTP.CD annual national observation forIND from WDI source2; preserve raw units/status/footnotes.",
+        "expected_ids": [
+          "2:NY.GDP.MKTP.CD:IND:2023"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.CD",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        }
+      },
+      {
+        "id": "ny-gdp-mktp-cd-usa-2023",
+        "intent": "Retrieve a non-null2023 NY.GDP.MKTP.CD annual national observation forUSA from WDI source2; preserve raw units/status/footnotes.",
+        "expected_ids": [
+          "2:NY.GDP.MKTP.CD:USA:2023"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.CD",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        }
+      },
+      {
+        "id": "ny-gdp-pcap-cd-ind-2023",
+        "intent": "Retrieve a non-null2023 NY.GDP.PCAP.CD annual national observation forIND from WDI source2; preserve raw units/status/footnotes.",
+        "expected_ids": [
+          "2:NY.GDP.PCAP.CD:IND:2023"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.PCAP.CD",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        }
+      },
+      {
+        "id": "ny-gdp-pcap-cd-usa-2023",
+        "intent": "Retrieve a non-null2023 NY.GDP.PCAP.CD annual national observation forUSA from WDI source2; preserve raw units/status/footnotes.",
+        "expected_ids": [
+          "2:NY.GDP.PCAP.CD:USA:2023"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.PCAP.CD",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        }
+      },
+      {
+        "id": "sp-dyn-le00-in-ind-2023",
+        "intent": "Retrieve a non-null2023 SP.DYN.LE00.IN annual national observation forIND from WDI source2; preserve raw units/status/footnotes.",
+        "expected_ids": [
+          "2:SP.DYN.LE00.IN:IND:2023"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/IND/indicator/SP.DYN.LE00.IN",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        }
+      },
+      {
+        "id": "sp-dyn-le00-in-usa-2023",
+        "intent": "Retrieve a non-null2023 SP.DYN.LE00.IN annual national observation forUSA from WDI source2; preserve raw units/status/footnotes.",
+        "expected_ids": [
+          "2:SP.DYN.LE00.IN:USA:2023"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/USA/indicator/SP.DYN.LE00.IN",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        }
+      },
+      {
+        "id": "sp-urb-totl-in-zs-ind-2023",
+        "intent": "Retrieve a non-null2023 SP.URB.TOTL.IN.ZS annual national observation forIND from WDI source2; preserve raw units/status/footnotes.",
+        "expected_ids": [
+          "2:SP.URB.TOTL.IN.ZS:IND:2023"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/IND/indicator/SP.URB.TOTL.IN.ZS",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        }
+      },
+      {
+        "id": "sp-urb-totl-in-zs-usa-2023",
+        "intent": "Retrieve a non-null2023 SP.URB.TOTL.IN.ZS annual national observation forUSA from WDI source2; preserve raw units/status/footnotes.",
+        "expected_ids": [
+          "2:SP.URB.TOTL.IN.ZS:USA:2023"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/USA/indicator/SP.URB.TOTL.IN.ZS",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        }
+      }
+    ],
+    "identity": "Dataset source ID + indicator code + ISO3 country code + annual period; dataset lastupdated and response hash identify mutable snapshot, not an immutable item revision.",
+    "scope_country_codes": [
+      "USA",
+      "IND"
+    ],
+    "scope_indicator_ids": [
+      "SP.POP.TOTL",
+      "NY.GDP.MKTP.CD",
+      "NY.GDP.PCAP.CD",
+      "SP.DYN.LE00.IN",
+      "SP.URB.TOTL.IN.ZS"
+    ],
+    "source_id": "2",
+    "paging": "Documented page/per_page; research maximum10rows per request,256KiBbody, no bulk export or rate stress."
+  },
+  "licensing": "General data terms default CC BY4.0 with mandatory additional terms, source/provider attribution and third-party exceptions. All five selected public indicator pages explicitly label CC BY-4.0. Metadata source organizations and limitations remain separate from publication-repository content rights.",
+  "documentation": [
+    "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+    "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures",
+    "https://datahelpdesk.worldbank.org/knowledgebase/articles/898599-indicator-api-queries",
+    "https://data.worldbank.org/summary-terms-of-use"
+  ],
+  "evidence": [
+    "runs/statistics-contract-20261105ag/observations.jsonl",
+    "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+    "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+    "examples/world-bank-indicators.scouting.jsonl",
+    "examples/world-bank-indicators.jsonl",
+    "examples/world-bank-indicators.benchmark.jsonl"
+  ],
+  "limitations": [
+    "No full-source or civic-cell qualification from these samples.",
+    "WDI is an attributed aggregator; its original providers and71 listed API datasets do not become separately qualified origins.",
+    "Empty units must be interpreted with indicator name/definition; no units or missing values are invented.",
+    "USA/India data coverage is not independent network-vantage verification."
+  ],
+  "last_reviewed_at": "2026-11-05T11:13:23.317507+00:00",
+  "next_action": "Complete rendered reader/access, attribution URI mapping, broader relevance and revision/operating analysis. P08 cells and area target remain open.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "One World Bank WDI indicator catalog. Native observation identity includes dataset source, indicator, ISO3 country and annual period; mutable update dates and capture hashes identify the observed snapshot.",
+      "facts": {
+        "operator": "World Bank Group",
+        "catalog": "World Development Indicators (API source 2)",
+        "native_identity": "2:{indicator_code}:{IND|USA}:{year}",
+        "version": "API v2; all ten current observations report dataset lastupdated 2026-10-08, period 2023. These are not 2026 observations.",
+        "deduplication": "The same NY.GDP.MKTP.CD code appears in sources 2 and 11; source identity must not be omitted. Countries, periods, languages and dataset labels are not origins.",
+        "operator_overlap": "world-bank-okr is a separate publication repository record under the same World Bank operator. No independent-origin or common-content-license inference from separate records.",
+        "attribution_chain": "WDI aggregates original providers; references to UN, Eurostat, OECD and national agencies are leads and attribution, not independently qualified origins."
+      },
+      "evidence": [
+        "runs/statistics-contract-20261105ag/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+        "examples/world-bank-indicators.scouting.jsonl",
+        "examples/world-bank-indicators.jsonl",
+        "examples/world-bank-indicators.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0b08a7ba2e8c1d6f5ba5",
+          "observed_at": "2026-11-05T10:42:04.212689+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+          "body_sha256": "a3160cd888a8f19bab2255e41e0915c35bd6704026cfc867e33e7c1718e18b08",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "2da87527d51f25207db0",
+          "observed_at": "2026-11-05T10:42:08.208274+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures",
+          "body_sha256": "5dfdf1cb985401fa87d1b160ff9d0a9075d4711950bcc844453cf623102a719a",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "7fc6bf3bbb800a2859d6",
+          "observed_at": "2026-11-05T10:42:15.419992+00:00",
+          "url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+          "body_sha256": "98626be13734ed45684f5a2c29b806de206e3858729a4efc9b89d5297058576a",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0cfdc20b96f1a92c3d52",
+          "observed_at": "2026-11-05T10:42:21.655082+00:00",
+          "url": "https://data.worldbank.org/indicator",
+          "body_sha256": "60490f86b66000653b7157edefed35551fa9caa7350e4e995f5a4dbe3bf9735e",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "806956be8c1add69c495",
+          "observed_at": "2026-11-05T10:43:17.571487+00:00",
+          "url": "https://data.worldbank.org/summary-terms-of-use",
+          "body_sha256": "3826b1a2d76b37cc4a63dd8017964263376d9ea12e8db4c4db161d2b22ef9469",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "88910e5f4dc998cf9ac6",
+          "observed_at": "2026-11-05T10:43:23.987970+00:00",
+          "url": "https://www.worldbank.org/ext/en/legal/terms-conditions",
+          "body_sha256": "686ea44d85a201428bb17e69ef1eccd17c21fcc51f61ba169eb4834f912cb1f2",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "d4512af3867cc4a400d8",
+          "observed_at": "2026-11-05T10:43:30.706157+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898620-api-error-codes",
+          "body_sha256": "f0b26e98d2ae6825df69df2e273c7d60a6df9736f1dcf0b2e9790eb875f9a127",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "21df81d7f4a8d021f7ae",
+          "observed_at": "2026-11-05T10:43:34.483674+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898599-indicator-api-queries",
+          "body_sha256": "db0221aac37c6d81ef205fecebcddb99dd099118544d69eb78e00315396b0f6d",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "e8287ef95ecec679cc0c",
+          "observed_at": "2026-11-05T10:47:46.906818+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
+          "body_sha256": "85013acf26bb4da407db9fd4d6ef5df6427d11fc8b5cac03db3e9ea45008fac1",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "ba245728db5e1dc549aa",
+          "observed_at": "2026-11-05T10:47:50.101137+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+          "body_sha256": "613fcacb271d13cf6f307b0246c670192b542055cf906a6d152005e8b16e4178",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "fb5b12c6923c5d16ca4f",
+          "observed_at": "2026-11-05T10:47:53.186382+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.CD",
+          "body_sha256": "b4ce5b1e2017ee3afb89d6d47ecc6dbf8ce00e8f89ce93834fb83501506ed37f",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "929da51023c6d870a13a",
+          "observed_at": "2026-11-05T10:47:56.440167+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.DYN.LE00.IN",
+          "body_sha256": "e4d16728f523cb399eaca4cdd7454f9c66bbd6c19e1565c066d6aa38519edfd5",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "93c275544bad836de566",
+          "observed_at": "2026-11-05T10:47:59.565847+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS",
+          "body_sha256": "edc8e64e72e18b581977feabd84bbfb1a7ab9f8d06c8e2f5132678f8766e6ebf",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "complete",
+      "summary": "Verified scope is five English-labelled annual national indicators for India and the USA. This is statistical-data coverage, not country-specific network access or comprehensive civic coverage.",
+      "facts": {
+        "areas": [
+          "C19",
+          "P08"
+        ],
+        "industries": [],
+        "countries_in_queries": [
+          "India",
+          "USA"
+        ],
+        "observed_languages": [
+          "en"
+        ],
+        "indicator_ids": [
+          "SP.POP.TOTL",
+          "NY.GDP.MKTP.CD",
+          "NY.GDP.PCAP.CD",
+          "SP.DYN.LE00.IN",
+          "SP.URB.TOTL.IN.ZS"
+        ],
+        "period": "2023",
+        "data_definitions": {
+          "population": "Midyear de facto estimates, not a household/person listing.",
+          "GDP": "Current US dollars, not inflation-adjusted.",
+          "urban_share": "National definitions, collected and smoothed by UN Population Division; not a uniform urban boundary definition."
+        },
+        "unsupported_scope": [
+          "Personal or household microdata",
+          "Parcel ownership",
+          "Subnational mapping",
+          "Unreviewed datasets and translations"
+        ],
+        "cell_closure": "P08 USA/India have query evidence but remain unaccounted pending full qualification and coverage review."
+      },
+      "evidence": [
+        "runs/statistics-contract-20261105ag/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+        "examples/world-bank-indicators.scouting.jsonl",
+        "examples/world-bank-indicators.jsonl",
+        "examples/world-bank-indicators.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0b08a7ba2e8c1d6f5ba5",
+          "observed_at": "2026-11-05T10:42:04.212689+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+          "body_sha256": "a3160cd888a8f19bab2255e41e0915c35bd6704026cfc867e33e7c1718e18b08",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "2da87527d51f25207db0",
+          "observed_at": "2026-11-05T10:42:08.208274+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures",
+          "body_sha256": "5dfdf1cb985401fa87d1b160ff9d0a9075d4711950bcc844453cf623102a719a",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "7fc6bf3bbb800a2859d6",
+          "observed_at": "2026-11-05T10:42:15.419992+00:00",
+          "url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+          "body_sha256": "98626be13734ed45684f5a2c29b806de206e3858729a4efc9b89d5297058576a",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0cfdc20b96f1a92c3d52",
+          "observed_at": "2026-11-05T10:42:21.655082+00:00",
+          "url": "https://data.worldbank.org/indicator",
+          "body_sha256": "60490f86b66000653b7157edefed35551fa9caa7350e4e995f5a4dbe3bf9735e",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "806956be8c1add69c495",
+          "observed_at": "2026-11-05T10:43:17.571487+00:00",
+          "url": "https://data.worldbank.org/summary-terms-of-use",
+          "body_sha256": "3826b1a2d76b37cc4a63dd8017964263376d9ea12e8db4c4db161d2b22ef9469",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "88910e5f4dc998cf9ac6",
+          "observed_at": "2026-11-05T10:43:23.987970+00:00",
+          "url": "https://www.worldbank.org/ext/en/legal/terms-conditions",
+          "body_sha256": "686ea44d85a201428bb17e69ef1eccd17c21fcc51f61ba169eb4834f912cb1f2",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "d4512af3867cc4a400d8",
+          "observed_at": "2026-11-05T10:43:30.706157+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898620-api-error-codes",
+          "body_sha256": "f0b26e98d2ae6825df69df2e273c7d60a6df9736f1dcf0b2e9790eb875f9a127",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "21df81d7f4a8d021f7ae",
+          "observed_at": "2026-11-05T10:43:34.483674+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898599-indicator-api-queries",
+          "body_sha256": "db0221aac37c6d81ef205fecebcddb99dd099118544d69eb78e00315396b0f6d",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "e8287ef95ecec679cc0c",
+          "observed_at": "2026-11-05T10:47:46.906818+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
+          "body_sha256": "85013acf26bb4da407db9fd4d6ef5df6427d11fc8b5cac03db3e9ea45008fac1",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "ba245728db5e1dc549aa",
+          "observed_at": "2026-11-05T10:47:50.101137+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+          "body_sha256": "613fcacb271d13cf6f307b0246c670192b542055cf906a6d152005e8b16e4178",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "fb5b12c6923c5d16ca4f",
+          "observed_at": "2026-11-05T10:47:53.186382+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.CD",
+          "body_sha256": "b4ce5b1e2017ee3afb89d6d47ecc6dbf8ce00e8f89ce93834fb83501506ed37f",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "929da51023c6d870a13a",
+          "observed_at": "2026-11-05T10:47:56.440167+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.DYN.LE00.IN",
+          "body_sha256": "e4d16728f523cb399eaca4cdd7454f9c66bbd6c19e1565c066d6aa38519edfd5",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "93c275544bad836de566",
+          "observed_at": "2026-11-05T10:47:59.565847+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS",
+          "body_sha256": "edc8e64e72e18b581977feabd84bbfb1a7ab9f8d06c8e2f5132678f8766e6ebf",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        }
+      ],
+      "open_questions": []
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Anonymous documented v2 GET requests passed ten native country/indicator/year cases. Metadata, data, empty responses and application errors have different shapes.",
+      "facts": {
+        "data_request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/country/IND/indicator/SP.POP.TOTL",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "date": "2023",
+            "per_page": 10,
+            "footnote": "y"
+          }
+        },
+        "metadata_request": {
+          "method": "GET",
+          "url": "https://api.worldbank.org/v2/indicators/{indicator_code}",
+          "params": {
+            "format": "json",
+            "source": 2,
+            "per_page": 10
+          }
+        },
+        "paging_request": {
+          "method": "GET",
+          "params": {
+            "date": "2023:2024",
+            "footnote": "y",
+            "format": "json",
+            "page": 1,
+            "per_page": 2,
+            "source": 2
+          },
+          "url": "https://api.worldbank.org/v2/country/IND;USA/indicator/SP.POP.TOTL"
+        },
+        "paging_observed_ids": [
+          [
+            "2:SP.POP.TOTL:IND:2024",
+            "2:SP.POP.TOTL:IND:2023"
+          ],
+          [
+            "2:SP.POP.TOTL:USA:2024",
+            "2:SP.POP.TOTL:USA:2023"
+          ]
+        ],
+        "supported": [
+          "Native indicator/source lookup",
+          "Country+indicator+year filtering",
+          "Explicit source selection",
+          "Page/per_page result traversal",
+          "Footnotes where provided"
+        ],
+        "unsupported": [
+          "Arbitrary keyword search across all knowledge",
+          "Personal/household microdata",
+          "Parcel/property-owner lookup",
+          "District/local geography from these national observations",
+          "Quarterly/monthly API modes in this annual-only adapter",
+          "Treating null data as zero",
+          "Unlicensed third-party dataset redistribution"
+        ],
+        "shape": "[page_header, observation_array]; country/source/indicator/year are checked; unit, status, decimal and footnote are retained verbatim.",
+        "empty": "Year 2200 returned total=0, pages=0, null source/update and null items. Initial strict parse failure and later offline interpretation are both retained.",
+        "error": "Unknown indicator returns HTTP 200 with message id 120 (Invalid value), not an empty success.",
+        "null": "A USA literacy 2023 record has value=null. It is preserved but never passes a numeric example; zero would remain a valid number."
+      },
+      "evidence": [
+        "runs/statistics-contract-20261105ag/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+        "examples/world-bank-indicators.scouting.jsonl",
+        "examples/world-bank-indicators.jsonl",
+        "examples/world-bank-indicators.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0b08a7ba2e8c1d6f5ba5",
+          "observed_at": "2026-11-05T10:42:04.212689+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+          "body_sha256": "a3160cd888a8f19bab2255e41e0915c35bd6704026cfc867e33e7c1718e18b08",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "2da87527d51f25207db0",
+          "observed_at": "2026-11-05T10:42:08.208274+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures",
+          "body_sha256": "5dfdf1cb985401fa87d1b160ff9d0a9075d4711950bcc844453cf623102a719a",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "7fc6bf3bbb800a2859d6",
+          "observed_at": "2026-11-05T10:42:15.419992+00:00",
+          "url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+          "body_sha256": "98626be13734ed45684f5a2c29b806de206e3858729a4efc9b89d5297058576a",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0cfdc20b96f1a92c3d52",
+          "observed_at": "2026-11-05T10:42:21.655082+00:00",
+          "url": "https://data.worldbank.org/indicator",
+          "body_sha256": "60490f86b66000653b7157edefed35551fa9caa7350e4e995f5a4dbe3bf9735e",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "806956be8c1add69c495",
+          "observed_at": "2026-11-05T10:43:17.571487+00:00",
+          "url": "https://data.worldbank.org/summary-terms-of-use",
+          "body_sha256": "3826b1a2d76b37cc4a63dd8017964263376d9ea12e8db4c4db161d2b22ef9469",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "88910e5f4dc998cf9ac6",
+          "observed_at": "2026-11-05T10:43:23.987970+00:00",
+          "url": "https://www.worldbank.org/ext/en/legal/terms-conditions",
+          "body_sha256": "686ea44d85a201428bb17e69ef1eccd17c21fcc51f61ba169eb4834f912cb1f2",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "d4512af3867cc4a400d8",
+          "observed_at": "2026-11-05T10:43:30.706157+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898620-api-error-codes",
+          "body_sha256": "f0b26e98d2ae6825df69df2e273c7d60a6df9736f1dcf0b2e9790eb875f9a127",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "21df81d7f4a8d021f7ae",
+          "observed_at": "2026-11-05T10:43:34.483674+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898599-indicator-api-queries",
+          "body_sha256": "db0221aac37c6d81ef205fecebcddb99dd099118544d69eb78e00315396b0f6d",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "e8287ef95ecec679cc0c",
+          "observed_at": "2026-11-05T10:47:46.906818+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
+          "body_sha256": "85013acf26bb4da407db9fd4d6ef5df6427d11fc8b5cac03db3e9ea45008fac1",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "ba245728db5e1dc549aa",
+          "observed_at": "2026-11-05T10:47:50.101137+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+          "body_sha256": "613fcacb271d13cf6f307b0246c670192b542055cf906a6d152005e8b16e4178",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "fb5b12c6923c5d16ca4f",
+          "observed_at": "2026-11-05T10:47:53.186382+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.CD",
+          "body_sha256": "b4ce5b1e2017ee3afb89d6d47ecc6dbf8ce00e8f89ce93834fb83501506ed37f",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "929da51023c6d870a13a",
+          "observed_at": "2026-11-05T10:47:56.440167+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.DYN.LE00.IN",
+          "body_sha256": "e4d16728f523cb399eaca4cdd7454f9c66bbd6c19e1565c066d6aa38519edfd5",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "93c275544bad836de566",
+          "observed_at": "2026-11-05T10:47:59.565847+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS",
+          "body_sha256": "edc8e64e72e18b581977feabd84bbfb1a7ab9f8d06c8e2f5132678f8766e6ebf",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "complete",
+      "summary": "Selected indicator pages explicitly display CC BY 4.0. World Bank data terms additionally require provider attribution and mediation/arbitration terms; broader website and third-party rights remain separate.",
+      "facts": {
+        "metadata_rights": "Retain WDI indicator metadata/source organizations and attribution under the specific data policy; no blanket right to website chrome, trademarks or unrelated archives.",
+        "data_rights": "Five reviewed indicator pages label CC BY-4.0; default data policy has third-party exceptions and binding additional terms.",
+        "attribution": "The World Bank: World Development Indicators: original data source(s) from each indicator metadata. Preserve terms URL and applicable additional conditions.",
+        "access_cost": "Official API documentation states no API key/authentication needed; anonymous requests passed. No numeric quota or unlimited-service guarantee found.",
+        "policy_url": "https://data.worldbank.org/summary-terms-of-use",
+        "legal_redirect": "Older datasets terms URL returned 301 to current generic terms; both attempts preserved. Generic website restrictions must be read with the specific data exception.",
+        "endorsement": false
+      },
+      "evidence": [
+        "runs/statistics-contract-20261105ag/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+        "examples/world-bank-indicators.scouting.jsonl",
+        "examples/world-bank-indicators.jsonl",
+        "examples/world-bank-indicators.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0b08a7ba2e8c1d6f5ba5",
+          "observed_at": "2026-11-05T10:42:04.212689+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+          "body_sha256": "a3160cd888a8f19bab2255e41e0915c35bd6704026cfc867e33e7c1718e18b08",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "2da87527d51f25207db0",
+          "observed_at": "2026-11-05T10:42:08.208274+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures",
+          "body_sha256": "5dfdf1cb985401fa87d1b160ff9d0a9075d4711950bcc844453cf623102a719a",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "7fc6bf3bbb800a2859d6",
+          "observed_at": "2026-11-05T10:42:15.419992+00:00",
+          "url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+          "body_sha256": "98626be13734ed45684f5a2c29b806de206e3858729a4efc9b89d5297058576a",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0cfdc20b96f1a92c3d52",
+          "observed_at": "2026-11-05T10:42:21.655082+00:00",
+          "url": "https://data.worldbank.org/indicator",
+          "body_sha256": "60490f86b66000653b7157edefed35551fa9caa7350e4e995f5a4dbe3bf9735e",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "806956be8c1add69c495",
+          "observed_at": "2026-11-05T10:43:17.571487+00:00",
+          "url": "https://data.worldbank.org/summary-terms-of-use",
+          "body_sha256": "3826b1a2d76b37cc4a63dd8017964263376d9ea12e8db4c4db161d2b22ef9469",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "88910e5f4dc998cf9ac6",
+          "observed_at": "2026-11-05T10:43:23.987970+00:00",
+          "url": "https://www.worldbank.org/ext/en/legal/terms-conditions",
+          "body_sha256": "686ea44d85a201428bb17e69ef1eccd17c21fcc51f61ba169eb4834f912cb1f2",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "d4512af3867cc4a400d8",
+          "observed_at": "2026-11-05T10:43:30.706157+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898620-api-error-codes",
+          "body_sha256": "f0b26e98d2ae6825df69df2e273c7d60a6df9736f1dcf0b2e9790eb875f9a127",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "21df81d7f4a8d021f7ae",
+          "observed_at": "2026-11-05T10:43:34.483674+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898599-indicator-api-queries",
+          "body_sha256": "db0221aac37c6d81ef205fecebcddb99dd099118544d69eb78e00315396b0f6d",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "e8287ef95ecec679cc0c",
+          "observed_at": "2026-11-05T10:47:46.906818+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
+          "body_sha256": "85013acf26bb4da407db9fd4d6ef5df6427d11fc8b5cac03db3e9ea45008fac1",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "ba245728db5e1dc549aa",
+          "observed_at": "2026-11-05T10:47:50.101137+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+          "body_sha256": "613fcacb271d13cf6f307b0246c670192b542055cf906a6d152005e8b16e4178",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "fb5b12c6923c5d16ca4f",
+          "observed_at": "2026-11-05T10:47:53.186382+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.CD",
+          "body_sha256": "b4ce5b1e2017ee3afb89d6d47ecc6dbf8ce00e8f89ce93834fb83501506ed37f",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "929da51023c6d870a13a",
+          "observed_at": "2026-11-05T10:47:56.440167+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.DYN.LE00.IN",
+          "body_sha256": "e4d16728f523cb399eaca4cdd7454f9c66bbd6c19e1565c066d6aa38519edfd5",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "93c275544bad836de566",
+          "observed_at": "2026-11-05T10:47:59.565847+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS",
+          "body_sha256": "edc8e64e72e18b581977feabd84bbfb1a7ab9f8d06c8e2f5132678f8766e6ebf",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        }
+      ],
+      "open_questions": []
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "The five public indicator pages and ten complete small numeric API records were returned anonymously. HTTP capture establishes data access, not rendered chart usability.",
+      "facts": {
+        "records_available": 10,
+        "indicator_landing_pages_http_200": 5,
+        "login_required_in_observed_route": false,
+        "full_record_scope": "Each retained JSON record contains the native indicator/country/year, numeric value and returned footnote/status metadata; no microdata or bulk export.",
+        "network_vantage": "Managed cloud, country not established; country-code filters do not prove USA/India reader vantage."
+      },
+      "evidence": [
+        "runs/statistics-contract-20261105ag/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+        "examples/world-bank-indicators.scouting.jsonl",
+        "examples/world-bank-indicators.jsonl",
+        "examples/world-bank-indicators.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0b08a7ba2e8c1d6f5ba5",
+          "observed_at": "2026-11-05T10:42:04.212689+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+          "body_sha256": "a3160cd888a8f19bab2255e41e0915c35bd6704026cfc867e33e7c1718e18b08",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "2da87527d51f25207db0",
+          "observed_at": "2026-11-05T10:42:08.208274+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures",
+          "body_sha256": "5dfdf1cb985401fa87d1b160ff9d0a9075d4711950bcc844453cf623102a719a",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "7fc6bf3bbb800a2859d6",
+          "observed_at": "2026-11-05T10:42:15.419992+00:00",
+          "url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+          "body_sha256": "98626be13734ed45684f5a2c29b806de206e3858729a4efc9b89d5297058576a",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0cfdc20b96f1a92c3d52",
+          "observed_at": "2026-11-05T10:42:21.655082+00:00",
+          "url": "https://data.worldbank.org/indicator",
+          "body_sha256": "60490f86b66000653b7157edefed35551fa9caa7350e4e995f5a4dbe3bf9735e",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "806956be8c1add69c495",
+          "observed_at": "2026-11-05T10:43:17.571487+00:00",
+          "url": "https://data.worldbank.org/summary-terms-of-use",
+          "body_sha256": "3826b1a2d76b37cc4a63dd8017964263376d9ea12e8db4c4db161d2b22ef9469",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "88910e5f4dc998cf9ac6",
+          "observed_at": "2026-11-05T10:43:23.987970+00:00",
+          "url": "https://www.worldbank.org/ext/en/legal/terms-conditions",
+          "body_sha256": "686ea44d85a201428bb17e69ef1eccd17c21fcc51f61ba169eb4834f912cb1f2",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "d4512af3867cc4a400d8",
+          "observed_at": "2026-11-05T10:43:30.706157+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898620-api-error-codes",
+          "body_sha256": "f0b26e98d2ae6825df69df2e273c7d60a6df9736f1dcf0b2e9790eb875f9a127",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "21df81d7f4a8d021f7ae",
+          "observed_at": "2026-11-05T10:43:34.483674+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898599-indicator-api-queries",
+          "body_sha256": "db0221aac37c6d81ef205fecebcddb99dd099118544d69eb78e00315396b0f6d",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "e8287ef95ecec679cc0c",
+          "observed_at": "2026-11-05T10:47:46.906818+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
+          "body_sha256": "85013acf26bb4da407db9fd4d6ef5df6427d11fc8b5cac03db3e9ea45008fac1",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "ba245728db5e1dc549aa",
+          "observed_at": "2026-11-05T10:47:50.101137+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+          "body_sha256": "613fcacb271d13cf6f307b0246c670192b542055cf906a6d152005e8b16e4178",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "fb5b12c6923c5d16ca4f",
+          "observed_at": "2026-11-05T10:47:53.186382+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.CD",
+          "body_sha256": "b4ce5b1e2017ee3afb89d6d47ecc6dbf8ce00e8f89ce93834fb83501506ed37f",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "929da51023c6d870a13a",
+          "observed_at": "2026-11-05T10:47:56.440167+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.DYN.LE00.IN",
+          "body_sha256": "e4d16728f523cb399eaca4cdd7454f9c66bbd6c19e1565c066d6aa38519edfd5",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "93c275544bad836de566",
+          "observed_at": "2026-11-05T10:47:59.565847+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS",
+          "body_sha256": "edc8e64e72e18b581977feabd84bbfb1a7ab9f8d06c8e2f5132678f8766e6ebf",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        }
+      ],
+      "open_questions": [
+        "Verify representative rendered desktop/mobile data-reader behavior and accessibility without treating chart shell text as a rendered chart."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten non-null native observations pass. Paging, same-code/different-source identity, unavailable periods, null values and HTTP-200 errors are preserved as separate checks.",
+      "facts": {
+        "passing_examples": 10,
+        "distinct_native_ids": 10,
+        "paging_duplicate_ids": [],
+        "units": "API unit is empty for all five indicators; indicator name/definition explains units. Do not manufacture an API unit field.",
+        "semantic_relevance": "Exact country/indicator/year selection, not natural-language semantic search. Population and urban definitions are estimates and depend on provider definitions.",
+        "provider_metadata_anomaly": "Population metadata labels Eurostat Demographic Statistics but links node_code=earn_ses_monthly. Preserve the exact URI as provider-supplied and keep its dataset mapping unresolved.",
+        "negative_tests": [
+          "Null literacy is not zero",
+          "Invalid indicator HTTP200 is not an empty success",
+          "Year2200 empty response does not establish future availability"
+        ]
+      },
+      "evidence": [
+        "runs/statistics-contract-20261105ag/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+        "examples/world-bank-indicators.scouting.jsonl",
+        "examples/world-bank-indicators.jsonl",
+        "examples/world-bank-indicators.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0b08a7ba2e8c1d6f5ba5",
+          "observed_at": "2026-11-05T10:42:04.212689+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+          "body_sha256": "a3160cd888a8f19bab2255e41e0915c35bd6704026cfc867e33e7c1718e18b08",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "2da87527d51f25207db0",
+          "observed_at": "2026-11-05T10:42:08.208274+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures",
+          "body_sha256": "5dfdf1cb985401fa87d1b160ff9d0a9075d4711950bcc844453cf623102a719a",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "7fc6bf3bbb800a2859d6",
+          "observed_at": "2026-11-05T10:42:15.419992+00:00",
+          "url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+          "body_sha256": "98626be13734ed45684f5a2c29b806de206e3858729a4efc9b89d5297058576a",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0cfdc20b96f1a92c3d52",
+          "observed_at": "2026-11-05T10:42:21.655082+00:00",
+          "url": "https://data.worldbank.org/indicator",
+          "body_sha256": "60490f86b66000653b7157edefed35551fa9caa7350e4e995f5a4dbe3bf9735e",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "806956be8c1add69c495",
+          "observed_at": "2026-11-05T10:43:17.571487+00:00",
+          "url": "https://data.worldbank.org/summary-terms-of-use",
+          "body_sha256": "3826b1a2d76b37cc4a63dd8017964263376d9ea12e8db4c4db161d2b22ef9469",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "88910e5f4dc998cf9ac6",
+          "observed_at": "2026-11-05T10:43:23.987970+00:00",
+          "url": "https://www.worldbank.org/ext/en/legal/terms-conditions",
+          "body_sha256": "686ea44d85a201428bb17e69ef1eccd17c21fcc51f61ba169eb4834f912cb1f2",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "d4512af3867cc4a400d8",
+          "observed_at": "2026-11-05T10:43:30.706157+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898620-api-error-codes",
+          "body_sha256": "f0b26e98d2ae6825df69df2e273c7d60a6df9736f1dcf0b2e9790eb875f9a127",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "21df81d7f4a8d021f7ae",
+          "observed_at": "2026-11-05T10:43:34.483674+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898599-indicator-api-queries",
+          "body_sha256": "db0221aac37c6d81ef205fecebcddb99dd099118544d69eb78e00315396b0f6d",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "e8287ef95ecec679cc0c",
+          "observed_at": "2026-11-05T10:47:46.906818+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
+          "body_sha256": "85013acf26bb4da407db9fd4d6ef5df6427d11fc8b5cac03db3e9ea45008fac1",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "ba245728db5e1dc549aa",
+          "observed_at": "2026-11-05T10:47:50.101137+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+          "body_sha256": "613fcacb271d13cf6f307b0246c670192b542055cf906a6d152005e8b16e4178",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "fb5b12c6923c5d16ca4f",
+          "observed_at": "2026-11-05T10:47:53.186382+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.CD",
+          "body_sha256": "b4ce5b1e2017ee3afb89d6d47ecc6dbf8ce00e8f89ce93834fb83501506ed37f",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "929da51023c6d870a13a",
+          "observed_at": "2026-11-05T10:47:56.440167+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.DYN.LE00.IN",
+          "body_sha256": "e4d16728f523cb399eaca4cdd7454f9c66bbd6c19e1565c066d6aa38519edfd5",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "93c275544bad836de566",
+          "observed_at": "2026-11-05T10:47:59.565847+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS",
+          "body_sha256": "edc8e64e72e18b581977feabd84bbfb1a7ab9f8d06c8e2f5132678f8766e6ebf",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        }
+      ],
+      "open_questions": [
+        "Resolve or explicitly constrain the provider-supplied Eurostat demographic URI mismatch before claiming complete attribution mapping.",
+        "Review broader user-intent relevance and revision/withdrawal behavior outside these ten exact lookups."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Research uses serial policy-checked, bounded metadata/data requests and stops on transport/access failures; no paid account, bulk export or rate testing.",
+      "facts": {
+        "anonymous": true,
+        "research_min_pause_seconds": 3,
+        "maximum_data_rows_per_request": 10,
+        "maximum_data_response_bytes": 262144,
+        "automatic_retries": 0,
+        "numeric_provider_quota": null,
+        "paging": "Two explicit pages, source=2, per_page=2, four distinct country/year records.",
+        "update_identity": "Mutable dataset lastupdated and response hash; no immutable edition inferred.",
+        "robots_policy_evidence": "Saved per-host policy response hashes and request observations; a future denial must stop new requests."
+      },
+      "evidence": [
+        "runs/statistics-contract-20261105ag/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+        "examples/world-bank-indicators.scouting.jsonl",
+        "examples/world-bank-indicators.jsonl",
+        "examples/world-bank-indicators.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0b08a7ba2e8c1d6f5ba5",
+          "observed_at": "2026-11-05T10:42:04.212689+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+          "body_sha256": "a3160cd888a8f19bab2255e41e0915c35bd6704026cfc867e33e7c1718e18b08",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "2da87527d51f25207db0",
+          "observed_at": "2026-11-05T10:42:08.208274+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures",
+          "body_sha256": "5dfdf1cb985401fa87d1b160ff9d0a9075d4711950bcc844453cf623102a719a",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "7fc6bf3bbb800a2859d6",
+          "observed_at": "2026-11-05T10:42:15.419992+00:00",
+          "url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+          "body_sha256": "98626be13734ed45684f5a2c29b806de206e3858729a4efc9b89d5297058576a",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0cfdc20b96f1a92c3d52",
+          "observed_at": "2026-11-05T10:42:21.655082+00:00",
+          "url": "https://data.worldbank.org/indicator",
+          "body_sha256": "60490f86b66000653b7157edefed35551fa9caa7350e4e995f5a4dbe3bf9735e",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "806956be8c1add69c495",
+          "observed_at": "2026-11-05T10:43:17.571487+00:00",
+          "url": "https://data.worldbank.org/summary-terms-of-use",
+          "body_sha256": "3826b1a2d76b37cc4a63dd8017964263376d9ea12e8db4c4db161d2b22ef9469",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "88910e5f4dc998cf9ac6",
+          "observed_at": "2026-11-05T10:43:23.987970+00:00",
+          "url": "https://www.worldbank.org/ext/en/legal/terms-conditions",
+          "body_sha256": "686ea44d85a201428bb17e69ef1eccd17c21fcc51f61ba169eb4834f912cb1f2",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "d4512af3867cc4a400d8",
+          "observed_at": "2026-11-05T10:43:30.706157+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898620-api-error-codes",
+          "body_sha256": "f0b26e98d2ae6825df69df2e273c7d60a6df9736f1dcf0b2e9790eb875f9a127",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "21df81d7f4a8d021f7ae",
+          "observed_at": "2026-11-05T10:43:34.483674+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898599-indicator-api-queries",
+          "body_sha256": "db0221aac37c6d81ef205fecebcddb99dd099118544d69eb78e00315396b0f6d",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "e8287ef95ecec679cc0c",
+          "observed_at": "2026-11-05T10:47:46.906818+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
+          "body_sha256": "85013acf26bb4da407db9fd4d6ef5df6427d11fc8b5cac03db3e9ea45008fac1",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "ba245728db5e1dc549aa",
+          "observed_at": "2026-11-05T10:47:50.101137+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+          "body_sha256": "613fcacb271d13cf6f307b0246c670192b542055cf906a6d152005e8b16e4178",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "fb5b12c6923c5d16ca4f",
+          "observed_at": "2026-11-05T10:47:53.186382+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.CD",
+          "body_sha256": "b4ce5b1e2017ee3afb89d6d47ecc6dbf8ce00e8f89ce93834fb83501506ed37f",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "929da51023c6d870a13a",
+          "observed_at": "2026-11-05T10:47:56.440167+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.DYN.LE00.IN",
+          "body_sha256": "e4d16728f523cb399eaca4cdd7454f9c66bbd6c19e1565c066d6aa38519edfd5",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "93c275544bad836de566",
+          "observed_at": "2026-11-05T10:47:59.565847+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS",
+          "body_sha256": "edc8e64e72e18b581977feabd84bbfb1a7ab9f8d06c8e2f5132678f8766e6ebf",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        }
+      ],
+      "open_questions": [
+        "Define and rehearse bounded metadata/data refresh, deletion/revision handling and later-day reliability; do not infer unlimited access from absent numeric quota."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain as a query-verified statistics candidate with ten current examples. Full source/area/jurisdiction qualification and runtime activation are open.",
+      "facts": {
+        "decision": "ten-query-examples-verified",
+        "activation_approved": false,
+        "owner_action_required": false,
+        "next_actions": [
+          "Rendered readers",
+          "Resolve metadata attribution URI anomaly",
+          "Refresh/revision and relevance analysis"
+        ],
+        "revisit_trigger": "Useful published policy/metadata changes or a new bounded qualification check; no access-denial bypass."
+      },
+      "evidence": [
+        "runs/statistics-contract-20261105ag/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+        "examples/world-bank-indicators.scouting.jsonl",
+        "examples/world-bank-indicators.jsonl",
+        "examples/world-bank-indicators.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0b08a7ba2e8c1d6f5ba5",
+          "observed_at": "2026-11-05T10:42:04.212689+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+          "body_sha256": "a3160cd888a8f19bab2255e41e0915c35bd6704026cfc867e33e7c1718e18b08",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "2da87527d51f25207db0",
+          "observed_at": "2026-11-05T10:42:08.208274+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures",
+          "body_sha256": "5dfdf1cb985401fa87d1b160ff9d0a9075d4711950bcc844453cf623102a719a",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "7fc6bf3bbb800a2859d6",
+          "observed_at": "2026-11-05T10:42:15.419992+00:00",
+          "url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+          "body_sha256": "98626be13734ed45684f5a2c29b806de206e3858729a4efc9b89d5297058576a",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-contract-20261105ag/observations.jsonl",
+          "job_id": "0cfdc20b96f1a92c3d52",
+          "observed_at": "2026-11-05T10:42:21.655082+00:00",
+          "url": "https://data.worldbank.org/indicator",
+          "body_sha256": "60490f86b66000653b7157edefed35551fa9caa7350e4e995f5a4dbe3bf9735e",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "806956be8c1add69c495",
+          "observed_at": "2026-11-05T10:43:17.571487+00:00",
+          "url": "https://data.worldbank.org/summary-terms-of-use",
+          "body_sha256": "3826b1a2d76b37cc4a63dd8017964263376d9ea12e8db4c4db161d2b22ef9469",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "88910e5f4dc998cf9ac6",
+          "observed_at": "2026-11-05T10:43:23.987970+00:00",
+          "url": "https://www.worldbank.org/ext/en/legal/terms-conditions",
+          "body_sha256": "686ea44d85a201428bb17e69ef1eccd17c21fcc51f61ba169eb4834f912cb1f2",
+          "policy_sha256": "5c36a22fe5b1a380eec660d48c98cc850aa242bb0ca9c5a817a4b49ca621f186"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "d4512af3867cc4a400d8",
+          "observed_at": "2026-11-05T10:43:30.706157+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898620-api-error-codes",
+          "body_sha256": "f0b26e98d2ae6825df69df2e273c7d60a6df9736f1dcf0b2e9790eb875f9a127",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "21df81d7f4a8d021f7ae",
+          "observed_at": "2026-11-05T10:43:34.483674+00:00",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898599-indicator-api-queries",
+          "body_sha256": "db0221aac37c6d81ef205fecebcddb99dd099118544d69eb78e00315396b0f6d",
+          "policy_sha256": "50ddba2e1316ad6661bb59c534d418125ff388f71a8a12ad843e928036c2d7bd"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "e8287ef95ecec679cc0c",
+          "observed_at": "2026-11-05T10:47:46.906818+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
+          "body_sha256": "85013acf26bb4da407db9fd4d6ef5df6427d11fc8b5cac03db3e9ea45008fac1",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "ba245728db5e1dc549aa",
+          "observed_at": "2026-11-05T10:47:50.101137+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+          "body_sha256": "613fcacb271d13cf6f307b0246c670192b542055cf906a6d152005e8b16e4178",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "fb5b12c6923c5d16ca4f",
+          "observed_at": "2026-11-05T10:47:53.186382+00:00",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.CD",
+          "body_sha256": "b4ce5b1e2017ee3afb89d6d47ecc6dbf8ce00e8f89ce93834fb83501506ed37f",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "929da51023c6d870a13a",
+          "observed_at": "2026-11-05T10:47:56.440167+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.DYN.LE00.IN",
+          "body_sha256": "e4d16728f523cb399eaca4cdd7454f9c66bbd6c19e1565c066d6aa38519edfd5",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        },
+        {
+          "path": "runs/indicator-reading-rights-20261105ai/observations.jsonl",
+          "job_id": "93c275544bad836de566",
+          "observed_at": "2026-11-05T10:47:59.565847+00:00",
+          "url": "https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS",
+          "body_sha256": "edc8e64e72e18b581977feabd84bbfb1a7ab9f8d06c8e2f5132678f8766e6ebf",
+          "policy_sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": []
+}

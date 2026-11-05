@@ -9,6 +9,7 @@ import re
 import subprocess
 
 from source_registry import ROOT, REGISTRY, current_verified, area_verified, observations
+from jsonl_io import read_jsonl
 
 RESEARCH = ROOT / 'docs/research/free-content'
 CORPUS_ROOTS = ['docs/research/free-content', 'docs/design/2026-11-free-content']
@@ -39,7 +40,7 @@ def input_paths():
 
 def documents():
     path = REGISTRY / 'analysis/documents.jsonl'
-    return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
+    return read_jsonl(path)
 
 
 def snapshot(path, root=ROOT):
@@ -142,8 +143,7 @@ def dossier_gaps(source, registry=REGISTRY):
                 continue
             # Archived documents are provenance, never fresh provider verification.
             if path.suffix == '.jsonl' and name != 'analysis/documents.jsonl':
-                for line in path.read_text().splitlines():
-                    row = json.loads(line)
+                for row in read_jsonl(path):
                     if row.get('observed_at') and (row.get('http') or row.get('robots_evidence')):
                         current = True
                         break
@@ -190,7 +190,7 @@ def evidence_run_audit(registry=REGISTRY):
         if not queue_path.exists():
             continue
         jobs = json.loads(queue_path.read_text())['jobs']
-        rows = [json.loads(line) for line in output.read_text().splitlines()] if output.exists() else []
+        rows = read_jsonl(output)
         known = {j['id'] for j in jobs}
         seen = set()
         for row in rows:
@@ -216,7 +216,7 @@ def inventory_capture_audit(registry=REGISTRY):
     """Every retained export needs a matching successful, hashed capture."""
     captures = []
     for path in (registry / 'examples').glob('*.access.jsonl'):
-        captures.extend(json.loads(line) for line in path.read_text().splitlines() if line.strip())
+        captures.extend(read_jsonl(path))
     errors = []
     for path in (registry / 'analysis/inventories').glob('*'):
         if not path.is_file() or path.name == 'README.md':
@@ -294,8 +294,7 @@ def audit():
     review_file = REGISTRY / 'analysis/named-entity-reviews.jsonl'
     entity_reviews = {}
     if review_file.exists():
-        for line in review_file.read_text().splitlines():
-            review = json.loads(line)
+        for review in read_jsonl(review_file):
             entity_reviews[review['document_id']] = review
     def entity_status(document_id):
         review = entity_reviews.get(document_id, {})
@@ -309,8 +308,7 @@ def audit():
     pending_entity_documents = [d['id'] for d in history if entity_status(d['id']) != 'complete']
     pending_primary_documents = []
     for output in sorted((REGISTRY / 'runs').glob('*/observations.jsonl')):
-        for line in output.read_text().splitlines():
-            row = json.loads(line)
+        for row in read_jsonl(output):
             identity = 'primary:' + digest(json.dumps(row, ensure_ascii=False, sort_keys=True).encode())
             if entity_status(identity) != 'complete':
                 pending_primary_documents.append({'document_id': identity, 'path': str(output.relative_to(REGISTRY)), 'job_id': row['job_id']})
@@ -318,8 +316,7 @@ def audit():
     jurisdiction_file = REGISTRY / 'analysis/jurisdiction-reviews.jsonl'
     jurisdiction_reviews = {}
     if jurisdiction_file.exists():
-        for line in jurisdiction_file.read_text().splitlines():
-            row = json.loads(line)
+        for row in read_jsonl(jurisdiction_file):
             jurisdiction_reviews[(row['area_id'], row['country'])] = row
     jurisdiction_cells = []
     for area in areas:
@@ -338,16 +335,14 @@ def audit():
     area_reviews = {}
     area_review_file = REGISTRY / 'analysis/area-coverage-reviews.jsonl'
     if area_review_file.exists():
-        for line in area_review_file.read_text().splitlines():
-            review = json.loads(line)
+        for review in read_jsonl(area_review_file):
             area_reviews[review['area_id']] = review
     area_results = {area['id']: area_completion(area, memberships[area['id']],
                     area_reviews.get(area['id'], {}), jurisdiction_cells) for area in areas}
     entity_leads_file = REGISTRY / 'analysis/entity-leads.jsonl'
     entity_leads = {}
     if entity_leads_file.exists():
-        for line in entity_leads_file.read_text().splitlines():
-            row = json.loads(line)
+        for row in read_jsonl(entity_leads_file):
             entity_leads[row['id']] = row
     unresolved_names = [{k: row.get(k) for k in ('id', 'observed_name', 'role', 'status', 'next_action')}
                         for row in entity_leads.values() if not row.get('source_id')]

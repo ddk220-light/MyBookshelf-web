@@ -9,6 +9,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from jsonl_io import read_jsonl
 
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY = ROOT / 'docs/research/free-content/registry'
@@ -136,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events'):
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -224,7 +225,7 @@ def evaluate(source, case, observation, data):
 
 def observations(registry, source_id):
     path = registry / 'examples' / f'{source_id}.jsonl'
-    return [json.loads(line) for line in path.read_text().splitlines() if line.strip()] if path.exists() else []
+    return read_jsonl(path)
 
 
 def current_verified(source, rows):
@@ -307,6 +308,12 @@ def validate(registry=REGISTRY):
 
 def probe(source_id, case_ids=None):
     source = json.loads((REGISTRY / 'sources' / f'{source_id}.json').read_text())
+    if source['query']['adapter'] == 'world-bank-indicators':
+        from world_bank_indicators import probe as probe_indicators
+        return probe_indicators(source, case_ids)
+    if source['query']['adapter'] == 'siyavula-toc':
+        from siyavula_inventory import probe as probe_siyavula
+        return probe_siyavula(source, case_ids)
     if source['query']['adapter'] == 'met-collection':
         from met_collection import probe as probe_met
         return probe_met(source, case_ids)
