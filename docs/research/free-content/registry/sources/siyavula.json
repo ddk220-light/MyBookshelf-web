@@ -236,8 +236,8 @@
     "examples/siyavula.benchmark.jsonl",
     "docs/research/free-content/evidence/2026-11-05-statistics-school/reader-observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T11:21:20.205222+00:00",
-  "next_action": "Continue screen-reader/lower-page math and remaining item access, vocabulary/edition/curriculum analysis and refresh/license-removal rehearsal. Representative anonymous desktop/mobile readers passed; full qualification remains open.",
+  "last_reviewed_at": "2026-11-05T16:49:35.531787+00:00",
+  "next_action": "Preserve measured title-only recall limits; inspect remaining chapter/edition/curriculum and actual screen-reader access. Later-day reliability remains pending. No runtime activation.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "complete",
@@ -520,7 +520,7 @@
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Two actual section bodies and two representative desktop/mobile WebKit readers expose instructional text anonymously, with rendered math DOM nodes and no horizontal overflow. Captured screenshots show page navigation; this is not a full screen-reader or media audit.",
+      "summary": "Two actual lesson bodies render anonymously. Lower-page desktop number sets and mobile mean formulas were visually inspected; native MathML and ARIA math roles are present. Diagram alternative text and assistive-technology speech remain limited/unverified.",
       "facts": {
         "chapter_tocs": [
           "algebraic-expressions",
@@ -565,7 +565,28 @@
             "page_errors": [],
             "failed_requests": []
           }
-        ]
+        ],
+        "lower_page_review": {
+          "source_id": "siyavula",
+          "observed_at": "2026-11-05T16:49:35.531787+00:00",
+          "event": "visual-and-accessibility-evidence-review",
+          "query_verified": false,
+          "evidence_kind": "manual-screenshot-plus-DOM-review",
+          "initial_attempt_limitation": "First two window.scrollTo attempts did not move the site nested scroll container (window scroll_y=0); screenshots show navigation, not equations. Preserve those attempts. Subsequent scrollIntoViewIfNeeded moved the nested DIV by705px desktop/782px mobile.",
+          "visually_reviewed_screenshots": [
+            "evidence/2026-11-05-school-math/real-numbers-desktop-scroll.png",
+            "evidence/2026-11-05-school-math/mean-mobile-scroll.png"
+          ],
+          "findings": [
+            "Desktop number-set diagram and natural/whole/integer definitions and square roots are visually legible; the diagram accessible name is a filename, not a description.",
+            "Mobile mean definition and two-line summation/fraction formula fit the390px viewport; no page horizontal overflow.",
+            "Native MathML markup includes fractions, subscripts and sums. WebKit ARIA snapshot exposes math roles, but flattened text omits structural cues; this is not NVDA/VoiceOver speech verification.",
+            "No login gate for the two lesson bodies; practice signup remains separate. Video2DBH is an external link and was not played or relicensed.",
+            "No HTML edition year or current CAPS curriculum revision was established."
+          ],
+          "screen_reader_certified": false,
+          "full_book_verified": false
+        }
       },
       "evidence": [
         "runs/canonical-books-policy-20261105b/observations.jsonl",
@@ -576,7 +597,8 @@
         "examples/siyavula.access.jsonl",
         "examples/siyavula.jsonl",
         "examples/siyavula.benchmark.jsonl",
-        "docs/research/free-content/evidence/2026-11-05-statistics-school/reader-observations.jsonl"
+        "docs/research/free-content/evidence/2026-11-05-statistics-school/reader-observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-school-math/reader-observations.jsonl"
       ],
       "observation_refs": [
         {
@@ -621,8 +643,8 @@
         }
       ],
       "open_questions": [
-        "Complete screen-reader/math accessibility and lower-page visual checks; verify media separately under its own license.",
-        "Review remaining chapter access and HTML edition/curriculum revision before complete source qualification."
+        "Verify actual assistive-technology math speech/interaction; the number-set diagram has only a filename accessible name.",
+        "Review remaining chapter access and HTML edition/curriculum revision before complete source qualification; external media is outside the observed free-text scope."
       ]
     },
     "quality_and_relevance": {
@@ -641,7 +663,24 @@
         ],
         "content_quality_observation": "Statistics text includes literal “temp text” placeholders in the captured page. Preserve as provider content-quality evidence, not parser error.",
         "scope_warning": "Chapter titles are coarse discovery metadata. A failed title query cannot establish absence from the book body.",
-        "rendered_quality_correction": "Literal temp text appears in HTTP extraction but not the captured rendered visible-text excerpt; treat it as an HTML-content observation, not proof of a visible user-facing placeholder."
+        "rendered_quality_correction": "Literal temp text appears in HTTP extraction but not the captured rendered visible-text excerpt; treat it as an HTML-content observation, not proof of a visible user-facing placeholder.",
+        "intent_evaluation": {
+          "cases": 16,
+          "exact_title_retrieval_cases": 4,
+          "body_witnessed_missed_topics": [
+            "mean",
+            "median",
+            "mode",
+            "arithmetic mean",
+            "real numbers",
+            "integers",
+            "imaginary numbers"
+          ],
+          "empty_boundary_cases": 5,
+          "finding": "Title-only retrieval cannot answer body-topic, book-title or translated-language requests reliably; do not imply that an empty search means content absence.",
+          "evidence": "examples/siyavula.relevance.jsonl"
+        },
+        "rendered_math": "Number-set notation and the mean summation/fraction formula were visually legible on the sampled desktop/mobile lower pages. No general curriculum suitability or screen-reader claim."
       },
       "evidence": [
         "runs/canonical-books-policy-20261105b/observations.jsonl",
@@ -651,7 +690,9 @@
         "runs/school-section-access-20261105ak/observations.jsonl",
         "examples/siyavula.access.jsonl",
         "examples/siyavula.jsonl",
-        "examples/siyavula.benchmark.jsonl"
+        "examples/siyavula.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-school-math/reader-observations.jsonl",
+        "examples/siyavula.relevance.jsonl"
       ],
       "observation_refs": [
         {
@@ -696,8 +737,7 @@
         }
       ],
       "open_questions": [
-        "Assess broader real user-intent relevance and known-item vocabulary; chapter-title-only matching has limited recall.",
-        "Verify rendered mathematical notation and version/curriculum suitability."
+        "Assess version/current curriculum suitability and remaining chapters. Broad semantic/full-text/translated search remains unsupported; seven witnessed topic misses are a documented limitation."
       ]
     },
     "operating_limits": {
@@ -710,7 +750,13 @@
         "refresh_guard": "Changed SHA256 or chapter count fails verification until reviewed; no silent replacement.",
         "retry_policy": "No automatic retries; stop policy/access controls.",
         "full_book_imported": false,
-        "offline_query_cost": "Local file search after one bounded TOC capture, ordinary Git JSON/JSONL."
+        "offline_query_cost": "Local file search after one bounded TOC capture, ordinary Git JSON/JSONL.",
+        "refresh_rehearsal": {
+          "cases": 10,
+          "evidence": "examples/siyavula.refresh.jsonl",
+          "method": "Offline mutations of the hash-pinned14-entry TOC; no actual provider change claimed.",
+          "outcomes": "Chapter deletion/rename and navigation-only body changes require manual review; missing license, wrong grade/language, access403, truncation and hash mismatch reject; unchanged snapshot remains unchanged. No accepted file replaced and no prior example reverified."
+        }
       },
       "evidence": [
         "runs/canonical-books-policy-20261105b/observations.jsonl",
@@ -720,7 +766,8 @@
         "runs/school-section-access-20261105ak/observations.jsonl",
         "examples/siyavula.access.jsonl",
         "examples/siyavula.jsonl",
-        "examples/siyavula.benchmark.jsonl"
+        "examples/siyavula.benchmark.jsonl",
+        "examples/siyavula.refresh.jsonl"
       ],
       "observation_refs": [
         {
@@ -765,7 +812,8 @@
         }
       ],
       "open_questions": [
-        "Rehearse changed/deleted chapter and license-removal handling; obtain later-day reliability evidence without repeated same-day requests."
+        "Obtain later-day reliability/refresh evidence on a genuinely later day; same-day browser and offline tests do not satisfy it.",
+        "Review an actual published version/curriculum change when available; synthetic deletion/rights-loss tests only establish local fail-closed handling."
       ]
     },
     "decision_and_followup": {

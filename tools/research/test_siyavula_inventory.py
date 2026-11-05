@@ -16,6 +16,50 @@ def document():
 
 
 class SchoolTocTests(unittest.TestCase):
+    def refresh(self, candidate, capture_changes=None):
+        body = document()
+        capture = {'http': {'status': 200, 'truncated': False,
+                           'sampled_bytes_sha256': hashlib.sha256(candidate).hexdigest()},
+                   'request': {'url': si.ENDPOINT}}
+        if capture_changes:
+            capture['http'].update(capture_changes)
+        return si.review_refresh(body, candidate, capture, hashlib.sha256(body).hexdigest())
+
+    def test_refresh_deletion_keeps_surviving_same_title_part_distinct(self):
+        body = document()
+        candidate = body.replace((f'<a class="chapter-title" href="{si.ENDPOINT}/trigonometry-part-2">'
+                                  'Chapter 11: Trigonometry</a>').encode(), b'')
+        result = self.refresh(candidate)
+        self.assertEqual(result['removed_ids'], [si.ENDPOINT + '/trigonometry-part-2'])
+        self.assertEqual(result['changed_ids'], [])
+        self.assertFalse(result['automatic_replacement'])
+        self.assertFalse(result['prior_examples_reverified'])
+
+    def test_refresh_renamed_chapter_and_navigation_change_both_require_review(self):
+        renamed = self.refresh(document().replace(b'Chapter 5: Trigonometry', b'Chapter 5: Angles'))
+        self.assertEqual(renamed['changed_ids'], [si.ENDPOINT + '/trigonometry-part-1'])
+        navigation = self.refresh(document().replace(b'</html>', b'<nav>New navigation</nav></html>'))
+        self.assertEqual(navigation['outcome'], 'candidate-needs-manual-review')
+        self.assertEqual(navigation['changed_ids'], [])
+        self.assertFalse(navigation['query_verified'])
+
+    def test_refresh_rights_loss_and_invalid_capture_fail_closed(self):
+        for body, changes in [
+            (document().replace(si.LICENSE.encode(), b'https://example.org/all-rights-reserved'), None),
+            (document(), {'status': 403}), (document(), {'truncated': True}),
+            (document(), {'sampled_bytes_sha256': '0' * 64}),
+        ]:
+            result = self.refresh(body, changes)
+            self.assertEqual(result['outcome'], 'candidate-rejected')
+            self.assertFalse(result['automatic_replacement'])
+
+    def test_refresh_accepted_pin_and_book_identity_are_mandatory(self):
+        with self.assertRaises(ValueError):
+            si.review_refresh(document(), document(), {}, '0' * 64)
+        for old, new in [(b'Grade 10', b'Grade 11'), (b'lang="en"', b'lang="af"')]:
+            self.assertEqual(self.refresh(document().replace(old, new))['outcome'], 'candidate-rejected')
+        self.assertEqual(self.refresh(document())['outcome'], 'unchanged-snapshot')
+
     def test_equal_chapter_names_keep_native_parts_and_unknown_edition(self):
         rows = si.parse_inventory(document())
         self.assertEqual(len({r['id'] for r in rows}), 2)

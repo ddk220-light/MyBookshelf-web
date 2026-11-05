@@ -101,6 +101,47 @@ def local_search(rows, query):
     return [row for row in rows if set(terms) <= set(re.findall(r'\w+', row['chapter_title'].casefold()))]
 
 
+def review_refresh(accepted_body, candidate_body, capture, accepted_sha256):
+    """Compare a bounded TOC candidate without replacing or re-verifying anything.
+
+    A same-day comparison is a refresh rehearsal, not reliability evidence.
+    Removed/changed native IDs require review; a missing license rejects the
+    candidate even when its titles happen to be unchanged.
+    """
+    accepted_hash = hashlib.sha256(accepted_body).hexdigest()
+    candidate_hash = hashlib.sha256(candidate_body).hexdigest()
+    if accepted_hash != accepted_sha256:
+        raise ValueError('Accepted snapshot does not match its pinned hash')
+    accepted = parse_inventory(accepted_body)
+    result = {'accepted_sha256': accepted_hash, 'candidate_sha256': candidate_hash,
+              'automatic_replacement': False, 'query_verified': False,
+              'removed_ids': [], 'added_ids': [], 'changed_ids': [],
+              'prior_examples_reverified': False}
+    http = capture.get('http', {})
+    if (http.get('status') != 200 or http.get('truncated')
+            or http.get('sampled_bytes_sha256') != candidate_hash
+            or capture.get('request', {}).get('url') != ENDPOINT):
+        return {**result, 'outcome': 'candidate-rejected',
+                'reason': 'Missing/mismatched successful TOC capture hash or endpoint'}
+    try:
+        candidate = parse_inventory(candidate_body)
+    except (ValueError, UnicodeError) as exc:
+        return {**result, 'outcome': 'candidate-rejected', 'reason': str(exc)}
+    before = {r['id']: r for r in accepted}
+    after = {r['id']: r for r in candidate}
+    result['removed_ids'] = sorted(before.keys() - after.keys())
+    result['added_ids'] = sorted(after.keys() - before.keys())
+    # Body hashes change for navigation/advertisements too. Compare actual
+    # chapter metadata separately, retaining the full hash change for review.
+    fields = ('chapter_title', 'chapter_number', 'book_title', 'language',
+              'grade', 'subject', 'license_url')
+    result['changed_ids'] = sorted(k for k in before.keys() & after.keys()
+                                  if any(before[k][f] != after[k][f] for f in fields))
+    result['outcome'] = ('unchanged-snapshot' if candidate_hash == accepted_hash
+                         else 'candidate-needs-manual-review')
+    return result
+
+
 def record_examples(source, capture, body, case_ids=None):
     digest = hashlib.sha256(body).hexdigest()
     rows, error = [], None
