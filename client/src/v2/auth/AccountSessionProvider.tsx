@@ -284,13 +284,14 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
   // privacy lock created by another operation.
   const captureAccessEnd = useCallback((identity: string) => {
     const intent = identityIntent.current,
+      epoch = current.current.epoch,
       ownsIdentity = current.current.user?.id === identity;
     let lock: object | null = null;
     return (confirmed: boolean) => {
       if (!ownsIdentity || intent !== identityIntent.current) return;
       if (lock) {
         if (!confirmed || accessEndLock.current !== lock || current.current.status !== "guest") return;
-      } else if (current.current.user?.id !== identity) return;
+      } else if (current.current.user?.id !== identity || current.current.epoch !== epoch) return;
       sessionController.current?.abort();
       request.current++;
       pending.current = null;

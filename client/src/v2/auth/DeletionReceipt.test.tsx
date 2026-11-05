@@ -239,6 +239,7 @@ function DeletionControls() {
     <button onClick={account.prepareSignIn}>Begin another sign-in</button>
     <button onClick={() => void account.refresh(true)}>Finish another sign-in</button>
     <button onClick={account.continueGuest}>Use guest</button>
+    <button onClick={() => void account.refresh()}>Refresh session</button>
   </>;
 }
 function renderDeletionControls() {
@@ -306,4 +307,21 @@ it("does not clear a newer identity's privacy lock when an older receipt is conf
   await waitFor(() => expect(screen.getByTestId("receipt")).toHaveTextContent("accepted"));
   expect(readSession()).toMatchObject({status: "guest", logoutPending: true});
   expect(localStorage.getItem("mybookshelf.local-guest-override.v1")).toBe("true");
+});
+
+it("rejects a late deletion response after automatic identity changes even if the original user returns", async () => {
+  let identity = "synthetic-owner", finish!: (response: Response) => void;
+  const response = new Promise<Response>(resolve => {finish = resolve;});
+  vi.stubGlobal("fetch", vi.fn(async (path: string) => path.endsWith("/session") ? json(authenticated(identity)) : response));
+  renderDeletionControls();
+  await waitFor(() => expect(readSession().status).toBe("authenticated"));
+  fireEvent.click(screen.getByRole("button", {name: "Delete owner"}));
+  identity = "another-owner";
+  fireEvent.click(screen.getByRole("button", {name: "Refresh session"}));
+  await waitFor(() => expect(readSession().user?.id).toBe(identity));
+  identity = "synthetic-owner";
+  fireEvent.click(screen.getByRole("button", {name: "Refresh session"}));
+  await waitFor(() => expect(readSession().user?.id).toBe(identity));
+  await act(async () => {finish(json({status: "accepted", accessEnded: true}));});
+  expect(readSession()).toMatchObject({status: "authenticated", user: {id: identity}});
 });
