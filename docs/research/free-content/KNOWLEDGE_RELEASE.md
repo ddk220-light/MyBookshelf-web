@@ -101,3 +101,25 @@ are intentional additions, without a pixel-equality claim.
 Preview `dpl_2JZ6PEvPC7gQnCe74mY3bVMHpWRs` (application commit `46a16ce`)
 built successfully. Authenticated source-directory verification returned 16
 connected sources; hosted query/browser acceptance continues in PR #179.
+
+Hosted preview acceptance, 2026-11-05: all ten new integrations plus OpenAlex
+and Europe PMC returned matches and resolved exact native identities (HTTP 200).
+WebKit completed real LibriVox search → detail → canonical listening link, then
+all-source mathematics (25 results, all 16 sources finished, zero page errors).
+Chromium's cloud proxy trust failure was an environment issue; WebKit used the
+existing system trust with HTTPS verification intact. No browser trust setting
+was changed. Preview account banners reflect its existing configuration.
+
+The older snapshots had expired access observations. Their official metadata
+exports/reading-gallery evidence were refreshed and audited: Gutenberg 1,000
+records (unchanged identities), OTL 1,910 (+1, no removed IDs, one metadata edit),
+Book Dash 30 pinned IDs (unchanged). No full books/art/audio were downloaded.
+The existing 24-hour evidence rule still applies; future refresh proposals must
+be reviewed/merged to keep these snapshot access labels current. StoryWeaver's
+robots endpoint returned HTTP 403; its refresh stopped and the three historical
+records remain available only with unclear access shown. It is not counted as a
+current free-reading verification. No source account was created.
+
+Results with matches now precede empty or unsuccessful groups. Book editions and
+documentation versions are visible on result/detail cards. No datastore, paid
+service or account configuration was added.

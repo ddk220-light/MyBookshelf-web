@@ -39,6 +39,8 @@ export function KnowledgeSearchPage(){
     }catch(error){if(!request.signal.aborted)setRows(all=>all.map(r=>r.source.id===row.source.id?{...r,busy:false,error:error instanceof PublicApiError?error:new PublicApiError()}:r));}
   }
   const connected=sources?.filter(s=>s.enabled)||[],finished=rows.filter(r=>!r.busy).length,count=rows.reduce((sum,r)=>sum+(r.page?.items.length||0),0),busy=rows.some(r=>r.busy);
+  const priority=(row:Row)=>row.page?.items.length?0:row.busy?1:row.error?2:3;
+  const displayedRows=[...rows].sort((a,b)=>priority(a)-priority(b));
   const returnTo='/app/search'+location.search;
   return <section className="page-section content-search knowledge-search">
     <div className="content-search-header"><header className="page-heading"><h1>Search</h1></header>
@@ -58,13 +60,13 @@ export function KnowledgeSearchPage(){
     </>:<>
       <p className="knowledge-progress" role="status" aria-live="polite">{count} results loaded · {finished} of {rows.length} sources finished{busy?' · still searching…':''}</p>
       {!rows.length&&<div className="content-notice"><h2>No connected source matches these filters</h2><p>Choose another source, type or language. This does not mean the information is unavailable.</p><button onClick={()=>change({source:'',kind:'',language:''})}>Search all connected sources</button></div>}
-      {rows.map(row=><section className="knowledge-source" key={row.source.id} aria-labelledby={'knowledge-'+row.source.id}>
+      {displayedRows.map(row=><section className="knowledge-source" key={row.source.id} aria-labelledby={'knowledge-'+row.source.id}>
         <header className="knowledge-source-heading"><div><h2 id={'knowledge-'+row.source.id}>{row.source.name}</h2><p>{row.source.scope}</p></div><span>{row.busy?'Searching…':row.error?'Could not finish':`${row.page?.items.length||0} loaded`}</span></header>
         {row.source.mode==='snapshot'&&<p className="content-coverage">Limited catalog snapshot. Older reading links may need checking at the source.</p>}
-        {!includeUnclear&&Boolean(row.page?.hiddenUnclear)&&<p className="content-coverage">{row.page?.hiddenUnclear} items on this page have unclear access. Turn on “Show items with unclear access” to see them.</p>}
+        {!includeUnclear&&Boolean(row.page?.hiddenUnclear)&&<p className="content-coverage">{row.page?.hiddenUnclear} additional items have unclear access. Turn on “Show items with unclear access” to see them.</p>}
         {row.error&&<div className="content-notice"><p>{row.error.message}</p>{row.error.sources?.filter(s=>s.id===row.source.id).map(s=><p key={s.id}>{sourceStatus(s)}</p>)}<button className="text-button" onClick={()=>void more(row,true)}>{row.error.code==='CONTENT_CURSOR_EXPIRED'?'Start this source again':`Retry ${row.source.name}`}</button></div>}
         {row.page?.items.slice(0,row.visible).map(item=><ContentResult key={item.key} item={item} to={'/app/read/'+encodeURIComponent(item.key)} returnTo={returnTo}/>)}
-        {!row.busy&&!row.error&&row.page&&!row.page.items.length&&<p className="content-coverage">No matches returned for this query.</p>}
+        {!row.busy&&!row.error&&row.page&&!row.page.items.length&&<p className="content-coverage">{row.page.hiddenUnclear?'No verified free matches returned. Matches needing an access check are hidden.':'No matches returned for this query.'}</p>}
         {row.page&&((row.visible<row.page.items.length)||row.page.nextCursor)&&<button disabled={row.busy} className="text-button knowledge-more" onClick={()=>void more(row)}>Show more from {row.source.name}</button>}
       </section>)}
       <p className="content-coverage">Results stay grouped by source to preserve editions, recordings and attribution. Sources may overlap. Search results can change between pages.</p>

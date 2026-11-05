@@ -56,6 +56,7 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
       {item.flags?.includes('source_reports_retracted')&&<p className="content-retraction">Retraction listed by source</p>}
       {item.flags?.includes('source_reports_correction')&&<p className="content-warning">Correction listed by source</p>}
       <p className="content-authors">{item.contributors.filter(c=>c.role==='author').map(c=>c.name).join(', ')}</p>
+      {['book','learning_resource'].includes(item.kind)&&item.version&&<p className="content-record">{item.version}</p>}
       <p className="content-record">{name}{source?.sourceRecordId?` ${source.sourceId==='gutenberg'?'eBook #':''}${source.sourceRecordId}`:''}{languages.length?' · '+languages.join(', '):''}{item.publishedAt&&!['book','learning_resource'].includes(item.kind)?' · '+item.publishedAt.slice(0,4):''}</p>
       {item.readingLevel&&<p className="content-credit">{item.readingLevel.publisher} · {item.readingLevel.label} (as the publisher labels it)</p>}{item.contributors.filter(c=>c.role!=='author').map(c=><p className="content-credit" key={c.role+':'+c.name}>{c.role}: {c.name}</p>)}
       {item.container&&<p className="content-record">{item.container.title}</p>}
