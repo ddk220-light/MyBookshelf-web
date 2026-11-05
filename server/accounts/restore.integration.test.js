@@ -88,6 +88,7 @@ test(
         { blob },
       );
     await ledger.persistRequest(deleted);
+    const cleanupCreatedAt = new Date();
     const cleanup = {
       id: randomUUID(),
       authUserId: deleted.authUserId,
@@ -97,8 +98,8 @@ test(
         { refreshToken: "synthetic-restored-provider-token" },
         "synthetic-restore-job-key-more-than-thirty-two-characters",
       ),
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 30 * 86400000),
+      createdAt: cleanupCreatedAt,
+      expiresAt: new Date(cleanupCreatedAt.getTime() + 30 * 86400000),
     };
     await ledger.persistProviderJob(cleanup);
     const snapshotCreatedAt = new Date(Date.now() - 86400000).toISOString();
