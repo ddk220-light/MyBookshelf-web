@@ -4,6 +4,8 @@
 
 MSHA Digital Library and MARAD Data Statistics are now canonical candidate records, with no query examples claimed. NHTSA/DGCA broad agency gateways remain six explicit URL follow-ups across two agencies. A 34-row identity-blocker ledger retains exact access/policy/redirect history and useful retry triggers. DGCA policy permits attributed reproduction except third-party material and prohibits framing; NSDC canonical path still exposes only navigation. NHTSA redirects to HTTP and the USGS lifecycle link is 404; no bypass or invented API was used.
 
+All 92 Book Sprints client labels now have explicit identity classifications: seven labels in three proposed lexical alias groups, 13 composites, 14 ambiguous acronym/branch/spelling labels, 55 unresolved single labels and three generic/person-only attributions. Thirty-four existing leads have specific next actions. This does not verify legal operator identity or membership in a queryable catalog; named-source gaps remain open.
+
 The registry has 204 triaged URL roles, 29 older unresolved catalog identities (30 references), and 115 unresolved named labels. Six new documentation queues completed 29 jobs: 22 captures, one policy-redirect skip, five redirects and one HTTP404. All 21 documentation queues / 255 jobs are collection-complete, not goal-complete. Capture inventory: 76 text/evidence documents and 169 binary assets. Registry/evidence checks and **51 research tests pass**. Completion automation remains enabled; native Goal UI was not activated. No runtime imports, source activation, account work or deployment.
 
 ## 2026-11-05: Python exact-symbol dossier checkpoint (latest)
