@@ -18,11 +18,11 @@ function remembered(key:string){const value=memory.get(key);if(value&&value.expi
 // Search history follows the existing same-tab search memory: bounded, never persisted.
 const recentSearches=new Map<string,{query:string;scope:'free'|'papers';href:string}>();
 
-export function SearchScopes({scope}:{scope:'library'|'free'|'papers'}){
+export function SearchScopes({scope}:{scope:'library'|'free'|'papers'|'knowledge'}){
   const location=useLocation();const q=new URLSearchParams(location.search).get('q');
-  return <nav className="content-scopes segment-control" aria-label="Search scope">{(['library','free','papers'] as const).map(value=>
+  return <nav className="content-scopes segment-control" aria-label="Search scope">{(['library','knowledge','free','papers'] as const).map(value=>
     <Link key={value} className={scope===value?'selected':''} aria-current={scope===value?'page':undefined}
-      to={'/app/search'+(value!=='library'||q?'?'+new URLSearchParams({...value!=='library'?{scope:value}:{},...q?{q}:{}}):'')}>{value==='library'?'Library books':value==='free'?'Free to read':'Papers'}</Link>)}</nav>;
+      to={'/app/search'+(value!=='library'||q?'?'+new URLSearchParams({...value!=='library'?{scope:value}:{},...q?{q}:{}}):'')}>{value==='library'?'Library books':value==='knowledge'?'All knowledge':value==='free'?'Free to read':'Papers'}</Link>)}</nav>;
 }
 
 export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {

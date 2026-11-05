@@ -1,6 +1,7 @@
 import type { ContentItem, ContentSourceStatus } from '../../contentTypes';
 
 export const sourceNames: Record<string, string> = {
+  gdl:'Global Digital Library',librivox:'LibriVox',loc:'Library of Congress',bhl:'Biodiversity Heritage Library','african-minds':'African Minds','lse-press':'LSE Press','mattering-press':'Mattering Press','mediastudies-press':'mediastudies.press','punctum-books':'punctum books','python-docs':'Python documentation',
   bookdash: 'Book Dash', gutenberg: 'Project Gutenberg', 'open-textbook-library': 'Open Textbook Library',
   europepmc: 'Europe PMC', doaj: 'DOAJ', arxiv: 'arXiv', openalex: 'Wide paper search',
   'children-pilot': 'Reviewed children’s starter set', storyweaver: 'StoryWeaver',

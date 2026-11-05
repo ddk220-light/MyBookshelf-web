@@ -56,18 +56,19 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
       {item.flags?.includes('source_reports_retracted')&&<p className="content-retraction">Retraction listed by source</p>}
       {item.flags?.includes('source_reports_correction')&&<p className="content-warning">Correction listed by source</p>}
       <p className="content-authors">{item.contributors.filter(c=>c.role==='author').map(c=>c.name).join(', ')}</p>
+      {['book','learning_resource'].includes(item.kind)&&item.version&&<p className="content-record">{item.version}</p>}
       <p className="content-record">{name}{source?.sourceRecordId?` ${source.sourceId==='gutenberg'?'eBook #':''}${source.sourceRecordId}`:''}{languages.length?' · '+languages.join(', '):''}{item.publishedAt&&!['book','learning_resource'].includes(item.kind)?' · '+item.publishedAt.slice(0,4):''}</p>
       {item.readingLevel&&<p className="content-credit">{item.readingLevel.publisher} · {item.readingLevel.label} (as the publisher labels it)</p>}{item.contributors.filter(c=>c.role!=='author').map(c=><p className="content-credit" key={c.role+':'+c.name}>{c.role}: {c.name}</p>)}
       {item.container&&<p className="content-record">{item.container.title}</p>}
     </div></div>
     {notice&&<p role="status">{notice}</p>}
     {!saveContent&&<p className="content-record">Free books and papers can be saved in browser-only mode. They do not sync to an account yet.</p>}
-    {primary&&!primary.requiresAccount&&<p className="content-access access-free"><span aria-hidden="true">● </span>Free to read{primaryLocation?.readerUrl?' online':''}</p>}
+    {primary&&!primary.requiresAccount&&<p className="content-access access-free"><span aria-hidden="true">● </span>{item.kind==='audiobook'?'Free to listen':'Free to read'}{primaryLocation?.readerUrl?' online':''}</p>}
     {primary?.requiresAccount&&<p className="content-access access-free">Free account required at {primaryLocation?.host||'the source'}. Sign in there to read this book.</p>}
     {primary&&safeSource(primary.url)?<a className="button-link content-read" href={safeSource(primary.url)} target="_blank" rel="noopener noreferrer" aria-label={`${primary.label}${primary.requiresAccount?' · free account required':''} (opens ${primaryLocation?.host||'source'})`}>{primary.label} <ExternalLinkIcon/></a>
       :<p className="content-access access-unclear">○ Access is unclear. Check the source for current reading options.</p>}
     {downloads.length>0&&<div className="content-formats" aria-label="Available formats">{downloads.map(file=>safeSource(file.url)&&<a key={file.url} href={safeSource(file.url)} target="_blank" rel="noopener noreferrer" aria-label={`${formatNames[file.mimeType]||'Format'} (opens ${new URL(file.url).hostname})`}>{formatNames[file.mimeType]||'Format'} <ExternalLinkIcon/></a>)}</div>}
-    {primary&&safeSource(primary.url)&&<p className="content-host-note">Opens {new URL(primary.url).hostname}. {['book','learning_resource'].includes(item.kind)?m.noHost:'MyBookshelf doesn’t host or download the paper.'}</p>}
+    {primary&&safeSource(primary.url)&&<p className="content-host-note">Opens {new URL(primary.url).hostname}. {['book','learning_resource'].includes(item.kind)?m.noHost:'MyBookshelf doesn’t host or download this content.'}</p>}
     <section className="content-rights"><h2>Reading and rights</h2><p className="content-license">{rights?.statement||rights?.id||'Licence not stated.'}</p>
       {primaryLocation?.version&&<p>Version at this host: {primaryLocation.version}</p>}
       <p>{m.rights}</p>

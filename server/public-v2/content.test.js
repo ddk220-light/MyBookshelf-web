@@ -54,3 +54,14 @@ test('real content routing searches and resolves live without a database, Redis 
   const resolved=await request(app).post('/api/v2/content/resolve').send({key:item.key});
   assert.equal(resolved.body.item.readingActions.length,1);assert.equal(calls,2);
 });
+
+test('knowledge source directory is public and no-store, with policy holds distinct from connected sources',async()=>{
+  const content=createContentService({env:{CONTENT_DISCOVERY_ENABLED:'true',CONTENT_KNOWLEDGE_ENABLED:'true',CONTENT_CURSOR_SECRET:'synthetic-directory-secret-more-than-32-chars'}});
+  const app=createAnonymousApp({publicRouter:createPublicV2Router({content})});
+  const response=await request(app).get('/api/v2/content/sources');
+  assert.equal(response.status,200);assert.equal(response.headers['cache-control'],'no-store');assert.equal(response.headers['set-cookie'],undefined);
+  assert.equal(response.body.sources.find(s=>s.id==='librivox').enabled,true);
+  assert.equal(response.body.sources.find(s=>s.id==='wikipedia').enabled,false);
+  assert.equal(response.body.sources.find(s=>s.id==='gutenberg').mode,'snapshot');
+  assert.ok(!response.text.includes('synthetic-directory-secret'));
+});

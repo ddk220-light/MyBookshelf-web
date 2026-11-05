@@ -1,0 +1,41 @@
+{
+  "recordedAt": "2026-11-05T04:08:34.058537Z",
+  "provenance": "Release implementation session; initial console failures retained as summaries, not raw responses.",
+  "observations": [
+    {
+      "source": "python-docs",
+      "stage": "initial live search",
+      "outcome": "failure",
+      "cause": "Parser rejected Sphinx inventory names containing spaces.",
+      "resolution": "Corrected parser; current official inventory, search and exact resolution passed."
+    },
+    {
+      "source": "loc",
+      "stage": "initial live search",
+      "outcome": "timeout",
+      "cause": "Provider did not return within the bounded deadline.",
+      "resolution": "Subsequent search without redundant first-page parameter, detail and paging passed; provider slowness remains possible."
+    },
+    {
+      "sources": [
+        "wikipedia",
+        "wikibooks",
+        "wikisource"
+      ],
+      "stage": "robots review",
+      "outcome": "policy_skip",
+      "path": "/w/api.php",
+      "resolution": "Reviewed path disallowed; adapters remain disconnected. No API query attempted."
+    },
+    {
+      "source": "storyweaver",
+      "stage": "policy refresh preflight",
+      "observedAt": "2026-11-05T04:18:50.444585+00:00",
+      "url": "https://storyweaver.org.in/robots.txt",
+      "outcome": "blocked",
+      "httpStatus": 403,
+      "resolution": "Stopped; no reading or metadata requests attempted after denial. Existing snapshot remains stale/unclear; no source account created."
+    }
+  ],
+  "qualification": "These observations do not complete research dossiers or ten-example qualification."
+}

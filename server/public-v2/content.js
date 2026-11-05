@@ -1,6 +1,7 @@
 import { createContentService } from '../services/content/search.js';
 
 export function mountContentRoutes(router, service = createContentService()) {
+  router.get('/content/sources',(_req,res)=>res.set('Cache-Control','no-store').json(service.sources?.()||{sources:[]}));
   for (const operation of ['search','resolve','locate']) router.post(`/content/${operation}`, async (req,res) => {
     let streaming=false;
     const controller=new AbortController();res.on('close',()=>controller.abort());
