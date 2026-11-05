@@ -397,15 +397,22 @@ export function createAccountMiddleware({
               message: "Check the submitted fields.",
             },
           });
-      if (error?.statusCode === 403)
+      if (error?.statusCode === 403) {
+        const code = error.body?.code;
+        const unverified = code === "EMAIL_NOT_VERIFIED";
+        const recent = code === "SESSION_NOT_FRESH";
         return res
           .status(403)
           .json({
             error: {
-              code: "VERIFY_EMAIL_REQUIRED",
-              message: "Verify your email before signing in.",
+              code: unverified ? "VERIFY_EMAIL_REQUIRED"
+                : recent ? "RECENT_AUTH_REQUIRED" : "ACCOUNT_FORBIDDEN",
+              message: unverified ? "Verify your email before signing in."
+                : recent ? "Confirm it’s you again to continue."
+                  : "This account action is not allowed.",
             },
           });
+      }
       if (error?.statusCode === 401)
         return res
           .status(401)

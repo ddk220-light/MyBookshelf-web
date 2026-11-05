@@ -9,8 +9,27 @@ function label(agent='') {
 export function createSessionActions({auth,pool,consumeProof}) {
   return {
     async list(identity,headers){
-      const sessions=await auth.api.listSessions({headers});
-      return {sessions:sessions.filter(s=>Date.now()-new Date(s.createdAt).getTime()<30*86400000).map(s=>({id:s.id,device:label(s.userAgent),current:s.id===identity.sessionId,createdAt:s.createdAt,expiresAt:s.expiresAt}))};
+      // Native listSessions requires a five-minute-fresh login. Reading the
+      // narrow device summary only needs an active verified session; revocation
+      // below still consumes a separate recent-auth proof.
+      return authTransaction(auth,pool,identity.authUserId,async(adapter)=>{
+        const current=await auth.api.getSession({headers});
+        if(current?.session.id!==identity.sessionId||
+          current.user.id!==identity.authUserId||!current.user.emailVerified)
+          throw new AccountRequestError(401,'SIGN_IN_REQUIRED','Sign in to continue.');
+        const now=new Date();
+        const sessions=await adapter.findMany({
+          model:'session',
+          select:['id','userAgent','createdAt','expiresAt'],
+          where:[
+            {field:'userId',value:identity.authUserId},
+            {field:'expiresAt',operator:'gt',value:now},
+            {field:'createdAt',operator:'gt',value:new Date(now.getTime()-30*86400000)},
+          ],
+          sortBy:{field:'createdAt',direction:'desc'},
+        });
+        return {sessions:sessions.map(s=>({id:s.id,device:label(s.userAgent),current:s.id===identity.sessionId,createdAt:s.createdAt,expiresAt:s.expiresAt}))};
+      });
     },
     async revoke(body,identity,headers,setCookie){
       strictObject(body,['sessionId','proof']);

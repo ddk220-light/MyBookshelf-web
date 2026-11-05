@@ -71,6 +71,7 @@ const app = createApplication({
       req.path !== "/__accounts_test__/mail" &&
       req.path !== "/__accounts_test__/cleanup" &&
       req.path !== "/__accounts_test__/missing-name" &&
+      req.path !== "/__accounts_test__/aged-session" &&
       req.path !== "/__accounts_test__/deletion-jobs"
     )
       return accounts(req, res, next);
@@ -80,6 +81,10 @@ const app = createApplication({
         return res.sendStatus(400);
       try {
         const email = req.body.email;
+        if (req.path.endsWith("/aged-session")) {
+          await admin.query('UPDATE "session" SET "createdAt"=now()-interval \'6 minutes\' WHERE "userId" IN (SELECT id FROM "user" WHERE email=$1)', [email]);
+          return res.json({ aged: true });
+        }
         if (req.path.endsWith("/missing-name")) {
           await admin.query('UPDATE "user" SET name=$1 WHERE email=$2', [
             "",
