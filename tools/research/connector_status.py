@@ -15,6 +15,10 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'fda-guidance-ui': 'Browser-only public guidance keyword table; first10 visible results with draft/final and native links',
+    'epa-nepis-ui': 'Browser-only public EPA NEPIS keyword form; first15 results with native document keys',
+    'osha-publications': 'Live public publication title/keyword/number search; exact returned language/version links',
+    'faa-handbooks': 'Local title-token or exact native URL search over42 reference-handbook catalog links; no full-text search',
     'siyavula-toc': 'Local chapter-title tokens or exact chapter URL; no body-topic/translated search',
     'sphinx-inventory': 'Exact documented symbol lookup in a downloaded metadata inventory',
     'world-bank-indicators': 'Exact country, indicator and year; no natural-language search',
@@ -49,11 +53,20 @@ def generate(registry=REGISTRY):
         if not mode:
             intents = list(dict.fromkeys(c.get('intent', '') for c in q.get('cases', []) if c.get('intent')))
             mode = ' / '.join(intents[:2]) if intents else 'Supported current search method not yet verified'
+        recovery = s.get('recovery', {})
+        decision = s.get('dossier', {}).get('decision_and_followup', {}).get('facts', {})
+        operating = s.get('dossier', {}).get('operating_limits', {}).get('facts', {})
+        reason = (recovery.get('reason') or decision.get('blocker') or operating.get('current_restriction')
+                  or ' | '.join(s.get('limitations', [])[:2])) if status == 'blocked_or_failed' else ''
         rows.append({'group_id': s['group'], 'group': GROUPS[s['group']], 'connector_id': s['id'],
                      'connector': s['name'], 'status': status, 'passing_examples': a['passing_examples'],
                      'tested_search_scope': mode,
                      'known_limitations': ' | '.join(str(v) for v in s.get('limitations', [])),
                      'next_step_or_blocker': s['next_action'],
+                     'block_reason': reason,
+                     'last_attempt_and_result': ' / '.join(str(recovery[k]) for k in ('attempt', 'result') if recovery.get(k)),
+                     'recovery_decision': recovery.get('decision', ''),
+                     'last_reviewed_at': s.get('last_reviewed_at'),
                      'record': 'sources/' + s['id'] + '.json', 'production_activation_changed': False})
         groups[s['group']]['total'] += 1
         groups[s['group']][status] += 1
@@ -70,7 +83,7 @@ def generate(registry=REGISTRY):
               'totals': totals, 'groups': list(groups.values()), 'connectors': rows}
     (registry / 'connector-status.json').write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n')
     with (registry / 'connector-status.csv').open('w', newline='') as output:
-        writer = csv.DictWriter(output, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(output, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     print(json.dumps(totals))

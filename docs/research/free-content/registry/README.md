@@ -243,3 +243,20 @@ Do not enable app sources, import a runtime catalog, provision infrastructure,
 create paid accounts, contact third parties, bypass challenges or deploy. The
 research files carry forward progress between runs; no always-running worker or
 external database is needed.
+
+## Public browser search checks
+
+FDA guidance and EPA NEPIS have research-only browser connectors. Their saved
+examples query the public UI and retain native item links, not a private JSON API.
+Run `python tools/research/source_registry.py probe fda-guidance` or
+`python tools/research/source_registry.py probe epa-nepis` with an installed
+Playwright WebKit runtime. If Playwright is installed outside this worktree,
+`MYBOOKSHELF_PLAYWRIGHT_MODULE` may point to that installed `@playwright/test`
+module. The Python entry point checks robots and the exclusive lease before
+starting the browser. Preserve the environment's proxy and trusted certificates.
+
+The browser captures only the first visible metadata page and never clicks PDF,
+order, subscription or account controls. FDA draft/final status and EPA native
+document keys are retained. EPA's stateless HTTP failures are preserved separately;
+the supported browser route succeeded. These research scripts do not activate any
+production source.

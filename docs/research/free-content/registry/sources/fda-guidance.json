@@ -11,7 +11,7 @@
     "I10",
     "I17"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -28,28 +28,209 @@
   },
   "aliases": [],
   "capabilities": [
-    "Official guidance catalog exposes organization, product/topic, issue-date, draft/final, comment and docket filters. The captured table shell alone does not establish a working API."
+    "Browser-only public guidance-table keyword search; first visible10 results with date, issuing center, topic, draft/final, docket and native links."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown; no query executed",
-    "request_shape_verified": false
+    "adapter": "fda-guidance-ui",
+    "endpoint": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+    "cases": [
+      {
+        "id": "guidance-topic-01",
+        "intent": "Search the published FDA guidance table for manufacturing",
+        "expected_ids": [
+          "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/postapproval-manufacturing-changes-biosimilar-and-interchangeable-biosimilar-products-questions-and"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "ui_query": {
+            "selector": "#search-filter",
+            "text": "manufacturing",
+            "action": "fill then Enter; inspect current visible table page"
+          }
+        }
+      },
+      {
+        "id": "guidance-topic-02",
+        "intent": "Search the published FDA guidance table for biosimilar",
+        "expected_ids": [
+          "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/questions-and-answers-biosimilar-development-and-bpci-act"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "ui_query": {
+            "selector": "#search-filter",
+            "text": "biosimilar",
+            "action": "fill then Enter; inspect current visible table page"
+          }
+        }
+      },
+      {
+        "id": "guidance-topic-03",
+        "intent": "Search the published FDA guidance table for gene therapy",
+        "expected_ids": [
+          "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/guidance-industry-potency-assurance-cellular-and-gene-therapy-products"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "ui_query": {
+            "selector": "#search-filter",
+            "text": "gene therapy",
+            "action": "fill then Enter; inspect current visible table page"
+          }
+        }
+      },
+      {
+        "id": "guidance-topic-04",
+        "intent": "Search the published FDA guidance table for medical gases",
+        "expected_ids": [
+          "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/certification-process-designated-medical-gases"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "ui_query": {
+            "selector": "#search-filter",
+            "text": "medical gases",
+            "action": "fill then Enter; inspect current visible table page"
+          }
+        }
+      },
+      {
+        "id": "guidance-topic-05",
+        "intent": "Search the published FDA guidance table for allergens",
+        "expected_ids": [
+          "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/guidance-industry-questions-and-answers-regarding-food-allergen-labeling-edition-5"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "ui_query": {
+            "selector": "#search-filter",
+            "text": "allergens",
+            "action": "fill then Enter; inspect current visible table page"
+          }
+        }
+      },
+      {
+        "id": "guidance-topic-06",
+        "intent": "Search the published FDA guidance table for seafood",
+        "expected_ids": [
+          "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/draft-guidance-industry-us-origin-statements-seafood"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "ui_query": {
+            "selector": "#search-filter",
+            "text": "seafood",
+            "action": "fill then Enter; inspect current visible table page"
+          }
+        }
+      },
+      {
+        "id": "guidance-topic-07",
+        "intent": "Search the published FDA guidance table for tobacco",
+        "expected_ids": [
+          "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/enforcement-priorities-certain-new-tobacco-products-marketed-without-premarket-authorization"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "ui_query": {
+            "selector": "#search-filter",
+            "text": "tobacco",
+            "action": "fill then Enter; inspect current visible table page"
+          }
+        }
+      },
+      {
+        "id": "guidance-topic-08",
+        "intent": "Search the published FDA guidance table for cybersecurity",
+        "expected_ids": [
+          "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/cybersecurity-medical-devices-quality-management-system-considerations-and-content-premarket"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "ui_query": {
+            "selector": "#search-filter",
+            "text": "cybersecurity",
+            "action": "fill then Enter; inspect current visible table page"
+          }
+        }
+      },
+      {
+        "id": "guidance-topic-09",
+        "intent": "Search the published FDA guidance table for sterility",
+        "expected_ids": [
+          "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/submission-and-review-sterility-information-premarket-notification-510k-submissions-devices-labeled"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "ui_query": {
+            "selector": "#search-filter",
+            "text": "sterility",
+            "action": "fill then Enter; inspect current visible table page"
+          }
+        }
+      },
+      {
+        "id": "guidance-topic-10",
+        "intent": "Search the published FDA guidance table for antibiotics",
+        "expected_ids": [
+          "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/establishing-impurity-specifications-antibiotics"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "ui_query": {
+            "selector": "#search-filter",
+            "text": "antibiotics",
+            "action": "fill then Enter; inspect current visible table page"
+          }
+        }
+      }
+    ],
+    "authentication": "Anonymous published browser UI; no account/API key.",
+    "cost": "Free public guidance search. Browser execution required; no hosted service or paid account.",
+    "request_shape_verified": true,
+    "supported_modes": [
+      "Published keyword guidance-table filter in browser",
+      "Visible metadata page results with native guidance and download links"
+    ],
+    "unsupported_modes": [
+      "JSON API contract",
+      "Full-document text search",
+      "Treating draft guidance as final",
+      "Whole FDA website or complete result export"
+    ],
+    "research_pause_seconds": 30,
+    "tested_scope": "Browser-only public guidance-table keyword search; first visible10 results with date, issuing center, topic, draft/final, docket and native links."
   },
   "documentation": [
-    "https://www.fda.gov/regulatory-information/search-fda-guidance-documents"
+    "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+    "https://www.fda.gov/about-fda/about-website/website-policies"
   ],
-  "licensing": "No blanket metadata/content reuse license established; inspect source and item terms separately.",
+  "licensing": "FDA website policy says text/graphics are public domain unless otherwise noted, permits linking and prefers links to copying because guidance changes. Preserve item exceptions and observation date; no blanket third-party rights or final-law claim.",
   "limitations": [
-    "No current item query examples; listing/documentation capture is not a qualified searchable origin.",
-    "Per-item rights, reading/access, versions and machine-query limits require separate checks."
+    "Browser UI route is verified; no stable JSON API or production integration is claimed.",
+    "First visible page of keyword-filtered metadata, not all matching guidance or document-body search.",
+    "Draft/final, issue dates, organizations, topic and docket retained; a shared docket does not merge guidance documents.",
+    "PDF/download links were discovered but not downloaded; actual full-item access and later changes remain separately unverified."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+    "runs/industry-search-followup-20261105cw/observations.jsonl",
+    "examples/fda-guidance.browser.jsonl",
+    "examples/fda-guidance.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T04:35:25.129476+00:00",
-  "next_action": "Find supported machine-readable search/export, read guidance status and rights policies, and retain document/docket/revision identities before query qualification.",
+  "last_reviewed_at": "2026-11-05T18:12:01.664167+00:00",
+  "next_action": "Working browser search. Investigate the explicitly offered Excel export as a potentially simpler metadata route, preserving native identity links; verify paging and representative reading access. Do not reverse-engineer private APIs.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -126,45 +307,104 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documentation/listing reviewed; exact supported public query/export request remains open.",
+      "summary": "Browser-only public guidance-table keyword search; first visible10 results with date, issuing center, topic, draft/final, docket and native links.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "cases": [],
-        "authentication": "Unknown; no query executed",
-        "request_shape_verified": false
+        "adapter": "fda-guidance-ui",
+        "endpoint": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+        "cases": [
+          "guidance-topic-01",
+          "guidance-topic-02",
+          "guidance-topic-03",
+          "guidance-topic-04",
+          "guidance-topic-05",
+          "guidance-topic-06",
+          "guidance-topic-07",
+          "guidance-topic-08",
+          "guidance-topic-09",
+          "guidance-topic-10"
+        ],
+        "authentication": "Anonymous published browser UI; no account/API key.",
+        "request_shape_verified": true,
+        "current_passing_examples": 10,
+        "query_coverage": "working",
+        "tested_scope": "Browser-only public guidance-table keyword search; first visible10 results with date, issuing center, topic, draft/final, docket and native links.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-followup-20261105cw/observations.jsonl",
+        "examples/fda-guidance.browser.jsonl",
+        "examples/fda-guidance.jsonl"
       ],
       "observation_refs": [
         {
           "path": "runs/source-evidence-20261105/observations.jsonl",
           "job_id": "415e1b1d4c1d8c300a90",
           "observed_at": "2026-11-05T02:29:07.292943+00:00"
+        },
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "415e1b1d4c1d8c300a90",
+          "observed_at": "2026-11-05T17:46:17.058534+00:00",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "body_sha256": "35c398447ceb34649f94e79545faf10188b6006fac556b5c693df05fc546b341",
+          "policy_sha256": "b28f1d0132f966047fe40018266dbff647024fa01c020b80e44b5c3f167114ed"
+        },
+        {
+          "path": "runs/industry-search-followup-20261105cw/observations.jsonl",
+          "job_id": "5b0fcb291c82fd762fa5",
+          "observed_at": "2026-11-05T17:56:08.905199+00:00",
+          "url": "https://www.fda.gov/about-fda/about-website/website-policies",
+          "body_sha256": "6dc337cc85e010965c1165cc05f7f39c17793c98f18d8f7e94a9dc4f752d1912",
+          "policy_sha256": "b28f1d0132f966047fe40018266dbff647024fa01c020b80e44b5c3f167114ed"
         }
       ],
       "open_questions": [
-        "Read supported machine access contract; capture ten distinct native-ID results plus paging/empty/error behavior."
+        "Browser-only route verified; published Excel export and paging remain to review."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "No blanket metadata/content reuse license established; inspect source and item terms separately.",
+      "summary": "FDA website policy says text/graphics are public domain unless otherwise noted, permits linking and prefers links to copying because guidance changes. Preserve item exceptions and observation date; no blanket third-party rights or final-law claim.",
       "facts": {
         "rights": "Unverified per item",
         "cost": "Unknown",
         "authentication": "Unknown; no query executed",
-        "observed_policy_facts": {}
+        "observed_policy_facts": {},
+        "current_passing_examples": 10,
+        "query_coverage": "working",
+        "tested_scope": "Browser-only public guidance-table keyword search; first visible10 results with date, issuing center, topic, draft/final, docket and native links.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-followup-20261105cw/observations.jsonl",
+        "examples/fda-guidance.browser.jsonl",
+        "examples/fda-guidance.jsonl"
       ],
       "observation_refs": [
         {
           "path": "runs/source-evidence-20261105/observations.jsonl",
           "job_id": "415e1b1d4c1d8c300a90",
           "observed_at": "2026-11-05T02:29:07.292943+00:00"
+        },
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "415e1b1d4c1d8c300a90",
+          "observed_at": "2026-11-05T17:46:17.058534+00:00",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "body_sha256": "35c398447ceb34649f94e79545faf10188b6006fac556b5c693df05fc546b341",
+          "policy_sha256": "b28f1d0132f966047fe40018266dbff647024fa01c020b80e44b5c3f167114ed"
+        },
+        {
+          "path": "runs/industry-search-followup-20261105cw/observations.jsonl",
+          "job_id": "5b0fcb291c82fd762fa5",
+          "observed_at": "2026-11-05T17:56:08.905199+00:00",
+          "url": "https://www.fda.gov/about-fda/about-website/website-policies",
+          "body_sha256": "6dc337cc85e010965c1165cc05f7f39c17793c98f18d8f7e94a9dc4f752d1912",
+          "policy_sha256": "b28f1d0132f966047fe40018266dbff647024fa01c020b80e44b5c3f167114ed"
         }
       ],
       "open_questions": [
@@ -195,24 +435,48 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No fresh query assertions. Preserve version, language, date and jurisdiction before making relevance claims.",
+      "summary": "Ten relevant actual keyword results and an explicit zero-match control; drafts/finals remain distinct.",
       "facts": {
-        "positive_examples": 0,
+        "positive_examples": 10,
         "native_identity_hint": null,
-        "historical_claims": "Retained separately in corpus; provider statements not independently enumerated"
+        "historical_claims": "Retained separately in corpus; provider statements not independently enumerated",
+        "current_passing_examples": 10,
+        "query_coverage": "working",
+        "tested_scope": "Browser-only public guidance-table keyword search; first visible10 results with date, issuing center, topic, draft/final, docket and native links.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-followup-20261105cw/observations.jsonl",
+        "examples/fda-guidance.browser.jsonl",
+        "examples/fda-guidance.jsonl"
       ],
       "observation_refs": [
         {
           "path": "runs/source-evidence-20261105/observations.jsonl",
           "job_id": "415e1b1d4c1d8c300a90",
           "observed_at": "2026-11-05T02:29:07.292943+00:00"
+        },
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "415e1b1d4c1d8c300a90",
+          "observed_at": "2026-11-05T17:46:17.058534+00:00",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "body_sha256": "35c398447ceb34649f94e79545faf10188b6006fac556b5c693df05fc546b341",
+          "policy_sha256": "b28f1d0132f966047fe40018266dbff647024fa01c020b80e44b5c3f167114ed"
+        },
+        {
+          "path": "runs/industry-search-followup-20261105cw/observations.jsonl",
+          "job_id": "5b0fcb291c82fd762fa5",
+          "observed_at": "2026-11-05T17:56:08.905199+00:00",
+          "url": "https://www.fda.gov/about-fda/about-website/website-policies",
+          "body_sha256": "6dc337cc85e010965c1165cc05f7f39c17793c98f18d8f7e94a9dc4f752d1912",
+          "policy_sha256": "b28f1d0132f966047fe40018266dbff647024fa01c020b80e44b5c3f167114ed"
         }
       ],
       "open_questions": [
-        "Verify five known-item/five topical intents, ten passing distinct examples and negative results under the supported method."
+        "Broader recall, reader and revision checks remain separate."
       ]
     },
     "operating_limits": {
@@ -222,7 +486,8 @@
         "robots_status": 200,
         "capture_http": 200,
         "numeric_quota": null,
-        "bulk_items_copied": false
+        "bulk_items_copied": false,
+        "current_restriction": "Requires browser rendering and client-side filter; robots30second initial pacing observed; no access denial in this run."
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl"
@@ -240,21 +505,45 @@
     },
     "decision_and_followup": {
       "status": "complete",
-      "summary": "Explicit candidate/deferred triage; unresolved evidence remains open.",
+      "summary": "Working query connector in its stated browser scope; no activation approval.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Find supported machine-readable search/export, read guidance status and rights policies, and retain document/docket/revision identities before query qualification.",
+        "decision": "working-in-tested-scope",
+        "next_action": "Working browser search. Investigate the explicitly offered Excel export as a potentially simpler metadata route, preserving native identity links; verify paging and representative reading access. Do not reverse-engineer private APIs.",
         "qualification": false,
-        "activation_approved": false
+        "activation_approved": false,
+        "current_passing_examples": 10,
+        "query_coverage": "working",
+        "tested_scope": "Browser-only public guidance-table keyword search; first visible10 results with date, issuing center, topic, draft/final, docket and native links.",
+        "owner_action_required": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-followup-20261105cw/observations.jsonl",
+        "examples/fda-guidance.browser.jsonl",
+        "examples/fda-guidance.jsonl"
       ],
       "observation_refs": [
         {
           "path": "runs/source-evidence-20261105/observations.jsonl",
           "job_id": "415e1b1d4c1d8c300a90",
           "observed_at": "2026-11-05T02:29:07.292943+00:00"
+        },
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "415e1b1d4c1d8c300a90",
+          "observed_at": "2026-11-05T17:46:17.058534+00:00",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents",
+          "body_sha256": "35c398447ceb34649f94e79545faf10188b6006fac556b5c693df05fc546b341",
+          "policy_sha256": "b28f1d0132f966047fe40018266dbff647024fa01c020b80e44b5c3f167114ed"
+        },
+        {
+          "path": "runs/industry-search-followup-20261105cw/observations.jsonl",
+          "job_id": "5b0fcb291c82fd762fa5",
+          "observed_at": "2026-11-05T17:56:08.905199+00:00",
+          "url": "https://www.fda.gov/about-fda/about-website/website-policies",
+          "body_sha256": "6dc337cc85e010965c1165cc05f7f39c17793c98f18d8f7e94a9dc4f752d1912",
+          "policy_sha256": "b28f1d0132f966047fe40018266dbff647024fa01c020b80e44b5c3f167114ed"
         }
       ],
       "open_questions": []
