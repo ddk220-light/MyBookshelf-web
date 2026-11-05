@@ -1,0 +1,95 @@
+# Source registry checkpoint
+
+Observed 2026-11-05 UTC. Research branch `research/free-content-discovery-expansion`,
+[PR #161](https://github.com/ddk220-light/MyBookshelf-web/pull/161).
+
+**21 source records; 12 have ten verified query examples each (120 total).**
+The original ten are included, followed by Wikipedia and Wikibooks from G02.
+Nine investigated alternatives are deferred with concrete blockers and next steps.
+The separate discovery inventory contains **138 links** from the existing plan;
+it includes directories and documentation, not 138 qualified sources. All 49
+content/industry/public-information areas are tracked. No production source is
+qualified or enabled by this research.
+
+## Current query evidence
+
+| Source | Group | Current successful cases | Query evidence |
+| --- | --- | --- | --- |
+| [African Minds](sources/african-minds.json) | G01 | 10/10 | [observations](examples/african-minds.jsonl) |
+| [Biodiversity Heritage Library](sources/bhl.json) | G01 | 10/10 | [observations](examples/bhl.jsonl) |
+| [Global Digital Library](sources/gdl.json) | G01 | 10/10 | [observations](examples/gdl.jsonl) |
+| [LibriVox](sources/librivox.json) | G01 | 10/10 | [observations](examples/librivox.jsonl) |
+| [Library of Congress digital books](sources/loc.json) | G01 | 10/10 | [observations](examples/loc.jsonl) |
+| [LSE Press](sources/lse-press.json) | G01 | 10/10 | [observations](examples/lse-press.jsonl) |
+| [Mattering Press](sources/mattering-press.json) | G01 | 10/10 | [observations](examples/mattering-press.jsonl) |
+| [mediastudies.press](sources/mediastudies-press.json) | G01 | 10/10 | [observations](examples/mediastudies-press.jsonl) |
+| [punctum books](sources/punctum-books.json) | G01 | 10/10 | [observations](examples/punctum-books.jsonl) |
+| [Wikibooks](sources/wikibooks.json) | G02 | 10/10 | [observations](examples/wikibooks.jsonl) |
+| [Wikipedia](sources/wikipedia.json) | G02 | 10/10 | [observations](examples/wikipedia.jsonl) |
+| [Wikisource](sources/wikisource.json) | G01 | 10/10 | [observations](examples/wikisource.jsonl) |
+
+The history also retains **8 unsuccessful query observations**, including
+queries later revised. Only the latest successful observation of each current,
+distinct request counts. Separate scouting/access files do not inflate this total.
+
+The suites mainly demonstrate known-title retrieval. LoC uses ten short subject
+queries with previously observed, title-matched native book IDs. These are small
+retrieval checks, not the full five-known-item/five-topic relevance benchmark.
+Book/volume/recording identity remains explicit. Item-level access and rights must
+still pass qualification before implementation.
+
+## Findings carried forward
+
+- GDL: title punctuation can affect matching; a distinctive title word found the
+  missed apostrophe-containing title. Blank queries returned mixed languages and
+  content types despite a language parameter. Validate item language/type and
+  relevance. The current suite includes a Hindi query and nine English queries.
+- Wikisource: generic **Pride and Prejudice** resolved to a title page that search
+  did not return in its first five results. The revised case explicitly targets
+  the observed 1817 edition. Historical Tamil reading evidence remains linked.
+- BHL: journal-title queries returned different issue IDs. Current examples
+  replace those two with known book titles; retain the failed issue observations.
+  The collection also includes reports, field notes, reviews and serials, so item
+  type and whole-book filtering remain required.
+- LoC: long congressional-report titles and one short physics request were slow
+  or timed out. Ten other short subjects returned the expected digitized books;
+  successful samples do not prove general reliability.
+- Wikibooks: `intitle` searches for French/Spanish surfaced other pages; ordinary
+  keyword searches returned the known book roots. Do not assume every title-only
+  operator improves ranking or every book is complete.
+- Wikipedia and Wikibooks: official copyright pages exposed CC BY-SA 4.0 terms.
+  Actual Mathematics article content and a linked Calculus/Differentiation chapter
+  returned parsed HTML, anonymously. See their access evidence files. This is not
+  a whole-site accuracy, accessibility or rights certification.
+- Five publisher origins share the Thoth connector. Results must retain work
+  identity/license and use approved canonical digital locations; print/retail or
+  unreviewed mirror links are excluded from the stored canonical-link samples.
+
+## Deferred candidates
+
+- [Gallica / Bibliothèque nationale de France](sources/gallica.json): Live SRU request returned HTTP 403.
+- [Helsinki University Press](sources/helsinki-university-press.json): Sampled records lacked canonical digital locations.
+- [Lever Press](sources/lever-press.json): Selected active-book query and small catalog probe returned no works.
+- [The Marg Foundation](sources/marg-foundation.json): Sample had paperback location only; no free digital edition established.
+- [NCBI Bookshelf](sources/ncbi-bookshelf.json): Sample reading destination returned browser verification; full-text crawl is not authorized by API search support.
+- [NCERT](sources/ncert.json): Catalog returned HTTP 503 in this environment.
+- [Open Book Publishers](sources/open-book-publishers.json): Sample canonical PDF presented human verification; alternate OAPEN challenged and Cambridge route was denied by environment proxy.
+- [OpenStax](sources/openstax.json): External use support for tested CMS route remains unestablished; overlaps Open Textbook Library.
+- [Project Madurai](sources/project-madurai.json): Permission and maintained machine-query or metadata-import route remain unproved.
+
+## Next work and completion boundary
+
+Continue G02 with technical documentation, current curricula, courses and vocational
+knowledge, then G03–G06. Triage linked and unlinked playbook leads, deduplicate
+origins and measure overlap with existing app catalogs. Current India-operated
+school-textbook coverage is still a gap; Hindi/Tamil or historical India content
+is not a substitute. Public-record/map work needs USA/India jurisdiction pairs.
+
+The first-ten evidence milestone is complete. Triage of all known leads and the
+long-term 100-origin-per-category/industry target remain open. The goal and actual
+continuation configuration are in [goal.json](goal.json). Do not label the whole
+internet inventoried or this goal complete merely because these files exist.
+
+Validation: offline registry validation, nine evidence-integrity unit tests and
+`git diff --check`. Network observations above are actual requests, not mocks.
+Application tests/deployment were not needed: no runtime code or manifest changed.

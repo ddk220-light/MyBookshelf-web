@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "id": "lse-press",
+  "name": "LSE Press",
+  "homepage": "https://press.lse.ac.uk/",
+  "group": "G01",
+  "areas": [
+    "C04",
+    "C02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "Publisher-scoped Thoth GraphQL keyword/title search with active book-type filters; digital publication locations and per-work license."
+  ],
+  "query": {
+    "adapter": "thoth",
+    "endpoint": "https://api.thoth.pub/graphql",
+    "authentication": "none for sampled public queries",
+    "cost": "No fee or API key used; respect current provider policies and rate limits.",
+    "research_pause_seconds": 2,
+    "cases": [
+      {
+        "id": "known-title-01",
+        "intent": "Find the known catalog record for Advanced Macroeconomics",
+        "expected_ids": [
+          "87ba80cb-eebd-4576-a8c4-a82a1b5bf19a"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Advanced Macroeconomics\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-02",
+        "intent": "Find the known catalog record for A Fair Bargain",
+        "expected_ids": [
+          "113eb387-dad9-4034-9ce0-5933f7a9b24d"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Fair Bargain\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-03",
+        "intent": "Find the known catalog record for Afghanistan",
+        "expected_ids": [
+          "8375f936-b472-4ee5-98d4-69576359e240"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Afghanistan\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-04",
+        "intent": "Find the known catalog record for Australia's Evolving Democracy",
+        "expected_ids": [
+          "80be8f95-dbeb-42d7-b843-a70e79e46edb"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Australia's Evolving Democracy\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-05",
+        "intent": "Find the known catalog record for Climate Hegemony",
+        "expected_ids": [
+          "89b1ceef-8795-4501-a870-a7ce30dc8380"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Climate Hegemony\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-06",
+        "intent": "Find the known catalog record for Conflict, War and Revolution",
+        "expected_ids": [
+          "0a9846b7-0034-4a41-803a-19f19db22f8f"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Conflict, War and Revolution\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-07",
+        "intent": "Find the known catalog record for COVID-19 in Southeast Asia",
+        "expected_ids": [
+          "2f6323bb-bf0d-4036-9d9a-3d7fdbc0bba2"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"COVID-19 in Southeast Asia\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-08",
+        "intent": "Find the known catalog record for Dead Men’s Propaganda",
+        "expected_ids": [
+          "2f52138f-d56a-4c5b-bf02-abdd1dd81af3"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Dead Men\\u2019s Propaganda\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-09",
+        "intent": "Find the known catalog record for Decentralised Governance",
+        "expected_ids": [
+          "f8247f73-0f29-4090-9cfb-92d7d600d9d8"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Decentralised Governance\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-10",
+        "intent": "Find the known catalog record for Doing Open Social Science",
+        "expected_ids": [
+          "c48d127f-71a0-410a-ad5b-2596f5da78c3"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Doing Open Social Science\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      }
+    ],
+    "paging": "offset, limit",
+    "publisher_id": "5da5617c-306b-4f68-b60b-abc74faf49f8",
+    "official_content_hosts": [
+      "books.press.lse.ac.uk",
+      "press.lse.ac.uk"
+    ]
+  },
+  "licensing": "Thoth metadata CC0; each book has separate content license, including possible NC/SA terms.",
+  "documentation": [
+    "https://thoth.pub/docs",
+    "https://api.thoth.pub/graphiql",
+    "https://thoth.pub/docs/policies/terms-thoth-metadata"
+  ],
+  "limitations": [
+    "Keyword filter can match descriptions and does not guarantee relevance order.",
+    "Exclude retail/print and unreviewed mirror locations. Preserve edition and volume IDs.",
+    "Ten known-item searches are not the full topic-relevance/reliability/rights qualification benchmark."
+  ],
+  "evidence": [
+    "../batches/G01_QUERY_EVIDENCE.json",
+    "../batches/G01_ACCESS_EVIDENCE.json",
+    "../batches/G01_FIRST_TEN.md"
+  ],
+  "last_reviewed_at": "2026-11-05",
+  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes."
+}

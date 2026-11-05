@@ -4,7 +4,11 @@ Updated 2026-11-05. Owner requested a complete backlog and the first ten
 high-quality, queryable candidates. **Current scope is research only: do not add
 sources to the app.** Work proceeds one group at a time; the first group's
 shortlist is a review checkpoint, not approval to implement it or an assertion
-that the whole group is complete.
+that the whole group is complete. The owner subsequently approved continued
+research and requested a persistent source registry with ten verified examples
+per usable source. Use [ordinary JSON files](registry/README.md) and the
+[ongoing goal](registry/goal.json); the earlier stop-after-ten instruction is
+superseded for research. See [current counts and gaps](registry/PROGRESS.md).
 
 GitHub backlog: [#164](https://github.com/ddk220-light/MyBookshelf-web/issues/164).
 Board: [Free Content Discovery project 4](https://github.com/users/ddk220-light/projects/4).
@@ -16,8 +20,8 @@ Use the [execution workflow](EXECUTION_PLAN.md) and
 
 | Order | Group | Area IDs | Status | Tracking |
 | --- | --- | --- | --- | --- |
-| 1 | Books, children's reading, textbooks and audiobooks | C01, C02, C04, C05 | First batch investigated; shortlist for owner review | [#165](https://github.com/ddk220-light/MyBookshelf-web/issues/165) |
-| 2 | Learning and technical knowledge | C09, C10, C11, C12, C13 | Queued | [#166](https://github.com/ddk220-light/MyBookshelf-web/issues/166) |
+| 1 | Books, children's reading, textbooks and audiobooks | C01, C02, C04, C05 | First ten persisted; example evidence expanded; deferred/India gaps remain | [#165](https://github.com/ddk220-light/MyBookshelf-web/issues/165) |
+| 2 | Learning and technical knowledge | C09, C10, C11, C12, C13 | Started with Wikipedia and Wikibooks; technical/current-curriculum gaps remain | [#166](https://github.com/ddk220-light/MyBookshelf-web/issues/166) |
 | 3 | Industry and job knowledge | I01, I02, I03, I04, I05, I06, I07, I08, I09, I10, I11, I12, I13, I14, I15, I16, I17, I18, I19, I20 | Queued | [#167](https://github.com/ddk220-light/MyBookshelf-web/issues/167) |
 | 4 | Public information, civic records and maps | C08, C18, C19, P01, P02, P03, P04, P05, P06, P07, P08, P09 | Queued | [#168](https://github.com/ddk220-light/MyBookshelf-web/issues/168) |
 | 5 | Scholarly research | C03, C06, C07 | Queued | [#169](https://github.com/ddk220-light/MyBookshelf-web/issues/169) |
@@ -130,8 +134,9 @@ memberships reference the same source evidence rather than duplicating it.
 An area checkbox closes after its first research pass is reviewed. The eventual
 10 → 25 → 50 → 100 progression is recorded separately; neither a ten-source
 shortlist nor one checked box means its category has reached the long-term goal.
-No schedules, paid services, new datastores, source accounts or outreach are
-created by this backlog.
+No paid services, new datastores, source accounts or outreach are authorized.
+The later continuation request is tracked in `registry/goal.json`; any actual
+research schedule is recorded there rather than implied by this backlog.
 
 ## First active batch
 

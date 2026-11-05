@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "id": "punctum-books",
+  "name": "punctum books",
+  "homepage": "https://punctumbooks.com/",
+  "group": "G01",
+  "areas": [
+    "C04",
+    "C02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "Publisher-scoped Thoth GraphQL keyword/title search with active book-type filters; digital publication locations and per-work license."
+  ],
+  "query": {
+    "adapter": "thoth",
+    "endpoint": "https://api.thoth.pub/graphql",
+    "authentication": "none for sampled public queries",
+    "cost": "No fee or API key used; respect current provider policies and rate limits.",
+    "research_pause_seconds": 2,
+    "cases": [
+      {
+        "id": "known-title-01",
+        "intent": "Find the known catalog record for (((",
+        "expected_ids": [
+          "b5c810e1-c847-4553-a24e-9893164d9786"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"(((\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-02",
+        "intent": "Find the known catalog record for 100 Chinese Silences",
+        "expected_ids": [
+          "4071e86c-433e-4a46-a84a-47f69ac945ac"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"100 Chinese Silences\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-03",
+        "intent": "Find the known catalog record for 2×6",
+        "expected_ids": [
+          "24e119ea-a0f2-4df7-8789-3ceb35e2500b"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"2\\u00d76\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-04",
+        "intent": "Find the known catalog record for A Bibliography for After Jews and Arabs",
+        "expected_ids": [
+          "e0f748b2-984f-45cc-8b9e-13989c31dda4"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Bibliography for After Jews and Arabs\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-05",
+        "intent": "Find the known catalog record for About That Life",
+        "expected_ids": [
+          "ca2f9ad1-a5fd-45b6-a662-4991cf1767a3"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"About That Life\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-06",
+        "intent": "Find the known catalog record for A Boy Asleep under the Sun",
+        "expected_ids": [
+          "5402ea62-7a1b-48b4-b5fb-7b114c04bc27"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Boy Asleep under the Sun\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-07",
+        "intent": "Find the known catalog record for A Brief Genealogy of Jewish Republicanism",
+        "expected_ids": [
+          "f02786d4-3bcc-473e-8d43-3da66c7e877c"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Brief Genealogy of Jewish Republicanism\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-08",
+        "intent": "Find the known catalog record for Abruptly Dogen",
+        "expected_ids": [
+          "010b08ba-0eed-4d21-8104-0a7913e10909"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Abruptly Dogen\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-09",
+        "intent": "Find the known catalog record for A Buddha Land in This World",
+        "expected_ids": [
+          "8a27431b-b1f9-4fed-a8e0-0a0aadc9d98c"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Buddha Land in This World\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-10",
+        "intent": "Find the known catalog record for A Credible Utopia",
+        "expected_ids": [
+          "88a8657d-d73d-4be1-b893-678b35fd709a"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Credible Utopia\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      }
+    ],
+    "paging": "offset, limit",
+    "publisher_id": "9c41b13c-cecc-4f6a-a151-be4682915ef5",
+    "official_content_hosts": [
+      "books.punctumbooks.com"
+    ]
+  },
+  "licensing": "Thoth metadata CC0; each book has separate content license, including possible NC/SA terms.",
+  "documentation": [
+    "https://thoth.pub/docs",
+    "https://api.thoth.pub/graphiql",
+    "https://thoth.pub/docs/policies/terms-thoth-metadata"
+  ],
+  "limitations": [
+    "Keyword filter can match descriptions and does not guarantee relevance order.",
+    "Exclude retail/print and unreviewed mirror locations. Preserve edition and volume IDs.",
+    "Ten known-item searches are not the full topic-relevance/reliability/rights qualification benchmark."
+  ],
+  "evidence": [
+    "../batches/G01_QUERY_EVIDENCE.json",
+    "../batches/G01_ACCESS_EVIDENCE.json",
+    "../batches/G01_FIRST_TEN.md"
+  ],
+  "last_reviewed_at": "2026-11-05",
+  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes."
+}

@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "id": "gdl",
+  "name": "Global Digital Library",
+  "homepage": "https://digitallibrary.io/",
+  "group": "G01",
+  "areas": [
+    "C01",
+    "C02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "Title/keyword search with a language filter; fixed 20-record pages and offset.",
+    "English and Hindi reading samples were verified; language availability is catalog-dependent."
+  ],
+  "query": {
+    "adapter": "gdl",
+    "endpoint": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+    "authentication": "none for sampled public queries",
+    "cost": "No fee or API key used; respect current provider policies and rate limits.",
+    "research_pause_seconds": 2,
+    "cases": [
+      {
+        "id": "known-title-01",
+        "intent": "Find Rain in en",
+        "expected_ids": [
+          "38970"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "Rain",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-02",
+        "intent": "Find the previously observed Caterpillar story by a distinctive title word; full apostrophe title query failed.",
+        "expected_ids": [
+          "36127"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "Caterpillar",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-03",
+        "intent": "Find Rabbit and Dog in en",
+        "expected_ids": [
+          "39979"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "Rabbit and Dog",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-04",
+        "intent": "Find The Day the Vegetables Came to School in en",
+        "expected_ids": [
+          "35873"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "The Day the Vegetables Came to School",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-05",
+        "intent": "Find My home in en",
+        "expected_ids": [
+          "39989"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "My home",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-06",
+        "intent": "Find My best friend in en",
+        "expected_ids": [
+          "38962"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "My best friend",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-07",
+        "intent": "Find Lata Loves Trees in en",
+        "expected_ids": [
+          "36097"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "Lata Loves Trees",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-08",
+        "intent": "Find Let’s Have a Water Fight! in en",
+        "expected_ids": [
+          "36120"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "Let’s Have a Water Fight!",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-09",
+        "intent": "Find The Brave Little Bird in en",
+        "expected_ids": [
+          "35935"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "The Brave Little Bird",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-10",
+        "intent": "Find पूरी क्यों फूलती है? in hi",
+        "expected_ids": [
+          "6127"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "पूरी क्यों फूलती है?",
+            "language": "hi"
+          },
+          "json": null
+        }
+      }
+    ],
+    "paging": "_skip, fixed 20 records"
+  },
+  "licensing": "Mixed per-book Creative Commons licenses; inspect credits and rights for each work.",
+  "documentation": [
+    "https://content.digitallibrary.io/api/"
+  ],
+  "limitations": [
+    "Substring matches need relevance evaluation; publisher/attribution fields can be empty.",
+    "Republished StoryWeaver/Book Dash content must not inflate origin counts. Per-book CC terms vary.",
+    "The blank-query catalog returned mixed languages/content types despite language=en; validate returned language and book/type metadata, and do not treat blank-query listings as filtered search evidence."
+  ],
+  "evidence": [
+    "../batches/G01_QUERY_EVIDENCE.json",
+    "../batches/G01_ACCESS_EVIDENCE.json",
+    "../batches/G01_FIRST_TEN.md"
+  ],
+  "last_reviewed_at": "2026-11-05",
+  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes."
+}

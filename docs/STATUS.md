@@ -1,5 +1,17 @@
 # MyBookshelf web handoff
 
+**Free-content JSON registry, 2026-11-05:** the owner authorized continued source
+research and requested simple files instead of SQL. The [registry](research/free-content/registry/README.md)
+contains 21 source records, 120 verified query examples across 12 sources, nine
+deferred candidates, 138 discovery links and all 49 research areas. The original
+ten-example milestone is complete; G02 now includes Wikipedia and Wikibooks.
+[Progress](research/free-content/registry/PROGRESS.md) preserves failures and limits;
+[goal.json](research/free-content/registry/goal.json) holds the continuation cursor
+and schedule configuration. The previous stop-after-ten review checkpoint is
+superseded for research. All records remain unqualified/disabled for new app
+integration. Work stays in the expansion worktree/PR #161; no SQL/database
+service, runtime source, infrastructure or deployment was added.
+
 **Free-content discovery batch, 2026-11-05:** the owner requested the full area
 backlog and ten high-quality queryable candidates from the first group, explicitly
 without adding them to the app. [Backlog #164](https://github.com/ddk220-light/MyBookshelf-web/issues/164)

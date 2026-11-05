@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "id": "wikisource",
+  "name": "Wikisource",
+  "homepage": "https://www.wikisource.org/",
+  "group": "G01",
+  "areas": [
+    "C02",
+    "C15"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "Native keyword/title search and page/section lookup, separately for each language wiki.",
+    "English and Tamil sampled; transcriptions, sections, editions and full books share search results."
+  ],
+  "query": {
+    "adapter": "mediawiki",
+    "endpoint": "https://en.wikisource.org/w/api.php",
+    "authentication": "none for sampled public queries",
+    "cost": "No fee or API key used; respect current provider policies and rate limits.",
+    "research_pause_seconds": 2,
+    "cases": [
+      {
+        "id": "known-title-01",
+        "intent": "Find the known catalog record for A History of Mathematics (1893)",
+        "expected_ids": [
+          "1549312"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://en.wikisource.org/w/api.php",
+          "params": {
+            "action": "query",
+            "list": "search",
+            "srsearch": "intitle:\"A History of Mathematics (1893)\"",
+            "srnamespace": 0,
+            "srlimit": 5,
+            "format": "json",
+            "maxlag": 5
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-02",
+        "intent": "Find the known catalog record for Alice's Adventures in Wonderland",
+        "expected_ids": [
+          "1594209"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://en.wikisource.org/w/api.php",
+          "params": {
+            "action": "query",
+            "list": "search",
+            "srsearch": "intitle:\"Alice's Adventures in Wonderland\"",
+            "srnamespace": 0,
+            "srlimit": 5,
+            "format": "json",
+            "maxlag": 5
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-03",
+        "intent": "Find the 1817 edition of Pride and Prejudice; the generic title page was not in the first five search hits.",
+        "expected_ids": [
+          "942"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://en.wikisource.org/w/api.php",
+          "params": {
+            "action": "query",
+            "list": "search",
+            "srsearch": "intitle:\"Pride and Prejudice (1817)\"",
+            "srnamespace": 0,
+            "srlimit": 5,
+            "format": "json",
+            "maxlag": 5
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-04",
+        "intent": "Find the known catalog record for The Adventures of Sherlock Holmes",
+        "expected_ids": [
+          "3627502"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://en.wikisource.org/w/api.php",
+          "params": {
+            "action": "query",
+            "list": "search",
+            "srsearch": "intitle:\"The Adventures of Sherlock Holmes\"",
+            "srnamespace": 0,
+            "srlimit": 5,
+            "format": "json",
+            "maxlag": 5
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-05",
+        "intent": "Find the known catalog record for The Jungle Book",
+        "expected_ids": [
+          "2041678"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://en.wikisource.org/w/api.php",
+          "params": {
+            "action": "query",
+            "list": "search",
+            "srsearch": "intitle:\"The Jungle Book\"",
+            "srnamespace": 0,
+            "srlimit": 5,
+            "format": "json",
+            "maxlag": 5
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-06",
+        "intent": "Find the known catalog record for The Secret Garden",
+        "expected_ids": [
+          "109483"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://en.wikisource.org/w/api.php",
+          "params": {
+            "action": "query",
+            "list": "search",
+            "srsearch": "intitle:\"The Secret Garden\"",
+            "srnamespace": 0,
+            "srlimit": 5,
+            "format": "json",
+            "maxlag": 5
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-07",
+        "intent": "Find the known catalog record for The Time Machine",
+        "expected_ids": [
+          "733473"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://en.wikisource.org/w/api.php",
+          "params": {
+            "action": "query",
+            "list": "search",
+            "srsearch": "intitle:\"The Time Machine\"",
+            "srnamespace": 0,
+            "srlimit": 5,
+            "format": "json",
+            "maxlag": 5
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-08",
+        "intent": "Find the known catalog record for The Wonderful Wizard of Oz",
+        "expected_ids": [
+          "11690"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://en.wikisource.org/w/api.php",
+          "params": {
+            "action": "query",
+            "list": "search",
+            "srsearch": "intitle:\"The Wonderful Wizard of Oz\"",
+            "srnamespace": 0,
+            "srlimit": 5,
+            "format": "json",
+            "maxlag": 5
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-09",
+        "intent": "Find the known catalog record for Walden",
+        "expected_ids": [
+          "2260258"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://en.wikisource.org/w/api.php",
+          "params": {
+            "action": "query",
+            "list": "search",
+            "srsearch": "intitle:\"Walden\"",
+            "srnamespace": 0,
+            "srlimit": 5,
+            "format": "json",
+            "maxlag": 5
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-10",
+        "intent": "Find the known catalog record for On the Origin of Species",
+        "expected_ids": [
+          "351535"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://en.wikisource.org/w/api.php",
+          "params": {
+            "action": "query",
+            "list": "search",
+            "srsearch": "intitle:\"On the Origin of Species\"",
+            "srnamespace": 0,
+            "srlimit": 5,
+            "format": "json",
+            "maxlag": 5
+          },
+          "json": null
+        }
+      }
+    ],
+    "paging": "sroffset/continue"
+  },
+  "licensing": "Per-work public-domain or compatible licensed originals; Wikimedia contribution/attribution terms also apply.",
+  "documentation": [
+    "https://www.mediawiki.org/wiki/API:Search",
+    "https://www.mediawiki.org/wiki/API:Etiquette",
+    "https://en.wikisource.org/wiki/Wikisource:Copyright_policy"
+  ],
+  "limitations": [
+    "Resolve parent work, edition, completeness and proofread status before presenting a complete book.",
+    "Check individual work rights and territory; language hosts are not separate sources.",
+    "Generic Pride and Prejudice title-page ID was absent from the first five hits, which returned the 1817 edition and chapters. The failed observation is retained; current case names the observed edition explicitly."
+  ],
+  "evidence": [
+    "../batches/G01_QUERY_EVIDENCE.json",
+    "../batches/G01_ACCESS_EVIDENCE.json",
+    "../batches/G01_FIRST_TEN.md"
+  ],
+  "last_reviewed_at": "2026-11-05",
+  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes."
+}

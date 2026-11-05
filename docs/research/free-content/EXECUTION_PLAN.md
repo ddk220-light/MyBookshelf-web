@@ -4,6 +4,12 @@ Proposed operating plan, 2026-11-05. Implements the direction in the
 [expansion plan](EXPANSION_PLAN.md) and its six category playbooks. This document
 sets a workflow; it does not start scheduled jobs or claim newly enabled sources.
 
+The owner subsequently authorized continued research and selected a
+[Git-tracked JSON registry](registry/README.md) instead of a SQL database.
+Its [goal and continuation cursor](registry/goal.json) record that work.
+Ten stored retrieval examples are an additional research checkpoint, not a
+replacement for the full qualification gates below.
+
 ## Recommendation: batch the research, limit active engineering, release often
 
 Use a rolling pipeline with two overlapping workstreams: **source research** and

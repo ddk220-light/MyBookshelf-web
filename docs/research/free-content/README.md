@@ -1,5 +1,13 @@
 # Free books and research discovery
 
+**Ongoing source registry (2026-11-05):** the owner requested capabilities,
+query instructions and ten verified examples per source, continued discovery,
+and simple files instead of a database. Use the [JSON registry](registry/README.md),
+[current evidence checkpoint](registry/PROGRESS.md) and [saved goal](registry/goal.json).
+Source details are JSON; timestamped observations are append-only JSONL in Git.
+No SQL or hosted datastore is needed. Continue research through the backlog;
+source activation remains outside this authorization.
+
 **Discovery backlog and first batch (2026-11-05):** the
 [six-group backlog](DISCOVERY_BACKLOG.md) tracks all 49 content, industry and
 public-information areas. [G01's first ten](batches/G01_FIRST_TEN.md) have live

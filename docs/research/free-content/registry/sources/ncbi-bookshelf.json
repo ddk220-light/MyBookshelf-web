@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "ncbi-bookshelf",
+  "name": "NCBI Bookshelf",
+  "homepage": "https://www.ncbi.nlm.nih.gov/books/",
+  "group": "G01",
+  "areas": [
+    "C04",
+    "I17"
+  ],
+  "state": "deferred",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "ESearch/ESummary with db=books returned native book/chapter IDs."
+  ],
+  "query": {
+    "adapter": "ncbi-eutils",
+    "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+    "cases": [],
+    "authentication": "not established for a complete supported route",
+    "cost": "No paid service used in initial review.",
+    "metadata_query_template": "GET esearch.fcgi?db=books&term=QUERY&retmode=json&retmax=3 then esummary.fcgi?db=books&id=IDS&retmode=json"
+  },
+  "licensing": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
+  "documentation": [
+    "https://www.ncbi.nlm.nih.gov/books/"
+  ],
+  "limitations": [
+    "Sample reading destination returned browser verification; full-text crawl is not authorized by API search support."
+  ],
+  "evidence": [
+    "../batches/G01_FIRST_TEN.md"
+  ],
+  "last_reviewed_at": "2026-11-05",
+  "next_action": "Verify ordinary reader access and parent book versus chapter mapping; respect NCBI full-text policies."
+}

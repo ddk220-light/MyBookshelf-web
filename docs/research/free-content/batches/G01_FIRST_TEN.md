@@ -122,8 +122,14 @@ engineering. BHL and LoC add historical depth; LibriVox adds audio and requires 
 appropriate listening-result design. Keep source qualification and new UI review
 before implementation under the agreed workflow.
 
-**Current stopping point:** share these ten for review. G01 stays open; G02–G06
-stay queued. Integration tasks have not been started.
+**Subsequent direction, 2026-11-05:** the owner approved continuing research and
+requested a source registry with capabilities, query instructions and ten
+verified examples per usable source, then chose simple JSON files over SQL.
+The [registry](../registry/README.md) and [current progress](../registry/PROGRESS.md)
+supersede the original stop-after-ten checkpoint. G01 remains open for its gaps;
+G02 research has begun. Integration tasks have not been started. The observations
+above remain the historical first-batch evidence, with later rechecks stored
+separately.
 
 ## Primary documentation reviewed
 

@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "id": "librivox",
+  "name": "LibriVox",
+  "homepage": "https://librivox.org/",
+  "group": "G01",
+  "areas": [
+    "C05",
+    "C01",
+    "C02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "Documented title/author/genre search, pagination and recording/section metadata."
+  ],
+  "query": {
+    "adapter": "librivox",
+    "endpoint": "https://librivox.org/api/feed/audiobooks",
+    "authentication": "none for sampled public queries",
+    "cost": "No fee or API key used; respect current provider policies and rate limits.",
+    "research_pause_seconds": 2,
+    "cases": [
+      {
+        "id": "known-title-01",
+        "intent": "Find the known catalog record for Count of Monte Cristo",
+        "expected_ids": [
+          "47"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://librivox.org/api/feed/audiobooks",
+          "params": {
+            "title": "Count of Monte Cristo",
+            "format": "json",
+            "limit": 5,
+            "extended": 1
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-02",
+        "intent": "Find the known catalog record for Letters of Two Brides",
+        "expected_ids": [
+          "52"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://librivox.org/api/feed/audiobooks",
+          "params": {
+            "title": "Letters of Two Brides",
+            "format": "json",
+            "limit": 5,
+            "extended": 1
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-03",
+        "intent": "Find the known catalog record for Bleak House",
+        "expected_ids": [
+          "53"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://librivox.org/api/feed/audiobooks",
+          "params": {
+            "title": "Bleak House",
+            "format": "json",
+            "limit": 5,
+            "extended": 1
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-04",
+        "intent": "Find the known catalog record for Penguin Island",
+        "expected_ids": [
+          "54"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://librivox.org/api/feed/audiobooks",
+          "params": {
+            "title": "Penguin Island",
+            "format": "json",
+            "limit": 5,
+            "extended": 1
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-05",
+        "intent": "Find the known catalog record for This Side of Paradise",
+        "expected_ids": [
+          "55"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://librivox.org/api/feed/audiobooks",
+          "params": {
+            "title": "This Side of Paradise",
+            "format": "json",
+            "limit": 5,
+            "extended": 1
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-06",
+        "intent": "Find the known catalog record for Secret Garden",
+        "expected_ids": [
+          "56"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://librivox.org/api/feed/audiobooks",
+          "params": {
+            "title": "Secret Garden",
+            "format": "json",
+            "limit": 5,
+            "extended": 1
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-07",
+        "intent": "Find the known catalog record for Twenty Years After",
+        "expected_ids": [
+          "57"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://librivox.org/api/feed/audiobooks",
+          "params": {
+            "title": "Twenty Years After",
+            "format": "json",
+            "limit": 5,
+            "extended": 1
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-08",
+        "intent": "Find the known catalog record for Adventures of Huckleberry Finn",
+        "expected_ids": [
+          "59"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://librivox.org/api/feed/audiobooks",
+          "params": {
+            "title": "Adventures of Huckleberry Finn",
+            "format": "json",
+            "limit": 5,
+            "extended": 1
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-09",
+        "intent": "Find the known catalog record for Heart of Darkness",
+        "expected_ids": [
+          "64"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://librivox.org/api/feed/audiobooks",
+          "params": {
+            "title": "Heart of Darkness",
+            "format": "json",
+            "limit": 5,
+            "extended": 1
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-10",
+        "intent": "Find the known catalog record for Odyssey",
+        "expected_ids": [
+          "65"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://librivox.org/api/feed/audiobooks",
+          "params": {
+            "title": "Odyssey",
+            "format": "json",
+            "limit": 5,
+            "extended": 1
+          },
+          "json": null
+        }
+      }
+    ],
+    "paging": "offset, limit <= 500"
+  },
+  "licensing": "Recordings are public domain in the USA; check listener jurisdiction and underlying work separately.",
+  "documentation": [
+    "https://librivox.org/api/info",
+    "https://librivox.org/pages/public-domain/"
+  ],
+  "limitations": [
+    "Preserve narrator, recording edition, language and abridgement. US public domain does not imply worldwide rights.",
+    "Documented audiobook-not-found JSON with HTTP 404 is an empty result, not necessarily an outage."
+  ],
+  "evidence": [
+    "../batches/G01_QUERY_EVIDENCE.json",
+    "../batches/G01_ACCESS_EVIDENCE.json",
+    "../batches/G01_FIRST_TEN.md"
+  ],
+  "last_reviewed_at": "2026-11-05",
+  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes."
+}
