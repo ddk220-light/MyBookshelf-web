@@ -233,10 +233,11 @@
     "runs/school-section-access-20261105ak/observations.jsonl",
     "examples/siyavula.access.jsonl",
     "examples/siyavula.jsonl",
-    "examples/siyavula.benchmark.jsonl"
+    "examples/siyavula.benchmark.jsonl",
+    "docs/research/free-content/evidence/2026-11-05-statistics-school/reader-observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T11:13:23.317507+00:00",
-  "next_action": "Complete representative rendered readers, title-relevance limits, HTML edition/curriculum analysis and refresh/license-removal rehearsal; retain broader catalog claims as partial.",
+  "last_reviewed_at": "2026-11-05T11:21:20.205222+00:00",
+  "next_action": "Continue screen-reader/lower-page math and remaining item access, vocabulary/edition/curriculum analysis and refresh/license-removal rehearsal. Representative anonymous desktop/mobile readers passed; full qualification remains open.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "complete",
@@ -519,7 +520,7 @@
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Two chapter TOCs and two actual section bodies returned HTTP200 anonymously. Section1.2 shows real-number definitions; section10.2 shows mean/median/mode definitions and worked examples.",
+      "summary": "Two actual section bodies and two representative desktop/mobile WebKit readers expose instructional text anonymously, with rendered math DOM nodes and no horizontal overflow. Captured screenshots show page navigation; this is not a full screen-reader or media audit.",
       "facts": {
         "chapter_tocs": [
           "algebraic-expressions",
@@ -534,7 +535,37 @@
           "10.2 Measures of central tendency (EMA6Y)"
         ],
         "login_boundary": "Signup calls to action refer to practice; captured instructional text is available before login.",
-        "scope": "Two representative sections, not full verification of every chapter or media embed. No bulk book/audio download."
+        "scope": "Two representative sections, not full verification of every chapter or media embed. No bulk book/audio download.",
+        "rendered_checks": [
+          {
+            "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+            "observed_at": "2026-11-05T11:19:13.333Z",
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            },
+            "horizontal_overflow": false,
+            "screenshot": "evidence/2026-11-05-statistics-school/desktop-real-numbers.png",
+            "main_landmarks": 1,
+            "math_nodes": 9,
+            "page_errors": [],
+            "failed_requests": []
+          },
+          {
+            "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01",
+            "observed_at": "2026-11-05T11:19:31.831Z",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontal_overflow": false,
+            "screenshot": "evidence/2026-11-05-statistics-school/mobile-statistics.png",
+            "main_landmarks": 1,
+            "math_nodes": 180,
+            "page_errors": [],
+            "failed_requests": []
+          }
+        ]
       },
       "evidence": [
         "runs/canonical-books-policy-20261105b/observations.jsonl",
@@ -544,7 +575,8 @@
         "runs/school-section-access-20261105ak/observations.jsonl",
         "examples/siyavula.access.jsonl",
         "examples/siyavula.jsonl",
-        "examples/siyavula.benchmark.jsonl"
+        "examples/siyavula.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-statistics-school/reader-observations.jsonl"
       ],
       "observation_refs": [
         {
@@ -589,8 +621,8 @@
         }
       ],
       "open_questions": [
-        "Verify rendered mobile/desktop reading and math/accessibility on representative sections; preserve incomplete media access.",
-        "Review remaining item access where required for a complete source dossier."
+        "Complete screen-reader/math accessibility and lower-page visual checks; verify media separately under its own license.",
+        "Review remaining chapter access and HTML edition/curriculum revision before complete source qualification."
       ]
     },
     "quality_and_relevance": {
@@ -608,7 +640,8 @@
           "Sine/cosine not chapter titles"
         ],
         "content_quality_observation": "Statistics text includes literal “temp text” placeholders in the captured page. Preserve as provider content-quality evidence, not parser error.",
-        "scope_warning": "Chapter titles are coarse discovery metadata. A failed title query cannot establish absence from the book body."
+        "scope_warning": "Chapter titles are coarse discovery metadata. A failed title query cannot establish absence from the book body.",
+        "rendered_quality_correction": "Literal temp text appears in HTTP extraction but not the captured rendered visible-text excerpt; treat it as an HTML-content observation, not proof of a visible user-facing placeholder."
       },
       "evidence": [
         "runs/canonical-books-policy-20261105b/observations.jsonl",

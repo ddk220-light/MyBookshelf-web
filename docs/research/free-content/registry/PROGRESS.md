@@ -10,6 +10,8 @@ Each source now has five complete semantic sections and partial reader, relevanc
 
 Five new documentation queues completed18 jobs:17 captures and one301 redirect, subsequently followed only at its published destination. All49 queues/353 jobs are collection-complete, not source qualification. A real captured document contained U+2028 inside a JSON string; research readers now split JSONL on actual newline bytes. Original evidence bytes are unchanged. Strict readers reject invalid/truncated records; optional read-only live reporting can ignore only an incomplete final record. Hash failures and partial/historical dossiers still fail completeness.
 
+A subsequent four-page WebKit check renders Siyavula desktop/mobile sections and World Bank India GDP/USA population charts without horizontal overflow or login. Screenshots and DOM observations are archived. World Bank reports a non-blocking trust-fund widget CORS/403 error on both pages, exposes no main landmark and shows a cookie banner over the lower viewport. No direct widget retry or bypass occurred. Its current2025 display uses different scales from the separately selected2023 API records. Siyavula math nodes and lesson text render; the HTTP “temp text” strings are absent from the captured rendered excerpt. Lower-page visual, screen-reader and media verification remain open. Capture inventory is now79 text/evidence documents and177 binary assets.
+
 Capture/index/audit, registry validation and85 research tests pass. Continue the saved ten-area gap list and near-complete dossiers. No runtime source activation/import, account work, deployment, paid services, SQL/Redis or outreach.
 
 ## 2026-11-05: museum query evidence, thesis/media policy and refresh safeguards (latest)
