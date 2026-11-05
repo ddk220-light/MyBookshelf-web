@@ -138,3 +138,16 @@ Validation: offline registry validation, corpus completeness/provenance audit,
 14 evidence/inventory/capture unit tests and
 `git diff --check`. Network observations above are actual requests, not mocks.
 Application tests/deployment were not needed: no runtime code or manifest changed.
+
+## 2026-11-05 partner-lead checkpoint
+
+All 22 previously untriaged URLs in the saved Book Dash partner excerpt now have
+explicit role/decision reviews. App-store listings, directories, offline products
+and opaque shortlinks remain leads; Worldreader's bot/mobile pages and duplicated
+app/editorial links are not separate origins. African Storybook maps to its
+existing record. Canonical operators and supported retrieval are still open for
+the other catalog candidates; no new source or verified example is counted.
+Ten distinct unresolved catalog/operator documentation leads are queued in
+`runs/partner-leads-20261105/`. HTTP variants are proposed HTTPS candidates, not
+verified canonical URLs. New evidence requests preserve redirects for review
+instead of silently crossing to a route with unreviewed policy.

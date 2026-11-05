@@ -60,6 +60,13 @@ class TextSample(HTMLParser):
             self.parts.append(data.strip())
 
 
+class ReviewRedirects(urllib.request.HTTPRedirectHandler):
+    # A redirect can change the applicable robots policy or operator. Preserve
+    # its destination for review instead of silently requesting another route.
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
 def request(url, limit=LIMIT):
     start = time.monotonic()
     result = {'requested_at': now(), 'url': url, 'status': None}
@@ -67,12 +74,13 @@ def request(url, limit=LIMIT):
     try:
         req = urllib.request.Request(url, headers={'User-Agent': USER_AGENT})
         try:
-            response = urllib.request.urlopen(req, timeout=20)
+            response = urllib.request.build_opener(ReviewRedirects()).open(req, timeout=20)
         except urllib.error.HTTPError as exc:
             response = exc
         with response:
             result.update(status=response.status, final_url=response.url,
-                          content_type=response.headers.get('Content-Type'))
+                          content_type=response.headers.get('Content-Type'),
+                          redirect_location=response.headers.get('Location'))
             body = response.read(limit + 1)
     except OSError as exc:
         result['error'] = str(exc)

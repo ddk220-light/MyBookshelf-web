@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 from urllib.robotparser import RobotFileParser
 
-from run_source_reviews import TextSample, pacing_seconds, run
+from run_source_reviews import TextSample, pacing_seconds, run, request
 
 
 class WorkerTests(unittest.TestCase):
@@ -15,6 +15,32 @@ class WorkerTests(unittest.TestCase):
         self.assertEqual(p.title, ['API documentation'])
         self.assertNotIn('privateCode()', '\n'.join(p.parts))
         self.assertIn('Public search contract', p.parts)
+
+    def test_redirect_is_saved_without_requesting_unreviewed_destination(self):
+        from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+        from threading import Thread
+        visits = []
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                visits.append(self.path)
+                self.send_response(302)
+                self.send_header('Location', '/unreviewed-policy')
+                self.end_headers()
+            def log_message(self, *args):
+                pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        worker = Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        try:
+            result, _ = request('http://127.0.0.1:' + str(server.server_port) + '/known')
+            self.assertEqual(result['status'], 302)
+            self.assertEqual(result['redirect_location'], '/unreviewed-policy')
+            self.assertEqual(visits, ['/known'])
+            self.assertEqual(len(result['sampled_bytes_sha256']), 64)
+        finally:
+            server.shutdown()
+            server.server_close()
+            worker.join()
 
     def test_provider_delay_is_never_shortened(self):
         p = RobotFileParser()
