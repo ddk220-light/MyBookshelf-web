@@ -4,7 +4,9 @@ Packet version **0.2 — R01 and R02 approved**, 2026-11-01. Product owner/revie
 Deepak Ravikumar. Draft author: Codex. Deepak approved the document packet and
 DEC-01–10 in chat on 2026-11-01 (America/Los_Angeles), at commit
 `5056de00bc1091fd11a8b49cf358e2594c37a49e`. Implementation and evidence are recorded in [IMPLEMENTATION.md](IMPLEMENTATION.md)
-and [VALIDATION.md](VALIDATION.md); R03 remains pending.
+and [VALIDATION.md](VALIDATION.md). The owner authorized production completion;
+email accounts are live. [Release acceptance](RELEASE_ACCEPTANCE.md) records the
+verified workflows and remaining backup/operator evidence.
 The implemented screens and approved artifact are compared in
 [SCREEN_REVIEW.md](SCREEN_REVIEW.md), with a normal-size phone/desktop gallery.
 
@@ -18,7 +20,8 @@ Unchanged documents retain their own version 0.1; review the whole packet at its
 linked commit. R01 approval is recorded in [#7](https://github.com/ddk220-light/MyBookshelf-web/issues/7).
 Deepak approved all checked-in artifacts at `36a1436` on 2026-11-01 and
 instructed implementation with story-by-story task expansion. R02 is complete;
-R03 release acceptance remains pending. See [the implementation record](IMPLEMENTATION.md).
+R03 has the owner’s conditional deployment authorization; final operational
+acceptance remains open. See [the implementation record](IMPLEMENTATION.md).
 
 | Document | Review purpose | Delivery issue |
 | --- | --- | --- |
