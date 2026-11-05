@@ -2,51 +2,40 @@
   "schema_version": 1,
   "id": "free-knowledge-source-registry",
   "state": "in-progress",
-  "owner_request": "Reach 100% of the agreed free-knowledge research coverage and actively execute through completion. Capture all analysis/evidence and triage all known named/linked leads; complete retained queryable-source dossiers and examples; close all 49 tracked areas and 18 USA/India civic cells with evidence. Continue across runs without a fixed daily source quota.",
+  "owner_request": "Work through every identified free-knowledge connector and get supported searches working. Report simple group/connector progress on every hourly run, including unchanged runs. Diagnose blockers and try useful permitted fixes, retries or alternatives; keep making progress independently.",
   "tracking_issue": "https://github.com/ddk220-light/MyBookshelf-web/issues/164",
   "branch": "research/free-content-discovery-expansion",
   "milestones": [
     {
-      "id": "M0",
-      "objective": "Backfill all existing free-content research/design documents, evidence, assets and project backlog with version/hash provenance; map all historical source-catalog rows and expose unresolved entity/analysis gaps.",
-      "state": "in-progress",
-      "note": "Lossless document capture is complete, but complete linked/unlinked entity mapping is not. coverage-audit.json exposes unreviewed document identities and catalog mappings; alias matching never proves exhaustiveness."
-    },
-    {
-      "id": "M1",
-      "objective": "Persist the first ten candidates with ten distinct positive query examples each.",
-      "state": "complete"
-    },
-    {
-      "id": "M2",
-      "objective": "Triage every existing playbook lead, resolving named/unlinked candidates; give each actual catalog a canonical identity and reviewed/deferred/rejected decision.",
+      "id": "Q1",
+      "objective": "Assess every identified connector and save its exact query scope, current examples or concrete blocking reason.",
       "state": "in-progress"
     },
     {
-      "id": "M2B",
-      "objective": "Complete evidence-backed source dossiers: identity/deduplication, coverage, query contract, rights/cost, reader access, quality/relevance, operating limits, decision/follow-up; keep every missing check and contradiction explicit.",
+      "id": "Q2",
+      "objective": "Resolve connector errors and useful retry/alternative paths; move actionable blocked sources back into the checking queue.",
       "state": "in-progress"
     },
     {
-      "id": "M3",
-      "objective": "Extend discovery through all six groups, 20 content categories, 20 industry tags and nine USA/India public tracks. Work toward 100 qualified origins per category/industry where evidence supports it; document genuine shortfalls.",
-      "state": "in-progress",
-      "note": "100% coverage target explicitly reaffirmed; start with zero-candidate areas and near-complete dossiers, then rotate all gaps. No shortfall has been accepted."
+      "id": "Q3",
+      "objective": "Publish the group table, changes, remaining work, blocker reasons/actions and per-connector list every hourly run, even without progress.",
+      "state": "in-progress"
     }
   ],
   "counting_rules": [
     "A URL or directory is a lead, not a source. Deduplicate origins, language variants, mirrors and shared connectors.",
     "Only latest successful observations of distinct current query requests count toward ten; failures/retries/empty results do not.",
-    "Ten known-item searches verify retrieval only; production qualification needs topic relevance, rights, reliability, access and UI tests.",
-    "Record overlap, geography and India/USA gaps; never inflate counts to meet a target."
+    "Record overlap, geography and India/USA gaps; never inflate counts to meet a target.",
+    "Working query coverage is separate from production approval, full reader/rights/reliability review and broad discovery targets.",
+    "Blocked/failed outcomes count as assessed, not working; Still checking is the remaining assessment queue."
   ],
   "execution": {
     "batch_size": "Small checkpoints, not a completion quota. Continue productive independent work within each run budget; resume hourly without waiting for new user requests.",
-    "cursor": "Owner reporting clarification: use connector-status.json/CSV and plain groups/sources.134knownsource records:33working in their tested query scope,56blocked/failed,45still to assess;365passingexamples. Prioritize the45activecandidates, starting with industry/jobknowledge(1workingof20), then other low-coverage groups. Mark a candidate blocked/failed with evidence when no supported query route can be established and move on. Eurostat adds10exactEUdensityqueries; four existingchildren’s leads now havedeferredrecords. Siyavula has documentedtopic-searchmisses;WorldBankIndia2025GDPscale matchesreader,USpopulationrequesttimedout. Additional reader/rights/version/reliability findings stay separate from query-coverage reporting. Original queue/reporterdone/disabled;hourlycompletionenabled. Researchonly;productionunchanged. Currentcollector processes exited;fetch/checkremote andleasebeforewriting. Resume from this cursor and savedstatus. Checkpoints8a05e36and9ea6928pushed;issues164–170andPR161exactreadbacksverifiedwithplainquerycoverage. Fetchbeforecontinuing.",
+    "cursor": "Resume the identified-connector queue from connector-status.json/CSV. Latest saved counts:134records,33working,56blocked/failed,45stillchecking. Recompute current counts each run. Prioritize unchecked sources and industry/jobknowledge, then other low-working groups. Analyze blockers and try permitted fixes, sensible retries or documented alternatives with evidence; do not blindly retry policy denials. Every run reports the six-group table and totals, progress since prior run, remaining checks, blocker causes/recovery decisions and next work, even if unchanged. The older deep research audits remain available but do not define current query coverage. Research only; fetch/check lease before writing; preserve JSONL and push checkpoints.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
-      "title": "Reach full source research coverage",
+      "title": "Complete connector search coverage",
       "enabled_at_creation": true,
       "cadence": "hourly",
       "timing_mode": "flexible_schedule",
@@ -61,11 +50,11 @@
         "fallback": "Execution started in this conversation; corpus capture, historical-source backfill and new Python inventory queries performed."
       },
       "last_observed_enabled": true,
-      "verified_at": "2026-11-05 17:11:29 UTC",
+      "verified_at": "2026-11-05 17:22:02 UTC",
       "next_run_time_reported": null,
-      "verification_note": "Exact-ID lookup confirms hourly completion enabled and original documentation reporter disabled. No schedule mutation or native chat Goal activation.",
+      "verification_note": "Actual automation prompt/title updated and exactly read back; hourly schedule, enabled state and inherited MyBookshelf environment verified. Original documentation reporter remains disabled.",
       "last_run_time_reported": "2026-11-05T16:37:46.429869+00:00",
-      "automation_prompt_updated_at": "2026-11-05T08:33:26.799141+00:00"
+      "automation_prompt_updated_at": "2026-11-05T17:22:03.158466+00:00"
     },
     "completion_audit": "completion-audit.json",
     "last_checkpoint": {
@@ -2481,7 +2470,8 @@
     ],
     "completion_automation_verified_at": "2026-11-05 16:21:50 UTC",
     "completion_automation_enabled": true,
-    "original_status_reporter_enabled": false
+    "original_status_reporter_enabled": false,
+    "scheduled_task_snapshot": "scheduled-task.json"
   },
   "constraints": [
     "Research only; do not enable app sources, import runtime catalogs or deploy.",
@@ -2489,7 +2479,7 @@
     "No CAPTCHA/WAF bypass or bulk full-work copying; retain small metadata evidence.",
     "Free reader login is acceptable when the catalog is queryable; label account requirements and do not create accounts automatically."
   ],
-  "completion_definition": "All known existing/current/historical analysis is captured with reproducible provenance; every identified linked/named lead has an evidence-backed canonical triage decision; every retained queryable source has eight complete dossier sections and ten current passing distinct examples; blocked/rejected cases retain concrete evidence, missing checks and useful revisit triggers; all 49 areas have explicit complete coverage reviews and all 18 USA/India civic cells are accounted. Each content category/industry reaches 100 qualified independent origins where supply supports it, or a real evidence-backed shortfall remains open until explicitly accepted by the owner. Partial claims, URL counts, overlaps, plans and schedules do not establish completion or exhaustion of internet sources.",
+  "completion_definition": "Every identified connector receives an evidence-backed query outcome: Working within its declared tested search scope, or Blocked/failed with a concrete cause and a considered retry/alternative decision. Finish the Still checking queue and pursue viable permitted recovery paths. Report working coverage separately from completed assessments; a blocked connector is not working. Additional full-dossier, topic and country research checks are preserved but do not gate the working-query count. Keep the hourly task enabled and reporting; do not stop because an individual provider is blocked.",
   "required_dossier_sections": [
     "identity_and_duplicates",
     "coverage_and_languages",
@@ -2508,25 +2498,19 @@
     "current and failed query observations; access/policy evidence; explicit unknowns"
   ],
   "coverage_target": {
-    "target_percentage": 100,
-    "tracked_areas": 49,
-    "content_categories": 20,
-    "industry_tags": 20,
-    "civic_tracks": 9,
-    "jurisdiction_cells": 18,
-    "jurisdictions": [
-      "USA",
-      "India"
+    "denominator": "All currently identified connector records; read current connector-status.json rather than freezing prompt counts.",
+    "working_definition": "Supported real queries return relevant native items, with saved current examples and a precise supported search scope.",
+    "registry_verification_standard": "Ten distinct passing current examples; retain actual query/relevance limits and failed/empty cases.",
+    "statuses": [
+      "working",
+      "blocked_or_failed",
+      "still_checking"
     ],
-    "qualified_origins_per_content_or_industry_area": 100,
-    "per_retained_queryable_source": {
-      "complete_dossier_sections": 8,
-      "distinct_passing_current_examples": 10
-    },
-    "closure": "Evidence-backed area review and qualified-origin target; civic tracks additionally need both country cells accounted. Documented scarcity needs explicit owner acceptance with provenance; unresolved questions keep the area open.",
-    "counting": "Memberships overlap. Do not add them into a unique-origin total or treat candidate/query examples as complete qualification.",
-    "internet_exhaustion_claim": false,
-    "set_at": "2026-11-05T08:35:42.263314+00:00"
+    "grouping": "Six primary connector groups; each record counted once in the total.",
+    "blocked_handling": "Diagnose temporary failures, implementation errors, obsolete routes, authentication and provider restrictions. Retry with backoff or a documented permitted alternative only for a useful reason; record cause/attempt/result/next trigger. Never bypass access controls.",
+    "additional_research_checks": "Separate follow-up, not a prerequisite for query coverage reporting.",
+    "historical_target": "Preserved in analysis/goal-reviews.jsonl; the earlier49-area/18-cell/full-dossier target is not the current hourly connector-completion gate.",
+    "set_at": "2026-11-05T17:22:03.158466+00:00"
   },
   "reporting": {
     "owner_clarified_at": "2026-11-05T17:10:06.266092+00:00",
@@ -2544,6 +2528,17 @@
     "status_files": [
       "connector-status.json",
       "connector-status.csv"
-    ]
+    ],
+    "every_run": true,
+    "including_unchanged_runs": true,
+    "report_table_columns": [
+      "Group",
+      "Working",
+      "Blocked/failed",
+      "Still checking",
+      "Total"
+    ],
+    "blocker_reporting": "Give plain causes, changed/new blocked connectors, attempts and next decisions; group recurring reasons and link the full connector list.",
+    "pause_when_provider_blocked": false
   }
 }

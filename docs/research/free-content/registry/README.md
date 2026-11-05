@@ -1,33 +1,40 @@
 # Free-knowledge source registry
 
-## Full coverage completion target
+## Current hourly connector goal
 
-The owner reaffirmed a 100% research-coverage goal on 2026-11-05. The existing
-hourly completion task is enabled as **Reach full source research coverage**;
-work also runs directly in this conversation. This is a saved repository goal
-and recurring task, not activation of the unavailable native chat Goal UI.
+The enabled task **Complete connector search coverage** actively works through
+identified connectors and reports here every hour, even if nothing changed.
+The owner replaced the earlier headline topic/country/full-dossier target with
+plain queryability by group and connector.
 
-Completion requires evidence-backed closure of all 49 areas and all 18 USA/India
-civic cells, complete known-evidence/lead analysis, and full eight-section dossiers
-with ten distinct current examples for retained queryable sources. Content and
-industry areas target 100 qualified independent origins each where supply supports
-it. Any documented scarcity stays open until the owner explicitly accepts the
-shortfall with recorded provenance. No shortfall has been accepted yet.
+- **Working:** supported real queries return relevant items within the saved search scope.
+- **Blocked/failed:** a concrete reason prevents working queries; retain the reason and recovery decision.
+- **Still checking:** assessment is unfinished and remains in the active queue.
 
-`completion-audit.json` now exposes `area_completion` and `target_progress`.
-Candidate counts, query-only examples, overlapping classifications and repeated
-source IDs cannot satisfy the qualified-origin target. Every area also needs a
-complete manual coverage review backed by saved evidence. Record those reviews
-in append-only `analysis/area-coverage-reviews.jsonl` when performed; do not mark
-a partial review complete to raise the percentage. The initial goal metrics are
-0/49 area closures and 0/18 civic cells accounted. Read the current audit for
-later values; counts in historical prose are checkpoints.
+Use [connector-status.json](connector-status.json) and
+[connector-status.csv](connector-status.csv) for six-group totals and individual
+sources. Prioritize unchecked connectors and groups with the fewest working
+connectors. Analyze blockers: fix implementation errors, use sensible backoff for
+transient failures, or try a documented permitted alternative. Record what was
+tried, what happened, and when another attempt is justified. Do not bypass access
+controls or repeatedly retry without a useful reason.
 
+Every run reports the group table plus totals, changes since the previous report,
+remaining checks, blocker reasons/retry decisions, and next work. Keep the task
+enabled and work across runs; an individual blocked provider does not halt it.
+The saved task settings are in [scheduled-task.json](scheduled-task.json).
+
+The detailed [completion audit](completion-audit.json) and
+[coverage audit](coverage-audit.json) preserve the broader research findings.
+Their full-dossier/topic/country checks are separate from working-query coverage.
+The previous goal definition remains in append-only
+[goal review history](analysis/goal-reviews.jsonl). Existing evidence, failures and
+constraints remain valid. This schedule does not activate the native chat Goal UI.
 
 This is a research collection of ordinary JSON files in Git. It needs no SQL,
 database server, Redis, paid service or new dependency. JSON preserves nested
 query parameters, multiple capabilities and result samples more clearly than a
-wide CSV. A CSV summary can be generated later if a spreadsheet becomes useful.
+wide CSV. The generated connector-status.csv provides a spreadsheet-friendly summary.
 
 The owner authorized continued source research after reviewing the first ten,
 then selected a simple file format. App integration remains a separate decision.
@@ -42,8 +49,8 @@ is claimed from that failed trigger.
 The goal is the authoritative collection of **all source analysis**, including
 historical findings, contradictions, failed attempts and open questions. The
 [completion audit](completion-audit.json) distinguishes captured evidence from
-completed analysis. A document import or ten passing queries does not close the
-whole source dossier or the expansion goal.
+completed analysis. A document import is not a working query. Passing query examples establish only
+the stated search scope; broader dossier checks remain separate follow-up.
 
 ## Immediate execution
 

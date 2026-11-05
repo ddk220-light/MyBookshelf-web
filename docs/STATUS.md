@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Connector task updated, 2026-11-05T17:22:03.158466+00:00:** The existing hourly task is enabled as **Complete connector search coverage**. It actively checks identified connectors, analyzes blockers/retries, and reports the plain group table every run, including unchanged runs. Read [task settings](research/free-content/registry/scheduled-task.json) and [current goal](research/free-content/registry/goal.json). Earlier full-dossier/topic/country targets are preserved as separate research history.
+
 **Free-knowledge source status, 2026-11-05T17:13:18.478423+00:00:** 134 recorded: **33 queryable,56blocked/failed,45still to assess**;365passingexamples. The owner requested plain group/connector coverage. Use [per-source status](research/free-content/registry/connector-status.csv), [group totals](research/free-content/registry/connector-status.json) and [resume goal](research/free-content/registry/goal.json). Eurostatadds10queries;fourchildren’s leadsbackfilled;181testspass. Researchonly;productionunchanged.
 
 **Free-knowledge research, 2026-11-05T16:50:33.474540+00:00:** 129 records, 355 current examples, 32 catalogs and two complete scoped dossiers. School title-search misses, safe refresh handling and rendered mathematical notation now have additional evidence; World Bank attribution remains constrained. 170 research tests pass. All full-area/civic closures remain open. See [goal](research/free-content/registry/goal.json) and [progress](research/free-content/registry/PROGRESS.md). Research only; production unchanged.
