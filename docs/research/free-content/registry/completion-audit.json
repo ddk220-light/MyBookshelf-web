@@ -4,10 +4,10 @@
   "captured_text_documents": 74,
   "indexed_binary_assets": 166,
   "document_capture_complete": true,
-  "source_records": 84,
+  "source_records": 86,
   "source_dossiers_complete": 0,
-  "query_verified_sources": 17,
-  "verified_examples": 170,
+  "query_verified_sources": 18,
+  "verified_examples": 180,
   "untriaged_link_ids": [],
   "unresolved_entity_mappings": [
     {
@@ -181,10 +181,22 @@
       "suggested_entity_id": "lets-read"
     }
   ],
-  "named_entity_lead_count": 35,
-  "unresolved_named_entity_count": 28,
+  "named_entity_lead_count": 124,
+  "unresolved_named_entity_count": 115,
   "named_entity_review_complete": false,
   "documentation_runs": [
+    {
+      "run_id": "canonical-books-policy-20261105b",
+      "jobs": 3,
+      "observations": 3,
+      "remaining_job_ids": [],
+      "outcomes": {
+        "captured": 2,
+        "skipped": 0,
+        "blocked-or-failed": 1
+      },
+      "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+    },
     {
       "run_id": "canonical-partners-onet-20261105",
       "jobs": 5,
@@ -230,6 +242,18 @@
         "captured": 20,
         "skipped": 1,
         "blocked-or-failed": 0
+      },
+      "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+    },
+    {
+      "run_id": "licensing-and-partners-20261105b",
+      "jobs": 10,
+      "observations": 10,
+      "remaining_job_ids": [],
+      "outcomes": {
+        "captured": 6,
+        "skipped": 3,
+        "blocked-or-failed": 1
       },
       "named_entity_review": "pending; document capture is not entity extraction or query qualification"
     },
@@ -313,6 +337,18 @@
       "outcomes": {
         "captured": 3,
         "skipped": 1,
+        "blocked-or-failed": 0
+      },
+      "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+    },
+    {
+      "run_id": "siyavula-catalog-terms-20261105b",
+      "jobs": 2,
+      "observations": 2,
+      "remaining_job_ids": [],
+      "outcomes": {
+        "captured": 2,
+        "skipped": 0,
         "blocked-or-failed": 0
       },
       "named_entity_review": "pending; document capture is not entity extraction or query qualification"
@@ -478,6 +514,22 @@
       ],
       "complete": false,
       "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker."
+    },
+    "book-sprints": {
+      "state": "candidate",
+      "passing_examples": 0,
+      "unresolved_fields": [
+        "identity_and_duplicates",
+        "coverage_and_languages",
+        "query_contract",
+        "rights_and_cost",
+        "reader_access",
+        "quality_and_relevance",
+        "operating_limits",
+        "ten_current_query_examples"
+      ],
+      "complete": false,
+      "next_action": "Resolve item licenses and native book/edition identities from official look-inside pages; determine a supported licensed metadata query/export. Review 139 book/client associations as leads, not 139 origins."
     },
     "cert-in": {
       "state": "candidate",
@@ -790,7 +842,7 @@
       "next_action": "Verify official publisher/repository query and reading route."
     },
     "indcat": {
-      "state": "candidate",
+      "state": "deferred",
       "passing_examples": 0,
       "unresolved_fields": [
         "identity_and_duplicates",
@@ -803,7 +855,7 @@
         "ten_current_query_examples"
       ],
       "complete": false,
-      "next_action": "Read the official SRU manual and copyright terms, verify anonymous MARCXML requests, paging/empty/diagnostic behavior and native record identities. Keep free-copy availability separate from metadata retrieval."
+      "next_action": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified."
     },
     "india-nqr": {
       "state": "candidate",
@@ -1223,21 +1275,18 @@
       "next_action": "Retain query-verified candidate; finish bounded PDF/representative reader checks, country/language evidence and refresh/deletion contract. Preserve CC0 metadata versus NC/SA book licenses and pedagogical versus practical intent."
     },
     "openalex": {
-      "state": "candidate",
-      "passing_examples": 0,
+      "state": "ten-query-examples-verified",
+      "passing_examples": 10,
       "unresolved_fields": [
         "identity_and_duplicates",
         "coverage_and_languages",
-        "query_contract",
         "rights_and_cost",
         "reader_access",
         "quality_and_relevance",
-        "operating_limits",
-        "decision_and_followup",
-        "ten_current_query_examples"
+        "operating_limits"
       ],
       "complete": false,
-      "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker."
+      "next_action": "Finish primary operator/metadata-license evidence, representative OA landing-page reading, retraction/version/overlap checks and regional/language coverage. Preserve current key/free-budget operating requirements; no deployment or catalog activation."
     },
     "openstax": {
       "state": "deferred",
@@ -1448,6 +1497,22 @@
       ],
       "complete": false,
       "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker."
+    },
+    "siyavula": {
+      "state": "candidate",
+      "passing_examples": 0,
+      "unresolved_fields": [
+        "identity_and_duplicates",
+        "coverage_and_languages",
+        "query_contract",
+        "rights_and_cost",
+        "reader_access",
+        "quality_and_relevance",
+        "operating_limits",
+        "ten_current_query_examples"
+      ],
+      "complete": false,
+      "next_action": "Verify one permitted textbook reader/edition and a supported machine metadata/search/export route. Keep branded/unbranded licensing and IT/CAT closed-copyright exceptions explicit; catalogue links alone are not ten verified queries."
     },
     "snapplify": {
       "state": "deferred",
@@ -1724,6 +1789,7 @@
       "candidate_source_ids": [
         "african-minds",
         "bhl",
+        "book-sprints",
         "doab",
         "helsinki-university-press",
         "lever-press",
@@ -1743,6 +1809,7 @@
         "punctum-books",
         "repec",
         "scielo",
+        "siyavula",
         "snapplify",
         "wikibooks"
       ],
@@ -1833,12 +1900,14 @@
         "core",
         "hal",
         "la-referencia",
+        "openalex",
         "osti",
         "repec",
         "scielo",
         "shodhganga"
       ],
       "query_example_source_ids": [
+        "openalex",
         "osti"
       ],
       "qualified_source_ids": []
@@ -1846,6 +1915,7 @@
     "C13": {
       "candidate_source_ids": [
         "bharat-skills",
+        "book-sprints",
         "cert-in",
         "faa-manuals",
         "fao-publications",
@@ -1905,6 +1975,7 @@
     },
     "C12": {
       "candidate_source_ids": [
+        "book-sprints",
         "cert-in",
         "nist-publications",
         "python-docs"
@@ -1916,6 +1987,7 @@
     },
     "I18": {
       "candidate_source_ids": [
+        "book-sprints",
         "cert-in",
         "india-nqr",
         "nist-publications",
@@ -1925,6 +1997,30 @@
       "query_example_source_ids": [
         "onet",
         "python-docs"
+      ],
+      "qualified_source_ids": []
+    },
+    "I11": {
+      "candidate_source_ids": [
+        "book-sprints",
+        "india-nqr",
+        "onet",
+        "osti"
+      ],
+      "query_example_source_ids": [
+        "onet",
+        "osti"
+      ],
+      "qualified_source_ids": []
+    },
+    "I20": {
+      "candidate_source_ids": [
+        "book-sprints",
+        "onet",
+        "repec"
+      ],
+      "query_example_source_ids": [
+        "onet"
       ],
       "qualified_source_ids": []
     },
@@ -1946,6 +2042,7 @@
       ],
       "query_example_source_ids": [
         "europe-pmc",
+        "openalex",
         "osti"
       ],
       "qualified_source_ids": []
@@ -1954,6 +2051,7 @@
       "candidate_source_ids": [
         "diksha",
         "ncert",
+        "siyavula",
         "swayam"
       ],
       "query_example_source_ids": [],
@@ -2088,18 +2186,6 @@
       "query_example_source_ids": [],
       "qualified_source_ids": []
     },
-    "I11": {
-      "candidate_source_ids": [
-        "india-nqr",
-        "onet",
-        "osti"
-      ],
-      "query_example_source_ids": [
-        "onet",
-        "osti"
-      ],
-      "qualified_source_ids": []
-    },
     "C05": {
       "candidate_source_ids": [
         "librivox",
@@ -2155,16 +2241,6 @@
       "candidate_source_ids": [
         "onet",
         "rosa-p"
-      ],
-      "query_example_source_ids": [
-        "onet"
-      ],
-      "qualified_source_ids": []
-    },
-    "I20": {
-      "candidate_source_ids": [
-        "onet",
-        "repec"
       ],
       "query_example_source_ids": [
         "onet"

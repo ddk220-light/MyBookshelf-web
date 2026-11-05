@@ -6,37 +6,237 @@
   "homepage_status": "historical-reference; canonical homepage/operator needs review",
   "group": "G05",
   "areas": [
-    "C03"
+    "C03",
+    "C07"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
-  "record_kind": "catalog-candidate",
+  "record_kind": "scholarly-metadata-aggregator",
   "capabilities": [
-    "Imported historical retrieval analysis: `/works?search=...&filter=is_oa:true`, filters/cursors, exact DOI lookup; `locations`, `best_oa_location`. [Authentication](https://help.openalex.org/api/authentication/), [costs](https://help.openalex.org/access/example-costs/)"
+    "Search scholarly work metadata, including provider-reported OA status and locations; resolve OpenAlex work IDs and preserve DOI, type, language and location version.",
+    "Ten independent current work lookups passed after title/topic scouting, using an existing key within its observed free daily allowance. No full texts downloaded."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "historical_contract": "`/works?search=...&filter=is_oa:true`, filters/cursors, exact DOI lookup; `locations`, `best_oa_location`. [Authentication](https://help.openalex.org/api/authentication/), [costs](https://help.openalex.org/access/example-costs/)",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "adapter": "openalex",
+    "endpoint": "https://api.openalex.org/works",
+    "method": "GET",
+    "authentication": "Verified examples used the existing configured free API key in an Authorization bearer header; credential is never stored. Anonymous searches returned 429 under elevated load.",
+    "cost": "Observed $1/day free allowance, $0 prepaid balance, sufficient free remaining budget before requests. Documented search $0.001/call and singleton free; no paid operation/account changes.",
+    "supported_modes": [
+      "search text",
+      "documented title-scoped search",
+      "is_oa:true filter",
+      "selected metadata fields",
+      "native work singleton",
+      "basic page parameter with configured key"
+    ],
+    "unsupported_modes": [
+      "independently verified full-text reading",
+      "all versions/locations exhaustiveness",
+      "semantic search qualification",
+      "anonymous reliability guarantee",
+      "geospatial feature/map querying",
+      "cursor paging verification"
+    ],
+    "cases": [
+      {
+        "id": "native-W2626778328",
+        "intent": "Resolve scouted work for Attention is all you need; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W2626778328"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2626778328",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2949650786",
+        "intent": "Resolve scouted work for Deep residual learning for image recognition; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W2949650786"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2949650786",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W1976149758",
+        "intent": "Resolve scouted work for The hallmarks of cancer; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W1976149758"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W1976149758",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2339144537",
+        "intent": "Resolve scouted work for CRISPR Cas9; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W2339144537"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2339144537",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W3016558255",
+        "intent": "Resolve scouted work for climate change adaptation; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W3016558255"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W3016558255",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2042959384",
+        "intent": "Resolve scouted work for malaria India; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W2042959384"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2042959384",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W3037315640",
+        "intent": "Resolve scouted work for quantum computing; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W3037315640"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W3037315640",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2108376748",
+        "intent": "Resolve scouted work for agroforestry India; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W2108376748"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2108376748",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2041404167",
+        "intent": "Resolve the exact-title A Mathematical Theory of Communication record observed at rank two; retain bibliographic/version distinctions",
+        "expected_ids": [
+          "https://openalex.org/W2041404167"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2041404167",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2477693623",
+        "intent": "Resolve India-focused geological mapping research metadata; no geospatial dataset/API claim",
+        "expected_ids": [
+          "https://openalex.org/W2477693623"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2477693623",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      }
+    ],
+    "research_pause_seconds": 3,
+    "pagination": "Second basic page tested with configured key. Cursor continuation requires a key per docs and was not tested."
   },
-  "licensing": "Choose a suitable OA host landing page; optionally PDF. Record page/DOI alone is not proof of free reading. Inspect location OA, version, license and freshness.",
+  "licensing": "Provider-reported work/location OA and license labels are retained; metadata-license primary confirmation and per-item content rights remain open. Do not equate public metadata, OA flag, reading availability and permission to reuse full text.",
   "documentation": [
     "https://help.openalex.org/api/authentication/",
     "https://help.openalex.org/access/example-costs/"
   ],
   "limitations": [
-    "Keyless first page worked. Observed policy: $0.10/day shared per IP keyless; verified free key $1/day; ordinary search $0.001/call; 10/30 RPS keyless/free. Cursor paging past first page requires key. Verify current policy and configured key. **Low/medium / P0**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "Metadata retrieval is verified; full source qualification and activation approval remain false.",
+    "Broad known-title search ranked ON THE MATHEMATICAL THEORY OF COMMUNICATION before the exact-title work; the current example uses the exact-title record observed at rank two.",
+    "Generic geological mapping returned Europa/Vesta papers; use explicit Earth/country intent. Even India-focused papers are not queryable map datasets.",
+    "Submitted/accepted/published versions and absent or restrictive license labels must remain visible. All sampled metadata language labels were English; other language and jurisdiction coverage is open.",
+    "Two anonymous 429 failures are retained. The provider explicitly suggested a free key; the existing configured key worked after free-budget verification."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "examples/openalex.budget.jsonl",
+    "examples/openalex.scouting.jsonl",
+    "examples/openalex.jsonl",
+    "examples/openalex.benchmark.jsonl",
+    "examples/openalex.relevance.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T06:14:38.096913+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Finish primary operator/metadata-license evidence, representative OA landing-page reading, retraction/version/overlap checks and regional/language coverage. Preserve current key/free-budget operating requirements; no deployment or catalog activation.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -47,136 +247,597 @@
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Native OpenAlex work identity and DOI captured; aggregator/operator and cross-index deduplication need further primary confirmation.",
       "facts": {
-        "id": "openalex",
-        "name": "OpenAlex",
-        "homepage_reference": "https://help.openalex.org/api/authentication/",
-        "operator": null,
-        "origin_deduplication": "pending"
+        "provider_brand": "OpenAlex",
+        "native_identity": "https://openalex.org/W<digits>",
+        "overlap": "DOI/versions may overlap HAL, Europe PMC, arXiv and publisher repositories; one OpenAlex catalog, not one origin per host location."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        }
       ],
       "open_questions": [
-        "Confirm operator, parent and catalog-versus-origin deduplication."
+        "Confirm legal operator and primary metadata rights; measure cross-index duplicate/version mapping."
       ]
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current samples cover research articles, reviews, conference papers and preprints; English observed, including India-focused research.",
       "facts": {
-        "category_industry_candidates": [
-          "C03"
+        "languages_observed": [
+          "en"
         ],
-        "languages": null,
-        "jurisdictions": null,
-        "coverage_evidence": "pending"
+        "sample_intents": [
+          "machine learning",
+          "information theory",
+          "cancer",
+          "CRISPR",
+          "climate adaptation",
+          "malaria India",
+          "quantum computing",
+          "agroforestry India",
+          "India geological mapping"
+        ],
+        "territory_caution": "India in title/topic is not proof of India-wide network access or a local civic dataset."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        }
       ],
       "open_questions": [
-        "Verify country/language/subject coverage with item evidence."
+        "Measure broader country/language coverage and geographic accessibility."
       ]
     },
     "query_contract": {
-      "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "status": "complete",
+      "summary": "Exact public search/filter/select and native singleton requests are captured, including empty output and basic paging.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Imported historical retrieval analysis: `/works?search=...&filter=is_oa:true`, filters/cursors, exact DOI lookup; `locations`, `best_oa_location`. [Authentication](https://help.openalex.org/api/authentication/), [costs](https://help.openalex.org/access/example-costs/)"
+        "adapter": "openalex",
+        "endpoint": "https://api.openalex.org/works",
+        "method": "GET",
+        "authentication": "Verified examples used the existing configured free API key in an Authorization bearer header; credential is never stored. Anonymous searches returned 429 under elevated load.",
+        "cost": "Observed $1/day free allowance, $0 prepaid balance, sufficient free remaining budget before requests. Documented search $0.001/call and singleton free; no paid operation/account changes.",
+        "supported_modes": [
+          "search text",
+          "documented title-scoped search",
+          "is_oa:true filter",
+          "selected metadata fields",
+          "native work singleton",
+          "basic page parameter with configured key"
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "unsupported_modes": [
+          "independently verified full-text reading",
+          "all versions/locations exhaustiveness",
+          "semantic search qualification",
+          "anonymous reliability guarantee",
+          "geospatial feature/map querying",
+          "cursor paging verification"
+        ],
+        "cases": [
+          {
+            "id": "native-W2626778328",
+            "intent": "Resolve scouted work for Attention is all you need; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W2626778328"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2626778328",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2949650786",
+            "intent": "Resolve scouted work for Deep residual learning for image recognition; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W2949650786"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2949650786",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W1976149758",
+            "intent": "Resolve scouted work for The hallmarks of cancer; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W1976149758"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W1976149758",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2339144537",
+            "intent": "Resolve scouted work for CRISPR Cas9; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W2339144537"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2339144537",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W3016558255",
+            "intent": "Resolve scouted work for climate change adaptation; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W3016558255"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W3016558255",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2042959384",
+            "intent": "Resolve scouted work for malaria India; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W2042959384"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2042959384",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W3037315640",
+            "intent": "Resolve scouted work for quantum computing; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W3037315640"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W3037315640",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2108376748",
+            "intent": "Resolve scouted work for agroforestry India; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W2108376748"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2108376748",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2041404167",
+            "intent": "Resolve the exact-title A Mathematical Theory of Communication record observed at rank two; retain bibliographic/version distinctions",
+            "expected_ids": [
+              "https://openalex.org/W2041404167"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2041404167",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2477693623",
+            "intent": "Resolve India-focused geological mapping research metadata; no geospatial dataset/API claim",
+            "expected_ids": [
+              "https://openalex.org/W2477693623"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2477693623",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          }
+        ],
+        "research_pause_seconds": 3,
+        "pagination": "Second basic page tested with configured key. Cursor continuation requires a key per docs and was not tested."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl"
       ],
-      "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
-      ]
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        }
+      ],
+      "open_questions": []
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Provider-reported work/location OA and license labels are retained; metadata-license primary confirmation and per-item content rights remain open. Do not equate public metadata, OA flag, reading availability and permission to reuse full text.",
       "facts": {
-        "license_notes": "Choose a suitable OA host landing page; optionally PDF. Record page/DOI alone is not proof of free reading. Inspect location OA, version, license and freshness.",
-        "authentication_notes": "See historical notes; current contract must be reconciled with newer evidence.",
-        "cost_notes": null,
-        "terms_review": "pending current reconciliation"
+        "budget_evidence": "examples/openalex.budget.jsonl",
+        "request_cost": "Search $0.001 and singleton free per current provider docs; bounded calls stayed within observed free allowance.",
+        "licenses_observed": [
+          "missing",
+          "cc-by",
+          "cc-by-nc",
+          "cc-by-nc-sa",
+          "other-oa"
+        ],
+        "reading": "OA/location claims only; no PDFs fetched"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        }
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+        "Confirm primary metadata reuse terms and item-specific content rights/reading."
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "OA flags and reported landing/PDF URLs captured; no independent full-copy access test.",
       "facts": {
-        "evidence_references": [
-          "analysis/documents.jsonl"
+        "reading_access_verified": false,
+        "versions_observed": [
+          "submittedVersion",
+          "acceptedVersion",
+          "publishedVersion"
         ],
-        "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "free_login": "Unknown per host; no account created."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        }
       ],
       "open_questions": [
-        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+        "Check representative permitted OA landing pages and label actual login/territorial/availability conditions."
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Scouted ten intents and independently resolved ten distinct current native IDs; two initial selections were corrected after title/context review.",
       "facts": {
-        "limitations": [
-          "Keyless first page worked. Observed policy: $0.10/day shared per IP keyless; verified free key $1/day; ordinary search $0.001/call; 10/30 RPS keyless/free. Cursor paging past first page requires key. Verify current policy and configured key. **Low/medium / P0**.",
-          "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
-        ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "current_examples": 10,
+        "historical_native_lookups_retained": 2,
+        "known_title_issue": "Broad Shannon-title result ranked a differently titled work first; exact-title rank-two record independently retrieved.",
+        "geology_issue": "Planetary mapping results satisfy broad words but not local Earth/civic intent; title/country narrowing tested and native record retained.",
+        "negative": "No-match sentinel returned HTTP 200 and no records; does not count as a positive example.",
+        "ranking": "Scouting shows related surveys and adjacent works; ten ID lookups do not establish broad relevance quality."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        }
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+        "Complete systematic relevance/edition/retraction and language/jurisdiction assessments."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Policy-checked serial requests; anonymous overload 429 retained and existing-key recovery was explicitly provider-recommended.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "pause_seconds": 3,
+        "anonymous_failures": 2,
+        "first_retry_after_seconds": 39,
+        "second_retry_after_seconds": 30,
+        "configured_key_policy": "Existing key only, no registration; free daily budget checked before use; no paid balance.",
+        "size_cap_bytes": 524288,
+        "paging_note": "Benchmark purpose text incorrectly says no key; its authentication field and this correction establish configured-key use."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        }
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Verify ongoing refresh/deletion/version behavior and provider reliability; do not infer perpetual availability from one pass."
       ]
     },
     "decision_and_followup": {
-      "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "status": "complete",
+      "summary": "Retain a query-verified research candidate; full qualification, activation and deployment remain unapproved.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "retain-query-verified-metadata-candidate",
+        "activation_approved": false,
+        "next_action": "Finish primary operator/metadata-license evidence, representative OA landing-page reading, retraction/version/overlap checks and regional/language coverage. Preserve current key/free-budget operating requirements; no deployment or catalog activation."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl"
       ],
-      "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
-      ]
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        }
+      ],
+      "open_questions": []
     }
   },
   "analysis_refs": [

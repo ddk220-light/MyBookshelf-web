@@ -8,7 +8,7 @@
     "C02",
     "C06"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -43,14 +43,148 @@
     "Bibliographic union catalogue for books, theses and serials, with Boolean/faceted search, book MARC downloads and documented SRU; Shodhganga links may lead to thesis text."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown; no query executed",
-    "request_shape_verified": false
+    "adapter": "indcat-sru",
+    "endpoint": "https://indcatsru.inflibnet.ac.in/biblio",
+    "cases": [
+      {
+        "id": "title-indian-polyporaceae",
+        "intent": "Known-title intent; bibliographic retrieval only",
+        "expected_ids": [
+          "772049"
+        ],
+        "request": {
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "method": "GET",
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"Indian Polyporaceae\"",
+            "recordSchema": "marcxml"
+          },
+          "url": "https://indcatsru.inflibnet.ac.in/biblio"
+        }
+      },
+      {
+        "id": "title-indian-constitution",
+        "intent": "Known-title intent; bibliographic retrieval only",
+        "expected_ids": [
+          "25006310"
+        ],
+        "request": {
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "method": "GET",
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"Indian constitution\"",
+            "recordSchema": "marcxml"
+          },
+          "url": "https://indcatsru.inflibnet.ac.in/biblio"
+        }
+      },
+      {
+        "id": "title-database-system-concepts",
+        "intent": "Known-title intent; bibliographic retrieval only",
+        "expected_ids": [
+          "9430624"
+        ],
+        "request": {
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "method": "GET",
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"Database system concepts\"",
+            "recordSchema": "marcxml"
+          },
+          "url": "https://indcatsru.inflibnet.ac.in/biblio"
+        }
+      },
+      {
+        "id": "title-machine-design",
+        "intent": "Known-title intent; bibliographic retrieval only",
+        "expected_ids": [
+          "20142477"
+        ],
+        "request": {
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "method": "GET",
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"Machine design\"",
+            "recordSchema": "marcxml"
+          },
+          "url": "https://indcatsru.inflibnet.ac.in/biblio"
+        }
+      },
+      {
+        "id": "title-construction",
+        "intent": "Topical title-field intent; bibliographic retrieval only",
+        "expected_ids": [
+          "5166212"
+        ],
+        "request": {
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "method": "GET",
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"construction\"",
+            "recordSchema": "marcxml"
+          },
+          "url": "https://indcatsru.inflibnet.ac.in/biblio"
+        }
+      },
+      {
+        "id": "title-manufacturing",
+        "intent": "Topical title-field intent; bibliographic retrieval only",
+        "expected_ids": [
+          "14980379"
+        ],
+        "request": {
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "method": "GET",
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"manufacturing\"",
+            "recordSchema": "marcxml"
+          },
+          "url": "https://indcatsru.inflibnet.ac.in/biblio"
+        }
+      }
+    ],
+    "authentication": "Anonymous IndCat-GEN, explicitly documented",
+    "request_shape_verified": false,
+    "method": "GET",
+    "supported_modes": [
+      "CQL title/ISBN/publisher/date metadata queries"
+    ],
+    "unsupported_modes": [
+      "full-book reading guarantee",
+      "full-text book search",
+      "semantic ranking"
+    ],
+    "research_pause_seconds": 3,
+    "research_hold": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified."
   },
   "documentation": [
-    "https://indcat.inflibnet.ac.in/index.php/main/features"
+    "https://indcat.inflibnet.ac.in/index.php/main/features",
+    "https://indcat.inflibnet.ac.in/index.php/main/sruManual",
+    "https://indcat.inflibnet.ac.in/index.php/main/copyright_policy"
   ],
   "licensing": "Metadata and content rights require separate evidence; no blanket reuse license established.",
   "limitations": [
@@ -60,10 +194,12 @@
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/retrieval-doc-links-20261105b/observations.jsonl",
-    "runs/retrieval-contracts-20261105b/observations.jsonl"
+    "runs/retrieval-contracts-20261105b/observations.jsonl",
+    "examples/indcat.scouting.jsonl",
+    "examples/indcat.topic-scouting.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T05:50:26.972137+00:00",
-  "next_action": "Read the official SRU manual and copyright terms, verify anonymous MARCXML requests, paging/empty/diagnostic behavior and native record identities. Keep free-copy availability separate from metadata retrieval.",
+  "last_reviewed_at": "2026-11-05T06:05:52.068546+00:00",
+  "next_action": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -157,18 +293,166 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documented catalog capabilities retained; exact executed machine contract remains open.",
+      "summary": "Official IndCat-GEN manual explicitly documents anonymous general-use bibliographic SRU, CQL and MARCXML for all IndCat Books records. One current title request returned native bibliographic records; free-copy access remains unverified.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "cases": [],
-        "authentication": "Unknown; no query executed",
-        "request_shape_verified": false
+        "adapter": "indcat-sru",
+        "endpoint": "https://indcatsru.inflibnet.ac.in/biblio",
+        "cases": [
+          {
+            "id": "title-indian-polyporaceae",
+            "intent": "Known-title intent; bibliographic retrieval only",
+            "expected_ids": [
+              "772049"
+            ],
+            "request": {
+              "headers": {
+                "Accept": "application/xml"
+              },
+              "method": "GET",
+              "params": {
+                "maximumRecords": 2,
+                "operation": "searchRetrieve",
+                "query": "dc.title=\"Indian Polyporaceae\"",
+                "recordSchema": "marcxml"
+              },
+              "url": "https://indcatsru.inflibnet.ac.in/biblio"
+            }
+          },
+          {
+            "id": "title-indian-constitution",
+            "intent": "Known-title intent; bibliographic retrieval only",
+            "expected_ids": [
+              "25006310"
+            ],
+            "request": {
+              "headers": {
+                "Accept": "application/xml"
+              },
+              "method": "GET",
+              "params": {
+                "maximumRecords": 2,
+                "operation": "searchRetrieve",
+                "query": "dc.title=\"Indian constitution\"",
+                "recordSchema": "marcxml"
+              },
+              "url": "https://indcatsru.inflibnet.ac.in/biblio"
+            }
+          },
+          {
+            "id": "title-database-system-concepts",
+            "intent": "Known-title intent; bibliographic retrieval only",
+            "expected_ids": [
+              "9430624"
+            ],
+            "request": {
+              "headers": {
+                "Accept": "application/xml"
+              },
+              "method": "GET",
+              "params": {
+                "maximumRecords": 2,
+                "operation": "searchRetrieve",
+                "query": "dc.title=\"Database system concepts\"",
+                "recordSchema": "marcxml"
+              },
+              "url": "https://indcatsru.inflibnet.ac.in/biblio"
+            }
+          },
+          {
+            "id": "title-machine-design",
+            "intent": "Known-title intent; bibliographic retrieval only",
+            "expected_ids": [
+              "20142477"
+            ],
+            "request": {
+              "headers": {
+                "Accept": "application/xml"
+              },
+              "method": "GET",
+              "params": {
+                "maximumRecords": 2,
+                "operation": "searchRetrieve",
+                "query": "dc.title=\"Machine design\"",
+                "recordSchema": "marcxml"
+              },
+              "url": "https://indcatsru.inflibnet.ac.in/biblio"
+            }
+          },
+          {
+            "id": "title-construction",
+            "intent": "Topical title-field intent; bibliographic retrieval only",
+            "expected_ids": [
+              "5166212"
+            ],
+            "request": {
+              "headers": {
+                "Accept": "application/xml"
+              },
+              "method": "GET",
+              "params": {
+                "maximumRecords": 2,
+                "operation": "searchRetrieve",
+                "query": "dc.title=\"construction\"",
+                "recordSchema": "marcxml"
+              },
+              "url": "https://indcatsru.inflibnet.ac.in/biblio"
+            }
+          },
+          {
+            "id": "title-manufacturing",
+            "intent": "Topical title-field intent; bibliographic retrieval only",
+            "expected_ids": [
+              "14980379"
+            ],
+            "request": {
+              "headers": {
+                "Accept": "application/xml"
+              },
+              "method": "GET",
+              "params": {
+                "maximumRecords": 2,
+                "operation": "searchRetrieve",
+                "query": "dc.title=\"manufacturing\"",
+                "recordSchema": "marcxml"
+              },
+              "url": "https://indcatsru.inflibnet.ac.in/biblio"
+            }
+          }
+        ],
+        "authentication": "Anonymous IndCat-GEN, explicitly documented",
+        "request_shape_verified": false,
+        "documented_endpoint": "https://indcatsru.inflibnet.ac.in/biblio",
+        "method": "GET",
+        "protocol": "SRU 2.0 advertised; ISBN example explicitly specifies version=1.2",
+        "documented_indexes": [
+          "dc.title",
+          "bath.isbn",
+          "dc.publisher",
+          "dc.date"
+        ],
+        "documented_request": {
+          "query": "dc.title=Indian Polyporaceae",
+          "maximumRecords": 10,
+          "operation": "searchRetrieve",
+          "recordSchema": "marcxml"
+        },
+        "observed_probe": "examples/indcat.scouting.jsonl",
+        "supported_modes": [
+          "CQL title/ISBN/publisher/date metadata queries"
+        ],
+        "unsupported_modes": [
+          "full-book reading guarantee",
+          "full-text book search",
+          "semantic ranking"
+        ],
+        "research_pause_seconds": 3,
+        "research_hold": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified."
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl",
         "runs/retrieval-doc-links-20261105b/observations.jsonl",
-        "runs/retrieval-contracts-20261105b/observations.jsonl"
+        "runs/retrieval-contracts-20261105b/observations.jsonl",
+        "examples/indcat.scouting.jsonl"
       ],
       "observation_refs": [
         {
@@ -201,7 +485,8 @@
       "summary": "Metadata and content rights require separate evidence; no blanket reuse license established.",
       "facts": {
         "rights": "Metadata and content rights require separate evidence; no blanket reuse license established.",
-        "cost": "Unknown per item/service"
+        "cost": "Unknown per item/service",
+        "copyright_page_observation": "HTTP 200 page shell and Copyright Policy heading only; no substantive copyright policy text captured. SRU manual permits general use/retrieval/reuse, but no named metadata license established."
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl",
@@ -278,7 +563,17 @@
       "facts": {
         "positive_examples": 0,
         "native_identity_samples": [],
-        "version_caution": "Version and overlap unresolved"
+        "version_caution": "Version and overlap unresolved",
+        "duplicate_example": "First title probe returned 22 records; 772049 and 995468 both describe Indian Polyporaceae (1971), with different native bibliographic IDs. Do not call these distinct works or origins.",
+        "scouting_results": {
+          "attempted_topics": 9,
+          "parsed_results_queries": 6,
+          "timeouts": 1,
+          "http_503": 1,
+          "parse_failures": 1,
+          "current_verified_examples": 0,
+          "health_query": "Not attempted after 503"
+        }
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl",
@@ -317,7 +612,8 @@
       "facts": {
         "numeric_quota": null,
         "bulk_content_downloaded": false,
-        "current_restriction": "Supported query allowance/limits still unresolved"
+        "current_restriction": "Supported query allowance/limits still unresolved",
+        "robots_format_caution": "SRU host /robots.txt returned HTTP 200 text/xml; standard parser found no disallowing rules. General anonymous use is separately explicit in official SRU documentation. Do not claim that response is a conventional robots text file."
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl",
@@ -354,8 +650,8 @@
       "status": "complete",
       "summary": "Candidate/deferred triage only; no runtime activation or qualification.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Read the official SRU manual and copyright terms, verify anonymous MARCXML requests, paging/empty/diagnostic behavior and native record identities. Keep free-copy availability separate from metadata retrieval.",
+        "decision": "deferred",
+        "next_action": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified.",
         "activation_approved": false
       },
       "evidence": [

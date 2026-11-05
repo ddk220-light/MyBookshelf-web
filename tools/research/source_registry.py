@@ -91,7 +91,33 @@ def normalize(source, data, endpoint=None):
     if not isinstance(data, dict) or data.get('errors') or data.get('error'):
         raise ValueError('Provider returned an error or invalid object')
     adapter = source['query']['adapter']
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json'):
+    if adapter == 'openalex':
+        import re
+        rows = data.get('results', [data] if data.get('id') else None)
+        if not isinstance(rows, list):
+            raise ValueError('OpenAlex payload has no record list or singleton')
+        results, seen = [], set()
+        for row in rows:
+            sid = row.get('id') if isinstance(row, dict) else None
+            if not isinstance(sid, str) or not re.fullmatch(r'https://openalex.org/W[0-9]+', sid) or sid in seen:
+                raise ValueError('Invalid or duplicate OpenAlex work identity')
+            access = row.get('open_access')
+            if not isinstance(access, dict) or access.get('is_oa') is not True or not isinstance(row.get('title'), str) or not row['title'].strip():
+                raise ValueError('OpenAlex open-access/title assertion not satisfied')
+            seen.add(sid)
+            best = row.get('best_oa_location') or {}
+            if not isinstance(best, dict):
+                raise ValueError('Invalid OpenAlex location metadata')
+            results.append({'id': sid, 'title': row['title'], 'doi': row.get('doi'),
+                            'publication_year': row.get('publication_year'), 'language': row.get('language'),
+                            'type': row.get('type'), 'is_retracted': row.get('is_retracted'),
+                            'open_access': row['open_access'],
+                            'best_oa_location': {key: best.get(key) for key in
+                                                 ('id', 'is_oa', 'landing_page_url', 'pdf_url', 'license', 'version', 'is_accepted', 'is_published')},
+                            'reading_access_verified': False,
+                            'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
+        return results
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -223,6 +249,12 @@ def validate(registry=REGISTRY):
 
 def probe(source_id, case_ids=None):
     source = json.loads((REGISTRY / 'sources' / f'{source_id}.json').read_text())
+    if source['query']['adapter'] == 'openalex':
+        from openalex_metadata import probe as probe_openalex
+        return probe_openalex(source, case_ids)
+    if source['query']['adapter'] == 'indcat-sru':
+        from sru_metadata import probe as probe_sru
+        return probe_sru(source, case_ids)
     if source['query']['adapter'] == 'onet-json':
         from occupational_inventory import probe as probe_occupations
         return probe_occupations(source, case_ids)
