@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "free-knowledge-source-registry",
   "state": "in-progress",
-  "owner_request": "Populate the JSON/JSONL collection as the authoritative, complete source of all free-content research analysis. Capture every identified source, all existing analysis/evidence, query methods, ten verified examples for every retained queryable source, decisions, blockers and next actions. Actively continue through the full discovery goal rather than stopping after a daily quota or an initial shortlist.",
+  "owner_request": "Reach 100% of the agreed free-knowledge research coverage and actively execute through completion. Capture all analysis/evidence and triage all known named/linked leads; complete retained queryable-source dossiers and examples; close all 49 tracked areas and 18 USA/India civic cells with evidence. Continue across runs without a fixed daily source quota.",
   "tracking_issue": "https://github.com/ddk220-light/MyBookshelf-web/issues/164",
   "branch": "research/free-content-discovery-expansion",
   "milestones": [
@@ -30,7 +30,8 @@
     {
       "id": "M3",
       "objective": "Extend discovery through all six groups, 20 content categories, 20 industry tags and nine USA/India public tracks. Work toward 100 qualified origins per category/industry where evidence supports it; document genuine shortfalls.",
-      "state": "queued"
+      "state": "in-progress",
+      "note": "100% coverage target explicitly reaffirmed; start with zero-candidate areas and near-complete dossiers, then rotate all gaps. No shortfall has been accepted."
     }
   ],
   "counting_rules": [
@@ -41,11 +42,11 @@
   ],
   "execution": {
     "batch_size": "Small checkpoints, not a completion quota. Continue productive independent work within each run budget; resume hourly without waiting for new user requests.",
-    "cursor": "Checkpoint:90 source records;200 current examples across19 catalogs;zero full dossiers. O*NET has20 title queries spanning20 industry tags, seven sections complete, operating partial. Five Thoth publisher dossiers are now reconciled with fresh CC0 metadata terms, native publisher/imprint/work/edition/language/license records and known-title replays; five literal topic samples remain insufficient for full relevance/reader qualification. mediastudies.press equal-title records are editions1/2 with distinct UUIDs/DOIs. National Map canonical catalog added but deferred after API-host robots403; no API bypass. LSE-home robots403 and Mattering-home proxy502 are independent reader-host blockers. 216 URL roles triaged;28 old catalog identities/29references, six agency-gateway URLs and115 named labels unresolved. 47/49 areas have candidates,35/49 have some query evidence,0/49 fully qualified; C17 newspapers/public-interest articles andP05 permits/zoning have no candidate record yet. Do not infer general category coverage from overlapping O*NET memberships. All28 documentation queues/277jobs are complete collection passes; never restart153-job worker. Resume full dossiers and known entity reconciliation, then prioritize14 areas without query evidence and USA/India gaps. Latest owner scope is research-only; no runtime activation/import/deployment.",
+    "cursor": "The owner reaffirmed a 100% completion goal on2026-11-05. Completion automation prompt updated and remains enabled. Current baseline:90 records,200 examples/19 query-verified catalogs,0 full dossiers,47/49 candidate areas and35/49 with queries. This run is researching C17 newspapers andP05 zoning/planning and adding explicit area-target gates to capture_analysis.py. Original153-job queue stays complete and must not restart. Finish current dirty research changes, then capture/index/audit, validate/tests and scoped commit/push. Research-only; no runtime source or deployment work.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
-      "title": "Complete source research registry",
+      "title": "Reach full source research coverage",
       "enabled_at_creation": true,
       "cadence": "hourly",
       "timing_mode": "flexible_schedule",
@@ -60,10 +61,11 @@
         "fallback": "Execution started in this conversation; corpus capture, historical-source backfill and new Python inventory queries performed."
       },
       "last_observed_enabled": true,
-      "verified_at": "2026-11-05T08:17:18.399235+00:00",
+      "verified_at": "2026-11-05T08:35:42.263314+00:00",
       "next_run_time_reported": null,
       "verification_note": "Private automation peek confirms enabled; last-run timestamp07:37:47 UTC, no next-run timestamp. Future execution is not guaranteed; native Goal UI not activated.",
-      "last_run_time_reported": "2026-11-05T07:37:47.657191+00:00"
+      "last_run_time_reported": "2026-11-05T07:37:47.657191+00:00",
+      "automation_prompt_updated_at": "2026-11-05T08:33:26.799141+00:00"
     },
     "completion_audit": "completion-audit.json",
     "last_checkpoint": {
@@ -134,23 +136,33 @@
     "next_actions": [
       {
         "priority": 1,
-        "task": "Resolve 29 older catalog identities/30 references and 115 named labels. Normalize Book Sprints aliases/consortia using attributed evidence; do not count agencies, clients or URL variants as origins. Six NHTSA/DGCA gateway URL follow-ups remain explicit."
+        "area_ids": [
+          "C17"
+        ],
+        "task": "Extend the existing Library of Congress catalog scope through its documented Chronicling America JSON API. Preserve item/title/issue/page/OCR distinctions and original newspaper attribution; do not count each newspaper title as a new independent catalog."
       },
       {
         "priority": 2,
-        "task": "Complete USGS Earthquake metadata rights, current lifecycle/revision rules and maintainable refresh; retain broken policy URL (404), differing GeoJSON empty behavior and unrendered map screenshot as gaps. Do not retry www.usgs.gov robots503 hold without useful trigger."
+        "area_ids": [
+          "P05"
+        ],
+        "task": "Identify supported municipal zoning/planning catalogs for USA and India. Start official NYC published zoning resources and Chennai CMDA plan documentation. Use public non-personal zoning/plan metadata only, no property-owner or permit-applicant data."
       },
       {
         "priority": 3,
-        "task": "Complete Python reader/country/accessibility and maintenance ownership/refresh rehearsal; six sections and ten exact symbols pass. Use snapshot hashes, not mutable /3.15/ URL alone, for build identity. Later-day checks should not be replaced with more same-day repeats."
+        "source_ids": [
+          "onet",
+          "python-docs"
+        ],
+        "task": "Finish near-complete dossiers using evidence-backed refresh/failure/reader checks. Preserve archived version contradictions and country limits; no production activation."
       },
       {
         "priority": 4,
-        "task": "Find published MSHA digital-library query/export/item-rights contract for mining research only; exclude accident/fatality/personal records. Follow MARAD aggregate trade/port metadata and data rights, not vessel-owner records. NHTSA chain currently downgrades to HTTP; DGCA permits attributed reuse with third-party exceptions but query contract remains open."
+        "task": "Reconcile 28 older catalog identities/29 references, 115 named labels and six gateway follow-ups. Keep deferred providers aside until useful policy/recovery triggers."
       },
       {
         "priority": 5,
-        "task": "Continue Siyavula, Book Sprints, FAO/WHO, OpenAlex, OSTI, O*NET, OTL and Europe PMC remaining gates; follow all six playbooks, 49 areas and 18 civic cells. Keep explicit access/auth/parser/provider holds aside until useful triggers; no accounts, bypasses or runtime activation."
+        "task": "Continue the remaining areas without current queries, then all other area/country/language gaps. Each area follows its specific playbook; manual area reviews and 100-origin targets are enforced by the audit."
       }
     ],
     "last_dossier_run": {
@@ -551,7 +563,7 @@
     "No CAPTCHA/WAF bypass or bulk full-work copying; retain small metadata evidence.",
     "Free reader login is acceptable when the catalog is queryable; label account requirements and do not create accounts automatically."
   ],
-  "completion_definition": "All existing analysis/evidence is captured with reproducible provenance; every identified linked or named lead has a canonical triage decision; every retained queryable source has a complete dossier and ten current verified examples; blocked/rejected cases retain evidence, missing checks and reconsideration triggers; every category/industry and USA/India public-information cell has accounted-for coverage. Expansion continues toward the agreed targets; genuine shortfalls need explicit acceptance. A saved plan, imported claim, URL count or scheduled task alone never means completion.",
+  "completion_definition": "All known existing/current/historical analysis is captured with reproducible provenance; every identified linked/named lead has an evidence-backed canonical triage decision; every retained queryable source has eight complete dossier sections and ten current passing distinct examples; blocked/rejected cases retain concrete evidence, missing checks and useful revisit triggers; all 49 areas have explicit complete coverage reviews and all 18 USA/India civic cells are accounted. Each content category/industry reaches 100 qualified independent origins where supply supports it, or a real evidence-backed shortfall remains open until explicitly accepted by the owner. Partial claims, URL counts, overlaps, plans and schedules do not establish completion or exhaustion of internet sources.",
   "required_dossier_sections": [
     "identity_and_duplicates",
     "coverage_and_languages",
@@ -568,5 +580,26 @@
     "existing GitHub discovery backlog issues 164–170",
     "source-level historical/contextual findings with document and line provenance",
     "current and failed query observations; access/policy evidence; explicit unknowns"
-  ]
+  ],
+  "coverage_target": {
+    "target_percentage": 100,
+    "tracked_areas": 49,
+    "content_categories": 20,
+    "industry_tags": 20,
+    "civic_tracks": 9,
+    "jurisdiction_cells": 18,
+    "jurisdictions": [
+      "USA",
+      "India"
+    ],
+    "qualified_origins_per_content_or_industry_area": 100,
+    "per_retained_queryable_source": {
+      "complete_dossier_sections": 8,
+      "distinct_passing_current_examples": 10
+    },
+    "closure": "Evidence-backed area review and qualified-origin target; civic tracks additionally need both country cells accounted. Documented scarcity needs explicit owner acceptance with provenance; unresolved questions keep the area open.",
+    "counting": "Memberships overlap. Do not add them into a unique-origin total or treat candidate/query examples as complete qualification.",
+    "internet_exhaustion_claim": false,
+    "set_at": "2026-11-05T08:35:42.263314+00:00"
+  }
 }

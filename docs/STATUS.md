@@ -1,5 +1,14 @@
 # MyBookshelf web handoff
 
+**100% free-knowledge coverage goal, 2026-11-05:** the owner explicitly requested
+full completion and continued execution. The existing recurring task is updated
+and enabled as **Reach full source research coverage**. The [saved goal](research/free-content/registry/goal.json)
+and audit now enforce all 49 area closures, 18 USA/India civic cells, complete
+evidence-backed dossiers and 100 qualified origins per category/industry where
+supply supports it. Shortfalls require explicit owner acceptance; none has been
+granted. Work continues on C17 newspapers and P05 zoning/planning under the
+research-only scope. The native chat Goal UI is unavailable and was not activated.
+
 **Free-knowledge research continuation, 2026-11-05 (latest):** the isolated expansion worktree / draft PR #161 now has **90 records, 200 current examples across 19 catalogs, zero full dossiers**. Five Thoth publisher dossiers have current policy, query and native-edition analysis; equal mediastudies.press titles are separate editions 1 and 2. O*NET has seven complete sections and 20 industry examples. National Map is mapped but API-policy blocked. Coverage: 47/49 areas have candidates and 35/49 have some query evidence; all 49 areas and 18 USA/India civic cells remain open. There are 216 triaged URL roles, 28 unresolved older catalog identities / 29 references, and 115 unresolved named labels. All 28 documentation queues / 277 jobs are complete collection passes. Registry/evidence checks and 55 tests pass. Completion task remains enabled; latest owner scope is research-only. Read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md).
 
 **Free-knowledge research continuation, 2026-11-05 (latest):** PR #161 / isolated expansion worktree now has **89 records, 200 current examples across 19 catalogs, zero fully complete dossiers**. O*NET has twenty title queries spanning all twenty industry tags and seven complete dossier sections; operating limits remain partial. Three anonymous desktop/mobile readers pass. Strict release checks reject the archived30.3 JSON that labels itself30.4; a separately published30.3 spreadsheet matches the1016 current records. Whole-word matching removes the actual nurse/nursery false positive. All24 documentation queues/266jobs are complete collection passes;214 URL roles triaged,29 old catalog identities/30references and115 named labels remain unresolved. Registry/evidence checks and55 tests pass. Latest owner steering is research-only: no runtime activation/import/deployment. Read the [goal cursor](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md); never restart completed queues.

@@ -1,5 +1,29 @@
 # Free-knowledge source registry
 
+## Full coverage completion target
+
+The owner reaffirmed a 100% research-coverage goal on 2026-11-05. The existing
+hourly completion task is enabled as **Reach full source research coverage**;
+work also runs directly in this conversation. This is a saved repository goal
+and recurring task, not activation of the unavailable native chat Goal UI.
+
+Completion requires evidence-backed closure of all 49 areas and all 18 USA/India
+civic cells, complete known-evidence/lead analysis, and full eight-section dossiers
+with ten distinct current examples for retained queryable sources. Content and
+industry areas target 100 qualified independent origins each where supply supports
+it. Any documented scarcity stays open until the owner explicitly accepts the
+shortfall with recorded provenance. No shortfall has been accepted yet.
+
+`completion-audit.json` now exposes `area_completion` and `target_progress`.
+Candidate counts, query-only examples, overlapping classifications and repeated
+source IDs cannot satisfy the qualified-origin target. Every area also needs a
+complete manual coverage review backed by saved evidence. Record those reviews
+in append-only `analysis/area-coverage-reviews.jsonl` when performed; do not mark
+a partial review complete to raise the percentage. The initial goal metrics are
+0/49 area closures and 0/18 civic cells accounted. Read the current audit for
+later values; counts in historical prose are checkpoints.
+
+
 This is a research collection of ordinary JSON files in Git. It needs no SQL,
 database server, Redis, paid service or new dependency. JSON preserves nested
 query parameters, multiple capabilities and result samples more clearly than a

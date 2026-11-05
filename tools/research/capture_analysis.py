@@ -154,6 +154,35 @@ def dossier_gaps(source, registry=REGISTRY):
     return gaps
 
 
+def area_completion(area, membership, review, jurisdiction_cells, registry=REGISTRY):
+    """Candidate/query counts never satisfy the qualified-origin coverage target."""
+    qualified = sorted(set(membership.get('qualified_source_ids', [])))
+    target = 100 if area['id'].startswith(('C', 'I')) else None
+    evidence = review.get('evidence', [])
+    evidence_backed = bool(evidence) and all(
+        (registry / (ref.get('path', '') if isinstance(ref, dict) else ref)).is_file()
+        for ref in evidence)
+    reviewed = (review.get('status') == 'complete' and review.get('reviewed_at')
+                and review.get('rationale') and review.get('reviewed_scope')
+                and 'unresolved_questions' in review and not review['unresolved_questions']
+                and evidence_backed)
+    accepted_shortfall = bool(reviewed and review.get('owner_accepted_shortfall') is True
+                              and review.get('acceptance_provenance')
+                              and review.get('scarcity_evidence_summary'))
+    cells = [c for c in jurisdiction_cells if c['area_id'] == area['id']]
+    jurisdiction_complete = (target is not None or
+                             {c['country'] for c in cells if c['status'] == 'accounted'} == {'USA', 'India'})
+    numeric_target_met = target is not None and len(qualified) >= target
+    enough_origins = numeric_target_met or accepted_shortfall if target is not None else jurisdiction_complete
+    return {'area_id': area['id'], 'name': area['name'], 'qualified_source_ids': qualified,
+            'qualified_origins': len(qualified), 'target_origins': target,
+            'numeric_target_met': numeric_target_met, 'accepted_shortfall': accepted_shortfall,
+            'manual_coverage_review_complete': bool(reviewed),
+            'jurisdiction_complete': jurisdiction_complete,
+            'status': 'complete' if reviewed and enough_origins and jurisdiction_complete else 'open',
+            'review': review or None}
+
+
 def evidence_run_audit(registry=REGISTRY):
     runs, errors = [], []
     for directory in sorted((registry / 'runs').glob('*')):
@@ -304,6 +333,14 @@ def audit():
                                        'status': 'accounted' if accounted else 'open',
                                        'qualified_source_ids': qualified,
                                        'review': review or None})
+    area_reviews = {}
+    area_review_file = REGISTRY / 'analysis/area-coverage-reviews.jsonl'
+    if area_review_file.exists():
+        for line in area_review_file.read_text().splitlines():
+            review = json.loads(line)
+            area_reviews[review['area_id']] = review
+    area_results = {area['id']: area_completion(area, memberships[area['id']],
+                    area_reviews.get(area['id'], {}), jurisdiction_cells) for area in areas}
     entity_leads_file = REGISTRY / 'analysis/entity-leads.jsonl'
     entity_leads = {}
     if entity_leads_file.exists():
@@ -332,7 +369,15 @@ def audit():
         'named_entity_lead_count': len(entity_leads), 'unresolved_named_entity_count': len(unresolved_names),
         'named_entity_review_complete': named_complete, 'documentation_runs': run_audits,
         'source_gaps': source_gaps, 'area_coverage': memberships,
-        'goal_complete': not errors and not unresolved and all(v['complete'] for v in source_gaps.values()) and all(v['qualified_source_ids'] for v in memberships.values()),
+        'area_completion': area_results,
+        'target_progress': {'area_total': len(areas),
+                            'areas_complete': sum(v['status'] == 'complete' for v in area_results.values()),
+                            'jurisdiction_total': len(jurisdiction_cells),
+                            'jurisdictions_accounted': sum(c['status'] == 'accounted' for c in jurisdiction_cells),
+                            'origins_per_content_or_industry_area': 100,
+                            'target_percentage': 100,
+                            'note': 'Area memberships overlap; counts cannot be summed into unique origins or overall percentage completion.'},
+        'goal_complete': not errors and not unresolved and all(v['complete'] for v in source_gaps.values()) and all(v['status'] == 'complete' for v in area_results.values()),
         'completion_note': 'Even a full current inventory does not automatically satisfy 100-origin targets or USA/India jurisdiction coverage. Owner acceptance or target evidence is required separately.'}
     # Never automatically close a goal whose expansion/coverage targets remain open.
     goal = json.loads((REGISTRY / 'goal.json').read_text())

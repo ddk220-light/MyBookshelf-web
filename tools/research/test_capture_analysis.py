@@ -5,11 +5,57 @@ from unittest.mock import patch
 import zlib
 import json
 
-from capture_analysis import paragraphs, snapshot, source_mentions, dossier_gaps, evidence_run_audit
+from capture_analysis import paragraphs, snapshot, source_mentions, dossier_gaps, evidence_run_audit, area_completion
 from sphinx_inventory import local_search, parse_inventory, probe
 
 
 class CorpusTests(unittest.TestCase):
+    def test_coverage_requires_qualified_origins_and_manual_review(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); (root / 'review.json').write_text('{}')
+            area = {'id': 'C17', 'name': 'News'}
+            review = {'status': 'complete', 'reviewed_at': 'today', 'reviewed_scope': 'Defined catalog scope',
+                      'rationale': 'Current source and language evidence reviewed',
+                      'evidence': ['review.json'], 'unresolved_questions': []}
+            membership = {'candidate_source_ids': [str(i) for i in range(150)],
+                          'query_example_source_ids': [str(i) for i in range(120)],
+                          'qualified_source_ids': [str(i) for i in range(99)]}
+            self.assertEqual(area_completion(area, membership, review, [], root)['status'], 'open')
+            # Repeated membership or a candidate is not the hundredth origin.
+            membership['qualified_source_ids'].append('0')
+            self.assertEqual(area_completion(area, membership, review, [], root)['qualified_origins'], 99)
+            membership['qualified_source_ids'].append('99')
+            self.assertEqual(area_completion(area, membership, review, [], root)['status'], 'complete')
+            review['unresolved_questions'] = ['India/local-language gap is unresolved']
+            self.assertEqual(area_completion(area, membership, review, [], root)['status'], 'open')
+
+    def test_scarcity_cannot_be_silently_accepted_or_use_missing_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); (root / 'review.json').write_text('{}')
+            area = {'id': 'I01', 'name': 'Agriculture'}
+            review = {'status': 'complete', 'reviewed_at': 'today', 'reviewed_scope': 'Documented discovery scope',
+                      'rationale': 'Scarcity review', 'evidence': ['review.json'], 'unresolved_questions': [],
+                      'scarcity_evidence_summary': 'Directories and conversion evidence reviewed'}
+            self.assertEqual(area_completion(area, {}, review, [], root)['status'], 'open')
+            review['owner_accepted_shortfall'] = True
+            self.assertEqual(area_completion(area, {}, review, [], root)['status'], 'open')
+            review['acceptance_provenance'] = 'Explicit owner acceptance reference'
+            self.assertEqual(area_completion(area, {}, review, [], root)['status'], 'complete')
+            (root / 'review.json').unlink()
+            self.assertEqual(area_completion(area, {}, review, [], root)['status'], 'open')
+
+    def test_civic_area_requires_both_country_cells_and_review(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); (root / 'review.json').write_text('{}')
+            review = {'status': 'complete', 'reviewed_at': 'today', 'reviewed_scope': 'Both jurisdictions',
+                      'rationale': 'Country evidence', 'evidence': ['review.json'], 'unresolved_questions': []}
+            area = {'id': 'P05', 'name': 'Planning'}
+            cells = [{'area_id': 'P05', 'country': 'USA', 'status': 'accounted'}]
+            self.assertEqual(area_completion(area, {}, review, cells, root)['status'], 'open')
+            cells.append({'area_id': 'P05', 'country': 'India', 'status': 'accounted'})
+            self.assertEqual(area_completion(area, {}, review, cells, root)['status'], 'complete')
+            self.assertEqual(area_completion(area, {}, {}, cells, root)['status'], 'open')
+
     def test_complete_label_cannot_hide_questions_missing_files_or_historical_only_claims(self):
         with tempfile.TemporaryDirectory() as tmp:
             registry = Path(tmp)
