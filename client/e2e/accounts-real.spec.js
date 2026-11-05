@@ -881,6 +881,7 @@ test("private export downloads JSON; deletion can be cancelled, confirmed once a
       }),
     ).toBeVisible();
     await expect(page.getByText(/Server sign-out is still unconfirmed/)).toHaveCount(0);
+    await expect(page.getByText(/Sign in to see your account shelf/)).toHaveCount(0);
     await expect(page.getByRole("button", {name: "Retry sign out", exact: true})).toHaveCount(0);
     expect(deletionPosts).toBe(1);
     expect(nonce).toHaveLength(43);

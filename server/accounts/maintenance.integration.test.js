@@ -30,9 +30,15 @@ test(
     const target = new URL(base);
     target.pathname = "/" + database;
     const isolated = new Pool({ connectionString: target.href });
+    const middlewares = [];
+    const owned = (middleware) => {
+      middlewares.push(middleware);
+      return middleware;
+    };
     t.after(async () => {
+      for (const middleware of middlewares) await middleware.close();
       await isolated.end();
-      await admin.query('DROP DATABASE "' + database + '" WITH (FORCE)');
+      await admin.query('DROP DATABASE "' + database + '"');
       await admin.end();
     });
     await migrate(isolated);
@@ -57,7 +63,7 @@ test(
       ACCOUNTS_DELETION_LEDGER_READ_WRITE_TOKEN: "synthetic-configured",
     };
     const monitored = createApplication({
-      accountHealth: createAccountHealthMiddleware({ env: monitoredEnv }),
+      accountHealth: owned(createAccountHealthMiddleware({ env: monitoredEnv })),
     });
     const healthPath = "/api/account/health";
     assert.equal(
@@ -81,9 +87,9 @@ test(
     assert.equal(ready.headers["x-robots-tag"], "noindex");
     assert.equal((await request(monitored).post(healthPath)).status, 405);
     const privileged = createApplication({
-      accountHealth: createAccountHealthMiddleware({
+      accountHealth: owned(createAccountHealthMiddleware({
         env: { ...monitoredEnv, ACCOUNTS_WORKER_DATABASE_URL: target.href },
-      }),
+      })),
     });
     assert.equal(
       (await request(privileged).get(healthPath)).status,
@@ -91,7 +97,7 @@ test(
       "administrator must not be used by monitor",
     );
     const missing = createApplication({
-      accountHealth: createAccountHealthMiddleware({ env }),
+      accountHealth: owned(createAccountHealthMiddleware({ env })),
     });
     assert.equal(
       (await request(missing).get(healthPath)).status,
@@ -99,7 +105,7 @@ test(
       "missing mail is unavailable even with a recent success",
     );
     await isolated.query("DELETE FROM account_job_health");
-    const app = createApplication({ jobs: createJobMiddleware({ env }) });
+    const app = createApplication({ jobs: owned(createJobMiddleware({ env })) });
     const path = "/api/internal/account-jobs";
     assert.equal((await request(app).get(path)).status, 403);
     assert.equal(

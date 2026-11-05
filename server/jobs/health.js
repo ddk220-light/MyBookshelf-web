@@ -2,7 +2,7 @@
 // queue contents, timestamps or credentials are returned to the caller.
 export function createAccountHealthMiddleware({ env = process.env } = {}) {
   let pool;
-  return async (req, res, next) => {
+  const middleware = async (req, res, next) => {
     if (req.path !== "/api/account/health") return next();
     res.set({
       "Cache-Control": "private, no-store",
@@ -50,4 +50,8 @@ export function createAccountHealthMiddleware({ env = process.env } = {}) {
       return unavailable();
     }
   };
+  middleware.close = async () => {
+    await pool?.end();
+  };
+  return middleware;
 }
