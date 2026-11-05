@@ -11,6 +11,9 @@ Draft [PR #161](https://github.com/ddk220-light/MyBookshelf-web/pull/161) carrie
 the review packet. It is documentation only on `research/free-content-discovery-expansion`
 in `/workspace/MyBookshelf-web-free-content-expansion`; no candidate integrations
 are enabled by this proposal. The no-new-datastore runtime policy continues.
+The [execution workflow](research/free-content/EXECUTION_PLAN.md) turns the plan
+into rolling research batches and small verified releases; the 300-membership
+survey and 60-review pilot are cumulative limits, not an upfront delivery gate.
 The earlier live simplification was released through PR #160, main `82c6559`;
 [#159](https://github.com/ddk220-light/MyBookshelf-web/issues/159) records that
 release. Older Redis-dependent descriptions below are historical.

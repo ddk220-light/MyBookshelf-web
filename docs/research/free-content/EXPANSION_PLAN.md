@@ -13,6 +13,11 @@ proposal adds no hosted database, paid search service, production change or sour
 account. Worktree: `/workspace/MyBookshelf-web-free-content-expansion`, branch
 `research/free-content-discovery-expansion`, based on main `82c6559`.
 
+Use the [execution workflow](EXECUTION_PLAN.md) to run this program: small research
+batches, one active connector family, evidence-based source stories and frequent
+verified releases. M1/M2/M3 overlap; the survey and pilot counts below are
+cumulative limits, not prerequisites to the first source release.
+
 ## 1. Goal and counting rules
 
 The useful outcome is: **a reader searches for something and receives a matching
@@ -439,8 +444,8 @@ bounded first research cycle; it does not create thousands of speculative tasks.
 | --- | --- | --- |
 | M0: Taxonomy and research contract | Accepted content categories, twenty industry tags, six detailed playbooks, count rules and review template | Current revision incorporates owner direction on industries and US/India civic/maps coverage; implementation remains future work |
 | M1: Candidate register and first survey | Ten leads/content category plus five/industry; shared deduplicated register and country/language/occupation gaps | Up to 300 category/industry memberships; actual unique count and P01–P09 USA/India coverage reported |
-| M2: Feasibility pilot | Aim for two deep reviews/content category and one/industry, with overlaps and public-records allocation inside a 60-unique-origin cap | Every reviewed source has a qualified/deferred/rejected reason; geographic/industry gaps, conversion rate and first ten integration recommendations |
-| M3: First expansion release | Implement the highest-value qualified origins in batches of 3–5; expand current book coverage as well as adding sources | Each batch has supported retrieval, fresh access evidence, measured marginal coverage and end-to-end tests |
+| M2: Feasibility pilot | Aim for two deep reviews/content category and one/industry, with overlaps and public-records allocation inside a cumulative 60-unique-origin cap | Every reviewed source has a qualified/deferred/rejected reason; feed ready sources into delivery while research continues |
+| M3: First expansion release | Implement the highest-value qualified origins in small batches of up to 3–5; the first ready source can ship independently | Each released source has supported retrieval, fresh access evidence, measured marginal coverage and end-to-end tests; no need to finish M1/M2 first |
 | M4: 100 unique origins | Continue targeted discovery; reach 100 qualified unique origins, then enable them in independently verified batches | Report qualified and enabled counts separately; never label a research-only milestone as live coverage |
 | M5: Per-category and industry ladder | Continue 10 → 25 → 50 → 100 per content category and selected industry cohorts, replenishing from measured conversion rates | Separate content/industry memberships, shortages, query modes, USA/India civic/maps coverage and globally unique totals published |
 | M6: Maintenance and consolidation | Broken-source triage, policy review, refresh validation, overlap review | Remove stale/unsupported counts; prioritize reliable useful coverage over a higher headline number |
@@ -479,7 +484,9 @@ catalogs, geological data and agriculture/construction/manufacturing/logistics
 guidance. Recheck existing source
 freshness first; new names do not solve an expired catalog or a three-item pilot.
 
-Deliver a research register, 60 or fewer distinct-origin completed reviews, an honest capability
-and geography matrix, and a ranked next-ten recommendation. Only then expand
-implementation stories for the first 3–5 integrations. This document is the plan
-for that work, not authorization to treat the candidate examples as enabled.
+Maintain a research register, up to 60 distinct-origin completed reviews, an honest
+capability/geography matrix and a rolling ranked next-ten recommendation. Expand
+implementation stories as the first useful sources qualify and capacity opens;
+continue the broader survey alongside delivery. The [execution workflow](EXECUTION_PLAN.md)
+defines active-work limits, the first delivery waves, release gates and reports.
+Candidate examples remain unqualified until their actual evidence passes.

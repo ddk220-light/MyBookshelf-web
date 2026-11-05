@@ -15,8 +15,8 @@ research result. Do not copy this blank template into production source config.
 - Source country / local relevance / languages and scripts:
 - Catalog or explicit subset; known size versus sampled size:
 - Role: host, publisher catalog, index or resolver. Underlying origin attribution:
-- State: candidate / triaged / probed / qualified / deferred / rejected /
-  implementing / enabled / suspended. Reason and last transition date:
+- State: candidate / triaged / probed / qualified / ready / deferred / rejected /
+  implementing / verifying / enabled / suspended. Reason and last transition date:
 
 ## Retrieval and policy
 
@@ -85,6 +85,8 @@ Record a failed probe without claiming source-wide downtime or absence.
 - Qualified scope and capability; withheld scope or unresolved assumptions:
 - Marginal value over current sources; overlap estimate and method:
 - Proposed priority / effort / source maintainer / follow-up review date:
+- Delivery batch / active story owner / connector dependency / remaining estimate:
+- Blocker, next action and specific reconsideration trigger or date:
 - Defer/reject reason, smallest next action and any required permission:
 - For enablement: story/PR, mapping contract, regression evidence, actual hosted
   browser/API proof, release ID, rollback and operating review schedule:

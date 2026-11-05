@@ -7,6 +7,10 @@ tracks. It includes queryability gates and staged qualification/enablement.
 Use the [source review template](SOURCE_REVIEW_TEMPLATE.md)
 for future candidates. It is a planning proposal; named leads are not enabled sources.
 
+The [execution workflow](EXECUTION_PLAN.md) recommends rolling research batches,
+one active connector family and frequent verified releases, with timeboxes,
+story definitions, operating checks and a bounded first-cycle sequence.
+
 **Current implementation direction (2026-11-03):** use the
 [simple free live plan](SIMPLE_LIVE_PLAN.md), authorized by the owner. Live paper
 requests and signed provider cursors require no Redis/database. Shared-store

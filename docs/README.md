@@ -32,6 +32,8 @@ retired authentication and unrelated research archives are outside its scope.
   content categories, 20 industry tags, six detailed discovery playbooks and a
   route to 100 qualified sources per category. Dedicated USA/India civic, property
   and geological-map coverage; [review template](research/free-content/SOURCE_REVIEW_TEMPLATE.md).
+- [Expansion execution workflow](research/free-content/EXECUTION_PLAN.md): research
+  cadence, work-in-progress limits, source stories, delivery waves and release checks.
 
 - [Overview and source categories](research/free-content/README.md).
 - [Repository catalog, APIs and access requirements](research/free-content/source-catalog.md).
