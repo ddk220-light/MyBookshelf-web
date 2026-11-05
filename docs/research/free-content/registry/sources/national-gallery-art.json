@@ -8,7 +8,7 @@
   "areas": [
     "C16"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "museum-collection-catalog",
@@ -18,9 +18,9 @@
     "jurisdiction": "USA"
   },
   "capabilities": [
-    "Officialcurrentpage publishesCC0 factualart-object/artistdatasetonGitHub andfreeobject-pageimage downloads; exactdatafiles/querynotyetreviewed."
+    "Local title-token searches over146454 NGA object metadata records from the pinned2026-11-05 CC0 CSV; native object/accession/parent identities retained."
   ],
-  "licensing": "Current officialNGApage releasesfactualart-object/artistdataset underCC0andselectedopenaccessimages freeforcommercial/noncommercialuse. Exactexportfilesandindividualimageclassifications remainunverified.",
+  "licensing": "NGA officially releases collection metadata CSV underCC0. README and dictionary explicitly exclude image/media content from this blanket waiver; per-image rights and access must be checked separately.",
   "documentation": [
     "https://www.nga.gov/artworks/free-images-and-open-access",
     "https://github.com/NationalGalleryOfArt/opendata"
@@ -28,21 +28,181 @@
   "evidence": [
     "runs/museum-thesis-access-20261105ae/observations.jsonl",
     "runs/museum-native-contract-20261105cj/observations.jsonl",
-    "runs/museum-rights-current-20261105ck/observations.jsonl"
+    "runs/museum-rights-current-20261105ck/observations.jsonl",
+    "analysis/external/nga-opendata-contract-20261105.json",
+    "examples/national-gallery-art.access.jsonl",
+    "examples/national-gallery-art.scouting.jsonl",
+    "examples/national-gallery-art.jsonl",
+    "examples/national-gallery-art.boundaries.jsonl"
   ],
   "analysis_refs": [],
   "limitations": [
-    "Publisherstates130000+artworks/artistsand60000+freeimages; countsarenotindependentlyaudited.",
-    "WholecollectionmetadataCC0doesnotmeanallimagesareavailableorunderthesamerights."
+    "Metadata only; no image or full-text search. Image availability and rights are separate.",
+    "Ten title searches verified; ambiguous titles can return multiple distinct native objects, not one deduplicated work.",
+    "Refresh requires a newly reviewed export version; pinned snapshot does not claim permanent freshness."
   ],
-  "last_reviewed_at": "2026-11-05T16:19:41.230914+00:00",
-  "next_action": "ReadpublishedGitHubschema/version/license andboundedexport sizes; preserveobject/accessionidentity andmapartist/partsrelations. Verify10localorAPIqueries andrepresentativefullitemrights/access. No bulkimages.",
+  "last_reviewed_at": "2026-11-05T18:52:21.582545+00:00",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "query": {
-    "adapter": "unverified",
-    "endpoint": "https://www.nga.gov/artworks/free-images-and-open-access",
-    "authentication": "Unknown; noaccountorpaidservicecreated.",
+    "adapter": "nga-csv",
+    "endpoint": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+    "authentication": "Public downloadable CSV; no account/key/payment.",
     "cost": "Unknown; nofeeincurred.",
-    "cases": []
+    "cases": [
+      {
+        "id": "art-title-01",
+        "intent": "Search artwork title tokens: Ginevra Benci",
+        "expected_ids": [
+          "50724"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Ginevra Benci"
+          }
+        }
+      },
+      {
+        "id": "art-title-02",
+        "intent": "Search artwork title tokens: Girl Red Hat",
+        "expected_ids": [
+          "60"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Girl Red Hat"
+          }
+        }
+      },
+      {
+        "id": "art-title-03",
+        "intent": "Search artwork title tokens: Lady Writing",
+        "expected_ids": [
+          "46437"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Lady Writing"
+          }
+        }
+      },
+      {
+        "id": "art-title-04",
+        "intent": "Search artwork title tokens: Japanese Footbridge",
+        "expected_ids": [
+          "74796"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Japanese Footbridge"
+          }
+        }
+      },
+      {
+        "id": "art-title-05",
+        "intent": "Search artwork title tokens: Lavender Mist",
+        "expected_ids": [
+          "55819"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Lavender Mist"
+          }
+        }
+      },
+      {
+        "id": "art-title-06",
+        "intent": "Search artwork title tokens: Skiff",
+        "expected_ids": [
+          "53746"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Skiff"
+          }
+        }
+      },
+      {
+        "id": "art-title-07",
+        "intent": "Search artwork title tokens: Watson Shark",
+        "expected_ids": [
+          "46471"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Watson Shark"
+          }
+        }
+      },
+      {
+        "id": "art-title-08",
+        "intent": "Search artwork title tokens: Alba Madonna",
+        "expected_ids": [
+          "26"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Alba Madonna"
+          }
+        }
+      },
+      {
+        "id": "art-title-09",
+        "intent": "Search artwork title tokens: Feast Gods",
+        "expected_ids": [
+          "1138"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Feast Gods"
+          }
+        }
+      },
+      {
+        "id": "art-title-10",
+        "intent": "Search artwork title tokens: White Girl",
+        "expected_ids": [
+          "12198"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "White Girl"
+          }
+        }
+      }
+    ],
+    "export_git_blob_sha": "5bd07fe48b6ebfc745cbcb025f3ab45f50bcc2ee",
+    "export_commit": "68d372221c7a848b932ce07c1e1f8c293c646688",
+    "export_entry_count": 146454
   },
   "dossier": {
     "identity_and_duplicates": {
@@ -85,38 +245,58 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "PublishedGitHubexport routeexists; exactfile/download/queryshape remainsopen.",
+      "summary": "Local title-token searches over146454 NGA object metadata records from the pinned2026-11-05 CC0 CSV; native object/accession/parent identities retained.",
       "facts": {
-        "query_evidence": false,
-        "request_shapes": [
-          "https://www.nga.gov/artworks/free-images-and-open-access",
-          "https://github.com/NationalGalleryOfArt/opendata"
-        ]
+        "adapter": "nga-csv",
+        "endpoint": "https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/68d372221c7a848b932ce07c1e1f8c293c646688/data/objects.csv",
+        "cases": [
+          "art-title-01",
+          "art-title-02",
+          "art-title-03",
+          "art-title-04",
+          "art-title-05",
+          "art-title-06",
+          "art-title-07",
+          "art-title-08",
+          "art-title-09",
+          "art-title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Local title-token searches over146454 NGA object metadata records from the pinned2026-11-05 CC0 CSV; native object/accession/parent identities retained.",
+        "authentication": "Public downloadable CSV; no account/key/payment.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/museum-thesis-access-20261105ae/observations.jsonl",
-        "runs/museum-native-contract-20261105cj/observations.jsonl",
-        "runs/museum-rights-current-20261105ck/observations.jsonl"
+        "analysis/external/nga-opendata-contract-20261105.json",
+        "examples/national-gallery-art.access.jsonl",
+        "examples/national-gallery-art.scouting.jsonl",
+        "examples/national-gallery-art.jsonl",
+        "examples/national-gallery-art.boundaries.jsonl"
       ],
       "open_questions": [
-        "Exactpermitted request/import,fields,auth,paging and10currentexamples missing."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "PrimaryNGApage explicitly releases factualartobjectdataset underCC0;selectedopenaccessimagesfreeforcommercial/noncommercialuse.",
+      "summary": "NGA officially releases collection metadata CSV underCC0. README and dictionary explicitly exclude image/media content from this blanket waiver; per-image rights and access must be checked separately.",
       "facts": {
-        "metadata_license": "CC0",
-        "content_license": "Selected60000+freeimages viaobjectpages;individualimageclassificationmustbechecked",
-        "fee": "Publishedmetadataandselectedimagesfree;noaccountused."
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Public downloadable CSV; no account/key/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
       },
       "evidence": [
-        "runs/museum-thesis-access-20261105ae/observations.jsonl",
-        "runs/museum-native-contract-20261105cj/observations.jsonl",
-        "runs/museum-rights-current-20261105ck/observations.jsonl"
+        "analysis/external/nga-opendata-contract-20261105.json",
+        "examples/national-gallery-art.access.jsonl",
+        "examples/national-gallery-art.scouting.jsonl",
+        "examples/national-gallery-art.jsonl",
+        "examples/national-gallery-art.boundaries.jsonl"
       ],
       "open_questions": [
-        "Reconcilemetadataanditem/contentrights,separateprotectedworks andaccessconditions."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -137,51 +317,66 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Historicalpeerlabelanddocumentation arenotqueryqualityevidence.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "historical_only_not_fresh_queries": true
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Local title-token searches over146454 NGA object metadata records from the pinned2026-11-05 CC0 CSV; native object/accession/parent identities retained.",
+        "empty_and_boundary_evidence": "examples/national-gallery-art.boundaries.jsonl"
       },
       "evidence": [
-        "runs/museum-thesis-access-20261105ae/observations.jsonl",
-        "runs/museum-native-contract-20261105cj/observations.jsonl",
-        "runs/museum-rights-current-20261105ck/observations.jsonl"
+        "analysis/external/nga-opendata-contract-20261105.json",
+        "examples/national-gallery-art.access.jsonl",
+        "examples/national-gallery-art.scouting.jsonl",
+        "examples/national-gallery-art.jsonl",
+        "examples/national-gallery-art.boundaries.jsonl"
       ],
       "open_questions": [
-        "Nativeidentity,topicrelevance,paging,empty,error,accessandversionchecks missing."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Policy-aware serialmetadatareview;numericquotas/SLA unknown.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "pacing": "Atleast3secondsorpublishedrobotslimits",
-        "access_control": "Stopondenial;neverusemirrorsorbypass",
-        "bulk_media": "No bulkimages/books/audio"
+        "limits": [
+          "Metadata only; no image or full-text search. Image availability and rights are separate.",
+          "Ten title searches verified; ambiguous titles can return multiple distinct native objects, not one deduplicated work.",
+          "Refresh requires a newly reviewed export version; pinned snapshot does not claim permanent freshness."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "runs/museum-thesis-access-20261105ae/observations.jsonl",
-        "runs/museum-native-contract-20261105cj/observations.jsonl",
-        "runs/museum-rights-current-20261105ck/observations.jsonl"
+        "analysis/external/nga-opendata-contract-20261105.json",
+        "examples/national-gallery-art.access.jsonl",
+        "examples/national-gallery-art.scouting.jsonl",
+        "examples/national-gallery-art.jsonl",
+        "examples/national-gallery-art.boundaries.jsonl"
       ],
       "open_questions": [
-        "Publishedlimits,refresh/removalhandlingandreliability needevidence."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Retaincandidatewithcurrentprimaryrights/exportlead,notqueryverification.",
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "decision": "candidate",
+        "decision": "working-query-scope-verified",
+        "reason": "Local title-token searches over146454 NGA object metadata records from the pinned2026-11-05 CC0 CSV; native object/accession/parent identities retained.",
         "activation_approved": false,
-        "owner_action_required": false,
-        "next_action": "ReadpublishedGitHubschema/version/license andboundedexport sizes; preserveobject/accessionidentity andmapartist/partsrelations. Verify10localorAPIqueries andrepresentativefullitemrights/access. No bulkimages."
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "runs/museum-thesis-access-20261105ae/observations.jsonl",
-        "runs/museum-native-contract-20261105cj/observations.jsonl",
-        "runs/museum-rights-current-20261105ck/observations.jsonl"
+        "analysis/external/nga-opendata-contract-20261105.json",
+        "examples/national-gallery-art.access.jsonl",
+        "examples/national-gallery-art.scouting.jsonl",
+        "examples/national-gallery-art.jsonl",
+        "examples/national-gallery-art.boundaries.jsonl"
       ],
-      "open_questions": []
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
     }
   }
 }

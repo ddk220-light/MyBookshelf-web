@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui'):
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -328,6 +328,12 @@ def probe(source_id, case_ids=None):
                 raise ValueError('Select map cases explicitly; mixed LOC batches cannot bypass the map policy gate')
             from loc_maps import probe as probe_maps
             return probe_maps(source, maps)
+    if source['query']['adapter'] in ('crossref-public', 'arxiv-atom'):
+        from scholarly_queries import probe as probe_scholarly
+        return probe_scholarly(source, case_ids)
+    if source['query']['adapter'] == 'nga-csv':
+        from nga_catalog import probe as probe_nga
+        return probe_nga(source, case_ids)
     if source['query']['adapter'] == 'cleveland-art':
         from cleveland_catalog import probe as probe_cleveland
         return probe_cleveland(source, case_ids)
@@ -355,7 +361,7 @@ def probe(source_id, case_ids=None):
     if source['query']['adapter'] in ('federal-register', 'usaspending'):
         from civic_catalogs import probe as probe_civic
         return probe_civic(source, case_ids)
-    if source['query']['adapter'] in ('fda-guidance-ui', 'epa-nepis-ui'):
+    if source['query']['adapter'] in ('fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv'):
         from browser_publications import probe as probe_browser_publications
         return probe_browser_publications(source, case_ids)
     if source['query']['adapter'] in ('osha-publications', 'faa-handbooks'):

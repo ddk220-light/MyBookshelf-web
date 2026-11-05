@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-11-05T18:24:20.045320+00:00",
+  "generated_at": "2026-11-05T18:54:32.127984+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by at least ten current passing examples in this registry. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
   "coverage_definition": "Queryability by group and connector, per owner clarification. Deeper research-quality checks remain separate.",
   "totals": {
     "total": 134,
-    "working": 37,
-    "blocked_or_failed": 56,
-    "still_checking": 41,
-    "not_working_verified": 97,
-    "assessed_or_deferred": 93,
-    "remaining_to_assess": 41,
-    "passing_query_examples": 405
+    "working": 39,
+    "blocked_or_failed": 57,
+    "still_checking": 38,
+    "not_working_verified": 95,
+    "assessed_or_deferred": 96,
+    "remaining_to_assess": 38,
+    "passing_query_examples": 425
   },
   "groups": [
     {
@@ -51,17 +51,17 @@
       "id": "G05",
       "name": "Research papers and scholarly sources",
       "total": 22,
-      "working": 3,
-      "blocked_or_failed": 6,
-      "still_checking": 13
+      "working": 4,
+      "blocked_or_failed": 7,
+      "still_checking": 11
     },
     {
       "id": "G06",
       "name": "Language, culture and media",
       "total": 12,
-      "working": 3,
+      "working": 4,
       "blocked_or_failed": 7,
-      "still_checking": 2
+      "still_checking": 1
     }
   ],
   "connectors": [
@@ -1768,6 +1768,23 @@
     {
       "group_id": "G05",
       "group": "Research papers and scholarly sources",
+      "connector_id": "arxiv",
+      "connector": "arXiv",
+      "status": "blocked_or_failed",
+      "passing_examples": 0,
+      "tested_search_scope": "Supported current search method not yet verified",
+      "known_limitations": "The export.arxiv.org robots response is HTML-labelled and contains a global Disallow:/ directive; current API access cannot be treated as permitted. | No live API query sent; documentation availability is not query verification.",
+      "next_step_or_blocker": "Wait for a policy clarification/change or documented explicitly permitted alternative; do not switch hosts to evade this restriction. Continue other scholarly connectors.",
+      "block_reason": "The export.arxiv.org robots response is HTML-labelled and contains a global Disallow:/ directive; current API access cannot be treated as permitted.",
+      "last_attempt_and_result": "Read current API manual/terms; inspected the26-byte robots response after the conservative policy gate stopped the first planned query. / Policy text contains Disallow:/; API query not sent. Current docs still describe a metadata API, so conflict remains open.",
+      "recovery_decision": "wait_for_policy_clarification_or_change",
+      "last_reviewed_at": "2026-11-05T18:54:29.288366+00:00",
+      "record": "sources/arxiv.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G05",
+      "group": "Research papers and scholarly sources",
       "connector_id": "caltech-thesis",
       "connector": "CaltechTHESIS public static repository",
       "status": "blocked_or_failed",
@@ -1870,23 +1887,6 @@
     {
       "group_id": "G05",
       "group": "Research papers and scholarly sources",
-      "connector_id": "arxiv",
-      "connector": "arXiv",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "No key. Current reviewed legacy API/OAI/RSS terms: one request/3 sec, one connection, across all controlled machines. Shared queue/cache needed. Atom worked. **Medium / P0**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
-      "next_step_or_blocker": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-      "block_reason": "",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": null,
-      "record": "sources/arxiv.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G05",
-      "group": "Research papers and scholarly sources",
       "connector_id": "biorxiv-medrxiv",
       "connector": "bioRxiv / medRxiv",
       "status": "still_checking",
@@ -1916,23 +1916,6 @@
       "recovery_decision": "",
       "last_reviewed_at": null,
       "record": "sources/core.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G05",
-      "group": "Research papers and scholarly sources",
-      "connector_id": "crossref",
-      "connector": "Crossref",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Public reads without key; real `mailto` contact recommended for polite pool. Observe rate/concurrency headers. Search worked. **Low / P1 enrichment**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
-      "next_step_or_blocker": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-      "block_reason": "",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": null,
-      "record": "sources/crossref.json",
       "production_activation_changed": false
     },
     {
@@ -2086,6 +2069,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T14:11:41.272046+00:00",
       "record": "sources/victoria-university-repository.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G05",
+      "group": "Research papers and scholarly sources",
+      "connector_id": "crossref",
+      "connector": "Crossref",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Live title-ranked bibliographic search, first3 records with nativeDOIs; no free-full-text guarantee",
+      "known_limitations": "Public pool is single-connection; currentdocs report5 rate limit with interval in response headers; research uses >=3seconds spacing. | Title matching is ranked/fuzzy: similarly titled chapters, articles and encyclopedia records can outrank the intended original work. | OnlyDOI/title/type/URL selected; no abstracts, PDFs or full text retained. | Offset paging and empty nonsense query verified; malformed negative rows400 retained.",
+      "next_step_or_blocker": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+      "block_reason": "",
+      "last_attempt_and_result": "",
+      "recovery_decision": "",
+      "last_reviewed_at": "2026-11-05T18:54:29.287156+00:00",
+      "record": "sources/crossref.json",
       "production_activation_changed": false
     },
     {
@@ -2278,23 +2278,6 @@
     {
       "group_id": "G06",
       "group": "Language, culture and media",
-      "connector_id": "national-gallery-art",
-      "connector": "National Gallery of Art collection",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Publisherstates130000+artworks/artistsand60000+freeimages; countsarenotindependentlyaudited. | WholecollectionmetadataCC0doesnotmeanallimagesareavailableorunderthesamerights.",
-      "next_step_or_blocker": "ReadpublishedGitHubschema/version/license andboundedexport sizes; preserveobject/accessionidentity andmapartist/partsrelations. Verify10localorAPIqueries andrepresentativefullitemrights/access. No bulkimages.",
-      "block_reason": "",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": "2026-11-05T16:19:41.230914+00:00",
-      "record": "sources/national-gallery-art.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G06",
-      "group": "Language, culture and media",
       "connector_id": "cleveland-museum-art",
       "connector": "Cleveland Museum of Art Open Access collection",
       "status": "working",
@@ -2307,6 +2290,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T16:22:58.602023+00:00",
       "record": "sources/cleveland-museum-art.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G06",
+      "group": "Language, culture and media",
+      "connector_id": "national-gallery-art",
+      "connector": "National Gallery of Art collection",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Local title-token search over146454 art-object metadata records from the pinnedCC0 export; no image search",
+      "known_limitations": "Metadata only; no image or full-text search. Image availability and rights are separate. | Ten title searches verified; ambiguous titles can return multiple distinct native objects, not one deduplicated work. | Refresh requires a newly reviewed export version; pinned snapshot does not claim permanent freshness.",
+      "next_step_or_blocker": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+      "block_reason": "",
+      "last_attempt_and_result": "",
+      "recovery_decision": "",
+      "last_reviewed_at": "2026-11-05T18:52:21.582545+00:00",
+      "record": "sources/national-gallery-art.json",
       "production_activation_changed": false
     },
     {

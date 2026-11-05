@@ -9,7 +9,7 @@
     "C06",
     "C07"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -30,15 +30,19 @@
     "https://info.arxiv.org/help/license/index.html"
   ],
   "limitations": [
-    "No key. Current reviewed legacy API/OAI/RSS terms: one request/3 sec, one connection, across all controlled machines. Shared queue/cache needed. Atom worked. **Medium / P0**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "The export.arxiv.org robots response is HTML-labelled and contains a global Disallow:/ directive; current API access cannot be treated as permitted.",
+    "No live API query sent; documentation availability is not query verification."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/scholarly-contracts-20261105db/observations.jsonl",
+    "runs/scholarly-policy-20261105dc/observations.jsonl",
+    "examples/arxiv.scouting.jsonl",
+    "examples/arxiv.policy-inspection.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T18:54:29.288366+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Wait for a policy clarification/change or documented explicitly permitted alternative; do not switch hosts to evade this restriction. Continue other scholarly connectors.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -168,17 +172,22 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "The export.arxiv.org robots response is HTML-labelled and contains a global Disallow:/ directive; current API access cannot be treated as permitted.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "blocked_or_failed",
+        "blocker": "The export.arxiv.org robots response is HTML-labelled and contains a global Disallow:/ directive; current API access cannot be treated as permitted.",
+        "next_action": "Wait for a policy clarification/change or documented explicitly permitted alternative; do not switch hosts to evade this restriction. Continue other scholarly connectors.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "runs/scholarly-policy-20261105dc/observations.jsonl",
+        "examples/arxiv.scouting.jsonl",
+        "examples/arxiv.policy-inspection.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Resolve current API documentation versus export-host robots policy before querying."
       ]
     }
   },
@@ -415,5 +424,13 @@
       "text": "Wikipedia, Wikibooks and Wikisource remain disconnected: the current robots\npolicies disallow the reviewed `/w/api.php` search route. No alternate route was\nused to evade this restriction. arXiv/DOAJ retain their existing pacing-related\nexclusion from live requests. Other registry candidates require supported query,\naccess or credential work before integration. This release does not make an\nunverified directory or research lead searchable by merely listing it.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "The export.arxiv.org robots response is HTML-labelled and contains a global Disallow:/ directive; current API access cannot be treated as permitted.",
+    "attempt": "Read current API manual/terms; inspected the26-byte robots response after the conservative policy gate stopped the first planned query.",
+    "result": "Policy text contains Disallow:/; API query not sent. Current docs still describe a metadata API, so conflict remains open.",
+    "decision": "wait_for_policy_clarification_or_change",
+    "next_action": "Wait for a policy clarification/change or documented explicitly permitted alternative; do not switch hosts to evade this restriction. Continue other scholarly connectors.",
+    "owner_action_required": false
+  }
 }
