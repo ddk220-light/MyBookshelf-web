@@ -1,3 +1,7 @@
+## 2026-11-05T22:42:52.422848+00:00: Paused by owner; all 71 blocker access actions reviewed
+
+63 Working, 71 Blocked/failed, 0 Still checking; 667 passing examples, unchanged. Hourly completion and legacy status reporter are disabled. No live query collection, signup or outreach. [Full report](../BLOCKED_CONNECTOR_ACCESS_REPORT.md). Eight connectors have public API-key/application/contact routes; five need permission/interface clarification; eleven have route-specific exclusions; three have eligibility/project-scope issues; 44 have technical or unfinished research blockers. No provider-wide permanent blanket ban is established.
+
 ## 2026-11-05T22:29:55.166355+00:00: Connector search checkpoint
 
 | Group | Working | Blocked/failed | Still checking | Total |

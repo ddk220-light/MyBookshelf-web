@@ -1,5 +1,8 @@
 # MyBookshelf web handoff
 
+**Hourly connector research paused by owner, 2026-11-05T22:42:52.422848+00:00.** Both automations are disabled; no query collector is active. Counts remain 63 Working / 71 Blocked or failed / 0 Still checking. [All 71 access actions](research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md) distinguish public signup, permission requests, route restrictions and unfinished engineering. No sources activated.
+
+
 **Free-knowledge connector research, 2026-11-05T22:29:55.166355+00:00:** 63 Working, 71 Blocked/failed, 0 Still checking of 134; 667 passing examples. 261 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
 
 **Free-knowledge connector research, 2026-11-05T22:03:57.009963+00:00:** 58 Working, 71 Blocked/failed, 5 Still checking of 134; 617 passing examples. 247 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
