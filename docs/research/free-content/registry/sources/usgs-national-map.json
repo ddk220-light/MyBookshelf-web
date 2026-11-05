@@ -1,0 +1,353 @@
+{
+  "schema_version": 1,
+  "id": "usgs-national-map",
+  "name": "USGS The National Map downloadable products",
+  "homepage": "https://www.usgs.gov/faqs/there-api-accessing-national-map-data",
+  "group": "G04",
+  "areas": [
+    "C19",
+    "P07"
+  ],
+  "state": "deferred",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "geospatial-product-catalog",
+  "aliases": [
+    "The National Map",
+    "TNM",
+    "TNMAccess"
+  ],
+  "operator": {
+    "name": "U.S. Geological Survey, National Geospatial Program; collaborating federal/state/local producers",
+    "jurisdiction": "USA",
+    "evidence": [
+      {
+        "path": "runs/national-map-contract-20261105l/observations.jsonl",
+        "job_id": "172fe82472159a1b5671",
+        "observed_at": "2026-11-05T07:59:40.839271+00:00"
+      },
+      {
+        "path": "runs/national-map-api-20261105m/observations.jsonl",
+        "job_id": "6b2a3dc9ec1d2ba583c9",
+        "observed_at": "2026-11-05T07:59:57.567119+00:00"
+      },
+      {
+        "path": "runs/national-map-api-20261105m/observations.jsonl",
+        "job_id": "39f7535ce005079d2847",
+        "observed_at": "2026-11-05T08:00:04.497306+00:00"
+      }
+    ]
+  },
+  "capabilities": [
+    "Official USGS FAQ documents TNMAccess HTTP GET/POST access to National Map downloadable products.",
+    "Product metadata/catalog discovery is separate from map viewing, geospatial features and downloading raster/vector data; no current query or item download tested."
+  ],
+  "query": {
+    "adapter": "unproven",
+    "endpoint": "https://tnmaccess.nationalmap.gov/api/v1/docs",
+    "method": "GET",
+    "authentication": "Unknown: API documentation request was skipped after robots HTTP403.",
+    "supported_modes": "Official FAQ states GET/POST product access; exact parameter/filter/paging contract unresolved.",
+    "unsupported_modes": [
+      "India-local map coverage",
+      "property-owner lookup",
+      "unverified free-text/parcel/feature search"
+    ],
+    "cases": []
+  },
+  "licensing": "Current USGS policy: USGS-produced data/information is in the US public domain; third-party material can remain copyrighted, publicity rights can apply, and USGS identifier is trademarked. Product-level attribution/partner rights remain unverified.",
+  "documentation": [
+    "https://www.usgs.gov/faqs/there-api-accessing-national-map-data",
+    "https://tnmaccess.nationalmap.gov/api/v1/docs",
+    "https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits"
+  ],
+  "limitations": [
+    "API-host robots request returned HTTP403; no API docs/query or alternate host request was made.",
+    "The recovered USGS FAQ establishes a catalog/API relationship, not working queryability or a full map-reading path.",
+    "US/topographic product candidate only; no India-local source, geological-layer or property-owner coverage counted.",
+    "No current native product ID, version/scale/CRS, ten query examples or map viewer checks yet."
+  ],
+  "evidence": [
+    "runs/national-map-contract-20261105l/observations.jsonl",
+    "runs/national-map-api-20261105m/observations.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T08:02:00.388801+00:00",
+  "next_action": "Defer TNMAccess requests until the host policy becomes readable or an explicitly authorized documented route is available; no bypass. Then inspect exact product filters/paging and map ID/version/CRS/scale/rights with ten bounded metadata examples. Continue independent sources now.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "Official recovered USGS FAQ identifies one TNM product API and its download-client view.",
+      "facts": {
+        "operator": "U.S. Geological Survey, National Geospatial Program; collaborating federal/state/local producers",
+        "catalog": "The National Map downloadable products",
+        "deduplication": "TNMAccess and the TNM Download Client are views of this one product catalog; not additional origins. Separate USGS Earthquake Catalog has different records and scope."
+      },
+      "evidence": [
+        "runs/national-map-contract-20261105l/observations.jsonl",
+        "runs/national-map-api-20261105m/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/national-map-contract-20261105l/observations.jsonl",
+          "job_id": "172fe82472159a1b5671",
+          "observed_at": "2026-11-05T07:59:40.839271+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "6b2a3dc9ec1d2ba583c9",
+          "observed_at": "2026-11-05T07:59:57.567119+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "39f7535ce005079d2847",
+          "observed_at": "2026-11-05T08:00:04.497306+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Topographic/geospatial US product discovery candidate; no exhaustive inventory inspected.",
+      "facts": {
+        "jurisdiction": "USA",
+        "observed_document_language": "en",
+        "country_gap": "India products and access country not verified.",
+        "areas": [
+          "C19",
+          "P07"
+        ]
+      },
+      "evidence": [
+        "runs/national-map-contract-20261105l/observations.jsonl",
+        "runs/national-map-api-20261105m/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/national-map-contract-20261105l/observations.jsonl",
+          "job_id": "172fe82472159a1b5671",
+          "observed_at": "2026-11-05T07:59:40.839271+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "6b2a3dc9ec1d2ba583c9",
+          "observed_at": "2026-11-05T07:59:57.567119+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "39f7535ce005079d2847",
+          "observed_at": "2026-11-05T08:00:04.497306+00:00"
+        }
+      ],
+      "open_questions": [
+        "Inspect dataset subcatalogs, extents, layer types, survey/publication dates and languages; do not assume geological or property-record coverage."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "USGS advertises supported HTTP requests, but the exact API guide is inaccessible under current policy checks.",
+      "facts": {
+        "discovery_url": "https://www.usgs.gov/faqs/there-api-accessing-national-map-data",
+        "api_documentation": "https://tnmaccess.nationalmap.gov/api/v1/docs",
+        "robots_status": 403,
+        "api_requested": false
+      },
+      "evidence": [
+        "runs/national-map-contract-20261105l/observations.jsonl",
+        "runs/national-map-api-20261105m/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/national-map-contract-20261105l/observations.jsonl",
+          "job_id": "172fe82472159a1b5671",
+          "observed_at": "2026-11-05T07:59:40.839271+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "6b2a3dc9ec1d2ba583c9",
+          "observed_at": "2026-11-05T07:59:57.567119+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "39f7535ce005079d2847",
+          "observed_at": "2026-11-05T08:00:04.497306+00:00"
+        }
+      ],
+      "open_questions": [
+        "Read supported parameter and paging/identity contract after policy/access recovery; collect ten real current examples."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Current USGS policy: USGS-produced data/information is in the US public domain; third-party material can remain copyrighted, publicity rights can apply, and USGS identifier is trademarked. Product-level attribution/partner rights remain unverified.",
+      "facts": {
+        "policy_url": "https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits",
+        "credit": "Credit: U.S. Geological Survey",
+        "country_scope_of_statement": "U.S. public domain",
+        "third_party_exceptions": true
+      },
+      "evidence": [
+        "runs/national-map-contract-20261105l/observations.jsonl",
+        "runs/national-map-api-20261105m/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/national-map-contract-20261105l/observations.jsonl",
+          "job_id": "172fe82472159a1b5671",
+          "observed_at": "2026-11-05T07:59:40.839271+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "6b2a3dc9ec1d2ba583c9",
+          "observed_at": "2026-11-05T07:59:57.567119+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "39f7535ce005079d2847",
+          "observed_at": "2026-11-05T08:00:04.497306+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify selected product metadata/content provenance, applicable third-party rights and API quotas/free limits."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "No product or map requested because API access qualification is blocked.",
+      "facts": {
+        "download_client": "https://apps.nationalmap.gov/downloader",
+        "access_class": "unknown for individual products",
+        "personal_property_records_requested": false
+      },
+      "evidence": [
+        "runs/national-map-contract-20261105l/observations.jsonl",
+        "runs/national-map-api-20261105m/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/national-map-contract-20261105l/observations.jsonl",
+          "job_id": "172fe82472159a1b5671",
+          "observed_at": "2026-11-05T07:59:40.839271+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "6b2a3dc9ec1d2ba583c9",
+          "observed_at": "2026-11-05T07:59:57.567119+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "39f7535ce005079d2847",
+          "observed_at": "2026-11-05T08:00:04.497306+00:00"
+        }
+      ],
+      "open_questions": [
+        "Test representative full maps/readers, item-specific access and scale/CRS/coordinate interpretation."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "No map/product query result has been qualified.",
+      "facts": {
+        "verified_query_examples": 0,
+        "metadata_vs_feature_distinction": "API product search does not establish querying map features or displaying maps."
+      },
+      "evidence": [
+        "runs/national-map-contract-20261105l/observations.jsonl",
+        "runs/national-map-api-20261105m/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/national-map-contract-20261105l/observations.jsonl",
+          "job_id": "172fe82472159a1b5671",
+          "observed_at": "2026-11-05T07:59:40.839271+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "6b2a3dc9ec1d2ba583c9",
+          "observed_at": "2026-11-05T07:59:57.567119+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "39f7535ce005079d2847",
+          "observed_at": "2026-11-05T08:00:04.497306+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify ten native products, spatial/filter relevance, versions/duplicates, paging and empty/error cases."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Robots403 is preserved as a policy/access blocker; no alternate path bypass or repeated request attempted.",
+      "facts": {
+        "retry_trigger": "Explicit host policy recovery or supported authorized route; not elapsed time.",
+        "prior_www_usgs_policy_failure": "503 on2026-11-05T02:23; later successful www.usgs policy captures justified this FAQ revisit.",
+        "numeric_quota": null
+      },
+      "evidence": [
+        "runs/national-map-contract-20261105l/observations.jsonl",
+        "runs/national-map-api-20261105m/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/national-map-contract-20261105l/observations.jsonl",
+          "job_id": "172fe82472159a1b5671",
+          "observed_at": "2026-11-05T07:59:40.839271+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "6b2a3dc9ec1d2ba583c9",
+          "observed_at": "2026-11-05T07:59:57.567119+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "39f7535ce005079d2847",
+          "observed_at": "2026-11-05T08:00:04.497306+00:00"
+        }
+      ],
+      "open_questions": [
+        "Inspect documented quotas, update/deletion/version rules and accountable maintenance after access recovery."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Canonical catalog identity retained; zero queries and incomplete rights/access prevent qualification.",
+      "facts": {
+        "decision": "defer-api-policy-access",
+        "activation_approved": false,
+        "next_action": "Defer TNMAccess requests until the host policy becomes readable or an explicitly authorized documented route is available; no bypass. Then inspect exact product filters/paging and map ID/version/CRS/scale/rights with ten bounded metadata examples. Continue independent sources now."
+      },
+      "evidence": [
+        "runs/national-map-contract-20261105l/observations.jsonl",
+        "runs/national-map-api-20261105m/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/national-map-contract-20261105l/observations.jsonl",
+          "job_id": "172fe82472159a1b5671",
+          "observed_at": "2026-11-05T07:59:40.839271+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "6b2a3dc9ec1d2ba583c9",
+          "observed_at": "2026-11-05T07:59:57.567119+00:00"
+        },
+        {
+          "path": "runs/national-map-api-20261105m/observations.jsonl",
+          "job_id": "39f7535ce005079d2847",
+          "observed_at": "2026-11-05T08:00:04.497306+00:00"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "e0f9e032470e81d885e20251a8653198ea6ed2892d86f761f802fa7c61095796",
+      "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+      "line": 180,
+      "heading": "Evidence status and next verification",
+      "text": "This was documentation research, not an API qualification run. Current official\nData.gov, GovInfo, USGS TNM, Census, USAGov, NYC and Tamil Nadu pages were readable;\ntheir documentation supports the proposed discovery routes, not an availability\nguarantee. Data.gov's current migration notice is especially important for future\nconnector selection. Keys, terms, quota settings and actual result samples still\nneed checking before implementation.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}
