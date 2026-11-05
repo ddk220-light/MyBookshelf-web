@@ -1,6 +1,6 @@
 import unittest
 
-from source_registry import current_verified, evaluate, fingerprint, request_url, normalize
+from source_registry import current_verified, area_verified, evaluate, fingerprint, request_url, normalize
 
 
 class EvidenceTests(unittest.TestCase):
@@ -19,6 +19,29 @@ class EvidenceTests(unittest.TestCase):
         for data in ({'query': {'search': []}}, {'query': {'search': [{'pageid': 43, 'title': 'Unrelated'}]}},
                      {'error': {'code': 'maxlag'}}, {}, '<html>verification</html>'):
             self.assertEqual(self.result(data)['verdict'], 'unverified')
+
+    def test_area_evidence_does_not_leak_between_catalog_subsets(self):
+        row = self.result()
+        self.source['query']['area_case_ids'] = {'C02': [self.case['id']], 'C17': []}
+        self.assertEqual(current_verified(self.source, [row]), 1)
+        self.assertEqual(area_verified(self.source, [row], 'C02'), 1)
+        self.assertEqual(area_verified(self.source, [row], 'C17'), 0)
+        self.assertEqual(area_verified(self.source, [row], 'P05'), 0)
+        failed = {**row, 'observed_at': '2026-11-05T02:00:00+00:00', 'verdict': 'unverified', 'matched_ids': []}
+        self.assertEqual(area_verified(self.source, [row, failed], 'C02'), 0)
+
+    def test_newspaper_pages_preserve_issue_edition_and_page_identity(self):
+        self.source['query']['adapter'] = 'loc'
+        ids = ['http://www.loc.gov/resource/sn123/1926-11-04/ed-1/?sp=1',
+               'http://www.loc.gov/resource/sn123/1926-11-04/ed-2/?sp=1',
+               'http://www.loc.gov/resource/sn123/1926-11-04/ed-2/?sp=2']
+        records = [{'id': sid, 'title': 'Same newspaper', 'original_format': ['newspaper']} for sid in ids]
+        result = normalize(self.source, {'results': records})
+        self.assertEqual([row['id'] for row in result], ids)
+        self.assertTrue(all(not row['reading_access_verified'] and not row['topic_relevance_verified'] for row in result))
+        records[0]['id'] = 'http://www.loc.gov/resource/sn123/1926-11-04/ed-1/'
+        with self.assertRaisesRegex(ValueError, 'page identity'):
+            normalize(self.source, {'results': records})
 
     def test_json_pair_arrays_preserve_repeated_query_fields(self):
         url = request_url({'url': 'https://archive.org/advancedsearch.php', 'params': [['fl[]', 'title'], ['fl[]', 'identifier']]})

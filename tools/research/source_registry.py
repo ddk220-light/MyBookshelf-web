@@ -156,7 +156,25 @@ def normalize(source, data, endpoint=None):
         host = urllib.parse.urlsplit(endpoint or source['query']['endpoint']).netloc
         return [{'id': str(r['pageid']), 'title': r['title'], 'landing_page': f'https://{host}/?curid={r["pageid"]}'} for r in data['query']['search']]
     if adapter == 'loc':
-        return [{'id': r['id'], 'title': r['title'], 'reading_urls': [v['url'] for v in r.get('resources', []) if v.get('url')], 'pdfs': [v['pdf'] for v in r.get('resources', []) if v.get('pdf')]} for r in data['results']]
+        results = []
+        for row in data['results']:
+            record = {'id': row['id'], 'title': row['title'],
+                      'reading_urls': [v['url'] for v in row.get('resources', []) if v.get('url')],
+                      'pdfs': [v['pdf'] for v in row.get('resources', []) if v.get('pdf')]}
+            if 'newspaper' in row.get('original_format', []):
+                identity = urllib.parse.urlsplit(row['id'])
+                page = urllib.parse.parse_qs(identity.query).get('sp', [])
+                if (identity.hostname != 'www.loc.gov' or not identity.path.startswith('/resource/')
+                        or '/ed-' not in identity.path or len(page) != 1 or not page[0].isdigit()):
+                    raise ValueError('Newspaper page identity must preserve issue, edition and page')
+                record.update(record_kind='newspaper-page', date=row.get('date'),
+                    newspaper_titles=row.get('partof_title', []), lccn=row.get('number_lccn', []),
+                    edition=row.get('number_edition', []), page_number=row.get('number_page', []),
+                    provider_page_id=row.get('page_id'), languages=row.get('language', []),
+                    formats=row.get('online_format', []), access_restricted=row.get('access_restricted'),
+                    reading_access_verified=False, topic_relevance_verified=False)
+            results.append(record)
+        return results
     if adapter == 'ia':
         return [{'id': r['identifier'], 'title': r['title'], 'landing_page': 'https://archive.org/details/' + r['identifier']} for r in data['response']['docs']]
     if adapter == 'librivox':
@@ -206,6 +224,21 @@ def current_verified(source, rows):
     return len(passed)
 
 
+def area_verified(source, rows, area):
+    """Explicit subset mappings prevent book examples from proving newspaper search.
+
+    Older records retain source-level evidence until their area mappings are
+    reviewed. This is an evidence-presence measure, not area qualification.
+    """
+    mapping = source['query'].get('area_case_ids')
+    if mapping is None:
+        return current_verified(source, rows)
+    ids = set(mapping.get(area, []))
+    scoped = {**source, 'query': {**source['query'], 'cases': [
+        case for case in source['query']['cases'] if case['id'] in ids]}}
+    return current_verified(scoped, rows)
+
+
 def validate(registry=REGISTRY):
     sources = [json.loads(p.read_text()) for p in sorted((registry / 'sources').glob('*.json'))]
     seen = set()
@@ -222,6 +255,12 @@ def validate(registry=REGISTRY):
         cases = source['query']['cases']
         assert len({c['id'] for c in cases}) == len(cases), f'Duplicate cases: {sid}'
         assert len({fingerprint(c['request']) for c in cases}) == len(cases), f'Duplicate requests: {sid}'
+        mapping = source['query'].get('area_case_ids')
+        if mapping is not None:
+            assert isinstance(mapping, dict) and set(mapping) == set(source['areas']), f'Incomplete area case mapping: {sid}'
+            case_ids = {case['id'] for case in cases}
+            for area, ids in mapping.items():
+                assert isinstance(ids, list) and len(ids) == len(set(ids)) and set(ids) <= case_ids, f'Invalid area case mapping: {sid}/{area}'
         for case in cases:
             assert case['expected_ids'] and case['intent'], f'Empty expectation: {sid}'
             assert case['request']['method'] in ('GET', 'POST'), sid

@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 import subprocess
 
-from source_registry import ROOT, REGISTRY, current_verified, observations
+from source_registry import ROOT, REGISTRY, current_verified, area_verified, observations
 
 RESEARCH = ROOT / 'docs/research/free-content'
 CORPUS_ROOTS = ['docs/research/free-content', 'docs/design/2026-11-free-content']
@@ -260,7 +260,8 @@ def audit():
     for path in sorted((REGISTRY / 'sources').glob('*.json')):
         source = json.loads(path.read_text())
         gaps = dossier_gaps(source)
-        passing = current_verified(source, observations(REGISTRY, source['id']))
+        rows = observations(REGISTRY, source['id'])
+        passing = current_verified(source, rows)
         if passing < 10:
             gaps.append('ten_current_query_examples')
         for mention in source.get('analysis_refs', []):
@@ -273,9 +274,10 @@ def audit():
         for area in source['areas']:
             memberships.setdefault(area, {'candidate_source_ids': [], 'query_example_source_ids': [], 'qualified_source_ids': []})
             memberships[area]['candidate_source_ids'].append(source['id'])
-            if passing >= 10:
+            area_passing = area_verified(source, rows, area)
+            if passing >= 10 and area_passing:
                 memberships[area]['query_example_source_ids'].append(source['id'])
-            if source.get('full_qualification_complete') and not gaps:
+            if source.get('full_qualification_complete') and not gaps and area_passing:
                 memberships[area]['qualified_source_ids'].append(source['id'])
     areas = json.loads((REGISTRY / 'areas.json').read_text())['areas']
     for area in areas:

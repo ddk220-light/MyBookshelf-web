@@ -1,26 +1,28 @@
 {
   "schema_version": 1,
   "id": "loc",
-  "name": "Library of Congress digital books",
+  "name": "Library of Congress digital books and newspapers",
   "homepage": "https://www.loc.gov/books/",
   "group": "G01",
   "areas": [
     "C02",
     "C04",
-    "C15"
+    "C15",
+    "C17"
   ],
   "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "capabilities": [
-    "Search digitized books by keywords, facets and pagination; item JSON provides rights and resource links."
+    "Search digitized books by keywords, facets and pagination; item JSON provides rights and resource links.",
+    "Date-scoped historical newspaper page search through the current loc.gov collection API; preserve newspaper title, LCCN, issue date, edition and page identity."
   ],
   "query": {
     "adapter": "loc",
     "endpoint": "https://www.loc.gov/books/",
     "authentication": "none for sampled public queries",
     "cost": "No fee or API key used; respect current provider policies and rate limits.",
-    "research_pause_seconds": 2,
+    "research_pause_seconds": 4,
     "cases": [
       {
         "id": "topic-mathematics",
@@ -201,13 +203,144 @@
           },
           "json": null
         }
+      },
+      {
+        "id": "newspaper-railroad",
+        "intent": "Replay fixed native newspaper page from earlier date-scoped scouting; exact ID retrieval does not prove semantic topic relevance or reader access.",
+        "expected_ids": [
+          "http://www.loc.gov/resource/sn83045462/1926-11-04/ed-1/?sp=38"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "at": "results,pagination",
+            "c": 3,
+            "dates": "1926-11-04",
+            "dl": "page",
+            "fo": "json",
+            "q": "railroad"
+          },
+          "url": "https://www.loc.gov/collections/chronicling-america/",
+          "json": null
+        }
+      },
+      {
+        "id": "newspaper-market",
+        "intent": "Replay fixed native newspaper page from earlier date-scoped scouting; exact ID retrieval does not prove semantic topic relevance or reader access.",
+        "expected_ids": [
+          "http://www.loc.gov/resource/sn83045462/1926-11-04/ed-1/?sp=14"
+        ],
+        "request": {
+          "json": null,
+          "method": "GET",
+          "params": {
+            "at": "results,pagination",
+            "c": 3,
+            "dates": "1926-11-04",
+            "dl": "page",
+            "fo": "json",
+            "q": "market"
+          },
+          "url": "https://www.loc.gov/collections/chronicling-america/"
+        }
+      },
+      {
+        "id": "newspaper-weather",
+        "intent": "Replay fixed native newspaper page from earlier date-scoped scouting; exact ID retrieval does not prove semantic topic relevance or reader access.",
+        "expected_ids": [
+          "http://www.loc.gov/resource/sn84036285/1926-11-04/ed-1/?sp=7"
+        ],
+        "request": {
+          "json": null,
+          "method": "GET",
+          "params": {
+            "at": "results,pagination",
+            "c": 3,
+            "dates": "1926-11-04",
+            "dl": "page",
+            "fo": "json",
+            "q": "weather"
+          },
+          "url": "https://www.loc.gov/collections/chronicling-america/"
+        }
+      },
+      {
+        "id": "newspaper-labor",
+        "intent": "Replay fixed native newspaper page from earlier date-scoped scouting; exact ID retrieval does not prove semantic topic relevance or reader access.",
+        "expected_ids": [
+          "http://www.loc.gov/resource/sn84020097/1926-11-04/ed-1/?sp=5"
+        ],
+        "request": {
+          "json": null,
+          "method": "GET",
+          "params": {
+            "at": "results,pagination",
+            "c": 3,
+            "dates": "1926-11-04",
+            "dl": "page",
+            "fo": "json",
+            "q": "labor"
+          },
+          "url": "https://www.loc.gov/collections/chronicling-america/"
+        }
       }
     ],
-    "paging": "sp (page), c (count)"
+    "paging": "sp (page), c (count)",
+    "area_case_ids": {
+      "C02": [
+        "topic-mathematics",
+        "topic-botany",
+        "topic-arithmetic",
+        "topic-astronomy",
+        "topic-grammar",
+        "topic-agriculture",
+        "topic-geography",
+        "topic-chemistry",
+        "topic-geometry",
+        "topic-algebra"
+      ],
+      "C04": [
+        "topic-mathematics",
+        "topic-botany",
+        "topic-arithmetic",
+        "topic-astronomy",
+        "topic-grammar",
+        "topic-agriculture",
+        "topic-geography",
+        "topic-chemistry",
+        "topic-geometry",
+        "topic-algebra"
+      ],
+      "C15": [
+        "topic-mathematics",
+        "topic-botany",
+        "topic-arithmetic",
+        "topic-astronomy",
+        "topic-grammar",
+        "topic-agriculture",
+        "topic-geography",
+        "topic-chemistry",
+        "topic-geometry",
+        "topic-algebra"
+      ],
+      "C17": [
+        "newspaper-railroad",
+        "newspaper-market",
+        "newspaper-weather",
+        "newspaper-labor"
+      ]
+    }
   },
   "licensing": "Per-item rights/access statements; first sampled item declared public domain and unrestricted access.",
   "documentation": [
-    "https://www.loc.gov/apis/json-and-yaml/"
+    "https://www.loc.gov/apis/json-and-yaml/",
+    "https://www.loc.gov/apis/additional-apis/chronicling-america-api/",
+    "https://www.loc.gov/apis/json-and-yaml/requests/",
+    "https://www.loc.gov/apis/json-and-yaml/working-within-limits/",
+    "https://www.loc.gov/collections/chronicling-america/about-this-collection/",
+    "https://www.loc.gov/apis/json-and-yaml/requests/parameters/",
+    "https://guides.loc.gov/chronicling-america/additional-features",
+    "https://www.loc.gov/collections/chronicling-america/about-this-collection/rights-and-access/"
   ],
   "limitations": [
     "The digital API is not the entire LoC catalog. OCR quality and completeness vary.",
@@ -217,12 +350,20 @@
   "evidence": [
     "../batches/G01_QUERY_EVIDENCE.json",
     "../batches/G01_ACCESS_EVIDENCE.json",
-    "../batches/G01_FIRST_TEN.md"
+    "../batches/G01_FIRST_TEN.md",
+    "runs/coverage-gap-docs-20261105p/observations.jsonl",
+    "runs/newspaper-contract-20261105q/observations.jsonl",
+    "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+    "examples/loc.newspaper-scouting.jsonl",
+    "examples/loc.jsonl"
   ],
   "last_reviewed_at": "2026-11-05",
-  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes.",
+  "next_action": "Continue newspaper topic/OCR relevance and representative page-reader/rights analysis; ten existing book cases plus four newspaper replays do not qualify the newspaper catalog. Broad and seven date-scoped queries timed out at20s. Investigate only documented narrower queries or later recovery; do not hammer timed-out search. Continue independent P05/India coverage.",
   "aliases": [
-    "Library of Congress"
+    "Library of Congress",
+    "Library of Congress digital books",
+    "Chronicling America",
+    "National Digital Newspaper Program"
   ],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -232,158 +373,660 @@
   },
   "dossier": {
     "identity_and_duplicates": {
-      "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "status": "complete",
+      "summary": "One Library of Congress digital-collection host, including books and Chronicling America. NDNP is a Library/NEH partnership; newspaper titles, issue dates and contributing institutions are not counted as extra catalog origins.",
       "facts": {
-        "id": "loc",
-        "name": "Library of Congress digital books",
-        "homepage_reference": "https://www.loc.gov/books/",
-        "operator": null,
-        "origin_deduplication": "pending"
+        "operator": "Library of Congress",
+        "newspaper_program_partner": "National Endowment for the Humanities",
+        "origin_id": "loc",
+        "independent_origins": 1,
+        "newspaper_native_identity": "Provider HTTP resource URL preserves LCCN/issue date/ed-N/?sp=page; source URL is retained without title-based merging.",
+        "migration": "Official API page states Chronicling America uses loc.gov exclusively since2025; legacy chroniclingamerica.loc.gov API recipes excluded.",
+        "scope": "Digital collections, not the entire Library catalog."
       },
       "evidence": [
         "../batches/G01_QUERY_EVIDENCE.json",
         "../batches/G01_ACCESS_EVIDENCE.json",
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/coverage-gap-docs-20261105p/observations.jsonl",
+        "runs/newspaper-contract-20261105q/observations.jsonl",
+        "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+        "examples/loc.newspaper-scouting.jsonl",
+        "examples/loc.jsonl"
       ],
-      "open_questions": [
-        "Confirm operator, parent and catalog-versus-origin deduplication."
-      ]
+      "observation_refs": [
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "23f63fe8a0498e271384",
+          "observed_at": "2026-11-05T08:32:41.092521+00:00",
+          "body_sha256": "65e1571a8091e382463f370139279ad780e98340b96d2b87cf54f2d6a4979791"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "cbb410cfe25f2f11e40b",
+          "observed_at": "2026-11-05T08:32:46.196725+00:00",
+          "body_sha256": "1f0ef4d9b1f596f0922aaed5f164258b15f9e7f83b04255654f494ef974a3ff6"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "b2fd5406afd25c33cab9",
+          "observed_at": "2026-11-05T08:32:51.297938+00:00",
+          "body_sha256": "a7b2bc9b25fdffff10d6558db38bacddc1f2b80e8bca13396a5b88fc74fc32d9"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "5fda2daf458fa0833d8f",
+          "observed_at": "2026-11-05T08:36:55.491621+00:00",
+          "body_sha256": "1d15858afdf015a72010bae4d66f5d1f55131c6b58fb1222fe3f39442f263f2e"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "e17a7a6140a2ec51854c",
+          "observed_at": "2026-11-05T08:37:00.612116+00:00",
+          "body_sha256": "b8c5b6b45d13442d85c52bd6069f225b62bf8b89413be758afa8abe6012ce6c6"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "9dbb4f02439d28b30698",
+          "observed_at": "2026-11-05T08:37:15.824320+00:00",
+          "body_sha256": "769377db0471b537cbcc564600ab389e836e4d1deb5ced3bc0fa2f8fc541f71d"
+        },
+        {
+          "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+          "job_id": "33302d22cfa4b5bc7a6e",
+          "observed_at": "2026-11-05T08:38:13.822679+00:00",
+          "body_sha256": "8ed69c955f9e24ca2c295332a8b02daf42c2b945d7790371a6c74c12372a225b"
+        }
+      ],
+      "open_questions": []
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current newspaper results are English US pages from1926-11-04; collection documentation describes selected US newspapers through1963. Broader language and India coverage remain unproven.",
       "facts": {
-        "category_industry_candidates": [
+        "areas": [
           "C02",
           "C04",
-          "C15"
+          "C15",
+          "C17"
         ],
-        "languages": null,
-        "jurisdictions": null,
-        "coverage_evidence": "pending"
+        "jurisdiction_observed": "USA",
+        "languages_observed": [
+          "English"
+        ],
+        "date_sample": "1926-11-04",
+        "collection_scope_provider_stated": "Selected historical US newspapers from nearly all states/territories through1963.",
+        "sample_title_names": [
+          "daily kennebec journal (augusta, me.) 1870-1975 [microfilm reel]",
+          "evening star (washington, d.c.) 1854-1972",
+          "the carbon county news (red lodge, mont.) 1924-1931",
+          "the daily worker (chicago, ill.;new york, n.y.) 1924-1958",
+          "the washington daily news (washington, d.c.) 1921-1972",
+          "the washington times (washington [d.c.]) 1902-1939",
+          "the wolf point herald (wolf point, mont.) 1913-1940"
+        ],
+        "query_evidence_scope": "query.area_case_ids explicitly separates books from newspaper pages; book examples cannot prove C17.",
+        "india": "No India-local newspaper source or network availability demonstrated."
       },
       "evidence": [
         "../batches/G01_QUERY_EVIDENCE.json",
         "../batches/G01_ACCESS_EVIDENCE.json",
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/coverage-gap-docs-20261105p/observations.jsonl",
+        "runs/newspaper-contract-20261105q/observations.jsonl",
+        "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+        "examples/loc.newspaper-scouting.jsonl",
+        "examples/loc.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "23f63fe8a0498e271384",
+          "observed_at": "2026-11-05T08:32:41.092521+00:00",
+          "body_sha256": "65e1571a8091e382463f370139279ad780e98340b96d2b87cf54f2d6a4979791"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "cbb410cfe25f2f11e40b",
+          "observed_at": "2026-11-05T08:32:46.196725+00:00",
+          "body_sha256": "1f0ef4d9b1f596f0922aaed5f164258b15f9e7f83b04255654f494ef974a3ff6"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "b2fd5406afd25c33cab9",
+          "observed_at": "2026-11-05T08:32:51.297938+00:00",
+          "body_sha256": "a7b2bc9b25fdffff10d6558db38bacddc1f2b80e8bca13396a5b88fc74fc32d9"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "5fda2daf458fa0833d8f",
+          "observed_at": "2026-11-05T08:36:55.491621+00:00",
+          "body_sha256": "1d15858afdf015a72010bae4d66f5d1f55131c6b58fb1222fe3f39442f263f2e"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "e17a7a6140a2ec51854c",
+          "observed_at": "2026-11-05T08:37:00.612116+00:00",
+          "body_sha256": "b8c5b6b45d13442d85c52bd6069f225b62bf8b89413be758afa8abe6012ce6c6"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "9dbb4f02439d28b30698",
+          "observed_at": "2026-11-05T08:37:15.824320+00:00",
+          "body_sha256": "769377db0471b537cbcc564600ab389e836e4d1deb5ced3bc0fa2f8fc541f71d"
+        },
+        {
+          "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+          "job_id": "33302d22cfa4b5bc7a6e",
+          "observed_at": "2026-11-05T08:38:13.822679+00:00",
+          "body_sha256": "8ed69c955f9e24ca2c295332a8b02daf42c2b945d7790371a6c74c12372a225b"
+        }
       ],
       "open_questions": [
-        "Verify country/language/subject coverage with item evidence."
+        "Broaden languages, dates and non-US/newspaper coverage with actual records; no whole-corpus recall inferred."
       ]
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current documented loc.gov JSON request and native newspaper page fields are observed; four earlier-known page IDs replayed successfully. Subject relevance and page detail/reader resolution remain open.",
       "facts": {
-        "adapter": "loc",
-        "endpoint": "https://www.loc.gov/books/",
-        "capabilities": [
-          "Search digitized books by keywords, facets and pagination; item JSON provides rights and resource links."
+        "newspaper_endpoint": "https://www.loc.gov/collections/chronicling-america/",
+        "exact_request": {
+          "method": "GET",
+          "params": {
+            "at": "results,pagination",
+            "c": 3,
+            "dates": "1926-11-04",
+            "dl": "page",
+            "fo": "json",
+            "q": "railroad"
+          },
+          "url": "https://www.loc.gov/collections/chronicling-america/"
+        },
+        "supported_modes_observed": [
+          "q keyword search scoped by published dates parameter",
+          "dl=page, c=3",
+          "sp=2 paging",
+          "at=results,pagination projection"
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "id_components": [
+          "number_lccn",
+          "date",
+          "number_edition",
+          "number_page",
+          "provider page_id",
+          "native resource id"
+        ],
+        "unsupported_or_unproven": [
+          "Legacy Chronicling America API",
+          "Entire Library bibliographic catalog",
+          "Current news reporting",
+          "Arbitrary geography and native-script recall",
+          "Semantic topic ranking",
+          "Bulk OCR/image export"
+        ],
+        "book_contract_history": {
+          "adapter": "loc",
+          "endpoint": "https://www.loc.gov/books/",
+          "capabilities": [
+            "Search digitized books by keywords, facets and pagination; item JSON provides rights and resource links."
+          ],
+          "supported_and_unsupported_modes": "needs explicit review"
+        },
+        "scouted_expected_ids_then_replayed": 4
       },
       "evidence": [
         "../batches/G01_QUERY_EVIDENCE.json",
         "../batches/G01_ACCESS_EVIDENCE.json",
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/coverage-gap-docs-20261105p/observations.jsonl",
+        "runs/newspaper-contract-20261105q/observations.jsonl",
+        "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+        "examples/loc.newspaper-scouting.jsonl",
+        "examples/loc.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "23f63fe8a0498e271384",
+          "observed_at": "2026-11-05T08:32:41.092521+00:00",
+          "body_sha256": "65e1571a8091e382463f370139279ad780e98340b96d2b87cf54f2d6a4979791"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "cbb410cfe25f2f11e40b",
+          "observed_at": "2026-11-05T08:32:46.196725+00:00",
+          "body_sha256": "1f0ef4d9b1f596f0922aaed5f164258b15f9e7f83b04255654f494ef974a3ff6"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "b2fd5406afd25c33cab9",
+          "observed_at": "2026-11-05T08:32:51.297938+00:00",
+          "body_sha256": "a7b2bc9b25fdffff10d6558db38bacddc1f2b80e8bca13396a5b88fc74fc32d9"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "5fda2daf458fa0833d8f",
+          "observed_at": "2026-11-05T08:36:55.491621+00:00",
+          "body_sha256": "1d15858afdf015a72010bae4d66f5d1f55131c6b58fb1222fe3f39442f263f2e"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "e17a7a6140a2ec51854c",
+          "observed_at": "2026-11-05T08:37:00.612116+00:00",
+          "body_sha256": "b8c5b6b45d13442d85c52bd6069f225b62bf8b89413be758afa8abe6012ce6c6"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "9dbb4f02439d28b30698",
+          "observed_at": "2026-11-05T08:37:15.824320+00:00",
+          "body_sha256": "769377db0471b537cbcc564600ab389e836e4d1deb5ced3bc0fa2f8fc541f71d"
+        },
+        {
+          "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+          "job_id": "33302d22cfa4b5bc7a6e",
+          "observed_at": "2026-11-05T08:38:13.822679+00:00",
+          "body_sha256": "8ed69c955f9e24ca2c295332a8b02daf42c2b945d7790371a6c74c12372a225b"
+        }
       ],
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Resolve representative exact newspaper page detail and readable full item; assess topic/OCR query semantics rather than infer from expected-ID match."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Collection rights state public-domain/no-known-restrictions belief for US newspapers; less-than95-year-old issues can contain third-party copyrighted material. No universal metadata/content license is inferred.",
       "facts": {
-        "license_notes": "Per-item rights/access statements; first sampled item declared public domain and unrestricted access.",
-        "authentication_notes": "none for sampled public queries",
-        "cost_notes": "No fee or API key used; respect current provider policies and rate limits.",
-        "terms_review": "pending current reconciliation"
+        "metadata_rights": "Current API is documented for data access; separate metadata reuse statement still needs reconciliation.",
+        "content_rights": "Library states US newspapers published more than95years ago are public domain in their entirety; newer titles may include third-party copyrighted material. This is the provider US-oriented statement, not worldwide legal clearance.",
+        "sample_publication_year": 1926,
+        "reader_account_used": false,
+        "authentication": "No API key or login used for sampled current JSON queries.",
+        "cost": "No paid service or account used. Documented JSON rate20requests/min; no paid-overage route identified.",
+        "research_pacing_seconds": 4,
+        "rate_denial_policy": "Stop on429/access challenge; documentation warns a1hour block may occur even below published limit. Never solve/bypass CAPTCHA."
       },
       "evidence": [
         "../batches/G01_QUERY_EVIDENCE.json",
         "../batches/G01_ACCESS_EVIDENCE.json",
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/coverage-gap-docs-20261105p/observations.jsonl",
+        "runs/newspaper-contract-20261105q/observations.jsonl",
+        "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+        "examples/loc.newspaper-scouting.jsonl",
+        "examples/loc.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "23f63fe8a0498e271384",
+          "observed_at": "2026-11-05T08:32:41.092521+00:00",
+          "body_sha256": "65e1571a8091e382463f370139279ad780e98340b96d2b87cf54f2d6a4979791"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "cbb410cfe25f2f11e40b",
+          "observed_at": "2026-11-05T08:32:46.196725+00:00",
+          "body_sha256": "1f0ef4d9b1f596f0922aaed5f164258b15f9e7f83b04255654f494ef974a3ff6"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "b2fd5406afd25c33cab9",
+          "observed_at": "2026-11-05T08:32:51.297938+00:00",
+          "body_sha256": "a7b2bc9b25fdffff10d6558db38bacddc1f2b80e8bca13396a5b88fc74fc32d9"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "5fda2daf458fa0833d8f",
+          "observed_at": "2026-11-05T08:36:55.491621+00:00",
+          "body_sha256": "1d15858afdf015a72010bae4d66f5d1f55131c6b58fb1222fe3f39442f263f2e"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "e17a7a6140a2ec51854c",
+          "observed_at": "2026-11-05T08:37:00.612116+00:00",
+          "body_sha256": "b8c5b6b45d13442d85c52bd6069f225b62bf8b89413be758afa8abe6012ce6c6"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "9dbb4f02439d28b30698",
+          "observed_at": "2026-11-05T08:37:15.824320+00:00",
+          "body_sha256": "769377db0471b537cbcc564600ab389e836e4d1deb5ced3bc0fa2f8fc541f71d"
+        },
+        {
+          "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+          "job_id": "33302d22cfa4b5bc7a6e",
+          "observed_at": "2026-11-05T08:38:13.822679+00:00",
+          "body_sha256": "8ed69c955f9e24ca2c295332a8b02daf42c2b945d7790371a6c74c12372a225b"
+        }
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+        "Reconcile metadata redistribution/attribution policy and representative item rights/access advisory; no worldwide rights claim."
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Book sample access remains preserved; newspaper JSON reports digitized image/PDF/online-text resource links but no full newspaper page has been opened by this pass.",
       "facts": {
-        "evidence_references": [
-          "../batches/G01_QUERY_EVIDENCE.json",
-          "../batches/G01_ACCESS_EVIDENCE.json",
-          "../batches/G01_FIRST_TEN.md"
+        "previous_book_evidence": {
+          "evidence_references": [
+            "../batches/G01_QUERY_EVIDENCE.json",
+            "../batches/G01_ACCESS_EVIDENCE.json",
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "free_login_eligible": true,
+          "access_classification": "needs explicit item-level review"
+        },
+        "newspaper_results_reported_access_restricted": [
+          "False"
         ],
-        "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "newspaper_actual_reading_access_verified": false,
+        "account_required": "No login for observed metadata; newspaper reader condition not independently checked.",
+        "network_vantage": "Managed cloud; country unknown."
       },
       "evidence": [
         "../batches/G01_QUERY_EVIDENCE.json",
         "../batches/G01_ACCESS_EVIDENCE.json",
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/coverage-gap-docs-20261105p/observations.jsonl",
+        "runs/newspaper-contract-20261105q/observations.jsonl",
+        "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+        "examples/loc.newspaper-scouting.jsonl",
+        "examples/loc.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "23f63fe8a0498e271384",
+          "observed_at": "2026-11-05T08:32:41.092521+00:00",
+          "body_sha256": "65e1571a8091e382463f370139279ad780e98340b96d2b87cf54f2d6a4979791"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "cbb410cfe25f2f11e40b",
+          "observed_at": "2026-11-05T08:32:46.196725+00:00",
+          "body_sha256": "1f0ef4d9b1f596f0922aaed5f164258b15f9e7f83b04255654f494ef974a3ff6"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "b2fd5406afd25c33cab9",
+          "observed_at": "2026-11-05T08:32:51.297938+00:00",
+          "body_sha256": "a7b2bc9b25fdffff10d6558db38bacddc1f2b80e8bca13396a5b88fc74fc32d9"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "5fda2daf458fa0833d8f",
+          "observed_at": "2026-11-05T08:36:55.491621+00:00",
+          "body_sha256": "1d15858afdf015a72010bae4d66f5d1f55131c6b58fb1222fe3f39442f263f2e"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "e17a7a6140a2ec51854c",
+          "observed_at": "2026-11-05T08:37:00.612116+00:00",
+          "body_sha256": "b8c5b6b45d13442d85c52bd6069f225b62bf8b89413be758afa8abe6012ce6c6"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "9dbb4f02439d28b30698",
+          "observed_at": "2026-11-05T08:37:15.824320+00:00",
+          "body_sha256": "769377db0471b537cbcc564600ab389e836e4d1deb5ced3bc0fa2f8fc541f71d"
+        },
+        {
+          "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+          "job_id": "33302d22cfa4b5bc7a6e",
+          "observed_at": "2026-11-05T08:38:13.822679+00:00",
+          "body_sha256": "8ed69c955f9e24ca2c295332a8b02daf42c2b945d7790371a6c74c12372a225b"
+        }
       ],
       "open_questions": [
-        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+        "Inspect representative newspaper page anonymously and confirm usable full-item display/reader; metadata availability alone is insufficient."
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Four current newspaper fixed-ID replays pass; raw scouting preserves eight timeouts, empty results and distinct second-page IDs. Keyword presence in OCR and semantic relevance remain unverified.",
       "facts": {
-        "limitations": [
-          "The digital API is not the entire LoC catalog. OCR quality and completeness vary.",
-          "Sample rights do not establish every result is unrestricted; retain per-item statements.",
-          "Long exact titles and a physics query were slow/timed out or missed the expected item. Failures retained. Current short-subject examples check native identity, not a full topic relevance/ranking benchmark."
+        "current_examples_total": 14,
+        "newspaper_current_examples": 4,
+        "scouting_attempts": 14,
+        "scouting_http200": 6,
+        "scouting_timeouts": 8,
+        "failed_terms": [
+          "railroad",
+          "church",
+          "school",
+          "election",
+          "automobile",
+          "farm",
+          "music",
+          "football"
         ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "empty_query": {
+          "json": null,
+          "method": "GET",
+          "params": {
+            "at": "results,pagination",
+            "c": 3,
+            "dates": "1926-11-04",
+            "dl": "page",
+            "fo": "json",
+            "q": "zxqvnonexistentnewspaper20261105"
+          },
+          "url": "https://www.loc.gov/collections/chronicling-america/"
+        },
+        "empty_returned_count": 0,
+        "page1_ids": [
+          "http://www.loc.gov/resource/sn82016181/1926-11-04/ed-1/?sp=8",
+          "http://www.loc.gov/resource/sn83045462/1926-11-04/ed-1/?sp=38",
+          "http://www.loc.gov/resource/sn84036285/1926-11-04/ed-1/?sp=1"
+        ],
+        "page2_ids": [
+          "http://www.loc.gov/resource/sn82016181/1926-11-04/ed-1/?sp=2",
+          "http://www.loc.gov/resource/sn82016181/1926-11-04/ed-1/?sp=20",
+          "http://www.loc.gov/resource/sn84026749/1926-11-04/ed-1/?sp=26"
+        ],
+        "page_overlap_ids": [],
+        "paging_caution": "Observed of=146 records,total=49 pages,c=3; API last/page_list exposedsp4 rather than49. Follow observed next links and bounded requests; do not treat last as complete traversal proof.",
+        "relevance_caution": "Result description is beginning-of-page OCR, not necessarily query hit/snippet. Matching source IDs proves retrieval only; no topic precision score assigned.",
+        "negative_evidence_preserved": true
       },
       "evidence": [
         "../batches/G01_QUERY_EVIDENCE.json",
         "../batches/G01_ACCESS_EVIDENCE.json",
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/coverage-gap-docs-20261105p/observations.jsonl",
+        "runs/newspaper-contract-20261105q/observations.jsonl",
+        "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+        "examples/loc.newspaper-scouting.jsonl",
+        "examples/loc.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "23f63fe8a0498e271384",
+          "observed_at": "2026-11-05T08:32:41.092521+00:00",
+          "body_sha256": "65e1571a8091e382463f370139279ad780e98340b96d2b87cf54f2d6a4979791"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "cbb410cfe25f2f11e40b",
+          "observed_at": "2026-11-05T08:32:46.196725+00:00",
+          "body_sha256": "1f0ef4d9b1f596f0922aaed5f164258b15f9e7f83b04255654f494ef974a3ff6"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "b2fd5406afd25c33cab9",
+          "observed_at": "2026-11-05T08:32:51.297938+00:00",
+          "body_sha256": "a7b2bc9b25fdffff10d6558db38bacddc1f2b80e8bca13396a5b88fc74fc32d9"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "5fda2daf458fa0833d8f",
+          "observed_at": "2026-11-05T08:36:55.491621+00:00",
+          "body_sha256": "1d15858afdf015a72010bae4d66f5d1f55131c6b58fb1222fe3f39442f263f2e"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "e17a7a6140a2ec51854c",
+          "observed_at": "2026-11-05T08:37:00.612116+00:00",
+          "body_sha256": "b8c5b6b45d13442d85c52bd6069f225b62bf8b89413be758afa8abe6012ce6c6"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "9dbb4f02439d28b30698",
+          "observed_at": "2026-11-05T08:37:15.824320+00:00",
+          "body_sha256": "769377db0471b537cbcc564600ab389e836e4d1deb5ced3bc0fa2f8fc541f71d"
+        },
+        {
+          "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+          "job_id": "33302d22cfa4b5bc7a6e",
+          "observed_at": "2026-11-05T08:38:13.822679+00:00",
+          "body_sha256": "8ed69c955f9e24ca2c295332a8b02daf42c2b945d7790371a6c74c12372a225b"
+        }
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+        "Review OCR query relevance, phrases/date edge cases, language queries and ambiguous title/edition behavior; actual timeout rate remains a reliability issue."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Official API limits and bounded paging are documented; four-second pacing used. Numerous20second query timeouts remain an operating limitation.",
       "facts": {
-        "paging": "sp (page), c (count)",
-        "research_pause_seconds": 2,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "json_requests_per_minute": 20,
+        "research_minimum_interval_seconds": 4,
+        "timeout_seconds": 20,
+        "body_cap_bytes": 524288,
+        "requests_are_serial": true,
+        "deep_paging_limit_provider_stated": 100000,
+        "recommended_max_page_size_provider_stated": 1000,
+        "observed_page_size": 3,
+        "failure_handling": "Preserve transport failures as unknown, not empty. No automatic same-request retry; only fixed-expectation replay after successful scouting. Stop access/rate controls.",
+        "refresh": "Recheck item/version/source policy on future qualification; no runtime importer or deployment changed."
       },
       "evidence": [
         "../batches/G01_QUERY_EVIDENCE.json",
         "../batches/G01_ACCESS_EVIDENCE.json",
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/coverage-gap-docs-20261105p/observations.jsonl",
+        "runs/newspaper-contract-20261105q/observations.jsonl",
+        "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+        "examples/loc.newspaper-scouting.jsonl",
+        "examples/loc.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "23f63fe8a0498e271384",
+          "observed_at": "2026-11-05T08:32:41.092521+00:00",
+          "body_sha256": "65e1571a8091e382463f370139279ad780e98340b96d2b87cf54f2d6a4979791"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "cbb410cfe25f2f11e40b",
+          "observed_at": "2026-11-05T08:32:46.196725+00:00",
+          "body_sha256": "1f0ef4d9b1f596f0922aaed5f164258b15f9e7f83b04255654f494ef974a3ff6"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "b2fd5406afd25c33cab9",
+          "observed_at": "2026-11-05T08:32:51.297938+00:00",
+          "body_sha256": "a7b2bc9b25fdffff10d6558db38bacddc1f2b80e8bca13396a5b88fc74fc32d9"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "5fda2daf458fa0833d8f",
+          "observed_at": "2026-11-05T08:36:55.491621+00:00",
+          "body_sha256": "1d15858afdf015a72010bae4d66f5d1f55131c6b58fb1222fe3f39442f263f2e"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "e17a7a6140a2ec51854c",
+          "observed_at": "2026-11-05T08:37:00.612116+00:00",
+          "body_sha256": "b8c5b6b45d13442d85c52bd6069f225b62bf8b89413be758afa8abe6012ce6c6"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "9dbb4f02439d28b30698",
+          "observed_at": "2026-11-05T08:37:15.824320+00:00",
+          "body_sha256": "769377db0471b537cbcc564600ab389e836e4d1deb5ced3bc0fa2f8fc541f71d"
+        },
+        {
+          "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+          "job_id": "33302d22cfa4b5bc7a6e",
+          "observed_at": "2026-11-05T08:38:13.822679+00:00",
+          "body_sha256": "8ed69c955f9e24ca2c295332a8b02daf42c2b945d7790371a6c74c12372a225b"
+        }
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Characterize supported narrower query latency/reliability on a useful later recovery/documentation trigger; define update/deletion handling and maintenance scope before full qualification."
       ]
     },
     "decision_and_followup": {
-      "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "status": "complete",
+      "summary": "Retain one partially qualified digital-collection source. C17 is now backed by actual newspaper metadata queries, but its rights/relevance/reader/operating gaps remain open; ten book examples cannot close it.",
       "facts": {
-        "state": "ten-query-examples-verified",
-        "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes.",
-        "production_qualification_complete": false
+        "decision": "retain-partial-newspaper-subset",
+        "full_qualification_complete": false,
+        "activation_approved": false,
+        "independent_origins": 1,
+        "next_action": "Continue newspaper topic/OCR relevance and representative page-reader/rights analysis; ten existing book cases plus four newspaper replays do not qualify the newspaper catalog. Broad and seven date-scoped queries timed out at20s. Investigate only documented narrower queries or later recovery; do not hammer timed-out search. Continue independent P05/India coverage.",
+        "revisit_trigger": "Documented narrower supported requests, provider recovery or new policy/reader evidence; blocked/timed-out route alone does not halt other sources."
       },
       "evidence": [
         "../batches/G01_QUERY_EVIDENCE.json",
         "../batches/G01_ACCESS_EVIDENCE.json",
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/coverage-gap-docs-20261105p/observations.jsonl",
+        "runs/newspaper-contract-20261105q/observations.jsonl",
+        "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+        "examples/loc.newspaper-scouting.jsonl",
+        "examples/loc.jsonl"
       ],
-      "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
-      ]
+      "observation_refs": [
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "23f63fe8a0498e271384",
+          "observed_at": "2026-11-05T08:32:41.092521+00:00",
+          "body_sha256": "65e1571a8091e382463f370139279ad780e98340b96d2b87cf54f2d6a4979791"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "cbb410cfe25f2f11e40b",
+          "observed_at": "2026-11-05T08:32:46.196725+00:00",
+          "body_sha256": "1f0ef4d9b1f596f0922aaed5f164258b15f9e7f83b04255654f494ef974a3ff6"
+        },
+        {
+          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+          "job_id": "b2fd5406afd25c33cab9",
+          "observed_at": "2026-11-05T08:32:51.297938+00:00",
+          "body_sha256": "a7b2bc9b25fdffff10d6558db38bacddc1f2b80e8bca13396a5b88fc74fc32d9"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "5fda2daf458fa0833d8f",
+          "observed_at": "2026-11-05T08:36:55.491621+00:00",
+          "body_sha256": "1d15858afdf015a72010bae4d66f5d1f55131c6b58fb1222fe3f39442f263f2e"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "e17a7a6140a2ec51854c",
+          "observed_at": "2026-11-05T08:37:00.612116+00:00",
+          "body_sha256": "b8c5b6b45d13442d85c52bd6069f225b62bf8b89413be758afa8abe6012ce6c6"
+        },
+        {
+          "path": "runs/newspaper-contract-20261105q/observations.jsonl",
+          "job_id": "9dbb4f02439d28b30698",
+          "observed_at": "2026-11-05T08:37:15.824320+00:00",
+          "body_sha256": "769377db0471b537cbcc564600ab389e836e4d1deb5ced3bc0fa2f8fc541f71d"
+        },
+        {
+          "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+          "job_id": "33302d22cfa4b5bc7a6e",
+          "observed_at": "2026-11-05T08:38:13.822679+00:00",
+          "body_sha256": "8ed69c955f9e24ca2c295332a8b02daf42c2b945d7790371a6c74c12372a225b"
+        }
+      ],
+      "open_questions": []
     }
   },
   "analysis_refs": [

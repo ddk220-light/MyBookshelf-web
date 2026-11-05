@@ -1,5 +1,8 @@
 # MyBookshelf web handoff
 
+**Free-knowledge research checkpoint, 2026-11-05:** isolated expansion worktree / draft PR #161 now has **92 records, 204 current examples across 19 catalogs, and 1 complete research dossier (O*NET 31.0)**. All 49 areas have candidates, 36 have query evidence; all 49 full-area closures and 18 USA/India civic cells remain open. LOC adds 4 newspaper replays with failed queries preserved. OpenCity India and NYC planning are deferred policy/access candidates. All 38 documentation queues / 312 jobs are complete collection passes. Registry/evidence checks and 60 tests pass. The 100% completion task remains enabled; read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+
 **100% free-knowledge coverage goal, 2026-11-05:** the owner explicitly requested
 full completion and continued execution. The existing recurring task is updated
 and enabled as **Reach full source research coverage**. The [saved goal](research/free-content/registry/goal.json)

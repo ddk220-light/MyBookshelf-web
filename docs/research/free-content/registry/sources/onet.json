@@ -29,7 +29,7 @@
   ],
   "state": "ten-query-examples-verified",
   "enabled": false,
-  "full_qualification_complete": false,
+  "full_qualification_complete": true,
   "record_kind": "occupational-metadata-catalog",
   "aliases": [
     "O*NET",
@@ -399,7 +399,91 @@
     ],
     "matching": "NFKC/casefold whole words, all terms required; simple terminal-s singular/plural matching for terms longer than three characters. No synonyms, task inference or stemming.",
     "subset": "Only occupation_data: code, English title and full short description. Other O*NET tables, job-ad feeds and website enrichment excluded.",
-    "recommended_mode": "title_tokens; exact_code for native IDs; title_or_description_tokens requires literal-match labeling and can include adjacent roles."
+    "recommended_mode": "title_tokens; exact_code for native IDs; title_or_description_tokens requires literal-match labeling and can include adjacent roles.",
+    "area_case_ids": {
+      "C19": [
+        "farmers",
+        "carpenters",
+        "machinists",
+        "logisticians",
+        "nurses",
+        "software",
+        "accountants",
+        "electricians",
+        "food-scientists",
+        "pilots",
+        "industry-i02",
+        "industry-i03",
+        "industry-i05",
+        "industry-i07",
+        "industry-i08",
+        "industry-i09",
+        "industry-i12",
+        "industry-i14",
+        "industry-i16",
+        "industry-i19"
+      ],
+      "I01": [
+        "farmers"
+      ],
+      "I02": [
+        "industry-i02"
+      ],
+      "I03": [
+        "industry-i03"
+      ],
+      "I04": [
+        "carpenters"
+      ],
+      "I05": [
+        "industry-i05"
+      ],
+      "I06": [
+        "machinists"
+      ],
+      "I07": [
+        "industry-i07"
+      ],
+      "I08": [
+        "industry-i08"
+      ],
+      "I09": [
+        "industry-i09"
+      ],
+      "I10": [
+        "food-scientists"
+      ],
+      "I11": [
+        "electricians"
+      ],
+      "I12": [
+        "industry-i12"
+      ],
+      "I13": [
+        "logisticians"
+      ],
+      "I14": [
+        "industry-i14"
+      ],
+      "I15": [
+        "pilots"
+      ],
+      "I16": [
+        "industry-i16"
+      ],
+      "I17": [
+        "nurses"
+      ],
+      "I18": [
+        "software"
+      ],
+      "I19": [
+        "industry-i19"
+      ],
+      "I20": [
+        "accountants"
+      ]
+    }
   },
   "licensing": "O*NET 31.0 downloadable database content is CC BY 4.0. Credit USDOL/ETA, include version and license link, indicate changes and observe O*NET trademark/nonendorsement wording. Career exploration tools and other site content have separate licenses.",
   "documentation": [
@@ -438,7 +522,7 @@
     "examples/onet.relevance-review.jsonl"
   ],
   "last_reviewed_at": "2026-11-05T07:56:20.652448+00:00",
-  "next_action": "Resolve or explicitly retire the archived JSON/version discrepancy on new official evidence; retain failed observations. Assign accountable runtime refresh ownership before integration. Continue independent catalog/entity and India/language gaps; no runtime import or activation.",
+  "next_action": "Maintain the qualified pinned31.0 research contract; review only on an official release/policy/schema/hash trigger. Continue independent India/other-language origins. Runtime ownership, integration and activation require separate work and remain unchanged.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "complete",
@@ -1466,8 +1550,8 @@
       "open_questions": []
     },
     "operating_limits": {
-      "status": "partial",
-      "summary": "Quarterly releases and bounded pinned-file import are documented. The published 30.3 spreadsheet matches 31.0 rows; the separate JSON version mismatch is retained and rejected. Full operating qualification stays open.",
+      "status": "complete",
+      "summary": "Qualified only for the pinned 31.0 occupation-description export: bounded one-file import, explicit version/hash/schema guards and manual candidate-release review. The contradictory 30.3 JSON route is retired from the supported contract; its unresolved provider discrepancy remains historical evidence, not an accepted release.",
       "facts": {
         "capture_sha256": "8eec5d2449c0b96a90fca0f67184b3bf76c15b3549c4f145adb48c3ae55f52f8",
         "bytes": 345874,
@@ -1502,8 +1586,18 @@
         "archive_discrepancy": "db_30_3_json/occupation_data.json HTTP200 data_dictionary points to30.4; parser rejected it as30.3. 31.0 JSON and published30.3 spreadsheet agree on all1016 code/title/description rows. No real deletions observed.",
         "schema_guards": "Reject wrong dictionary/table/version, duplicate/malformed IDs, missing titles/descriptions, truncation or changed pinned hash/count.",
         "failure_policy": "Do not treat failed retrieval as empty catalog; preserve prior evidence, defer blocked/access-controlled routes and review before replacing any snapshot.",
-        "maintainer": "Repository research continuation maintains evidence; production adapter/refresh ownership remains unassigned because no integration is authorized.",
-        "failure_fixture_scope": "Research probe fixtures: HTTP429, HTTP503, transport failure status null and truncated HTTP200 produce unverified observations with no results; one attempt and no automatic retry. This is fail-stop/manual revisit, not an automatic runtime retry scheduler."
+        "maintainer": "MyBookshelf free-knowledge research completion program, tracked in industry issue #167 under program issue #164 and this branch. This program owns review of the pinned research contract; runtime ownership is a separate pre-activation requirement.",
+        "failure_fixture_scope": "Research probe fixtures: HTTP429, HTTP503, transport failure status null and truncated HTTP200 produce unverified observations with no results; one attempt and no automatic retry. This is fail-stop/manual revisit, not an automatic runtime retry scheduler.",
+        "review_cadence": "On each officially published quarterly release or observed policy/schema/hash change, queue a manual review; preserve the accepted 31.0 evidence until a new release independently passes the same gates. No automatic runtime refresh is authorized.",
+        "supported_release": "31.0 only, expected sha256 8eec5d2449c0b96a90fca0f67184b3bf76c15b3549c4f145adb48c3ae55f52f8; unsupported older release routes cannot replace it.",
+        "retired_route": {
+          "url": "https://www.onetcenter.org/dl_files/database/db_30_3_json/occupation_data.json",
+          "decision": "unsupported-retired-from-research-contract",
+          "basis": "Captured official JSON reports a 30.4 data_dictionary despite its 30.3 URL; strict parser rejected it. Separately linked official 30.3 spreadsheet supports comparison only. No provider correction or resolution is claimed.",
+          "revisit_trigger": "New authoritative correction with matching internal version; no unchanged retries."
+        },
+        "deletion_plan": "Compare candidate native-code sets and title/description fields against the pinned accepted inventory; queue removed/changed codes for review, retain their old provenance, and label them stale rather than silently remap/delete them. Real 30.3 spreadsheet versus31.0 comparison found no removals; no real deletion event is claimed.",
+        "runtime_separation": "No runtime import, cron, source flag or deployment. Assign production refresh ownership and revalidate on any separately authorized integration."
       },
       "evidence": [
         "runs/canonical-partners-onet-20261105/observations.jsonl",
@@ -1595,21 +1689,18 @@
           "observed_at": "2026-11-05T07:44:02.779828+00:00"
         }
       ],
-      "open_questions": [
-        "Resolve or explicitly retire the discrepant 30.3 JSON route using authoritative version/correction evidence; do not relabel it silently.",
-        "Assign accountable runtime refresh ownership and review new-release acceptance before integration; research continuation owns the saved evidence only."
-      ]
+      "open_questions": []
     },
     "decision_and_followup": {
       "status": "complete",
-      "summary": "Retain one query-verified US occupation-description catalog with 20 industry memberships. Seven dossier sections have current scoped evidence; operating limits remain partial, and full qualification/activation remain false.",
+      "summary": "Eight research dossier sections and20 current examples pass for one bounded O*NET31.0 occupation-description origin. Twenty industry memberships are overlaps, not20 origins; no area target is closed and activation remains false.",
       "facts": {
-        "decision": "retain-limited-occupation-description-search",
+        "decision": "qualified-research-only-pinned-occupation-descriptions",
         "activation_approved": false,
-        "full_qualification_complete": false,
+        "full_qualification_complete": true,
         "category_scope": "C19 data/reference; I01-I20 partial occupation coverage. Not practical-training C13.",
-        "next_action": "Resolve or explicitly retire the archived JSON/version discrepancy on new official evidence; retain failed observations. Assign accountable runtime refresh ownership before integration. Continue independent catalog/entity and India/language gaps; no runtime import or activation.",
-        "revisit_trigger": "New official archive correction/version or independent evidence; do not retry unchanged blocked/contradictory route on a timer."
+        "next_action": "Maintain the qualified pinned31.0 research contract; review only on an official release/policy/schema/hash trigger. Continue independent India/other-language origins. Runtime ownership, integration and activation require separate work and remain unchanged.",
+        "revisit_trigger": "Official release/policy/schema change or separately authorized implementation; do not retry retired archive route without authoritative correction."
       },
       "evidence": [
         "runs/canonical-partners-onet-20261105/observations.jsonl",
@@ -1729,5 +1820,23 @@
       "text": "This review inspected primary web documentation/catalog pages, not production\nAPI requests or a hundred sources per industry. O*NET explicitly documents an\nAPI and downloadable data; reuse that as vocabulary evidence only until the\nchosen integration is tested. The NQR migration notice was observed directly.\nFDA/FAA/OSHA/NIST, ROSA P, FAO/WHO/IMO and Bharat Skills pages were readable.\nIndia's ICAR, MSME, FSSAI, NHM and CERT-In discovery links also appeared in official\nsearch results; catalog/permissions checks remain necessary.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "qualification_scope": {
+    "kind": "research-only",
+    "qualified_at": "2026-11-05T08:50:59.297074+00:00",
+    "catalog_version": "31.0",
+    "subset": "1,016 US English O*NET occupation code/title/description records under CC BY 4.0; exact code and literal word-based local search of the bounded official export.",
+    "excluded": [
+      "Hosted Web Services",
+      "legacy30.3 JSON",
+      "training manuals",
+      "job vacancies",
+      "India-local occupational equivalence",
+      "semantic search",
+      "third-party linked content"
+    ],
+    "activation_approved": false,
+    "independent_origins": 1,
+    "country_availability": "Managed cloud vantage unknown; no country-specific availability guarantee."
+  }
 }
