@@ -12,7 +12,7 @@
     "I14",
     "I15"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -44,14 +44,17 @@
     "https://rosap.ntl.bts.gov/"
   ],
   "limitations": [
+    "The homepage is readable, but the published public search GET returned HTTP403.",
     "FAA, MARAD, NHTSA and university transportation materials can overlap their primary agency catalogs; repository membership does not multiply origins.",
     "No fresh item-query examples; policy/documentation observations are not successful catalog queries."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/industry-search-followup-20261105cw/observations.jsonl",
+    "runs/industry-native-search-20261105cx/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T03:19:01.955069+00:00",
-  "next_action": "Find official supported API/export/OAI documentation, then verify transport/logistics native records, versions and free reading. Preserve DOT agency and funded-producer attribution.",
+  "last_reviewed_at": "2026-11-05T18:00:13.076167+00:00",
+  "next_action": "Wait for a useful provider access-policy/recovery change before retrying the published gsearch route. Homepage200 does not override search403. Help on the same host was skipped after denial; no alternate endpoint or identity was used.",
   "primary_document_observations": [
     {
       "path": "runs/source-evidence-20261105/observations.jsonl",
@@ -204,7 +207,8 @@
       "summary": "Published operating constraints captured with remaining scope kept explicit.",
       "facts": {
         "api_quota": null,
-        "search_export_contract": "Not verified; public search UI is not an API contract"
+        "search_export_contract": "Not verified; public search UI is not an API contract",
+        "current_restriction": "The homepage is readable, but the published public search GET returned HTTP403."
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl"
@@ -224,9 +228,11 @@
       "status": "complete",
       "summary": "Retain for supported retrieval and item review; not qualified.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Find official supported API/export/OAI documentation, then verify transport/logistics native records, versions and free reading. Preserve DOT agency and funded-producer attribution.",
-        "revisit_trigger": "Current API/export contract and bounded reader evidence"
+        "decision": "deferred",
+        "next_action": "Wait for a useful provider access-policy/recovery change before retrying the published gsearch route. Homepage200 does not override search403. Help on the same host was skipped after denial; no alternate endpoint or identity was used.",
+        "revisit_trigger": "Current API/export contract and bounded reader evidence",
+        "blocker": "The homepage is readable, but the published public search GET returned HTTP403.",
+        "owner_action_required": false
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl"
@@ -258,5 +264,19 @@
       "text": "This review inspected primary web documentation/catalog pages, not production\nAPI requests or a hundred sources per industry. O*NET explicitly documents an\nAPI and downloadable data; reuse that as vocabulary evidence only until the\nchosen integration is tested. The NQR migration notice was observed directly.\nFDA/FAA/OSHA/NIST, ROSA P, FAO/WHO/IMO and Bharat Skills pages were readable.\nIndia's ICAR, MSME, FSSAI, NHM and CERT-In discovery links also appeared in official\nsearch results; catalog/permissions checks remain necessary.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "status": "blocked_or_failed",
+    "reason": "The homepage is readable, but the published public search GET returned HTTP403.",
+    "attempt": "Followed the homepage GET form to /gsearch?terms=cold+chain with the research user agent and robots pacing.",
+    "result": "Search403; same-host help skipped after denial. No item query results.",
+    "decision": "wait",
+    "next_action": "Wait for a useful provider access-policy/recovery change before retrying the published gsearch route. Homepage200 does not override search403. Help on the same host was skipped after denial; no alternate endpoint or identity was used.",
+    "owner_action_required": false,
+    "observed_at": "2026-11-05T18:00:13.076167+00:00",
+    "evidence": [
+      "runs/industry-search-followup-20261105cw/observations.jsonl",
+      "runs/industry-native-search-20261105cx/observations.jsonl"
+    ]
+  }
 }

@@ -8,7 +8,7 @@
     "C13",
     "I15"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -25,28 +25,212 @@
   },
   "aliases": [],
   "capabilities": [
-    "Official aviation and aircraft handbook directory links pilot and technical reference publications; no machine-readable search or export has been established."
+    "Local title-token and exact-URL search over all42 links in the published FAA Reference Handbooks table; ten tested topic queries."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown; no query executed",
-    "request_shape_verified": false
+    "adapter": "faa-handbooks",
+    "endpoint": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+    "authentication": "Anonymous public HTML catalog; no account/key or pilot-record query.",
+    "cost": "Free catalog metadata, no paid account.",
+    "supported_modes": [
+      "Bounded public Reference Handbooks metadata import",
+      "Local title-token search",
+      "Exact native URL lookup"
+    ],
+    "unsupported_modes": [
+      "Full-text handbook search",
+      "Aircraft/model-specific maintenance records",
+      "Whole FAA website search",
+      "Supersession inferred from similar names"
+    ],
+    "cases": [
+      {
+        "id": "handbook-topic-01",
+        "intent": "Search FAA Reference Handbooks catalog titles for airplane flying",
+        "expected_ids": [
+          "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/airplane_handbook",
+          "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/AFH_Addendum_(MOSAIC).pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "airplane flying"
+          }
+        }
+      },
+      {
+        "id": "handbook-topic-02",
+        "intent": "Search FAA Reference Handbooks catalog titles for maintenance general",
+        "expected_ids": [
+          "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/amtg_handbook.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "maintenance general"
+          }
+        }
+      },
+      {
+        "id": "handbook-topic-03",
+        "intent": "Search FAA Reference Handbooks catalog titles for maintenance airframe",
+        "expected_ids": [
+          "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/FAA-H-8083-31B_Aviation_Maintenance_Technician_Handbook.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "maintenance airframe"
+          }
+        }
+      },
+      {
+        "id": "handbook-topic-04",
+        "intent": "Search FAA Reference Handbooks catalog titles for maintenance powerplant",
+        "expected_ids": [
+          "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/amt_powerplant_handbook.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "maintenance powerplant"
+          }
+        }
+      },
+      {
+        "id": "handbook-topic-05",
+        "intent": "Search FAA Reference Handbooks catalog titles for balloon flying",
+        "expected_ids": [
+          "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/Balloon_Flying_Handbook"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "balloon flying"
+          }
+        }
+      },
+      {
+        "id": "handbook-topic-06",
+        "intent": "Search FAA Reference Handbooks catalog titles for glider flying",
+        "expected_ids": [
+          "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/glider_handbook"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "glider flying"
+          }
+        }
+      },
+      {
+        "id": "handbook-topic-07",
+        "intent": "Search FAA Reference Handbooks catalog titles for helicopter flying",
+        "expected_ids": [
+          "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/helicopter_flying_handbook"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "helicopter flying"
+          }
+        }
+      },
+      {
+        "id": "handbook-topic-08",
+        "intent": "Search FAA Reference Handbooks catalog titles for instrument flying",
+        "expected_ids": [
+          "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/FAA-H-8083-15B.pdf",
+          "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/ifh_errata.pdf",
+          "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/ifh_addendum.pdf",
+          "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/ifh_addendum_b.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "instrument flying"
+          }
+        }
+      },
+      {
+        "id": "handbook-topic-09",
+        "intent": "Search FAA Reference Handbooks catalog titles for aviation weather",
+        "expected_ids": [
+          "https://www.faa.gov/regulationspolicies/handbooksmanuals/aviation/faa-h-8083-28-aviation-weather-handbook"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "aviation weather"
+          }
+        }
+      },
+      {
+        "id": "handbook-topic-10",
+        "intent": "Search FAA Reference Handbooks catalog titles for weight balance",
+        "expected_ids": [
+          "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/FAA-H-8083-1.pdf",
+          "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/Weight_Balance_HB_Addendum_(MOSAIC).pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "weight balance"
+          }
+        }
+      }
+    ],
+    "research_pause_seconds": 3,
+    "expected_entry_count": 42,
+    "observed_inventory_sha256": "b5bbd13e6f34389e90434aa35122c454b87d2339601d0e49af1f79c40dfd98a7",
+    "tested_scope": "Local title-token and exact-URL search over all42 links in the published FAA Reference Handbooks table; ten tested topic queries."
   },
   "documentation": [
-    "https://www.faa.gov/regulations_policies/handbooks_manuals"
+    "https://www.faa.gov/regulations_policies/handbooks_manuals",
+    "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+    "https://www.faa.gov/web_policies/",
+    "https://www.faa.gov/web_policies",
+    "https://www.faa.gov/web_policies/disclaimer",
+    "https://www.faa.gov/web_policies/linking_policy"
   ],
-  "licensing": "Metadata and content rights require separate evidence; no blanket reuse license established.",
+  "licensing": "Factual titles, native links and listing dates from the publicly offered FAA government catalog are used for research metadata search. FAA linking policy excludes authorization for third-party copyrighted content; no blanket handbook/image/content reuse license is claimed. No books downloaded.",
   "limitations": [
-    "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
-    "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
+    "Scope is the Reference Handbooks table, not all FAA material, model-specific maintenance manuals or full-text search.",
+    "Shared row dates are retained as shared; addenda/errata are separate URLs, not assumed to have the handbook publication date.",
+    "HTML links may lead to a handbook landing page or collection; per-item reading/access and full-content rights remain separate.",
+    "Title-only search misses body terms such as turbulence; no Hindi title matches were observed in this English catalog."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+    "runs/industry-search-policy-20261105cs/observations.jsonl",
+    "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+    "runs/industry-publication-permission-20261105cu/observations.jsonl",
+    "examples/faa-manuals.jsonl",
+    "examples/faa-manuals.benchmark.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T05:50:26.972137+00:00",
-  "next_action": "Review official catalog/export terms and representative handbook edition/errata pages; find a supported query method. Keep personal pilot records and print-order transactions outside scope.",
+  "last_reviewed_at": "2026-11-05T17:57:15.867146+00:00",
+  "next_action": "Working scoped title search. Verify representative handbook landing/access links and snapshot refresh behavior, then broaden to other published FAA handbook tables only if useful. No bulk book download.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -103,43 +287,172 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documented catalog capabilities retained; exact executed machine contract remains open.",
+      "summary": "Local title-token and exact-URL search over all42 links in the published FAA Reference Handbooks table; ten tested topic queries.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "cases": [],
-        "authentication": "Unknown; no query executed",
-        "request_shape_verified": false
+        "adapter": "faa-handbooks",
+        "endpoint": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+        "cases": [
+          "handbook-topic-01",
+          "handbook-topic-02",
+          "handbook-topic-03",
+          "handbook-topic-04",
+          "handbook-topic-05",
+          "handbook-topic-06",
+          "handbook-topic-07",
+          "handbook-topic-08",
+          "handbook-topic-09",
+          "handbook-topic-10"
+        ],
+        "authentication": "Anonymous public HTML catalog; no account/key or pilot-record query.",
+        "request_shape_verified": true,
+        "current_passing_examples": 10,
+        "query_coverage": "working",
+        "tested_scope": "Local title-token and exact-URL search over all42 links in the published FAA Reference Handbooks table; ten tested topic queries.",
+        "activation_approved": false,
+        "method": "faa-handbooks",
+        "supported_modes": [
+          "Bounded public Reference Handbooks metadata import",
+          "Local title-token search",
+          "Exact native URL lookup"
+        ],
+        "unsupported_modes": [
+          "Full-text handbook search",
+          "Aircraft/model-specific maintenance records",
+          "Whole FAA website search",
+          "Supersession inferred from similar names"
+        ]
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-policy-20261105cs/observations.jsonl",
+        "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+        "runs/industry-publication-permission-20261105cu/observations.jsonl",
+        "examples/faa-manuals.jsonl",
+        "examples/faa-manuals.benchmark.jsonl"
       ],
       "observation_refs": [
         {
           "path": "runs/source-evidence-20261105/observations.jsonl",
           "job_id": "89e14ac3296f18c19927",
           "observed_at": "2026-11-05T02:31:53.447719+00:00"
+        },
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "89e14ac3296f18c19927",
+          "observed_at": "2026-11-05T17:45:41.308244+00:00",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals",
+          "body_sha256": "2a39d7ebbbd6b46fd0363dba6427845d10f0d5449cfb3fca8a6288472fdbfba6",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "ab8fdd3261339a1d2fce",
+          "observed_at": "2026-11-05T17:47:34.777563+00:00",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "body_sha256": "b5bbd13e6f34389e90434aa35122c454b87d2339601d0e49af1f79c40dfd98a7",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "cd8222b2010e30b4317d",
+          "observed_at": "2026-11-05T17:47:39.039730+00:00",
+          "url": "https://www.faa.gov/web_policies/",
+          "body_sha256": "16b1d03c521889bf461ff1dfda2db3546e4c9da08b64b6581a914917f54b141a",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+          "job_id": "757c81c86efca2b19875",
+          "observed_at": "2026-11-05T17:48:19.976115+00:00",
+          "url": "https://www.faa.gov/web_policies",
+          "body_sha256": "e7436fdb3c578d53b17be262925683826364d2ba3aff8fe4e151982b6bf84740",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-publication-permission-20261105cu/observations.jsonl",
+          "job_id": "61fd1a386175ad015351",
+          "observed_at": "2026-11-05T17:50:25.019609+00:00",
+          "url": "https://www.faa.gov/web_policies/disclaimer",
+          "body_sha256": "bc49d0625e42fe64a14f19a95f59f5362105ff60272fd8b55f11b2289917b8e1",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-publication-permission-20261105cu/observations.jsonl",
+          "job_id": "8425db66032afc9d0d41",
+          "observed_at": "2026-11-05T17:50:29.852321+00:00",
+          "url": "https://www.faa.gov/web_policies/linking_policy",
+          "body_sha256": "26b9ac39454c557136201fbd741c4e7790f68270c48e322888cc1a1f32b4f6a1",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
         }
       ],
       "open_questions": [
-        "Obtain supported public request shapes and verify ten distinct native-ID examples plus paging/empty/error behavior."
+        "Later-day source changes and additional scopes remain untested."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Metadata and content rights require separate evidence; no blanket reuse license established.",
+      "summary": "Factual titles, native links and listing dates from the publicly offered FAA government catalog are used for research metadata search. FAA linking policy excludes authorization for third-party copyrighted content; no blanket handbook/image/content reuse license is claimed. No books downloaded.",
       "facts": {
         "rights": "Metadata and content rights require separate evidence; no blanket reuse license established.",
         "cost": "Unknown per item/service"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-policy-20261105cs/observations.jsonl",
+        "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+        "runs/industry-publication-permission-20261105cu/observations.jsonl",
+        "examples/faa-manuals.jsonl",
+        "examples/faa-manuals.benchmark.jsonl"
       ],
       "observation_refs": [
         {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
           "job_id": "89e14ac3296f18c19927",
-          "observed_at": "2026-11-05T02:31:53.447719+00:00"
+          "observed_at": "2026-11-05T17:45:41.308244+00:00",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals",
+          "body_sha256": "2a39d7ebbbd6b46fd0363dba6427845d10f0d5449cfb3fca8a6288472fdbfba6",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "ab8fdd3261339a1d2fce",
+          "observed_at": "2026-11-05T17:47:34.777563+00:00",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "body_sha256": "b5bbd13e6f34389e90434aa35122c454b87d2339601d0e49af1f79c40dfd98a7",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "cd8222b2010e30b4317d",
+          "observed_at": "2026-11-05T17:47:39.039730+00:00",
+          "url": "https://www.faa.gov/web_policies/",
+          "body_sha256": "16b1d03c521889bf461ff1dfda2db3546e4c9da08b64b6581a914917f54b141a",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+          "job_id": "757c81c86efca2b19875",
+          "observed_at": "2026-11-05T17:48:19.976115+00:00",
+          "url": "https://www.faa.gov/web_policies",
+          "body_sha256": "e7436fdb3c578d53b17be262925683826364d2ba3aff8fe4e151982b6bf84740",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-publication-permission-20261105cu/observations.jsonl",
+          "job_id": "61fd1a386175ad015351",
+          "observed_at": "2026-11-05T17:50:25.019609+00:00",
+          "url": "https://www.faa.gov/web_policies/disclaimer",
+          "body_sha256": "bc49d0625e42fe64a14f19a95f59f5362105ff60272fd8b55f11b2289917b8e1",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-publication-permission-20261105cu/observations.jsonl",
+          "job_id": "8425db66032afc9d0d41",
+          "observed_at": "2026-11-05T17:50:29.852321+00:00",
+          "url": "https://www.faa.gov/web_policies/linking_policy",
+          "body_sha256": "26b9ac39454c557136201fbd741c4e7790f68270c48e322888cc1a1f32b4f6a1",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
         }
       ],
       "open_questions": [
@@ -169,24 +482,83 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No current query assertions; observed listing identities are not passing examples.",
+      "summary": "Local title-token and exact-URL search over all42 links in the published FAA Reference Handbooks table; ten tested topic queries.",
       "facts": {
-        "positive_examples": 0,
+        "positive_examples": 10,
         "native_identity_samples": [],
-        "version_caution": "Handbook number, edition, errata and effective date remain to verify."
+        "version_caution": "Handbook number, edition, errata and effective date remain to verify.",
+        "current_passing_examples": 10,
+        "query_coverage": "working",
+        "tested_scope": "Local title-token and exact-URL search over all42 links in the published FAA Reference Handbooks table; ten tested topic queries.",
+        "activation_approved": false,
+        "negative_evidence": "examples/faa-manuals.benchmark.jsonl"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-policy-20261105cs/observations.jsonl",
+        "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+        "runs/industry-publication-permission-20261105cu/observations.jsonl",
+        "examples/faa-manuals.jsonl",
+        "examples/faa-manuals.benchmark.jsonl"
       ],
       "observation_refs": [
         {
           "path": "runs/source-evidence-20261105/observations.jsonl",
           "job_id": "89e14ac3296f18c19927",
           "observed_at": "2026-11-05T02:31:53.447719+00:00"
+        },
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "89e14ac3296f18c19927",
+          "observed_at": "2026-11-05T17:45:41.308244+00:00",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals",
+          "body_sha256": "2a39d7ebbbd6b46fd0363dba6427845d10f0d5449cfb3fca8a6288472fdbfba6",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "ab8fdd3261339a1d2fce",
+          "observed_at": "2026-11-05T17:47:34.777563+00:00",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "body_sha256": "b5bbd13e6f34389e90434aa35122c454b87d2339601d0e49af1f79c40dfd98a7",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "cd8222b2010e30b4317d",
+          "observed_at": "2026-11-05T17:47:39.039730+00:00",
+          "url": "https://www.faa.gov/web_policies/",
+          "body_sha256": "16b1d03c521889bf461ff1dfda2db3546e4c9da08b64b6581a914917f54b141a",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+          "job_id": "757c81c86efca2b19875",
+          "observed_at": "2026-11-05T17:48:19.976115+00:00",
+          "url": "https://www.faa.gov/web_policies",
+          "body_sha256": "e7436fdb3c578d53b17be262925683826364d2ba3aff8fe4e151982b6bf84740",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-publication-permission-20261105cu/observations.jsonl",
+          "job_id": "61fd1a386175ad015351",
+          "observed_at": "2026-11-05T17:50:25.019609+00:00",
+          "url": "https://www.faa.gov/web_policies/disclaimer",
+          "body_sha256": "bc49d0625e42fe64a14f19a95f59f5362105ff60272fd8b55f11b2289917b8e1",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-publication-permission-20261105cu/observations.jsonl",
+          "job_id": "8425db66032afc9d0d41",
+          "observed_at": "2026-11-05T17:50:29.852321+00:00",
+          "url": "https://www.faa.gov/web_policies/linking_policy",
+          "body_sha256": "26b9ac39454c557136201fbd741c4e7790f68270c48e322888cc1a1f32b4f6a1",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
         }
       ],
       "open_questions": [
-        "Test known-item and topical relevance, negative queries and native identities without counting documentation samples as examples."
+        "Per-item current applicability and native reading access remain separate."
       ]
     },
     "operating_limits": {
@@ -195,7 +567,9 @@
       "facts": {
         "numeric_quota": null,
         "bulk_content_downloaded": false,
-        "current_restriction": "Supported query allowance/limits still unresolved"
+        "current_restriction": "No login/access denial in current catalog/search responses; serial policy pacing observed.",
+        "maximum_response_bytes": 524288,
+        "automatic_retries": 0
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl"
@@ -213,20 +587,78 @@
     },
     "decision_and_followup": {
       "status": "complete",
-      "summary": "Candidate/deferred triage only; no runtime activation or qualification.",
+      "summary": "Working query connector in stated scope; deeper content/access checks remain open and do not gate query coverage.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Review official catalog/export terms and representative handbook edition/errata pages; find a supported query method. Keep personal pilot records and print-order transactions outside scope.",
-        "activation_approved": false
+        "decision": "working-in-tested-scope",
+        "next_action": "Working scoped title search. Verify representative handbook landing/access links and snapshot refresh behavior, then broaden to other published FAA handbook tables only if useful. No bulk book download.",
+        "activation_approved": false,
+        "current_passing_examples": 10,
+        "query_coverage": "working",
+        "tested_scope": "Local title-token and exact-URL search over all42 links in the published FAA Reference Handbooks table; ten tested topic queries.",
+        "owner_action_required": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-policy-20261105cs/observations.jsonl",
+        "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+        "runs/industry-publication-permission-20261105cu/observations.jsonl",
+        "examples/faa-manuals.jsonl",
+        "examples/faa-manuals.benchmark.jsonl"
       ],
       "observation_refs": [
         {
           "path": "runs/source-evidence-20261105/observations.jsonl",
           "job_id": "89e14ac3296f18c19927",
           "observed_at": "2026-11-05T02:31:53.447719+00:00"
+        },
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "89e14ac3296f18c19927",
+          "observed_at": "2026-11-05T17:45:41.308244+00:00",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals",
+          "body_sha256": "2a39d7ebbbd6b46fd0363dba6427845d10f0d5449cfb3fca8a6288472fdbfba6",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "ab8fdd3261339a1d2fce",
+          "observed_at": "2026-11-05T17:47:34.777563+00:00",
+          "url": "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation",
+          "body_sha256": "b5bbd13e6f34389e90434aa35122c454b87d2339601d0e49af1f79c40dfd98a7",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "cd8222b2010e30b4317d",
+          "observed_at": "2026-11-05T17:47:39.039730+00:00",
+          "url": "https://www.faa.gov/web_policies/",
+          "body_sha256": "16b1d03c521889bf461ff1dfda2db3546e4c9da08b64b6581a914917f54b141a",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+          "job_id": "757c81c86efca2b19875",
+          "observed_at": "2026-11-05T17:48:19.976115+00:00",
+          "url": "https://www.faa.gov/web_policies",
+          "body_sha256": "e7436fdb3c578d53b17be262925683826364d2ba3aff8fe4e151982b6bf84740",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-publication-permission-20261105cu/observations.jsonl",
+          "job_id": "61fd1a386175ad015351",
+          "observed_at": "2026-11-05T17:50:25.019609+00:00",
+          "url": "https://www.faa.gov/web_policies/disclaimer",
+          "body_sha256": "bc49d0625e42fe64a14f19a95f59f5362105ff60272fd8b55f11b2289917b8e1",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
+        },
+        {
+          "path": "runs/industry-publication-permission-20261105cu/observations.jsonl",
+          "job_id": "8425db66032afc9d0d41",
+          "observed_at": "2026-11-05T17:50:29.852321+00:00",
+          "url": "https://www.faa.gov/web_policies/linking_policy",
+          "body_sha256": "26b9ac39454c557136201fbd741c4e7790f68270c48e322888cc1a1f32b4f6a1",
+          "policy_sha256": "2f03b9a5dbfd11e2384c792b63f8540ef293f717eca8dae88526c1a98d0cea86"
         }
       ],
       "open_questions": []

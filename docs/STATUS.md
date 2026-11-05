@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Free-knowledge connector research, 2026-11-05T18:01:02.377757+00:00:**35 Working,57 Blocked/failed,42 Still checking of134. OSHA live publication queries and FAA reference-handbook title queries now work; ROSA P search403 is deferred. EPA native search form is next.189 research tests pass. See [connector status](research/free-content/registry/connector-status.csv) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
 **Connector task updated, 2026-11-05T17:22:03.158466+00:00:** The existing hourly task is enabled as **Complete connector search coverage**. It actively checks identified connectors, analyzes blockers/retries, and reports the plain group table every run, including unchanged runs. Read [task settings](research/free-content/registry/scheduled-task.json) and [current goal](research/free-content/registry/goal.json). Earlier full-dossier/topic/country targets are preserved as separate research history.
 
 **Free-knowledge source status, 2026-11-05T17:13:18.478423+00:00:** 134 recorded: **33 queryable,56blocked/failed,45still to assess**;365passingexamples. The owner requested plain group/connector coverage. Use [per-source status](research/free-content/registry/connector-status.csv), [group totals](research/free-content/registry/connector-status.json) and [resume goal](research/free-content/registry/goal.json). Eurostatadds10queries;fourchildren’s leadsbackfilled;181testspass. Researchonly;productionunchanged.

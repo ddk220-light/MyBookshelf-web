@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-11-05T17:22:05.958596+00:00",
+  "generated_at": "2026-11-05T18:01:05.162320+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by at least ten current passing examples in this registry. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
   "coverage_definition": "Queryability by group and connector, per owner clarification. Deeper research-quality checks remain separate.",
   "totals": {
     "total": 134,
-    "working": 33,
-    "blocked_or_failed": 56,
-    "still_checking": 45,
-    "not_working_verified": 101,
-    "assessed_or_deferred": 89,
-    "remaining_to_assess": 45,
-    "passing_query_examples": 365
+    "working": 35,
+    "blocked_or_failed": 57,
+    "still_checking": 42,
+    "not_working_verified": 99,
+    "assessed_or_deferred": 92,
+    "remaining_to_assess": 42,
+    "passing_query_examples": 385
   },
   "groups": [
     {
@@ -35,9 +35,9 @@
       "id": "G03",
       "name": "Industry and job knowledge",
       "total": 20,
-      "working": 1,
-      "blocked_or_failed": 8,
-      "still_checking": 11
+      "working": 3,
+      "blocked_or_failed": 9,
+      "still_checking": 8
     },
     {
       "id": "G04",
@@ -861,6 +861,19 @@
     {
       "group_id": "G03",
       "group": "Industry and job knowledge",
+      "connector_id": "rosa-p",
+      "connector": "ROSA P",
+      "status": "blocked_or_failed",
+      "passing_examples": 0,
+      "tested_search_scope": "Supported current search method not yet verified",
+      "known_limitations": "The homepage is readable, but the published public search GET returned HTTP403. | FAA, MARAD, NHTSA and university transportation materials can overlap their primary agency catalogs; repository membership does not multiply origins. | No fresh item-query examples; policy/documentation observations are not successful catalog queries.",
+      "next_step_or_blocker": "Wait for a useful provider access-policy/recovery change before retrying the published gsearch route. Homepage200 does not override search403. Help on the same host was skipped after denial; no alternate endpoint or identity was used.",
+      "record": "sources/rosa-p.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G03",
+      "group": "Industry and job knowledge",
       "connector_id": "usfs-research",
       "connector": "US Forest Service research publications",
       "status": "blocked_or_failed",
@@ -882,19 +895,6 @@
       "known_limitations": "No current verified item-query examples. Catalog identity and documentation do not establish qualification. | Reading availability, jurisdiction, language, native version identity and machine-use limits remain open.",
       "next_step_or_blocker": "Inspect website-use/rights terms and permitted catalog discovery, retain revision/obsolete-product labels, then verify item-page access and ten current searches without treating old security guidance as current.",
       "record": "sources/cert-in.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G03",
-      "group": "Industry and job knowledge",
-      "connector_id": "faa-manuals",
-      "connector": "FAA handbooks and manuals",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "No current verified item-query examples. Catalog identity and documentation do not establish qualification. | Reading availability, jurisdiction, language, native version identity and machine-use limits remain open.",
-      "next_step_or_blocker": "Review official catalog/export terms and representative handbook edition/errata pages; find a supported query method. Keep personal pilot records and print-order transactions outside scope.",
-      "record": "sources/faa-manuals.json",
       "production_activation_changed": false
     },
     {
@@ -978,32 +978,6 @@
     {
       "group_id": "G03",
       "group": "Industry and job knowledge",
-      "connector_id": "osha-publications",
-      "connector": "OSHA Publications",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "No current item query examples; listing/documentation capture is not a qualified searchable origin. | Per-item rights, reading/access, versions and machine-query limits require separate checks.",
-      "next_step_or_blocker": "Review official export/search access and website reuse terms, then verify exact publication links, revision dates, applicability and ten query examples; do not submit print orders.",
-      "record": "sources/osha-publications.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G03",
-      "group": "Industry and job knowledge",
-      "connector_id": "rosa-p",
-      "connector": "ROSA P",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "FAA, MARAD, NHTSA and university transportation materials can overlap their primary agency catalogs; repository membership does not multiply origins. | No fresh item-query examples; policy/documentation observations are not successful catalog queries.",
-      "next_step_or_blocker": "Find official supported API/export/OAI documentation, then verify transport/logistics native records, versions and free reading. Preserve DOT agency and funded-producer attribution.",
-      "record": "sources/rosa-p.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G03",
-      "group": "Industry and job knowledge",
       "connector_id": "who-publications",
       "connector": "WHO publications and IRIS",
       "status": "still_checking",
@@ -1017,6 +991,19 @@
     {
       "group_id": "G03",
       "group": "Industry and job knowledge",
+      "connector_id": "faa-manuals",
+      "connector": "FAA handbooks and manuals",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Search FAA Reference Handbooks catalog titles for airplane flying / Search FAA Reference Handbooks catalog titles for maintenance general",
+      "known_limitations": "Scope is the Reference Handbooks table, not all FAA material, model-specific maintenance manuals or full-text search. | Shared row dates are retained as shared; addenda/errata are separate URLs, not assumed to have the handbook publication date. | HTML links may lead to a handbook landing page or collection; per-item reading/access and full-content rights remain separate. | Title-only search misses body terms such as turbulence; no Hindi title matches were observed in this English catalog.",
+      "next_step_or_blocker": "Working scoped title search. Verify representative handbook landing/access links and snapshot refresh behavior, then broaden to other published FAA handbook tables only if useful. No bulk book download.",
+      "record": "sources/faa-manuals.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G03",
+      "group": "Industry and job knowledge",
       "connector_id": "onet",
       "connector": "O*NET occupational data",
       "status": "working",
@@ -1025,6 +1012,19 @@
       "known_limitations": "US taxonomy and English descriptions only. Managed-cloud access was observed; USA/India reader network availability was not independently tested. | One catalog overlaps 20 industry tags; one role sample per tag does not meet any 100-origin target or establish broad task/training coverage. | 31.0 distribution has an occupation table unchanged since 25.1 per dictionary; current OnLine page update labels cover richer data and do not re-date the pinned descriptions. | Literal term search can miss synonymous occupations: agriculture misses Farmers; logistics misses Logisticians. Code/title queries remain supported. | 30.3 JSON URL reports a 30.4 dictionary internally and is rejected as a 30.3 release. Published 30.3 spreadsheet rows match 31.0; mismatch remains an open provider-evidence discrepancy. | Numeric download quota is not published in the reviewed docs; no unlimited-service claim. No API key/account, paid service or automatic refresh was configured.",
       "next_step_or_blocker": "Maintain the qualified pinned31.0 research contract; review only on an official release/policy/schema/hash trigger. Continue independent India/other-language origins. Runtime ownership, integration and activation require separate work and remain unchanged.",
       "record": "sources/onet.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G03",
+      "group": "Industry and job knowledge",
+      "connector_id": "osha-publications",
+      "connector": "OSHA Publications",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Find OSHA publication metadata about asbestos / Find OSHA publication metadata about silica",
+      "known_limitations": "Public form search, not a documented JSON API or full-document semantic search. | Some published PDF links differ in filename capitalization between homepage and search. Preserve exact returned URL; language page fragments remain separate identities. | Nonsense query returns HTTP200 with a query form but no explicit empty-state marker; parser rejects ambiguous empty markup. Broad safety query yielded230 linked versions and no pager links; total catalog recall is not asserted. | Printed orders, bulk PDFs and accounts are excluded. Language variants are not additional origins.",
+      "next_step_or_blocker": "Working scoped search. Improve explicit handling of observed empty markup without masking schema errors; review representative reading links and published catalog changes. Preserve case-sensitive filenames and language-page anchors.",
+      "record": "sources/osha-publications.json",
       "production_activation_changed": false
     },
     {

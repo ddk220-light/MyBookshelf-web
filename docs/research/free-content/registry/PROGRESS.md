@@ -1,3 +1,9 @@
+## 2026-11-05: OSHA and FAA searches working
+
+35 Working,57 Blocked/failed,42 Still checking across134 connectors;385 current passing examples. This checkpoint adds10 real OSHA publication searches and10 local title searches over the42-entry FAA reference-handbook catalog. Earlier OSHA failures are retained: PDF filename capitalization differed between homepage/search, and language-specific PDF page anchors were incorrectly rejected. Parser/assertions now preserve exact returned identities. OSHA nonsense query has no explicit empty marker and remains an unresolved parser boundary; broad safety query returned230 linked versions without a pager. FAA metadata search is title-only, with addenda and shared listing-row dates kept distinct. No PDFs or books collected.189 research tests pass.
+
+ROSA P homepage200 led to its published search form, but gsearch returned403. Same-host help was skipped; wait for useful access-policy/recovery evidence, not blind alternate requests. EPA previous empty-shell blocker is understood: the homepage publishes an anonymous redirect to the actual search form, now captured. FDA correct website-policy page is captured after one mistaken404 URL, which is retained as a collector mistake. FoSTaC publishes12 linked manuals/forms, mostly portal administration and two food-vendor manuals; no general query route verified yet. Continue these independent investigations.
+
 ## 2026-11-05: museum backfill and final research checkpoint
 
 ## 2026-11-05T17:13:18.478423+00:00: plain group and source status
