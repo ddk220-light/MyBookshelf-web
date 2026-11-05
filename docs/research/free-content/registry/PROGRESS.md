@@ -151,3 +151,7 @@ Ten distinct unresolved catalog/operator documentation leads are queued in
 `runs/partner-leads-20261105/`. HTTP variants are proposed HTTPS candidates, not
 verified canonical URLs. New evidence requests preserve redirects for review
 instead of silently crossing to a route with unreviewed policy.
+
+## 2026-11-05T04:31:47.556068+00:00 — partner outcomes and Census authentication
+
+All ten partner jobs are analyzed: one captured, seven skipped, two blocked/failed. Nal’ibali is a catalog candidate, not query-qualified. Census API examples now explicitly require a key for every data query; three policy/schema documents are captured, with no data call or account creation. Both catalog identities have partial eight-section dossiers and exact blockers. Canonical redirects are leads needing independent policy review; 403/503 hosts remain deferred. Existing observations and historical claims are retained.

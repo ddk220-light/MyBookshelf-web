@@ -4,7 +4,7 @@
   "captured_text_documents": 60,
   "indexed_binary_assets": 156,
   "document_capture_complete": true,
-  "source_records": 61,
+  "source_records": 63,
   "source_dossiers_complete": 0,
   "query_verified_sources": 15,
   "verified_examples": 150,
@@ -54,11 +54,6 @@
       "lead_id": "lead-ea02e36d7b53",
       "url": "https://bhuvan.nrsc.gov.in/",
       "suggested_entity_id": "bhuvan"
-    },
-    {
-      "lead_id": "lead-77faefa494a1",
-      "url": "https://www.census.gov/data/developers/geography.html",
-      "suggested_entity_id": "us-census"
     },
     {
       "lead_id": "lead-a19610b9ef79",
@@ -271,11 +266,6 @@
       "suggested_entity_id": "freekidsbooks"
     },
     {
-      "lead_id": "lead-64bcbf27e27b",
-      "url": "http://nalibali.org/",
-      "suggested_entity_id": "nalibali"
-    },
-    {
       "lead_id": "lead-273783c23d7b",
       "url": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
       "suggested_entity_id": "worldreader"
@@ -326,6 +316,18 @@
   "named_entity_review_complete": false,
   "documentation_runs": [
     {
+      "run_id": "census-policy-20261105",
+      "jobs": 3,
+      "observations": 3,
+      "remaining_job_ids": [],
+      "outcomes": {
+        "captured": 3,
+        "skipped": 0,
+        "blocked-or-failed": 0
+      },
+      "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+    },
+    {
       "run_id": "dossier-evidence-20261105",
       "jobs": 21,
       "observations": 21,
@@ -340,23 +342,12 @@
     {
       "run_id": "partner-leads-20261105",
       "jobs": 10,
-      "observations": 0,
-      "remaining_job_ids": [
-        "26c22662a0f4dcc87fcb",
-        "273783c23d7b0c265bc6",
-        "4c13ffbadde80a6ac2d5",
-        "517b1dabf930d56f9d46",
-        "8734430cf4b82d9408e9",
-        "8c7e05e6d65f4798a352",
-        "dfd69cdb65b3637a163d",
-        "eb3f3fa1f34213fe47f3",
-        "f52177948a70a8e673f6",
-        "fdd03876d50161f2a1eb"
-      ],
+      "observations": 10,
+      "remaining_job_ids": [],
       "outcomes": {
-        "captured": 0,
-        "skipped": 0,
-        "blocked-or-failed": 0
+        "captured": 1,
+        "skipped": 7,
+        "blocked-or-failed": 2
       },
       "named_entity_review": "pending; document capture is not entity extraction or query qualification"
     },
@@ -900,6 +891,22 @@
       "complete": false,
       "next_action": "Locate official supported course metadata API/export documentation; a JavaScript search shell is not an API contract."
     },
+    "nalibali": {
+      "state": "candidate",
+      "passing_examples": 0,
+      "unresolved_fields": [
+        "identity_and_duplicates",
+        "coverage_and_languages",
+        "query_contract",
+        "rights_and_cost",
+        "reader_access",
+        "quality_and_relevance",
+        "operating_limits",
+        "ten_current_query_examples"
+      ],
+      "complete": false,
+      "next_action": "Review the campaign’s operator/policy pages and documented catalog export/search method. Preserve story-language/version identity; test permitted reading links before claiming free access."
+    },
     "nara-catalog": {
       "state": "deferred",
       "passing_examples": 0,
@@ -1278,6 +1285,21 @@
       "complete": false,
       "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker."
     },
+    "us-census": {
+      "state": "deferred",
+      "passing_examples": 0,
+      "unresolved_fields": [
+        "coverage_and_languages",
+        "query_contract",
+        "rights_and_cost",
+        "reader_access",
+        "quality_and_relevance",
+        "operating_limits",
+        "ten_current_query_examples"
+      ],
+      "complete": false,
+      "next_action": "Revisit when an already-authorized Census API credential is available, or official policy documents a keyless dataset route. Continue other sources meanwhile; no account creation or owner action needed to continue the program."
+    },
     "us-data-gov": {
       "state": "deferred",
       "passing_examples": 0,
@@ -1454,6 +1476,7 @@
         "book-dash",
         "gdl",
         "librivox",
+        "nalibali",
         "storyweaver"
       ],
       "query_example_source_ids": [
@@ -1504,6 +1527,7 @@
     "C14": {
       "candidate_source_ids": [
         "bharatavani",
+        "nalibali",
         "project-madurai"
       ],
       "query_example_source_ids": [],
@@ -1615,7 +1639,8 @@
     },
     "C05": {
       "candidate_source_ids": [
-        "librivox"
+        "librivox",
+        "nalibali"
       ],
       "query_example_source_ids": [
         "librivox"
@@ -1696,8 +1721,17 @@
     },
     "C19": {
       "candidate_source_ids": [
+        "us-census",
         "us-data-gov",
         "zenodo"
+      ],
+      "query_example_source_ids": [],
+      "qualified_source_ids": []
+    },
+    "P08": {
+      "candidate_source_ids": [
+        "us-census",
+        "us-data-gov"
       ],
       "query_example_source_ids": [],
       "qualified_source_ids": []
@@ -1710,13 +1744,6 @@
       "qualified_source_ids": []
     },
     "P07": {
-      "candidate_source_ids": [
-        "us-data-gov"
-      ],
-      "query_example_source_ids": [],
-      "qualified_source_ids": []
-    },
-    "P08": {
       "candidate_source_ids": [
         "us-data-gov"
       ],
