@@ -15,6 +15,11 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'storyweaver-ui': 'Live published English story search, first30 native story IDs/title links; full reading and translation/version relations not tested',
+    'african-storybook-ui': 'Live all-language approved-storybook browser search; first40 visible metadata cards, native loadBook IDs and selected English-title examples; language filter/reader not verified',
+    'nalibali-public': 'Published live keyword form; current /stories/ posts retained from first10 site results, native post IDs and landing URLs; translations/full reading not tested',
+    'storyberries-public': 'Published live keyword form, first9 story/article post results with native IDs and title links; no full-story copy or blanket reuse license',
+    'archive-texts': 'Live title search restricted to text items reporting a CC public-domain mark/zero license; first2 native Archive IDs, uploader rights claims and reader access unverified',
     'bookdash-public': 'Live published keyword form returning native book/variant pages; literal-title examples verified, language counts are not translated edition IDs',
     'gutenberg-csv': 'Local title-token/native ebook-ID search over the complete permitted weekly CSV; PG release date is not print edition date, no book downloads',
     'standard-new-releases': 'Local title-token/native edition-URL search over the free latest15-release Atom feed only; full-catalog OPDS requires membership and is not tested',

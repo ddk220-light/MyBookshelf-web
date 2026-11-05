@@ -9,7 +9,7 @@
     "C05",
     "C14"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -18,28 +18,155 @@
     "Nalibali"
   ],
   "capabilities": [
-    "South African reading campaign with visible read/listen/watch story catalog and language selectors; machine-query/export contract and reader rights remain unverified."
+    "Live published site keyword form, keeping only current /stories/ posts among the first10 site results. Ten native post IDs with meaningful title-word matches; old news/story-library posts are excluded from this tested scope."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Not established",
-    "request_shape_verified": "documentation only; no item queries executed"
+    "adapter": "nalibali-public",
+    "endpoint": "https://nalibali.org/",
+    "cases": [
+      {
+        "id": "keyword-01",
+        "intent": "Published story keyword search with meaningful title-word match: moon",
+        "expected_ids": [
+          "38322"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nalibali.org/?s=moon&id=35234"
+        }
+      },
+      {
+        "id": "keyword-02",
+        "intent": "Published story keyword search with meaningful title-word match: wolf",
+        "expected_ids": [
+          "38323"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nalibali.org/?s=wolf&id=35234"
+        }
+      },
+      {
+        "id": "keyword-03",
+        "intent": "Published story keyword search with meaningful title-word match: bat",
+        "expected_ids": [
+          "38320"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nalibali.org/?s=bat&id=35234"
+        }
+      },
+      {
+        "id": "keyword-04",
+        "intent": "Published story keyword search with meaningful title-word match: monkeys",
+        "expected_ids": [
+          "38318"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nalibali.org/?s=monkeys&id=35234"
+        }
+      },
+      {
+        "id": "keyword-05",
+        "intent": "Published story keyword search with meaningful title-word match: tails",
+        "expected_ids": [
+          "38316"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nalibali.org/?s=tails&id=35234"
+        }
+      },
+      {
+        "id": "keyword-06",
+        "intent": "Published story keyword search with meaningful title-word match: rabbit",
+        "expected_ids": [
+          "38179"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nalibali.org/?s=rabbit&id=35234"
+        }
+      },
+      {
+        "id": "keyword-07",
+        "intent": "Published story keyword search with meaningful title-word match: friend",
+        "expected_ids": [
+          "38286"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nalibali.org/?s=friend&id=35234"
+        }
+      },
+      {
+        "id": "keyword-08",
+        "intent": "Published story keyword search with meaningful title-word match: lion",
+        "expected_ids": [
+          "38244"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nalibali.org/?s=lion&id=35234"
+        }
+      },
+      {
+        "id": "keyword-09",
+        "intent": "Published story keyword search with meaningful title-word match: magic",
+        "expected_ids": [
+          "38245"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nalibali.org/?s=magic&id=35234"
+        }
+      },
+      {
+        "id": "keyword-10",
+        "intent": "Published story keyword search with meaningful title-word match: mermaid",
+        "expected_ids": [
+          "38249"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nalibali.org/?s=mermaid&id=35234"
+        }
+      }
+    ],
+    "authentication": "Anonymous published GET search form; no account/key/payment.",
+    "request_shape_verified": true,
+    "published_form": {
+      "method": "GET",
+      "action": "https://nalibali.org/",
+      "field": "s",
+      "form_id": "35234"
+    }
   },
-  "licensing": "Metadata and content rights remain separate and unverified unless specified below.",
+  "licensing": "Public site search exposes story metadata. Footer reserves rights; item reading, reuse/translation and full-story permissions are separate and not inferred from free search. No blanket open-content license established in this batch.",
   "documentation": [
     "https://nalibali.org/"
   ],
   "limitations": [
-    "No current item query examples. Documentation responses are not qualified origins.",
-    "No country-specific access or complete language coverage established."
+    "Global site search can return news/articles and substring/body-only matches. School returned no current story posts on its first page, and hat had no meaningful title-word match; both negative findings retained.",
+    "Current post IDs and story URLs are native identities, not verified work or translation editions. Listed language variants/reader access not tested.",
+    "Nonsense query showed a blank result area without an explicit empty-state message. This remains an inconclusive negative; do not infer the source has no content.",
+    "Public metadata/title excerpts only; no full stories, PDF or audio copied."
   ],
   "evidence": [
-    "runs/partner-leads-20261105/observations.jsonl"
+    "runs/partner-leads-20261105/observations.jsonl",
+    "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+    "runs/story-keyword-validation-20261105ew/observations.jsonl",
+    "runs/story-query-followups-20261105ex/observations.jsonl",
+    "runs/final-children-docs-20261105et/observations.jsonl",
+    "runs/children-search-pages-20261105eu/observations.jsonl",
+    "analysis/external/nalibali-search-records-20261105.json",
+    "examples/nalibali.jsonl",
+    "examples/nalibali.boundaries.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T04:31:47.556068+00:00",
-  "next_action": "Review the campaign’s operator/policy pages and documented catalog export/search method. Preserve story-language/version identity; test permitted reading links before claiming free access.",
+  "last_reviewed_at": "2026-11-05T22:14:01.301115+00:00",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -106,59 +233,64 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Visible category and language controls exist; no supported API, export or exact item request established.",
+      "summary": "Live published site keyword form, keeping only current /stories/ posts among the first10 site results. Ten native post IDs with meaningful title-word matches; old news/story-library posts are excluded from this tested scope.",
       "facts": {
-        "visible_categories": [
-          "Traditional Tales",
-          "Life Lessons",
-          "Animals",
-          "Real Life",
-          "Latest",
-          "Funny",
-          "Feel Good",
-          "Fantasy"
+        "adapter": "nalibali-public",
+        "endpoint": "https://nalibali.org/",
+        "cases": [
+          "keyword-01",
+          "keyword-02",
+          "keyword-03",
+          "keyword-04",
+          "keyword-05",
+          "keyword-06",
+          "keyword-07",
+          "keyword-08",
+          "keyword-09",
+          "keyword-10"
         ],
-        "supported_machine_modes": [],
-        "unsupported_claims": [
-          "Full-text search",
-          "native-ID resolution",
-          "automated catalog import"
-        ]
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live published site keyword form, keeping only current /stories/ posts among the first10 site results. Ten native post IDs with meaningful title-word matches; old news/story-library posts are excluded from this tested scope.",
+        "authentication": "Anonymous published GET search form; no account/key/payment.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "eb3f3fa1f34213fe47f3",
-          "observed_at": "2026-11-05T04:24:48.030521+00:00"
-        }
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "runs/story-keyword-validation-20261105ew/observations.jsonl",
+        "runs/story-query-followups-20261105ex/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-search-pages-20261105eu/observations.jsonl",
+        "analysis/external/nalibali-search-records-20261105.json",
+        "examples/nalibali.jsonl",
+        "examples/nalibali.boundaries.jsonl"
       ],
       "open_questions": [
-        "Find an officially supported search/export contract; no undocumented endpoint guessing."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Public listing observed; story/audio metadata and content reuse licenses remain unknown.",
+      "summary": "Public site search exposes story metadata. Footer reserves rights; item reading, reuse/translation and full-story permissions are separate and not inferred from free search. No blanket open-content license established in this batch.",
       "facts": {
-        "metadata_license": null,
-        "content_license": null,
-        "cost": null
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous published GET search form; no account/key/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
       },
       "evidence": [
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "eb3f3fa1f34213fe47f3",
-          "observed_at": "2026-11-05T04:24:48.030521+00:00"
-        }
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "runs/story-keyword-validation-20261105ew/observations.jsonl",
+        "runs/story-query-followups-20261105ex/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-search-pages-20261105eu/observations.jsonl",
+        "analysis/external/nalibali-search-records-20261105.json",
+        "examples/nalibali.jsonl",
+        "examples/nalibali.boundaries.jsonl"
       ],
       "open_questions": [
-        "Read current policies and representative item rights."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -193,67 +325,76 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Named samples are evidence of visible catalog entries, not query matches.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "positive_examples": 0,
-        "pagination": null,
-        "empty_error_behavior": null
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live published site keyword form, keeping only current /stories/ posts among the first10 site results. Ten native post IDs with meaningful title-word matches; old news/story-library posts are excluded from this tested scope.",
+        "empty_and_boundary_evidence": "examples/nalibali.boundaries.jsonl"
       },
       "evidence": [
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "eb3f3fa1f34213fe47f3",
-          "observed_at": "2026-11-05T04:24:48.030521+00:00"
-        }
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "runs/story-keyword-validation-20261105ew/observations.jsonl",
+        "runs/story-query-followups-20261105ex/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-search-pages-20261105eu/observations.jsonl",
+        "analysis/external/nalibali-search-records-20261105.json",
+        "examples/nalibali.jsonl",
+        "examples/nalibali.boundaries.jsonl"
       ],
       "open_questions": [
-        "Capture ten distinct query examples, topical relevance and language/version differences only after supported method confirmed."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "One policy-checked homepage capture; numeric quotas and refresh rules unknown.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "research_spacing_seconds": 3,
-        "numeric_quota": null,
-        "bulk_content_downloaded": false
+        "limits": [
+          "Global site search can return news/articles and substring/body-only matches. School returned no current story posts on its first page, and hat had no meaningful title-word match; both negative findings retained.",
+          "Current post IDs and story URLs are native identities, not verified work or translation editions. Listed language variants/reader access not tested.",
+          "Nonsense query showed a blank result area without an explicit empty-state message. This remains an inconclusive negative; do not infer the source has no content.",
+          "Public metadata/title excerpts only; no full stories, PDF or audio copied."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "eb3f3fa1f34213fe47f3",
-          "observed_at": "2026-11-05T04:24:48.030521+00:00"
-        }
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "runs/story-keyword-validation-20261105ew/observations.jsonl",
+        "runs/story-query-followups-20261105ex/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-search-pages-20261105eu/observations.jsonl",
+        "analysis/external/nalibali-search-records-20261105.json",
+        "examples/nalibali.jsonl",
+        "examples/nalibali.boundaries.jsonl"
       ],
       "open_questions": [
-        "Review current policy for machine access and update/deletion behavior."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Retain an identifiable catalog candidate with explicitly incomplete query/access review.",
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "decision": "retain-for-supported-query-review",
+        "decision": "working-query-scope-verified",
+        "reason": "Live published site keyword form, keeping only current /stories/ posts among the first10 site results. Ten native post IDs with meaningful title-word matches; old news/story-library posts are excluded from this tested scope.",
         "activation_approved": false,
-        "trigger": "Review the campaign’s operator/policy pages and documented catalog export/search method. Preserve story-language/version identity; test permitted reading links before claiming free access."
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "runs/partner-leads-20261105/observations.jsonl"
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "runs/story-keyword-validation-20261105ew/observations.jsonl",
+        "runs/story-query-followups-20261105ex/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-search-pages-20261105eu/observations.jsonl",
+        "analysis/external/nalibali-search-records-20261105.json",
+        "examples/nalibali.jsonl",
+        "examples/nalibali.boundaries.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "eb3f3fa1f34213fe47f3",
-          "observed_at": "2026-11-05T04:24:48.030521+00:00"
-        }
-      ],
-      "open_questions": []
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
     }
   },
   "operator": {

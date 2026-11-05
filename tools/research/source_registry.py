@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public'):
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -349,12 +349,21 @@ def probe(source_id, case_ids=None):
     if source['query']['adapter'] == 'lareferencia-title':
         from lareferencia_queries import probe as probe_lareferencia
         return probe_lareferencia(source, case_ids)
+    if source['query']['adapter'] in ('nalibali-public','storyberries-public'):
+        from story_queries import probe as story_probe
+        return story_probe(source, case_ids)
     if source['query']['adapter'] == 'bookdash-public':
         from bookdash_queries import probe as bookdash_probe
         return bookdash_probe(source, case_ids)
     if source['query']['adapter'] in ('gutenberg-csv', 'standard-new-releases'):
         from book_catalogs import probe as book_catalog_probe
         return book_catalog_probe(source, case_ids)
+    if source['query']['adapter'] == 'storyweaver-ui':
+        from storyweaver_browser import probe as storyweaver_probe
+        return storyweaver_probe(source, case_ids)
+    if source['query']['adapter'] == 'african-storybook-ui':
+        from african_storybook_browser import probe as african_probe
+        return african_probe(source, case_ids)
     if source['query']['adapter'] == 'govinfo-ui':
         from govinfo_browser import probe as govinfo_probe
         return govinfo_probe(source, case_ids)
@@ -394,6 +403,9 @@ def probe(source_id, case_ids=None):
     if source['query']['adapter'] == 'landportal-metadata':
         from landportal_catalog import probe as probe_landportal
         return probe_landportal(source, case_ids)
+    if source['query']['adapter'] == 'archive-texts':
+        from archive_texts import probe as probe_archive_texts
+        return probe_archive_texts(source, case_ids)
     if source['query']['adapter'] == 'archive-education':
         from archive_education import probe as probe_education
         return probe_education(source, case_ids)

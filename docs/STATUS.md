@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Free-knowledge connector research, 2026-11-05T22:29:55.166355+00:00:** 63 Working, 71 Blocked/failed, 0 Still checking of 134; 667 passing examples. 261 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
 **Free-knowledge connector research, 2026-11-05T22:03:57.009963+00:00:** 58 Working, 71 Blocked/failed, 5 Still checking of 134; 617 passing examples. 247 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
 
 **Free-knowledge connector research, 2026-11-05T21:51:00.516961+00:00:** 54 Working, 67 Blocked/failed, 13 Still checking of 134; 575 passing examples. 242 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
