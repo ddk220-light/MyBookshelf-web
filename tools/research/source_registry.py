@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata'):
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -328,6 +328,12 @@ def probe(source_id, case_ids=None):
                 raise ValueError('Select map cases explicitly; mixed LOC batches cannot bypass the map policy gate')
             from loc_maps import probe as probe_maps
             return probe_maps(source, maps)
+    if source['query']['adapter'] == 'plss-townships':
+        from plss_catalog import probe as probe_plss
+        return probe_plss(source, case_ids)
+    if source['query']['adapter'] == 'boston-zoning':
+        from boston_zoning import probe as probe_zoning
+        return probe_zoning(source, case_ids)
     if source['query']['adapter'] == 'landportal-metadata':
         from landportal_catalog import probe as probe_landportal
         return probe_landportal(source, case_ids)
