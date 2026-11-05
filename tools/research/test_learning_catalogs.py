@@ -15,6 +15,18 @@ def catalog(*cards):
 
 
 class LearningCatalogTests(unittest.TestCase):
+    def test_marad_excludes_fleet_lists_preserves_title_years(self):
+        body = b'<article data-history-node-id="10341"><div class="mb-4 clearfix"><h2>Vessels</h2><ul><li>Owner list <a href="/owners">PDF</a></li></ul><h2>International Trade</h2><ul><li>Trade Ports 2000-2017 | <a href="/trade-2000-2017">Excel</a></li></ul><h2>Maritime Reports</h2><ul><li>2020 <a href="/nation">Maritime Nation</a></li></ul><h2>Questions?</h2><ul><li><a href="/contact">Contact</a></li></ul></div></article>'
+        rows = parse(body, 'marad-reports')['results']
+        self.assertEqual([r['title'] for r in rows], ['Trade Ports 2000-2017', '2020 Maritime Nation'])
+        self.assertEqual(rows[0]['listed_years'], ['2000', '2017'])
+        self.assertFalse(rows[0]['reading_access_verified'])
+        self.assertEqual(search(rows, {'mode':'title_tokens','text':'owner'}), [])
+        with self.assertRaises(ValueError):
+            parse(body.replace(b'Maritime Reports', b'Changed Section'), 'marad-reports')
+        with self.assertRaises(ValueError):
+            parse(body.replace(b'href="/nation"', b'href="https://other.org/nation"'), 'marad-reports')
+
     def test_fostac_only_linked_manuals_not_courses_or_slides(self):
         body = b'<ol class="cours"><li>Advance Manufacturing - Fish<ul><li><a href="/doc/Fish Manual.pdf">Training manual</a></li><li><a href="/doc/Fish.ppt">PPT</a></li></ul></li><li>Advance Organic food</li></ol>'
         rows = parse(body, 'fostac-manuals')['results']

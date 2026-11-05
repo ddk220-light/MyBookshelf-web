@@ -18,6 +18,8 @@ MODES = {
     'core-public': 'Live anonymous CORE work-title search, first1 native work with underlying output/provider IDs; no full text or reader guarantee',
     'doaj-public': 'Live public article title-field search, first3 native article IDs; page2/empty tested, no full-text or broad-topic ranking guarantee',
     'who-publications-ui': 'Browser-only live WHO publication keyword filter, first50 native item URLs; selected website catalog, not full IRIS holdings',
+    'msha-public-ui': 'Published Public Research guest browser keyword search; native product IDs from visible metadata links, not display rank; document/media downloads blocked',
+    'marad-reports': 'Local title-token search over11 published trade/report entries; report years preserved, no vessel-owner lists or underlying statistical-row queries',
     'fostac-manuals': 'Local title-token search over13 linked advanced food-safety manuals; no PPT/full-text/training enrollment or download validation',
     'libretexts-ui': 'Browser-only live Commons Books keyword search, first24 native library/page IDs; Load more tested, full-text and edition identity not inferred',
     'nptel-catalog': 'Local title-token search over3482 unambiguous course IDs from the published catalog; semester/version and lecture text not searched',

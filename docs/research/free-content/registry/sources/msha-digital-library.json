@@ -13,7 +13,7 @@
     "C20",
     "I12"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "institutional-digital-catalog",
@@ -29,15 +29,167 @@
     "full_catalog_coverage": "unknown"
   },
   "capabilities": [
-    "Published catalog/collection discovery pages; in-app retrieval not verified."
+    "Live keyword searches in the officially linked Public Research guest browser interface; ten distinct native Knowvation product IDs from rendered metadata links, first25 visible results only."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "authentication": "unknown for query route; captured documentation anonymous",
-    "cases": []
+    "adapter": "msha-public-ui",
+    "endpoint": "https://digitallibrary.msha.gov/#!autologin/research",
+    "authentication": "Official public guest autologin/research route; no account created, no personal credentials or paid service.",
+    "cases": [
+      {
+        "id": "research-topic-01",
+        "intent": "Public Research keyword search: dust",
+        "expected_ids": [
+          "55996"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://digitallibrary.msha.gov/#!autologin/research",
+          "ui_query": {
+            "text": "dust",
+            "action": "Enter in published search box; inspect matching title metadata link without downloading"
+          }
+        }
+      },
+      {
+        "id": "research-topic-02",
+        "intent": "Public Research keyword search: ventilation",
+        "expected_ids": [
+          "49366"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://digitallibrary.msha.gov/#!autologin/research",
+          "ui_query": {
+            "text": "ventilation",
+            "action": "Enter in published search box; inspect matching title metadata link without downloading"
+          }
+        }
+      },
+      {
+        "id": "research-topic-03",
+        "intent": "Public Research keyword search: diesel",
+        "expected_ids": [
+          "51691"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://digitallibrary.msha.gov/#!autologin/research",
+          "ui_query": {
+            "text": "diesel",
+            "action": "Enter in published search box; inspect matching title metadata link without downloading"
+          }
+        }
+      },
+      {
+        "id": "research-topic-04",
+        "intent": "Public Research keyword search: roof",
+        "expected_ids": [
+          "67493"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://digitallibrary.msha.gov/#!autologin/research",
+          "ui_query": {
+            "text": "roof",
+            "action": "Enter in published search box; inspect matching title metadata link without downloading"
+          }
+        }
+      },
+      {
+        "id": "research-topic-05",
+        "intent": "Public Research keyword search: conveyor",
+        "expected_ids": [
+          "65487"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://digitallibrary.msha.gov/#!autologin/research",
+          "ui_query": {
+            "text": "conveyor",
+            "action": "Enter in published search box; inspect matching title metadata link without downloading"
+          }
+        }
+      },
+      {
+        "id": "research-topic-06",
+        "intent": "Public Research keyword search: methane",
+        "expected_ids": [
+          "50539"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://digitallibrary.msha.gov/#!autologin/research",
+          "ui_query": {
+            "text": "methane",
+            "action": "Enter in published search box; inspect matching title metadata link without downloading"
+          }
+        }
+      },
+      {
+        "id": "research-topic-07",
+        "intent": "Public Research keyword search: noise",
+        "expected_ids": [
+          "49878"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://digitallibrary.msha.gov/#!autologin/research",
+          "ui_query": {
+            "text": "noise",
+            "action": "Enter in published search box; inspect matching title metadata link without downloading"
+          }
+        }
+      },
+      {
+        "id": "research-topic-08",
+        "intent": "Public Research keyword search: blasting",
+        "expected_ids": [
+          "53916"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://digitallibrary.msha.gov/#!autologin/research",
+          "ui_query": {
+            "text": "blasting",
+            "action": "Enter in published search box; inspect matching title metadata link without downloading"
+          }
+        }
+      },
+      {
+        "id": "research-topic-09",
+        "intent": "Public Research keyword search: electrical",
+        "expected_ids": [
+          "55808"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://digitallibrary.msha.gov/#!autologin/research",
+          "ui_query": {
+            "text": "electrical",
+            "action": "Enter in published search box; inspect matching title metadata link without downloading"
+          }
+        }
+      },
+      {
+        "id": "research-topic-10",
+        "intent": "Public Research keyword search: silica",
+        "expected_ids": [
+          "78383"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://digitallibrary.msha.gov/#!autologin/research",
+          "ui_query": {
+            "text": "silica",
+            "action": "Enter in published search box; inspect matching title metadata link without downloading"
+          }
+        }
+      }
+    ],
+    "request_shape_verified": true
   },
-  "licensing": "DOL disclaimer offers public information, warns external-link content is outside its control and says Federal Register/CFR remain authoritative for regulations. That disclaimer does not itself establish a metadata-harvesting license or rights to every historical third-party item.",
+  "licensing": "DOL public-information disclaimer and MSHA official library links captured. External/third-party historical material may have separate rights; a public catalog or government host is not a blanket content license. Query collector blocks document/PDF/media transfers; earlier one-item reader-shell inspection did not measure transfer and is not asserted download-free.",
   "documentation": [
     "https://www.msha.gov/",
     "https://www.msha.gov/msha-technical-information-center-and-library",
@@ -46,17 +198,27 @@
     "https://www.dol.gov/general/disclaim"
   ],
   "limitations": [
-    "Mining research/training is a candidate bounded subset. The institutional WorldCat catalog may include physical/loan-only items and is not proof of free full texts. Six instructor PDF links (OT54/55/56, IG24a/24b/37) are separate known documents, not six origins or verified query results.",
-    "No catalog query or reading availability inferred from HTTP200 gateway responses."
+    "Browser-only guest route; no private API replay, account creation or password collection.",
+    "Native product ID is not display Rank or publication series number. Publication date/year and edition need item-level review; none inferred from rank.",
+    "Grid title overlap caused one click timeout, fixed by clicking the visible start of the title. The original failure remains.",
+    "Nonsense-query timeout remains negative evidence; no successful empty-result or page2 behavior claimed.",
+    "Only selected title-relevant research reports assessed; broad keyword results may match abstracts. Full-text/reader download access not verified."
   ],
   "evidence": [
     "runs/industry-gateway-links-20261105d/observations.jsonl",
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/industry-catalog-routes-20261105e/observations.jsonl",
-    "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+    "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+    "runs/industry-final-candidates-20261105ef/observations.jsonl",
+    "examples/msha-digital-library.access.jsonl",
+    "examples/msha-digital-library.ui-inspection.jsonl",
+    "examples/msha-digital-library.record-inspection.jsonl",
+    "examples/msha-digital-library.browser.jsonl",
+    "examples/msha-digital-library.jsonl",
+    "examples/msha-digital-library.boundaries.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T07:07:22.445181+00:00",
-  "next_action": "Locate a publicly documented API/export and item-rights policy for the linked digital library. Do not reverse engineer private endpoints or fetch accident records. Check six instructor guides only through permitted metadata/limited reader sampling.",
+  "last_reviewed_at": "2026-11-05T20:45:57.135655+00:00",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "complete",
@@ -84,28 +246,66 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Published HTML discovery pages and outbound links only. Supported API/export, exact query syntax, authentication, paging and stable item/version contract remain unproven; cases intentionally empty.",
+      "summary": "Live keyword searches in the officially linked Public Research guest browser interface; ten distinct native Knowvation product IDs from rendered metadata links, first25 visible results only.",
+      "facts": {
+        "adapter": "msha-public-ui",
+        "endpoint": "https://digitallibrary.msha.gov/#!autologin/research",
+        "cases": [
+          "research-topic-01",
+          "research-topic-02",
+          "research-topic-03",
+          "research-topic-04",
+          "research-topic-05",
+          "research-topic-06",
+          "research-topic-07",
+          "research-topic-08",
+          "research-topic-09",
+          "research-topic-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live keyword searches in the officially linked Public Research guest browser interface; ten distinct native Knowvation product IDs from rendered metadata links, first25 visible results only.",
+        "authentication": "Official public guest autologin/research route; no account created, no personal credentials or paid service.",
+        "activation_approved": false
+      },
       "evidence": [
-        "runs/industry-gateway-links-20261105d/observations.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-final-candidates-20261105ef/observations.jsonl",
         "runs/industry-catalog-routes-20261105e/observations.jsonl",
-        "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+        "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+        "examples/msha-digital-library.access.jsonl",
+        "examples/msha-digital-library.ui-inspection.jsonl",
+        "examples/msha-digital-library.record-inspection.jsonl",
+        "examples/msha-digital-library.browser.jsonl",
+        "examples/msha-digital-library.jsonl",
+        "examples/msha-digital-library.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete the source-specific checks described in this section; no current query/rights/access conclusion inferred from page capture."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "DOL disclaimer offers public information, warns external-link content is outside its control and says Federal Register/CFR remain authoritative for regulations. That disclaimer does not itself establish a metadata-harvesting license or rights to every historical third-party item. No account, paid service, outreach or bulk download used; numeric quotas unknown.",
+      "summary": "DOL public-information disclaimer and MSHA official library links captured. External/third-party historical material may have separate rights; a public catalog or government host is not a blanket content license. Query collector blocks document/PDF/media transfers; earlier one-item reader-shell inspection did not measure transfer and is not asserted download-free.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Official public guest autologin/research route; no account created, no personal credentials or paid service.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
       "evidence": [
-        "runs/industry-gateway-links-20261105d/observations.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-final-candidates-20261105ef/observations.jsonl",
         "runs/industry-catalog-routes-20261105e/observations.jsonl",
-        "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+        "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+        "examples/msha-digital-library.access.jsonl",
+        "examples/msha-digital-library.ui-inspection.jsonl",
+        "examples/msha-digital-library.record-inspection.jsonl",
+        "examples/msha-digital-library.browser.jsonl",
+        "examples/msha-digital-library.jsonl",
+        "examples/msha-digital-library.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete the source-specific checks described in this section; no current query/rights/access conclusion inferred from page capture."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -123,41 +323,79 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Catalog descriptions establish a relevant discovery lead only. No ten current queries, topic relevance, empty/error/paging or full-item benchmark has passed.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live keyword searches in the officially linked Public Research guest browser interface; ten distinct native Knowvation product IDs from rendered metadata links, first25 visible results only.",
+        "empty_and_boundary_evidence": "examples/msha-digital-library.boundaries.jsonl"
+      },
       "evidence": [
-        "runs/industry-gateway-links-20261105d/observations.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-final-candidates-20261105ef/observations.jsonl",
         "runs/industry-catalog-routes-20261105e/observations.jsonl",
-        "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+        "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+        "examples/msha-digital-library.access.jsonl",
+        "examples/msha-digital-library.ui-inspection.jsonl",
+        "examples/msha-digital-library.record-inspection.jsonl",
+        "examples/msha-digital-library.browser.jsonl",
+        "examples/msha-digital-library.jsonl",
+        "examples/msha-digital-library.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete the source-specific checks described in this section; no current query/rights/access conclusion inferred from page capture."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Serial primary-page requests with robots evidence and bounded response samples. Metadata refresh/deletion behavior and accountable maintainer are unknown.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "Browser-only guest route; no private API replay, account creation or password collection.",
+          "Native product ID is not display Rank or publication series number. Publication date/year and edition need item-level review; none inferred from rank.",
+          "Grid title overlap caused one click timeout, fixed by clicking the visible start of the title. The original failure remains.",
+          "Nonsense-query timeout remains negative evidence; no successful empty-result or page2 behavior claimed.",
+          "Only selected title-relevant research reports assessed; broad keyword results may match abstracts. Full-text/reader download access not verified."
+        ],
+        "no_bulk_content": true
+      },
       "evidence": [
-        "runs/industry-gateway-links-20261105d/observations.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-final-candidates-20261105ef/observations.jsonl",
         "runs/industry-catalog-routes-20261105e/observations.jsonl",
-        "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+        "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+        "examples/msha-digital-library.access.jsonl",
+        "examples/msha-digital-library.ui-inspection.jsonl",
+        "examples/msha-digital-library.record-inspection.jsonl",
+        "examples/msha-digital-library.browser.jsonl",
+        "examples/msha-digital-library.jsonl",
+        "examples/msha-digital-library.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete the source-specific checks described in this section; no current query/rights/access conclusion inferred from page capture."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Retain a candidate catalog identity; full qualification and research activation remain false. Locate a publicly documented API/export and item-rights policy for the linked digital library. Do not reverse engineer private endpoints or fetch accident records. Check six instructor guides only through permitted metadata/limited reader sampling.",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Live keyword searches in the officially linked Public Research guest browser interface; ten distinct native Knowvation product IDs from rendered metadata links, first25 visible results only.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
       "evidence": [
-        "runs/industry-gateway-links-20261105d/observations.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-final-candidates-20261105ef/observations.jsonl",
         "runs/industry-catalog-routes-20261105e/observations.jsonl",
-        "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+        "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+        "examples/msha-digital-library.access.jsonl",
+        "examples/msha-digital-library.ui-inspection.jsonl",
+        "examples/msha-digital-library.record-inspection.jsonl",
+        "examples/msha-digital-library.browser.jsonl",
+        "examples/msha-digital-library.jsonl",
+        "examples/msha-digital-library.boundaries.jsonl"
       ],
       "open_questions": [
-        "Locate a publicly documented API/export and item-rights policy for the linked digital library. Do not reverse engineer private endpoints or fetch accident records. Check six instructor guides only through permitted metadata/limited reader sampling."
+        "Production activation has not been requested by this task."
       ]
     }
   },

@@ -1,3 +1,21 @@
+## 2026-11-05T20:47:02.368317+00:00: Connector search checkpoint
+
+| Group | Working | Blocked/failed | Still checking | Total |
+|---|---:|---:|---:|---:|
+| Books, children’s books and audiobooks | 11 | 15 | 13 | 39 |
+| Learning and technical documentation | 9 | 6 | 0 | 15 |
+| Industry and job knowledge | 10 | 10 | 0 | 20 |
+| Government, maps and public data | 9 | 15 | 2 | 26 |
+| Research papers and scholarly sources | 8 | 8 | 6 | 22 |
+| Language, culture and media | 4 | 8 | 0 | 12 |
+| **Total** | **51** | **62** | **21** | **134** |
+
+Compared with the prior hourly report: +2 Working, +0 Blocked/failed, 2 fewer Still checking; 20 added passing examples.
+
+51 Working, 62 Blocked/failed, 21 Still checking of 134; 545 passing examples. This run's Working additions: marad-data-reports, msha-digital-library. New blocked: none. Read connector-status.csv for actual supported scopes and recovery actions. MARAD searches11 published trade/report titles; MSHA uses the public guest form and native metadata product IDs, never display rank. Its title-click overlap was fixed; two nonsense-query timeouts remain open. Five culture/media recovery actions were clarified from saved evidence, not fresh requests. Continue unchecked scholarly connectors, then books and public data; blocked providers need a useful recovery trigger. Research only; hourly task stays enabled.
+
+Validation: 224 research tests and registry capture/index/audit/validation pass. No source activation or deployment. [Per-connector search scopes and recovery actions](connector-status.csv). State: checkpointed-continuing-scholarly.
+
 ## 2026-11-05T19:22:07.398727+00:00: Five more working connectors; seven more assessed
 
 **42 Working | 58 Blocked/failed | 34 Still checking | 134 total.** Compared with the prior hourly report: +5 Working, +2 Blocked/failed, −7 Still checking. There are 455 passing examples (+50). All 12 language/culture connectors have now been assessed: four work and eight are blocked; this does not mean all 12 work.

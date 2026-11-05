@@ -31,7 +31,7 @@
   ],
   "execution": {
     "batch_size": "Small checkpoints, not a completion quota. Continue productive independent work within each run budget; resume hourly without waiting for new user requests.",
-    "cursor": "49 Working, 62 Blocked/failed and 23 Still checking out of 134; 525 passing examples. This run verified seven connectors: NPTEL, Book Sprints, LibreTexts, FoSTaC, WHO Publications, DOAJ and CORE. DIKSHA requires login; CERT-In and NQR have unusable/access-denied policy responses; the official NQR successor also lacks a usable policy response. Semantic Scholar returned HTTP 429 twice, 90.3 seconds apart. Search scopes, failed attempts and recovery decisions are saved in connector-status.csv and source evidence. All owned collectors exited. Next check the two remaining industry connectors (MSHA and MARAD) and six scholarly connectors, then the remaining books and public-data queue. Fetch and verify writer/lock/remote freshness before starting. Research only; the hourly task remains enabled.",
+    "cursor": "51 Working, 62 Blocked/failed, 21 Still checking of 134; 545 passing examples. This run's Working additions: marad-data-reports, msha-digital-library. New blocked: none. Read connector-status.csv for actual supported scopes and recovery actions. MARAD searches11 published trade/report titles; MSHA uses the public guest form and native metadata product IDs, never display rank. Its title-click overlap was fixed; two nonsense-query timeouts remain open. Five culture/media recovery actions were clarified from saved evidence, not fresh requests. Continue unchecked scholarly connectors, then books and public data; blocked providers need a useful recovery trigger. Research only; hourly task stays enabled.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
@@ -58,12 +58,12 @@
     },
     "completion_audit": "completion-audit.json",
     "last_checkpoint": {
-      "observed_at": "2026-11-05T20:23:48.057873+00:00",
+      "observed_at": "2026-11-05T20:47:02.368317+00:00",
       "source_records": 134,
-      "verified_examples": 525,
-      "query_verified_sources": 49,
+      "verified_examples": 545,
+      "query_verified_sources": 51,
       "source_dossiers_complete": 2,
-      "captured_text_documents": 114,
+      "captured_text_documents": 115,
       "indexed_binary_assets": 221,
       "existing_links_triaged": 615,
       "new_untriaged_links": 0,
@@ -78,36 +78,33 @@
       "civic_cells_accounted": 0,
       "civic_cells_total": 18,
       "open_gateway_url_followups": 82,
-      "documentation_runs": 147,
-      "documentation_jobs": 599,
+      "documentation_runs": 148,
+      "documentation_jobs": 601,
       "current_batch": {
         "new_working_connectors": [
-          "nptel",
-          "book-sprints",
-          "libretexts",
-          "fostac",
-          "who-publications",
-          "doaj",
-          "core"
+          "marad-data-reports",
+          "msha-digital-library"
         ],
-        "new_blocked_connectors": [
-          "diksha",
-          "cert-in",
-          "india-nqr",
-          "semantic-scholar"
-        ],
-        "new_verified_examples": 70,
+        "new_blocked_connectors": [],
+        "new_verified_examples": 20,
         "new_source_records": 0,
-        "still_checking_change": -11,
-        "research_tests": 221,
-        "production_changed": false
+        "still_checking_change": -2,
+        "research_tests": 224,
+        "production_changed": false,
+        "older_blocker_actions_clarified": [
+          "dpla",
+          "lincs",
+          "museums-of-india",
+          "nasa-image-video-library",
+          "wikimedia-commons"
+        ]
       },
-      "validation": "capture/index/audit, registry validation,221research tests and append-only checks pass; no capture hash errors or unfinished documentation queues",
+      "validation": "Capture/index/audit, registry validation and 224 research tests pass; zero capture errors.",
       "goal_complete": false,
-      "previous_saved_commit": "69bb4f5216bd9d13602ba10f7b2397066b7b2c76",
+      "previous_saved_commit": "01b54744128b96a5c1e0dc20ea1d3034fd10ae7a",
       "backlog_archive": "analysis/external/github-backlog-current.json",
-      "backlog_update_state": "issues164-170 and PR161 updated and readback-verified",
-      "research_commit": "d08f28a977054f2049365155fa6bcd5c5d2a5bda",
+      "backlog_update_state": "pending current-run final update/readback",
+      "research_commit": "01b54744128b96a5c1e0dc20ea1d3034fd10ae7a",
       "backlog_issues_updated": [
         164,
         165,
@@ -122,13 +119,13 @@
       "pending_corpus_entity_reviews": 126,
       "query_status": {
         "total": 134,
-        "working": 49,
+        "working": 51,
         "blocked_or_failed": 62,
-        "still_checking": 23,
-        "not_working_verified": 85,
-        "assessed_or_deferred": 111,
-        "remaining_to_assess": 23,
-        "passing_query_examples": 525
+        "still_checking": 21,
+        "not_working_verified": 83,
+        "assessed_or_deferred": 113,
+        "remaining_to_assess": 21,
+        "passing_query_examples": 545
       }
     },
     "native_chat_goal": {
@@ -136,33 +133,32 @@
       "reason": "No native chat Goal control is exposed in the available tools; scheduler run-now returns HTTP 404. A saved goal and schedule are not the native feature."
     },
     "current_run": {
-      "state": "checkpointed-awaiting-next-scheduled-run",
-      "checkpoint_at": "2026-11-05T20:23:48.057873+00:00",
-      "writer": "this conversation; all collectors exited",
+      "state": "checkpointed-continuing-scholarly",
+      "checkpoint_at": "2026-11-05T20:47:02.368317+00:00",
+      "writer": "this conversation",
       "active_detached_worker": false,
       "scope": "research only",
-      "writer_lease": "free; exact collector commands absent and no non-zombie worker",
-      "base_commit": "69bb4f5216bd9d13602ba10f7b2397066b7b2c76",
-      "research_commit": "d08f28a977054f2049365155fa6bcd5c5d2a5bda",
-      "backlog_verified_at": "2026-11-05 20:23:17 UTC"
+      "base_commit": "01b54744128b96a5c1e0dc20ea1d3034fd10ae7a",
+      "research_commit": "01b54744128b96a5c1e0dc20ea1d3034fd10ae7a",
+      "writer_lease": "All collectors for checkpoint are finished; verify lock/queues/PID/remote before another writer."
     },
     "coverage_audit": "coverage-audit.json",
     "next_actions": [
       {
         "priority": 1,
-        "task": "Industry and scholarly groups have8Working each. Prioritize MSHA/MARAD remaining industry connectors and six scholarly candidates: LA Referencia,RIT,SciELO,Unpaywall,Utrecht,Victoria. Reuse existing evidence before requests."
+        "task": "Finish unchecked scholarly connectors using their published query/export forms and current policy gates. Reuse saved evidence and retain failures; never infer working from accessible homepages."
       },
       {
         "priority": 2,
-        "task": "G02learning andG06language/culture have0unchecked. Their blocked providers need useful recovery/policy/auth/documented-alternative triggers, not blind repeats. DIKSHA account work is outside scope; CERT-In/NQR policy failures and Semantic Scholar shared429 remain open."
+        "task": "Continue unchecked books/children/audio and public-data connectors. Prefer title/topic searches; distinguish exact-ID lookup and local metadata searches in every status."
       },
       {
         "priority": 3,
-        "task": "Continue13unchecked books/audio and2public-data candidates. Preserve exact lookup versus title/browser/imported-metadata scopes; no runtime source activation."
+        "task": "G02/G03/G06 have no unchecked connectors after industry batch. Investigate blocked connectors only on a useful policy/access/documented-alternative trigger. Do not create accounts or bypass controls."
       },
       {
         "priority": 4,
-        "task": "Before any writer fetch current remote, verify queues/lock/PID command/non-zombie state and advancing checkpoints. Recompute all six groups, validate and push research evidence, update164-170/current PR and report every run."
+        "task": "Fetch and verify writer/lock/remote freshness. Validate evidence, refresh all status/goal counts consistently, push small research checkpoints, update164-170/PR and report all six groups every run."
       }
     ],
     "last_dossier_run": {
@@ -798,6 +794,19 @@
         "remaining_job_ids": [],
         "outcomes": {
           "captured": 5,
+          "skipped": 0,
+          "blocked-or-failed": 0
+        },
+        "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+      },
+      {
+        "run_id": "industry-final-candidates-20261105ef",
+        "jobs": 2,
+        "observations": 2,
+        "local_input_failure_job_ids": [],
+        "remaining_job_ids": [],
+        "outcomes": {
+          "captured": 2,
           "skipped": 0,
           "blocked-or-failed": 0
         },
@@ -3020,15 +3029,15 @@
     "original_status_reporter_enabled": false,
     "scheduled_task_snapshot": "scheduled-task.json",
     "connector_progress": {
-      "observed_at": "2026-11-05T19:23:08.339466+00:00",
+      "observed_at": "2026-11-05T20:47:02.368317+00:00",
       "total": 134,
-      "working": 42,
-      "blocked_or_failed": 58,
-      "still_checking": 34,
-      "not_working_verified": 92,
-      "assessed_or_deferred": 100,
-      "remaining_to_assess": 34,
-      "passing_query_examples": 455,
+      "working": 51,
+      "blocked_or_failed": 62,
+      "still_checking": 21,
+      "not_working_verified": 83,
+      "assessed_or_deferred": 113,
+      "remaining_to_assess": 21,
+      "passing_query_examples": 545,
       "groups": [
         {
           "id": "G01",
@@ -3042,17 +3051,17 @@
           "id": "G02",
           "name": "Learning and technical documentation",
           "total": 15,
-          "working": 6,
-          "blocked_or_failed": 5,
-          "still_checking": 4
+          "working": 9,
+          "blocked_or_failed": 6,
+          "still_checking": 0
         },
         {
           "id": "G03",
           "name": "Industry and job knowledge",
           "total": 20,
-          "working": 6,
-          "blocked_or_failed": 8,
-          "still_checking": 6
+          "working": 10,
+          "blocked_or_failed": 10,
+          "still_checking": 0
         },
         {
           "id": "G04",
@@ -3066,9 +3075,9 @@
           "id": "G05",
           "name": "Research papers and scholarly sources",
           "total": 22,
-          "working": 6,
-          "blocked_or_failed": 7,
-          "still_checking": 9
+          "working": 8,
+          "blocked_or_failed": 8,
+          "still_checking": 6
         },
         {
           "id": "G06",
@@ -3081,22 +3090,19 @@
       ],
       "previous_report": {
         "total": 134,
-        "working": 37,
-        "blocked_or_failed": 56,
-        "still_checking": 41,
-        "passing_query_examples": 405
+        "working": 49,
+        "blocked_or_failed": 62,
+        "still_checking": 23,
+        "not_working_verified": 85,
+        "assessed_or_deferred": 111,
+        "remaining_to_assess": 23,
+        "passing_query_examples": 525
       },
       "new_working": [
-        "crossref",
-        "national-gallery-art",
-        "biorxiv-medrxiv",
-        "pubmed-pmc",
-        "fao-publications"
+        "marad-data-reports",
+        "msha-digital-library"
       ],
-      "new_blocked": [
-        "arxiv",
-        "abhilekh-patal"
-      ],
+      "new_blocked": [],
       "status_list": "connector-status.csv",
       "new_provider_errors_require_owner_action": false
     },
@@ -3154,7 +3160,7 @@
       "blocked_or_failed": "Investigation deferred with a concrete access/policy/API/rights limitation; not a permanent outage claim.",
       "still_checking": "Known candidate without completed current query verification and not deferred."
     },
-    "remaining_definition": "34 Still checking connectors are unassessed;58 Blocked/failed have concrete recorded blockers.92 lack working-query verification, but do not call all92 uninvestigated.",
+    "remaining_definition": "21 Still checking connectors remain unassessed; 62 Blocked/failed have concrete recorded blockers. 83 lack working-query verification; blocked does not mean unchecked.",
     "supported_scope_required": true,
     "deeper_dossier_and_geography_audits": "Retained as separate research-quality follow-up; do not describe them as the number of working search connectors.",
     "production_note": "Research-query verification does not imply activation in the app. Existing production state unchanged.",
@@ -3174,5 +3180,5 @@
     "blocker_reporting": "Give plain causes, changed/new blocked connectors, attempts and next decisions; group recurring reasons and link the full connector list.",
     "pause_when_provider_blocked": false
   },
-  "updated_at": "2026-11-05T20:23:48.057873+00:00"
+  "updated_at": "2026-11-05T20:47:02.368317+00:00"
 }

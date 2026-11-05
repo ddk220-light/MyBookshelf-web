@@ -1,4 +1,4 @@
-"""Research-only title lookup in published NPTEL, Book Sprints and FoSTaC HTML catalogs.
+"""Research-only title lookup in published learning and industry HTML catalogs.
 
 Only rendered catalog metadata is imported. No private API, course video, book
 PDF, registration, certification or media request is made.
@@ -18,7 +18,8 @@ from source_registry import REGISTRY, USER_AGENT, evaluate
 
 ENDPOINTS = {'nptel-catalog': 'https://nptel.ac.in/courses',
              'booksprints-catalog': 'https://www.booksprints.net/book/',
-             'fostac-manuals': 'https://fostac.fssai.gov.in/advance.jsp'}
+             'fostac-manuals': 'https://fostac.fssai.gov.in/advance.jsp',
+             'marad-reports': 'https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics'}
 LIMIT = 8 * 1024 * 1024
 
 
@@ -95,6 +96,33 @@ def parse(body, adapter):
                              'listed_document_url':native, 'raw_native_href':href,
                              'listed_version_filename':url.path.rsplit('/',1)[1],
                              'reading_access_verified':False})
+    elif adapter == 'marad-reports':
+        article = one(root.nodes(lambda n: n.tag == 'article' and n.attrs.get('data-history-node-id') == '10341'), 'MARAD catalog article')
+        catalog = one(article.nodes(lambda n: n.tag == 'div' and n.has_class('mb-4') and n.has_class('clearfix')), 'MARAD report body')
+        section = None
+        allowed = {'International Trade', 'Maritime Reports'}
+        seen = set()
+        for node in catalog.children:
+            if not isinstance(node, Node):
+                continue
+            if node.tag == 'h2':
+                section = node.text()
+                seen.add(section)
+            elif node.tag == 'ul' and section in allowed:
+                for item in [n for n in node.children if isinstance(n, Node) and n.tag == 'li']:
+                    link = one(item.nodes(lambda n: n.tag == 'a'), 'single report identity')
+                    raw = urlsplit(urljoin(ENDPOINTS[adapter], link.attrs.get('href', '')))
+                    if raw.scheme != 'https' or raw.netloc != 'www.maritime.dot.gov' or raw.query or raw.fragment:
+                        raise ValueError('Unexpected MARAD report link')
+                    native = 'https://www.maritime.dot.gov' + quote(raw.path, safe='/%')
+                    title = re.sub(r'\s*\|\s*(?:Excel|PDF)\s*$', '', item.text())
+                    rows.append({'id': native, 'title': title, 'landing_page': native,
+                                 'catalog_section': section, 'raw_native_href': link.attrs['href'],
+                                 'listed_years': re.findall(r'\b(?:19|20)\d{2}\b', title),
+                                 'version_scope': 'Published report link and title years; page update date is not dataset vintage',
+                                 'reading_access_verified': False})
+        if not allowed <= seen:
+            raise ValueError('Changed MARAD trade/report sections')
     else:
         raise ValueError('Unsupported catalog')
     if not rows or len(rows) > 10000:

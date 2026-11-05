@@ -13,7 +13,7 @@
     "I13",
     "I14"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "institutional-digital-catalog",
@@ -29,32 +29,191 @@
     "full_catalog_coverage": "unknown"
   },
   "capabilities": [
-    "Published catalog/collection discovery pages; in-app retrieval not verified."
+    "Local title-token search over11 published MARAD International Trade and Maritime Reports catalog entries; native report links and title years preserved."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "authentication": "unknown for query route; captured documentation anonymous",
-    "cases": []
+    "adapter": "marad-reports",
+    "endpoint": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+    "authentication": "Public catalog GET; no account/key/payment.",
+    "cases": [
+      {
+        "id": "report-title-01",
+        "intent": "Published report-title search: ports 2000 2017",
+        "expected_ids": [
+          "https://www.maritime.dot.gov/outreach/data-statistics/us-waterborne-foreign-container-trade-us-customs-ports-2000-%E2%80%93-2017"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "ports 2000 2017"
+          }
+        }
+      },
+      {
+        "id": "report-title-02",
+        "intent": "Published report-title search: ports 1997 1999",
+        "expected_ids": [
+          "https://www.maritime.dot.gov/outreach/data-statistics/us-waterborne-foreign-container-trade-us-customs-ports-1997-%E2%80%93-1999"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "ports 1997 1999"
+          }
+        }
+      },
+      {
+        "id": "report-title-03",
+        "intent": "Published report-title search: custom districts",
+        "expected_ids": [
+          "https://www.maritime.dot.gov/outreach/data-statistics/us-waterborne-foreign-trade-us-custom-districts"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "custom districts"
+          }
+        }
+      },
+      {
+        "id": "report-title-04",
+        "intent": "Published report-title search: trading partners",
+        "expected_ids": [
+          "https://www.maritime.dot.gov/outreach/data-statistics/us-waterborne-foreign-trade-trading-partners"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "trading partners"
+          }
+        }
+      },
+      {
+        "id": "report-title-05",
+        "intent": "Published report-title search: coastal tank vessel",
+        "expected_ids": [
+          "https://www.maritime.dot.gov/outreach/data-statistics/2017-us-coastal-tank-vessel-trade-volumes-xls"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "coastal tank vessel"
+          }
+        }
+      },
+      {
+        "id": "report-title-06",
+        "intent": "Published report-title search: government impelled cargo",
+        "expected_ids": [
+          "https://www.maritime.dot.gov/data-reports/report-congress-impact-reduction-government"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "government impelled cargo"
+          }
+        }
+      },
+      {
+        "id": "report-title-07",
+        "intent": "Published report-title search: stronger maritime nation",
+        "expected_ids": [
+          "https://www.maritime.dot.gov/data-reports/stronger-maritime-national-report"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "stronger maritime nation"
+          }
+        }
+      },
+      {
+        "id": "report-title-08",
+        "intent": "Published report-title search: credentialed mariners",
+        "expected_ids": [
+          "https://www.maritime.dot.gov/data-reports/mariner-opportunities-and-challenges"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "credentialed mariners"
+          }
+        }
+      },
+      {
+        "id": "report-title-09",
+        "intent": "Published report-title search: 2023 bill lading",
+        "expected_ids": [
+          "https://www.maritime.dot.gov/data-reports/data-statistics/fy-2023-federal-agency-bill-lading-submissions-report-congress"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "2023 bill lading"
+          }
+        }
+      },
+      {
+        "id": "report-title-10",
+        "intent": "Published report-title search: 2024 cargo preference",
+        "expected_ids": [
+          "https://www.maritime.dot.gov/data-reports/data-statistics/fy-2024-cargo-preference-report-congress-46-usc-ss-55301"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "2024 cargo preference"
+          }
+        }
+      }
+    ],
+    "request_shape_verified": true,
+    "catalog_entry_count": 11
   },
-  "licensing": "DOT web-policy page is a directory of policy notices, not a blanket reuse license. Exact dataset metadata/content notices and supported indexing/export terms remain unknown.",
+  "licensing": "Public DOT/MARAD report-title metadata and official web-policy links observed. Do not infer blanket rights for linked third-party report content; no report/PDF/workbook fetched.",
   "documentation": [
     "https://www.maritime.dot.gov/",
     "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
     "https://www.transportation.gov/web-policies"
   ],
   "limitations": [
-    "Prefer aggregate trade/port statistics and reports. No vessel/operator or personal ownership rows were collected. Page update date is not a dataset reference year. PDF/Excel links provide candidate item identities; no machine-search or variable/time/geography query has been verified.",
-    "No catalog query or reading availability inferred from HTTP200 gateway responses."
+    "No geographic/statistical-row or full-text search; no fleet/owner records imported.",
+    "Only two published report sections; this is not the whole MARAD website.",
+    "Report titles preserve2000–2017/1997–1999 ranges and FY2023/FY2024; page update September22,2026 is not report data vintage.",
+    "Full item download availability and third-party rights not inferred from a linked catalog entry."
   ],
   "evidence": [
     "runs/industry-gateway-links-20261105d/observations.jsonl",
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/industry-catalog-routes-20261105e/observations.jsonl",
-    "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+    "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+    "runs/industry-final-candidates-20261105ef/observations.jsonl",
+    "analysis/external/marad-report-catalog-20261105.json",
+    "examples/marad-data-reports.jsonl",
+    "examples/marad-data-reports.boundaries.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T07:07:22.445181+00:00",
-  "next_action": "Follow the published DOT Data/disclaimer policies, then choose aggregate trade/port dataset documentation. Confirm bounded reusable metadata index or documented API, revision identity, units/geography, actual reader/export and ten queries before retention as queryable.",
+  "last_reviewed_at": "2026-11-05T20:39:35.753874+00:00",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "complete",
@@ -82,28 +241,58 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Published HTML discovery pages and outbound links only. Supported API/export, exact query syntax, authentication, paging and stable item/version contract remain unproven; cases intentionally empty.",
+      "summary": "Local title-token search over11 published MARAD International Trade and Maritime Reports catalog entries; native report links and title years preserved.",
+      "facts": {
+        "adapter": "marad-reports",
+        "endpoint": "https://www.maritime.dot.gov/data-reports/data-statistics/data-statistics",
+        "cases": [
+          "report-title-01",
+          "report-title-02",
+          "report-title-03",
+          "report-title-04",
+          "report-title-05",
+          "report-title-06",
+          "report-title-07",
+          "report-title-08",
+          "report-title-09",
+          "report-title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Local title-token search over11 published MARAD International Trade and Maritime Reports catalog entries; native report links and title years preserved.",
+        "authentication": "Public catalog GET; no account/key/payment.",
+        "activation_approved": false
+      },
       "evidence": [
-        "runs/industry-gateway-links-20261105d/observations.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/industry-catalog-routes-20261105e/observations.jsonl",
-        "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+        "runs/industry-final-candidates-20261105ef/observations.jsonl",
+        "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+        "analysis/external/marad-report-catalog-20261105.json",
+        "examples/marad-data-reports.jsonl",
+        "examples/marad-data-reports.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete the source-specific checks described in this section; no current query/rights/access conclusion inferred from page capture."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "DOT web-policy page is a directory of policy notices, not a blanket reuse license. Exact dataset metadata/content notices and supported indexing/export terms remain unknown. No account, paid service, outreach or bulk download used; numeric quotas unknown.",
+      "summary": "Public DOT/MARAD report-title metadata and official web-policy links observed. Do not infer blanket rights for linked third-party report content; no report/PDF/workbook fetched.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Public catalog GET; no account/key/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
       "evidence": [
-        "runs/industry-gateway-links-20261105d/observations.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/industry-catalog-routes-20261105e/observations.jsonl",
-        "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+        "runs/industry-final-candidates-20261105ef/observations.jsonl",
+        "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+        "analysis/external/marad-report-catalog-20261105.json",
+        "examples/marad-data-reports.jsonl",
+        "examples/marad-data-reports.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete the source-specific checks described in this section; no current query/rights/access conclusion inferred from page capture."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -121,41 +310,66 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Catalog descriptions establish a relevant discovery lead only. No ten current queries, topic relevance, empty/error/paging or full-item benchmark has passed.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Local title-token search over11 published MARAD International Trade and Maritime Reports catalog entries; native report links and title years preserved.",
+        "empty_and_boundary_evidence": "examples/marad-data-reports.boundaries.jsonl"
+      },
       "evidence": [
-        "runs/industry-gateway-links-20261105d/observations.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/industry-catalog-routes-20261105e/observations.jsonl",
-        "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+        "runs/industry-final-candidates-20261105ef/observations.jsonl",
+        "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+        "analysis/external/marad-report-catalog-20261105.json",
+        "examples/marad-data-reports.jsonl",
+        "examples/marad-data-reports.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete the source-specific checks described in this section; no current query/rights/access conclusion inferred from page capture."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Serial primary-page requests with robots evidence and bounded response samples. Metadata refresh/deletion behavior and accountable maintainer are unknown.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "No geographic/statistical-row or full-text search; no fleet/owner records imported.",
+          "Only two published report sections; this is not the whole MARAD website.",
+          "Report titles preserve2000–2017/1997–1999 ranges and FY2023/FY2024; page update September22,2026 is not report data vintage.",
+          "Full item download availability and third-party rights not inferred from a linked catalog entry."
+        ],
+        "no_bulk_content": true
+      },
       "evidence": [
-        "runs/industry-gateway-links-20261105d/observations.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/industry-catalog-routes-20261105e/observations.jsonl",
-        "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+        "runs/industry-final-candidates-20261105ef/observations.jsonl",
+        "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+        "analysis/external/marad-report-catalog-20261105.json",
+        "examples/marad-data-reports.jsonl",
+        "examples/marad-data-reports.boundaries.jsonl"
       ],
       "open_questions": [
-        "Complete the source-specific checks described in this section; no current query/rights/access conclusion inferred from page capture."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Retain a candidate catalog identity; full qualification and research activation remain false. Follow the published DOT Data/disclaimer policies, then choose aggregate trade/port dataset documentation. Confirm bounded reusable metadata index or documented API, revision identity, units/geography, actual reader/export and ten queries before retention as queryable.",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Local title-token search over11 published MARAD International Trade and Maritime Reports catalog entries; native report links and title years preserved.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
       "evidence": [
-        "runs/industry-gateway-links-20261105d/observations.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/industry-catalog-routes-20261105e/observations.jsonl",
-        "runs/industry-retrieval-policies-20261105f/observations.jsonl"
+        "runs/industry-final-candidates-20261105ef/observations.jsonl",
+        "runs/industry-retrieval-policies-20261105f/observations.jsonl",
+        "analysis/external/marad-report-catalog-20261105.json",
+        "examples/marad-data-reports.jsonl",
+        "examples/marad-data-reports.boundaries.jsonl"
       ],
       "open_questions": [
-        "Follow the published DOT Data/disclaimer policies, then choose aggregate trade/port dataset documentation. Confirm bounded reusable metadata index or documented API, revision identity, units/geography, actual reader/export and ten queries before retention as queryable."
+        "Production activation has not been requested by this task."
       ]
     }
   },
