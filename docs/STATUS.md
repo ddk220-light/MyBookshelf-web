@@ -1,5 +1,14 @@
 # MyBookshelf web handoff
 
+**Live source-evidence run, 2026-11-05:** after the owner requested immediate
+execution, a resumable worker started in this worktree against 153 pending primary
+documentation URLs. Read [live progress](research/free-content/registry/runs/source-evidence-20261105/progress.json)
+and verify the PID/heartbeat before restarting. It respects robots/pacing, captures
+real evidence and pushes checkpoints every ten jobs. It does not finish semantic
+source qualification automatically. The native chat Goal control is unavailable
+in the exposed tools; the saved goal/schedule must not be described as that feature.
+Seventeen research-tool tests passed before launch.
+
 **Complete-analysis goal, 2026-11-05:** the owner clarified that this is active
 completion work, not a small daily quota. The existing task now resumes hourly;
 the immediate-run endpoint returned HTTP 404, so the first pass ran in this chat.
