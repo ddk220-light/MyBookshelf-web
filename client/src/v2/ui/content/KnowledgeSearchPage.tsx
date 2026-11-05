@@ -44,13 +44,13 @@ export function KnowledgeSearchPage(){
     <div className="content-search-header"><header className="page-heading"><h1>Search</h1></header>
       <form className="content-search-form" onSubmit={submit}><label className="visually-hidden" htmlFor="knowledge-query">Search all knowledge</label><input id="knowledge-query" type="search" maxLength={300} placeholder="Books, papers, audio and more" value={input} onChange={e=>setInput(e.target.value)}/><button type="submit" aria-label="Search"><SearchIcon/></button></form><SearchScopes scope="knowledge"/>
     </div>
-    <label className="knowledge-unclear"><input type="checkbox" checked={includeUnclear} onChange={e=>change({unclear:e.target.checked?'1':''})}/>Show items with unclear access, labelled</label>
     <p className="knowledge-intro">One search across books, research, audiobooks and learning resources. Read or listen on the original source.</p>
     <div className="knowledge-filters">
       <label>Source<select value={sourceId} onChange={e=>change({source:e.target.value})}><option value="">All connected sources{sources?` (${connected.length})`:''}</option>{sources?.map(s=><option key={s.id} value={s.id} disabled={!s.enabled}>{s.name}{!s.enabled?' · not connected':''}</option>)}</select></label>
       <label>Type<select value={kind||''} onChange={e=>change({kind:e.target.value})}><option value="">All types</option>{kinds.map(k=><option key={k} value={k}>{kindLabel(k)}</option>)}</select></label>
       <label>Language<select value={language} onChange={e=>change({language:e.target.value})}><option value="">Source default</option><option value="en">English</option><option value="hi">हिन्दी</option><option value="ta">தமிழ்</option></select></label>
     </div>
+    <label className="knowledge-unclear"><input type="checkbox" checked={includeUnclear} onChange={e=>change({unclear:e.target.checked?'1':''})}/>Show items with unclear access, labelled</label>
     {language&&<p className="content-coverage">Searching sources that support this language filter. Other sources may also hold material in this language.</p>}
     {catalogError?<div className="content-notice" role="alert"><p>The source list could not be loaded.</p><button onClick={()=>setCatalogRetry(v=>v+1)}>Try again</button></div>:!sources?<p role="status">Loading connected sources…</p>:!query?<>
       <div className="content-browse">{[['mathematics','Mathematics'],['agriculture','Agriculture'],['history','History'],['python','Programming']].map(([q,label])=><Link key={q} to={'/app/search?'+new URLSearchParams({scope:'knowledge',q})}><strong>{label}</strong><span>Explore across sources →</span></Link>)}</div>

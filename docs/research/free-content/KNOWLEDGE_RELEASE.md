@@ -86,7 +86,18 @@ project (`prj_AhxvPVIgw95iofXaWigVNSYF30iP`) in team
 Pre-release rollback candidate: `dpl_2sgN9LmdusVzujjPhu91BAQihc7m`, production
 source `c590a694c341c02b5192207616f352967a0fd1d4`.
 
-Local validation checkpoint: 36 client suites / 186 tests passed; server suite
-563 passing, 15 existing database-dependent skips before the final cancellation
-and directory checks were added (both new checks pass). TypeScript, build and SEO
-passed. Final browser and hosted acceptance are still in progress.
+Local acceptance: 186 client tests; 565 server tests passed (15 existing
+database-dependent tests run in CI with disposable Postgres); TypeScript, build
+and SEO passed. All 27 targeted browser scenarios passed in Chromium, mobile
+Chromium and WebKit across three reading lights, including axe accessibility,
+independent source failure/paging, listening, saving, and 320px at 200% text.
+WebKit exposed a native-select overflow; rem-based filter widths corrected it.
+An attempted optional Firefox run could not launch in this container; it is not
+claimed as passing. Screenshots and the dated validation summary are saved with
+the release evidence. Existing approved reading-light, heading, card, rights and
+navigation styles were reviewed; the fourth Search scope and source sections
+are intentional additions, without a pixel-equality claim.
+
+Preview `dpl_2JZ6PEvPC7gQnCe74mY3bVMHpWRs` (application commit `46a16ce`)
+built successfully. Authenticated source-directory verification returned 16
+connected sources; hosted query/browser acceptance continues in PR #179.
