@@ -185,6 +185,7 @@ def area_completion(area, membership, review, jurisdiction_cells, registry=REGIS
 
 def evidence_run_audit(registry=REGISTRY):
     runs, errors = [], []
+    local_failures = read_jsonl(registry / 'analysis/collector-failures.jsonl')
     for directory in sorted((registry / 'runs').glob('*')):
         queue_path, output = directory / 'queue.json', directory / 'observations.jsonl'
         if not queue_path.exists():
@@ -193,10 +194,40 @@ def evidence_run_audit(registry=REGISTRY):
         rows = read_jsonl(output)
         known = {j['id'] for j in jobs}
         seen = set()
+        local_input_failures = []
         for row in rows:
             if row['job_id'] not in known or row['job_id'] in seen:
                 errors.append(f'Unknown/duplicate documentation observation: {directory.name}/{row["job_id"]}')
             seen.add(row['job_id'])
+            # A malformed local input can fail before an HTTP request exists.
+            # Keep the original observation immutable and require a separately
+            # hashed traceback plus an exact hash of that observation. This
+            # exception cannot excuse any actual HTTP/policy response.
+            candidates = [r for r in local_failures
+                          if r.get('run_id') == directory.name and r.get('job_id') == row['job_id']]
+            if candidates:
+                review = candidates[-1]
+                log = (registry / review.get('traceback_path', '')).resolve()
+                job = next((j for j in jobs if j['id'] == row['job_id']), {})
+                valid = (review.get('kind') == 'invalid-request-url-before-network'
+                         and review.get('network_request_sent') is False
+                         and review.get('reviewed_at') and row.get('observed_at')
+                         and row.get('outcome') == 'blocked-or-failed'
+                         and row.get('query_verified') is False
+                         and row.get('url') == job.get('url')
+                         and isinstance(row.get('url'), str)
+                         and not re.match(r'https?://', row['url'])
+                         and row.get('http') in (None, {}, {'status': None})
+                         and row.get('robots_evidence') in (None, {})
+                         and review.get('observation_sha256') == digest(
+                             json.dumps(row, ensure_ascii=False, sort_keys=True).encode())
+                         and log.is_relative_to(registry.resolve()) and log.is_file()
+                         and review.get('traceback_sha256') == digest(log.read_bytes())
+                         and b'unknown url type' in log.read_bytes())
+                if valid:
+                    local_input_failures.append(row['job_id'])
+                    continue
+                errors.append(f'Invalid local failure evidence: {directory.name}/{row["job_id"]}')
             if not row.get('robots_evidence'):
                 errors.append(f'Missing capture hash/policy evidence: {directory.name}/{row["job_id"]}')
             for evidence in [row.get('robots_evidence'), row.get('http')]:
@@ -205,6 +236,7 @@ def evidence_run_audit(registry=REGISTRY):
             if row.get('outcome') == 'captured' and (row.get('http') or {}).get('status') != 200:
                 errors.append(f'Captured document lacks HTTP 200: {directory.name}/{row["job_id"]}')
         runs.append({'run_id': directory.name, 'jobs': len(jobs), 'observations': len(rows),
+                     'local_input_failure_job_ids': local_input_failures,
                      'remaining_job_ids': sorted(known - seen),
                      'outcomes': {state: sum(r['outcome'] == state for r in rows)
                                   for state in ('captured', 'skipped', 'blocked-or-failed')},

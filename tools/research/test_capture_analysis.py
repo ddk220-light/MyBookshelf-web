@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 import zlib
 import json
+import hashlib
 
 from capture_analysis import paragraphs, snapshot, source_mentions, dossier_gaps, evidence_run_audit, area_completion
 from sphinx_inventory import local_search, parse_inventory, probe
@@ -80,6 +81,46 @@ class CorpusTests(unittest.TestCase):
             (run / 'observations.jsonl').write_text('{"job_id":"a","outcome":"captured","http":{"status":200},"robots_evidence":{"status":404}}\n')
             _, errors = evidence_run_audit(registry)
             self.assertTrue(any('Missing capture hash' in e for e in errors))
+
+    def local_failure_fixture(self, registry, url='source-label', outcome='blocked-or-failed', http=None):
+        run = registry / 'runs/check'
+        run.mkdir(parents=True)
+        (registry / 'analysis').mkdir()
+        (run / 'queue.json').write_text(json.dumps({'jobs': [{'id': 'a', 'url': url}]}))
+        row = {'job_id': 'a', 'url': url, 'outcome': outcome, 'http': http,
+               'robots_evidence': {}, 'query_verified': False, 'observed_at': 'today'}
+        (run / 'observations.jsonl').write_text(json.dumps(row) + '\n')
+        log = b"ValueError: unknown url type: ':///robots.txt'\n"
+        (run / 'traceback.txt').write_bytes(log)
+        review = {'run_id': 'check', 'job_id': 'a', 'kind': 'invalid-request-url-before-network',
+                  'network_request_sent': False, 'reviewed_at': 'today',
+                  'observation_sha256': hashlib.sha256(json.dumps(row, ensure_ascii=False, sort_keys=True).encode()).hexdigest(),
+                  'traceback_path': 'runs/check/traceback.txt', 'traceback_sha256': hashlib.sha256(log).hexdigest()}
+        (registry / 'analysis/collector-failures.jsonl').write_text(json.dumps(review) + '\n')
+        return run
+
+    def test_local_input_failure_requires_both_exact_observation_and_traceback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); run = self.local_failure_fixture(root)
+            runs, errors = evidence_run_audit(root)
+            self.assertEqual(errors, [])
+            self.assertEqual(runs[0]['outcomes']['captured'], 0)
+            self.assertEqual(runs[0]['local_input_failure_job_ids'], ['a'])
+            (run / 'traceback.txt').write_text('changed')
+            self.assertTrue(evidence_run_audit(root)[1])
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); run = self.local_failure_fixture(root)
+            row = json.loads((run / 'observations.jsonl').read_text())
+            row['observed_at'] = 'changed'
+            (run / 'observations.jsonl').write_text(json.dumps(row) + '\n')
+            self.assertTrue(evidence_run_audit(root)[1])
+
+    def test_local_failure_review_cannot_waive_a_real_capture_or_valid_url(self):
+        for args in [{'url': 'https://example.org/api'}, {'outcome': 'captured'}, {'http': {'status': 403}}]:
+            with self.subTest(args=args), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp); self.local_failure_fixture(root, **args)
+                _, errors = evidence_run_audit(root)
+                self.assertTrue(any('Missing capture hash' in e for e in errors))
 
     def test_snapshot_is_lossless_and_changes_identity_when_evidence_changes(self):
         with tempfile.TemporaryDirectory() as tmp:

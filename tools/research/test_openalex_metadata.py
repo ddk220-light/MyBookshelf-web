@@ -1,7 +1,7 @@
 import unittest
 import json
 from unittest.mock import patch
-from source_registry import normalize, evaluate
+from source_registry import normalize, evaluate, current_verified
 from openalex_metadata import fetch_singleton
 
 
@@ -33,6 +33,25 @@ class OpenAlexMetadataTests(unittest.TestCase):
                 'expected_ids': ['https://openalex.org/W42']}
         row = evaluate(self.source, case, {'http': {'status': 200, 'truncated': False}, 'error': None}, {'results': []})
         self.assertEqual(row['verdict'], 'unverified')
+
+    def test_thesis_identity_requires_the_observed_work_type(self):
+        case = {'id': 'thesis', 'expected_ids': ['https://openalex.org/W42'],
+                'expected_work_type': 'dissertation',
+                'request': {'method': 'GET', 'url': 'https://api.openalex.org/works/W42'}}
+        obs = {'observed_at': '2026-11-05T13:00:00Z', 'http': {'status': 200, 'truncated': False}}
+        for kind in (None, 'article', 'dissertation'):
+            row = evaluate(self.source, case, obs, {**self.work(), 'type': kind})
+            self.assertEqual(row['verdict'], 'verified' if kind == 'dissertation' else 'unverified')
+
+    def test_historical_article_cannot_satisfy_a_new_thesis_expectation(self):
+        case = {'id': 'native', 'expected_ids': ['https://openalex.org/W42'],
+                'request': {'method': 'GET', 'url': 'https://api.openalex.org/works/W42'}}
+        obs = {'observed_at': '2026-11-05T13:00:00Z', 'http': {'status': 200, 'truncated': False}}
+        row = evaluate(self.source, case, obs, {**self.work(), 'type': 'article'})
+        source = {**self.source, 'query': {**self.source['query'], 'cases': [case]}}
+        self.assertEqual(current_verified(source, [row]), 1)
+        case['expected_work_type'] = 'dissertation'
+        self.assertEqual(current_verified(source, [row]), 0)
 
     def test_existing_key_is_sent_only_in_memory_and_not_saved_in_evidence(self):
         req = {'method': 'GET', 'url': 'https://api.openalex.org/works/W42', 'params': {'select': 'id,title'}}

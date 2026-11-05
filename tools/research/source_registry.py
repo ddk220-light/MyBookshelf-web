@@ -214,6 +214,11 @@ def evaluate(source, case, observation, data):
             error = 'Invalid result shape: ' + str(exc)
     expected = {str(x) for x in case['expected_ids']}
     matched = sorted(expected & {str(r['id']) for r in results})
+    if case.get('expected_work_type'):
+        typed = {str(r['id']) for r in results if r.get('type') == case['expected_work_type']}
+        if set(matched) - typed:
+            error = 'Expected native work returned with missing or different work type'
+        matched = sorted(set(matched) & typed)
     verified = bool(matched) and not error and observation['http']['status'] == 200
     # Put the matching record first so stored evidence always contains the proof.
     ordered = sorted(results, key=lambda r: str(r['id']) not in matched)
@@ -240,6 +245,10 @@ def current_verified(source, rows):
         fp = fingerprint(case['request'])
         row = latest.get((case['id'], fp))
         if row and row['verdict'] == 'verified' and set(map(str, case['expected_ids'])) & set(row['matched_ids']):
+            if case.get('expected_work_type') and not any(
+                    str(r.get('id')) in set(map(str, case['expected_ids'])) & set(row['matched_ids'])
+                    and r.get('type') == case['expected_work_type'] for r in row.get('sample_results', [])):
+                continue
             passed.add(fp)
     return len(passed)
 
