@@ -1,3 +1,15 @@
+## 2026-11-05: museum backfill and final research checkpoint
+
+**129 source records, 355 current examples across 32 catalogs, and two complete scoped dossiers.** All 49 areas have query evidence; all 49 full-area closures and 18 USA/India civic cells remain open. This run adds 20 examples, five records and the completed Federal Register dossier. Research qualification is separate from source activation.
+
+Cleveland Museum of Art adds five topic searches and five distinct native-item lookups, with ID/accession identity, CC0 item status and image metadata. Topic scouts retain their original dates. Same-title Standing Buddha records remain separate. Chinese and Japanese original titles are preserved without claiming translated search. Three initial schema failures are retained: the API adds a conservation-image flag and may omit the original-language field. Seven regression tests verify license boundaries, omissions, identity, bounded requests and failure handling. A nonsense query and Hindi lotus query return empty; a missing native ID returns 404; the second lotus page is disjoint. Two native HTML item pages and the Open Access page return 200, but no full image or rendered accessibility claim is made.
+
+Three earlier named museum leads now have explicit dossiers. National Gallery of Art publishes a CC0 factual-art dataset on GitHub and selected free images; exact export files and query examples remain open. Art Institute of Chicago stays deferred at robots403. An unnecessary repeat of its already-known policy check is recorded as a process failure, not progress; no catalog request was made. Smithsonian/Cooper Hewitt and other museum identities remain unresolved.
+
+All 102 documentation queues / 487 jobs are collection-complete. The run's 19 documentation attempts include 13 captures, three policy skips and three redirect/timeout/404 outcomes. Separate browser/PDF/API evidence is retained. There are 615 triaged URL roles, 38 unresolved catalog identities / 39 references, 160 unresolved named labels of 186, and 82 gateway follow-ups. The capture index includes 104 current documents and 209 binary assets. Historical and partial analyses remain open in the audits.
+
+**166 research tests pass**, with zero capture-integrity errors. The hourly completion task was verified enabled at 2026-11-05 16:21:50 UTC; the completed153-job reporter remains disabled. All collectors exited. No runtime import, activation, account work or deployment occurred. Resume from the goal and current audits after fetching remote and checking writer freshness.
+
 ## 2026-11-05: all areas have query evidence; qualification remains open
 
 **126 source records, 345 current examples across 31 catalogs, and 2 complete scoped dossiers.** All 49 tracked areas now have query evidence. This does not close any of the 49 full-area reviews or 18 USA/India civic cells. Qualified independent-origin targets, rights/access gaps and historical entity analysis remain open; no scarcity shortfall has owner acceptance.
