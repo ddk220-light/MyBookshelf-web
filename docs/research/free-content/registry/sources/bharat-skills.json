@@ -7,7 +7,7 @@
   "areas": [
     "C13"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -41,10 +41,13 @@
     "Not an approved or verified origin; missing evidence remains open."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/dossier-evidence-20261105/observations.jsonl",
+    "analysis/dossier-reviews.jsonl",
+    "analysis/primary-document-reviews.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T02:51:16.117896+00:00",
-  "next_action": "Identify permitted trade/material metadata export or supported search documentation; verify two native material IDs and language/edition fields.",
+  "last_reviewed_at": "2026-11-05T03:31:24.495339+00:00",
+  "next_action": "Current robots request timed out; do not fetch the catalog while policy is unavailable. Revisit after a useful availability change and supported official API/export discovery; continue other candidates.",
   "primary_document_observations": [
     {
       "path": "runs/source-evidence-20261105/observations.jsonl",
@@ -200,14 +203,28 @@
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Documentation collector observed robots/pacing and bounded HTML capture; this does not establish API quotas.",
+      "summary": "A new robots request timed out and this pass skipped the homepage. Earlier successful public HTML evidence remains historical; no route or alternate hostname was used to evade unavailable policy.",
       "facts": {
         "capture_truncated": false,
         "numeric_api_quota": null,
-        "policy_outcome": "captured"
+        "policy_outcome": "captured",
+        "latest_policy_outcome": "skipped",
+        "robots_error": {
+          "bytes_read": 0,
+          "error": "<urlopen error Tunnel connection failed: 403 Forbidden>",
+          "requested_at": "2026-11-05T03:19:34.101914+00:00",
+          "sampled_bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "seconds": 0.198,
+          "status": null,
+          "truncated": false,
+          "url": "https://bharatskills.gov.in/robots.txt"
+        },
+        "current_catalog_request_sent": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "observation_refs": [
         {
@@ -218,20 +235,22 @@
         }
       ],
       "open_questions": [
-        "Review API/export allowance, refresh/deletion and backoff behavior."
+        "Wait for a useful availability trigger, then obtain readable robots and supported API/export/refresh policy."
       ]
     },
     "decision_and_followup": {
       "status": "complete",
-      "summary": "Retain catalog lead for focused contract and item review; not qualified.",
+      "summary": "Defer until current policy availability and a supported metadata route are established.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Identify permitted trade/material metadata export or supported search documentation; verify two native material IDs and language/edition fields.",
-        "blocker": "Supported machine retrieval not yet established",
-        "revisit_trigger": "Official retrieval documentation or permitted metadata export located"
+        "decision": "deferred",
+        "next_action": "Current robots request timed out; do not fetch the catalog while policy is unavailable. Revisit after a useful availability change and supported official API/export discovery; continue other candidates.",
+        "blocker": "Robots timeout; API/export unverified",
+        "revisit_trigger": "Provider policy endpoint recovers or official supported export documentation is found"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "observation_refs": [
         {

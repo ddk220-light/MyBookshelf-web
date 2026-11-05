@@ -25,7 +25,9 @@ class WorkerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             jobs = [{'id': str(i), 'url': f'https://example.org/{i}', 'source_ids': [], 'lead_ids': []} for i in range(2)]
-            with patch('run_source_reviews.REGISTRY', root), patch('run_source_reviews.build_queue', return_value=jobs), patch('run_source_reviews.robots', return_value=(None, {'status': 404})), patch('run_source_reviews.pace'), patch('run_source_reviews.request', return_value=({'status': 403}, b'')) as fetch:
+            # Keep the real advisory-lock behavior, but isolate its file from a
+            # researcher or worker holding the production lock in this environment.
+            with patch('run_source_reviews.Path', return_value=root / 'worker.lock'), patch('run_source_reviews.REGISTRY', root), patch('run_source_reviews.build_queue', return_value=jobs), patch('run_source_reviews.robots', return_value=(None, {'status': 404})), patch('run_source_reviews.pace'), patch('run_source_reviews.request', return_value=({'status': 403}, b'')) as fetch:
                 run('fixture')
                 run('fixture')
             self.assertEqual(fetch.call_count, 1)

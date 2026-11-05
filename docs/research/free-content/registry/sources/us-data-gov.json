@@ -1,0 +1,282 @@
+{
+  "schema_version": 1,
+  "id": "us-data-gov",
+  "name": "Data.gov catalog",
+  "homepage": "https://catalog.data.gov/",
+  "group": "G04",
+  "areas": [
+    "C19",
+    "P06",
+    "P07",
+    "P08",
+    "P09"
+  ],
+  "state": "deferred",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "aliases": [],
+  "operator": {
+    "name": "US General Services Administration / Data.gov",
+    "jurisdiction": "USA",
+    "evidence": [
+      {
+        "path": "runs/source-evidence-20261105/observations.jsonl",
+        "job_id": "787c8e8e26987bbbb620",
+        "observed_at": "2026-11-05T02:24:36.381759+00:00"
+      }
+    ]
+  },
+  "capabilities": [
+    "Current v4 catalog searches dataset metadata by keywords, publisher organization and geographic intersection/containment, with cursor pagination. Individual distributions require separate access/rights review."
+  ],
+  "query": {
+    "adapter": "unproven",
+    "endpoint": "https://api.gsa.gov/technology/datagov/v4/search",
+    "cases": [],
+    "documented_request": {
+      "method": "GET",
+      "url": "https://api.gsa.gov/technology/datagov/v4/search",
+      "params": {
+        "q": "climate",
+        "org_slug": "nasa",
+        "per_page": 3
+      },
+      "headers": {
+        "X-Api-Key": "<configured-free-api-key>"
+      }
+    },
+    "authentication": "Personal free api.data.gov key required for automated queries. Published DEMO_KEY is limited to initial exploration and is explicitly not suitable for automated queries; no request sent.",
+    "request_shape_verified": "documentation-only; never executed"
+  },
+  "licensing": "Catalog accessLevel and DCAT/distribution metadata do not grant universal reuse rights to underlying datasets. Dataset license, spatial precision, update date and publisher authority remain per-item checks.",
+  "documentation": [
+    "https://resources.data.gov/catalog-api/"
+  ],
+  "limitations": [
+    "Metadata aggregator for federal/state/local/tribal publishers; appearances in Data.gov do not qualify or multiply publisher origins.",
+    "No fresh item-query examples; policy/documentation observations are not successful catalog queries."
+  ],
+  "evidence": [
+    "runs/source-evidence-20261105/observations.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T03:19:01.955069+00:00",
+  "next_action": "Defer automated v4 probing pending an already-authorized free key or explicit permitted metadata export. Continue independent public catalogs; no paid service/account is required for other research.",
+  "primary_document_observations": [
+    {
+      "path": "runs/source-evidence-20261105/observations.jsonl",
+      "job_id": "787c8e8e26987bbbb620",
+      "observed_at": "2026-11-05T02:24:36.381759+00:00"
+    }
+  ],
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "Metadata aggregator for federal/state/local/tribal publishers; appearances in Data.gov do not qualify or multiply publisher origins.",
+      "facts": {
+        "operator": "US General Services Administration / Data.gov",
+        "canonical_domain": "https://catalog.data.gov/",
+        "role": "metadata/catalog provider"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "787c8e8e26987bbbb620",
+          "observed_at": "2026-11-05T02:24:36.381759+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Current v4 catalog searches dataset metadata by keywords, publisher organization and geographic intersection/containment, with cursor pagination. Individual distributions require separate access/rights review.",
+      "facts": {
+        "country_of_operator": "USA",
+        "area_candidates": [
+          "C19",
+          "P06",
+          "P07",
+          "P08",
+          "P09"
+        ],
+        "languages": null,
+        "jurisdiction": "Catalog metadata only; actual issuing authority/geographic scope unverified"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "787c8e8e26987bbbb620",
+          "observed_at": "2026-11-05T02:24:36.381759+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify representative items and actual languages/jurisdiction; no map parcel/owner records to be collected."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Documented capabilities captured; no live query verified.",
+      "facts": {
+        "request": {
+          "method": "GET",
+          "url": "https://api.gsa.gov/technology/datagov/v4/search",
+          "params": {
+            "q": "climate",
+            "org_slug": "nasa",
+            "per_page": 3
+          },
+          "headers": {
+            "X-Api-Key": "<configured-free-api-key>"
+          }
+        },
+        "authentication": "Personal free api.data.gov key required for automated queries. Published DEMO_KEY is limited to initial exploration and is explicitly not suitable for automated queries; no request sent.",
+        "supported": "Current v4 catalog searches dataset metadata by keywords, publisher organization and geographic intersection/containment, with cursor pagination. Individual distributions require separate access/rights review.",
+        "unsupported": "No universal free reading, address/owner lookup or full-text completeness claim."
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "787c8e8e26987bbbb620",
+          "observed_at": "2026-11-05T02:24:36.381759+00:00"
+        }
+      ],
+      "open_questions": [
+        "Execute supported bounded queries and verify native IDs, paging/empty/error/edition behavior once access conditions are met."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Catalog accessLevel and DCAT/distribution metadata do not grant universal reuse rights to underlying datasets. Dataset license, spatial precision, update date and publisher authority remain per-item checks.",
+      "facts": {
+        "authentication": "Personal free api.data.gov key required for automated queries. Published DEMO_KEY is limited to initial exploration and is explicitly not suitable for automated queries; no request sent.",
+        "published_limits": {
+          "personal_per_hour": 1000,
+          "demo_per_ip_per_hour": 30,
+          "demo_per_ip_per_day": 50,
+          "error": "429; automatic release after one hour",
+          "paging": "Preserve query/filter/sort/per_page and pass returned after cursor",
+          "legacy": "Prior CKAN API remains read-only for existing integrations; provider directs new development to v4, not a way around key requirements."
+        },
+        "attribution": null
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "787c8e8e26987bbbb620",
+          "observed_at": "2026-11-05T02:24:36.381759+00:00"
+        }
+      ],
+      "open_questions": [
+        "Review metadata/content licenses and representative object rights separately."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Primary documentation or homepage read anonymously; complete items not tested.",
+      "facts": {
+        "reader_conditions": "Unknown per item; free login is allowed if disclosed; no accounts created."
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "787c8e8e26987bbbb620",
+          "observed_at": "2026-11-05T02:24:36.381759+00:00"
+        }
+      ],
+      "open_questions": [
+        "Read a permitted representative complete item and document any restrictions."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "No current item-query examples yet; names and documentation responses are not qualification.",
+      "facts": {
+        "ten_examples": 0,
+        "versions": "Preserve issuing authority, dates, edition and native item/layer IDs"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "787c8e8e26987bbbb620",
+          "observed_at": "2026-11-05T02:24:36.381759+00:00"
+        }
+      ],
+      "open_questions": [
+        "Collect five known-item/five topic observations plus ten passing examples and source-specific version/jurisdiction checks."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Published operating constraints captured with remaining scope kept explicit.",
+      "facts": {
+        "personal_per_hour": 1000,
+        "demo_per_ip_per_hour": 30,
+        "demo_per_ip_per_day": 50,
+        "error": "429; automatic release after one hour",
+        "paging": "Preserve query/filter/sort/per_page and pass returned after cursor",
+        "legacy": "Prior CKAN API remains read-only for existing integrations; provider directs new development to v4, not a way around key requirements."
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "787c8e8e26987bbbb620",
+          "observed_at": "2026-11-05T02:24:36.381759+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify current route-level allowance and failure/refresh behavior before repeated automated use."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Deferred for an explicit access prerequisite; independent research continues.",
+      "facts": {
+        "decision": "deferred",
+        "next_action": "Defer automated v4 probing pending an already-authorized free key or explicit permitted metadata export. Continue independent public catalogs; no paid service/account is required for other research.",
+        "revisit_trigger": "Already-authorized key or published permitted export becomes available"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "787c8e8e26987bbbb620",
+          "observed_at": "2026-11-05T02:24:36.381759+00:00"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "e0f9e032470e81d885e20251a8653198ea6ed2892d86f761f802fa7c61095796",
+      "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+      "line": 75,
+      "heading": "From a directory entry to something the app can query",
+      "text": "1. **Official document/dataset catalog API.** [GovInfo documents an API search\n   service](https://www.govinfo.gov/features/search-service-overview) for content\n   and metadata. The current [Data.gov Catalog API](https://resources.data.gov/catalog-api/)\n   searches dataset metadata and identifies publisher organizations; it explicitly\n   replaces the previous CKAN API. Use the current interface and key policy,\n   not an old tutorial. An indexed dataset still needs a valid resource link.\n2. **Approved exports and local metadata search.** Small DCAT/CSV/JSON/XML catalogs\n   can become bounded, reviewed search artifacts without a hosted database. Prefer\n   metadata and canonical outbound links; do not copy whole national parcel or\n   imagery stores to make a prototype searchable.\n3. **Native record or feature queries.** A source can qualify for property or\n   spatial lookup through real address/parcel/document-ID/area queries even when\n   it lacks general keyword search. This must return record metadata and a usable\n   destination; an identifier-shaped redirect to an external search page is not\n   retrieval. Record this as a separate capability from topic discovery.\n4. **Geo services with explicit discovery.** [OGC WFS](https://www.ogc.org/standards/wfs/),\n   [OGC API Features](https://www.ogc.org/standards/ogcapi-features/) and documented\n   [ArcGIS layer queries](https://developers.arcgis.com/rest/services-reference/enterprise/query-feature-service-layer/)\n   are patterns to inspect for spatial/attribute filtering. Confirm the deployed\n   service's capabilities, limits, IDs and terms; the platform brand is not proof.\n   [WMS](https://www.ogc.org/standards/wms/)/WMTS primarily deliver rendered maps\n   or tiles. A searchable layer catalog can support map discovery, but does not\n   establish searchable parcel attributes or downloadable source features.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

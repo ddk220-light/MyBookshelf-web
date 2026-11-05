@@ -202,11 +202,14 @@
   "evidence": [
     "examples/open-textbook-library.access.jsonl",
     "examples/open-textbook-library.jsonl",
-    "examples/open-textbook-library.benchmark.jsonl"
+    "examples/open-textbook-library.benchmark.jsonl",
+    "runs/dossier-evidence-20261105/observations.jsonl",
+    "analysis/dossier-reviews.jsonl",
+    "analysis/primary-document-reviews.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T02:49:26.154388+00:00",
+  "last_reviewed_at": "2026-11-05T03:31:24.495339+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Verify permitted canonical item detail plus two representative publisher reader links, current rights/edition identity and refresh/deletion behavior; investigate language/India coverage before research qualification or any app integration.",
+  "next_action": "Retain query-verified candidate; finish bounded PDF/representative reader checks, country/language evidence and refresh/deletion contract. Preserve CC0 metadata versus NC/SA book licenses and pedagogical versus practical intent.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -237,7 +240,7 @@
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Multidisciplinary textbook catalog, with observed title examples across ten subjects. Language and country availability are not supplied by this export.",
+      "summary": "The CSV has no language field; canonical detail pages for OTL 10 and 22 explicitly identify English. This does not establish catalog-wide language or geographic coverage.",
       "facts": {
         "categories": [
           "C04"
@@ -245,15 +248,22 @@
         "country_of_operator": "USA",
         "records_observed": 1910,
         "languages": "Not a CSV field; unknown for individual records",
-        "industries": "Nursing/finance/computing examples are overlap leads, not qualified industry origins"
+        "industries": "Nursing/finance/computing examples are overlap leads, not qualified industry origins",
+        "representative_languages": {
+          "10": "English",
+          "22": "English"
+        },
+        "geographic_probe": "One cloud network; no USA/India location comparison."
       },
       "evidence": [
         "examples/open-textbook-library.access.jsonl",
         "examples/open-textbook-library.jsonl",
-        "examples/open-textbook-library.benchmark.jsonl"
+        "examples/open-textbook-library.benchmark.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "open_questions": [
-        "Verify item languages and India-origin representation; test actual USA/India access separately."
+        "Measure India-origin and non-English coverage; verify regional availability without inferring absence from missing metadata."
       ]
     },
     "query_contract": {
@@ -289,73 +299,138 @@
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Discovery page explicitly licenses catalog records CC0. Individual books have differing licenses including noncommercial/no-derivatives/GNU labels; no prose, full books or audio imported. A free-price metadata link is not proof of working access or reuse permission.",
+      "summary": "CC0 catalog metadata is separate from per-book licenses. Calculus/MIT terms specify CC BY-NC-SA 4.0; the Chemistry HTML adaptation specifies CC BY-NC-SA 3.0, with its own attribution and version notes.",
       "facts": {
         "metadata": "CC0 explicitly documented",
         "content": "Per-book license labels, no blanket reuse grant",
         "cost": "No key/account/payment used",
-        "scope": "Research metadata only"
+        "scope": "Research metadata only",
+        "representative_content_licenses": {
+          "10": {
+            "label": "CC BY-NC-SA 4.0",
+            "terms_url": "https://ocw.mit.edu/pages/privacy-and-terms-of-use/",
+            "conditions": [
+              "attribution",
+              "noncommercial",
+              "share-alike"
+            ],
+            "limits": "Check item/third-party exclusions; no blanket commercial republication grant."
+          },
+          "22": {
+            "label": "CC BY-NC-SA 3.0",
+            "terms_url": "https://saylordotorg.github.io/text_introductory-chemistry/s00-license.html",
+            "attribution": "Saylor Academy adaptation; page says original creator requested no attribution; acknowledge Andy Schmitz HTML maintenance as stated.",
+            "conditions": [
+              "noncommercial",
+              "share-alike",
+              "preserve stated license/citation"
+            ]
+          }
+        }
       },
       "evidence": [
         "examples/open-textbook-library.access.jsonl",
         "examples/open-textbook-library.jsonl",
-        "examples/open-textbook-library.benchmark.jsonl"
+        "examples/open-textbook-library.benchmark.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "open_questions": [
-        "Inspect actual representative content-license pages and reuse/attribution requirements; numeric free quota not published in reviewed evidence."
+        "Review any item-specific third-party exceptions before reuse; determine published numeric quota if available."
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Anonymous metadata export succeeded; target books and free-account conditions have not yet been tested in this pass.",
+      "summary": "OTL 10/22 detail pages, MIT Calculus resource/TOC and Saylor Chemistry TOC plus first/middle/final HTML sections returned HTTP 200 anonymously. Complete works were not copied; not every chapter or PDF byte was verified.",
       "facts": {
         "catalog_http": 200,
-        "reader_links": "Only HTTPS, $0.00 nonprint links retained; each access_verified=false",
-        "free_login": "Acceptable if documented, but no new accounts created"
+        "reader_links": "Export links remain access_verified=false by default; these checks apply only to the identified destinations, not every catalog result.",
+        "free_login": "Acceptable if documented, but no new accounts created",
+        "reader_checks": {
+          "10": {
+            "version": "Updated third edition, first published 1991; course Fall 2023 is not publication year",
+            "isbn13": "9780961408824",
+            "complete_pdf_link": "https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/mitres_18_001_f17_full_book.pdf",
+            "pdf_bytes_requested": 0,
+            "observed": "Public chapter list 0–16, index and whole-book PDF resource page"
+          },
+          "22": {
+            "version": "HTML v1.0; catalog copyright 2011, Saylor adaptation citation 2012",
+            "isbn13": "9781453311073",
+            "observed": "TOC and three sampled complete HTML section responses; no login/paywall observed"
+          }
+        }
       },
       "evidence": [
         "examples/open-textbook-library.access.jsonl",
         "examples/open-textbook-library.jsonl",
-        "examples/open-textbook-library.benchmark.jsonl"
+        "examples/open-textbook-library.benchmark.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "open_questions": [
-        "Probe permitted canonical details and representative reading endpoints without bulk downloads or bypassing controls."
+        "Test bounded Calculus PDF response without downloading a whole book; confirm representative availability in USA/India."
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Ten title searches passed with native IDs; local Mathematics subject search, empty and unsupported-mode observations retained.",
+      "summary": "Ten known-title searches re-passed; five topical metadata searches were manually reviewed. Numeric-ID ordering is deterministic, not relevance ranking; broad Agriculture retrieves teaching pedagogy as well as subject texts.",
       "facts": {
         "positive_examples": 10,
         "known_item_expectations": "Selected from current export, then actual local searches executed; not ten network API requests",
         "ranking": "Stable native numeric ID order; no semantic relevance ranking claimed",
-        "version": "Copyright year and ISBN are not sufficient to infer a complete edition history"
+        "version": "Copyright year and ISBN are not sufficient to infer a complete edition history",
+        "topic_benchmark": {
+          "topics": 5,
+          "reviewed_results": 21,
+          "scope": "First five title/subject matches per query (or all when fewer); judgments concern visible metadata, not full text or curriculum suitability.",
+          "topic_counts": {
+            "Mathematics": 191,
+            "Nursing": 33,
+            "Geology": 5,
+            "Agriculture": 3,
+            "Manufacturing": 3
+          }
+        },
+        "representative_version_distinctions": "OTL 10 copyright 1991 versus updated third edition/course 2023; OTL 22 copyright 2011 versus Saylor adaptation 2012. Preserve separate fields."
       },
       "evidence": [
         "examples/open-textbook-library.access.jsonl",
         "examples/open-textbook-library.jsonl",
-        "examples/open-textbook-library.benchmark.jsonl"
+        "examples/open-textbook-library.benchmark.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "open_questions": [
-        "Compare topical relevance and version distinctions across representative catalog and publisher detail records."
+        "Add grade/level/language intent checks and edition-aware ranking; broad-domain matching does not imply practical field guidance."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "One 2.7 MB metadata export was read within a 4 MiB research cap; robots checked and its pacing respected.",
+      "summary": "Two permitted metadata exports 41 minutes apart were identical (1,910 entries, same SHA-256); no observed deletion event. Current robots pacing was 120 seconds, respected for requests to the host.",
       "facts": {
         "bytes": 2735950,
         "body_sha256": "2721f1af482787e4fe328905a8feb0bde3ccf5168dcbb9fd3949ac47e7cca8f6",
         "refresh": "Re-fetch permitted export with its robots pacing; validate size/schema/native identities and replace the research metadata snapshot atomically. Compare removed IDs with provider deletion notices. Never treat an unavailable export as an empty catalog.",
-        "numeric_api_quota": null
+        "numeric_api_quota": null,
+        "repeat_export": {
+          "first_requested_at": "2026-11-05T02:46:53.019138+00:00",
+          "second_requested_at": "2026-11-05T03:28:04.467569+00:00",
+          "identical_hash": true,
+          "deleted_ids_observed": 0,
+          "limitation": "Unchanged export cannot validate deletion/tombstone handling."
+        },
+        "robots_delay_seconds": 120
       },
       "evidence": [
         "examples/open-textbook-library.access.jsonl",
         "examples/open-textbook-library.jsonl",
-        "examples/open-textbook-library.benchmark.jsonl"
+        "examples/open-textbook-library.benchmark.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "open_questions": [
-        "Record detailed provider quota/refresh guidance if published; validate deleted-item handling on a later export."
+        "Review provider refresh/deletion policy and any published numeric allowance; test real deletion/version changes when observed."
       ]
     },
     "decision_and_followup": {
@@ -366,7 +441,7 @@
         "query_examples_complete": true,
         "full_qualification_complete": false,
         "activation_approved": false,
-        "blockers": "Verify permitted canonical item detail plus two representative publisher reader links, current rights/edition identity and refresh/deletion behavior; investigate language/India coverage before research qualification or any app integration.",
+        "blockers": "Retain query-verified candidate; finish bounded PDF/representative reader checks, country/language evidence and refresh/deletion contract. Preserve CC0 metadata versus NC/SA book licenses and pedagogical versus practical intent.",
         "revisit_trigger": "Permitted reader/detail review and new rights/refresh evidence; no owner action required to continue other sources"
       },
       "evidence": [

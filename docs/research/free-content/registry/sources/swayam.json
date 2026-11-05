@@ -8,7 +8,7 @@
     "C09",
     "C10"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -42,10 +42,13 @@
     "Not an approved or verified origin; missing evidence remains open."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/dossier-evidence-20261105/observations.jsonl",
+    "analysis/dossier-reviews.jsonl",
+    "analysis/primary-document-reviews.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T02:51:16.117580+00:00",
-  "next_action": "Find a supported coordinator/catalog feed or permitted export, then test course/version identity and reader conditions.",
+  "last_reviewed_at": "2026-11-05T03:31:24.495339+00:00",
+  "next_action": "Do not scrape SWAYAM catalogs. Revisit only when an official permitted machine API/export contract is located; continue independent sources.",
   "primary_document_observations": [
     {
       "path": "runs/source-evidence-20261105/observations.jsonl",
@@ -108,15 +111,19 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Find a supported coordinator/catalog feed or permitted export, then test course/version identity and reader conditions.",
+      "summary": "Current SWAYAM terms prohibit scraping and bulk downloading site content. Public search/course pages do not authorize a scraper; no supported API/export established.",
       "facts": {
         "supported_request": null,
         "actual_observation": "Primary-document HTTP/robots only",
         "native_item_ids": [],
-        "paging_empty_error_tests": "not run"
+        "paging_empty_error_tests": "not run",
+        "excluded_route": "HTML catalog scraping/bulk harvesting",
+        "policy_quote": "not to scrape, or otherwise download in bulk, any SWAYAM Site content"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "observation_refs": [
         {
@@ -127,19 +134,23 @@
         }
       ],
       "open_questions": [
-        "Find supported documented query/export; execute exact, topic, paging, empty and error cases."
+        "Locate an official permitted API/export, including authentication, allowed use and stable native course/version IDs."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Current metadata/content reuse permissions have not been established; public documentation access is not a reuse license.",
+      "summary": "Free course learning and optional paid certification are separate. SWAYAM terms prohibit scraping; free learning is not a blanket metadata/content reuse license.",
       "facts": {
         "metadata_license": null,
         "content_license": null,
-        "cost_and_authentication": "Official overview distinguishes free learning from paid proctored certification; course-specific enrollment/availability remains untested."
+        "cost_and_authentication": "FAQ describes enrollment deadlines; coordinator page lists optional proctored certification Rs.1000/course. No account created; exact course reading/login tested separately.",
+        "automation_policy": "No site scraping/bulk downloads",
+        "faq_capture_limit": "FAQ response truncated at 64 KiB; conclusions limited to captured text."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "observation_refs": [
         {
@@ -150,7 +161,7 @@
         }
       ],
       "open_questions": [
-        "Review metadata license and actual content rights/free limits separately."
+        "Verify item-specific reuse license and permitted machine metadata terms if a supported route exists."
       ]
     },
     "reader_access": {
@@ -225,15 +236,17 @@
     },
     "decision_and_followup": {
       "status": "complete",
-      "summary": "Retain catalog lead for focused contract and item review; not qualified.",
+      "summary": "Defer automated catalog retrieval under current terms; free learning remains a user-facing possibility but no source qualification.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Find a supported coordinator/catalog feed or permitted export, then test course/version identity and reader conditions.",
-        "blocker": "Supported machine retrieval not yet established",
-        "revisit_trigger": "Official retrieval documentation or permitted metadata export located"
+        "decision": "deferred",
+        "next_action": "Do not scrape SWAYAM catalogs. Revisit only when an official permitted machine API/export contract is located; continue independent sources.",
+        "blocker": "Current no-scraping terms and no supported machine API/export verified",
+        "revisit_trigger": "Official supported API/export with compatible permitted-use terms is located"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "observation_refs": [
         {

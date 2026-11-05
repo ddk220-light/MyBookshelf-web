@@ -70,12 +70,18 @@ class EvidenceTests(unittest.TestCase):
     def test_scholarly_identity_keeps_provider_namespace_and_excludes_subscription_link(self):
         source = {'query': {'adapter': 'europe-pmc'}}
         item = {'id': '42', 'source': 'MED', 'title': 'Correction to an article', 'isOpenAccess': 'Y',
+                'license': 'cc by', 'pubTypeList': {'pubType': ['Published Erratum']},
+                'commentCorrectionList': {'commentCorrection': [{'source': 'MED', 'id': '7', 'type': 'Erratum for'}]},
                 'fullTextUrlList': {'fullTextUrl': [
                     {'availabilityCode': 'S', 'url': 'https://doi.org/example'},
                     {'availabilityCode': 'OA', 'url': 'https://europepmc.org/articles/PMC42'}]}}
         rows = normalize(source, {'resultList': {'result': [item, {**item, 'source': 'PMC'}]}})
         self.assertNotEqual(rows[0]['id'], rows[1]['id'])
         self.assertEqual(rows[0]['title'], 'Correction to an article')
+        self.assertEqual(rows[0]['publication_types'], ['Published Erratum'])
+        self.assertEqual(rows[0]['correction_relations'][0]['id'], '7')
+        self.assertEqual(rows[0]['license_label'], 'cc by')
+        self.assertIsNone(rows[0]['is_retracted'])
         self.assertEqual(len(rows[0]['reported_free_links']), 1)
         self.assertEqual(rows[0]['reported_free_links'][0]['availabilityCode'], 'OA')
         with self.assertRaises(ValueError):

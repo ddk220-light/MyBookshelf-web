@@ -1,3 +1,13 @@
+## 2026-11-05: current policy, reader and version evidence
+
+Current checkpoint: **61 source records, 150 current verified examples across 15 catalogs, zero complete expanded dossiers.** Four prior catalog identities now have explicit candidate/deferred dossiers: NARA Catalog, US Data.gov, GovInfo and ROSA P. They add no verified query examples. Forty-six catalog identities (51 references), 31 named organizations and 22 URL leads still need resolution.
+
+A separate 21-job reader/policy pass finished with 20 captured responses and one robots-timeout skip (Bharat Skills). OTL 10/22 now have canonical edition/language/license evidence plus MIT/Saylor reader samples; five topical searches retain 21 manual metadata judgments and practical-versus-pedagogical limitations. Two 1,910-record exports had the same hash; that does not verify deletion handling. OTL and Europe PMC's existing ten queries each re-passed without double-counting. Europe PMC now preserves publication types, item license labels, correction relationships and unknown retraction flags. Two rendered reader attempts failed because of cloud Chromium CA trust; these are environment failures, not proof of provider denial.
+
+SWAYAM's current terms prohibit scraping, so that route is deferred. DIKSHA's Sunbird software license is not a hosted catalog access grant. NPTEL's NC license-label inconsistency and optional certificate fee remain explicit. NARA/Data.gov key requirements are recorded without provisioning accounts or using an inappropriate demo route. Historical section findings are retained in `analysis/dossier-reviews.jsonl`; short policy excerpts link exact primary-document hashes and job IDs. No production source activation changed.
+
+The original 153-job documentation worker remains complete: 121 captures, 30 skips, one HTTP 403 and one timeout, final pushed worker checkpoint `dd2b8a5` at 02:46:35 UTC. Its status reporter was disabled after the final report; the broader completion task remains enabled. The registry/evidence audit and all 23 tests pass. A test initially collided with the active research lease; its lock fixture now uses a temporary file, leaving the real worker lock intact. Resume from the goal cursor and audits; documentation capture, repeat checks and candidate counts are not full source qualification.
+
 ## 2026-11-05: lead triage, scholarly queries and explicit completeness gaps
 
 Current checkpoint: **57 source records; 150 current verified examples across 15 catalogs; zero complete expanded dossiers.** Europe PMC adds ten actual DOI queries, with topic/empty/pagination observations and correction/editorial limitations retained. OTL adds ten local queries over a supported CC0 metadata export. Existing production activation is unchanged.

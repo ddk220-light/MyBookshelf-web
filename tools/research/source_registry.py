@@ -77,6 +77,11 @@ def normalize(source, data, endpoint=None):
         return [{'id': row['source'] + ':' + row['id'], 'title': row['title'],
                  'source': row['source'], 'native_id': row['id'], 'pmcid': row.get('pmcid'),
                  'doi': row.get('doi'), 'language': row.get('language'), 'year': row.get('pubYear'),
+                 'first_publication_date': row.get('firstPublicationDate'),
+                 'publication_types': row.get('pubTypeList', {}).get('pubType', []),
+                 'license_label': row.get('license'),
+                 'correction_relations': row.get('commentCorrectionList', {}).get('commentCorrection', []),
+                 'is_retracted': row.get('isRetracted'),
                  'is_open_access': row.get('isOpenAccess'),
                  'landing_page': 'https://europepmc.org/article/' + row['source'] + '/' + row['id'],
                  'reported_free_links': [link for link in row.get('fullTextUrlList', {}).get('fullTextUrl', [])

@@ -214,18 +214,21 @@
   ],
   "limitations": [
     "Europe PMC overlaps PubMed/PMC and publisher copies; source+id/DOI/PMCID identities must remain linked without multiplying origins.",
-    "One verified example is explicitly a correction and another an editorial by title; do not present every hit as an original study. Detailed publication type/version relations are not yet reviewed.",
+    "One verified example is explicitly a correction and another an editorial by title; do not present every hit as an original study. Current publication types and a correction-to-original relation are retained; broader version/retraction tests remain open.",
     "The tested examples are English. Country-specific access and language breadth are not established.",
     "Ten identity searches are complete; full dossier, reader access, rights and topical relevance remain open. Existing deployed source state was not changed."
   ],
   "evidence": [
     "examples/europe-pmc.jsonl",
     "examples/europe-pmc.benchmark.jsonl",
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/dossier-evidence-20261105/observations.jsonl",
+    "analysis/dossier-reviews.jsonl",
+    "analysis/primary-document-reviews.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T02:56:38.808777+00:00",
+  "last_reviewed_at": "2026-11-05T03:31:24.495339+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Inspect permitted reader access and article licenses; capture publication types/correction/retraction relations, complete topic relevance and India/language coverage, and reconcile PubMed/PMC overlap. Do not change existing deployed source activation.",
+  "next_action": "Verify metadata terms and permitted article reader/license routes; fix browser CA trust without disabling TLS, then test retraction/version and broad-topic behavior. Keep correction identity distinct.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -302,16 +305,23 @@
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "OA flags and fullTextUrl availability are discovery metadata, not blanket reuse licenses. Metadata terms and each representative article license/correction status still require review; subscription-labelled DOI links are excluded from free-link samples.",
+      "summary": "Current core responses expose item license labels, including cc by and cc by-nc-nd. OA availability is not blanket permission; article license URLs and catalog metadata terms still need verification.",
       "facts": {
         "authentication": "none used",
         "free_access_evidence": "OA flag and availabilityCode metadata only",
-        "license_review": "pending"
+        "license_review": "pending",
+        "observed_license_labels": [
+          "cc by",
+          "cc by-nc-nd"
+        ],
+        "inference_limit": "Use source-provided labels; do not normalize away noncommercial/no-derivatives terms or infer reuse from OA flag."
       },
       "evidence": [
         "examples/europe-pmc.jsonl",
         "examples/europe-pmc.benchmark.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "open_questions": [
         "Verify current metadata reuse terms and representative content license URLs; do not infer quota or universal copyright permission."
@@ -319,37 +329,79 @@
     },
     "reader_access": {
       "status": "partial",
-      "summary": "API metadata returned reported free reader links, but no complete article reader has yet been verified in this batch.",
+      "summary": "Plain HTTP article URL returned the JavaScript shell. Two rendered reader attempts failed on this environment’s Chromium CA trust before content could load; this is not evidence of a provider denial or a broken reader.",
       "facts": {
         "HTTP_search": 200,
         "login": "No API login used; per-reader login/access conditions unknown",
-        "access_location": "Managed cloud execution only"
+        "access_location": "Managed cloud execution only",
+        "browser_checks": {
+          "native_ids": [
+            "PMC13209386",
+            "PMC13590939"
+          ],
+          "outcome": "unverified",
+          "error": "net::ERR_CERT_AUTHORITY_INVALID",
+          "cause_scope": "Cloud browser trust configuration; urllib API/HTTP requests succeeded",
+          "access_control_observed": false,
+          "tls_verification_bypassed": false
+        }
       },
       "evidence": [
         "examples/europe-pmc.jsonl",
         "examples/europe-pmc.benchmark.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl",
+        "examples/europe-pmc.reader.jsonl"
       ],
       "open_questions": [
-        "Test allowed representative full reader destinations and document any account/geographic/WAF restrictions."
+        "Verify permitted rendered readers with correctly configured CA trust, or a documented bounded OA full-text route; retain current failures as environment-specific."
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Ten distinct DOI resolutions matched preselected native IDs; correction/editorial titles and paging/empty observations are preserved.",
+      "summary": "All ten DOI queries re-passed with publication types, license labels and correction relations preserved. MED:42769525 is an erratum for MED:40894524, not a second copy of the original study.",
       "facts": {
         "positive_examples": 10,
         "example_selection": "Scouted metadata first; independently executed exact DOI queries then matched expected native IDs",
         "topic_benchmark": "One malaria query only; no general precision claim",
-        "version_risk": "Correction to a study is a distinct item, not automatically the original study"
+        "version_risk": "Correction to a study is a distinct item, not automatically the original study",
+        "correction_example": {
+          "id": "MED:42769525",
+          "doi": "10.1155/ijog/9865175",
+          "pmcid": "PMC13590939",
+          "publication_types": [
+            "Published Erratum",
+            "correction"
+          ],
+          "relation_type": "Erratum for",
+          "original_native_id": "MED:40894524",
+          "original_doi_in_reference": "10.1155/ijog/6664418",
+          "first_publication_date": "2026-09-20"
+        },
+        "retraction_handling": "Absent isRetracted stays null/unknown; never infer no retraction from missing field.",
+        "publication_type_labels": [
+          "Comment",
+          "Editorial",
+          "Journal Article",
+          "Letter",
+          "Published Erratum",
+          "Review",
+          "article-commentary",
+          "correction",
+          "research-article",
+          "review-article"
+        ]
       },
       "evidence": [
         "examples/europe-pmc.jsonl",
         "examples/europe-pmc.benchmark.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
       ],
       "open_questions": [
-        "Capture publication types, correction/retraction relations, version identity and broader topic relevance."
+        "Test retracted and versioned records explicitly; measure broader topic relevance beyond DOI retrieval."
       ]
     },
     "operating_limits": {
@@ -375,7 +427,7 @@
       "summary": "Retain as current query-verified scholarly catalog evidence. Research qualification and new activation approval remain false.",
       "facts": {
         "decision": "retain-for-rights-reader-version-review",
-        "next_action": "Inspect permitted reader access and article licenses; capture publication types/correction/retraction relations, complete topic relevance and India/language coverage, and reconcile PubMed/PMC overlap. Do not change existing deployed source activation.",
+        "next_action": "Verify metadata terms and permitted article reader/license routes; fix browser CA trust without disabling TLS, then test retraction/version and broad-topic behavior. Keep correction identity distinct.",
         "existing_production_status": "Unchanged by research; enabled=false here is not a statement about deployed integration."
       },
       "evidence": [

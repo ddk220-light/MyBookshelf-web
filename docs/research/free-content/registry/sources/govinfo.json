@@ -1,0 +1,363 @@
+{
+  "schema_version": 1,
+  "id": "govinfo",
+  "name": "GovInfo",
+  "homepage": "https://www.govinfo.gov/",
+  "group": "G04",
+  "areas": [
+    "C08",
+    "C18",
+    "P01",
+    "P02",
+    "P03"
+  ],
+  "state": "candidate",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "aliases": [],
+  "operator": {
+    "name": "US Government Publishing Office (GPO)",
+    "jurisdiction": "USA",
+    "evidence": [
+      {
+        "path": "runs/source-evidence-20261105/observations.jsonl",
+        "job_id": "d471a90db3c3dba84445",
+        "observed_at": "2026-11-05T02:24:28.636404+00:00"
+      },
+      {
+        "path": "runs/source-evidence-20261105/observations.jsonl",
+        "job_id": "281915c94d05a08dd5fb",
+        "observed_at": "2026-11-05T02:21:00.792094+00:00"
+      }
+    ]
+  },
+  "capabilities": [
+    "Official search service supports field queries over publication packages/granules, relevance/date/title sorting and cursor pages; historical editions require explicit historical=true."
+  ],
+  "query": {
+    "adapter": "unproven",
+    "endpoint": "https://api.govinfo.gov/search",
+    "cases": [],
+    "documented_request": {
+      "method": "POST",
+      "url": "https://api.govinfo.gov/search",
+      "json": {
+        "query": "federal API",
+        "pageSize": "2",
+        "offsetMark": "*",
+        "sorts": [
+          {
+            "field": "score",
+            "sortOrder": "DESC"
+          }
+        ]
+      },
+      "authentication": "api.data.gov key; documentation offers DEMO_KEY for interactive initial trials"
+    },
+    "authentication": "API key normally required; documented DEMO_KEY trial is distinct from permission/quota for ongoing service.",
+    "request_shape_verified": "documentation-only; never executed"
+  },
+  "licensing": "Government publishing catalog with collection-specific records; do not infer all material copyright-free. Metadata/content terms and representative publication rights remain open.",
+  "documentation": [
+    "https://www.govinfo.gov/features/search-service-overview",
+    "https://www.govinfo.gov/developers"
+  ],
+  "limitations": [
+    "One GPO catalog across collections. Federal Register/CFR editions and package/granule records are distinct native items, not new origins.",
+    "No fresh item-query examples; policy/documentation observations are not successful catalog queries."
+  ],
+  "evidence": [
+    "runs/source-evidence-20261105/observations.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T03:19:01.955069+00:00",
+  "next_action": "Inspect current API documentation and bounded trial allowance; test packages vs granules, current vs historical editions, reader destinations and quotas. No production activation.",
+  "primary_document_observations": [
+    {
+      "path": "runs/source-evidence-20261105/observations.jsonl",
+      "job_id": "d471a90db3c3dba84445",
+      "observed_at": "2026-11-05T02:24:28.636404+00:00"
+    },
+    {
+      "path": "runs/source-evidence-20261105/observations.jsonl",
+      "job_id": "281915c94d05a08dd5fb",
+      "observed_at": "2026-11-05T02:21:00.792094+00:00"
+    }
+  ],
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "One GPO catalog across collections. Federal Register/CFR editions and package/granule records are distinct native items, not new origins.",
+      "facts": {
+        "operator": "US Government Publishing Office (GPO)",
+        "canonical_domain": "https://www.govinfo.gov/",
+        "role": "metadata/catalog provider"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d471a90db3c3dba84445",
+          "observed_at": "2026-11-05T02:24:28.636404+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "281915c94d05a08dd5fb",
+          "observed_at": "2026-11-05T02:21:00.792094+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Official search service supports field queries over publication packages/granules, relevance/date/title sorting and cursor pages; historical editions require explicit historical=true.",
+      "facts": {
+        "country_of_operator": "USA",
+        "area_candidates": [
+          "C08",
+          "C18",
+          "P01",
+          "P02",
+          "P03"
+        ],
+        "languages": null,
+        "jurisdiction": "Catalog metadata only; actual issuing authority/geographic scope unverified"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d471a90db3c3dba84445",
+          "observed_at": "2026-11-05T02:24:28.636404+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "281915c94d05a08dd5fb",
+          "observed_at": "2026-11-05T02:21:00.792094+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify representative items and actual languages/jurisdiction; no map parcel/owner records to be collected."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Documented capabilities captured; no live query verified.",
+      "facts": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.govinfo.gov/search",
+          "json": {
+            "query": "federal API",
+            "pageSize": "2",
+            "offsetMark": "*",
+            "sorts": [
+              {
+                "field": "score",
+                "sortOrder": "DESC"
+              }
+            ]
+          },
+          "authentication": "api.data.gov key; documentation offers DEMO_KEY for interactive initial trials"
+        },
+        "authentication": "API key normally required; documented DEMO_KEY trial is distinct from permission/quota for ongoing service.",
+        "supported": "Official search service supports field queries over publication packages/granules, relevance/date/title sorting and cursor pages; historical editions require explicit historical=true.",
+        "unsupported": "No universal free reading, address/owner lookup or full-text completeness claim."
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d471a90db3c3dba84445",
+          "observed_at": "2026-11-05T02:24:28.636404+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "281915c94d05a08dd5fb",
+          "observed_at": "2026-11-05T02:21:00.792094+00:00"
+        }
+      ],
+      "open_questions": [
+        "Execute supported bounded queries and verify native IDs, paging/empty/error/edition behavior once access conditions are met."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Government publishing catalog with collection-specific records; do not infer all material copyright-free. Metadata/content terms and representative publication rights remain open.",
+      "facts": {
+        "authentication": "API key normally required; documented DEMO_KEY trial is distinct from permission/quota for ongoing service.",
+        "published_limits": {
+          "max_page_size": 1000,
+          "paging": "offsetMark starts * then returned offsetMark",
+          "default_historical": false,
+          "published_numeric_rate_limit": "Not established by these saved documents",
+          "stability": "Saved feature article labels 2023 initial service public preview; current stability needs reconciliation."
+        },
+        "attribution": null
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d471a90db3c3dba84445",
+          "observed_at": "2026-11-05T02:24:28.636404+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "281915c94d05a08dd5fb",
+          "observed_at": "2026-11-05T02:21:00.792094+00:00"
+        }
+      ],
+      "open_questions": [
+        "Review metadata/content licenses and representative object rights separately."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Primary documentation or homepage read anonymously; complete items not tested.",
+      "facts": {
+        "reader_conditions": "Unknown per item; free login is allowed if disclosed; no accounts created."
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d471a90db3c3dba84445",
+          "observed_at": "2026-11-05T02:24:28.636404+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "281915c94d05a08dd5fb",
+          "observed_at": "2026-11-05T02:21:00.792094+00:00"
+        }
+      ],
+      "open_questions": [
+        "Read a permitted representative complete item and document any restrictions."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "No current item-query examples yet; names and documentation responses are not qualification.",
+      "facts": {
+        "ten_examples": 0,
+        "versions": "Preserve issuing authority, dates, edition and native item/layer IDs"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d471a90db3c3dba84445",
+          "observed_at": "2026-11-05T02:24:28.636404+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "281915c94d05a08dd5fb",
+          "observed_at": "2026-11-05T02:21:00.792094+00:00"
+        }
+      ],
+      "open_questions": [
+        "Collect five known-item/five topic observations plus ten passing examples and source-specific version/jurisdiction checks."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Published operating constraints captured with remaining scope kept explicit.",
+      "facts": {
+        "max_page_size": 1000,
+        "paging": "offsetMark starts * then returned offsetMark",
+        "default_historical": false,
+        "published_numeric_rate_limit": "Not established by these saved documents",
+        "stability": "Saved feature article labels 2023 initial service public preview; current stability needs reconciliation."
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d471a90db3c3dba84445",
+          "observed_at": "2026-11-05T02:24:28.636404+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "281915c94d05a08dd5fb",
+          "observed_at": "2026-11-05T02:21:00.792094+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify current route-level allowance and failure/refresh behavior before repeated automated use."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain for supported retrieval and item review; not qualified.",
+      "facts": {
+        "decision": "candidate",
+        "next_action": "Inspect current API documentation and bounded trial allowance; test packages vs granules, current vs historical editions, reader destinations and quotas. No production activation.",
+        "revisit_trigger": "Current API/export contract and bounded reader evidence"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d471a90db3c3dba84445",
+          "observed_at": "2026-11-05T02:24:28.636404+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "281915c94d05a08dd5fb",
+          "observed_at": "2026-11-05T02:21:00.792094+00:00"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "e0f9e032470e81d885e20251a8653198ea6ed2892d86f761f802fa7c61095796",
+      "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+      "line": 18,
+      "heading": "Research matrix",
+      "text": "| **P01 Government, research and development reports — C08** | [GovInfo Developer Hub](https://www.govinfo.gov/developers), agency publication catalogs, state research bureaus, municipal annual reports; follow publishing agencies from catalog records | Ministry/department publication sections reached through the [National Portal](https://www.india.gov.in/); RBI, NITI Aayog, research councils and state economic-survey series as leads | Topic/title/year/issuing body → report ID, edition, publication date and full report. A press release announcing a report is not the report. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "e0f9e032470e81d885e20251a8653198ea6ed2892d86f761f802fa7c61095796",
+      "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+      "line": 19,
+      "heading": "Research matrix",
+      "text": "| **P02 Laws, rules and gazettes — C18** | GovInfo, official federal regulations, state legislatures and local ordinance publishers linked from government websites | [India Code](https://www.indiacode.nic.in/indiacode/home.jsp), Union/state gazettes, legislature sites and official rules collections | Act/rule number, title, section, jurisdiction and effective date → authoritative document/version. Distinguish enacted law, proposed bill, amendment and consolidated text. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "e0f9e032470e81d885e20251a8653198ea6ed2892d86f761f802fa7c61095796",
+      "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+      "line": 75,
+      "heading": "From a directory entry to something the app can query",
+      "text": "1. **Official document/dataset catalog API.** [GovInfo documents an API search\n   service](https://www.govinfo.gov/features/search-service-overview) for content\n   and metadata. The current [Data.gov Catalog API](https://resources.data.gov/catalog-api/)\n   searches dataset metadata and identifies publisher organizations; it explicitly\n   replaces the previous CKAN API. Use the current interface and key policy,\n   not an old tutorial. An indexed dataset still needs a valid resource link.\n2. **Approved exports and local metadata search.** Small DCAT/CSV/JSON/XML catalogs\n   can become bounded, reviewed search artifacts without a hosted database. Prefer\n   metadata and canonical outbound links; do not copy whole national parcel or\n   imagery stores to make a prototype searchable.\n3. **Native record or feature queries.** A source can qualify for property or\n   spatial lookup through real address/parcel/document-ID/area queries even when\n   it lacks general keyword search. This must return record metadata and a usable\n   destination; an identifier-shaped redirect to an external search page is not\n   retrieval. Record this as a separate capability from topic discovery.\n4. **Geo services with explicit discovery.** [OGC WFS](https://www.ogc.org/standards/wfs/),\n   [OGC API Features](https://www.ogc.org/standards/ogcapi-features/) and documented\n   [ArcGIS layer queries](https://developers.arcgis.com/rest/services-reference/enterprise/query-feature-service-layer/)\n   are patterns to inspect for spatial/attribute filtering. Confirm the deployed\n   service's capabilities, limits, IDs and terms; the platform brand is not proof.\n   [WMS](https://www.ogc.org/standards/wms/)/WMTS primarily deliver rendered maps\n   or tiles. A searchable layer catalog can support map discovery, but does not\n   establish searchable parcel attributes or downloadable source features.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "e0f9e032470e81d885e20251a8653198ea6ed2892d86f761f802fa7c61095796",
+      "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+      "line": 180,
+      "heading": "Evidence status and next verification",
+      "text": "This was documentation research, not an API qualification run. Current official\nData.gov, GovInfo, USGS TNM, Census, USAGov, NYC and Tamil Nadu pages were readable;\ntheir documentation supports the proposed discovery routes, not an availability\nguarantee. Data.gov's current migration notice is especially important for future\nconnector selection. Keys, terms, quota settings and actual result samples still\nneed checking before implementation.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}
