@@ -31,11 +31,20 @@
     "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/media-bot-contract-20261105bd/observations.jsonl",
+    "runs/media-access-policy-20261105be/observations.jsonl",
+    "runs/media-terms-search-20261105bf/observations.jsonl",
+    "runs/archive-supported-search-20261105bg/observations.jsonl",
+    "runs/archive-search-form-20261105bh/observations.jsonl",
+    "examples/internet-archive.terms-rendered.jsonl",
+    "examples/internet-archive.map-media-batch-scouting.jsonl",
+    "examples/internet-archive.education-collection-scouting.jsonl",
+    "examples/internet-archive.mit-collection-scouting.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T13:59:28.795812+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "General Archive uploads remain unqualified. Continue source-attributed collections with official publisher backlinks, per-item rights, permitted access and bounded file/reader checks. Do not duplicate BHL/MIT hosted copies as new origins; resolve product-use permission separately from research-only access.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -46,136 +55,208 @@
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Archive is an aggregation/hosting catalog, not a separate origin for each mirrored publisher, collection or course.",
       "facts": {
-        "id": "internet-archive",
-        "name": "Internet Archive",
-        "homepage_reference": "https://archive.org/developers/",
-        "operator": null,
-        "origin_deduplication": "pending"
+        "operator": {
+          "name": "Internet Archive",
+          "verification": "Current official rendered terms identify Archive; legal incorporation specifics not reverified."
+        },
+        "overlap": "BHL collection remains attributed to BHL; mit_ocw is an attributed MIT lead. Community calculus uploads do not establish MIT provenance.",
+        "identity": "Archive native item identifier can group many course recordings; files, derivatives and playlists are separate from publisher origin."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/media-bot-contract-20261105bd/observations.jsonl",
+        "runs/media-access-policy-20261105be/observations.jsonl",
+        "runs/media-terms-search-20261105bf/observations.jsonl",
+        "runs/archive-supported-search-20261105bg/observations.jsonl",
+        "runs/archive-search-form-20261105bh/observations.jsonl",
+        "examples/internet-archive.terms-rendered.jsonl",
+        "examples/internet-archive.map-media-batch-scouting.jsonl",
+        "examples/internet-archive.education-collection-scouting.jsonl",
+        "examples/internet-archive.mit-collection-scouting.jsonl"
       ],
       "open_questions": [
-        "Confirm operator, parent and catalog-versus-origin deduplication."
+        "Resolve collection publisher authority and mirror overlap per retained collection."
       ]
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Public text and movie metadata exist, but broad media availability is not qualified coverage.",
       "facts": {
-        "category_industry_candidates": [
-          "C02"
-        ],
-        "languages": null,
-        "jurisdictions": null,
-        "coverage_evidence": "pending"
+        "provenance": "Historical book claims preserved. Current calculus movie sample contains community uploads with uploader-supplied NC-ND licenses.",
+        "languages": "General catalog languages and USA/India network access unverified.",
+        "counts": "Zero general-Archive current examples counted; only source-specific independently scoped query cases can count."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/media-bot-contract-20261105bd/observations.jsonl",
+        "runs/media-access-policy-20261105be/observations.jsonl",
+        "runs/media-terms-search-20261105bf/observations.jsonl",
+        "runs/archive-supported-search-20261105bg/observations.jsonl",
+        "runs/archive-search-form-20261105bh/observations.jsonl",
+        "examples/internet-archive.terms-rendered.jsonl",
+        "examples/internet-archive.map-media-batch-scouting.jsonl",
+        "examples/internet-archive.education-collection-scouting.jsonl",
+        "examples/internet-archive.mit-collection-scouting.jsonl"
       ],
       "open_questions": [
-        "Verify country/language/subject coverage with item evidence."
+        "Establish attributable content/languages and local access, excluding account/favorite metadata."
       ]
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current published Advanced Search form, CLI search and metadata-read docs support bounded public metadata queries.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Imported historical retrieval analysis: Advanced Search JSON `/advancedsearch.php`; `/metadata/{identifier}`; search title/creator, media type and collection, then inspect access/files. [Developer portal](https://archive.org/developers/)"
-        ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "request_shape": "GET /advancedsearch.php?q={collection/type/title/native-id expression}&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=licenseurl&fl[]=language&fl[]=date&rows=2&page=1&output=json",
+        "partial_metadata": "GET /metadata/{identifier}/metadata/description returns result string. Public metadata read mostly available anonymously; writes require authentication and are excluded.",
+        "field_minimization": "Do not request uploader/account/favorite fields. collection unexpectedly includes personal favorites; new unpublished observations were sanitized before checkpoint and explicitly annotated while retaining raw HTTP hashes. Future scoped collector omits collection field and whitelists stored docs.",
+        "documentation_limit": "Advanced-search form excerpt stops inside a long sort-option list; it is not a complete schema capture. CLI current search docs explicitly document bounded page/rows.",
+        "empty": "Broad collection:education physics query returned200 numFound0; not proof there are no educational videos."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/media-bot-contract-20261105bd/observations.jsonl",
+        "runs/media-access-policy-20261105be/observations.jsonl",
+        "runs/media-terms-search-20261105bf/observations.jsonl",
+        "runs/archive-supported-search-20261105bg/observations.jsonl",
+        "runs/archive-search-form-20261105bh/observations.jsonl",
+        "examples/internet-archive.terms-rendered.jsonl",
+        "examples/internet-archive.map-media-batch-scouting.jsonl",
+        "examples/internet-archive.education-collection-scouting.jsonl",
+        "examples/internet-archive.mit-collection-scouting.jsonl"
       ],
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Validate per-collection query types, error semantics, full schema and native edition/file identity."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Rendered current terms permit no-charge scholarship/research use; content and public-product reuse require separate analysis.",
       "facts": {
-        "license_notes": "Prefer `https://archive.org/details/{identifier}`. `mediatype:texts` does not imply free reading: lending/restricted/metadata-only items exist.",
-        "authentication_notes": "See historical notes; current contract must be reconciled with newer evidence.",
-        "cost_notes": null,
-        "terms_review": "pending current reconciliation"
+        "observation_date": "2026-11-05T13:59:28.795812+00:00",
+        "terms_displayed_date": "31 December2014; privacy/copyright text10 March2001. Observation date is not revision date.",
+        "metadata": "No blanket metadata license established. Account/favorite personal metadata is excluded.",
+        "content": "Per-item rights must be established; Archive warns that CC claims require trusting the declarer. Community-hosted NC-ND labels are not official-origin proof.",
+        "authentication": "No account/key/payment used for these public metadata reads. Some collections may require approved account/password.",
+        "scope": "This research fits scholarship/research reading. Product integration permission unresolved; no activation or runtime import."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/media-bot-contract-20261105bd/observations.jsonl",
+        "runs/media-access-policy-20261105be/observations.jsonl",
+        "runs/media-terms-search-20261105bf/observations.jsonl",
+        "runs/archive-supported-search-20261105bg/observations.jsonl",
+        "runs/archive-search-form-20261105bh/observations.jsonl",
+        "examples/internet-archive.terms-rendered.jsonl",
+        "examples/internet-archive.map-media-batch-scouting.jsonl",
+        "examples/internet-archive.education-collection-scouting.jsonl",
+        "examples/internet-archive.mit-collection-scouting.jsonl"
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+        "Resolve metadata/content licenses and permitted eventual product use without assuming an uploader license guarantees rights."
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Only official terms text and public metadata were read; no course playback or general full-item access proved.",
       "facts": {
-        "evidence_references": [
-          "analysis/documents.jsonl"
-        ],
-        "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "terms_rendering": "Initial body.innerText returned empty because Web Components; later open-shadow-DOM extraction captured17627 characters. Both observations retained; no login, form or consent acceptance.",
+        "items": "Community movie search metadata and attributed MIT course records are not playback tests.",
+        "access": "Free login may be acceptable, but borrowing/preview/territory/paid conditions must be explicit."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/media-bot-contract-20261105bd/observations.jsonl",
+        "runs/media-access-policy-20261105be/observations.jsonl",
+        "runs/media-terms-search-20261105bf/observations.jsonl",
+        "runs/archive-supported-search-20261105bg/observations.jsonl",
+        "runs/archive-search-form-20261105bh/observations.jsonl",
+        "examples/internet-archive.terms-rendered.jsonl",
+        "examples/internet-archive.map-media-batch-scouting.jsonl",
+        "examples/internet-archive.education-collection-scouting.jsonl",
+        "examples/internet-archive.mit-collection-scouting.jsonl"
       ],
       "open_questions": [
-        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+        "Inspect representative official full-item reader/player, duration/transcript/captions, rights and geographic/accessibility behavior."
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "A title match can be an untrusted upload or an entire course bundle; source attribution must be checked.",
       "facts": {
-        "limitations": [
-          "Public metadata/search need no key. Inspect item access and rights; do not assume all uploads are rights-vetted. Search worked, item access validation remains. **Medium / P1**.",
-          "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+        "negative_cases": [
+          "Unattributed calculus community uploads",
+          "education-collection physics200 empty",
+          "Guessed /developers/apis.html404 retained; correct portal-published index-apis.html200 captured later"
         ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "historical_findings": "Original text-search claims remain historical, not new verified examples.",
+        "privacy": "Unexpected personal favorite collection names were removed from new observations before commit; no user profiles or account records researched."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/media-bot-contract-20261105bd/observations.jsonl",
+        "runs/media-access-policy-20261105be/observations.jsonl",
+        "runs/media-terms-search-20261105bf/observations.jsonl",
+        "runs/archive-supported-search-20261105bg/observations.jsonl",
+        "runs/archive-search-form-20261105bh/observations.jsonl",
+        "examples/internet-archive.terms-rendered.jsonl",
+        "examples/internet-archive.map-media-batch-scouting.jsonl",
+        "examples/internet-archive.education-collection-scouting.jsonl",
+        "examples/internet-archive.mit-collection-scouting.jsonl"
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+        "Verify ten current source-scoped examples with expected native IDs, relevance and item access."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current bot docs require descriptive tool/version/AI-model User-Agent, pacing, backoff and no duplicate harvesting.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "user_agent": "MyBookshelf-SourceReview/1.0 (Codex GPT-6; +https://github.com/ddk220-light/MyBookshelf-web)",
+        "rate": "Minimum4seconds in scoped media tests; no published universal numeric quota inferred. Stop on access/rate errors; no automatic retries.",
+        "changes": "Terms allow removal without notice; metadata/file refresh and tombstones not yet rehearsed.",
+        "failure": "A second collector invocation was rejected by the exclusive lock before any target request; it ran serially only after the first collector finished. No duplicate collection."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/media-bot-contract-20261105bd/observations.jsonl",
+        "runs/media-access-policy-20261105be/observations.jsonl",
+        "runs/media-terms-search-20261105bf/observations.jsonl",
+        "runs/archive-supported-search-20261105bg/observations.jsonl",
+        "runs/archive-search-form-20261105bh/observations.jsonl",
+        "examples/internet-archive.terms-rendered.jsonl",
+        "examples/internet-archive.map-media-batch-scouting.jsonl",
+        "examples/internet-archive.education-collection-scouting.jsonl",
+        "examples/internet-archive.mit-collection-scouting.jsonl"
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Establish bounded corrections/removals/refresh behavior and later-session reliability."
       ]
     },
     "decision_and_followup": {
-      "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "status": "complete",
+      "summary": "Keep general Archive catalog unqualified while investigating explicitly attributed educational media.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "candidate",
+        "next_action": "General Archive uploads remain unqualified. Continue source-attributed collections with official publisher backlinks, per-item rights, permitted access and bounded file/reader checks. Do not duplicate BHL/MIT hosted copies as new origins; resolve product-use permission separately from research-only access.",
+        "activation_approved": false,
+        "owner_action_required": false,
+        "full_qualification_complete": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/media-bot-contract-20261105bd/observations.jsonl",
+        "runs/media-access-policy-20261105be/observations.jsonl",
+        "runs/media-terms-search-20261105bf/observations.jsonl",
+        "runs/archive-supported-search-20261105bg/observations.jsonl",
+        "runs/archive-search-form-20261105bh/observations.jsonl",
+        "examples/internet-archive.terms-rendered.jsonl",
+        "examples/internet-archive.map-media-batch-scouting.jsonl",
+        "examples/internet-archive.education-collection-scouting.jsonl",
+        "examples/internet-archive.mit-collection-scouting.jsonl"
       ],
-      "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
-      ]
+      "open_questions": []
     }
   },
   "analysis_refs": [
@@ -291,5 +372,10 @@
       "text": "Ten new integrations are released behind `CONTENT_KNOWLEDGE_ENABLED=true`:\nGlobal Digital Library, LibriVox, Library of Congress digital books, Biodiversity\nHeritage Library's Internet Archive collection, African Minds, LSE Press,\nMattering Press, mediastudies.press, punctum books and Python 3.15 documentation.\nFive publisher catalogs share Thoth; this is not five separate API infrastructures.\nThe existing Gutenberg, Open Textbook Library, Book Dash and StoryWeaver snapshots\nand the existing OpenAlex/Europe PMC integrations are also selectable. With the\nexisting production flags, this gives 16 connected sources, not 16 fully audited\norigins or complete catalogs.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "operator": {
+    "name": "Internet Archive",
+    "verification": "Current official rendered terms identify Archive; legal incorporation specifics not reverified."
+  },
+  "origin_family": "internet-archive"
 }

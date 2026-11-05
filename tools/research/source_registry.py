@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia'):
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -176,6 +176,9 @@ def normalize(source, data, endpoint=None):
         host = urllib.parse.urlsplit(endpoint or source['query']['endpoint']).netloc
         return [{'id': str(r['pageid']), 'title': r['title'], 'landing_page': f'https://{host}/?curid={r["pageid"]}'} for r in data['query']['search']]
     if adapter == 'loc':
+        if endpoint and (urllib.parse.urlsplit(endpoint).path == '/maps/' or isinstance(data.get('item'), dict)):
+            from loc_maps import parse as parse_maps
+            return parse_maps(data, endpoint)
         results = []
         for row in data['results']:
             record = {'id': row['id'], 'title': row['title'],
@@ -317,6 +320,9 @@ def validate(registry=REGISTRY):
 
 def probe(source_id, case_ids=None):
     source = json.loads((REGISTRY / 'sources' / f'{source_id}.json').read_text())
+    if source['query']['adapter'] == 'archive-education':
+        from archive_education import probe as probe_education
+        return probe_education(source, case_ids)
     if source['query']['adapter'] == 'appropedia':
         from appropedia_catalog import probe as probe_appropedia
         return probe_appropedia(source, case_ids)
