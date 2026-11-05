@@ -1,3 +1,9 @@
+## 2026-11-05: completed documentation pass and textbook metadata queries
+
+The primary-document queue finished all 153 jobs: 121 captured responses, 30 policy/access skips and two request failures. Skips and failures remain saved; a captured page is not a qualified source. The process exited and its final checkpoint is `dd2b8a5`.
+
+Open Textbook Library adds ten actual title searches over its documented CC0 CSV metadata export (1,910 records, 2,735,950 bytes). Five boundary/topic observations preserve empty results and unsupported full-text behavior. Total: 52 source records, 140 verified examples across 14 catalogs. Reader destinations, content rights, language/country coverage and full qualification remain open. Registry/capture/audit checks and 20 unit tests passed.
+
 # Source registry checkpoint
 
 Observed 2026-11-05 UTC. Research branch `research/free-content-discovery-expansion`,
