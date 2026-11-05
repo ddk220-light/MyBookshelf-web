@@ -5,10 +5,39 @@ import unittest
 from unittest.mock import patch
 from urllib.robotparser import RobotFileParser
 
-from run_source_reviews import TextSample, pacing_seconds, run, request
+from run_source_reviews import TextSample, pacing_seconds, run, request, robots
 
 
 class WorkerTests(unittest.TestCase):
+    def test_html_login_or_app_shell_cannot_silently_allow_collection(self):
+        for content_type, body in [
+            ('text/html', b'<html><title>Sign in</title></html>'),
+            ('text/plain', b'<!DOCTYPE html><html>Challenge</html>'),
+            ('application/json', b'{"error":"auth required"}'),
+            ('text/plain', b'\xffUser-agent: *'),
+        ]:
+            with self.subTest(content_type=content_type, body=body):
+                response = {'status': 200, 'truncated': False, 'content_type': content_type}
+                with patch('run_source_reviews.request', return_value=(response, body)):
+                    policy, evidence = robots('https://example.org/catalog')
+                self.assertIs(policy, False)
+                self.assertIn('policy_error', evidence)
+
+    def test_empty_plain_robots_and_404_remain_distinct_from_denial(self):
+        for status, body in [(200, b''), (404, b'<html>Not found</html>')]:
+            with patch('run_source_reviews.request', return_value=(
+                    {'status': status, 'truncated': False, 'content_type': 'text/plain'}, body)):
+                policy, _ = robots('https://example.org/catalog')
+            if status == 404:
+                self.assertIsNone(policy)
+            else:
+                self.assertTrue(policy.can_fetch('ResearchAgent', '/catalog'))
+        with patch('run_source_reviews.request', return_value=(
+                {'status': 200, 'truncated': False, 'content_type': 'text/plain'},
+                b'\xef\xbb\xbfUser-agent: *\nDisallow: /catalog\n')):
+            policy, _ = robots('https://example.org/catalog')
+        self.assertFalse(policy.can_fetch('ResearchAgent', '/catalog'))
+
     def test_scripts_are_not_collected_as_document_text(self):
         p = TextSample()
         p.feed('<title>API documentation</title><script>privateCode()</script><p>Public search contract</p>')

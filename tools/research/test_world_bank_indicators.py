@@ -19,6 +19,50 @@ def payload(value=0, country='IND', year='2023'):
 
 
 class IndicatorEvidenceTests(unittest.TestCase):
+    def refresh_capture(self, data):
+        return {'request': {'url': wb.BASE + '/country/IND/indicator/SP.POP.TOTL',
+                            'params': {'source': 2, 'date': '2023'}},
+                'outcome': 'captured', 'http': {'status': 200, 'truncated': False},
+                'observed_output': data}
+
+    def test_refresh_null_revision_and_footnote_change_require_review(self):
+        accepted = self.refresh_capture(payload(42))
+        for data in [payload(43), payload(None)]:
+            result = wb.review_refresh(accepted, self.refresh_capture(data))
+            self.assertEqual(result['changed_ids'], ['2:SP.POP.TOTL:IND:2023'])
+            self.assertEqual(result['outcome'], 'manual-review-required')
+            self.assertFalse(result['automatic_replacement'])
+        result = wb.review_refresh(accepted, self.refresh_capture(payload(None)))
+        self.assertEqual(result['newly_null_ids'], ['2:SP.POP.TOTL:IND:2023'])
+        data = payload(42)
+        data[1][0]['footnote'] = 'Revised estimate'
+        self.assertEqual(wb.review_refresh(accepted, self.refresh_capture(data))['outcome'], 'manual-review-required')
+
+    def test_refresh_partial_page_cannot_establish_deletion(self):
+        accepted = self.refresh_capture(payload(42))
+        data = payload(42)
+        data[0]['total'] = 2
+        result = wb.review_refresh(accepted, self.refresh_capture(data))
+        self.assertEqual(result['outcome'], 'candidate-rejected')
+        self.assertEqual(result['missing_from_response'], [])
+        empty = [{'page': 1, 'total': 0, 'sourceid': '2'}, []]
+        result = wb.review_refresh(accepted, self.refresh_capture(empty))
+        self.assertEqual(result['missing_from_response'], ['2:SP.POP.TOTL:IND:2023'])
+        self.assertFalse(result['global_withdrawal_proven'])
+
+    def test_refresh_failure_changed_request_and_release_date_are_separate(self):
+        accepted = self.refresh_capture(payload(42))
+        candidate = copy.deepcopy(accepted)
+        candidate['request']['params']['date'] = '2024'
+        self.assertEqual(wb.review_refresh(accepted, candidate)['outcome'], 'candidate-rejected')
+        candidate = copy.deepcopy(accepted)
+        candidate['http']['status'] = 503
+        self.assertEqual(wb.review_refresh(accepted, candidate)['outcome'], 'candidate-rejected')
+        candidate = copy.deepcopy(accepted)
+        candidate['observed_output'][0]['lastupdated'] = '2026-11-06'
+        self.assertEqual(wb.review_refresh(accepted, candidate)['outcome'], 'manual-review-required')
+        self.assertEqual(wb.review_refresh(accepted, accepted)['outcome'], 'unchanged-observations')
+
     def test_country_period_and_dataset_are_part_of_identity(self):
         a, b, c = [wb.parse_data(data)[0] for data in [payload(), payload(country='USA'), payload(year='2024')]]
         self.assertEqual(len({a['id'], b['id'], c['id']}), 3)

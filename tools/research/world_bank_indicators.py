@@ -101,6 +101,45 @@ def capture(url, params, policy, proof):
     return row
 
 
+def review_refresh(accepted, candidate):
+    """Compare two bounded responses to the same exact request, offline only.
+
+    Absence/null is not evidence of a global withdrawal. Every changed value,
+    footnote or release date requires manual review; old provenance survives.
+    """
+    result = {'automatic_replacement': False, 'query_verified': False,
+              'outcome': 'candidate-rejected', 'missing_from_response': [],
+              'new_ids': [], 'changed_ids': [], 'newly_null_ids': [],
+              'global_withdrawal_proven': False}
+    if accepted.get('request') != candidate.get('request'):
+        return {**result, 'reason': 'Requests differ; source/country/indicator/year must not be conflated'}
+    try:
+        parsed = []
+        for observation in (accepted, candidate):
+            http = observation.get('http', {})
+            if (http.get('status') != 200 or http.get('truncated') or observation.get('error')
+                    or observation.get('outcome') != 'captured'):
+                raise ValueError('Unsuccessful, truncated or invalid captured response')
+            data = observation['observed_output']
+            rows = parse_data(data)
+            if data[0].get('total') != len(rows) or data[0].get('page') != 1:
+                raise ValueError('Partial pages cannot establish bounded-request removal')
+            parsed.append({row['id']: row for row in rows})
+        before, after = parsed
+        if not before:
+            raise ValueError('Accepted response must contain a witnessed record')
+        result['missing_from_response'] = sorted(before.keys() - after.keys())
+        result['new_ids'] = sorted(after.keys() - before.keys())
+        result['changed_ids'] = sorted(k for k in before.keys() & after.keys() if before[k] != after[k])
+        result['newly_null_ids'] = sorted(k for k in before.keys() & after.keys()
+                                          if before[k]['value_available'] and not after[k]['value_available'])
+        result['outcome'] = ('manual-review-required' if any(result[k] for k in
+                             ('missing_from_response', 'new_ids', 'changed_ids')) else 'unchanged-observations')
+    except (ValueError, KeyError, TypeError) as exc:
+        result['reason'] = str(exc)
+    return result
+
+
 def probe(source, case_ids=None):
     with LOCK_PATH.open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)

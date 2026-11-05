@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+"""Generate the owner's plain group/connector query status; no network or activation."""
+import csv
+from datetime import datetime, timezone
+import json
+from pathlib import Path
+
+REGISTRY = Path(__file__).resolve().parents[2] / 'docs/research/free-content/registry'
+GROUPS = {
+    'G01': 'Books, children’s books and audiobooks',
+    'G02': 'Learning and technical documentation',
+    'G03': 'Industry and job knowledge',
+    'G04': 'Government, maps and public data',
+    'G05': 'Research papers and scholarly sources',
+    'G06': 'Language, culture and media',
+}
+MODES = {
+    'siyavula-toc': 'Local chapter-title tokens or exact chapter URL; no body-topic/translated search',
+    'sphinx-inventory': 'Exact documented symbol lookup in a downloaded metadata inventory',
+    'world-bank-indicators': 'Exact country, indicator and year; no natural-language search',
+    'eurostat': 'Exact dataset/dimension lookup; current sample is EU population density',
+    'wa-owned-land': 'Bounded Washington state-owned parcel identifiers/county filters; no owner data',
+    'blm-plss': 'Survey grid identifiers; no ownership data',
+    'plss-townships': 'Survey grid identifiers; no ownership data',
+    'boston-zoning': 'Zoning district/layer queries',
+    'landportal-metadata': 'Dataset metadata labels/identifiers; no individual ownership records',
+}
+
+
+def classify(source, audit_row):
+    if audit_row.get('passing_examples', 0) >= 10:
+        return 'working'
+    return 'blocked_or_failed' if source['state'] == 'deferred' else 'still_checking'
+
+
+def generate(registry=REGISTRY):
+    audit = json.loads((registry / 'completion-audit.json').read_text())
+    sources = [json.loads(p.read_text()) for p in sorted((registry / 'sources').glob('*.json'))]
+    if set(audit['source_gaps']) != {s['id'] for s in sources}:
+        raise ValueError('Audit/source inventory differs; run capture/index/audit before reporting')
+    groups = {key: {'id': key, 'name': name, 'total': 0, 'working': 0,
+                    'blocked_or_failed': 0, 'still_checking': 0} for key, name in GROUPS.items()}
+    rows = []
+    for s in sources:
+        a = audit['source_gaps'][s['id']]
+        status = classify(s, a)
+        q = s['query']
+        mode = MODES.get(q['adapter'])
+        if not mode:
+            intents = list(dict.fromkeys(c.get('intent', '') for c in q.get('cases', []) if c.get('intent')))
+            mode = ' / '.join(intents[:2]) if intents else 'Supported current search method not yet verified'
+        rows.append({'group_id': s['group'], 'group': GROUPS[s['group']], 'connector_id': s['id'],
+                     'connector': s['name'], 'status': status, 'passing_examples': a['passing_examples'],
+                     'tested_search_scope': mode,
+                     'known_limitations': ' | '.join(str(v) for v in s.get('limitations', [])),
+                     'next_step_or_blocker': s['next_action'],
+                     'record': 'sources/' + s['id'] + '.json', 'production_activation_changed': False})
+        groups[s['group']]['total'] += 1
+        groups[s['group']][status] += 1
+    rows.sort(key=lambda row: (row['group_id'], row['status'], row['connector'].casefold()))
+    totals = {key: sum(g[key] for g in groups.values()) for key in ('total', 'working', 'blocked_or_failed', 'still_checking')}
+    totals['not_working_verified'] = totals['blocked_or_failed'] + totals['still_checking']
+    totals['assessed_or_deferred'] = totals['working'] + totals['blocked_or_failed']
+    totals['remaining_to_assess'] = totals['still_checking']
+    totals['passing_query_examples'] = sum(row['passing_examples'] for row in rows)
+    result = {'generated_at': datetime.now(timezone.utc).isoformat(), 'scope': 'Currently recorded research connectors; discovery can add more. Not deployed-app inventory.',
+              'meaning_of_working': 'Can query offered items within the stated tested scope, backed by at least ten current passing examples in this registry. Exact lookups are distinguished from title/topic search.',
+              'meaning_of_blocked_or_failed': 'Deferred with a recorded reason; not necessarily permanently unavailable.',
+              'coverage_definition': 'Queryability by group and connector, per owner clarification. Deeper research-quality checks remain separate.',
+              'totals': totals, 'groups': list(groups.values()), 'connectors': rows}
+    (registry / 'connector-status.json').write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n')
+    with (registry / 'connector-status.csv').open('w', newline='') as output:
+        writer = csv.DictWriter(output, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    print(json.dumps(totals))
+    return result
+
+
+if __name__ == '__main__':
+    generate()

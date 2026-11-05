@@ -115,8 +115,22 @@ def robots(url):
         return None, observation
     if observation['status'] != 200 or observation['truncated']:
         return False, observation
+    # A successful HTML app/login/challenge page is not an empty robots file.
+    # RobotFileParser silently ignores its markup and would otherwise allow all
+    # paths. Preserve the response evidence and defer instead of inferring access.
+    content_type = (observation.get('content_type') or '').lower()
+    prefix = body.lstrip(b'\xef\xbb\xbf \t\r\n').lower()
+    if ('html' in content_type or 'json' in content_type
+            or prefix.startswith((b'<!doctype', b'<html', b'<?xml', b'{', b'['))):
+        observation['policy_error'] = 'Non-robots HTML/JSON/XML response; policy unavailable'
+        return False, observation
+    try:
+        text = body.decode('utf-8-sig')
+    except UnicodeError:
+        observation['policy_error'] = 'Robots response is not valid UTF-8; policy unavailable'
+        return False, observation
     parser = urllib.robotparser.RobotFileParser(address)
-    parser.parse(body.decode('utf-8', errors='replace').splitlines())
+    parser.parse(text.splitlines())
     return parser, observation
 
 

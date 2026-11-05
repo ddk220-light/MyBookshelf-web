@@ -267,8 +267,8 @@
     "Empty units must be interpreted with indicator name/definition; no units or missing values are invented.",
     "USA/India data coverage is not independent network-vantage verification."
   ],
-  "last_reviewed_at": "2026-11-05T16:49:35.531787+00:00",
-  "next_action": "Continue chart/table accessibility and year/scaling review, provider attribution URI mapping, broader relevance and refresh/revision operations. Representative rendered charts passed with non-blocking CORS widget failure preserved.",
+  "last_reviewed_at": "2026-11-05T16:57:44.879754+00:00",
+  "next_action": "Continue chart/table accessibility, later-day reliability and attribution mapping. India2025 GDP reader/API scales reconcile; USA2025population query timed out and remains pending a useful recovery trigger.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "complete",
@@ -938,7 +938,25 @@
           }
         ],
         "visual_review": "India GDP desktop line chart and USA population mobile chart visible. Cookie notice obscures bottom of viewport; no dismissal/account/location action taken. Charts show current2025 values, while the separately verified API examples select2023.",
-        "new_error": "Both reader loads reported a provider trustfunds.worldbank.org/portal/tfsearch CORS/403 widget error. Charts remained visible. No direct request or bypass was attempted; future browser checks should suppress known blocked widget requests rather than retry them."
+        "new_error": "Both reader loads reported a provider trustfunds.worldbank.org/portal/tfsearch CORS/403 widget error. Charts remained visible. No direct request or bypass was attempted; future browser checks should suppress known blocked widget requests rather than retry them.",
+        "period_scale_comparison": {
+          "observed_at": "2026-11-05T16:57:44.879754+00:00",
+          "evidence": [
+            "examples/world-bank-indicators.reader-year.jsonl",
+            "docs/research/free-content/evidence/2026-11-05-statistics-school/reader-observations.jsonl"
+          ],
+          "matched_record": "2:NY.GDP.MKTP.CD:IND:2025",
+          "api_value_current_usd": 3956067115771.63,
+          "reader_year": "2025",
+          "reader_scale": "Millions",
+          "reader_display": "3,956,067.12",
+          "calculated_display": "3,956,067.12",
+          "matches_at_display_precision": true,
+          "api_dataset_updated": "2026-10-08",
+          "earlier_examples_year": "2023",
+          "usa_population": "New exact2025 APIrequest timed out; prior reader shows341,784,857 but no current APIcomparison is claimed.",
+          "scope": "One same-day GDP comparison; no later-day or all-indicator reader verification."
+        }
       },
       "evidence": [
         "runs/statistics-contract-20261105ag/observations.jsonl",
@@ -947,7 +965,8 @@
         "examples/world-bank-indicators.scouting.jsonl",
         "examples/world-bank-indicators.jsonl",
         "examples/world-bank-indicators.benchmark.jsonl",
-        "docs/research/free-content/evidence/2026-11-05-statistics-school/reader-observations.jsonl"
+        "docs/research/free-content/evidence/2026-11-05-statistics-school/reader-observations.jsonl",
+        "examples/world-bank-indicators.reader-year.jsonl"
       ],
       "observation_refs": [
         {
@@ -1056,8 +1075,8 @@
         }
       ],
       "open_questions": [
-        "Assess data-chart/table keyboard and screen-reader access; both observed pages expose zero main landmarks and a cookie banner obscures the lower viewport.",
-        "Reconcile current-reader year/scaling presentation with exact API record links; do not compare2025 display values to2023 query examples as if same period."
+        "Assess data-chart/table keyboard and screen-reader access; zero main landmarks and cookie-banner obstruction remain.",
+        "Revisit the USA2025 population API comparison only after a useful recovery trigger; timeout is preserved, not an empty result."
       ]
     },
     "quality_and_relevance": {
@@ -1082,6 +1101,11 @@
           "finding": "Captured public Eurostat database shell describes datasets/flags but does not identify a selected population dataset in returned text. The earn_ses_monthly demographic attribution mapping remains unresolved.",
           "constraint": "Display exact World Bank-provided attribution as supplied; do not normalize this link into a verified demographic dataset, infer an upstream join or replace it with a guessed URI.",
           "outcome": "unresolved-attribution-mapping"
+        },
+        "revision_rehearsal": {
+          "evidence": "examples/world-bank-indicators.refresh.jsonl",
+          "cases": 9,
+          "scope": "Synthetic mutation of one witnessed2023 India population response; changes/nulls/footnotes/update dates require review; absence is not proven global withdrawal. Partial pages, HTTP503 and changed request periods reject. No old record replaced or fresh example counted."
         }
       },
       "evidence": [
@@ -1091,7 +1115,8 @@
         "examples/world-bank-indicators.scouting.jsonl",
         "examples/world-bank-indicators.jsonl",
         "examples/world-bank-indicators.benchmark.jsonl",
-        "runs/eurostat-attribution-20261105cm/observations.jsonl"
+        "runs/eurostat-attribution-20261105cm/observations.jsonl",
+        "examples/world-bank-indicators.refresh.jsonl"
       ],
       "observation_refs": [
         {
@@ -1224,7 +1249,15 @@
         "numeric_provider_quota": null,
         "paging": "Two explicit pages, source=2, per_page=2, four distinct country/year records.",
         "update_identity": "Mutable dataset lastupdated and response hash; no immutable edition inferred.",
-        "robots_policy_evidence": "Saved per-host policy response hashes and request observations; a future denial must stop new requests."
+        "robots_policy_evidence": "Saved per-host policy response hashes and request observations; a future denial must stop new requests.",
+        "bounded_refresh": {
+          "evidence": "examples/world-bank-indicators.refresh.jsonl",
+          "same_exact_request_required": true,
+          "complete_bounded_page_required": true,
+          "automatic_replacement": false,
+          "global_withdrawal_from_absence": false,
+          "new_failure": "USA2025population boundedrequest readtimeout; noautomaticretry."
+        }
       },
       "evidence": [
         "runs/statistics-contract-20261105ag/observations.jsonl",
@@ -1232,7 +1265,9 @@
         "runs/indicator-reading-rights-20261105ai/observations.jsonl",
         "examples/world-bank-indicators.scouting.jsonl",
         "examples/world-bank-indicators.jsonl",
-        "examples/world-bank-indicators.benchmark.jsonl"
+        "examples/world-bank-indicators.benchmark.jsonl",
+        "examples/world-bank-indicators.refresh.jsonl",
+        "examples/world-bank-indicators.reader-year.jsonl"
       ],
       "observation_refs": [
         {
@@ -1341,7 +1376,8 @@
         }
       ],
       "open_questions": [
-        "Define and rehearse bounded metadata/data refresh, deletion/revision handling and later-day reliability; do not infer unlimited access from absent numeric quota."
+        "Obtain later-day reliability and an actual provider revision when available; same-day and synthetic tests do not establish this.",
+        "Review metadata/rights changes with each future accepted data refresh; attribution anomaly remains unresolved."
       ]
     },
     "decision_and_followup": {
