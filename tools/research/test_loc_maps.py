@@ -1,8 +1,12 @@
 import copy
+import json
+from pathlib import Path
+import tempfile
 import unittest
 from unittest.mock import patch
 
 import loc_maps as maps
+import source_registry
 from source_registry import current_verified, evaluate
 
 
@@ -53,6 +57,20 @@ class MapCatalogTests(unittest.TestCase):
             row = maps.capture(self.req, False, {'status': 403})
         request.assert_not_called()
         self.assertEqual(row['outcome'], 'skipped')
+        # The shared CLI must not route newly added map cases through its older
+        # generic fetcher, which lacks this collector's policy gate.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'sources').mkdir()
+            source = {'id': 'loc', 'query': {'adapter': 'loc', 'cases': [
+                {'id': 'map-native-98687195'}, {'id': 'topic-books'}]}}
+            (root / 'sources/loc.json').write_text(json.dumps(source))
+            with patch.object(source_registry, 'REGISTRY', root), patch.object(maps, 'probe') as probe:
+                with self.assertRaises(ValueError):
+                    source_registry.probe('loc')
+                probe.assert_not_called()
+                source_registry.probe('loc', ['map-native-98687195'])
+                probe.assert_called_once_with(source, ['map-native-98687195'])
 
     def test_map_type_required_in_stored_evidence(self):
         case = {'id': 'map-india', 'request': self.req, 'expected_ids': [self.row['id']], 'expected_work_type': 'map'}

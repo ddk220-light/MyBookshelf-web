@@ -320,6 +320,14 @@ def validate(registry=REGISTRY):
 
 def probe(source_id, case_ids=None):
     source = json.loads((REGISTRY / 'sources' / f'{source_id}.json').read_text())
+    if source['query']['adapter'] == 'loc':
+        selected = [c for c in source['query']['cases'] if not case_ids or c['id'] in case_ids]
+        maps = [c['id'] for c in selected if c['id'].startswith('map-native-')]
+        if maps:
+            if len(maps) != len(selected):
+                raise ValueError('Select map cases explicitly; mixed LOC batches cannot bypass the map policy gate')
+            from loc_maps import probe as probe_maps
+            return probe_maps(source, maps)
     if source['query']['adapter'] == 'landportal-metadata':
         from landportal_catalog import probe as probe_landportal
         return probe_landportal(source, case_ids)
