@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "capture_errors": [],
-  "captured_text_documents": 73,
+  "captured_text_documents": 74,
   "indexed_binary_assets": 166,
   "document_capture_complete": true,
-  "source_records": 71,
+  "source_records": 74,
   "source_dossiers_complete": 0,
-  "query_verified_sources": 16,
-  "verified_examples": 160,
+  "query_verified_sources": 17,
+  "verified_examples": 170,
   "untriaged_link_ids": [],
   "unresolved_entity_mappings": [
     {
@@ -104,11 +104,6 @@
       "lead_id": "lead-97d3866872a5",
       "url": "https://cdsco.gov.in/",
       "suggested_entity_id": "cdsco"
-    },
-    {
-      "lead_id": "lead-ea0a988dfb6b",
-      "url": "https://www.osti.gov/",
-      "suggested_entity_id": "osti"
     },
     {
       "lead_id": "lead-6301e728a5c1",
@@ -221,11 +216,6 @@
       "suggested_entity_id": "worldreader"
     },
     {
-      "lead_id": "lead-f52177948a70",
-      "url": "https://store.snapplify.com/publisher/?p=Book+Dash&t=library",
-      "suggested_entity_id": "snapplify"
-    },
-    {
       "lead_id": "lead-c60166bb5b35",
       "url": "http://www.digitalbookpoint.co.ke",
       "suggested_entity_id": "digital-book-point"
@@ -234,11 +224,6 @@
       "lead_id": "lead-08b9269bf714",
       "url": "http://bloomlibrary.org/browse?shelf=Book%20Dash",
       "suggested_entity_id": "bloom-library"
-    },
-    {
-      "lead_id": "lead-1da7c5d3c80f",
-      "url": "http://storyberries.com/author/book-dash/",
-      "suggested_entity_id": "storyberries"
     },
     {
       "lead_id": "lead-d995b7a7550e",
@@ -257,7 +242,7 @@
     }
   ],
   "named_entity_lead_count": 35,
-  "unresolved_named_entity_count": 31,
+  "unresolved_named_entity_count": 28,
   "named_entity_review_complete": false,
   "documentation_runs": [
     {
@@ -269,6 +254,18 @@
         "captured": 5,
         "skipped": 0,
         "blocked-or-failed": 0
+      },
+      "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+    },
+    {
+      "run_id": "catalog-contracts-20261105",
+      "jobs": 2,
+      "observations": 2,
+      "remaining_job_ids": [],
+      "outcomes": {
+        "captured": 1,
+        "skipped": 0,
+        "blocked-or-failed": 1
       },
       "named_entity_review": "pending; document capture is not entity extraction or query qualification"
     },
@@ -303,6 +300,42 @@
       "remaining_job_ids": [],
       "outcomes": {
         "captured": 2,
+        "skipped": 0,
+        "blocked-or-failed": 0
+      },
+      "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+    },
+    {
+      "run_id": "osti-api-policy-20261105",
+      "jobs": 2,
+      "observations": 2,
+      "remaining_job_ids": [],
+      "outcomes": {
+        "captured": 2,
+        "skipped": 0,
+        "blocked-or-failed": 0
+      },
+      "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+    },
+    {
+      "run_id": "osti-developer-20261105",
+      "jobs": 1,
+      "observations": 1,
+      "remaining_job_ids": [],
+      "outcomes": {
+        "captured": 1,
+        "skipped": 0,
+        "blocked-or-failed": 0
+      },
+      "named_entity_review": "pending; document capture is not entity extraction or query qualification"
+    },
+    {
+      "run_id": "osti-query-docs-20261105",
+      "jobs": 1,
+      "observations": 1,
+      "remaining_job_ids": [],
+      "outcomes": {
+        "captured": 1,
         "skipped": 0,
         "blocked-or-failed": 0
       },
@@ -989,7 +1022,7 @@
       "next_action": "Find documented metadata/feed/import route; do not infer source-wide outage."
     },
     "nls-bard": {
-      "state": "candidate",
+      "state": "deferred",
       "passing_examples": 0,
       "unresolved_fields": [
         "identity_and_duplicates",
@@ -1002,7 +1035,7 @@
         "ten_current_query_examples"
       ],
       "complete": false,
-      "next_action": "Read public API documentation and terms; if permitted, verify metadata-only queries while clearly labeling eligibility-restricted reading. Never create an account or download protected audio/braille."
+      "next_action": "Public API documentation returned HTTP 403. Stop this route; revisit only after policy/access availability changes or official alternate documentation is published. Eligibility-limited reading is separate from metadata access; no account or bypass."
     },
     "nptel": {
       "state": "candidate",
@@ -1163,6 +1196,19 @@
       "complete": false,
       "next_action": "Review official export/search access and website reuse terms, then verify exact publication links, revision dates, applicability and ten query examples; do not submit print orders."
     },
+    "osti": {
+      "state": "ten-query-examples-verified",
+      "passing_examples": 10,
+      "unresolved_fields": [
+        "coverage_and_languages",
+        "rights_and_cost",
+        "reader_access",
+        "quality_and_relevance",
+        "operating_limits"
+      ],
+      "complete": false,
+      "next_action": "Finish representative permitted reader/license and manuscript/publication-version checks. Prefer explicitly labeled title-field retrieval over broad full-record matching where relevance matters. Review refresh/change and geographic/language gaps; no runtime activation authorized."
+    },
     "project-gutenberg": {
       "state": "candidate",
       "passing_examples": 0,
@@ -1311,6 +1357,22 @@
       "complete": false,
       "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker."
     },
+    "snapplify": {
+      "state": "deferred",
+      "passing_examples": 0,
+      "unresolved_fields": [
+        "identity_and_duplicates",
+        "coverage_and_languages",
+        "query_contract",
+        "rights_and_cost",
+        "reader_access",
+        "quality_and_relevance",
+        "operating_limits",
+        "ten_current_query_examples"
+      ],
+      "complete": false,
+      "next_action": "Defer general free-reading qualification. Find a documented free-item subset and supported metadata method; preserve price, territory and time-limited licenses. No purchases/accounts."
+    },
     "standard-ebooks": {
       "state": "candidate",
       "passing_examples": 0,
@@ -1327,6 +1389,22 @@
       ],
       "complete": false,
       "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker."
+    },
+    "storyberries": {
+      "state": "candidate",
+      "passing_examples": 0,
+      "unresolved_fields": [
+        "identity_and_duplicates",
+        "coverage_and_languages",
+        "query_contract",
+        "rights_and_cost",
+        "reader_access",
+        "quality_and_relevance",
+        "operating_limits",
+        "ten_current_query_examples"
+      ],
+      "complete": false,
+      "next_action": "Review official operator/terms and supported search/export documentation; do not assume WordPress endpoints are permitted."
     },
     "storyweaver": {
       "state": "candidate",
@@ -1539,6 +1617,7 @@
         "openstax",
         "punctum-books",
         "repec",
+        "snapplify",
         "wikibooks"
       ],
       "query_example_source_ids": [
@@ -1573,6 +1652,7 @@
         "project-gutenberg",
         "project-madurai",
         "punctum-books",
+        "snapplify",
         "standard-ebooks",
         "wikisource"
       ],
@@ -1597,6 +1677,7 @@
         "gdl",
         "librivox",
         "nalibali",
+        "storyberries",
         "storyweaver"
       ],
       "query_example_source_ids": [
@@ -1622,10 +1703,13 @@
         "biorxiv-medrxiv",
         "core",
         "hal",
+        "osti",
         "repec",
         "shodhganga"
       ],
-      "query_example_source_ids": [],
+      "query_example_source_ids": [
+        "osti"
+      ],
       "qualified_source_ids": []
     },
     "C13": {
@@ -1687,6 +1771,7 @@
         "doaj",
         "europe-pmc",
         "openalex",
+        "osti",
         "pubmed-pmc",
         "repec",
         "rosa-p",
@@ -1695,7 +1780,8 @@
         "zenodo"
       ],
       "query_example_source_ids": [
-        "europe-pmc"
+        "europe-pmc",
+        "osti"
       ],
       "qualified_source_ids": []
     },
@@ -1750,17 +1836,23 @@
     "C08": {
       "candidate_source_ids": [
         "govinfo",
+        "osti",
         "rosa-p",
         "world-bank-okr"
       ],
-      "query_example_source_ids": [],
+      "query_example_source_ids": [
+        "osti"
+      ],
       "qualified_source_ids": []
     },
     "P01": {
       "candidate_source_ids": [
-        "govinfo"
+        "govinfo",
+        "osti"
       ],
-      "query_example_source_ids": [],
+      "query_example_source_ids": [
+        "osti"
+      ],
       "qualified_source_ids": []
     },
     "P02": {
@@ -1810,10 +1902,12 @@
     "I11": {
       "candidate_source_ids": [
         "india-nqr",
-        "onet"
+        "onet",
+        "osti"
       ],
       "query_example_source_ids": [
-        "onet"
+        "onet",
+        "osti"
       ],
       "qualified_source_ids": []
     },
@@ -1833,7 +1927,8 @@
       "candidate_source_ids": [
         "librivox",
         "nalibali",
-        "nls-bard"
+        "nls-bard",
+        "storyberries"
       ],
       "query_example_source_ids": [
         "librivox"

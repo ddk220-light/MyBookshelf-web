@@ -47,6 +47,35 @@ class WorkerTests(unittest.TestCase):
         p.parse(['User-agent: *', 'Crawl-delay: 90', 'Request-rate: 1/120'])
         self.assertEqual(pacing_seconds(p), 120)
 
+    def test_json_negotiation_and_public_paging_headers_are_preserved(self):
+        from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+        from threading import Thread
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.send_response(200)
+                is_json = self.headers.get('Accept') == 'application/json'
+                self.send_header('Content-Type', 'application/json' if is_json else 'application/xml')
+                self.send_header('Link', '<https://example.org/records?page=2>; rel="next"')
+                self.send_header('X-Total-Count', '2')
+                self.send_header('Set-Cookie', 'private-session=not-evidence')
+                self.end_headers()
+                self.wfile.write(b'[]' if is_json else b'<records/>')
+            def log_message(self, *args):
+                pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        worker = Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        try:
+            result, body = request('http://127.0.0.1:' + str(server.server_port), headers={'Accept': 'application/json'})
+            self.assertEqual(json.loads(body), [])
+            self.assertEqual(result['response_headers']['X-Total-Count'], '2')
+            self.assertIn('page=2', result['response_headers']['Link'])
+            self.assertNotIn('Set-Cookie', result['response_headers'])
+        finally:
+            server.shutdown()
+            server.server_close()
+            worker.join()
+
     def test_denied_host_is_not_retried_and_resume_does_not_repeat_work(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

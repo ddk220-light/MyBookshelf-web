@@ -66,6 +66,28 @@ def fetch(request):
 
 def normalize(source, data, endpoint=None):
     """Retain native identity and small metadata samples; never copy full works."""
+    if source['query']['adapter'] == 'osti':
+        if not isinstance(data, list):
+            raise ValueError('OSTI error/invalid payload is not a record list')
+        results, seen = [], set()
+        for row in data:
+            sid = row.get('osti_id') if isinstance(row, dict) else None
+            if (not isinstance(sid, str) or not sid.isascii() or not sid.isdigit()
+                    or sid in seen or not isinstance(row.get('title'), str) or not row['title'].strip()):
+                raise ValueError('OSTI missing, duplicate or invalid native identity')
+            seen.add(sid)
+            links = [link for link in row.get('links', []) if isinstance(link, dict)
+                     and isinstance(link.get('href'), str) and link['href'].startswith('https://')]
+            results.append({'id': sid, 'title': row['title'], 'doi': row.get('doi'),
+                            'product_type': row.get('product_type'), 'article_type': row.get('article_type'),
+                            'publication_date': row.get('publication_date'), 'entry_date': row.get('entry_date'),
+                            'language': row.get('language'), 'country_publication': row.get('country_publication'),
+                            'availability': row.get('availability'), 'report_number': row.get('report_number'),
+                            'subjects': row.get('subjects', []),
+                            'citation_links': [link['href'] for link in links if link.get('rel') == 'citation'],
+                            'reported_fulltext_links': [link['href'] for link in links if link.get('rel') == 'fulltext'],
+                            'reading_access_verified': False, 'reuse_license': None})
+        return results
     if not isinstance(data, dict) or data.get('errors') or data.get('error'):
         raise ValueError('Provider returned an error or invalid object')
     adapter = source['query']['adapter']

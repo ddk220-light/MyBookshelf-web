@@ -8,7 +8,7 @@
     "C02",
     "C05"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -43,10 +43,11 @@
     "Per-item rights, reading/access, versions and machine-query limits require separate checks."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/catalog-contracts-20261105/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T04:35:25.129476+00:00",
-  "next_action": "Read public API documentation and terms; if permitted, verify metadata-only queries while clearly labeling eligibility-restricted reading. Never create an account or download protected audio/braille.",
+  "last_reviewed_at": "2026-11-05T04:51:26.175619+00:00",
+  "next_action": "Public API documentation returned HTTP 403. Stop this route; revisit only after policy/access availability changes or official alternate documentation is published. Eligibility-limited reading is separate from metadata access; no account or bypass.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -113,26 +114,24 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documentation/listing reviewed; exact supported public query/export request remains open.",
+      "summary": "Official LoC overview says metadata API needs no password, but current API documentation route returned HTTP 403; no queries were attempted.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "cases": [],
-        "authentication": "No password authentication required, per official documentation",
-        "request_shape_verified": false
+        "HTTP_documentation": 403,
+        "endpoint": "https://api.nlsbard.loc.gov/",
+        "queries_attempted": 0
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/catalog-contracts-20261105/observations.jsonl"
       ],
       "observation_refs": [
         {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "a642c477f383486dbd01",
-          "observed_at": "2026-11-05T02:38:55.775267+00:00"
+          "path": "runs/catalog-contracts-20261105/observations.jsonl",
+          "job_id": "e2f60e012a2749827858",
+          "observed_at": "2026-11-05T04:42:12.213777+00:00"
         }
       ],
       "open_questions": [
-        "Read supported machine access contract; capture ten distinct native-ID results plus paging/empty/error behavior."
+        "Supported request shapes and current permission/access remain unresolved."
       ]
     },
     "rights_and_cost": {
@@ -227,21 +226,19 @@
     },
     "decision_and_followup": {
       "status": "complete",
-      "summary": "Explicit candidate/deferred triage; unresolved evidence remains open.",
+      "summary": "Public API documentation returned HTTP 403. Stop this route; revisit only after policy/access availability changes or official alternate documentation is published. Eligibility-limited reading is separate from metadata access; no account or bypass.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Read public API documentation and terms; if permitted, verify metadata-only queries while clearly labeling eligibility-restricted reading. Never create an account or download protected audio/braille.",
-        "qualification": false,
+        "decision": "deferred-access-control",
         "activation_approved": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/catalog-contracts-20261105/observations.jsonl"
       ],
       "observation_refs": [
         {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "a642c477f383486dbd01",
-          "observed_at": "2026-11-05T02:38:55.775267+00:00"
+          "path": "runs/catalog-contracts-20261105/observations.jsonl",
+          "job_id": "e2f60e012a2749827858",
+          "observed_at": "2026-11-05T04:42:12.213777+00:00"
         }
       ],
       "open_questions": []

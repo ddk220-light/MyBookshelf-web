@@ -183,6 +183,25 @@ def evidence_run_audit(registry=REGISTRY):
     return runs, errors
 
 
+def inventory_capture_audit(registry=REGISTRY):
+    """Every retained JSON export needs a matching successful, hashed capture."""
+    captures = []
+    for path in (registry / 'examples').glob('*.access.jsonl'):
+        captures.extend(json.loads(line) for line in path.read_text().splitlines() if line.strip())
+    errors = []
+    for path in (registry / 'analysis/inventories').glob('*.json'):
+        name, sha = str(path.relative_to(registry)), digest(path.read_bytes())
+        backed = any(row.get('inventory_path') == name and row.get('observed_at')
+                     and row.get('http', {}).get('status') == 200
+                     and not row.get('http', {}).get('truncated')
+                     and row.get('http', {}).get('sampled_bytes_sha256') == sha
+                     and re.fullmatch(r'[0-9a-f]{64}', row.get('robots_evidence', {}).get('sampled_bytes_sha256', ''))
+                     for row in captures)
+        if not backed:
+            errors.append('Missing/mismatched inventory capture hash or policy evidence: ' + name)
+    return errors
+
+
 def audit():
     manifest = json.loads((REGISTRY / 'analysis/manifest.json').read_text())
     history = documents()
@@ -205,6 +224,7 @@ def audit():
             errors.append('Changed/missing asset: ' + ref['path'])
     run_audits, run_errors = evidence_run_audit()
     errors.extend(run_errors)
+    errors.extend(inventory_capture_audit())
     source_gaps, memberships, source_mentions_by_doc = {}, {}, {}
     for path in sorted((REGISTRY / 'sources').glob('*.json')):
         source = json.loads(path.read_text())

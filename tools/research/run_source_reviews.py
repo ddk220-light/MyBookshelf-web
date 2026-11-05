@@ -67,12 +67,12 @@ class ReviewRedirects(urllib.request.HTTPRedirectHandler):
         return None
 
 
-def request(url, limit=LIMIT):
+def request(url, limit=LIMIT, headers=None):
     start = time.monotonic()
     result = {'requested_at': now(), 'url': url, 'status': None}
     body = b''
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': USER_AGENT})
+        req = urllib.request.Request(url, headers={'User-Agent': USER_AGENT, **(headers or {})})
         try:
             response = urllib.request.build_opener(ReviewRedirects()).open(req, timeout=20)
         except urllib.error.HTTPError as exc:
@@ -80,7 +80,9 @@ def request(url, limit=LIMIT):
         with response:
             result.update(status=response.status, final_url=response.url,
                           content_type=response.headers.get('Content-Type'),
-                          redirect_location=response.headers.get('Location'))
+                          redirect_location=response.headers.get('Location'),
+                          response_headers={key: response.headers[key] for key in
+                                            ('Link', 'X-Total-Count', 'Retry-After') if key in response.headers})
             body = response.read(limit + 1)
     except OSError as exc:
         result['error'] = str(exc)

@@ -643,12 +643,21 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Ten distinct local title queries executed over a freshly captured official export; a name substring may match helpers/specialties as well as the main occupation.",
+      "summary": "Ten title searches passed; five topic result sets (23 visible records) reviewed. Literal substring matching misses some morphologically related occupation titles and returns adjacent/supporting roles.",
       "facts": {
         "examples": 10,
         "ordering": "O*NET-SOC code, not semantic relevance",
         "version": "31.0 distribution; occupation table last content update 25.1",
-        "crosswalks": "Unknown; do not map US codes to India jobs automatically"
+        "crosswalks": "Unknown; do not map US codes to India jobs automatically",
+        "topic_review": {
+          "topics": 5,
+          "sampled_results": 23,
+          "agriculture": "3 matches: precision agriculture and farm educators are direct; hydrologic technician is adjacent. Literal agriculture misses Farmers because its title/description uses different words.",
+          "construction": "First five span construction manager/civil engineer and adjacent wind-energy manager, estimator and surveyor roles.",
+          "manufacturing": "First five span manufacturing operations plus purchasing, estimating, chemical and hardware engineering roles.",
+          "logistics": "Five matches include logistics engineer/analyst, transport manager and adjacent operations-research/industrial-engineer roles. Logisticians is not returned by this literal term query.",
+          "health": "First five span healthcare management, wellness, informatics, clinical data and biomedical engineering; these are profiles, not care instructions."
+        }
       },
       "evidence": [
         "runs/canonical-partners-onet-20261105/observations.jsonl",
@@ -680,7 +689,7 @@
         }
       ],
       "open_questions": [
-        "Review five topical result sets and exact-code/version edge cases; profile matches do not establish training suitability."
+        "Evaluate broader occupation/task intent, synonyms and taxonomy-version changes before stronger relevance claims."
       ]
     },
     "operating_limits": {

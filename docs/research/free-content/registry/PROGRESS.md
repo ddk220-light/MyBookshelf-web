@@ -161,3 +161,15 @@ All ten partner jobs are analyzed: one captured, seven skipped, two blocked/fail
 Added O*NET 31.0: one public CC BY 4.0 JSON file, 1,016 occupations, ten distinct local query examples and eight benchmark/negative observations. Preserve occupation code plus release; the export is occupational reference metadata, not job vacancies or training manuals. No SQL or hosted database is used. Added primary-document dossiers for Abhilekh Patal, NQR, FoSTaC, OSHA, FDA guidance, NLS BARD and RePEc. BARD metadata is documented public but reading requires eligibility; RePEc discourages website scraping and requires separate commercial-use permission. No new account or outreach occurred.
 
 Merged current main into the research branch, preserving unrelated account work, and captured the independently authorized PR #179 release evidence. Its runtime enablement does not qualify registry dossiers. Four canonical partner destinations now return public pages after independently checking their robots policies; supported query/rights review remains open.
+
+## 2026-11-05T04:51:26.175619+00:00 — OSTI retrieval and source-specific limits
+
+OSTI adds ten distinct verified record queries; total 74 records and 170 examples across 17 query-verified catalogs. Eight headerless XML/JSON parsing failures remain saved. Documented explicit JSON negotiation, second-page links, two empty queries and three narrower title-field comparisons are captured. Broad full-record search can produce weak apparent topic matches; complete reader/rights/version checks remain open. Storyberries and Snapplify now have canonical candidate dossiers; Snapplify’s paid/territory-limited examples are explicit. BARD API docs returned HTTP 403 and are deferred. Nal’ibali, Storyberries and Snapplify named-entity mappings now reference their evidence-backed candidate records.
+
+O*NET topic review inspected 23 records across five queries and records missing morphological matches and adjacent roles. Neither source is a practical-training guarantee. The production snapshot recheck artifact was separated from the Europe PMC retry so successful snapshot samples and both timeout observations retain distinct files. No research source activation or account work occurred.
+
+## 2026-11-05T04:53:51.059690+00:00 — durable continuation checkpoint
+
+74 source records; 170 verified examples across 17 catalogs; zero complete expanded dossiers. All 160 known URL roles are triaged, but 43 canonical catalog identities (46 references), 28 named organizations and all full area/jurisdiction completion gates remain open. All ten documentation queues have one observation per queued job; processed documents are not qualified sources. Completion automation was privately checked and remains enabled; it returned no next-run timestamp. No native Goal UI activation is claimed. Resume from goal.json and completion-audit.json without restarting completed queues.
+
+Registry validation, capture/index/audit and 33 research tests pass, including a failure check for missing/mismatched saved-inventory hashes. No research runtime source changes, accounts, hosted database, purchases or outreach.
