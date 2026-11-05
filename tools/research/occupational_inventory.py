@@ -4,9 +4,12 @@ This is US occupational metadata, not a job board or a training/manual library.
 Keep the release and O*NET-SOC identity together. Nothing imports this into runtime.
 """
 import hashlib
+import fcntl
 import json
+from pathlib import Path
 import re
 import time
+import unicodedata
 
 from run_source_reviews import now, pacing_seconds, request, robots
 from source_registry import REGISTRY, USER_AGENT, evaluate
@@ -14,12 +17,15 @@ from source_registry import REGISTRY, USER_AGENT, evaluate
 VERSION = '31.0'
 ENDPOINT = 'https://www.onetcenter.org/dl_files/database/db_31_0_json/occupation_data.json'
 MAX_BYTES = 1024 * 1024
+LOCK_PATH = Path('/tmp/mybookshelf-source-review.lock')
 
 
-def parse_onet(body):
+def parse_onet(body, expected_version=VERSION):
+    if not re.fullmatch(r'[0-9]{2}\.[0-9]', expected_version):
+        raise ValueError('Invalid occupation release identifier')
     data = json.loads(body)
     if (not isinstance(data, dict) or data.get('table_id') != 'occupation_data'
-            or data.get('data_dictionary') != 'https://www.onetcenter.org/dictionary/31.0/json/occupation_data.html'
+            or data.get('data_dictionary') != f'https://www.onetcenter.org/dictionary/{expected_version}/json/occupation_data.html'
             or not isinstance(data.get('row'), list) or not 1 <= len(data['row']) <= 2000):
         raise ValueError('Unexpected occupation export table, version or row count')
     rows, seen = [], set()
@@ -33,14 +39,14 @@ def parse_onet(body):
             raise ValueError('Missing, duplicate or malformed occupation identity/content')
         seen.add(code)
         rows.append({'id': code, 'title': title, 'description': description,
-                     'catalog_version': VERSION, 'jurisdiction': 'USA',
+                     'catalog_version': expected_version, 'jurisdiction': 'USA',
                      'license': 'CC BY 4.0', 'record_kind': 'occupation-description'})
     return rows
 
 
 def local_search(rows, query):
     mode = query.get('mode')
-    if mode not in ('exact_code', 'title_contains', 'title_or_description'):
+    if mode not in ('exact_code', 'title_contains', 'title_or_description', 'title_tokens', 'title_or_description_tokens'):
         raise ValueError('Unsupported occupational search mode')
     text = query.get('text')
     if not isinstance(text, str):
@@ -48,9 +54,18 @@ def local_search(rows, query):
     text = text.strip().casefold()
     if not text:
         return []
+    terms = re.findall(r'[^\W_]+', unicodedata.normalize('NFKC', text))
+    if mode.endswith('_tokens') and not terms:
+        return []
     def matches(row):
         if mode == 'exact_code':
             return row['id'].casefold() == text
+        if mode.endswith('_tokens'):
+            fields = row['title'] + (' ' + row['description'] if mode == 'title_or_description_tokens' else '')
+            words = set(re.findall(r'[^\W_]+', unicodedata.normalize('NFKC', fields).casefold()))
+            return all(term in words or len(term) > 3 and
+                       (term + 's' in words or term.endswith('s') and term[:-1] in words)
+                       for term in terms)
         return text in row['title'].casefold() or (mode == 'title_or_description' and text in row['description'].casefold())
     return sorted((row for row in rows if matches(row)), key=lambda row: row['id'])
 
@@ -67,6 +82,10 @@ def record_examples(source, capture, body, case_ids=None):
     else:
         try:
             rows = parse_onet(body)
+            contract = source['query']
+            if (contract.get('expected_inventory_sha256') and digest != contract['expected_inventory_sha256']
+                    or contract.get('expected_entry_count') and len(rows) != contract['expected_entry_count']):
+                raise ValueError('Pinned occupation release changed; review before accepting new evidence')
         except (ValueError, TypeError, KeyError, UnicodeError) as exc:
             error = str(exc)
     for case in source['query']['cases']:
@@ -86,6 +105,12 @@ def record_examples(source, capture, body, case_ids=None):
 
 
 def probe(source, case_ids=None):
+    with LOCK_PATH.open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        return _probe(source, case_ids)
+
+
+def _probe(source, case_ids=None):
     policy, proof = robots(ENDPOINT)
     body = b''
     http = {'status': None, 'truncated': False, 'sampled_bytes_sha256': hashlib.sha256(body).hexdigest()}

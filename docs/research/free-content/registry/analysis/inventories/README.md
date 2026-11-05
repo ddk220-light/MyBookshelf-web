@@ -15,3 +15,10 @@ robots evidence and byte hashes are in `examples/python-docs.access.jsonl`.
 The PSF License v2 text, copyright notice and description of our derived
 analysis are retained in `analysis/legal-notices/python-psf-v2.json`.
 The minor-version URLs may change; the byte hash identifies each saved build.
+
+O*NET archive cross-checks
+=========================
+
+The additional 31.0 JSON capture has the same SHA-256 as the earlier current export. The `onet-30.3-occupation-*.xlsx` file is the provider-linked 30.3 occupation spreadsheet, licensed under the same CC BY 4.0 attribution terms (substitute version 30.3). It contains only occupation codes, titles and descriptions, not whole manuals or personal records. All 1,016 rows match the current occupation table.
+
+The `onet-30.3-occupation-*.json` filename records the **requested** release, not a verified internal version: its dictionary link unexpectedly says 30.4. It is retained as negative evidence and was rejected by the 30.3 parser. Do not relabel it or import it as verified 30.3 data. Exact request URLs, robots evidence and byte hashes are in `examples/onet.access.jsonl`; comparison results are in `examples/onet.qualification-benchmark.jsonl`.
