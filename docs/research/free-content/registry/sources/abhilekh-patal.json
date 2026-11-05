@@ -8,7 +8,7 @@
     "C15",
     "C18"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -39,14 +39,19 @@
   ],
   "licensing": "No blanket metadata/content reuse license established; inspect source and item terms separately.",
   "limitations": [
-    "No current item query examples; listing/documentation capture is not a qualified searchable origin.",
-    "Per-item rights, reading/access, versions and machine-query limits require separate checks."
+    "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
+    "The National Archives description has a placeholder # link, but its homepage publishes https://www.abhilekh-patal.in/.",
+    "Catalog search was not requested; metadata listing, digitized pages and paid/on-demand delivery must be distinguished."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/abhilekh-official-links-20261105di/observations.jsonl",
+    "runs/abhilekh-entrypoint-20261105dj/observations.jsonl",
+    "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
+    "runs/pmc-query-contract-20261105dl/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T04:35:25.129476+00:00",
-  "next_action": "Find official catalog query/export documentation, distinguish metadata-only, existing scans and on-demand services, and verify free/login/payment conditions without ordering anything.",
+  "last_reviewed_at": "2026-11-05T19:04:12.509244+00:00",
+  "next_action": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -234,25 +239,23 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Explicit candidate/deferred triage; unresolved evidence remains open.",
+      "status": "partial",
+      "summary": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Find official catalog query/export documentation, distinguish metadata-only, existing scans and on-demand services, and verify free/login/payment conditions without ordering anything.",
-        "qualification": false,
-        "activation_approved": false
+        "decision": "blocked_or_failed",
+        "blocker": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
+        "activation_approved": false,
+        "next_action": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/abhilekh-official-links-20261105di/observations.jsonl",
+        "runs/abhilekh-entrypoint-20261105dj/observations.jsonl",
+        "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
+        "runs/pmc-query-contract-20261105dl/observations.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "0238bde75fc3f098867a",
-          "observed_at": "2026-11-05T02:19:31.048841+00:00"
-        }
-      ],
-      "open_questions": []
+      "open_questions": [
+        "Usable policy and supported current search/export route remain unavailable."
+      ]
     }
   },
   "analysis_refs": [
@@ -272,5 +275,13 @@
       "text": "**Retrieval and tests.** Prefer supported archival search or licensed EAD/OAI\nexports with origin attribution. NARA documents a machine route; current key,\nterms and limits still require review. Abhilekh Patal's external integration route\nis unverified here. A finding aid may describe an undigitized box: require an\nactual digitized object for usable online access. Test collection → series → item\nhierarchy, reference code, date range, historical place aliases and a multipage\nobject. A IIIF manifest can describe/display a known object; separately prove\ncatalog discovery. Flag missing OCR rather than promising handwritten full-text\nsearch. Deep-review one supported catalog and one Indian-origin candidate first.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
+    "attempt": "Followed the official National Archives homepage link; checked catalog robots, waited, then retried the same policy endpoint once.",
+    "result": "Both checks returned HTTP202 with0 bytes; no catalog search request was sent. Cause of the202 response is unknown.",
+    "decision": "wait_for_policy_endpoint_recovery_or_documented_alternative",
+    "next_action": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order.",
+    "owner_action_required": false
+  }
 }

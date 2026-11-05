@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-11-05T18:54:32.127984+00:00",
+  "generated_at": "2026-11-05T19:22:11.489775+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by at least ten current passing examples in this registry. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
   "coverage_definition": "Queryability by group and connector, per owner clarification. Deeper research-quality checks remain separate.",
   "totals": {
     "total": 134,
-    "working": 39,
-    "blocked_or_failed": 57,
-    "still_checking": 38,
-    "not_working_verified": 95,
-    "assessed_or_deferred": 96,
-    "remaining_to_assess": 38,
-    "passing_query_examples": 425
+    "working": 42,
+    "blocked_or_failed": 58,
+    "still_checking": 34,
+    "not_working_verified": 92,
+    "assessed_or_deferred": 100,
+    "remaining_to_assess": 34,
+    "passing_query_examples": 455
   },
   "groups": [
     {
@@ -35,9 +35,9 @@
       "id": "G03",
       "name": "Industry and job knowledge",
       "total": 20,
-      "working": 5,
+      "working": 6,
       "blocked_or_failed": 8,
-      "still_checking": 7
+      "still_checking": 6
     },
     {
       "id": "G04",
@@ -51,17 +51,17 @@
       "id": "G05",
       "name": "Research papers and scholarly sources",
       "total": 22,
-      "working": 4,
+      "working": 6,
       "blocked_or_failed": 7,
-      "still_checking": 11
+      "still_checking": 9
     },
     {
       "id": "G06",
       "name": "Language, culture and media",
       "total": 12,
       "working": 4,
-      "blocked_or_failed": 7,
-      "still_checking": 1
+      "blocked_or_failed": 8,
+      "still_checking": 0
     }
   ],
   "connectors": [
@@ -1139,34 +1139,17 @@
     {
       "group_id": "G03",
       "group": "Industry and job knowledge",
-      "connector_id": "fao-publications",
-      "connector": "FAO publications and Knowledge Repository",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "No current verified item-query examples. Catalog identity and documentation do not establish qualification. | Reading availability, jurisdiction, language, native version identity and machine-use limits remain open.",
-      "next_step_or_blocker": "Inspect the linked Knowledge Repository and FAO terms, then obtain an explicitly supported search/export contract and item-specific license/access evidence. Do not infer undocumented DSpace APIs.",
-      "block_reason": "",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": "2026-11-05T05:58:32.137260+00:00",
-      "record": "sources/fao-publications.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G03",
-      "group": "Industry and job knowledge",
       "connector_id": "fostac",
       "connector": "FoSTaC manuals",
       "status": "still_checking",
       "passing_examples": 0,
       "tested_search_scope": "Supported current search method not yet verified",
       "known_limitations": "No current item query examples; listing/documentation capture is not a qualified searchable origin. | Per-item rights, reading/access, versions and machine-query limits require separate checks.",
-      "next_step_or_blocker": "Separate substantive food-safety manuals from portal account instructions; verify exact downloadable item IDs, licenses and a permitted machine discovery method.",
+      "next_step_or_blocker": "Test title/language lookup over the two substantive public Street Food Vendors manual links, then follow the broader public FSSAI training-material catalog. Keep account/setup forms separate from food-safety knowledge; no PDF download or account action has been performed.",
       "block_reason": "",
       "last_attempt_and_result": "",
       "recovery_decision": "",
-      "last_reviewed_at": "2026-11-05T04:35:25.129476+00:00",
+      "last_reviewed_at": "2026-11-05T19:22:07.398727+00:00",
       "record": "sources/fostac.json",
       "production_activation_changed": false
     },
@@ -1270,6 +1253,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T17:57:15.867146+00:00",
       "record": "sources/faa-manuals.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G03",
+      "group": "Industry and job knowledge",
+      "connector_id": "fao-publications",
+      "connector": "FAO publications and Knowledge Repository",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Live title-filtered Atom publication search; first 3 results with native handles, no broad-topic relevance guarantee",
+      "known_limitations": "The published OpenSearch descriptor URL /server/opensearch returned404. The separately published homepage Atom URL /server/opensearch/search works. | The title: field and quoted title phrases returned relevant records; those query semantics are empirically tested on the published endpoint, not a claim that every Lucene field is documented/supported. | The XML query echo percent/form-encodes searchTerms. Decode exactly once; three original multiword-parser failures are preserved. | Broad searches often match metadata/body terms and show loosely related recent works; they are not counted as relevant title results. | Crawl-delay honored (10seconds observed);3 metadata records requested per query. No books/PDFs downloaded. | General FAO web reuse allows research/noncommercial uses; commercial product reuse and item-specific repository licenses need separate review.",
+      "next_step_or_blocker": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+      "block_reason": "",
+      "last_attempt_and_result": "Used the public homepage Atom link, tested title-constrained terms/phrases, and decoded the echoed query exactly once. Preserved all original results and failures. / Ten distinct title queries now return relevant native publications; empty and paging controls saved separately.",
+      "recovery_decision": "use_published_Atom_title_query_scope",
+      "last_reviewed_at": "2026-11-05T19:22:07.359245+00:00",
+      "record": "sources/fao-publications.json",
       "production_activation_changed": false
     },
     {
@@ -1887,23 +1887,6 @@
     {
       "group_id": "G05",
       "group": "Research papers and scholarly sources",
-      "connector_id": "biorxiv-medrxiv",
-      "connector": "bioRxiv / medRxiv",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "No public-endpoint key documented in reviewed material. Feed/lookup interface, not generic title-search replacement. Use aggregator coverage first or import date-window metadata. Docs reviewed; no query tested. **Medium / P1**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
-      "next_step_or_blocker": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-      "block_reason": "",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": null,
-      "record": "sources/biorxiv-medrxiv.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G05",
-      "group": "Research papers and scholarly sources",
       "connector_id": "core",
       "connector": "CORE",
       "status": "still_checking",
@@ -1950,23 +1933,6 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T05:50:26.972137+00:00",
       "record": "sources/la-referencia.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G05",
-      "group": "Research papers and scholarly sources",
-      "connector_id": "pubmed-pmc",
-      "connector": "PubMed / PMC",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Common E-utilities allowances are 3 requests/sec without key and 10 with key; verify current endpoint policy before coding. PMC endpoints have distinct rules. Prefer Europe PMC first to avoid duplication. **Medium / P1**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
-      "next_step_or_blocker": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-      "block_reason": "",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": null,
-      "record": "sources/pubmed-pmc.json",
       "production_activation_changed": false
     },
     {
@@ -2074,11 +2040,28 @@
     {
       "group_id": "G05",
       "group": "Research papers and scholarly sources",
+      "connector_id": "biorxiv-medrxiv",
+      "connector": "bioRxiv / medRxiv",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Live bioRxiv/medRxiv DOI and version lookups; date-paged metadata verified separately, no upstream title search",
+      "known_limitations": "No upstream title-query API documented; broad keyword search needs a permitted metadata index beyond this bounded research sample. | Observed a medRxiv record with version0; parser deliberately rejects that unsupported version and retains the failed attempt. Do not infer a valid v0 or full-item availability. | DOI prefixes10.1101 and10.64898 occur in actual responses; journal published DOI is a relation, not a substitute preprint identity. | Date API returns30 records per page; first and second pages tested, not the entire dated result set. | Full text, withdrawal handling across all versions and blanket metadata reuse rights remain separate unverified checks.",
+      "next_step_or_blocker": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+      "block_reason": "",
+      "last_attempt_and_result": "",
+      "recovery_decision": "",
+      "last_reviewed_at": "2026-11-05T19:01:58.878074+00:00",
+      "record": "sources/biorxiv-medrxiv.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G05",
+      "group": "Research papers and scholarly sources",
       "connector_id": "crossref",
       "connector": "Crossref",
       "status": "working",
       "passing_examples": 10,
-      "tested_search_scope": "Live title-ranked bibliographic search, first3 records with nativeDOIs; no free-full-text guarantee",
+      "tested_search_scope": "Live title-ranked bibliographic search, first 3 records with native DOIs; no free-full-text guarantee",
       "known_limitations": "Public pool is single-connection; currentdocs report5 rate limit with interval in response headers; research uses >=3seconds spacing. | Title matching is ranked/fuzzy: similarly titled chapters, articles and encyclopedia records can outrank the intended original work. | OnlyDOI/title/type/URL selected; no abstracts, PDFs or full text retained. | Offset paging and empty nonsense query verified; malformed negative rows400 retained.",
       "next_step_or_blocker": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
       "block_reason": "",
@@ -2137,6 +2120,40 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T04:51:26.175619+00:00",
       "record": "sources/osti.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G05",
+      "group": "Research papers and scholarly sources",
+      "connector_id": "pubmed-pmc",
+      "connector": "PubMed / PMC",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Exact PMC native-record metadata lookup through OAI; date/set harvesting also tested, no upstream keyword search",
+      "known_limitations": "E-Utilities robots explicitly disallows all paths for this client; ESearch and ESummary were not requested. Separate PMC-hosted OAI API has a permitting policy and is explicitly documented. | The NCBI Bookshelf overview returned a browser/reCAPTCHA page; no challenge bypass attempted. Current PMC-hosted developer/OAI pages provide the metadata contract. | OAI supports native IDs, sets, datestamps and resumable metadata harvest, not free-text queries. Topic search would require a permitted local metadata index. | No more than3requests/second and no concurrent requests. This run uses >=3seconds between requests and fewer than100 total OAI requests; >100 requests must be outside published peak hours. | PMCID, DOI and PMID retained as separate relations; overlap with Europe PMC is recorded, not a new publication/origin per record. | Metadata rights statements do not imply that all PMC full text is reusable; full-item access and correction/version relationships remain separate checks.",
+      "next_step_or_blocker": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+      "block_reason": "",
+      "last_attempt_and_result": "Used the separately published and permitted PMC OAI metadata API; no change of identity or E-Utilities host bypass. / Ten native PMC metadata lookups returned matching records; missing native ID404 and date-page10 records retained.",
+      "recovery_decision": "use_documented_OAI_metadata_alternative",
+      "last_reviewed_at": "2026-11-05T19:09:48.354467+00:00",
+      "record": "sources/pubmed-pmc.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G06",
+      "group": "Language, culture and media",
+      "connector_id": "abhilekh-patal",
+      "connector": "Abhilekh Patal",
+      "status": "blocked_or_failed",
+      "passing_examples": 0,
+      "tested_search_scope": "Supported current search method not yet verified",
+      "known_limitations": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established. | The National Archives description has a placeholder # link, but its homepage publishes https://www.abhilekh-patal.in/. | Catalog search was not requested; metadata listing, digitized pages and paid/on-demand delivery must be distinguished.",
+      "next_step_or_blocker": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order.",
+      "block_reason": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
+      "last_attempt_and_result": "Followed the official National Archives homepage link; checked catalog robots, waited, then retried the same policy endpoint once. / Both checks returned HTTP202 with0 bytes; no catalog search request was sent. Cause of the202 response is unknown.",
+      "recovery_decision": "wait_for_policy_endpoint_recovery_or_documented_alternative",
+      "last_reviewed_at": "2026-11-05T19:04:12.509244+00:00",
+      "record": "sources/abhilekh-patal.json",
       "production_activation_changed": false
     },
     {
@@ -2261,23 +2278,6 @@
     {
       "group_id": "G06",
       "group": "Language, culture and media",
-      "connector_id": "abhilekh-patal",
-      "connector": "Abhilekh Patal",
-      "status": "still_checking",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "No current item query examples; listing/documentation capture is not a qualified searchable origin. | Per-item rights, reading/access, versions and machine-query limits require separate checks.",
-      "next_step_or_blocker": "Find official catalog query/export documentation, distinguish metadata-only, existing scans and on-demand services, and verify free/login/payment conditions without ordering anything.",
-      "block_reason": "",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": "2026-11-05T04:35:25.129476+00:00",
-      "record": "sources/abhilekh-patal.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G06",
-      "group": "Language, culture and media",
       "connector_id": "cleveland-museum-art",
       "connector": "Cleveland Museum of Art Open Access collection",
       "status": "working",
@@ -2299,7 +2299,7 @@
       "connector": "National Gallery of Art collection",
       "status": "working",
       "passing_examples": 10,
-      "tested_search_scope": "Local title-token search over146454 art-object metadata records from the pinnedCC0 export; no image search",
+      "tested_search_scope": "Local title-token search over 146454 art-object metadata records from the pinned CC0 export; no image search",
       "known_limitations": "Metadata only; no image or full-text search. Image availability and rights are separate. | Ten title searches verified; ambiguous titles can return multiple distinct native objects, not one deduplicated work. | Refresh requires a newly reviewed export version; pinned snapshot does not claim permanent freshness.",
       "next_step_or_blocker": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
       "block_reason": "",

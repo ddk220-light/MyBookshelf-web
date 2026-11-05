@@ -1,3 +1,29 @@
+## 2026-11-05T19:22:07.398727+00:00: Five more working connectors; seven more assessed
+
+**42 Working | 58 Blocked/failed | 34 Still checking | 134 total.** Compared with the prior hourly report: +5 Working, +2 Blocked/failed, −7 Still checking. There are 455 passing examples (+50). All 12 language/culture connectors have now been assessed: four work and eight are blocked; this does not mean all 12 work.
+
+| Group | Working | Blocked/failed | Still checking | Total |
+|---|---:|---:|---:|---:|
+| Books, children’s books and audio | 11 | 15 | 13 | 39 |
+| Learning and technical documentation | 6 | 5 | 4 | 15 |
+| Industry and job knowledge | 6 | 8 | 6 | 20 |
+| Government, maps and public data | 9 | 15 | 2 | 26 |
+| Scholarly research | 6 | 7 | 9 | 22 |
+| Language, culture and media | 4 | 8 | 0 | 12 |
+| **Total** | **42** | **58** | **34** | **134** |
+
+Crossref has live title-ranked bibliographic queries; National Gallery of Art has local title queries over its pinned 146,454-record CC0 object-metadata export; bioRxiv/medRxiv has native DOI/version queries; PMC uses its explicitly documented OAI metadata API for native-record lookup and date/set harvesting; FAO has live title-filtered Atom searches. Each has ten current distinct passing cases with native IDs, observed results and precise scope. PMC and bioRxiv/medRxiv are not upstream keyword-search APIs. No source was activated in production.
+
+FAO's broad metadata queries were noisy. Its descriptor points at a 404 route, while the homepage's published Atom route works. Title constraints improved relevance, and decoding the XML query echo exactly once fixed the local multiword-parser failure. The three earlier parser failures, two descriptor404s, broad search outputs, successful title queries, empty result and paging are all retained. Crossref's title-only results can identify different similarly named works; the missing intended original DOIs in two top-three results remain explicit negative evidence.
+
+bioRxiv/medRxiv's exact `no posts found` response is now recognized as empty. Its version0 record remains unsupported; the failed case and removal-notice observation are preserved and replaced with a different valid case, without inventing a version. PMC E-Utilities' global robots disallow was respected; the separately documented PMC-hosted OAI service has a permitting policy and works. Two OAI metadata pages have ten distinct records each with no overlap; missing native ID returns404. No full-text XML/PDFs were collected.
+
+New blocked connectors: **arXiv** (export-host policy contains global `Disallow: /`; API documentation conflict remains; no query sent) and **Abhilekh Patal** (official catalog's robots endpoint returned empty202 twice, including a delayed retry; no search sent). Wait for a useful policy/recovery trigger. NCBI Bookshelf's browser/reCAPTCHA response was retained; its challenge was not bypassed. No owner action is required to continue other connectors.
+
+FoSTaC remains Still checking: its public page identifies Hindi and Malayalam Street Food Vendors manuals alongside account/setup instructions. The two knowledge links were recorded; no PDF, account action or search success is claimed. Next prioritize the four unchecked learning/technical connectors and remaining industry/scholarly connectors, now tied at six Working; continue existing blockers only on useful triggers.
+
+The hourly completion task remains enabled. The old documentation reporter remains disabled. Research only: no activation, deployment, paid service/account, bulk books/audio or personal-owner collection. [Per-connector status and next actions](connector-status.csv); [saved goal](goal.json). Validation results are recorded in the goal/checkpoint after running the required checks.
+
 ## 2026-11-05 18:23 UTC: Four more working connector searches
 
 **37 Working |56 Blocked/failed |41 Still checking |134 total.** This run adds40 passing examples (405 total) acrossOSHA,FAA,FDA andEPA. Three previously unchecked connectors now work; EPA recovered from an old block; ROSA P moved from unchecked to blocked. Thus four fewer remain to assess and the blocked total stays56. Industry/job knowledge is now5/8/7 out of20.

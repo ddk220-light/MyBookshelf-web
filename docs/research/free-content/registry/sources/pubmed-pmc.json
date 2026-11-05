@@ -8,35 +8,280 @@
   "areas": [
     "C03"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "source-family-needs-splitting",
   "capabilities": [
-    "Imported historical retrieval analysis: NCBI E-utilities for bibliography; PMC OAI and OA services for archival metadata/eligible files. [PMC developers](https://pmc.ncbi.nlm.nih.gov/tools/developers/), [OAI](https://pmc.ncbi.nlm.nih.gov/tools/oai/)"
+    "Exact PMC record lookup through the officially documented OAI Dublin Core metadata service;10 current native-ID examples. Date-filtered metadata pages also work. No upstream keyword search or PubMed-wide claim."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
+    "adapter": "pmc-oai",
+    "endpoint": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+    "cases": [
+      {
+        "id": "oai-native-01",
+        "intent": "Resolve PMC metadata by native PMCID for Correction to \"Impact of Genetic Polymorphisms on the Efficacy and Safety of Isoniazid in Saudi Tuberculosis Patients\".",
+        "expected_ids": [
+          "oai:pubmedcentral.nih.gov:13590939"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+          "params": {
+            "verb": "GetRecord",
+            "identifier": "oai:pubmedcentral.nih.gov:13590939",
+            "metadataPrefix": "oai_dc"
+          }
+        },
+        "seed_provenance": {
+          "pmcid": "PMC13590939",
+          "title": "Correction to \"Impact of Genetic Polymorphisms on the Efficacy and Safety of Isoniazid in Saudi Tuberculosis Patients\".",
+          "observed_at": "2026-11-05T03:24:56.666165+00:00",
+          "case_id": "doi-01",
+          "seed_source": "examples/europe-pmc.jsonl"
+        }
+      },
+      {
+        "id": "oai-native-02",
+        "intent": "Resolve PMC metadata by native PMCID for Paleopathology Meets Public Health: Deep-Time Syndemics and the Ecology of Emerging Infections.",
+        "expected_ids": [
+          "oai:pubmedcentral.nih.gov:13209386"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+          "params": {
+            "verb": "GetRecord",
+            "identifier": "oai:pubmedcentral.nih.gov:13209386",
+            "metadataPrefix": "oai_dc"
+          }
+        },
+        "seed_provenance": {
+          "pmcid": "PMC13209386",
+          "title": "Paleopathology Meets Public Health: Deep-Time Syndemics and the Ecology of Emerging Infections.",
+          "observed_at": "2026-11-05T03:25:07.871287+00:00",
+          "case_id": "doi-02",
+          "seed_source": "examples/europe-pmc.jsonl"
+        }
+      },
+      {
+        "id": "oai-native-03",
+        "intent": "Resolve PMC metadata by native PMCID for Climate change and tropical medicine in the Amazon: contributions from a research center, gaps and future priorities.",
+        "expected_ids": [
+          "oai:pubmedcentral.nih.gov:13286602"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+          "params": {
+            "verb": "GetRecord",
+            "identifier": "oai:pubmedcentral.nih.gov:13286602",
+            "metadataPrefix": "oai_dc"
+          }
+        },
+        "seed_provenance": {
+          "pmcid": "PMC13286602",
+          "title": "Climate change and tropical medicine in the Amazon: contributions from a research center, gaps and future priorities.",
+          "observed_at": "2026-11-05T03:25:18.982747+00:00",
+          "case_id": "doi-03",
+          "seed_source": "examples/europe-pmc.jsonl"
+        }
+      },
+      {
+        "id": "oai-native-04",
+        "intent": "Resolve PMC metadata by native PMCID for Reading immune restoration through &lt;i&gt;Mycobacterium tuberculosis&lt;/i&gt; intrahost evolution.",
+        "expected_ids": [
+          "oai:pubmedcentral.nih.gov:13713011"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+          "params": {
+            "verb": "GetRecord",
+            "identifier": "oai:pubmedcentral.nih.gov:13713011",
+            "metadataPrefix": "oai_dc"
+          }
+        },
+        "seed_provenance": {
+          "pmcid": "PMC13713011",
+          "title": "Reading immune restoration through &lt;i&gt;Mycobacterium tuberculosis&lt;/i&gt; intrahost evolution.",
+          "observed_at": "2026-11-05T03:25:29.406799+00:00",
+          "case_id": "doi-04",
+          "seed_source": "examples/europe-pmc.jsonl"
+        }
+      },
+      {
+        "id": "oai-native-05",
+        "intent": "Resolve PMC metadata by native PMCID for Editorial: Women in infectious agents and disease: 2025.",
+        "expected_ids": [
+          "oai:pubmedcentral.nih.gov:13275687"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+          "params": {
+            "verb": "GetRecord",
+            "identifier": "oai:pubmedcentral.nih.gov:13275687",
+            "metadataPrefix": "oai_dc"
+          }
+        },
+        "seed_provenance": {
+          "pmcid": "PMC13275687",
+          "title": "Editorial: Women in infectious agents and disease: 2025.",
+          "observed_at": "2026-11-05T03:25:39.870533+00:00",
+          "case_id": "doi-05",
+          "seed_source": "examples/europe-pmc.jsonl"
+        }
+      },
+      {
+        "id": "oai-native-06",
+        "intent": "Resolve PMC metadata by native PMCID for Harnessing omics to refine taxonomic classification in the malaria vector Anopheles gambiae species complex: a review.",
+        "expected_ids": [
+          "oai:pubmedcentral.nih.gov:13711727"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+          "params": {
+            "verb": "GetRecord",
+            "identifier": "oai:pubmedcentral.nih.gov:13711727",
+            "metadataPrefix": "oai_dc"
+          }
+        },
+        "seed_provenance": {
+          "pmcid": "PMC13711727",
+          "title": "Harnessing omics to refine taxonomic classification in the malaria vector Anopheles gambiae species complex: a review.",
+          "observed_at": "2026-11-05T03:25:50.184231+00:00",
+          "case_id": "doi-06",
+          "seed_source": "examples/europe-pmc.jsonl"
+        }
+      },
+      {
+        "id": "oai-native-07",
+        "intent": "Resolve PMC metadata by native PMCID for Reimagining research equity and beneficial community impact: reflections from the GSK Africa Open Lab inaugural cohort.",
+        "expected_ids": [
+          "oai:pubmedcentral.nih.gov:13508491"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+          "params": {
+            "verb": "GetRecord",
+            "identifier": "oai:pubmedcentral.nih.gov:13508491",
+            "metadataPrefix": "oai_dc"
+          }
+        },
+        "seed_provenance": {
+          "pmcid": "PMC13508491",
+          "title": "Reimagining research equity and beneficial community impact: reflections from the GSK Africa Open Lab inaugural cohort.",
+          "observed_at": "2026-11-05T03:26:00.558329+00:00",
+          "case_id": "doi-07",
+          "seed_source": "examples/europe-pmc.jsonl"
+        }
+      },
+      {
+        "id": "oai-native-08",
+        "intent": "Resolve PMC metadata by native PMCID for Divergent urban-rural drivers of malaria vector ecology: a 6-year One Health longitudinal study in China.",
+        "expected_ids": [
+          "oai:pubmedcentral.nih.gov:13495405"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+          "params": {
+            "verb": "GetRecord",
+            "identifier": "oai:pubmedcentral.nih.gov:13495405",
+            "metadataPrefix": "oai_dc"
+          }
+        },
+        "seed_provenance": {
+          "pmcid": "PMC13495405",
+          "title": "Divergent urban-rural drivers of malaria vector ecology: a 6-year One Health longitudinal study in China.",
+          "observed_at": "2026-11-05T03:26:10.917124+00:00",
+          "case_id": "doi-08",
+          "seed_source": "examples/europe-pmc.jsonl"
+        }
+      },
+      {
+        "id": "oai-native-09",
+        "intent": "Resolve PMC metadata by native PMCID for The news media and the agenda for noncommunicable diseases before and during the COVID-19 pandemic: Losing the competition for coverage and framing responsibility for action in Malawi.",
+        "expected_ids": [
+          "oai:pubmedcentral.nih.gov:13399344"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+          "params": {
+            "verb": "GetRecord",
+            "identifier": "oai:pubmedcentral.nih.gov:13399344",
+            "metadataPrefix": "oai_dc"
+          }
+        },
+        "seed_provenance": {
+          "pmcid": "PMC13399344",
+          "title": "The news media and the agenda for noncommunicable diseases before and during the COVID-19 pandemic: Losing the competition for coverage and framing responsibility for action in Malawi.",
+          "observed_at": "2026-11-05T03:26:21.417388+00:00",
+          "case_id": "doi-09",
+          "seed_source": "examples/europe-pmc.jsonl"
+        }
+      },
+      {
+        "id": "oai-native-10",
+        "intent": "Resolve PMC metadata by native PMCID for One Health in Mesoamerica: historical legacies, current challenges, and strategic directions.",
+        "expected_ids": [
+          "oai:pubmedcentral.nih.gov:13465641"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+          "params": {
+            "verb": "GetRecord",
+            "identifier": "oai:pubmedcentral.nih.gov:13465641",
+            "metadataPrefix": "oai_dc"
+          }
+        },
+        "seed_provenance": {
+          "pmcid": "PMC13465641",
+          "title": "One Health in Mesoamerica: historical legacies, current challenges, and strategic directions.",
+          "observed_at": "2026-11-05T03:26:31.707981+00:00",
+          "case_id": "doi-10",
+          "seed_source": "examples/europe-pmc.jsonl"
+        }
+      }
+    ],
     "historical_contract": "NCBI E-utilities for bibliography; PMC OAI and OA services for archival metadata/eligible files. [PMC developers](https://pmc.ncbi.nlm.nih.gov/tools/developers/), [OAI](https://pmc.ncbi.nlm.nih.gov/tools/oai/)",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "authentication": "Published anonymous PMC OAI service; no account/key/payment."
   },
-  "licensing": "Actual PMC articles at `https://pmc.ncbi.nlm.nih.gov/articles/{PMCID}/`; PubMed primarily bibliographic. Free reading and OA-subset reuse permissions differ.",
+  "licensing": "PMC documents OAI metadata access for all repository items; article licenses and reuse rights vary. Dublin Core rights values retained, metadataPrefix limited to oai_dc. No full-text XML/PDFs downloaded.",
   "documentation": [
     "https://pmc.ncbi.nlm.nih.gov/tools/developers/",
     "https://pmc.ncbi.nlm.nih.gov/tools/oai/"
   ],
   "limitations": [
-    "Common E-utilities allowances are 3 requests/sec without key and 10 with key; verify current endpoint policy before coding. PMC endpoints have distinct rules. Prefer Europe PMC first to avoid duplication. **Medium / P1**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "E-Utilities robots explicitly disallows all paths for this client; ESearch and ESummary were not requested. Separate PMC-hosted OAI API has a permitting policy and is explicitly documented.",
+    "The NCBI Bookshelf overview returned a browser/reCAPTCHA page; no challenge bypass attempted. Current PMC-hosted developer/OAI pages provide the metadata contract.",
+    "OAI supports native IDs, sets, datestamps and resumable metadata harvest, not free-text queries. Topic search would require a permitted local metadata index.",
+    "No more than3requests/second and no concurrent requests. This run uses >=3seconds between requests and fewer than100 total OAI requests; >100 requests must be outside published peak hours.",
+    "PMCID, DOI and PMID retained as separate relations; overlap with Europe PMC is recorded, not a new publication/origin per record.",
+    "Metadata rights statements do not imply that all PMC full text is reusable; full-item access and correction/version relationships remain separate checks."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
+    "runs/pmc-query-contract-20261105dl/observations.jsonl",
+    "runs/pmc-metadata-contract-20261105dm/observations.jsonl",
+    "runs/pmc-oai-alternative-20261105dn/observations.jsonl",
+    "examples/pubmed-pmc.scouting.jsonl",
+    "examples/pubmed-pmc.policy-inspection.jsonl",
+    "examples/pubmed-pmc.oai-access.jsonl",
+    "examples/pubmed-pmc.oai-boundaries.jsonl",
+    "examples/pubmed-pmc.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T19:09:48.354467+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "aliases": [
     "PubMed",
     "PMC"
@@ -85,36 +330,68 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Exact PMC record lookup through the officially documented OAI Dublin Core metadata service;10 current native-ID examples. Date-filtered metadata pages also work. No upstream keyword search or PubMed-wide claim.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Imported historical retrieval analysis: NCBI E-utilities for bibliography; PMC OAI and OA services for archival metadata/eligible files. [PMC developers](https://pmc.ncbi.nlm.nih.gov/tools/developers/), [OAI](https://pmc.ncbi.nlm.nih.gov/tools/oai/)"
+        "adapter": "pmc-oai",
+        "endpoint": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/",
+        "cases": [
+          "oai-native-01",
+          "oai-native-02",
+          "oai-native-03",
+          "oai-native-04",
+          "oai-native-05",
+          "oai-native-06",
+          "oai-native-07",
+          "oai-native-08",
+          "oai-native-09",
+          "oai-native-10"
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Exact PMC record lookup through the officially documented OAI Dublin Core metadata service;10 current native-ID examples. Date-filtered metadata pages also work. No upstream keyword search or PubMed-wide claim.",
+        "authentication": "Published anonymous PMC OAI service; no account/key/payment.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
+        "runs/pmc-query-contract-20261105dl/observations.jsonl",
+        "runs/pmc-metadata-contract-20261105dm/observations.jsonl",
+        "runs/pmc-oai-alternative-20261105dn/observations.jsonl",
+        "examples/pubmed-pmc.scouting.jsonl",
+        "examples/pubmed-pmc.policy-inspection.jsonl",
+        "examples/pubmed-pmc.oai-access.jsonl",
+        "examples/pubmed-pmc.oai-boundaries.jsonl",
+        "examples/pubmed-pmc.jsonl"
       ],
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "PMC documents OAI metadata access for all repository items; article licenses and reuse rights vary. Dublin Core rights values retained, metadataPrefix limited to oai_dc. No full-text XML/PDFs downloaded.",
       "facts": {
-        "license_notes": "Actual PMC articles at `https://pmc.ncbi.nlm.nih.gov/articles/{PMCID}/`; PubMed primarily bibliographic. Free reading and OA-subset reuse permissions differ.",
-        "authentication_notes": "See historical notes; current contract must be reconciled with newer evidence.",
-        "cost_notes": null,
-        "terms_review": "pending current reconciliation"
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Published anonymous PMC OAI service; no account/key/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
+        "runs/pmc-query-contract-20261105dl/observations.jsonl",
+        "runs/pmc-metadata-contract-20261105dm/observations.jsonl",
+        "runs/pmc-oai-alternative-20261105dn/observations.jsonl",
+        "examples/pubmed-pmc.scouting.jsonl",
+        "examples/pubmed-pmc.policy-inspection.jsonl",
+        "examples/pubmed-pmc.oai-access.jsonl",
+        "examples/pubmed-pmc.oai-boundaries.jsonl",
+        "examples/pubmed-pmc.jsonl"
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -136,49 +413,83 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "limitations": [
-          "Common E-utilities allowances are 3 requests/sec without key and 10 with key; verify current endpoint policy before coding. PMC endpoints have distinct rules. Prefer Europe PMC first to avoid duplication. **Medium / P1**.",
-          "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
-        ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Exact PMC record lookup through the officially documented OAI Dublin Core metadata service;10 current native-ID examples. Date-filtered metadata pages also work. No upstream keyword search or PubMed-wide claim.",
+        "empty_and_boundary_evidence": "examples/pubmed-pmc.oai-boundaries.jsonl"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
+        "runs/pmc-query-contract-20261105dl/observations.jsonl",
+        "runs/pmc-metadata-contract-20261105dm/observations.jsonl",
+        "runs/pmc-oai-alternative-20261105dn/observations.jsonl",
+        "examples/pubmed-pmc.scouting.jsonl",
+        "examples/pubmed-pmc.policy-inspection.jsonl",
+        "examples/pubmed-pmc.oai-access.jsonl",
+        "examples/pubmed-pmc.oai-boundaries.jsonl",
+        "examples/pubmed-pmc.jsonl"
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "limits": [
+          "E-Utilities robots explicitly disallows all paths for this client; ESearch and ESummary were not requested. Separate PMC-hosted OAI API has a permitting policy and is explicitly documented.",
+          "The NCBI Bookshelf overview returned a browser/reCAPTCHA page; no challenge bypass attempted. Current PMC-hosted developer/OAI pages provide the metadata contract.",
+          "OAI supports native IDs, sets, datestamps and resumable metadata harvest, not free-text queries. Topic search would require a permitted local metadata index.",
+          "No more than3requests/second and no concurrent requests. This run uses >=3seconds between requests and fewer than100 total OAI requests; >100 requests must be outside published peak hours.",
+          "PMCID, DOI and PMID retained as separate relations; overlap with Europe PMC is recorded, not a new publication/origin per record.",
+          "Metadata rights statements do not imply that all PMC full text is reusable; full-item access and correction/version relationships remain separate checks."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
+        "runs/pmc-query-contract-20261105dl/observations.jsonl",
+        "runs/pmc-metadata-contract-20261105dm/observations.jsonl",
+        "runs/pmc-oai-alternative-20261105dn/observations.jsonl",
+        "examples/pubmed-pmc.scouting.jsonl",
+        "examples/pubmed-pmc.policy-inspection.jsonl",
+        "examples/pubmed-pmc.oai-access.jsonl",
+        "examples/pubmed-pmc.oai-boundaries.jsonl",
+        "examples/pubmed-pmc.jsonl"
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "working-query-scope-verified",
+        "reason": "Exact PMC record lookup through the officially documented OAI Dublin Core metadata service;10 current native-ID examples. Date-filtered metadata pages also work. No upstream keyword search or PubMed-wide claim.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
+        "runs/pmc-query-contract-20261105dl/observations.jsonl",
+        "runs/pmc-metadata-contract-20261105dm/observations.jsonl",
+        "runs/pmc-oai-alternative-20261105dn/observations.jsonl",
+        "examples/pubmed-pmc.scouting.jsonl",
+        "examples/pubmed-pmc.policy-inspection.jsonl",
+        "examples/pubmed-pmc.oai-access.jsonl",
+        "examples/pubmed-pmc.oai-boundaries.jsonl",
+        "examples/pubmed-pmc.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Production activation has not been requested by this task."
       ]
     }
   },
@@ -367,5 +678,13 @@
       "text": "All ten new live query/detail samples and OpenAlex passed in production. Refreshed Gutenberg, OTL and Book Dash query/detail checks passed. StoryWeaver remains stale/unclear and is excluded by the default access filter. Two Europe PMC malaria probes timed out; the UI preserves that source error while other sources return results. This is an unresolved provider/runtime reliability observation, not a zero-result claim. The mobile WebKit all-source query completed all 16 groups with 26 loaded results, no page errors and no horizontal overflow; the LibriVox detail linked to the correct recording. See [saved production evidence](evidence/knowledge-release-2026-11-05/production/deployment.json), including failed probes and screenshots. The temporary preview share link was revoked after testing; protection settings were not weakened.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "E-Utilities search route is disallowed by its robots policy.",
+    "attempt": "Used the separately published and permitted PMC OAI metadata API; no change of identity or E-Utilities host bypass.",
+    "result": "Ten native PMC metadata lookups returned matching records; missing native ID404 and date-page10 records retained.",
+    "decision": "use_documented_OAI_metadata_alternative",
+    "next_action": "Keep exact-ID scope explicit. Keyword search needs a separate permitted metadata index; no runtime import in this task.",
+    "owner_action_required": false
+  }
 }

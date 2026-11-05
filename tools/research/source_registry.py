@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv'):
+    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -331,6 +331,15 @@ def probe(source_id, case_ids=None):
     if source['query']['adapter'] in ('crossref-public', 'arxiv-atom'):
         from scholarly_queries import probe as probe_scholarly
         return probe_scholarly(source, case_ids)
+    if source['query']['adapter'] == 'fao-opensearch':
+        from fao_opensearch import probe as probe_fao
+        return probe_fao(source, case_ids)
+    if source['query']['adapter'] == 'pmc-oai':
+        from pmc_oai import probe as probe_pmc_oai
+        return probe_pmc_oai(source, case_ids)
+    if source['query']['adapter'] == 'preprint-details':
+        from preprint_catalog import probe as probe_preprints
+        return probe_preprints(source, case_ids)
     if source['query']['adapter'] == 'nga-csv':
         from nga_catalog import probe as probe_nga
         return probe_nga(source, case_ids)
@@ -361,7 +370,7 @@ def probe(source_id, case_ids=None):
     if source['query']['adapter'] in ('federal-register', 'usaspending'):
         from civic_catalogs import probe as probe_civic
         return probe_civic(source, case_ids)
-    if source['query']['adapter'] in ('fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv'):
+    if source['query']['adapter'] in ('fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch'):
         from browser_publications import probe as probe_browser_publications
         return probe_browser_publications(source, case_ids)
     if source['query']['adapter'] in ('osha-publications', 'faa-handbooks'):

@@ -83,7 +83,7 @@ def request(url, limit=LIMIT, headers=None):
                           content_type=response.headers.get('Content-Type'),
                           redirect_location=response.headers.get('Location'),
                           response_headers={key: response.headers[key] for key in
-                                            ('Link', 'X-Total-Count', 'Retry-After') if key in response.headers})
+                                            ('Link', 'X-Total-Count', 'Retry-After', 'Content-Encoding') if key in response.headers})
             body = response.read(limit + 1)
     except OSError as exc:
         result['error'] = str(exc)

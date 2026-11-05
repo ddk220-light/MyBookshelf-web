@@ -15,8 +15,11 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
-    'crossref-public': 'Live title-ranked bibliographic search, first3 records with nativeDOIs; no free-full-text guarantee',
-    'nga-csv': 'Local title-token search over146454 art-object metadata records from the pinnedCC0 export; no image search',
+    'fao-opensearch': 'Live title-filtered Atom publication search; first 3 results with native handles, no broad-topic relevance guarantee',
+    'pmc-oai': 'Exact PMC native-record metadata lookup through OAI; date/set harvesting also tested, no upstream keyword search',
+    'preprint-details': 'Live bioRxiv/medRxiv DOI and version lookups; date-paged metadata verified separately, no upstream title search',
+    'crossref-public': 'Live title-ranked bibliographic search, first 3 records with native DOIs; no free-full-text guarantee',
+    'nga-csv': 'Local title-token search over 146454 art-object metadata records from the pinned CC0 export; no image search',
     'arxiv-atom': 'Versioned Atom metadata API; current export-host robots restriction prevents live query verification',
     'fda-guidance-ui': 'Browser-only public guidance keyword table; first10 visible results with draft/final and native links',
     'epa-nepis-ui': 'Browser-only public EPA NEPIS keyword form; first15 results with native document keys',
