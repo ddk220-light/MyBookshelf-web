@@ -8,7 +8,7 @@
     "C10",
     "C20"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -19,36 +19,194 @@
     "verification": "needs-reconciliation"
   },
   "capabilities": [
-    "Current course page exposes course titles, instructor names and institutions, but the 512 KiB capture is truncated."
+    "Local title-token queries over 3482 unambiguous NPTEL course IDs in the current published catalog; one conflicting course ID excluded, semester/version unknown."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "No login used for primary documentation; catalog API requirements unknown",
+    "adapter": "nptel-catalog",
+    "endpoint": "https://nptel.ac.in/courses",
+    "cases": [
+      {
+        "id": "catalog-title-01",
+        "intent": "Search published catalog title tokens: python petroleum",
+        "expected_ids": [
+          "103105782"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nptel.ac.in/courses",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "python petroleum"
+          }
+        }
+      },
+      {
+        "id": "catalog-title-02",
+        "intent": "Search published catalog title tokens: linear algebra geometry",
+        "expected_ids": [
+          "106108482"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nptel.ac.in/courses",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "linear algebra geometry"
+          }
+        }
+      },
+      {
+        "id": "catalog-title-03",
+        "intent": "Search published catalog title tokens: quantum atoms molecules",
+        "expected_ids": [
+          "104101124"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nptel.ac.in/courses",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "quantum atoms molecules"
+          }
+        }
+      },
+      {
+        "id": "catalog-title-04",
+        "intent": "Search published catalog title tokens: calculus one real variable",
+        "expected_ids": [
+          "109104124"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nptel.ac.in/courses",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "calculus one real variable"
+          }
+        }
+      },
+      {
+        "id": "catalog-title-05",
+        "intent": "Search published catalog title tokens: pavement construction",
+        "expected_ids": [
+          "105103685"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nptel.ac.in/courses",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "pavement construction"
+          }
+        }
+      },
+      {
+        "id": "catalog-title-06",
+        "intent": "Search published catalog title tokens: logistics supply",
+        "expected_ids": [
+          "109105494"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nptel.ac.in/courses",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "logistics supply"
+          }
+        }
+      },
+      {
+        "id": "catalog-title-07",
+        "intent": "Search published catalog title tokens: nanotechnology agriculture",
+        "expected_ids": [
+          "102104069"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nptel.ac.in/courses",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "nanotechnology agriculture"
+          }
+        }
+      },
+      {
+        "id": "catalog-title-08",
+        "intent": "Search published catalog title tokens: engineering thermodynamics",
+        "expected_ids": [
+          "101104063"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nptel.ac.in/courses",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "engineering thermodynamics"
+          }
+        }
+      },
+      {
+        "id": "catalog-title-09",
+        "intent": "Search published catalog title tokens: statistical machine learning",
+        "expected_ids": [
+          "105105001"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nptel.ac.in/courses",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "statistical machine learning"
+          }
+        }
+      },
+      {
+        "id": "catalog-title-10",
+        "intent": "Search published catalog title tokens: physico chemical wastewater",
+        "expected_ids": [
+          "103107212"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nptel.ac.in/courses",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "physico chemical wastewater"
+          }
+        }
+      }
+    ],
+    "authentication": "Public catalog without login/key/payment.",
     "supported_method": null,
     "unsupported_claims": [
       "No verified third-party query/export contract",
       "No item-level search examples yet"
-    ]
+    ],
+    "catalog_entry_count": 3482,
+    "catalog_snapshot": "analysis/external/nptel-catalog-20261105.json"
   },
   "documentation": [
     "https://nptel.ac.in/courses"
   ],
-  "licensing": "Current metadata/content reuse permissions have not been established; public documentation access is not a reuse license.",
+  "licensing": "Course-list metadata used for bounded research title lookup. No blanket content redistribution license inferred; course reading, videos, assessments and certification are separate. Existing content licensing review remains open.",
   "limitations": [
-    "SWAYAM distributes NPTEL courses; preserve producing institution and course versions rather than counting mirrors.",
-    "Homepage/course listing is public; free learning vs enrollment/certification and complete reader/media access require review.",
-    "Not an approved or verified origin; missing evidence remains open."
+    "Only local title tokens and exact native identities; no upstream keyword API, body text, translation or catalog completeness beyond the published page.",
+    "No full books, lectures, videos or PDFs downloaded.",
+    "The observed single-page catalog is bounded; no fabricated server paging contract.",
+    "Conflicting native IDs excluded with both variants retained; title duplicates with different IDs remain distinct."
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/dossier-evidence-20261105/observations.jsonl",
     "analysis/dossier-reviews.jsonl",
-    "analysis/primary-document-reviews.jsonl"
+    "analysis/primary-document-reviews.jsonl",
+    "examples/nptel.catalog.jsonl",
+    "examples/nptel.jsonl",
+    "examples/nptel.boundaries.jsonl",
+    "analysis/external/nptel-catalog-20261105.json"
   ],
-  "last_reviewed_at": "2026-11-05T03:31:24.495339+00:00",
-  "next_action": "Find supported NPTEL metadata API/export; preserve institution/course/version and SWAYAM overlap. Resolve NC license scope and learning-versus-certification conditions before qualification.",
+  "last_reviewed_at": "2026-11-05T19:49:45.867547+00:00",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "primary_document_observations": [
     {
       "path": "runs/source-evidence-20261105/observations.jsonl",
@@ -116,58 +274,56 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Locate supported course metadata export/API and preserve course code/version and links; do not infer complete catalog from truncated HTML.",
+      "summary": "Local title-token queries over 3482 unambiguous NPTEL course IDs in the current published catalog; one conflicting course ID excluded, semester/version unknown.",
       "facts": {
-        "supported_request": null,
-        "actual_observation": "Primary-document HTTP/robots only",
-        "native_item_ids": [],
-        "paging_empty_error_tests": "not run"
+        "adapter": "nptel-catalog",
+        "endpoint": "https://nptel.ac.in/courses",
+        "cases": [
+          "catalog-title-01",
+          "catalog-title-02",
+          "catalog-title-03",
+          "catalog-title-04",
+          "catalog-title-05",
+          "catalog-title-06",
+          "catalog-title-07",
+          "catalog-title-08",
+          "catalog-title-09",
+          "catalog-title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Local title-token queries over 3482 unambiguous NPTEL course IDs in the current published catalog; one conflicting course ID excluded, semester/version unknown.",
+        "authentication": "Public catalog without login/key/payment.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "30f39f7382ec199866a2",
-          "observed_at": "2026-11-05T02:20:35.497609+00:00",
-          "outcome": "captured"
-        }
+        "examples/nptel.catalog.jsonl",
+        "examples/nptel.jsonl",
+        "examples/nptel.boundaries.jsonl",
+        "analysis/external/nptel-catalog-20261105.json"
       ],
       "open_questions": [
-        "Find supported documented query/export; execute exact, topic, paging, empty and error cases."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "NPTEL about page displays CC BY-NC-SA alongside an inconsistent Attribution-ShareAlike description. Preserve the explicit NC label; resolve scope/version and item exceptions before reuse. Optional proctored certification has a separately stated fee.",
+      "summary": "Course-list metadata used for bounded research title lookup. No blanket content redistribution license inferred; course reading, videos, assessments and certification are separate. Existing content licensing review remains open.",
       "facts": {
-        "metadata_license": null,
-        "content_license": null,
-        "cost_and_authentication": "Homepage/course listing is public; free learning vs enrollment/certification and complete reader/media access require review.",
-        "observed_license_labels": [
-          "Creative Commons Attribution-ShareAlike",
-          "CC BY - NC - SA"
-        ],
-        "license_ambiguity": "Description omits NC while explicit label contains NC; no commercial reuse assumption.",
-        "certificate_fee_observed": "Rs.1000/course on current SWAYAM NPTEL coordinator page; course conditions may vary",
-        "catalog_metadata_license": null
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Public catalog without login/key/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/dossier-evidence-20261105/observations.jsonl",
-        "analysis/primary-document-reviews.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "30f39f7382ec199866a2",
-          "observed_at": "2026-11-05T02:20:35.497609+00:00",
-          "outcome": "captured"
-        }
+        "examples/nptel.catalog.jsonl",
+        "examples/nptel.jsonl",
+        "examples/nptel.boundaries.jsonl",
+        "analysis/external/nptel-catalog-20261105.json"
       ],
       "open_questions": [
-        "Resolve authoritative license link/version and coverage; verify representative item rights and supported metadata-use terms."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -196,71 +352,64 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No catalog search examples run; primary-document title/navigation evidence does not count as retrieval.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "passing_examples": 0,
-        "representative_item_version": null,
-        "relevance": "unverified"
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Local title-token queries over 3482 unambiguous NPTEL course IDs in the current published catalog; one conflicting course ID excluded, semester/version unknown.",
+        "empty_and_boundary_evidence": "examples/nptel.boundaries.jsonl"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "30f39f7382ec199866a2",
-          "observed_at": "2026-11-05T02:20:35.497609+00:00",
-          "outcome": "captured"
-        }
+        "examples/nptel.catalog.jsonl",
+        "examples/nptel.jsonl",
+        "examples/nptel.boundaries.jsonl",
+        "analysis/external/nptel-catalog-20261105.json"
       ],
       "open_questions": [
-        "Collect ten native-ID query examples and inspect version/topic relevance once supported access exists."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Documentation collector observed robots/pacing and bounded HTML capture; this does not establish API quotas.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "capture_truncated": true,
-        "numeric_api_quota": null,
-        "policy_outcome": "captured"
+        "limits": [
+          "Only local title tokens and exact native identities; no upstream keyword API, body text, translation or catalog completeness beyond the published page.",
+          "No full books, lectures, videos or PDFs downloaded.",
+          "The observed single-page catalog is bounded; no fabricated server paging contract.",
+          "Conflicting native IDs excluded with both variants retained; title duplicates with different IDs remain distinct."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "30f39f7382ec199866a2",
-          "observed_at": "2026-11-05T02:20:35.497609+00:00",
-          "outcome": "captured"
-        }
+        "examples/nptel.catalog.jsonl",
+        "examples/nptel.jsonl",
+        "examples/nptel.boundaries.jsonl",
+        "analysis/external/nptel-catalog-20261105.json"
       ],
       "open_questions": [
-        "Review API/export allowance, refresh/deletion and backoff behavior."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Retain catalog lead for focused contract and item review; not qualified.",
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Locate supported course metadata export/API and preserve course code/version and links; do not infer complete catalog from truncated HTML.",
-        "blocker": "Supported machine retrieval not yet established",
-        "revisit_trigger": "Official retrieval documentation or permitted metadata export located"
+        "decision": "working-query-scope-verified",
+        "reason": "Local title-token queries over 3482 unambiguous NPTEL course IDs in the current published catalog; one conflicting course ID excluded, semester/version unknown.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "examples/nptel.catalog.jsonl",
+        "examples/nptel.jsonl",
+        "examples/nptel.boundaries.jsonl",
+        "analysis/external/nptel-catalog-20261105.json"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "30f39f7382ec199866a2",
-          "observed_at": "2026-11-05T02:20:35.497609+00:00",
-          "outcome": "captured"
-        }
-      ],
-      "open_questions": []
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
     }
   },
   "analysis_refs": [

@@ -15,6 +15,9 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'libretexts-ui': 'Browser-only live Commons Books keyword search, first24 native library/page IDs; Load more tested, full-text and edition identity not inferred',
+    'nptel-catalog': 'Local title-token search over3482 unambiguous course IDs from the published catalog; semester/version and lecture text not searched',
+    'booksprints-catalog': 'Local title-token search over139 published sample catalog entries; entries may be projects/series, full-book access not assumed',
     'fao-opensearch': 'Live title-filtered Atom publication search; first 3 results with native handles, no broad-topic relevance guarantee',
     'pmc-oai': 'Exact PMC native-record metadata lookup through OAI; date/set harvesting also tested, no upstream keyword search',
     'preprint-details': 'Live bioRxiv/medRxiv DOI and version lookups; date-paged metadata verified separately, no upstream title search',

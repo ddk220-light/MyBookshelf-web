@@ -451,3 +451,10 @@ O*NET topic review inspected 23 records across five queries and records missing 
 74 source records; 170 verified examples across 17 catalogs; zero complete expanded dossiers. All 160 known URL roles are triaged, but 43 canonical catalog identities (46 references), 28 named organizations and all full area/jurisdiction completion gates remain open. All ten documentation queues have one observation per queued job; processed documents are not qualified sources. Completion automation was privately checked and remains enabled; it returned no next-run timestamp. No native Goal UI activation is claimed. Resume from goal.json and completion-audit.json without restarting completed queues.
 
 Registry validation, capture/index/audit and 33 research tests pass, including a failure check for missing/mismatched saved-inventory hashes. No research runtime source changes, accounts, hosted database, purchases or outreach.
+
+
+### 2026-11-05T19:56:22.607735+00:00 — Learning connector query checkpoint
+
+45 Working,59 Blocked/failed,30 Still checking of134;485 passing examples. NPTEL and Book Sprints published catalog title searches and LibreTexts public Books UI now pass ten examples each. DIKSHA redirects to login with no guest search; defer pending documented public alternative. NPTEL native-ID conflict quarantined, LibreTexts k12 parsing corrected, empty/Load more boundaries saved. All owned collectors exited. Next industry candidates FoSTaC/CERT-In/NQR and scholarly candidates; check lease, PID command and remote freshness first. Research only.
+
+Validation:210research tests; capture/index/audit and registry checks pass. The NPTEL snapshot retains both contradictory112104188records and excludes them from matches. Book Sprints scope is139published sample entries, not all books or a full-reader guarantee. LibreTexts uses only its public Books form; browser Load more24→48and empty-search results are saved. DIKSHA login inspection submitted no credentials and created no account.

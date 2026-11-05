@@ -8,34 +8,199 @@
   "areas": [
     "C04"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
   "capabilities": [
-    "Imported historical retrieval analysis: [Platform](https://libretexts.org/); curated books/agreed export, then assess approved platform APIs."
+    "Live public Commons Books keyword searches through the published browser form; up to24 visible native library/page IDs per query; ten subjects relevant and Load more48 results verified."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
+    "adapter": "libretexts-ui",
+    "endpoint": "https://commons.libretexts.org/",
+    "cases": [
+      {
+        "id": "books-calculus",
+        "intent": "Search Commons Books: calculus",
+        "expected_ids": [
+          "math-2417"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://commons.libretexts.org/",
+          "ui_query": {
+            "text": "calculus",
+            "tab": "Books"
+          }
+        }
+      },
+      {
+        "id": "books-biology",
+        "intent": "Search Commons Books: biology",
+        "expected_ids": [
+          "bio-3734"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://commons.libretexts.org/",
+          "ui_query": {
+            "text": "biology",
+            "tab": "Books"
+          }
+        }
+      },
+      {
+        "id": "books-chemistry",
+        "intent": "Search Commons Books: chemistry",
+        "expected_ids": [
+          "chem-441581"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://commons.libretexts.org/",
+          "ui_query": {
+            "text": "chemistry",
+            "tab": "Books"
+          }
+        }
+      },
+      {
+        "id": "books-physics",
+        "intent": "Search Commons Books: physics",
+        "expected_ids": [
+          "phys-14430"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://commons.libretexts.org/",
+          "ui_query": {
+            "text": "physics",
+            "tab": "Books"
+          }
+        }
+      },
+      {
+        "id": "books-nursing",
+        "intent": "Search Commons Books: nursing",
+        "expected_ids": [
+          "med-44470"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://commons.libretexts.org/",
+          "ui_query": {
+            "text": "nursing",
+            "tab": "Books"
+          }
+        }
+      },
+      {
+        "id": "books-accounting",
+        "intent": "Search Commons Books: accounting",
+        "expected_ids": [
+          "biz-43052"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://commons.libretexts.org/",
+          "ui_query": {
+            "text": "accounting",
+            "tab": "Books"
+          }
+        }
+      },
+      {
+        "id": "books-japanese",
+        "intent": "Search Commons Books: japanese",
+        "expected_ids": [
+          "human-289529"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://commons.libretexts.org/",
+          "ui_query": {
+            "text": "japanese",
+            "tab": "Books"
+          }
+        }
+      },
+      {
+        "id": "books-statistics",
+        "intent": "Search Commons Books: statistics",
+        "expected_ids": [
+          "stats-13961"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://commons.libretexts.org/",
+          "ui_query": {
+            "text": "statistics",
+            "tab": "Books"
+          }
+        }
+      },
+      {
+        "id": "books-psychology",
+        "intent": "Search Commons Books: psychology",
+        "expected_ids": [
+          "socialsci-65318"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://commons.libretexts.org/",
+          "ui_query": {
+            "text": "psychology",
+            "tab": "Books"
+          }
+        }
+      },
+      {
+        "id": "books-economics",
+        "intent": "Search Commons Books: economics",
+        "expected_ids": [
+          "k12-182"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://commons.libretexts.org/",
+          "ui_query": {
+            "text": "economics",
+            "tab": "Books"
+          }
+        }
+      }
+    ],
     "historical_contract": "[Platform](https://libretexts.org/); curated books/agreed export, then assess approved platform APIs.",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "authentication": "Anonymous public browser form, no key/login/payment.",
+    "published_browser_search_urls": [
+      "https://commons.libretexts.org/?search=calculus"
+    ],
+    "search_result_page_size_observed": 24
   },
-  "licensing": "Books, pages, remixes; attribution/licenses may vary within collections. Do not index every section as a textbook.",
+  "licensing": "Official homepage describes curated OER from16 libraries as free. Published terms require compliance with each content license; no blanket metadata/content redistribution license inferred. Item reading/license review remains separate.",
   "documentation": [
     "https://libretexts.org/"
   ],
   "limitations": [
-    "Anonymous external discovery contract not verified. **High / P2**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "Browser UI only; no undocumented/private API used.",
+    "Books tab scope; Assets, Mini-Repos, Projects and Authors not separately verified.",
+    "Native library-page IDs do not establish a shared work/edition/version; identical titles from different pages preserved.",
+    "No bulk texts/PDFs downloaded; search metadata is not full-item reading or licensing verification.",
+    "No authenticated instructor functionality or free accounts used."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "examples/libretexts.access.jsonl",
+    "examples/libretexts.ui-inspection.jsonl",
+    "examples/libretexts.search-inspection.jsonl",
+    "examples/libretexts.browser.jsonl",
+    "examples/libretexts.jsonl",
+    "examples/libretexts.boundaries.jsonl",
+    "runs/learning-library-policy-20261105dt/observations.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T19:55:03.440362+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -81,36 +246,62 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Live public Commons Books keyword searches through the published browser form; up to24 visible native library/page IDs per query; ten subjects relevant and Load more48 results verified.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Imported historical retrieval analysis: [Platform](https://libretexts.org/); curated books/agreed export, then assess approved platform APIs."
+        "adapter": "libretexts-ui",
+        "endpoint": "https://commons.libretexts.org/",
+        "cases": [
+          "books-calculus",
+          "books-biology",
+          "books-chemistry",
+          "books-physics",
+          "books-nursing",
+          "books-accounting",
+          "books-japanese",
+          "books-statistics",
+          "books-psychology",
+          "books-economics"
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live public Commons Books keyword searches through the published browser form; up to24 visible native library/page IDs per query; ten subjects relevant and Load more48 results verified.",
+        "authentication": "Anonymous public browser form, no key/login/payment.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/libretexts.access.jsonl",
+        "examples/libretexts.ui-inspection.jsonl",
+        "examples/libretexts.search-inspection.jsonl",
+        "examples/libretexts.browser.jsonl",
+        "examples/libretexts.jsonl",
+        "examples/libretexts.boundaries.jsonl",
+        "runs/learning-library-policy-20261105dt/observations.jsonl"
       ],
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Official homepage describes curated OER from16 libraries as free. Published terms require compliance with each content license; no blanket metadata/content redistribution license inferred. Item reading/license review remains separate.",
       "facts": {
-        "license_notes": "Books, pages, remixes; attribution/licenses may vary within collections. Do not index every section as a textbook.",
-        "authentication_notes": "See historical notes; current contract must be reconciled with newer evidence.",
-        "cost_notes": null,
-        "terms_review": "pending current reconciliation"
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous public browser form, no key/login/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/libretexts.access.jsonl",
+        "examples/libretexts.ui-inspection.jsonl",
+        "examples/libretexts.search-inspection.jsonl",
+        "examples/libretexts.browser.jsonl",
+        "examples/libretexts.jsonl",
+        "examples/libretexts.boundaries.jsonl",
+        "runs/learning-library-policy-20261105dt/observations.jsonl"
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -132,49 +323,73 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "limitations": [
-          "Anonymous external discovery contract not verified. **High / P2**.",
-          "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
-        ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live public Commons Books keyword searches through the published browser form; up to24 visible native library/page IDs per query; ten subjects relevant and Load more48 results verified.",
+        "empty_and_boundary_evidence": "examples/libretexts.boundaries.jsonl"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/libretexts.access.jsonl",
+        "examples/libretexts.ui-inspection.jsonl",
+        "examples/libretexts.search-inspection.jsonl",
+        "examples/libretexts.browser.jsonl",
+        "examples/libretexts.jsonl",
+        "examples/libretexts.boundaries.jsonl",
+        "runs/learning-library-policy-20261105dt/observations.jsonl"
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "limits": [
+          "Browser UI only; no undocumented/private API used.",
+          "Books tab scope; Assets, Mini-Repos, Projects and Authors not separately verified.",
+          "Native library-page IDs do not establish a shared work/edition/version; identical titles from different pages preserved.",
+          "No bulk texts/PDFs downloaded; search metadata is not full-item reading or licensing verification.",
+          "No authenticated instructor functionality or free accounts used."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/libretexts.access.jsonl",
+        "examples/libretexts.ui-inspection.jsonl",
+        "examples/libretexts.search-inspection.jsonl",
+        "examples/libretexts.browser.jsonl",
+        "examples/libretexts.jsonl",
+        "examples/libretexts.boundaries.jsonl",
+        "runs/learning-library-policy-20261105dt/observations.jsonl"
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "working-query-scope-verified",
+        "reason": "Live public Commons Books keyword searches through the published browser form; up to24 visible native library/page IDs per query; ten subjects relevant and Load more48 results verified.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/libretexts.access.jsonl",
+        "examples/libretexts.ui-inspection.jsonl",
+        "examples/libretexts.search-inspection.jsonl",
+        "examples/libretexts.browser.jsonl",
+        "examples/libretexts.jsonl",
+        "examples/libretexts.boundaries.jsonl",
+        "runs/learning-library-policy-20261105dt/observations.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Production activation has not been requested by this task."
       ]
     }
   },

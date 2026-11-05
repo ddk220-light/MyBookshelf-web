@@ -8,7 +8,7 @@
   "areas": [
     "C09"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -20,7 +20,8 @@
     "endpoint": null,
     "cases": [],
     "historical_contract": "[Platform](https://diksha.gov.in/); investigate approved deployed search API/partnership. Sunbird software availability does not establish public DIKSHA API access.",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "authentication": "Official Library route currently requires login; no account created or credentials entered.",
+    "request_shape_verified": false
   },
   "licensing": "Documents, lessons and other media; filter types/language/board/grade and per-resource rights.",
   "documentation": [
@@ -34,11 +35,15 @@
     "analysis/documents.jsonl",
     "runs/dossier-evidence-20261105/observations.jsonl",
     "analysis/dossier-reviews.jsonl",
-    "analysis/primary-document-reviews.jsonl"
+    "analysis/primary-document-reviews.jsonl",
+    "runs/learning-library-policy-20261105dt/observations.jsonl",
+    "runs/learning-ui-routes-20261105du/observations.jsonl",
+    "examples/diksha.access.jsonl",
+    "examples/diksha.ui-inspection.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T03:31:24.495339+00:00",
+  "last_reviewed_at": "2026-11-05T19:55:40.492673+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Follow official Sunbird documentation as a specification lead; establish deployed DIKSHA catalog API authentication/terms before querying. Do not equate MIT software licensing with content or deployment access.",
+  "next_action": "Wait for a documented permitted anonymous catalog/API/export or restored guest search. Free reader login is acceptable in the product, but this research-only task does not create accounts or handle account credentials. Do not replay hidden Sunbird API endpoints.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -181,21 +186,23 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Retain a catalog candidate with current official documentation, but no verified production query route or full qualification.",
+      "status": "partial",
+      "summary": "The official public Library search link now redirects to DIKSHA login; anonymous browser shows only sign-in/registration, no guest search or item results.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Follow official Sunbird documentation as a specification lead; establish deployed DIKSHA catalog API authentication/terms before querying. Do not equate MIT software licensing with content or deployment access.",
-        "production_qualification_complete": false,
-        "blocker": "Hosted API and content rights not established",
-        "revisit_trigger": "Supported deployment documentation or permitted catalog export becomes available"
+        "decision": "deferred",
+        "blocker": "The official public Library search link now redirects to DIKSHA login; anonymous browser shows only sign-in/registration, no guest search or item results.",
+        "next_action": "Wait for a documented permitted anonymous catalog/API/export or restored guest search. Free reader login is acceptable in the product, but this research-only task does not create accounts or handle account credentials. Do not replay hidden Sunbird API endpoints.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl",
-        "runs/dossier-evidence-20261105/observations.jsonl",
-        "analysis/primary-document-reviews.jsonl"
+        "runs/learning-library-policy-20261105dt/observations.jsonl",
+        "runs/learning-ui-routes-20261105du/observations.jsonl",
+        "examples/diksha.access.jsonl",
+        "examples/diksha.ui-inspection.jsonl"
       ],
-      "open_questions": []
+      "open_questions": [
+        "A public supported alternative may exist, but none established from current deployment documentation."
+      ]
     }
   },
   "analysis_refs": [
@@ -263,5 +270,20 @@
       "text": "Assumptions: global discovery with explicit language/country context; lawful public hosts; verified free source login is allowed (owner clarification 2026-11-01), labelled separately from anonymous reading; no full-text hosting, subscription purchases, or library-card integration. Existing India library coverage makes NCERT, DIKSHA, StoryWeaver and Shodhganga useful follow-ups, but their discovery integrations are not assumed ready.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "The official public Library search link now redirects to DIKSHA login; anonymous browser shows only sign-in/registration, no guest search or item results.",
+    "attempt": "Compared official homepage/help and direct Library HTTP302; checked allowed public browser flow and inspected final login screen. No form submitted. Terms page still partial/truncated.",
+    "result": "No anonymous search results. HTTP200 belongs to login page, not catalog.",
+    "decision": "wait-for-documented-public-alternative",
+    "next_action": "Wait for a documented permitted anonymous catalog/API/export or restored guest search. Free reader login is acceptable in the product, but this research-only task does not create accounts or handle account credentials. Do not replay hidden Sunbird API endpoints.",
+    "retry_trigger": "Official deployment documents a permitted anonymous API/export or guest route; owner separately authorizes account-based research if desired.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/learning-library-policy-20261105dt/observations.jsonl",
+      "runs/learning-ui-routes-20261105du/observations.jsonl",
+      "examples/diksha.access.jsonl",
+      "examples/diksha.ui-inspection.jsonl"
+    ]
+  }
 }
