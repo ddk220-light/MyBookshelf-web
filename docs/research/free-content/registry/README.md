@@ -118,6 +118,14 @@ earlier success for the same case when computing current progress. Retries,
 pagination and duplicate requests do not inflate the count. The timestamp is the
 date observed, not a guarantee of future availability.
 
+For catalogs spanning distinct content subsets, `query.area_case_ids` assigns
+specific current cases to each area. An empty mapping establishes no query
+coverage there; book examples cannot prove newspaper search. Older records
+without this mapping retain source-level evidence until reviewed. Area closure
+still requires its separate manual review and qualified-origin target. A complete
+research dossier qualifies only its declared, evidenced subset; runtime ownership,
+activation approval and deployment are separate decisions.
+
 The initial ten-example suites emphasize **known-item retrieval**. They do not
 establish topic relevance, whole-book completeness, worldwide rights, reliability
 or production readiness. The separate five-known-item/five-topic qualification
