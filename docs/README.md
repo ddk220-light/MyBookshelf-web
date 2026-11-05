@@ -28,6 +28,10 @@ retired authentication and unrelated research archives are outside its scope.
 
 ## Free ebooks and scientific papers: implementation
 
+- [Free-knowledge expansion plan](research/free-content/EXPANSION_PLAN.md): 20
+  categories, a route to 100 qualified sources per category, global/India discovery
+  and source-queryability gates; [review template](research/free-content/SOURCE_REVIEW_TEMPLATE.md).
+
 - [Overview and source categories](research/free-content/README.md).
 - [Repository catalog, APIs and access requirements](research/free-content/source-catalog.md).
 - [Metadata discovery architecture and delivery phases](research/free-content/architecture.md).

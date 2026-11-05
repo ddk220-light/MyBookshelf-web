@@ -1,5 +1,16 @@
 # MyBookshelf web handoff
 
+**Free-content expansion proposal, 2026-11-05:** the owner requested a plan to
+find 100 searchable sources per category, including global and India/local
+coverage. [The plan](research/free-content/EXPANSION_PLAN.md) defines 20 categories,
+discovery methods, qualification gates, staged delivery and a reusable review
+template. It is documentation only on `research/free-content-discovery-expansion`
+in `/workspace/MyBookshelf-web-free-content-expansion`; no candidate integrations
+are enabled by this proposal. The no-new-datastore runtime policy continues.
+The earlier live simplification was released through PR #160, main `82c6559`;
+[#159](https://github.com/ddk220-light/MyBookshelf-web/issues/159) records that
+release. Older Redis-dependent descriptions below are historical.
+
 **Current free-content direction, 2026-11-03:** the owner requested a simpler
 free live implementation with no datastore until a specific need is proven.
 Use [the active plan](research/free-content/SIMPLE_LIVE_PLAN.md) / #156 on
