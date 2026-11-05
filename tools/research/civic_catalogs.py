@@ -13,6 +13,7 @@ from source_registry import REGISTRY, USER_AGENT, evaluate
 
 FIELDS = ['document_number', 'title', 'type', 'publication_date', 'effective_on',
           'citation', 'agencies', 'html_url', 'pdf_url', 'abstract', 'correction_of', 'corrections']
+LIFECYCLE_FIELDS = ['action', 'dates', 'disposition_notes']
 MAX_BYTES = 256 * 1024
 LOCK = Path('/tmp/mybookshelf-source-review.lock')
 
@@ -29,7 +30,7 @@ def allowed_request(sid, req):
         allowed = {'fields[]', 'conditions[term]', 'conditions[type][]',
                    'conditions[publication_date][year]', 'per_page', 'page', 'order'}
         if (set(params) - allowed or not isinstance(params.get('fields[]'), list)
-                or not params['fields[]'] or set(params['fields[]']) - set(FIELDS)
+                or not params['fields[]'] or set(params['fields[]']) - set(FIELDS + LIFECYCLE_FIELDS)
                 or not 1 <= int(params.get('per_page', 5)) <= 5):
             raise ValueError('Metadata fields and at most five results are required')
         year = params.get('conditions[publication_date][year]')
@@ -78,9 +79,20 @@ def parse_federal(data):
             raise ValueError('Missing or mismatched native reader link')
         if item.get('type') not in ('Rule', 'Proposed Rule', 'Notice', 'Presidential Document'):
             raise ValueError('Unknown legal document type')
+        for field in LIFECYCLE_FIELDS:
+            if item.get(field) is not None and not isinstance(item[field], str):
+                raise ValueError('Lifecycle metadata must be text or null')
+        corrections = item.get('corrections', [])
+        if not isinstance(corrections, list):
+            raise ValueError('Corrections must be an array of native document links')
+        for link in corrections + ([item['correction_of']] if item.get('correction_of') else []):
+            if not isinstance(link, str) or not re.fullmatch(
+                    r'https://www\.federalregister\.gov/api/v1/documents/(?:C[0-9]+-)?[0-9]{4}-[0-9]+(?:\.json)?', link):
+                raise ValueError('Correction relationship must retain its native document identity')
         seen.add(identity)
         result.append({'id': identity, 'title': item['title'], 'record_kind': 'federal-register-document',
                        **{k: item.get(k) for k in FIELDS if k not in ('document_number', 'title')},
+                       **{k: item[k] for k in LIFECYCLE_FIELDS if k in item},
                        'landing_page': item['html_url'], 'reading_access_verified': False,
                        'legal_status': 'Informational HTML/XML rendition; verify official edition for legal reliance.',
                        'current_law_verified': False})
@@ -92,11 +104,48 @@ def check_federal_filters(records, req):
     year = params.get('conditions[publication_date][year]')
     kinds = {'RULE': 'Rule', 'PRORULE': 'Proposed Rule', 'NOTICE': 'Notice', 'PRESDOCU': 'Presidential Document'}
     kind = params.get('conditions[type][]')
+    native = re.fullmatch(r'/api/v1/documents/((?:C[0-9]+-)?[0-9]{4}-[0-9]+)\.json', urlsplit(req['url']).path) if req.get('url') else None
+    if native and (len(records) != 1 or records[0]['id'] != native.group(1)):
+        raise ValueError('Native lookup returned a different document or no document')
     for row in records:
         if year is not None and row['publication_date'][:4] != str(year):
             raise ValueError('Provider result does not match the requested publication year')
         if kind in kinds and row['type'] != kinds[kind]:
             raise ValueError('Provider result does not match the requested document type')
+
+
+def review_federal_refresh(previous, candidate):
+    """Review saved evidence only; never replace a catalog or infer legal effect."""
+    old = parse_federal(previous['observed_output'])
+    check_federal_filters(old, previous['request'])
+    result = {'query_verified': False, 'replace_accepted': False,
+              'current_law_verified': False, 'retained_ids': [r['id'] for r in old],
+              'removed_ids': [], 'changed_ids': [], 'added_ids': [],
+              'status': 'candidate-rejected', 'snapshot_stale': True}
+    for row in (previous, candidate):
+        digest = row.get('response_sha256')
+        if not isinstance(digest, str) or not re.fullmatch('[0-9a-f]{64}', digest):
+            return {**result, 'reason': 'Missing response hash; evidence cannot establish freshness'}
+        if row.get('http', {}).get('sampled_bytes_sha256') != digest:
+            return {**result, 'reason': 'Response hash disagrees with saved HTTP evidence'}
+    if previous['request'] != candidate.get('request'):
+        return {**result, 'reason': 'Different request scope is not a refresh of this snapshot'}
+    http = candidate.get('http', {})
+    if candidate.get('outcome') != 'captured' or http.get('status') != 200 or http.get('truncated'):
+        return {**result, 'reason': 'Unavailable/failed candidate; preserve history, do not infer removal or repeal'}
+    try:
+        new = parse_federal(candidate['observed_output'])
+        check_federal_filters(new, candidate['request'])
+    except (ValueError, KeyError, TypeError) as exc:
+        return {**result, 'reason': str(exc)}
+    before, after = {r['id']: r for r in old}, {r['id']: r for r in new}
+    changed = sorted(k for k in before.keys() & after.keys() if before[k] != after[k])
+    missing = sorted(before.keys() - after.keys())
+    added = sorted(after.keys() - before.keys())
+    return {**result, 'status': 'manual-review-required' if changed or missing or added else 'unchanged',
+            'snapshot_stale': bool(changed or missing or added), 'changed_ids': changed, 'added_ids': added,
+            'missing_from_page_ids': missing,
+            'reason': 'Page disappearance is not catalog deletion; action/correction text requires review, never automatic current-law status'}
 
 
 def parse_budget(data, code, agency):
