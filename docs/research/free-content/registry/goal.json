@@ -41,7 +41,7 @@
   ],
   "execution": {
     "batch_size": "Small checkpoints, not a completion quota. Continue productive independent work within each run budget; resume hourly without waiting for new user requests.",
-    "cursor": "Lead-role triage saved for all 138 existing links. Resolve 50 remaining candidate identities (56 references), review named entities in archived/current primary documents, continue five G02 dossiers, and finish Europe PMC evidence reconciliation. Documentation queue must not be restarted.",
+    "cursor": "Resume from completion-audit.json and coverage-audit.json. The 153-job evidence worker is finished; do not restart its completed queue. Current: 57 records, 150 verified examples across 15 catalogs, no complete expanded dossiers. Reconcile 50 catalog identities/56 references, 31 unresolved named organizations and 22 newly discovered URL leads; prioritize G02 India curriculum/vocational query contracts, OTL reader/rights checks and Europe PMC correction/version/rights tests. Continue all groups and country/language gaps.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
@@ -62,13 +62,19 @@
     },
     "completion_audit": "completion-audit.json",
     "last_checkpoint": {
-      "observed_at": "2026-11-05T02:50:06.486097+00:00",
+      "observed_at": "2026-11-05T03:02:37.600357+00:00",
       "source_records": 57,
-      "verified_examples": 140,
-      "query_verified_sources": 14,
-      "validation": "Capture/index/audit, source validation and 22 research tests passed; unresolved named entities stay open.",
-      "goal_complete": false,
-      "note": "Documentation queue completed 153/153: 121 captured, 30 policy/access skips, 2 request failures. OTL adds ten actual metadata-export/local queries."
+      "verified_examples": 150,
+      "query_verified_sources": 15,
+      "source_dossiers_complete": 0,
+      "existing_links_triaged": 138,
+      "new_untriaged_links": 22,
+      "unresolved_catalog_identities": 50,
+      "unresolved_catalog_references": 56,
+      "named_entity_leads": 35,
+      "unresolved_named_entities": 31,
+      "validation": "Source registry, capture/index/evidence audit and 23 research-tool tests pass. Final capture includes current issue snapshots.",
+      "goal_complete": false
     },
     "native_chat_goal": {
       "activated": false,
@@ -86,9 +92,34 @@
       "queue_size": 153,
       "publish_checkpoints": true,
       "validation": "17 research-tool tests passed before launch.",
-      "note": "Verify PID and advancing heartbeat before claiming this run is still alive. This phase does not autonomously finish every source dossier."
+      "note": "Verify PID and advancing heartbeat before claiming this run is still alive. This phase does not autonomously finish every source dossier.",
+      "final_commit": "dd2b8a5",
+      "processed": 153,
+      "outcomes": {
+        "captured": 121,
+        "skipped": 30,
+        "blocked-or-failed": 2
+      }
     },
-    "coverage_audit": "coverage-audit.json"
+    "coverage_audit": "coverage-audit.json",
+    "next_actions": [
+      {
+        "priority": 1,
+        "task": "Finish India/global learning-source retrieval contracts and representative reader/rights review; supported local metadata search remains allowed."
+      },
+      {
+        "priority": 2,
+        "task": "Resolve existing catalog identity mappings and newly captured Book Dash organizations/URLs without counting mirrors, app stores or institutions as qualified origins."
+      },
+      {
+        "priority": 3,
+        "task": "Review named entities in every current/historical corpus snapshot and primary-document observation; append explicit extraction reviews and retain unresolved names."
+      },
+      {
+        "priority": 4,
+        "task": "Complete remaining source dossier facts and ten current passing examples for retained queryable candidates; continue all six groups and 49 areas, with 18 explicit USA/India civic coverage cells."
+      }
+    ]
   },
   "constraints": [
     "Research only; do not enable app sources, import runtime catalogs or deploy.",

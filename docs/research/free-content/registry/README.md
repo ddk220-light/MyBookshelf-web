@@ -98,9 +98,10 @@ representative reading/file checks are retained in the G01 batch evidence; ten
 query successes do not mean ten complete books have been read or downloaded.
 
 Source states are `candidate`, `probed`, `deferred`, and
-`ten-query-examples-verified`. This research never sets `enabled` or
-`full_qualification_complete` to true. Existing production sources remain outside
-this research's activation decisions. Publishers sharing Thoth are separate
+`ten-query-examples-verified`. This research never sets `enabled` to true.
+`full_qualification_complete` may become true only after all evidence-backed
+research gates are satisfied; it is separate from approval to activate a source.
+Existing production sources remain outside this research's activation decisions. Publishers sharing Thoth are separate
 origins with one connector; language wikis and mirrors are not extra sources.
 Aggregator memberships and overlapping records need deduplication.
 
@@ -130,12 +131,29 @@ distinct exact-symbol searches execute locally. The evidence labels this mode;
 it does not claim ten live full-text API searches. Version and anchor identities
 are retained, and a changed inventory version fails validation.
 
+For `open-textbook-library`, a documented CC0 CSV export supports actual local
+title/subject searches. Its book URLs remain metadata-reported until reader access
+is tested; paid print links are excluded. For `europe-pmc`, examples are real
+exact-DOI REST queries with provider/native IDs retained; correction notices and
+editorials must not be silently relabelled as original studies. Provider-specific
+robots pacing applies (ten seconds in the current Europe PMC evidence).
+
 After editing research/design documents or importing external findings, run
 `capture`, `index`, then `audit`. Capture embeds current text losslessly, index
 copies source-matching passages with provenance, and audit rejects missing/changed
 captures. Source sections marked partial/unknown remain unresolved even if query
 examples pass. Later mark a section complete only with concrete evidence and a
 reviewed explanation; use not-applicable only with a justified reason.
+
+`coverage-audit.json` distinguishes capture from entity completeness. Its open
+catalog mappings and unreviewed named entities are real outstanding work, even
+when all linked URLs have a role assigned. Record manual named-entity reviews in
+append-only `analysis/named-entity-reviews.jsonl`, keyed by archived document ID
+(or the `primary:` observation identity reported by the audit), with reviewed_at,
+status, rationale, resolved entities and unresolved_names. Review superseded
+versions too. Country-specific civic coverage is recorded separately in
+`analysis/jurisdiction-reviews.jsonl`; geography cannot be inferred from an
+operator's country or a single cloud-network request.
 
 After a recheck, update source state and the progress checkpoint to match the
 latest evidence; a previous verified state with failing current cases is rejected

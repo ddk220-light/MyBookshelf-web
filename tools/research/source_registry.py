@@ -71,6 +71,18 @@ def normalize(source, data, endpoint=None):
     adapter = source['query']['adapter']
     if adapter in ('sphinx-inventory', 'otl-csv'):
         return data['results']
+    if adapter == 'europe-pmc':
+        if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
+            raise ValueError('Open-access filter was not satisfied by every returned record')
+        return [{'id': row['source'] + ':' + row['id'], 'title': row['title'],
+                 'source': row['source'], 'native_id': row['id'], 'pmcid': row.get('pmcid'),
+                 'doi': row.get('doi'), 'language': row.get('language'), 'year': row.get('pubYear'),
+                 'is_open_access': row.get('isOpenAccess'),
+                 'landing_page': 'https://europepmc.org/article/' + row['source'] + '/' + row['id'],
+                 'reported_free_links': [link for link in row.get('fullTextUrlList', {}).get('fullTextUrl', [])
+                                         if link.get('availabilityCode') in ('OA', 'F')
+                                         and link.get('url', '').startswith('https://')]}
+                for row in data['resultList']['result']]
     if adapter == 'thoth':
         rows = data['data']['works']
         results = []

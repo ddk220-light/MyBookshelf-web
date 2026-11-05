@@ -1,3 +1,11 @@
+## 2026-11-05: lead triage, scholarly queries and explicit completeness gaps
+
+Current checkpoint: **57 source records; 150 current verified examples across 15 catalogs; zero complete expanded dossiers.** Europe PMC adds ten actual DOI queries, with topic/empty/pagination observations and correction/editorial limitations retained. OTL adds ten local queries over a supported CC0 metadata export. Existing production activation is unchanged.
+
+All 138 preexisting URL leads now have explicit roles/decisions. Fifty candidate catalog identities (56 references) remain unmapped. Five G02 dossiers cover MIT OCW, SWAYAM, Bharatavani, Bharat Skills and NPTEL, with unsupported retrieval/rights modes explicit. Read the Docs search was skipped under its robots rule. The Book Dash partner excerpt contributed 35 named organizations (31 unresolved) and 22 additional URL leads, with no new qualified-origin count.
+
+`coverage-audit.json` exposes per-document capture hashes, unresolved entity mappings, pending historical/current named-entity review, missing dossier fields and all 18 USA/India civic coverage cells. M0 is open until entity completeness is established; prior document-capture completion must not be confused with that stronger requirement. Missing capture hashes, partial sections, open questions and historical-only evidence cannot establish completion. Issues #164–170 are updated and archived. Registry/evidence checks and 23 research tests pass. Continue from the goal cursor; the recurring completion goal remains open.
+
 ## 2026-11-05: completed documentation pass and textbook metadata queries
 
 The primary-document queue finished all 153 jobs: 121 captured responses, 30 policy/access skips and two request failures. Skips and failures remain saved; a captured page is not a qualified source. The process exited and its final checkpoint is `dd2b8a5`.

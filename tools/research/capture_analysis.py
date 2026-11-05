@@ -168,6 +168,8 @@ def evidence_run_audit(registry=REGISTRY):
             if row['job_id'] not in known or row['job_id'] in seen:
                 errors.append(f'Unknown/duplicate documentation observation: {directory.name}/{row["job_id"]}')
             seen.add(row['job_id'])
+            if not row.get('robots_evidence'):
+                errors.append(f'Missing capture hash/policy evidence: {directory.name}/{row["job_id"]}')
             for evidence in [row.get('robots_evidence'), row.get('http')]:
                 if evidence is not None and not re.fullmatch(r'[0-9a-f]{64}', evidence.get('sampled_bytes_sha256', '')):
                     errors.append(f'Missing capture hash: {directory.name}/{row["job_id"]}')
@@ -278,8 +280,17 @@ def audit():
                                        'status': 'accounted' if accounted else 'open',
                                        'qualified_source_ids': qualified,
                                        'review': review or None})
+    entity_leads_file = REGISTRY / 'analysis/entity-leads.jsonl'
+    entity_leads = {}
+    if entity_leads_file.exists():
+        for line in entity_leads_file.read_text().splitlines():
+            row = json.loads(line)
+            entity_leads[row['id']] = row
+    unresolved_names = [{k: row.get(k) for k in ('id', 'observed_name', 'role', 'status', 'next_action')}
+                        for row in entity_leads.values() if not row.get('source_id')]
     coverage = {'schema_version': 1, 'captured_documents': captured_docs,
                 'unresolved_entity_mappings': unmapped, 'documentation_runs': run_audits,
+                'named_entity_lead_count': len(entity_leads), 'unresolved_named_entities': unresolved_names,
                 'named_entity_review_complete': named_complete,
                 'pending_named_entity_document_ids': pending_entity_documents,
                 'pending_primary_document_entity_reviews': pending_primary_documents,
@@ -293,6 +304,7 @@ def audit():
         'query_verified_sources': sum(v['passing_examples'] >= 10 for v in source_gaps.values()),
         'verified_examples': sum(v['passing_examples'] for v in source_gaps.values()),
         'untriaged_link_ids': unresolved, 'unresolved_entity_mappings': unmapped,
+        'named_entity_lead_count': len(entity_leads), 'unresolved_named_entity_count': len(unresolved_names),
         'named_entity_review_complete': named_complete, 'documentation_runs': run_audits,
         'source_gaps': source_gaps, 'area_coverage': memberships,
         'goal_complete': not errors and not unresolved and all(v['complete'] for v in source_gaps.values()) and all(v['qualified_source_ids'] for v in memberships.values()),

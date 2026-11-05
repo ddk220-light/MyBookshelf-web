@@ -1,6 +1,5 @@
 """Bounded research queries over the documented Open Textbook Library CSV export."""
 import csv
-from datetime import datetime, timezone
 import io
 import json
 from urllib.parse import urlsplit
@@ -18,7 +17,7 @@ def parse_otl(body):
     rows, seen = [], set()
     for item in reader:
         sid, title, landing = item['Otl id'], item['Title'], item['Library URL']
-        if not sid or sid in seen or not title or not landing.startswith('https://open.umn.edu/opentextbooks/textbooks/'):
+        if not sid or not sid.isascii() or not sid.isdigit() or sid in seen or not title or not landing.startswith('https://open.umn.edu/opentextbooks/textbooks/'):
             raise ValueError('Missing, duplicate or noncanonical catalog identity')
         seen.add(sid)
         links = []

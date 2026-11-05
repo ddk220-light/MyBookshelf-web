@@ -1,6 +1,6 @@
 import unittest
 
-from source_registry import current_verified, evaluate, fingerprint, request_url
+from source_registry import current_verified, evaluate, fingerprint, request_url, normalize
 
 
 class EvidenceTests(unittest.TestCase):
@@ -66,6 +66,20 @@ class EvidenceTests(unittest.TestCase):
                 {'canonical': True, 'fullTextUrl': 'https://books.publisher.example/book.pdf'}]}]}]}}
         links = self.result(data)['sample_results'][0]['canonical_digital_links']
         self.assertEqual(links, [{'format': 'PDF', 'url': 'https://books.publisher.example/book.pdf'}])
+
+    def test_scholarly_identity_keeps_provider_namespace_and_excludes_subscription_link(self):
+        source = {'query': {'adapter': 'europe-pmc'}}
+        item = {'id': '42', 'source': 'MED', 'title': 'Correction to an article', 'isOpenAccess': 'Y',
+                'fullTextUrlList': {'fullTextUrl': [
+                    {'availabilityCode': 'S', 'url': 'https://doi.org/example'},
+                    {'availabilityCode': 'OA', 'url': 'https://europepmc.org/articles/PMC42'}]}}
+        rows = normalize(source, {'resultList': {'result': [item, {**item, 'source': 'PMC'}]}})
+        self.assertNotEqual(rows[0]['id'], rows[1]['id'])
+        self.assertEqual(rows[0]['title'], 'Correction to an article')
+        self.assertEqual(len(rows[0]['reported_free_links']), 1)
+        self.assertEqual(rows[0]['reported_free_links'][0]['availabilityCode'], 'OA')
+        with self.assertRaises(ValueError):
+            normalize(source, {'resultList': {'result': [{**item, 'isOpenAccess': 'N'}]}})
 
 
 if __name__ == '__main__':

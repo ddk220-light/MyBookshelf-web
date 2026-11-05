@@ -2,40 +2,230 @@
   "schema_version": 1,
   "id": "europe-pmc",
   "name": "Europe PMC",
-  "homepage": "https://europepmc.org/RestfulWebService",
-  "homepage_status": "historical-reference; canonical homepage/operator needs review",
+  "homepage": "https://europepmc.org/",
+  "homepage_status": "Official REST documentation captured in current pass",
   "group": "G05",
   "areas": [
     "C03"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
-  "record_kind": "catalog-candidate",
+  "record_kind": "scholarly-metadata-and-fulltext-aggregator",
   "capabilities": [
-    "Imported historical retrieval analysis: REST `/webservices/rest/search?query=...&format=json`, `OPEN_ACCESS:Y`, `IN_PMC:Y`, `resultType=core`, cursorMark. [REST docs](https://europepmc.org/RestfulWebService)"
+    "Public documented REST search returns native provider+ID identities, DOI/PMCID, language, year and availability-labelled full-text links.",
+    "Ten distinct exact-DOI OA queries passed; a topic query, empty result and second cursor page were also observed. These do not prove topic precision across arbitrary queries."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "historical_contract": "REST `/webservices/rest/search?query=...&format=json`, `OPEN_ACCESS:Y`, `IN_PMC:Y`, `resultType=core`, cursorMark. [REST docs](https://europepmc.org/RestfulWebService)",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "adapter": "europe-pmc",
+    "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+    "cases": [
+      {
+        "id": "doi-01",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42769525"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1155/ijog/9865175 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-02",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42198669"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.3390/pathogens15050543 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-03",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42340043"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1590/0037-8682-0470-2025 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-04",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42770717"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1128/msystems.00953-26 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-05",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42326416"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.3389/fmicb.2026.1884772 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-06",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42934756"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1186/s12936-026-06041-5 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-07",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42635105"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1080/16549716.2026.2718934 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-08",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42298720"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1186/s13071-026-07507-w AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-09",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42497109"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1371/journal.pone.0341285 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-10",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42587337"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1186/s42522-026-00236-1 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      }
+    ],
+    "authentication": "None for tested public REST search",
+    "cost": "No account/key/payment used; numeric API allowance not established by this review",
+    "research_pause_seconds": 10,
+    "paging": "cursorMark=* then nextCursorMark or nextPageUrl, preserving original query/filter/resultType/pageSize",
+    "supported_modes": [
+      "keyword/field query",
+      "exact DOI query",
+      "OPEN_ACCESS:Y filter",
+      "JSON core metadata",
+      "cursor pagination"
+    ],
+    "unsupported_or_unverified_modes": [
+      "Guaranteed full-text access for every metadata hit",
+      "Licensing/reuse clearance for every OA article",
+      "Item-level version/correction resolution across all provider sources"
+    ]
   },
-  "licensing": "Returned full-text locations/PMCID pages. OA filter is stricter than free reading; PMC inclusion does not imply an open reuse license. PubMed records alone need not be free.",
+  "licensing": "OA flags and fullTextUrl availability are discovery metadata, not blanket reuse licenses. Metadata terms and each representative article license/correction status still require review; subscription-labelled DOI links are excluded from free-link samples.",
   "documentation": [
     "https://europepmc.org/RestfulWebService"
   ],
   "limitations": [
-    "No key for public REST. Parse individual access/license fields and observe service limits. OA query worked. **Low / P0**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "Europe PMC overlaps PubMed/PMC and publisher copies; source+id/DOI/PMCID identities must remain linked without multiplying origins.",
+    "One verified example is explicitly a correction and another an editorial by title; do not present every hit as an original study. Detailed publication type/version relations are not yet reviewed.",
+    "The tested examples are English. Country-specific access and language breadth are not established.",
+    "Ten identity searches are complete; full dossier, reader access, rights and topical relevance remain open. Existing deployed source state was not changed."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "examples/europe-pmc.jsonl",
+    "examples/europe-pmc.benchmark.jsonl",
+    "runs/source-evidence-20261105/observations.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T02:56:38.808777+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Inspect permitted reader access and article licenses; capture publication types/correction/retraction relations, complete topic relevance and India/language coverage, and reconcile PubMed/PMC overlap. Do not change existing deployed source activation.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -45,137 +235,155 @@
   },
   "dossier": {
     "identity_and_duplicates": {
-      "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "status": "complete",
+      "summary": "Official Europe PMC REST documentation identifies EMBL-EBI/NLM collaboration; aggregate source identities must be retained.",
       "facts": {
-        "id": "europe-pmc",
-        "name": "Europe PMC",
-        "homepage_reference": "https://europepmc.org/RestfulWebService",
-        "operator": null,
-        "origin_deduplication": "pending"
+        "operator": {
+          "name": "EMBL-EBI, supported by Europe PMC Funders Group in collaboration with NLM",
+          "jurisdiction": "UK/international",
+          "evidence": "runs/source-evidence-20261105/observations.jsonl"
+        },
+        "native_key": "source:id; preserve DOI and PMCID as related identifiers",
+        "deduplication": "Overlap with PubMed/PMC, publisher copies and indexed repositories; none are additional origins just because returned here."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
-      "open_questions": [
-        "Confirm operator, parent and catalog-versus-origin deduplication."
-      ]
+      "open_questions": []
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Observed life-sciences/public-health article metadata, not a coverage census.",
       "facts": {
-        "category_industry_candidates": [
+        "categories": [
           "C03"
         ],
-        "languages": null,
-        "jurisdictions": null,
-        "coverage_evidence": "pending"
+        "example_language": "eng",
+        "jurisdiction": "International scholarly coverage; USA/India access not tested",
+        "industry_overlap": "I17 healthcare candidate; no industry qualification inferred"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
       "open_questions": [
-        "Verify country/language/subject coverage with item evidence."
+        "Test additional languages and India-relevant works; measure incremental coverage over existing sources."
       ]
     },
     "query_contract": {
-      "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "status": "complete",
+      "summary": "Documented GET search supports JSON core records, field/DOI queries and cursor pagination; exact executed requests are preserved in each example.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Imported historical retrieval analysis: REST `/webservices/rest/search?query=...&format=json`, `OPEN_ACCESS:Y`, `IN_PMC:Y`, `resultType=core`, cursorMark. [REST docs](https://europepmc.org/RestfulWebService)"
-        ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+        "request_parameters": {
+          "query": "DOI:<doi> AND OPEN_ACCESS:Y",
+          "format": "json",
+          "pageSize": 3,
+          "resultType": "core"
+        },
+        "native_id": "source:id",
+        "paging": "cursorMark=* then nextCursorMark or nextPageUrl, preserving original query/filter/resultType/pageSize",
+        "zero_result": "Observed 200 JSON hitCount=0 for sentinel term",
+        "unsupported": [
+          "Guaranteed full-text access for every metadata hit",
+          "Licensing/reuse clearance for every OA article",
+          "Item-level version/correction resolution across all provider sources"
+        ]
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
-      "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
-      ]
+      "open_questions": []
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "OA flags and fullTextUrl availability are discovery metadata, not blanket reuse licenses. Metadata terms and each representative article license/correction status still require review; subscription-labelled DOI links are excluded from free-link samples.",
       "facts": {
-        "license_notes": "Returned full-text locations/PMCID pages. OA filter is stricter than free reading; PMC inclusion does not imply an open reuse license. PubMed records alone need not be free.",
-        "authentication_notes": "See historical notes; current contract must be reconciled with newer evidence.",
-        "cost_notes": null,
-        "terms_review": "pending current reconciliation"
+        "authentication": "none used",
+        "free_access_evidence": "OA flag and availabilityCode metadata only",
+        "license_review": "pending"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+        "Verify current metadata reuse terms and representative content license URLs; do not infer quota or universal copyright permission."
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "API metadata returned reported free reader links, but no complete article reader has yet been verified in this batch.",
       "facts": {
-        "evidence_references": [
-          "analysis/documents.jsonl"
-        ],
-        "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "HTTP_search": 200,
+        "login": "No API login used; per-reader login/access conditions unknown",
+        "access_location": "Managed cloud execution only"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
       "open_questions": [
-        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+        "Test allowed representative full reader destinations and document any account/geographic/WAF restrictions."
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Ten distinct DOI resolutions matched preselected native IDs; correction/editorial titles and paging/empty observations are preserved.",
       "facts": {
-        "limitations": [
-          "No key for public REST. Parse individual access/license fields and observe service limits. OA query worked. **Low / P0**.",
-          "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
-        ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "positive_examples": 10,
+        "example_selection": "Scouted metadata first; independently executed exact DOI queries then matched expected native IDs",
+        "topic_benchmark": "One malaria query only; no general precision claim",
+        "version_risk": "Correction to a study is a distinct item, not automatically the original study"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+        "Capture publication types, correction/retraction relations, version identity and broader topic relevance."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Serial requests obeyed the observed 10-second robots pacing; no account, paid service or bulk article download was used.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "request_spacing_seconds": 10,
+        "provider_numeric_API_quota": null,
+        "response_bound_bytes": 4194304,
+        "backoff": "Stop source on HTTP 403/429/503; retain all outcomes"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Review published API limits and update/deletion/version reconciliation guidance."
       ]
     },
     "decision_and_followup": {
-      "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "status": "complete",
+      "summary": "Retain as current query-verified scholarly catalog evidence. Research qualification and new activation approval remain false.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "retain-for-rights-reader-version-review",
+        "next_action": "Inspect permitted reader access and article licenses; capture publication types/correction/retraction relations, complete topic relevance and India/language coverage, and reconcile PubMed/PMC overlap. Do not change existing deployed source activation.",
+        "existing_production_status": "Unchanged by research; enabled=false here is not a statement about deployed integration."
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
-      "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
-      ]
+      "open_questions": []
     }
   },
   "analysis_refs": [
@@ -339,5 +547,10 @@
       "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "operator": {
+    "name": "EMBL-EBI, supported by Europe PMC Funders Group in collaboration with NLM",
+    "jurisdiction": "UK/international",
+    "evidence": "runs/source-evidence-20261105/observations.jsonl"
+  }
 }
