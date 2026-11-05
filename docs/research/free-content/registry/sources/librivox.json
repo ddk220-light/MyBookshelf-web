@@ -220,5 +220,281 @@
     "../batches/G01_FIRST_TEN.md"
   ],
   "last_reviewed_at": "2026-11-05",
-  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes."
+  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 83,
+    "text": "| **LibriVox — audiobook index** | `/api/feed/audiobooks/?title=...&format=json`, `url_librivox`, section/feed links. [Docs](https://librivox.org/api/info) | No key in successful title query. US public-domain recordings, jurisdiction may differ. Preserve narrator/language/duration/abridgement/recording identity independently of book. | **Low / P1 optional**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "librivox",
+        "name": "LibriVox",
+        "homepage_reference": "https://librivox.org/",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C05",
+          "C01",
+          "C02"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "adapter": "librivox",
+        "endpoint": "https://librivox.org/api/feed/audiobooks",
+        "capabilities": [
+          "Documented title/author/genre search, pagination and recording/section metadata."
+        ],
+        "supported_and_unsupported_modes": "needs explicit review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "license_notes": "Recordings are public domain in the USA; check listener jurisdiction and underlying work separately.",
+        "authentication_notes": "none for sampled public queries",
+        "cost_notes": "No fee or API key used; respect current provider policies and rate limits.",
+        "terms_review": "pending current reconciliation"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "../batches/G01_QUERY_EVIDENCE.json",
+          "../batches/G01_ACCESS_EVIDENCE.json",
+          "../batches/G01_FIRST_TEN.md"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "limitations": [
+          "Preserve narrator, recording edition, language and abridgement. US public domain does not imply worldwide rights.",
+          "Documented audiobook-not-found JSON with HTTP 404 is an empty result, not necessarily an outage."
+        ],
+        "ranking_relevance_completeness": "not fully qualified"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "paging": "offset, limit <= 500",
+        "research_pause_seconds": 2,
+        "provider_quota_refresh_deletion_contract": "needs explicit review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "state": "ten-query-examples-verified",
+        "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes.",
+        "production_qualification_complete": false
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "fd8535ec9c649383f404c1736bfa3722c5459a1092cbd2250f0fbbd5ba658ae3",
+      "path": "docs/design/2026-11-free-content/README.md",
+      "line": 85,
+      "heading": "2. Scope",
+      "text": "- Free to read: Project Gutenberg (local metadata import), Open Textbook\n  Library and the bounded Book Dash catalog (owner-approved source expansion). Other free versions (LibriVox, Wikisource) appear only on detail\n  pages as separate items, when a source links them.\n- Papers: OpenAlex (when its key and budget are verified), Europe PMC, DOAJ,\n  arXiv.\n- Children's stories: the reviewed pilot set only, labelled as such.\n- The library book page gains an \"Also free to read\" section.\n- Desktop and mobile layouts, all three reading lights.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 86,
+      "heading": "2. Twenty categories and how to find candidates for each",
+      "text": "| C05 Audiobooks and recorded books | Public-domain audio publishers, LibriVox-related collections, library audio collections and publisher feeds | Regional-language volunteer reading projects, public cultural institutions and eligible accessible-book initiatives | Search API, reusable catalog or complete feeds; distinguish complete recordings, samples, abridgements and eligibility restrictions |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 34,
+      "heading": "The ten candidates",
+      "text": "| 5 | [LibriVox](https://librivox.org/api/info) | Free recorded books, including children's classics | Title prefix `Alice` → **Alice's Adventures in Wonderland**, recording ID `200` | Official title/author/genre API and recording/section IDs |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 61,
+      "heading": "Reading evidence and source-specific limits",
+      "text": "| LibriVox | API returned 12 sections for recording 200. First, middle and final section URLs returned HTTP 206 audio/mpeg bytes. | Other results included a different recording and an abridged version. Preserve narrator, recording ID, language and abridgement. US public-domain statements do not establish worldwide rights. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 75,
+      "heading": "Query behavior and operating constraints",
+      "text": "All six retrieval families—GDL, MediaWiki, LoC JSON, Internet Archive search,\nLibriVox and Thoth—were probed with a nonsense term. Empty results were observed;\nLibriVox expresses this as HTTP 404 with an audiobook-not-found JSON message.\nAn adapter must distinguish that documented response shape from an outage.\nRepresentative second-page requests were also checked; retain each provider's\npaging and scope. These checks are evidence, not implemented app behavior.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 88,
+      "heading": "Query behavior and operating constraints",
+      "text": "No paid fallback is proposed. All tested search requests worked anonymously.\nRespect current provider limits and use bounded requests, cancellation, backoff\nand truthful unavailable states. No numeric unlimited allowance is inferred where\ndocumentation does not publish one. Wikimedia calls should be serial with a\ndescriptive User-Agent and maxlag for research; Internet Archive also requests\nidentification of automated clients. LibriVox documents a maximum page size of\n500 and pacing for bulk work. We requested only three catalog records at a time,\nexcept GDL's fixed 20-record search page.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 119,
+      "heading": "Coverage and the next decision",
+      "text": "If selected to advance later, prioritize GDL for children's coverage, Wikisource\nfor Indian-language literature, and the five Thoth publishers for shared\nengineering. BHL and LoC add historical depth; LibriVox adds audio and requires an\nappropriate listening-result design. Keep source qualification and new UI review\nbefore implementation under the agreed workflow.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 136,
+      "heading": "Primary documentation reviewed",
+      "text": "- [GDL content API](https://content.digitallibrary.io/api/).\n- [MediaWiki search](https://www.mediawiki.org/wiki/API:Search) and\n  [API etiquette](https://www.mediawiki.org/wiki/API:Etiquette).\n- [Library of Congress JSON API](https://www.loc.gov/apis/json-and-yaml/).\n- [BHL developer/data tools](https://about.biodiversitylibrary.org/tools-and-services/developer-and-data-tools/),\n  [collection policy](https://about.biodiversitylibrary.org/about/collection-management/collection-development-policy/),\n  and [copyright/reuse](https://about.biodiversitylibrary.org/help/copyright-and-reuse/).\n- [Internet Archive structured advanced search](https://archive.org/advancedsearch.php),\n  [metadata API](https://archive.org/developers/md-read.html), and\n  [automated-access guidance](https://archive.org/developers/bots.html).\n- [LibriVox API](https://librivox.org/api/info) and\n  [public-domain scope](https://librivox.org/pages/public-domain/).\n- [Thoth documentation](https://thoth.pub/docs),\n  [live schema explorer](https://api.thoth.pub/graphiql) and\n  [metadata access/CC0 policy](https://thoth.pub/docs/policies/terms-thoth-metadata).",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "bc9fc5b79faad6eb7e4ca7da71ee7d8ca37b617fe707629d433f910056832bd1",
+      "path": "docs/research/free-content/discovery/BOOKS_AND_AUDIO.md",
+      "line": 156,
+      "heading": "C05. Audiobooks and recorded books",
+      "text": "**Best starting points.** [LibriVox API documentation](https://librivox.org/api/info)\ndescribes ID, title, author and genre retrieval, JSON/XML responses and offset\npaging. It presently caps `limit` at 500 and asks clients to space bulk requests;\nrecheck current policies before implementation. Use national-library audio\ncollections and independently maintained public-domain recording projects for\nadditional catalogs. [DAISY member organizations](https://daisy.org/about-us/membership/full-members/)\nprovide accessible-reading leads, with eligibility evaluated individually.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "bc9fc5b79faad6eb7e4ca7da71ee7d8ca37b617fe707629d433f910056832bd1",
+      "path": "docs/research/free-content/discovery/BOOKS_AND_AUDIO.md",
+      "line": 172,
+      "heading": "C05. Audiobooks and recorded books",
+      "text": "**Search process.** Search `\"{language}\" \"public domain audiobooks\"`,\n`\"{institution}\" (\"talking books\" OR audiobooks) (catalog OR API OR RSS)`,\nand native-script equivalents for recorded stories/books. Follow a catalog's\nproducer credits to independently maintained origins. Expand by language/country\nand producer type; distinguish library catalogs, volunteer recording projects and\npublishers. A LibriVox narrator, recording version or mirror is not a new origin.\nExpect a lower qualification rate and document scarcity if 100 independent,\nfreely accessible catalogs cannot be established.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "bc9fc5b79faad6eb7e4ca7da71ee7d8ca37b617fe707629d433f910056832bd1",
+      "path": "docs/research/free-content/discovery/BOOKS_AND_AUDIO.md",
+      "line": 200,
+      "heading": "Evidence boundaries and next handoff",
+      "text": "Documentation opens succeeded for IBBY, Parag, Book Dash, Gutenberg, OTL, DOAB,\nProject Madurai, LibriVox, DAISY and NLS during this planning review. The research\ntool returned HTTP 402 for StoryWeaver's open-content page, 502 for NCERT's\ntextbook page and 403 for DPLA's API page. Sugamya redirected to its current domain\nbut exposed no readable content to the tool. These observations establish neither\npayment requirements nor source-wide outages. No credentials, source accounts,\noutreach, bulk harvests or live query qualification probes were performed.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 83,
+      "heading": "6. Cultural collections, historical science and audio",
+      "text": "| **LibriVox — audiobook index** | `/api/feed/audiobooks/?title=...&format=json`, `url_librivox`, section/feed links. [Docs](https://librivox.org/api/info) | No key in successful title query. US public-domain recordings, jurisdiction may differ. Preserve narrator/language/duration/abridgement/recording identity independently of book. | **Low / P1 optional**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 79,
+      "heading": "Categories",
+      "text": "| Audiobooks (optional extension) | Recorded readings of public-domain books | LibriVox |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 85,
+      "heading": "What the original checks established",
+      "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
 }

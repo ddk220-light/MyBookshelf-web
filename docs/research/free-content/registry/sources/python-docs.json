@@ -1,0 +1,341 @@
+{
+  "schema_version": 1,
+  "id": "python-docs",
+  "name": "Python documentation",
+  "aliases": [
+    "Python",
+    "Python documentation"
+  ],
+  "homepage": "https://docs.python.org/3.15/",
+  "group": "G02",
+  "areas": [
+    "C12",
+    "I18"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "official-project-documentation",
+  "capabilities": [
+    "Download the official Sphinx symbol inventory and search it locally by exact symbol; return a version-pinned documentation URL and anchor.",
+    "This route searches named modules/classes/functions; it does not establish full-text topical search or find arbitrary procedural instructions."
+  ],
+  "query": {
+    "adapter": "sphinx-inventory",
+    "endpoint": "https://docs.python.org/3.15/objects.inv",
+    "base_url": "https://docs.python.org/3.15/",
+    "version": "3.15",
+    "authentication": "none",
+    "cost": "Public metadata export; no paid service or key used.",
+    "research_pause_seconds": 2,
+    "paging": "One bounded metadata inventory; local symbol queries do not issue one network request each.",
+    "cases": [
+      {
+        "id": "symbol-01",
+        "intent": "Resolve documented Python 3.15 symbol asyncio",
+        "expected_ids": [
+          "py:module:asyncio"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://docs.python.org/3.15/objects.inv",
+          "local_query": {
+            "mode": "exact_symbol",
+            "text": "asyncio"
+          }
+        }
+      },
+      {
+        "id": "symbol-02",
+        "intent": "Resolve documented Python 3.15 symbol pathlib.Path",
+        "expected_ids": [
+          "py:class:pathlib.Path"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://docs.python.org/3.15/objects.inv",
+          "local_query": {
+            "mode": "exact_symbol",
+            "text": "pathlib.Path"
+          }
+        }
+      },
+      {
+        "id": "symbol-03",
+        "intent": "Resolve documented Python 3.15 symbol sqlite3.connect",
+        "expected_ids": [
+          "py:function:sqlite3.connect"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://docs.python.org/3.15/objects.inv",
+          "local_query": {
+            "mode": "exact_symbol",
+            "text": "sqlite3.connect"
+          }
+        }
+      },
+      {
+        "id": "symbol-04",
+        "intent": "Resolve documented Python 3.15 symbol json.loads",
+        "expected_ids": [
+          "py:function:json.loads"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://docs.python.org/3.15/objects.inv",
+          "local_query": {
+            "mode": "exact_symbol",
+            "text": "json.loads"
+          }
+        }
+      },
+      {
+        "id": "symbol-05",
+        "intent": "Resolve documented Python 3.15 symbol datetime.datetime",
+        "expected_ids": [
+          "py:class:datetime.datetime"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://docs.python.org/3.15/objects.inv",
+          "local_query": {
+            "mode": "exact_symbol",
+            "text": "datetime.datetime"
+          }
+        }
+      },
+      {
+        "id": "symbol-06",
+        "intent": "Resolve documented Python 3.15 symbol collections.Counter",
+        "expected_ids": [
+          "py:class:collections.Counter"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://docs.python.org/3.15/objects.inv",
+          "local_query": {
+            "mode": "exact_symbol",
+            "text": "collections.Counter"
+          }
+        }
+      },
+      {
+        "id": "symbol-07",
+        "intent": "Resolve documented Python 3.15 symbol itertools.groupby",
+        "expected_ids": [
+          "py:function:itertools.groupby"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://docs.python.org/3.15/objects.inv",
+          "local_query": {
+            "mode": "exact_symbol",
+            "text": "itertools.groupby"
+          }
+        }
+      },
+      {
+        "id": "symbol-08",
+        "intent": "Resolve documented Python 3.15 symbol logging.getLogger",
+        "expected_ids": [
+          "py:function:logging.getLogger"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://docs.python.org/3.15/objects.inv",
+          "local_query": {
+            "mode": "exact_symbol",
+            "text": "logging.getLogger"
+          }
+        }
+      },
+      {
+        "id": "symbol-09",
+        "intent": "Resolve documented Python 3.15 symbol dataclasses.dataclass",
+        "expected_ids": [
+          "py:function:dataclasses.dataclass"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://docs.python.org/3.15/objects.inv",
+          "local_query": {
+            "mode": "exact_symbol",
+            "text": "dataclasses.dataclass"
+          }
+        }
+      },
+      {
+        "id": "symbol-10",
+        "intent": "Resolve documented Python 3.15 symbol concurrent.futures.ThreadPoolExecutor",
+        "expected_ids": [
+          "py:class:concurrent.futures.ThreadPoolExecutor"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://docs.python.org/3.15/objects.inv",
+          "local_query": {
+            "mode": "exact_symbol",
+            "text": "concurrent.futures.ThreadPoolExecutor"
+          }
+        }
+      }
+    ]
+  },
+  "licensing": "Official Python license page contains PSF License Agreement terms and incorporated licenses. Inventory is officially distributed for inter-project references; preserve attribution/version and review licenses separately before copying documentation prose.",
+  "documentation": [
+    "https://docs.python.org/3.15/license.html",
+    "https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html"
+  ],
+  "limitations": [
+    "Scope is exact symbols in English Python 3.15 documentation; not a general full-text search API.",
+    "One project is one origin; language variants and release versions do not add origins.",
+    "Future inventory/version/anchor changes must be revalidated; country-specific browser and accessibility checks remain open."
+  ],
+  "evidence": [
+    "examples/python-docs.access.jsonl",
+    "examples/python-docs.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05",
+  "next_action": "Broaden exact-symbol cases and negative/version/anchor checks; complete relevance/access/refresh analysis for this explicitly limited retrieval mode before any integration.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Official Python documentation, one project origin across versions and languages.",
+      "evidence": [
+        "examples/python-docs.access.jsonl",
+        "examples/python-docs.jsonl"
+      ],
+      "open_questions": [
+        "Complete the remaining source-review gates for this limited symbol-search route."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "C12 and I18: English Python 3.15 symbols; ten module/class/function examples. Global/India availability is not established by the server probe alone.",
+      "evidence": [
+        "examples/python-docs.access.jsonl",
+        "examples/python-docs.jsonl"
+      ],
+      "open_questions": [
+        "Complete the remaining source-review gates for this limited symbol-search route."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Official Sphinx metadata export with exact local symbol lookup, no full-text query capability claimed.",
+      "evidence": [
+        "examples/python-docs.access.jsonl",
+        "examples/python-docs.jsonl"
+      ],
+      "open_questions": [
+        "Complete the remaining source-review gates for this limited symbol-search route."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Official Python license page contains PSF License Agreement terms and incorporated licenses. Inventory is officially distributed for inter-project references; preserve attribution/version and review licenses separately before copying documentation prose.",
+      "evidence": [
+        "examples/python-docs.access.jsonl",
+        "examples/python-docs.jsonl"
+      ],
+      "open_questions": [
+        "Complete the remaining source-review gates for this limited symbol-search route."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Anonymous official library pages returned content and expected symbol markers; browser/accessibility review remains open.",
+      "evidence": [
+        "examples/python-docs.access.jsonl",
+        "examples/python-docs.jsonl"
+      ],
+      "open_questions": [
+        "Complete the remaining source-review gates for this limited symbol-search route."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Native symbol/type/version IDs are preserved. Topical search is unsupported. Ten exact-symbol examples required; broader scope and negative/version checks remain.",
+      "evidence": [
+        "examples/python-docs.access.jsonl",
+        "examples/python-docs.jsonl"
+      ],
+      "open_questions": [
+        "Complete the remaining source-review gates for this limited symbol-search route."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "One bounded metadata download per run; no numeric unlimited allowance inferred. Pin 3.15 and fail if the inventory version changes. Refresh/deletion strategy remains to review.",
+      "evidence": [
+        "examples/python-docs.access.jsonl",
+        "examples/python-docs.jsonl"
+      ],
+      "open_questions": [
+        "Complete the remaining source-review gates for this limited symbol-search route."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Broaden exact-symbol cases and negative/version/anchor checks; complete relevance/access/refresh analysis for this explicitly limited retrieval mode before any integration.",
+      "evidence": [
+        "examples/python-docs.access.jsonl",
+        "examples/python-docs.jsonl"
+      ],
+      "open_questions": [
+        "Complete the remaining source-review gates for this limited symbol-search route."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "b486fb04a1b5c0cf06a90a83187194a2a24676f5f97e809d97ae9b30c9d88912",
+      "path": "docs/research/free-content/ADDITIONAL_SOURCES.md",
+      "line": 39,
+      "heading": "Connected next: Book Dash",
+      "text": "```sh\npython tools/content/import_bookdash.py --max-records 30 --output server/data/content/bookdash.json\npython -m unittest discover -s tools/content -v\nnode tools/content/audit_snapshots.mjs\n```",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "943c4340f9c8a3dc13aa17a6c5d7b7af8ded6b60b61b79548a6061908f272447",
+      "path": "docs/research/free-content/LIVE_VALIDATION.md",
+      "line": 8,
+      "heading": "Implemented and checked locally",
+      "text": "- Redis coordinator, shared record/page caches, stored federation sessions,\n  application-wide source counters and their setup/CI prerequisites are removed.\n- One live source request per search/detail. Native cursors are signed, bounded,\n  context-bound and usable after process restart. Replay makes another request.\n- Deterministic tests cover source routing, no fan-out, token tampering/expiry,\n  old-session rejection, page cycles/depth, underfilled pages, access classes,\n  invalid provider responses, provider errors, cancellation and exact resolution.\n- OpenAlex verifies free allowance/known pricing/zero prepaid funds before each\n  request. Existing tests reject paid balances, changed prices and exhaustion.\n- 570 server tests pass with zero skips; 179 client tests and typecheck pass.\n  The disposable PostgreSQL used for existing account regression tests is local\n  test infrastructure, not a free-content runtime dependency or hosted resource.\n- 62 focused desktop/mobile browser checks pass, including live coverage,\n  paging, source switching/website links, reading, save/reload/reopen and three\n  reading lights. Full build, isolated client-only build, SEO/deployment checks,\n  12 Python importer tests and refresh-script tests pass.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "7d009e0c173238584b41259d85805653725f23e35657f2bf95bb15735a95da4f",
+      "path": "docs/research/free-content/OPERATIONS.md",
+      "line": 97,
+      "heading": "Reviewed daily refresh",
+      "text": "`python tools/content/refresh_catalogs.py --output-dir /tmp/new-free-candidates`\nprepares the three catalog imports in a new directory, preserving the active baseline. Any\nsource failure, empty/schema-invalid candidate or shrink failure leaves no\npublished candidate. `node tools/content/audit_snapshots.mjs /tmp/new-free-candidates`\nverifies actual source identities, indexing and current reading evidence. Inspect\nthe report's additions, missing keys and semantic changes before updating files.\nObservation-time changes are reported separately from bibliographic changes.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c686b333a7fef814327a9e18ca574a86edf6fc032a6cc5659ff5cbb327df41c0",
+      "path": "docs/research/free-content/VALIDATION.md",
+      "line": 6,
+      "heading": "Free-content implementation validation",
+      "text": "Latest local UI review: **537 server tests (real Redis, no skips), 141 client\ntests, 262 broad feature-enabled desktop/mobile browser journeys and 50 focused\nfeature journeys passed**. All **84 board-state/theme/device captures** pass axe\nand overflow checks. See the [screen review and comparison gallery](UI_REVIEW.md).\nTypecheck, production build and SEO/deployment checks pass. The unchanged importers\npreviously passed 12 Python checks; isolated client-only build and pinned actionlint\nalso passed in the preceding source-expansion checkpoint. CI on\n[PR #110](https://github.com/ddk220-light/MyBookshelf-web/pull/110) also runs WebKit\nand both disabled/enabled feature paths; consult the PR for the current head.\nHosted enablement and first scheduled refresh execution remain release checks.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c686b333a7fef814327a9e18ca574a86edf6fc032a6cc5659ff5cbb327df41c0",
+      "path": "docs/research/free-content/VALIDATION.md",
+      "line": 53,
+      "heading": "Search → API → metadata → reader → shelf",
+      "text": "```sh\npython -m unittest discover -s tools/content -v\ndocker run -d --name mybookshelf-free-content-test-redis redis:7-alpine\nCONTENT_REDIS_TEST_CONTAINER=mybookshelf-free-content-test-redis npm test --workspace=server\nnpm run typecheck:client\nnpm run test:client\nnpm run build\nnpm run test:seo\nnode --test tools/deployment/*.test.mjs\nnpm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium\nVITE_CONTENT_DISCOVERY_ENABLED=true FREE_CONTENT_E2E=true npm run test:e2e --workspace=client -- free-content.spec.js --project=chromium --project=mobile-chromium\n```",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c686b333a7fef814327a9e18ca574a86edf6fc032a6cc5659ff5cbb327df41c0",
+      "path": "docs/research/free-content/VALIDATION.md",
+      "line": 95,
+      "heading": "Open Textbook Library follow-up",
+      "text": "Six Python importer tests, 25 focused content/API tests (real Redis included),\n510 full server tests, 131 client tests and 14 feature browser checks pass.\nTypecheck and feature-enabled production build pass.\nThe [real textbook flow](evidence/2026-11-01/textbook-flow.json) verifies on\nphone/desktop: search → resolve → supplied LibreTexts host link → save → reload\n→ reopen, and exact source ISBN `9781946135100` → OTL record 4. No made-up file\ndownload buttons appeared for the host's HTML landing page. There were no browser\npage errors or horizontal overflow. These are metadata and browser checks, not\nan exhaustive check of every publisher's outbound link.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

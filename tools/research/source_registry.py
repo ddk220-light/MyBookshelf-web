@@ -69,6 +69,8 @@ def normalize(source, data, endpoint=None):
     if not isinstance(data, dict) or data.get('errors') or data.get('error'):
         raise ValueError('Provider returned an error or invalid object')
     adapter = source['query']['adapter']
+    if adapter == 'sphinx-inventory':
+        return data['results']
     if adapter == 'thoth':
         rows = data['data']['works']
         results = []
@@ -182,6 +184,9 @@ def validate(registry=REGISTRY):
 
 def probe(source_id, case_ids=None):
     source = json.loads((REGISTRY / 'sources' / f'{source_id}.json').read_text())
+    if source['query']['adapter'] == 'sphinx-inventory':
+        from sphinx_inventory import probe as probe_inventory
+        return probe_inventory(source, case_ids)
     for case in source['query']['cases']:
         if case_ids and case['id'] not in case_ids:
             continue

@@ -7,6 +7,9 @@ and simple files instead of a database. Use the [JSON registry](registry/README.
 Source details are JSON; timestamped observations are append-only JSONL in Git.
 No SQL or hosted datastore is needed. Continue research through the backlog;
 source activation remains outside this authorization.
+The follow-up completion goal captures all existing research/design analysis with
+provenance and exposes missing fields through a [completion audit](registry/completion-audit.json).
+The worker now resumes hourly and continues past small checkpoint batches.
 
 **Discovery backlog and first batch (2026-11-05):** the
 [six-group backlog](DISCOVERY_BACKLOG.md) tracks all 49 content, industry and

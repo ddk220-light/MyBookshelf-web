@@ -2,10 +2,15 @@
   "schema_version": 1,
   "id": "free-knowledge-source-registry",
   "state": "in-progress",
-  "owner_request": "Record every identified source, what it can search, how to query it, ten different verified examples, and keep expanding the inventory. Use simple Git-tracked JSON; no SQL or hosted datastore.",
+  "owner_request": "Populate the JSON/JSONL collection as the authoritative, complete source of all free-content research analysis. Capture every identified source, all existing analysis/evidence, query methods, ten verified examples for every retained queryable source, decisions, blockers and next actions. Actively continue through the full discovery goal rather than stopping after a daily quota or an initial shortlist.",
   "tracking_issue": "https://github.com/ddk220-light/MyBookshelf-web/issues/164",
   "branch": "research/free-content-discovery-expansion",
   "milestones": [
+    {
+      "id": "M0",
+      "objective": "Backfill all existing free-content research/design documents, evidence, assets and project backlog with version/hash provenance; map all historical source-catalog rows and expose unresolved entity/analysis gaps.",
+      "state": "complete"
+    },
     {
       "id": "M1",
       "objective": "Persist the first ten candidates with ten distinct positive query examples each.",
@@ -14,6 +19,11 @@
     {
       "id": "M2",
       "objective": "Triage every existing playbook lead, resolving named/unlinked candidates; give each actual catalog a canonical identity and reviewed/deferred/rejected decision.",
+      "state": "in-progress"
+    },
+    {
+      "id": "M2B",
+      "objective": "Complete evidence-backed source dossiers: identity/deduplication, coverage, query contract, rights/cost, reader access, quality/relevance, operating limits, decision/follow-up; keep every missing check and contradiction explicit.",
       "state": "in-progress"
     },
     {
@@ -29,25 +39,61 @@
     "Record overlap, geography and India/USA gaps; never inflate counts to meet a target."
   ],
   "execution": {
-    "batch_size": "1–3 candidates; serial provider calls with documented limits/backoff",
-    "cursor": "Continue G02: technical documentation (Python/Sphinx inventory), curricula (DIKSHA/NCERT supported metadata), courses and vocational guides. Then G03–G06; revisit G01 deferred and India-owned catalog gaps.",
+    "batch_size": "Small checkpoints, not a completion quota. Continue productive independent work within each run budget; resume hourly without waiting for new user requests.",
+    "cursor": "Backfill captured; reconcile 52 source dossiers and triage remaining linked/unlinked leads across all groups. Python documentation now has ten real metadata-import/local-query examples. Fill missing source fields, expand G02 curricula/courses/vocational coverage, then G03–G06.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
-      "title": "Expand source registry",
+      "title": "Complete source research registry",
       "enabled_at_creation": true,
-      "cadence": "daily",
+      "cadence": "hourly",
       "timing_mode": "flexible_schedule",
       "timezone": "America/Los_Angeles",
       "created_at": "2026-11-05T01:20:22.989728+00:00",
       "environment_selection": "inherited",
-      "note": "Creation confirmed; future execution/access is not guaranteed. Resume instructions and scope are in README.md."
+      "note": "Creation confirmed; future execution/access is not guaranteed. Resume instructions and scope are in README.md.",
+      "updated_on": "2026-11-05",
+      "immediate_run": {
+        "requested": true,
+        "scheduler_trigger": "failed: HTTP 404 Action not found",
+        "fallback": "Execution started in this conversation; corpus capture, historical-source backfill and new Python inventory queries performed."
+      }
+    },
+    "completion_audit": "completion-audit.json",
+    "last_checkpoint": {
+      "observed_at": "2026-11-05T01:46:58.247798+00:00",
+      "mode": "work performed in active conversation after run-now endpoint failed",
+      "source_records": 52,
+      "captured_text_documents": 59,
+      "indexed_binary_assets": 156,
+      "verified_examples": 130,
+      "query_verified_sources": 13,
+      "validation": "Registry validation, corpus/provenance audit, 14 unit tests and diff whitespace check passed.",
+      "goal_complete": false
     }
   },
   "constraints": [
     "Research only; do not enable app sources, import runtime catalogs or deploy.",
     "No new database service, SQL, Redis, paid API or account setup.",
-    "No CAPTCHA/WAF bypass or bulk full-work copying; retain small metadata evidence."
+    "No CAPTCHA/WAF bypass or bulk full-work copying; retain small metadata evidence.",
+    "Free reader login is acceptable when the catalog is queryable; label account requirements and do not create accounts automatically."
   ],
-  "completion_definition": "Every currently identified lead has been triaged; every retained queryable candidate has documented capabilities, policy and ten verified query examples. Expansion targets remain active until evidence supports them or the owner accepts a documented shortfall; no claim of exhaustive internet coverage."
+  "completion_definition": "All existing analysis/evidence is captured with reproducible provenance; every identified linked or named lead has a canonical triage decision; every retained queryable source has a complete dossier and ten current verified examples; blocked/rejected cases retain evidence, missing checks and reconsideration triggers; every category/industry and USA/India public-information cell has accounted-for coverage. Expansion continues toward the agreed targets; genuine shortfalls need explicit acceptance. A saved plan, imported claim, URL count or scheduled task alone never means completion.",
+  "required_dossier_sections": [
+    "identity_and_duplicates",
+    "coverage_and_languages",
+    "query_contract",
+    "rights_and_cost",
+    "reader_access",
+    "quality_and_relevance",
+    "operating_limits",
+    "decision_and_followup"
+  ],
+  "analysis_capture_scope": [
+    "all repository free-content research documents and JSON evidence",
+    "approved free-content design artifacts and referenced binary evidence",
+    "existing GitHub discovery backlog issues 164–170",
+    "source-level historical/contextual findings with document and line provenance",
+    "current and failed query observations; access/policy evidence; explicit unknowns"
+  ]
 }

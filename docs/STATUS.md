@@ -1,5 +1,17 @@
 # MyBookshelf web handoff
 
+**Complete-analysis goal, 2026-11-05:** the owner clarified that this is active
+completion work, not a small daily quota. The existing task now resumes hourly;
+the immediate-run endpoint returned HTTP 404, so the first pass ran in this chat.
+The [registry](research/free-content/registry/README.md) now contains 52 source
+records, 130 verified examples across 13 sources, all 36 historical catalog rows,
+complete text snapshots of the research/design evidence and indexed screenshots.
+An eight-part source dossier and [completion audit](research/free-content/registry/completion-audit.json)
+make missing analysis explicit. Historical imports are not new verification.
+Python 3.15 documentation adds a verified official-inventory/local-symbol-search
+route. Continue the saved goal through all known leads and categories; no new
+runtime integration, datastore or deployment is authorized.
+
 **Free-content JSON registry, 2026-11-05:** the owner authorized continued source
 research and requested simple files instead of SQL. The [registry](research/free-content/registry/README.md)
 contains 21 source records, 120 verified query examples across 12 sources, nine

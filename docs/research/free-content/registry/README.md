@@ -9,9 +9,17 @@ The owner authorized continued source research after reviewing the first ten,
 then selected a simple file format. App integration remains a separate decision.
 The durable goal is in [goal.json](goal.json), tracked by
 [#164](https://github.com/ddk220-light/MyBookshelf-web/issues/164).
-Daily research continuation was created and enabled on 2026-11-05, for bounded
-batches of 1–3 candidates. The schedule runs research work; it does not enable
-sources. Each run must report actual progress or its access blocker.
+The completion task was updated on 2026-11-05 to resume **hourly**, use available
+run time productively and checkpoint small batches. A batch size is not a stopping
+quota. The immediate-run tool returned HTTP 404, so the first completion pass was
+executed in the active conversation. Scheduling is confirmed; no background run
+is claimed from that failed trigger.
+
+The goal is the authoritative collection of **all source analysis**, including
+historical findings, contradictions, failed attempts and open questions. The
+[completion audit](completion-audit.json) distinguishes captured evidence from
+completed analysis. A document import or ten passing queries does not close the
+whole source dossier or the expansion goal.
 
 ## Files and evidence
 
@@ -30,10 +38,25 @@ sources. Each run must report actual progress or its access blocker.
 - `areas.json`: all 49 overlapping categories, industries and public tracks.
 - `goal.json`: milestones, counting rules, continuation cursor and constraints.
 - [PROGRESS.md](PROGRESS.md): human-readable checkpoint, including remaining gaps.
+- `analysis/documents.jsonl`: complete text of the existing free-content research,
+  structured evidence and approved design artifacts, retained by content hash.
+  Changed documents append a new version; historical findings remain historical.
+- `analysis/manifest.json`: current source paths/hashes and existing screenshot
+  assets. Binary screenshots stay in Git and are referenced without duplicate copies.
+- `analysis/external/github-backlog.json`: snapshot of the seven discovery issues.
+- `catalog-import.json`: all 36 historical source-catalog rows mapped to records.
+- `sources/<id>.json` also contains the eight-part `dossier`, explicit open
+  questions and `analysis_refs` with exact document/line/text provenance.
+- `completion-audit.json`: missing captures, unresolved dossiers, untriaged leads
+  and candidate/query-verified/qualified memberships for all 49 areas.
 
 Source `evidence` paths are relative to this registry directory. Documentation
 URLs are primary references, not a claim that every policy has completed review.
 Deferred records explicitly identify the missing evidence.
+Imported catalog records may describe already deployed sources. Their `enabled`
+field is this research's activation approval, not a claim about production's
+current configuration. Use the preserved operations/release evidence to reconcile
+historical implementation status; this workflow does not alter it.
 
 ## What “verified” means
 
@@ -67,6 +90,10 @@ python tools/research/source_registry.py validate
 python -m unittest discover -s tools/research -p 'test_*.py' -v
 python tools/research/source_registry.py probe gdl
 python tools/research/source_registry.py probe gdl --case known-title-01
+python tools/research/source_registry.py probe python-docs
+python tools/research/capture_analysis.py capture
+python tools/research/capture_analysis.py index
+python tools/research/capture_analysis.py audit
 ```
 
 Validation and tests are offline. `probe` makes the public requests saved in that
@@ -75,6 +102,17 @@ first. Calls are serial with a descriptive User-Agent, a two-second pause and a
 4 MiB response cap. Stop on 403, 429, 503 or MediaWiki maxlag; do not bypass access
 controls or blindly retry. Provider-specific limits override this research pace.
 The probe is a developer research utility, not an application search adapter.
+For `python-docs`, one official Sphinx metadata inventory is downloaded and ten
+distinct exact-symbol searches execute locally. The evidence labels this mode;
+it does not claim ten live full-text API searches. Version and anchor identities
+are retained, and a changed inventory version fails validation.
+
+After editing research/design documents or importing external findings, run
+`capture`, `index`, then `audit`. Capture embeds current text losslessly, index
+copies source-matching passages with provenance, and audit rejects missing/changed
+captures. Source sections marked partial/unknown remain unresolved even if query
+examples pass. Later mark a section complete only with concrete evidence and a
+reviewed explanation; use not-applicable only with a justified reason.
 
 After a recheck, update source state and the progress checkpoint to match the
 latest evidence; a previous verified state with failing current cases is rejected
@@ -85,7 +123,7 @@ by validation. Never delete failed observations to restore a passing count.
 1. Use the free-content expansion worktree/branch, fetch the current remote and
    read `AGENTS.md`, `docs/STATUS.md`, this directory and the owning playbook.
    Preserve unrelated work and avoid overlapping runs.
-2. Select 1–3 candidates from the current group. Resolve a stable origin/catalog
+2. Work in small checkpoints while continuing toward completion. Resolve a stable origin/catalog
    identity and distinguish directory, aggregator, connector, mirror and content
    origin. Keep India/global gaps and USA/India public jurisdictions explicit.
 3. Review official access/query/reuse documentation. Save a source record even
@@ -95,8 +133,10 @@ by validation. Never delete failed observations to restore a passing count.
    then run the ten real requests and save small outputs. Include representative
    subjects/languages where possible; never invent expected IDs or observations.
    Record content-access evidence separately and preserve item/version rights.
-5. Update `goal.json`, `PROGRESS.md`, source state and backlog issues. Run offline
-   validation/tests and commit/push only scoped research changes to PR #161.
+5. Update `goal.json`, `PROGRESS.md`, all dossier fields, source state and backlog
+   issues. Run capture/index/completion audit, offline validation/tests and
+   commit/push only scoped research changes to PR #161. Continue independent work
+   after a checkpoint; do not stop solely because a source-count quota was reached.
 6. Continue G02–G06, then revisit deferred and scarce areas. Work toward 100
    qualified origins per category/industry where real evidence supports it.
    Document shortfalls rather than padding counts. M2 completes only after every

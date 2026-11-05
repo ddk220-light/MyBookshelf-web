@@ -252,5 +252,266 @@
     "../batches/G01_FIRST_TEN.md"
   ],
   "last_reviewed_at": "2026-11-05",
-  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes."
+  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 21,
+    "text": "| **Wikisource — host** | MediaWiki `action=query&list=search&srsearch=...`; resolve page IDs and full URLs. Separate language subdomains. [Search API](https://www.mediawiki.org/wiki/API:Search) | Stable text page. Editions, scans, transcriptions, proofreading and translations differ. Rights depend on text and contributions. | No key for public reads. Identify/cache requests, honor Wikimedia policy, filter namespaces/languages; scan index pages are not necessarily finished books. Search worked. **Low/medium / P1**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "wikisource",
+        "name": "Wikisource",
+        "homepage_reference": "https://www.wikisource.org/",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C02",
+          "C15"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "adapter": "mediawiki",
+        "endpoint": "https://en.wikisource.org/w/api.php",
+        "capabilities": [
+          "Native keyword/title search and page/section lookup, separately for each language wiki.",
+          "English and Tamil sampled; transcriptions, sections, editions and full books share search results."
+        ],
+        "supported_and_unsupported_modes": "needs explicit review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "license_notes": "Per-work public-domain or compatible licensed originals; Wikimedia contribution/attribution terms also apply.",
+        "authentication_notes": "none for sampled public queries",
+        "cost_notes": "No fee or API key used; respect current provider policies and rate limits.",
+        "terms_review": "pending current reconciliation"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "../batches/G01_QUERY_EVIDENCE.json",
+          "../batches/G01_ACCESS_EVIDENCE.json",
+          "../batches/G01_FIRST_TEN.md"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "limitations": [
+          "Resolve parent work, edition, completeness and proofread status before presenting a complete book.",
+          "Check individual work rights and territory; language hosts are not separate sources.",
+          "Generic Pride and Prejudice title-page ID was absent from the first five hits, which returned the 1817 edition and chapters. The failed observation is retained; current case names the observed edition explicitly."
+        ],
+        "ranking_relevance_completeness": "not fully qualified"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "paging": "sroffset/continue",
+        "research_pause_seconds": 2,
+        "provider_quota_refresh_deletion_contract": "needs explicit review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "state": "ten-query-examples-verified",
+        "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes.",
+        "production_qualification_complete": false
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "fd8535ec9c649383f404c1736bfa3722c5459a1092cbd2250f0fbbd5ba658ae3",
+      "path": "docs/design/2026-11-free-content/README.md",
+      "line": 85,
+      "heading": "2. Scope",
+      "text": "- Free to read: Project Gutenberg (local metadata import), Open Textbook\n  Library and the bounded Book Dash catalog (owner-approved source expansion). Other free versions (LibriVox, Wikisource) appear only on detail\n  pages as separate items, when a source links them.\n- Papers: OpenAlex (when its key and budget are verified), Europe PMC, DOAJ,\n  arXiv.\n- Children's stories: the reviewed pilot set only, labelled as such.\n- The library book page gains an \"Also free to read\" section.\n- Desktop and mobile layouts, all three reading lights.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "b486fb04a1b5c0cf06a90a83187194a2a24676f5f97e809d97ae9b30c9d88912",
+      "path": "docs/research/free-content/ADDITIONAL_SOURCES.md",
+      "line": 54,
+      "heading": "Other sources checked",
+      "text": "| [Wikisource](https://www.mediawiki.org/wiki/API:Main_page) | Public metadata APIs returned stable page IDs in English, Hindi and Tamil. | Resolve redirects, distinguish work/edition lists and transclusions from complete editions, preserve contributors and per-text rights. The sampled Hindi title redirected. Do not treat namespace 0 or HTTP 200 alone as a readable book. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "b486fb04a1b5c0cf06a90a83187194a2a24676f5f97e809d97ae9b30c9d88912",
+      "path": "docs/research/free-content/ADDITIONAL_SOURCES.md",
+      "line": 63,
+      "heading": "Other sources checked",
+      "text": "The next strongest scholarly-book candidates are DOAB/OAPEN, followed by\nWikisource for multilingual editions. They remain researched candidates, not\nenabled sources. No paid integration, new reader account or source outreach\nwas performed. Redis remains deferred for the four existing live paper adapters;\nthe book catalogs and source research are independent of that setup.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 83,
+      "heading": "2. Twenty categories and how to find candidates for each",
+      "text": "| C02 General books and ebooks | National-library digital catalogs, public-domain publisher directories, Wikisource community links, Gutenberg-related catalogs | National/state digital libraries, regional literature academies, university digitization projects, Tamil/Hindi and other language collections | Official metadata exports, OPDS or documented search; distinguish full books from scans of covers, previews and loans |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 31,
+      "heading": "The ten candidates",
+      "text": "| 2 | [Wikisource](https://www.mediawiki.org/wiki/API:Search) | Literature and historical books; original-script Indian-language coverage | English mathematics-title query → **A History of Mathematics (1893)**; Tamil `திருக்குறள்` → **திருக்குறள், மூலம்** | MediaWiki search plus page/section resolution; EN/TA are one source candidate |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 58,
+      "heading": "Reading evidence and source-specific limits",
+      "text": "| Wikisource | English introduction returned 18,376 characters of rendered HTML; Tamil **உழவு** section returned 7,337. Native page IDs and parent/section links resolved. | Search returns chapters, version pages and entire works together. Preserve language, edition, parent work, proofread status and applicable rights; do not label a contents page or incomplete transcription a complete book. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 82,
+      "heading": "Query behavior and operating constraints",
+      "text": "Thoth publisher filters and active book types constrain results, but results are\nnot guaranteed to be ordered by reader relevance. They can match descriptions.\nWikisource needs whole-work/section handling. GDL needs token/phrase relevance\nchecks. These observations are particularly relevant to the earlier irrelevant\nfree-search results: a working API alone does not finish search quality.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 119,
+      "heading": "Coverage and the next decision",
+      "text": "If selected to advance later, prioritize GDL for children's coverage, Wikisource\nfor Indian-language literature, and the five Thoth publishers for shared\nengineering. BHL and LoC add historical depth; LibriVox adds audio and requires an\nappropriate listening-result design. Keep source qualification and new UI review\nbefore implementation under the agreed workflow.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 21,
+      "heading": "1. General ebooks and public-domain literature",
+      "text": "| **Wikisource — host** | MediaWiki `action=query&list=search&srsearch=...`; resolve page IDs and full URLs. Separate language subdomains. [Search API](https://www.mediawiki.org/wiki/API:Search) | Stable text page. Editions, scans, transcriptions, proofreading and translations differ. Rights depend on text and contributions. | No key for public reads. Identify/cache requests, honor Wikimedia policy, filter namespaces/languages; scan index pages are not necessarily finished books. Search worked. **Low/medium / P1**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 70,
+      "heading": "Categories",
+      "text": "| General ebooks and public-domain literature | Novels, poetry, essays, historical nonfiction | Gutenberg, Standard Ebooks, Wikisource, Internet Archive |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 78,
+      "heading": "Categories",
+      "text": "| Historical and cultural collections | Digitized books, serials, rare texts, regional-language literature | Internet Archive, Library of Congress, Europeana, Biodiversity Heritage Library, Wikisource |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 85,
+      "heading": "What the original checks established",
+      "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
 }

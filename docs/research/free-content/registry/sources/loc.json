@@ -220,5 +220,260 @@
     "../batches/G01_FIRST_TEN.md"
   ],
   "last_reviewed_at": "2026-11-05",
-  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes."
+  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes.",
+  "aliases": [
+    "Library of Congress"
+  ],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 80,
+    "text": "| **Library of Congress — host/index** | JSON/YAML `?fo=json`, search/collections/item resources. [API](https://www.loc.gov/apis/json-and-yaml/) | No key. Readable resources subset of catalog; per-item rights/access advisory. Books response worked, digitized/full-text classification not tested. | **Low/medium / P1**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "loc",
+        "name": "Library of Congress digital books",
+        "homepage_reference": "https://www.loc.gov/books/",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C02",
+          "C04",
+          "C15"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "adapter": "loc",
+        "endpoint": "https://www.loc.gov/books/",
+        "capabilities": [
+          "Search digitized books by keywords, facets and pagination; item JSON provides rights and resource links."
+        ],
+        "supported_and_unsupported_modes": "needs explicit review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "license_notes": "Per-item rights/access statements; first sampled item declared public domain and unrestricted access.",
+        "authentication_notes": "none for sampled public queries",
+        "cost_notes": "No fee or API key used; respect current provider policies and rate limits.",
+        "terms_review": "pending current reconciliation"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "../batches/G01_QUERY_EVIDENCE.json",
+          "../batches/G01_ACCESS_EVIDENCE.json",
+          "../batches/G01_FIRST_TEN.md"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "limitations": [
+          "The digital API is not the entire LoC catalog. OCR quality and completeness vary.",
+          "Sample rights do not establish every result is unrestricted; retain per-item statements.",
+          "Long exact titles and a physics query were slow/timed out or missed the expected item. Failures retained. Current short-subject examples check native identity, not a full topic relevance/ranking benchmark."
+        ],
+        "ranking_relevance_completeness": "not fully qualified"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "paging": "sp (page), c (count)",
+        "research_pause_seconds": 2,
+        "provider_quota_refresh_deletion_contract": "needs explicit review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "state": "ten-query-examples-verified",
+        "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes.",
+        "production_qualification_complete": false
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 96,
+      "heading": "2. Twenty categories and how to find candidates for each",
+      "text": "| C15 Historical documents, manuscripts and archives | National/archive association directories, Library of Congress, Europeana and regional aggregators | National/state archives, university special collections and regional manuscript initiatives | Collection search/export with digitized-item links; IIIF may describe/view an item but does not itself prove catalog search |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 193,
+      "heading": "3. Discovery engines to use before broad web searching",
+      "text": "| [Library of Congress JSON/YAML API](https://www.loc.gov/apis/json-and-yaml/) | Structured digital collection/search/item records across books, maps, images and media | Coverage of its whole library catalog or unrestricted reuse of every item |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 32,
+      "heading": "The ten candidates",
+      "text": "| 3 | [Library of Congress digital books](https://www.loc.gov/apis/json-and-yaml/) | Digitized historical nonfiction, literature and educational books | `mathematics` → **Introduction to mathematics**, native ID `16017346` | Official search/item JSON API, restricted to online material |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 59,
+      "heading": "Reading evidence and source-specific limits",
+      "text": "| Library of Congress | Sample item declared unrestricted access and public-domain reuse; its PDF returned HTTP 206 and PDF bytes. | API covers digital collections rather than the whole library catalog. Keep per-item rights, scan/OCR quality and historical publication date. Metadata result alone is insufficient. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 136,
+      "heading": "Primary documentation reviewed",
+      "text": "- [GDL content API](https://content.digitallibrary.io/api/).\n- [MediaWiki search](https://www.mediawiki.org/wiki/API:Search) and\n  [API etiquette](https://www.mediawiki.org/wiki/API:Etiquette).\n- [Library of Congress JSON API](https://www.loc.gov/apis/json-and-yaml/).\n- [BHL developer/data tools](https://about.biodiversitylibrary.org/tools-and-services/developer-and-data-tools/),\n  [collection policy](https://about.biodiversitylibrary.org/about/collection-management/collection-development-policy/),\n  and [copyright/reuse](https://about.biodiversitylibrary.org/help/copyright-and-reuse/).\n- [Internet Archive structured advanced search](https://archive.org/advancedsearch.php),\n  [metadata API](https://archive.org/developers/md-read.html), and\n  [automated-access guidance](https://archive.org/developers/bots.html).\n- [LibriVox API](https://librivox.org/api/info) and\n  [public-domain scope](https://librivox.org/pages/public-domain/).\n- [Thoth documentation](https://thoth.pub/docs),\n  [live schema explorer](https://api.thoth.pub/graphiql) and\n  [metadata access/CC0 policy](https://thoth.pub/docs/policies/terms-thoth-metadata).",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "bc9fc5b79faad6eb7e4ca7da71ee7d8ca37b617fe707629d433f910056832bd1",
+      "path": "docs/research/free-content/discovery/BOOKS_AND_AUDIO.md",
+      "line": 65,
+      "heading": "C02. General books and ebooks",
+      "text": "**Best starting points.** [Project Gutenberg's official catalog documentation](https://www.gutenberg.org/ebooks/offline_catalogs.html)\nidentifies machine-readable catalogs, OPDS and affiliate/mirror links. Use the\ncatalog as a retrieval model; mirrors are duplicate hosting. National libraries,\nstate digital libraries, regional literary organizations and university special\ncollections supply additional independent origins. The [Library of Congress\nJSON/YAML interface](https://www.loc.gov/apis/json-and-yaml/) is a US starting\npoint for digitized collection records; its scope is not the entire library catalog.\nDPLA's [developer documentation](https://pro.dp.la/developers/api-codex) is a\nUS aggregator lead requiring a fresh documentation/access check before selection.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a1152262daa2c2e9e30dc6b14a7917fa8e5d2b068757757dfc590f307a445834",
+      "path": "docs/research/free-content/discovery/LANGUAGE_CULTURE_MEDIA.md",
+      "line": 117,
+      "heading": "C17 — Newspapers, magazines and public-interest articles",
+      "text": "**Where to start.** Separate historic newspaper repositories from current\npublishers. The [Library of Congress Chronicling America API page](https://www.loc.gov/apis/additional-apis/chronicling-america-api/)\nstates that the collection moved exclusively to the loc.gov API beginning in\n2025; do not reuse old `chroniclingamerica.loc.gov` integration recipes.\nEuropeana and national libraries provide additional historical leads. For current\nUS/local journalism, [INN's Find Your News directory](https://findyournews.org/)\nleads to publishers by place and topic. India's\n[Press Registrar title directory](https://prgi.gov.in/en/test/registred-titles)\nsupports discovery by publication place, state and language. Registration proves\nneither free article access nor permission to reuse metadata.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 80,
+      "heading": "6. Cultural collections, historical science and audio",
+      "text": "| **Library of Congress — host/index** | JSON/YAML `?fo=json`, search/collections/item resources. [API](https://www.loc.gov/apis/json-and-yaml/) | No key. Readable resources subset of catalog; per-item rights/access advisory. Books response worked, digitized/full-text classification not tested. | **Low/medium / P1**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 77,
+      "heading": "Categories",
+      "text": "| Government, policy, organizational publications | Reports, policy papers, public documents | World Bank Open Knowledge Repository, Library of Congress, institutional repositories |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 78,
+      "heading": "Categories",
+      "text": "| Historical and cultural collections | Digitized books, serials, rare texts, regional-language literature | Internet Archive, Library of Congress, Europeana, Biodiversity Heritage Library, Wikisource |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 85,
+      "heading": "What the original checks established",
+      "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
 }

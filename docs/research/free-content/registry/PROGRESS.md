@@ -3,13 +3,25 @@
 Observed 2026-11-05 UTC. Research branch `research/free-content-discovery-expansion`,
 [PR #161](https://github.com/ddk220-light/MyBookshelf-web/pull/161).
 
-**21 source records; 12 have ten verified query examples each (120 total).**
-The original ten are included, followed by Wikipedia and Wikibooks from G02.
-Nine investigated alternatives are deferred with concrete blockers and next steps.
+**52 source records; 13 have ten verified query examples each (130 total).**
+The original ten are included, followed by Wikipedia, Wikibooks and Python
+documentation from G02. Nine alternatives are deferred; 30 additional catalog
+records were backfilled from historical analysis and require reconciliation.
+All 36 rows of the earlier source catalog now map to individual catalog/family
+records. A family record is not counted as a qualified independent origin.
 The separate discovery inventory contains **138 links** from the existing plan;
 it includes directories and documentation, not 138 qualified sources. All 49
 content/industry/public-information areas are tracked. No production source is
 qualified or enabled by this research.
+
+The completion pass captures 59 text/evidence files (including the seven-issue
+backlog snapshot) and indexes 156 existing screenshots. Full text, hashes and
+source-specific passages live inside the JSON collection. All source dossiers
+expose eight analysis sections and their remaining questions. Capturing existing
+analysis is complete for the declared repository/backlog scope; no source dossier
+is yet declared fully complete under the expanded audit. The recurring execution
+task is enabled hourly. Its immediate-run endpoint failed with HTTP 404, so this
+pass was performed directly in the conversation rather than deferred.
 
 ## Current query evidence
 
@@ -27,6 +39,7 @@ qualified or enabled by this research.
 | [Wikibooks](sources/wikibooks.json) | G02 | 10/10 | [observations](examples/wikibooks.jsonl) |
 | [Wikipedia](sources/wikipedia.json) | G02 | 10/10 | [observations](examples/wikipedia.jsonl) |
 | [Wikisource](sources/wikisource.json) | G01 | 10/10 | [observations](examples/wikisource.jsonl) |
+| [Python documentation](sources/python-docs.json) | G02 | 10/10 | [observations](examples/python-docs.jsonl) |
 
 The history also retains **8 unsuccessful query observations**, including
 queries later revised. Only the latest successful observation of each current,
@@ -64,6 +77,13 @@ still pass qualification before implementation.
 - Five publisher origins share the Thoth connector. Results must retain work
   identity/license and use approved canonical digital locations; print/retail or
   unreviewed mirror links are excluded from the stored canonical-link samples.
+- Python documentation: the official Python 3.15 Sphinx inventory supplied 20,490
+  entries. Ten exact-symbol searches resolved native symbol/type IDs to versioned
+  page anchors, including `pathlib.Path`, `sqlite3.connect` and `json.loads`.
+  The official license and inventory documentation were reviewed; representative
+  library pages exposed the expected symbols anonymously. This is metadata import
+  plus local symbol search, not general topic/full-text search. Other languages,
+  versions and broader quality/access/refresh questions remain explicit.
 
 ## Deferred candidates
 
@@ -90,6 +110,7 @@ long-term 100-origin-per-category/industry target remain open. The goal and actu
 continuation configuration are in [goal.json](goal.json). Do not label the whole
 internet inventoried or this goal complete merely because these files exist.
 
-Validation: offline registry validation, nine evidence-integrity unit tests and
+Validation: offline registry validation, corpus completeness/provenance audit,
+14 evidence/inventory/capture unit tests and
 `git diff --check`. Network observations above are actual requests, not mocks.
 Application tests/deployment were not needed: no runtime code or manifest changed.
