@@ -880,6 +880,8 @@ test("private export downloads JSON; deletion can be cancelled, confirmed once a
         exact: false,
       }),
     ).toBeVisible();
+    await expect(page.getByText(/Server sign-out is still unconfirmed/)).toHaveCount(0);
+    await expect(page.getByRole("button", {name: "Retry sign out", exact: true})).toHaveCount(0);
     expect(deletionPosts).toBe(1);
     expect(nonce).toHaveLength(43);
     const storage = await page.evaluate(() =>
