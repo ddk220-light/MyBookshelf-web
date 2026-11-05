@@ -1,0 +1,944 @@
+{
+  "schema_version": 1,
+  "id": "federal-register",
+  "name": "FederalRegister.gov document catalog",
+  "homepage": "https://www.federalregister.gov/",
+  "aliases": [],
+  "group": "G04",
+  "areas": [
+    "C18",
+    "P02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "public-regulation-document-catalog",
+  "operator": {
+    "name": "Office of the Federal Register/NARA and US Government Publishing Office",
+    "jurisdiction": "USA federal"
+  },
+  "capabilities": [
+    "Documented anonymous API v1 full-text metadata search and native-document retrieval; tested 2024 final-rule subset.",
+    "Exact agency/date/type/citation/correction identities retained. Informational HTML and official PDF destinations distinguished."
+  ],
+  "licensing": "Current OFR/GPO About page cites 1 CFR2.6 permitting reproduction/republishing of Federal Register editions. Public API metadata and document text are distinct from third-party links, incorporated external standards and government trademarks.",
+  "documentation": [
+    "https://www.federalregister.gov/developers/documentation/api/v1",
+    "https://www.federalregister.gov/api/v1/documentation.json",
+    "https://www.federalregister.gov/reader-aids/government-policy-and-ofr-procedures/about-this-site"
+  ],
+  "evidence": [
+    "runs/law-media-contract-20261105al/observations.jsonl",
+    "examples/federal-register.documentation-discovery.jsonl",
+    "examples/federal-register.openapi.jsonl",
+    "examples/federal-register.scouting.jsonl",
+    "examples/federal-register.jsonl",
+    "examples/federal-register.benchmark.jsonl",
+    "docs/research/free-content/evidence/2026-11-05-civic/reader-observations.jsonl",
+    "runs/civic-native-readers-20261105an/observations.jsonl",
+    "examples/federal-register.access.jsonl"
+  ],
+  "limitations": [
+    "One FR origin represented in FederalRegister.gov and GovInfo official editions; not two independent copies of the same legal publication.",
+    "Informational HTML/XML is not the official edition or independent proof a rule is currently in force.",
+    "Research parser deliberately supports the tested modern four-digit document-number family plus C-number correction prefixes; legacy two-digit IDs remain outside this adapter.",
+    "USA federal/English subset; India and other legal jurisdictions not covered."
+  ],
+  "last_reviewed_at": "2026-11-05T12:03:47.363230+00:00",
+  "next_action": "Finish responsive mobile/accessibility review, temporal/correction/withdrawal semantics and bounded refresh operations; preserve official-edition verification requirement.",
+  "analysis_refs": [],
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "OFR/NARA and GPO jointly administer one Federal Register publication catalog; HTML/XML, official PDFs and correction notices retain separate roles.",
+      "facts": {
+        "operator": {
+          "name": "Office of the Federal Register/NARA and US Government Publishing Office",
+          "jurisdiction": "USA federal"
+        },
+        "native_identity": "document_number plus citation, publication date, issuing agency and snapshot hash; do not derive publication year from number prefix.",
+        "overlap": "GovInfo hosts official editions of the same FR documents. Existing govinfo source is a broader GPO catalog; these copies do not add an independent FR origin.",
+        "same_title_examples": {
+          "2024-31419": "FDA/HHS, published2024-12-31",
+          "2024-27864": "FSIS/USDA, published2024-11-27"
+        },
+        "correction_identity": "C1-2024-01530 links back to2024-01530; distinct correction publication, not a replacement title-only match.",
+        "pdf_boundary": "Official PDF for2024-31419 spans three printed pages and includes preceding document2024-31384 ending. Native FR Doc footer uses an en dash; file/title alone is not an exclusive content boundary."
+      },
+      "evidence": [
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "examples/federal-register.documentation-discovery.jsonl",
+        "examples/federal-register.openapi.jsonl",
+        "examples/federal-register.scouting.jsonl",
+        "examples/federal-register.jsonl",
+        "examples/federal-register.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-civic/reader-observations.jsonl",
+        "runs/civic-native-readers-20261105an/observations.jsonl",
+        "examples/federal-register.access.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "962f52ab9427c0556ed6",
+          "observed_at": "2026-11-05T11:37:46.908266+00:00",
+          "url": "https://www.federalregister.gov/developers/documentation/api/v1",
+          "body_sha256": "2948676b1d97ec5223d249c1e5f773e969a01d4d55abb4b71294f97cbd02c466",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "3e870dddde27a9b3cd43",
+          "observed_at": "2026-11-05T11:37:50.623182+00:00",
+          "url": "https://www.federalregister.gov/reader-aids/government-policy-and-ofr-procedures/about-this-site",
+          "body_sha256": "6faab66dc46a837ccb1e2b8d06c11fde7b7c5b1a690d972718e1440ca374659d",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "ff2108e7a79fd5e7116a",
+          "observed_at": "2026-11-05T11:51:18.006591+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/12/31/2024-31419/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "9dbafcf41ccee3d2ac3d340218d9305a2d21536e4314682248bc6992023aad7c",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "2fdf0459ea8bf3a31ca3",
+          "observed_at": "2026-11-05T11:51:22.059615+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/11/27/2024-27864/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "7eaa1057141df9d1717898f2dd76f8b96009d5c579bb3524f2ef2b2d1390eeb1",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "complete",
+      "summary": "Current examples cover USA federal English final-rule metadata published in2024 across five subjects. Official API describes search coverage since1994; this does not establish all historical ID families or current legal effect.",
+      "facts": {
+        "areas": [
+          "C18",
+          "P02"
+        ],
+        "jurisdiction": "USA federal",
+        "observed_language": "en",
+        "subjects": [
+          "drinking water",
+          "airworthiness",
+          "energy conservation",
+          "food labeling",
+          "hazardous waste"
+        ],
+        "observed_examples": 10,
+        "publication_vs_effective": "2024 publication dates may have2025 effective dates; one result has effective_on=null. A 2023-prefixed number is published2024.",
+        "country_boundary": "No India-source or country-network-vantage claim; no owner/parcel/property lookups."
+      },
+      "evidence": [
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "examples/federal-register.documentation-discovery.jsonl",
+        "examples/federal-register.openapi.jsonl",
+        "examples/federal-register.scouting.jsonl",
+        "examples/federal-register.jsonl",
+        "examples/federal-register.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-civic/reader-observations.jsonl",
+        "runs/civic-native-readers-20261105an/observations.jsonl",
+        "examples/federal-register.access.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "962f52ab9427c0556ed6",
+          "observed_at": "2026-11-05T11:37:46.908266+00:00",
+          "url": "https://www.federalregister.gov/developers/documentation/api/v1",
+          "body_sha256": "2948676b1d97ec5223d249c1e5f773e969a01d4d55abb4b71294f97cbd02c466",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "3e870dddde27a9b3cd43",
+          "observed_at": "2026-11-05T11:37:50.623182+00:00",
+          "url": "https://www.federalregister.gov/reader-aids/government-policy-and-ofr-procedures/about-this-site",
+          "body_sha256": "6faab66dc46a837ccb1e2b8d06c11fde7b7c5b1a690d972718e1440ca374659d",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "ff2108e7a79fd5e7116a",
+          "observed_at": "2026-11-05T11:51:18.006591+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/12/31/2024-31419/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "9dbafcf41ccee3d2ac3d340218d9305a2d21536e4314682248bc6992023aad7c",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "2fdf0459ea8bf3a31ca3",
+          "observed_at": "2026-11-05T11:51:22.059615+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/11/27/2024-27864/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "7eaa1057141df9d1717898f2dd76f8b96009d5c579bb3524f2ef2b2d1390eeb1",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        }
+      ],
+      "open_questions": []
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Published OpenAPI specification supplies exact GET shapes and no-key authentication. Five topic cases and five distinct known-document round trips pass.",
+      "facts": {
+        "spec_url": "https://www.federalregister.gov/api/v1/documentation.json",
+        "search_request": {
+          "method": "GET",
+          "params": {
+            "conditions[publication_date][year]": 2024,
+            "conditions[term]": "drinking water",
+            "conditions[type][]": "RULE",
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ],
+            "order": "relevance",
+            "page": 1,
+            "per_page": 5
+          },
+          "url": "https://www.federalregister.gov/api/v1/documents.json"
+        },
+        "detail_request": {
+          "method": "GET",
+          "url": "https://www.federalregister.gov/api/v1/documents/2024-07773.json",
+          "params": {
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ]
+          }
+        },
+        "native_ids": [
+          "2024-00549",
+          "2024-01530",
+          "2024-07773",
+          "2024-07873",
+          "2024-08212",
+          "2024-23809",
+          "2024-27864",
+          "2024-28790",
+          "2024-28802",
+          "2024-31419"
+        ],
+        "paging_duplicate_ids": [],
+        "empty": "HTTP200 count0 can omit results; original parse failure and offline reinterpretation retained.",
+        "error": "Missing native document returns404 HTML; malformed year returned200, description year0 and year2000 documents. Reject invalid year syntax before sending and enforce actual returned year/type.",
+        "legacy_limit": "Year2000 results use00- prefixed numbers, outside the explicitly scoped modern parser; not nonexistent documents."
+      },
+      "evidence": [
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "examples/federal-register.documentation-discovery.jsonl",
+        "examples/federal-register.openapi.jsonl",
+        "examples/federal-register.scouting.jsonl",
+        "examples/federal-register.jsonl",
+        "examples/federal-register.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-civic/reader-observations.jsonl",
+        "runs/civic-native-readers-20261105an/observations.jsonl",
+        "examples/federal-register.access.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "962f52ab9427c0556ed6",
+          "observed_at": "2026-11-05T11:37:46.908266+00:00",
+          "url": "https://www.federalregister.gov/developers/documentation/api/v1",
+          "body_sha256": "2948676b1d97ec5223d249c1e5f773e969a01d4d55abb4b71294f97cbd02c466",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "3e870dddde27a9b3cd43",
+          "observed_at": "2026-11-05T11:37:50.623182+00:00",
+          "url": "https://www.federalregister.gov/reader-aids/government-policy-and-ofr-procedures/about-this-site",
+          "body_sha256": "6faab66dc46a837ccb1e2b8d06c11fde7b7c5b1a690d972718e1440ca374659d",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "ff2108e7a79fd5e7116a",
+          "observed_at": "2026-11-05T11:51:18.006591+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/12/31/2024-31419/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "9dbafcf41ccee3d2ac3d340218d9305a2d21536e4314682248bc6992023aad7c",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "2fdf0459ea8bf3a31ca3",
+          "observed_at": "2026-11-05T11:51:22.059615+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/11/27/2024-27864/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "7eaa1057141df9d1717898f2dd76f8b96009d5c579bb3524f2ef2b2d1390eeb1",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "complete",
+      "summary": "Public API needs no key. The official About page expressly permits reproducing Federal Register editions under1 CFR2.6; legal status and external-content exceptions remain distinct.",
+      "facts": {
+        "metadata": "Public supported field-selected API; retain native source/citation and provenance.",
+        "content": "Any person may reproduce or republish material in regular/special FR editions under cited rule. This does not license external incorporated standards or unrelated sites.",
+        "legal_reliance": "OFR/GPO explicitly calls this XML/HTML resource unofficial informational; verify official edition for legal research.",
+        "accounts": "MyFR saved searches/comments accounts are separate and unused. No payment/key/signup needed for tested retrieval.",
+        "limits": "No numeric quota or SLA found; no inference of unlimited capacity."
+      },
+      "evidence": [
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "examples/federal-register.documentation-discovery.jsonl",
+        "examples/federal-register.openapi.jsonl",
+        "examples/federal-register.scouting.jsonl",
+        "examples/federal-register.jsonl",
+        "examples/federal-register.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-civic/reader-observations.jsonl",
+        "runs/civic-native-readers-20261105an/observations.jsonl",
+        "examples/federal-register.access.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "962f52ab9427c0556ed6",
+          "observed_at": "2026-11-05T11:37:46.908266+00:00",
+          "url": "https://www.federalregister.gov/developers/documentation/api/v1",
+          "body_sha256": "2948676b1d97ec5223d249c1e5f773e969a01d4d55abb4b71294f97cbd02c466",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "3e870dddde27a9b3cd43",
+          "observed_at": "2026-11-05T11:37:50.623182+00:00",
+          "url": "https://www.federalregister.gov/reader-aids/government-policy-and-ofr-procedures/about-this-site",
+          "body_sha256": "6faab66dc46a837ccb1e2b8d06c11fde7b7c5b1a690d972718e1440ca374659d",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "ff2108e7a79fd5e7116a",
+          "observed_at": "2026-11-05T11:51:18.006591+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/12/31/2024-31419/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "9dbafcf41ccee3d2ac3d340218d9305a2d21536e4314682248bc6992023aad7c",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "2fdf0459ea8bf3a31ca3",
+          "observed_at": "2026-11-05T11:51:22.059615+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/11/27/2024-27864/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "7eaa1057141df9d1717898f2dd76f8b96009d5c579bb3524f2ef2b2d1390eeb1",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        }
+      ],
+      "open_questions": []
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Two native HTML rule pages and one complete small official PDF are accessible anonymously. Desktop/mobile browser observations and the mobile layout limitation are preserved.",
+      "facts": {
+        "reader_observations": [
+          {
+            "url": "https://www.federalregister.gov/documents/2024/12/31/2024-31419/uniform-compliance-date-for-food-labeling-regulations",
+            "outcome": "reader-rendered-observation",
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            },
+            "horizontal_overflow": false,
+            "screenshot": "evidence/2026-11-05-civic/desktop-fda.png"
+          },
+          {
+            "url": "https://www.federalregister.gov/documents/2024/11/27/2024-27864/uniform-compliance-date-for-food-labeling-regulations",
+            "outcome": "reader-rendered-observation",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontal_overflow": true,
+            "screenshot": "evidence/2026-11-05-civic/mobile-fsis.png"
+          }
+        ],
+        "official_pdf": "docs/research/free-content/evidence/2026-11-05-civic/2024-31419-official.pdf",
+        "pdf_text_native_footer": "FR Doc.2024–31419; also adjacent2024–31384, both preserved.",
+        "network_vantage": "Managed cloud, physical country unverified.",
+        "login_required_observed": false
+      },
+      "evidence": [
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "examples/federal-register.documentation-discovery.jsonl",
+        "examples/federal-register.openapi.jsonl",
+        "examples/federal-register.scouting.jsonl",
+        "examples/federal-register.jsonl",
+        "examples/federal-register.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-civic/reader-observations.jsonl",
+        "runs/civic-native-readers-20261105an/observations.jsonl",
+        "examples/federal-register.access.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "962f52ab9427c0556ed6",
+          "observed_at": "2026-11-05T11:37:46.908266+00:00",
+          "url": "https://www.federalregister.gov/developers/documentation/api/v1",
+          "body_sha256": "2948676b1d97ec5223d249c1e5f773e969a01d4d55abb4b71294f97cbd02c466",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "3e870dddde27a9b3cd43",
+          "observed_at": "2026-11-05T11:37:50.623182+00:00",
+          "url": "https://www.federalregister.gov/reader-aids/government-policy-and-ofr-procedures/about-this-site",
+          "body_sha256": "6faab66dc46a837ccb1e2b8d06c11fde7b7c5b1a690d972718e1440ca374659d",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "ff2108e7a79fd5e7116a",
+          "observed_at": "2026-11-05T11:51:18.006591+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/12/31/2024-31419/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "9dbafcf41ccee3d2ac3d340218d9305a2d21536e4314682248bc6992023aad7c",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "2fdf0459ea8bf3a31ca3",
+          "observed_at": "2026-11-05T11:51:22.059615+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/11/27/2024-27864/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "7eaa1057141df9d1717898f2dd76f8b96009d5c579bb3524f2ef2b2d1390eeb1",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        }
+      ],
+      "open_questions": [
+        "Resolve/characterize mobile horizontal overflow and complete keyboard/screen-reader review.",
+        "Test remaining item/official-edition destinations without conflating HTML availability with current legal authority."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Five top-five topic sets were reviewed against titles/abstracts; exact rule identities, issuing agencies and dates remain visible. Topic hits include narrow notices/corrections and are not five broad practical guides.",
+      "facts": {
+        "topic_results_reviewed": 25,
+        "food_labeling": "Two equal titles belong to FDA and FSIS; frozen-cherry-pie standards are related food-standard content, not a literal title match.",
+        "airworthiness": "Equal Airbus titles concern different aircraft and native directives; publication year differs from one number prefix.",
+        "hazardous_waste": "Some hits are specific facility/exclusion changes, not broad waste guidance; do not tag them as property-owner discovery.",
+        "correction": "Source provides correction links; supplemental current-law/withdrawal checking remains necessary.",
+        "negative_tests": [
+          "No-result count0 omitted results",
+          "Missing document404",
+          "Invalid year silently broadened/misdirected results",
+          "Correction notice with distinct native ID"
+        ]
+      },
+      "evidence": [
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "examples/federal-register.documentation-discovery.jsonl",
+        "examples/federal-register.openapi.jsonl",
+        "examples/federal-register.scouting.jsonl",
+        "examples/federal-register.jsonl",
+        "examples/federal-register.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-civic/reader-observations.jsonl",
+        "runs/civic-native-readers-20261105an/observations.jsonl",
+        "examples/federal-register.access.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "962f52ab9427c0556ed6",
+          "observed_at": "2026-11-05T11:37:46.908266+00:00",
+          "url": "https://www.federalregister.gov/developers/documentation/api/v1",
+          "body_sha256": "2948676b1d97ec5223d249c1e5f773e969a01d4d55abb4b71294f97cbd02c466",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "3e870dddde27a9b3cd43",
+          "observed_at": "2026-11-05T11:37:50.623182+00:00",
+          "url": "https://www.federalregister.gov/reader-aids/government-policy-and-ofr-procedures/about-this-site",
+          "body_sha256": "6faab66dc46a837ccb1e2b8d06c11fde7b7c5b1a690d972718e1440ca374659d",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "ff2108e7a79fd5e7116a",
+          "observed_at": "2026-11-05T11:51:18.006591+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/12/31/2024-31419/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "9dbafcf41ccee3d2ac3d340218d9305a2d21536e4314682248bc6992023aad7c",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "2fdf0459ea8bf3a31ca3",
+          "observed_at": "2026-11-05T11:51:22.059615+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/11/27/2024-27864/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "7eaa1057141df9d1717898f2dd76f8b96009d5c579bb3524f2ef2b2d1390eeb1",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        }
+      ],
+      "open_questions": [
+        "Complete correction/withdrawal and supersession handling for retained historical records; avoid current-law claims.",
+        "Review wider intent/Unicode behavior without presenting English sample coverage as exhaustive."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Bounded anonymous GETs use current policy evidence, one writer lease, serial pacing and strict metadata/date/type guards. No bulk editions or form submissions.",
+      "facts": {
+        "minimum_pause_seconds": 3,
+        "max_results": 5,
+        "max_response_bytes": 262144,
+        "automatic_retries": 0,
+        "numeric_provider_quota": null,
+        "refresh_identity": "Mutable API response hash/observation date; publication/effective date is not last API revision."
+      },
+      "evidence": [
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "examples/federal-register.documentation-discovery.jsonl",
+        "examples/federal-register.openapi.jsonl",
+        "examples/federal-register.scouting.jsonl",
+        "examples/federal-register.jsonl",
+        "examples/federal-register.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-civic/reader-observations.jsonl",
+        "runs/civic-native-readers-20261105an/observations.jsonl",
+        "examples/federal-register.access.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "962f52ab9427c0556ed6",
+          "observed_at": "2026-11-05T11:37:46.908266+00:00",
+          "url": "https://www.federalregister.gov/developers/documentation/api/v1",
+          "body_sha256": "2948676b1d97ec5223d249c1e5f773e969a01d4d55abb4b71294f97cbd02c466",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "3e870dddde27a9b3cd43",
+          "observed_at": "2026-11-05T11:37:50.623182+00:00",
+          "url": "https://www.federalregister.gov/reader-aids/government-policy-and-ofr-procedures/about-this-site",
+          "body_sha256": "6faab66dc46a837ccb1e2b8d06c11fde7b7c5b1a690d972718e1440ca374659d",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "ff2108e7a79fd5e7116a",
+          "observed_at": "2026-11-05T11:51:18.006591+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/12/31/2024-31419/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "9dbafcf41ccee3d2ac3d340218d9305a2d21536e4314682248bc6992023aad7c",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "2fdf0459ea8bf3a31ca3",
+          "observed_at": "2026-11-05T11:51:22.059615+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/11/27/2024-27864/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "7eaa1057141df9d1717898f2dd76f8b96009d5c579bb3524f2ef2b2d1390eeb1",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        }
+      ],
+      "open_questions": [
+        "Rehearse refresh, correction/withdrawal/removal and outage behavior; obtain later-session reliability and maintenance ownership."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain ten current-query examples for one scoped regulatory catalog, with full qualification still open.",
+      "facts": {
+        "decision": "ten-query-examples-verified",
+        "activation_approved": false,
+        "owner_action_required": false,
+        "next_action": "Finish responsive mobile/accessibility review, temporal/correction/withdrawal semantics and bounded refresh operations; preserve official-edition verification requirement.",
+        "revisit_trigger": "Published API/policy change, source corrections or a specific remaining qualification check; no repeated access-denied requests."
+      },
+      "evidence": [
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "examples/federal-register.documentation-discovery.jsonl",
+        "examples/federal-register.openapi.jsonl",
+        "examples/federal-register.scouting.jsonl",
+        "examples/federal-register.jsonl",
+        "examples/federal-register.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-civic/reader-observations.jsonl",
+        "runs/civic-native-readers-20261105an/observations.jsonl",
+        "examples/federal-register.access.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "962f52ab9427c0556ed6",
+          "observed_at": "2026-11-05T11:37:46.908266+00:00",
+          "url": "https://www.federalregister.gov/developers/documentation/api/v1",
+          "body_sha256": "2948676b1d97ec5223d249c1e5f773e969a01d4d55abb4b71294f97cbd02c466",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/law-media-contract-20261105al/observations.jsonl",
+          "job_id": "3e870dddde27a9b3cd43",
+          "observed_at": "2026-11-05T11:37:50.623182+00:00",
+          "url": "https://www.federalregister.gov/reader-aids/government-policy-and-ofr-procedures/about-this-site",
+          "body_sha256": "6faab66dc46a837ccb1e2b8d06c11fde7b7c5b1a690d972718e1440ca374659d",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "ff2108e7a79fd5e7116a",
+          "observed_at": "2026-11-05T11:51:18.006591+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/12/31/2024-31419/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "9dbafcf41ccee3d2ac3d340218d9305a2d21536e4314682248bc6992023aad7c",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        },
+        {
+          "path": "runs/civic-native-readers-20261105an/observations.jsonl",
+          "job_id": "2fdf0459ea8bf3a31ca3",
+          "observed_at": "2026-11-05T11:51:22.059615+00:00",
+          "url": "https://www.federalregister.gov/documents/2024/11/27/2024-27864/uniform-compliance-date-for-food-labeling-regulations",
+          "body_sha256": "7eaa1057141df9d1717898f2dd76f8b96009d5c579bb3524f2ef2b2d1390eeb1",
+          "policy_sha256": "6c180c52aac5e205b870c129f0edc466413fe32eeefea40fefcde42464e8ba62"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "origin_family": "ofr-nara-gpo-federal-register",
+  "query": {
+    "adapter": "federal-register",
+    "endpoint": "https://www.federalregister.gov/api/v1/documents.json",
+    "authentication": "Official documentation explicitly says no API key required.",
+    "cost": "No payment/key; numeric quota not found. Research serial >=3seconds, at most5 records and256KiB per request.",
+    "cases": [
+      {
+        "id": "topic-1",
+        "intent": "Search 2024 final-rule metadata for drinking water; this is not verification of current legal effect.",
+        "expected_ids": [
+          "2024-01530"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "conditions[publication_date][year]": 2024,
+            "conditions[term]": "drinking water",
+            "conditions[type][]": "RULE",
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ],
+            "order": "relevance",
+            "page": 1,
+            "per_page": 5
+          },
+          "url": "https://www.federalregister.gov/api/v1/documents.json"
+        }
+      },
+      {
+        "id": "topic-2",
+        "intent": "Search 2024 final-rule metadata for airworthiness; this is not verification of current legal effect.",
+        "expected_ids": [
+          "2024-00549"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "conditions[publication_date][year]": 2024,
+            "conditions[term]": "airworthiness",
+            "conditions[type][]": "RULE",
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ],
+            "order": "relevance",
+            "page": 1,
+            "per_page": 5
+          },
+          "url": "https://www.federalregister.gov/api/v1/documents.json"
+        }
+      },
+      {
+        "id": "topic-3",
+        "intent": "Search 2024 final-rule metadata for energy conservation; this is not verification of current legal effect.",
+        "expected_ids": [
+          "2024-08212"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "conditions[publication_date][year]": 2024,
+            "conditions[term]": "energy conservation",
+            "conditions[type][]": "RULE",
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ],
+            "order": "relevance",
+            "page": 1,
+            "per_page": 5
+          },
+          "url": "https://www.federalregister.gov/api/v1/documents.json"
+        }
+      },
+      {
+        "id": "topic-4",
+        "intent": "Search 2024 final-rule metadata for food labeling; this is not verification of current legal effect.",
+        "expected_ids": [
+          "2024-31419"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "conditions[publication_date][year]": 2024,
+            "conditions[term]": "food labeling",
+            "conditions[type][]": "RULE",
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ],
+            "order": "relevance",
+            "page": 1,
+            "per_page": 5
+          },
+          "url": "https://www.federalregister.gov/api/v1/documents.json"
+        }
+      },
+      {
+        "id": "topic-5",
+        "intent": "Search 2024 final-rule metadata for hazardous waste; this is not verification of current legal effect.",
+        "expected_ids": [
+          "2024-23809"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "conditions[publication_date][year]": 2024,
+            "conditions[term]": "hazardous waste",
+            "conditions[type][]": "RULE",
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ],
+            "order": "relevance",
+            "page": 1,
+            "per_page": 5
+          },
+          "url": "https://www.federalregister.gov/api/v1/documents.json"
+        }
+      },
+      {
+        "id": "known-document-1",
+        "intent": "Retrieve one distinct known native document; preserve publication/effective dates and correction links.",
+        "expected_ids": [
+          "2024-07773"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.federalregister.gov/api/v1/documents/2024-07773.json",
+          "params": {
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ]
+          }
+        }
+      },
+      {
+        "id": "known-document-2",
+        "intent": "Retrieve one distinct known native document; preserve publication/effective dates and correction links.",
+        "expected_ids": [
+          "2024-28790"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.federalregister.gov/api/v1/documents/2024-28790.json",
+          "params": {
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ]
+          }
+        }
+      },
+      {
+        "id": "known-document-3",
+        "intent": "Retrieve one distinct known native document; preserve publication/effective dates and correction links.",
+        "expected_ids": [
+          "2024-07873"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.federalregister.gov/api/v1/documents/2024-07873.json",
+          "params": {
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ]
+          }
+        }
+      },
+      {
+        "id": "known-document-4",
+        "intent": "Retrieve one distinct known native document; preserve publication/effective dates and correction links.",
+        "expected_ids": [
+          "2024-27864"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.federalregister.gov/api/v1/documents/2024-27864.json",
+          "params": {
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ]
+          }
+        }
+      },
+      {
+        "id": "known-document-5",
+        "intent": "Retrieve one distinct known native document; preserve publication/effective dates and correction links.",
+        "expected_ids": [
+          "2024-28802"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.federalregister.gov/api/v1/documents/2024-28802.json",
+          "params": {
+            "fields[]": [
+              "document_number",
+              "title",
+              "type",
+              "publication_date",
+              "effective_on",
+              "citation",
+              "agencies",
+              "html_url",
+              "pdf_url",
+              "abstract",
+              "correction_of",
+              "corrections"
+            ]
+          }
+        }
+      }
+    ],
+    "supported_modes": [
+      "Full-text search with explicit year/type filters",
+      "Native document number lookup",
+      "Selected metadata fields",
+      "Explicit page/per_page"
+    ],
+    "unsupported_modes": [
+      "Current consolidated law/current legal advice",
+      "Legacy two-digit document IDs in this research adapter",
+      "India/local/state legislation",
+      "Incorporated third-party standards content",
+      "Account/comment submission"
+    ],
+    "paging": "Documented maximum1000; research cap5. Two observed pages have ten distinct IDs.",
+    "scope": "2024 publication-year final rules; effective dates may be later or null."
+  }
+}
