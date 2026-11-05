@@ -11,7 +11,7 @@
   "areas": [
     "C06"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "attributed-repository-candidate",
@@ -38,11 +38,14 @@
   "evidence": [
     "runs/thesis-native-followup-20261105bb/observations.jsonl",
     "examples/openalex.jsonl",
-    "runs/thesis-index-readers-20261105ba/observations.jsonl"
+    "runs/thesis-index-readers-20261105ba/observations.jsonl",
+    "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+    "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+    "runs/scholarly-title-queries-20261105ei/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T14:11:41.272046+00:00",
+  "last_reviewed_at": "2026-11-05T20:53:39.757710+00:00",
   "fresh_query_verification": false,
-  "next_action": "Review the publicly linked query/export contract and metadata/content terms, then obtain ten current native examples with supported search,paging,empty,error and reader checks. Reuse the saved item evidence first; no new network request for this backfill.",
+  "next_action": "Revisit a published permitted metadata export or changed policy. Do not replay hidden DSpace APIs or use a browser to evade the denied routes.",
   "analysis_refs": [],
   "dossier": {
     "identity_and_duplicates": {
@@ -267,36 +270,41 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Retain an explicit partial repository dossier without adding query or qualification counts.",
+      "status": "partial",
+      "summary": "Robots policy disallows both published repository search routes tested here.",
       "facts": {
-        "decision": "candidate",
-        "activation_approved": false,
-        "full_qualification_complete": false,
-        "owner_action_required": false,
-        "next_action": "Review the publicly linked query/export contract and metadata/content terms, then obtain ten current native examples with supported search,paging,empty,error and reader checks. Reuse the saved item evidence first; no new network request for this backfill."
+        "decision": "blocked_or_failed",
+        "blocker": "Robots policy disallows both published repository search routes tested here.",
+        "next_action": "Revisit a published permitted metadata export or changed policy. Do not replay hidden DSpace APIs or use a browser to evade the denied routes.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/thesis-native-followup-20261105bb/observations.jsonl",
-        "examples/openalex.jsonl",
-        "runs/thesis-index-readers-20261105ba/observations.jsonl"
+        "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
-          "job_id": "e801990b436204831720",
-          "url": "https://dspace.library.uu.nl/items/4a1f5618-c6b9-4864-9084-8771e10374f4",
-          "observed_at": "2026-11-05T13:11:52.172592+00:00",
-          "body_sha256": "a1fb2510a3059e8de15e25ea51400102ea0665eef01d889a8b9d70ca7288c67d",
-          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
-        }
-      ],
-      "fresh_query_verification": false,
-      "open_questions": []
+      "open_questions": [
+        "Current supported queryability remains unresolved; failure is not a permanent unavailability claim."
+      ]
     }
   },
   "limitations": [
+    "Robots policy disallows both published repository search routes tested here.",
     "Only a previously captured native item metadata page has been analyzed; supported machine query/export, ten current examples, full reading, licenses and operating contract remain open.",
     "One institution repository candidate; native items, handles, files, mirrors and the shared OpenAlex index do not create additional origins."
-  ]
+  ],
+  "recovery": {
+    "reason": "Robots policy disallows both published repository search routes tested here.",
+    "attempt": "Read the public homepage form and linked Atom search feed; checked their exact paths under the published robots policy.",
+    "result": "Both /server/opensearch/search and /search were skipped under policy. Public native item metadata remains known; no query was sent. Homepage evidence was size-truncated and is not a complete catalog capture.",
+    "decision": "wait_for_permitted_export_or_policy_change",
+    "next_action": "Revisit a published permitted metadata export or changed policy. Do not replay hidden DSpace APIs or use a browser to evade the denied routes.",
+    "retry_trigger": "Revisit a published permitted metadata export or changed policy. Do not replay hidden DSpace APIs or use a browser to evade the denied routes.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+      "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+      "runs/scholarly-title-queries-20261105ei/observations.jsonl"
+    ]
+  }
 }

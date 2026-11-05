@@ -196,7 +196,25 @@ def evidence_run_audit(registry=REGISTRY):
         seen = set()
         local_input_failures = []
         for row in rows:
-            if row['job_id'] not in known or row['job_id'] in seen:
+            # A corrected parser may reassess an independently saved capture.
+            # Preserve the failed attempt; only accept a duplicate job when its
+            # full HTTP/policy proof exactly matches the cited external capture.
+            verified_reassessment = False
+            reference = row.get('capture_reused_from')
+            if row['job_id'] in seen and reference and row.get('reassessment_at'):
+                proof_path = (registry / reference).resolve()
+                if (proof_path.is_relative_to((registry / 'runs').resolve())
+                        and proof_path != output.resolve() and proof_path.is_file()
+                        and row.get('outcome') == 'captured'):
+                    verified_reassessment = any(
+                        prior.get('job_id') == row['job_id']
+                        and prior.get('url') == row.get('url')
+                        and prior.get('outcome') == 'captured'
+                        and prior.get('observed_at') == row.get('observed_at')
+                        and prior.get('http') == row.get('http')
+                        and prior.get('robots_evidence') == row.get('robots_evidence')
+                        for prior in read_jsonl(proof_path))
+            if row['job_id'] not in known or row['job_id'] in seen and not verified_reassessment:
                 errors.append(f'Unknown/duplicate documentation observation: {directory.name}/{row["job_id"]}')
             seen.add(row['job_id'])
             # A malformed local input can fail before an HTTP request exists.

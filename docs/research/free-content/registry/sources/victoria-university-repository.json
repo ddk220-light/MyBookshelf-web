@@ -11,7 +11,7 @@
   "areas": [
     "C06"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "attributed-repository-candidate",
@@ -37,11 +37,14 @@
   ],
   "evidence": [
     "runs/thesis-index-readers-20261105ba/observations.jsonl",
-    "examples/openalex.jsonl"
+    "examples/openalex.jsonl",
+    "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+    "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+    "runs/scholarly-title-queries-20261105ei/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T14:11:41.272046+00:00",
+  "last_reviewed_at": "2026-11-05T20:53:39.758312+00:00",
   "fresh_query_verification": false,
-  "next_action": "Review the publicly linked query/export contract and metadata/content terms, then obtain ten current native examples with supported search,paging,empty,error and reader checks. Reuse the saved item evidence first; no new network request for this backfill.",
+  "next_action": "Revisit only on a documented permitted catalog/export or policy change; do not guess EPrints API paths or repeat unchanged denials.",
   "analysis_refs": [],
   "dossier": {
     "identity_and_duplicates": {
@@ -259,35 +262,41 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Retain an explicit partial repository dossier without adding query or qualification counts.",
+      "status": "partial",
+      "summary": "After a temporary503 recovered, the usable robots policy disallowed the published search and thesis-browse routes.",
       "facts": {
-        "decision": "candidate",
-        "activation_approved": false,
-        "full_qualification_complete": false,
-        "owner_action_required": false,
-        "next_action": "Review the publicly linked query/export contract and metadata/content terms, then obtain ten current native examples with supported search,paging,empty,error and reader checks. Reuse the saved item evidence first; no new network request for this backfill."
+        "decision": "blocked_or_failed",
+        "blocker": "After a temporary503 recovered, the usable robots policy disallowed the published search and thesis-browse routes.",
+        "next_action": "Revisit only on a documented permitted catalog/export or policy change; do not guess EPrints API paths or repeat unchanged denials.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/thesis-index-readers-20261105ba/observations.jsonl",
-        "examples/openalex.jsonl"
+        "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
-          "job_id": "f65261b2807021139b74",
-          "url": "https://vuir.vu.edu.au/15601/",
-          "observed_at": "2026-11-05T13:10:17.919446+00:00",
-          "body_sha256": "3ab2f80fa7881cf0f160479532956da5b57f84c4d09b0f59694108f54a1ec8fe",
-          "policy_sha256": "02b321e3cde580c105d7da21f4cb16342ee14edb7c8db55a83954e5d8a0dc2f8"
-        }
-      ],
-      "fresh_query_verification": false,
-      "open_questions": []
+      "open_questions": [
+        "Current supported queryability remains unresolved; failure is not a permanent unavailability claim."
+      ]
     }
   },
   "limitations": [
+    "After a temporary503 recovered, the usable robots policy disallowed the published search and thesis-browse routes.",
     "Only a previously captured native item metadata page has been analyzed; supported machine query/export, ten current examples, full reading, licenses and operating contract remain open.",
     "One institution repository candidate; native items, handles, files, mirrors and the shared OpenAlex index do not create additional origins."
-  ]
+  ],
+  "recovery": {
+    "reason": "After a temporary503 recovered, the usable robots policy disallowed the published search and thesis-browse routes.",
+    "attempt": "Checked the officially linked advanced search; waited 158.3 seconds between policy request starts, then checked the published thesis browse alternative.",
+    "result": "Initial robots503 caused a skip. Delayed robots200 still disallowed /cgi/search/advanced; /view/type/thesis.html also skipped. Older native record15601 and advertised metadata exports are not current search proof.",
+    "decision": "wait_for_permitted_metadata_route_or_policy_change",
+    "next_action": "Revisit only on a documented permitted catalog/export or policy change; do not guess EPrints API paths or repeat unchanged denials.",
+    "retry_trigger": "Revisit only on a documented permitted catalog/export or policy change; do not guess EPrints API paths or repeat unchanged denials.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+      "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+      "runs/scholarly-title-queries-20261105ei/observations.jsonl"
+    ]
+  }
 }

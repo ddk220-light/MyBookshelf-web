@@ -1,3 +1,43 @@
+## 2026-11-05T21:32:59.298196+00:00: Connector search checkpoint
+
+| Group | Working | Blocked/failed | Still checking | Total |
+|---|---:|---:|---:|---:|
+| Books, children’s books and audiobooks | 11 | 15 | 13 | 39 |
+| Learning and technical documentation | 9 | 6 | 0 | 15 |
+| Industry and job knowledge | 10 | 10 | 0 | 20 |
+| Government, maps and public data | 9 | 15 | 2 | 26 |
+| Research papers and scholarly sources | 10 | 12 | 0 | 22 |
+| Language, culture and media | 4 | 8 | 0 | 12 |
+| **Total** | **53** | **66** | **15** | **134** |
+
+Compared with the prior hourly report: +4 Working, +4 Blocked/failed, 8 fewer Still checking; 40 added passing examples.
+
+53 Working, 66 Blocked/failed, 15 Still checking of 134; 565 passing examples. This run's Working additions: marad-data-reports, msha-digital-library, la-referencia, rit-scholarworks. New blocked: scielo, unpaywall, utrecht-repository, victoria-university-repository. Read connector-status.csv for actual supported scopes and recovery actions. MARAD searches11 published trade/report titles; MSHA uses the public guest form and native metadata product IDs, never display rank. Its title-click overlap was fixed; two nonsense-query timeouts remain open. Five culture/media recovery actions were clarified from saved evidence, not fresh requests. Continue unchecked scholarly connectors, then books and public data; blocked providers need a useful recovery trigger. Research only; hourly task stays enabled.
+
+RIT:111 pages/11042 distinct thesis records, zero duplicates. LA Referencia:ten title queries plus empty and page2 controls. New blockers:SciELO403,Utrecht policy-denied search/feed,Victoria temporary503 then policy-denied search/browse,Unpaywall unusable policy and unconfigured historical API contact. Parser and UI failures remain in append-only evidence. Next:GovInfo/World Bank repository,then13 book connectors. All collectors exited.
+
+Validation: 233 research tests and registry capture/index/audit/validation pass. No source activation or deployment. [Per-connector search scopes and recovery actions](connector-status.csv). State: checkpointed-awaiting-next-scheduled-run.
+
+## 2026-11-05T21:31:22.894577+00:00: Connector search checkpoint
+
+| Group | Working | Blocked/failed | Still checking | Total |
+|---|---:|---:|---:|---:|
+| Books, children’s books and audiobooks | 11 | 15 | 13 | 39 |
+| Learning and technical documentation | 9 | 6 | 0 | 15 |
+| Industry and job knowledge | 10 | 10 | 0 | 20 |
+| Government, maps and public data | 9 | 15 | 2 | 26 |
+| Research papers and scholarly sources | 9 | 12 | 1 | 22 |
+| Language, culture and media | 4 | 8 | 0 | 12 |
+| **Total** | **52** | **66** | **16** | **134** |
+
+Compared with the prior hourly report: +3 Working, +4 Blocked/failed, 7 fewer Still checking; 30 added passing examples.
+
+52 Working, 66 Blocked/failed, 16 Still checking of 134; 555 passing examples. This run's Working additions: marad-data-reports, msha-digital-library, la-referencia. New blocked: scielo, unpaywall, utrecht-repository, victoria-university-repository. Read connector-status.csv for actual supported scopes and recovery actions. MARAD searches11 published trade/report titles; MSHA uses the public guest form and native metadata product IDs, never display rank. Its title-click overlap was fixed; two nonsense-query timeouts remain open. Five culture/media recovery actions were clarified from saved evidence, not fresh requests. Continue unchecked scholarly connectors, then books and public data; blocked providers need a useful recovery trigger. Research only; hourly task stays enabled.
+
+RIT: all111 published pages/11042 distinct theses, zero duplicate IDs; page108 parser error corrected using the published numbered next link. LA Referencia: ten Title-field searches, explicit empty control and page2. New blockers: SciELO403; Utrecht denied search/feed routes; Victoria recovered robots503 then policy-denied search/browse; Unpaywall HTML policy and missing configured contact. All collectors exited. Next: GovInfo and World Bank repository, then13 book connectors.
+
+Validation: 231 research tests and registry capture/index/audit/validation pass. No source activation or deployment. [Per-connector search scopes and recovery actions](connector-status.csv). State: checkpointed-awaiting-next-scheduled-run.
+
 ## 2026-11-05T20:47:02.368317+00:00: Connector search checkpoint
 
 | Group | Working | Blocked/failed | Still checking | Total |

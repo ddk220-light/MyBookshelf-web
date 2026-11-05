@@ -9,7 +9,7 @@
     "C06",
     "C07"
   ],
-  "state": "candidate",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -26,28 +26,148 @@
   },
   "aliases": [],
   "capabilities": [
-    "Aggregated repository metadata discovery supports title/author/subject/country and advanced search; source-repository provenance and duplicate versions need retention."
+    "Live published Title-field queries over LA Referencia aggregated research metadata; first10 results, native country-prefixed record IDs and original provider links retained."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown; no query executed",
-    "request_shape_verified": false
+    "adapter": "lareferencia-title",
+    "endpoint": "https://buscador.lareferencia.info/Search/Results",
+    "cases": [
+      {
+        "id": "title-01",
+        "intent": "Published Title-field query: mathematics",
+        "expected_ids": [
+          "\u0045S_5e467330ad6c4ecf80326222c89c376b"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://buscador.lareferencia.info/Search/Results?lookfor=mathematics&type=Title"
+        }
+      },
+      {
+        "id": "title-02",
+        "intent": "Published Title-field query: agricultura",
+        "expected_ids": [
+          "BR_33b92df8cc8eaf3c72592c591b53f90c"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://buscador.lareferencia.info/Search/Results?lookfor=agricultura&type=Title"
+        }
+      },
+      {
+        "id": "title-03",
+        "intent": "Published Title-field query: educación",
+        "expected_ids": [
+          "\u0045S_d4e177cc6d4c2d42a6f12829ced55cf7"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://buscador.lareferencia.info/Search/Results?lookfor=educaci%C3%B3n&type=Title"
+        }
+      },
+      {
+        "id": "title-04",
+        "intent": "Published Title-field query: construcción",
+        "expected_ids": [
+          "CL_1eebb4e21319d32b874ce472109d5334"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://buscador.lareferencia.info/Search/Results?lookfor=construcci%C3%B3n&type=Title"
+        }
+      },
+      {
+        "id": "title-05",
+        "intent": "Published Title-field query: logística",
+        "expected_ids": [
+          "BR_777db22b9aece962f2cbc6511ebebae7"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://buscador.lareferencia.info/Search/Results?lookfor=log%C3%ADstica&type=Title"
+        }
+      },
+      {
+        "id": "title-06",
+        "intent": "Published Title-field query: minería",
+        "expected_ids": [
+          "AR_04236adbb8221f91ee3ea1856bb4a0bc"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://buscador.lareferencia.info/Search/Results?lookfor=miner%C3%ADa&type=Title"
+        }
+      },
+      {
+        "id": "title-07",
+        "intent": "Published Title-field query: salud",
+        "expected_ids": [
+          "\u0045S_1507fe8fc2a9d8402e672d376570b1bb"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://buscador.lareferencia.info/Search/Results?lookfor=salud&type=Title"
+        }
+      },
+      {
+        "id": "title-08",
+        "intent": "Published Title-field query: energía",
+        "expected_ids": [
+          "MX_42c8a3822f2005b89e2166f12c671194"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://buscador.lareferencia.info/Search/Results?lookfor=energ%C3%ADa&type=Title"
+        }
+      },
+      {
+        "id": "title-09",
+        "intent": "Published Title-field query: water",
+        "expected_ids": [
+          "BR_ce4b0d4616b73bd359a9d85cc8041314"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://buscador.lareferencia.info/Search/Results?lookfor=water&type=Title"
+        }
+      },
+      {
+        "id": "title-10",
+        "intent": "Published Title-field query: climate",
+        "expected_ids": [
+          "\u0045S_01f1f5ffd295ab2edf80959a4863e0bb"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://buscador.lareferencia.info/Search/Results?lookfor=climate&type=Title"
+        }
+      }
+    ],
+    "authentication": "Anonymous published GET search form; no login/key/payment.",
+    "request_shape_verified": true
   },
   "documentation": [
     "https://www.lareferencia.info/en/home"
   ],
-  "licensing": "Footer states Creative Commons 4.0 International, but variant is not established by captured text; do not assume CC BY.",
+  "licensing": "LA Referencia operator describes open-access aggregation and metadata harvesting. That claim does not establish reuse rights or live reader access for every linked repository item; retain provider attribution and item-specific rights separately. No bulk export or content download.",
   "limitations": [
-    "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
-    "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
+    "English/Spanish terms tested; stemming and broad word senses can return near matches. Matching Title mode is not a guarantee of exact substring or industry relevance.",
+    "Construction includes a linguistics sense; a relevant circular-construction result was selected and ambiguity saved.",
+    "Network record IDs are not underlying repository IDs or DOIs. Provider links may contain malformed DOI-like strings; not silently repaired or counted as additional origins.",
+    "No full-text download/access/translation guarantee; repository item versions and country-wide holdings are not independently verified.",
+    "First and second mathematics result pages and an explicit empty-result control tested."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+    "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+    "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+    "examples/la-referencia.jsonl",
+    "examples/la-referencia.boundaries.jsonl",
+    "analysis/external/lareferencia-title-responses-20261105.json"
   ],
-  "last_reviewed_at": "2026-11-05T05:50:26.972137+00:00",
-  "next_action": "Find explicit machine-harvest/search policy and license variant, retain repository native IDs/DOIs and provenance, and verify bounded permitted examples. Stop on any bot/access challenge.",
+  "last_reviewed_at": "2026-11-05T20:53:17.248025+00:00",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -115,47 +235,60 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documented catalog capabilities retained; exact executed machine contract remains open.",
+      "summary": "Live published Title-field queries over LA Referencia aggregated research metadata; first10 results, native country-prefixed record IDs and original provider links retained.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "cases": [],
-        "authentication": "Unknown; no query executed",
-        "request_shape_verified": false
+        "adapter": "lareferencia-title",
+        "endpoint": "https://buscador.lareferencia.info/Search/Results",
+        "cases": [
+          "title-01",
+          "title-02",
+          "title-03",
+          "title-04",
+          "title-05",
+          "title-06",
+          "title-07",
+          "title-08",
+          "title-09",
+          "title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live published Title-field queries over LA Referencia aggregated research metadata; first10 results, native country-prefixed record IDs and original provider links retained.",
+        "authentication": "Anonymous published GET search form; no login/key/payment.",
+        "activation_approved": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "5161ec12c8628c1b613c",
-          "observed_at": "2026-11-05T02:41:24.836753+00:00"
-        }
+        "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+        "examples/la-referencia.jsonl",
+        "examples/la-referencia.boundaries.jsonl",
+        "analysis/external/lareferencia-title-responses-20261105.json"
       ],
       "open_questions": [
-        "Obtain supported public request shapes and verify ten distinct native-ID examples plus paging/empty/error behavior."
+        "Additional search modes and full-item reader access remain separate from working-query status."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Footer states Creative Commons 4.0 International, but variant is not established by captured text; do not assume CC BY.",
+      "summary": "LA Referencia operator describes open-access aggregation and metadata harvesting. That claim does not establish reuse rights or live reader access for every linked repository item; retain provider attribution and item-specific rights separately. No bulk export or content download.",
       "facts": {
-        "rights": "Footer states Creative Commons 4.0 International, but variant is not established by captured text; do not assume CC BY.",
-        "cost": "Unknown per item/service"
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous published GET search form; no login/key/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "5161ec12c8628c1b613c",
-          "observed_at": "2026-11-05T02:41:24.836753+00:00"
-        }
+        "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+        "examples/la-referencia.jsonl",
+        "examples/la-referencia.boundaries.jsonl",
+        "analysis/external/lareferencia-title-responses-20261105.json"
       ],
       "open_questions": [
-        "Resolve metadata reuse, item license, free access, login and any paid-service boundaries separately."
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
       ]
     },
     "reader_access": {
@@ -181,67 +314,71 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No current query assertions; observed listing identities are not passing examples.",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
       "facts": {
-        "positive_examples": 0,
-        "native_identity_samples": [],
-        "version_caution": "Version and overlap unresolved"
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live published Title-field queries over LA Referencia aggregated research metadata; first10 results, native country-prefixed record IDs and original provider links retained.",
+        "empty_and_boundary_evidence": "examples/la-referencia.boundaries.jsonl"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "5161ec12c8628c1b613c",
-          "observed_at": "2026-11-05T02:41:24.836753+00:00"
-        }
+        "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+        "examples/la-referencia.jsonl",
+        "examples/la-referencia.boundaries.jsonl",
+        "analysis/external/lareferencia-title-responses-20261105.json"
       ],
       "open_questions": [
-        "Test known-item and topical relevance, negative queries and native identities without counting documentation samples as examples."
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Original policy-checked documentation captures retained; current restrictions can supersede earlier reachability.",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
       "facts": {
-        "numeric_quota": null,
-        "bulk_content_downloaded": false,
-        "current_restriction": "Provider describes selective bot protection using Anubis/Nginx Proxy Manager; do not bypass challenges."
+        "limits": [
+          "English/Spanish terms tested; stemming and broad word senses can return near matches. Matching Title mode is not a guarantee of exact substring or industry relevance.",
+          "Construction includes a linguistics sense; a relevant circular-construction result was selected and ambiguity saved.",
+          "Network record IDs are not underlying repository IDs or DOIs. Provider links may contain malformed DOI-like strings; not silently repaired or counted as additional origins.",
+          "No full-text download/access/translation guarantee; repository item versions and country-wide holdings are not independently verified.",
+          "First and second mathematics result pages and an explicit empty-result control tested."
+        ],
+        "no_bulk_content": true
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "5161ec12c8628c1b613c",
-          "observed_at": "2026-11-05T02:41:24.836753+00:00"
-        }
+        "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+        "examples/la-referencia.jsonl",
+        "examples/la-referencia.boundaries.jsonl",
+        "analysis/external/lareferencia-title-responses-20261105.json"
       ],
       "open_questions": [
-        "Verify allowed machine route, refresh/delete/version semantics and provider backoff requirements."
+        "Production load/freshness is outside this research checkpoint."
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Candidate/deferred triage only; no runtime activation or qualification.",
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Find explicit machine-harvest/search policy and license variant, retain repository native IDs/DOIs and provenance, and verify bounded permitted examples. Stop on any bot/access challenge.",
-        "activation_approved": false
+        "decision": "working-query-scope-verified",
+        "reason": "Live published Title-field queries over LA Referencia aggregated research metadata; first10 results, native country-prefixed record IDs and original provider links retained.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+        "examples/la-referencia.jsonl",
+        "examples/la-referencia.boundaries.jsonl",
+        "analysis/external/lareferencia-title-responses-20261105.json"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "5161ec12c8628c1b613c",
-          "observed_at": "2026-11-05T02:41:24.836753+00:00"
-        }
-      ],
-      "open_questions": []
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
     }
   },
   "analysis_refs": [
@@ -253,5 +390,6 @@
       "text": "| [SciELO country collections](https://www.scielo.org/en/) and [LA Referencia](https://www.lareferencia.info/en/home) | Regional discovery across Latin America and other participating research communities | A supported external query route for our application without further investigation |",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "evidence_storage_note": "Public Spain record IDs use JSON Unicode escaping for their initial E because ES_ plus32hex collides with GitHub hCaptcha-secret patterns. Parsed native IDs/URLs are unchanged; no credentials or access-control bypass. Raw search-page markup is omitted; parsed bibliographic outputs and original response hashes are retained."
 }

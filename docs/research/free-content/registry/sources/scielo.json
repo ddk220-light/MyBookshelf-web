@@ -9,7 +9,7 @@
     "C04",
     "C07"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -40,14 +40,18 @@
   ],
   "licensing": "Open Access Statement is linked; item license and metadata reuse contract remain unverified.",
   "limitations": [
+    "The published article search returned HTTP403 from this environment after a successful robots check.",
     "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
     "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+    "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+    "runs/scholarly-title-queries-20261105ei/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T05:50:26.972137+00:00",
-  "next_action": "Resolve network/legal operators, follow official open-access and API/export documentation, and map article DOI/version/license overlap with Europe PMC/OpenAlex before counting independent origins.",
+  "last_reviewed_at": "2026-11-05T20:53:39.757262+00:00",
+  "next_action": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -229,25 +233,37 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Candidate/deferred triage only; no runtime activation or qualification.",
+      "status": "partial",
+      "summary": "The published article search returned HTTP403 from this environment after a successful robots check.",
       "facts": {
-        "decision": "candidate",
-        "next_action": "Resolve network/legal operators, follow official open-access and API/export documentation, and map article DOI/version/license overlap with Europe PMC/OpenAlex before counting independent origins.",
+        "decision": "blocked_or_failed",
+        "blocker": "The published article search returned HTTP403 from this environment after a successful robots check.",
+        "next_action": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
         "activation_approved": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "edf0454bb520b17422c6",
-          "observed_at": "2026-11-05T02:39:31.109712+00:00"
-        }
-      ],
-      "open_questions": []
+      "open_questions": [
+        "Current supported queryability remains unresolved; failure is not a permanent unavailability claim."
+      ]
     }
   },
-  "analysis_refs": []
+  "analysis_refs": [],
+  "recovery": {
+    "reason": "The published article search returned HTTP403 from this environment after a successful robots check.",
+    "attempt": "Followed the SciELO homepage search form with its published parameters and mathematics query.",
+    "result": "Homepage200; search403. Stopped on access denial; no challenge bypass or alternate search hostname.",
+    "decision": "wait_for_search_access_recovery",
+    "next_action": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
+    "retry_trigger": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+      "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+      "runs/scholarly-title-queries-20261105ei/observations.jsonl"
+    ]
+  }
 }

@@ -8,7 +8,7 @@
   "areas": [
     "C03"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -28,15 +28,19 @@
     "https://unpaywall.org/products/api/v2"
   ],
   "limitations": [
+    "The official documentation host returns HTML instead of a usable robots policy; the historical DOI API also requires a real contact email that is not configured here.",
     "Real email required; observed docs said 100,000 calls/day. No DOI call tested without contact. Official site JS said title search retired 2026-09-18 (410), recommending OpenAlex. **Low / P1 resolver**, not search.",
     "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+    "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+    "runs/scholarly-title-queries-20261105ei/observations.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T20:53:39.758705+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "After usable public documentation/policy and an already authorized real API contact are available, verify DOI lookups. Continue other scholarly sources now; no account/outreach request required.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -165,17 +169,20 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "The official documentation host returns HTML instead of a usable robots policy; the historical DOI API also requires a real contact email that is not configured here.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "blocked_or_failed",
+        "blocker": "The official documentation host returns HTML instead of a usable robots policy; the historical DOI API also requires a real contact email that is not configured here.",
+        "next_action": "After usable public documentation/policy and an already authorized real API contact are available, verify DOI lookups. Continue other scholarly sources now; no account/outreach request required.",
+        "activation_approved": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Current supported queryability remains unresolved; failure is not a permanent unavailability claim."
       ]
     }
   },
@@ -228,5 +235,19 @@
       "text": "1. Verify **`OPENALEX_API_KEY`** in the backend. The replacement environment reports the variable configured; no authenticated OpenAlex request was made during this repository transfer. At the research date the free account included $1/day of API usage, roughly 1,000 ordinary search requests before caching. Disable paid overages unless deliberately budgeted.\n2. Choose a real **application contact email** for request identification and, if enabled, Unpaywall's required `email` parameter. No email was invented, registered, or sent during this work.\n3. Optional later: Semantic Scholar, BHL and Europeana keys; CORE upgrade/eligibility confirmation. Standard Ebooks feed access and children's/OER catalog feeds need provider-specific arrangements.",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "recovery": {
+    "reason": "The official documentation host returns HTML instead of a usable robots policy; the historical DOI API also requires a real contact email that is not configured here.",
+    "attempt": "Checked the existing official API documentation URL and available contact-variable names; reviewed saved historical API notes.",
+    "result": "robots200 returned1421bytes of HTML, so documentation was skipped. No DOI query, invented email, account creation or alternate-host attempt. Historical title-search retirement is not freshly verified.",
+    "decision": "wait_for_policy_recovery_and_existing_authorized_contact",
+    "next_action": "After usable public documentation/policy and an already authorized real API contact are available, verify DOI lookups. Continue other scholarly sources now; no account/outreach request required.",
+    "retry_trigger": "After usable public documentation/policy and an already authorized real API contact are available, verify DOI lookups. Continue other scholarly sources now; no account/outreach request required.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+      "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+      "runs/scholarly-title-queries-20261105ei/observations.jsonl"
+    ]
+  }
 }

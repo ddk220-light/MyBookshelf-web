@@ -1,5 +1,9 @@
 # MyBookshelf web handoff
 
+**Free-knowledge connector research, 2026-11-05T21:32:59.298196+00:00:** 53 Working, 66 Blocked/failed, 15 Still checking of 134; 565 passing examples. 233 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
+**Free-knowledge connector research, 2026-11-05T21:31:22.894577+00:00:** 52 Working, 66 Blocked/failed, 16 Still checking of 134; 555 passing examples. 231 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
 **Free-knowledge connector research, 2026-11-05T20:47:02.368317+00:00:** 51 Working, 62 Blocked/failed, 21 Still checking of 134; 545 passing examples. 224 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
 
 **Free-knowledge connector research, 2026-11-05T20:20:37.648859+00:00:**49 Working,62 Blocked/failed,23 Still checking of134;525passing examples. Seven connectors gain working scoped searches this run; four blockers assessed.221research tests pass. Read [per-connector status](research/free-content/registry/connector-status.csv) and [goal](research/free-content/registry/goal.json). Hourly completion enabled; research only.
