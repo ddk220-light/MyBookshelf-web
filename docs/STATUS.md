@@ -1,5 +1,18 @@
 # MyBookshelf web handoff
 
+**Free-content discovery batch, 2026-11-05:** the owner requested the full area
+backlog and ten high-quality queryable candidates from the first group, explicitly
+without adding them to the app. [Backlog #164](https://github.com/ddk220-light/MyBookshelf-web/issues/164)
+and group issues #165–170 cover six groups, 20 content categories, 20 industries
+and nine USA/India public-information tracks. See the
+[backlog](research/free-content/DISCOVERY_BACKLOG.md) and
+[G01 first-ten evidence](research/free-content/batches/G01_FIRST_TEN.md).
+Ten candidates returned actual machine-search results and representative reading
+content/file samples. They remain probed/recommended for owner review; full
+production qualification is pending. G01 stays open, remaining groups queued.
+Work is documentation/research only in the expansion worktree/PR #161; no runtime
+source, catalog, flag, deployment or infrastructure was changed.
+
 **Free-content expansion proposal, 2026-11-05:** the owner requested a plan to
 find 100 searchable sources per category, including global and India/local
 coverage. The owner accepted those categories and requested industry/job knowledge

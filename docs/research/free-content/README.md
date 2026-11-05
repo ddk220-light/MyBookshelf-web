@@ -1,5 +1,11 @@
 # Free books and research discovery
 
+**Discovery backlog and first batch (2026-11-05):** the
+[six-group backlog](DISCOVERY_BACKLOG.md) tracks all 49 content, industry and
+public-information areas. [G01's first ten](batches/G01_FIRST_TEN.md) have live
+query and representative reading-access evidence for owner review. This phase
+is research only; do not integrate or enable these candidates.
+
 **Expansion planning (2026-11-05):** [100-source-per-category roadmap](EXPANSION_PLAN.md)
 defines 20 content categories, a group of 20 industry tags, six detailed discovery
 playbooks, and dedicated USA/India civic-record, property and geological-map

@@ -1,0 +1,519 @@
+{
+  "review_date": "2026-11-05",
+  "limitations": [
+    "Small anonymous samples only; no country-location testing, full-file audit, audio listening or app integration.",
+    "Early response times use actual capture-file modification time, not a fabricated observation timestamp.",
+    "Full external responses and copyrighted book/audio contents are not committed.",
+    "Source challenges and a proxy denial were respected; no bypass was attempted."
+  ],
+  "query_checks": [
+    {
+      "test": "thoth-no-result",
+      "capture_file_mtime_utc": "2026-11-05T00:50:40.650940+00:00",
+      "request_url": "https://api.thoth.pub/graphql",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "670c5f717c2ad3fd30430b19ad0171cd021d74b2f30c9804a04d96ca6d1f4de7",
+      "outcome": "empty result set",
+      "request_json": {
+        "query": "{works(limit:3,filter:\"zzqxvmbnonexistent20261105\"){workId}}"
+      }
+    },
+    {
+      "test": "gdl-no-result",
+      "capture_file_mtime_utc": "2026-11-05T00:50:42.130681+00:00",
+      "request_url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch?query=zzqxvmbnonexistent20261105&language=en",
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "response_sha256": "9ad11376410a6dc09f509105d537b2530632cf1656a4407c011a2b10cb25405f",
+      "outcome": "empty result set"
+    },
+    {
+      "test": "wiki-no-result",
+      "capture_file_mtime_utc": "2026-11-05T00:50:43.197188+00:00",
+      "request_url": "https://en.wikisource.org/w/api.php?action=query&list=search&srsearch=zzqxvmbnonexistent20261105&srnamespace=0&srlimit=3&format=json&maxlag=5",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "response_sha256": "688d401ed6447a04b61b8b5aea327e975f2f69ec5596d800d49a0b230236ea4b",
+      "outcome": "empty result set"
+    },
+    {
+      "test": "loc-no-result",
+      "capture_file_mtime_utc": "2026-11-05T00:50:44.096954+00:00",
+      "request_url": "https://www.loc.gov/books/?fo=json&q=zzqxvmbnonexistent20261105&c=3",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "b435624202aa095b0c8a9f05627c798d709ba153638c95e323491fd89ae53de9",
+      "outcome": "empty result set"
+    },
+    {
+      "test": "librivox-no-result",
+      "capture_file_mtime_utc": "2026-11-05T00:50:45.164468+00:00",
+      "request_url": "https://librivox.org/api/feed/audiobooks?title=zzqxvmbnonexistent20261105&format=json&limit=3",
+      "status": 404,
+      "content_type": "application/json",
+      "response_sha256": "5d96f946e557af9c38198d86192660851d00683bc2d629e0e753aa6643057725",
+      "outcome": "404 with JSON audiobook-not-found error"
+    },
+    {
+      "test": "bhl-no-result",
+      "capture_file_mtime_utc": "2026-11-05T00:52:27.357713+00:00",
+      "request_url": "https://archive.org/advancedsearch.php?q=collection%3Abiodiversity+AND+title%3Azzqxvmbnonexistent20261105&fl%5B%5D=identifier&rows=3&output=json",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "b9f24b56e912a1223a764517c5dc2304d4b3fa07a3b481b6ba21a68ad98c769c",
+      "outcome": "empty result set"
+    },
+    {
+      "test": "thoth-page2",
+      "capture_file_mtime_utc": "2026-11-05T00:54:03.088543+00:00",
+      "request_url": "https://api.thoth.pub/graphql",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "81866b718e04eb9b803d737bffa3793f1f49538d42a460420c44e8719ca1a931",
+      "ids": [
+        "0a9846b7-0034-4a41-803a-19f19db22f8f",
+        "69108498-9fd5-4494-9879-9cae7c800179",
+        "38d26bff-897c-42b3-bb96-eb94984d1391"
+      ],
+      "overlap_with_previous_sample": [],
+      "request_json": {
+        "query": "{works(limit:3,offset:3,filter:\"politics\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle}}}"
+      }
+    },
+    {
+      "test": "gdl-page2",
+      "capture_file_mtime_utc": "2026-11-05T00:54:04.802041+00:00",
+      "request_url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch?query=rain&language=en&_skip=20",
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "response_sha256": "9c44baa4a0cfad237bf99bc7d270c4ff016dd53b5d2c86af5b1dcac4c382ac33",
+      "ids": [
+        35865,
+        35794,
+        35772,
+        35760,
+        35594,
+        35522,
+        35183,
+        35083,
+        35067,
+        34943,
+        2556,
+        2330,
+        2056,
+        1960,
+        1830,
+        1794,
+        1650,
+        1634
+      ],
+      "overlap_with_previous_sample": []
+    },
+    {
+      "test": "loc-page2",
+      "capture_file_mtime_utc": "2026-11-05T00:54:07.259184+00:00",
+      "request_url": "https://www.loc.gov/books/?fo=json&q=mathematics&c=3&fa=online-format%3Aonline+text&sp=2",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "7a559419bc1793f56674bc54ca46000766515cf0ee546d0d828dd6a348bb77ea",
+      "ids": [
+        "http://www.loc.gov/item/2020780891/",
+        "http://www.loc.gov/item/2009389846/",
+        "http://www.loc.gov/item/tmp96026538/"
+      ],
+      "overlap_with_previous_sample": []
+    },
+    {
+      "test": "wiki-page2",
+      "capture_file_mtime_utc": "2026-11-05T00:54:08.540675+00:00",
+      "request_url": "https://en.wikisource.org/w/api.php?action=query&list=search&srsearch=intitle%3A%22A+History+of+Mathematics%22&srnamespace=0&srlimit=3&sroffset=3&format=json&maxlag=5",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "response_sha256": "b8c089af4b67bcd42beff60a7a7aa15a30c97b8fe8ab90fc7538ae30e677a8a3",
+      "ids": [
+        1555361,
+        1549318,
+        1635057
+      ],
+      "overlap_with_previous_sample": []
+    },
+    {
+      "test": "librivox-page2",
+      "capture_file_mtime_utc": "2026-11-05T00:54:09.108186+00:00",
+      "request_url": "https://librivox.org/api/feed/audiobooks?title=%5EAlice&format=json&limit=3&offset=3",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "0205ae7b2086a9b19e404885e85dd10192ab61b45c1e3f60e86bc89cbcbfaa90",
+      "ids": [
+        "1208",
+        "2827",
+        "2896"
+      ],
+      "overlap_with_previous_sample": []
+    },
+    {
+      "test": "bhl-page2",
+      "capture_file_mtime_utc": "2026-11-05T00:54:10.154826+00:00",
+      "request_url": "https://archive.org/advancedsearch.php?q=collection%3Abiodiversity+AND+title%3Abotany+AND+mediatype%3Atexts+AND+NOT+access-restricted-item%3Atrue&fl%5B%5D=identifier&fl%5B%5D=title&rows=3&page=2&output=json",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "7102c1504e4ad94a4f8e63a6bbcd06c3465b37b811444868410b976d7f047dc9",
+      "ids": [
+        "essentialsofcoll00bessuoft",
+        "thirtyeightpl00mart",
+        "timberbotanycomp00kent"
+      ],
+      "overlap_with_previous_sample": []
+    }
+  ],
+  "additional_queries": [
+    {
+      "test": "gdl-hindi",
+      "capture_file_mtime_utc": "2026-11-05T00:46:18.240211+00:00",
+      "request_url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch?query=%E0%A4%AA%E0%A4%BE%E0%A4%A8%E0%A5%80&language=hi",
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "response_sha256": "f188b46ff252810bc0badc8d00409ce44c5cf0646292ae2d0cefa85cd68dba2e",
+      "sample": [
+        {
+          "id": 6127,
+          "title": "पूरी क्यों फूलती है?",
+          "url": "https://content.digitallibrary.io/hi/book/%e0%a4%aa%e0%a5%82%e0%a4%b0%e0%a5%80-%e0%a4%95%e0%a5%8d%e0%a4%af%e0%a5%8b%e0%a4%82-%e0%a4%ab%e0%a5%82%e0%a4%b2%e0%a4%a4%e0%a5%80-%e0%a4%b9%e0%a5%88/"
+        },
+        {
+          "id": 6079,
+          "title": "चुन्नु-मुन्नु का नहाना",
+          "url": "https://content.digitallibrary.io/hi/book/%e0%a4%9a%e0%a5%81%e0%a4%a8%e0%a5%8d%e0%a4%a8%e0%a5%81-%e0%a4%ae%e0%a5%81%e0%a4%a8%e0%a5%8d%e0%a4%a8%e0%a5%81-%e0%a4%95%e0%a4%be-%e0%a4%a8%e0%a4%b9%e0%a4%be%e0%a4%a8%e0%a4%be/"
+        }
+      ]
+    },
+    {
+      "test": "wiki-tamil",
+      "capture_file_mtime_utc": "2026-11-05T00:46:18.899554+00:00",
+      "request_url": "https://ta.wikisource.org/w/api.php?action=query&list=search&srsearch=%E0%AE%A4%E0%AE%BF%E0%AE%B0%E0%AF%81%E0%AE%95%E0%AF%8D%E0%AE%95%E0%AF%81%E0%AE%B1%E0%AE%B3%E0%AF%8D&srnamespace=0&srlimit=3&format=json",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "response_sha256": "398d4be4a4c3a93944d044afcda485dececa6e2c88e89d0f853303297bee72d1",
+      "sample": [
+        {
+          "id": 52,
+          "title": "திருக்குறள், மூலம்"
+        },
+        {
+          "id": 2440,
+          "title": "திருக்குறள் பரிமேலழகர் உரை"
+        },
+        {
+          "id": 443660,
+          "title": "திருக்குறள் மணக்குடவருரை"
+        }
+      ]
+    },
+    {
+      "test": "bhl-india-search",
+      "capture_file_mtime_utc": "2026-11-05T00:52:26.778491+00:00",
+      "request_url": "https://archive.org/advancedsearch.php?q=collection%3Abiodiversity+AND+title%3A%22flora+of+British+India%22+AND+NOT+access-restricted-item%3Atrue&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=year&rows=3&output=json",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "e33d8c81743c30130cb914978bf76f0f973a96e969e26e08e1ce2c0291e5538a",
+      "sample": [
+        {
+          "identifier": "cu31924050778723",
+          "title": "The flora of British India",
+          "year": 1875
+        },
+        {
+          "identifier": "cu31924050778681",
+          "title": "The flora of British India",
+          "year": 1875
+        },
+        {
+          "identifier": "cu31924001825474",
+          "title": "The flora of British India",
+          "year": 1875
+        }
+      ]
+    },
+    {
+      "test": "mattering-known-title",
+      "capture_file_mtime_utc": "2026-11-05T00:54:02.072908+00:00",
+      "request_url": "https://api.thoth.pub/graphql",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "b6955835055231bab73d652f26b4f83903aa19845141728b89cbe7e1240cb573",
+      "sample": [
+        {
+          "workId": "8610efab-7a5b-4078-9770-ab39d79329d2",
+          "titles": [
+            {
+              "fullTitle": "The Ethnographic Case"
+            }
+          ],
+          "landingPage": "https://www.matteringpress.org/books/the-ethnographic-case-2nd-edition",
+          "license": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+        },
+        {
+          "workId": "89d1e59f-8780-44ce-a0d3-8aead89e99b9",
+          "titles": [
+            {
+              "fullTitle": "The Ethnographic Case"
+            }
+          ],
+          "landingPage": "https://www.matteringpress.org/books/the-ethnographic-case",
+          "license": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+        }
+      ],
+      "request_json": {
+        "query": "{works(limit:3,filter:\"The Ethnographic Case\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} landingPage license}}"
+      }
+    },
+    {
+      "test": "bhl-known-title",
+      "capture_file_mtime_utc": "2026-11-05T00:54:02.421602+00:00",
+      "request_url": "https://archive.org/advancedsearch.php?q=collection%3Abiodiversity+AND+title%3A%22Exotic+botany+illustrated%22+AND+NOT+access-restricted-item%3Atrue&fl%5B%5D=identifier&fl%5B%5D=title&rows=3&output=json",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "1ebd82716b0e41e55cc0b915d68e0baf7311b53e0f4fdb1587327621e9b962c5",
+      "sample": [
+        {
+          "identifier": "exoticbotanyill00hill",
+          "title": "Exotic botany illustrated, in thirty-five figures of curious and elegant plants: explaining the sexual system; and tending to give some new lights into the vegetable philosophy"
+        }
+      ]
+    }
+  ],
+  "reading_content_checks": [
+    {
+      "test": "gdl-read-en",
+      "capture_file_mtime_utc": "2026-11-05T00:46:43.165667+00:00",
+      "request_url": "https://content.digitallibrary.io/en/book/rain/",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "response_sha256": "7369a7f32bc2b9a6fa3f70abfae51ab684992af0d22d8f8b4f1333a5159a5f36",
+      "embedded_book_chapter_page_units": 15,
+      "content_text_committed": false
+    },
+    {
+      "test": "gdl-read-hi",
+      "capture_file_mtime_utc": "2026-11-05T00:49:25.686491+00:00",
+      "request_url": "https://content.digitallibrary.io/hi/book/%e0%a4%aa%e0%a5%82%e0%a4%b0%e0%a5%80-%e0%a4%95%e0%a5%8d%e0%a4%af%e0%a5%8b%e0%a4%82-%e0%a4%ab%e0%a5%82%e0%a4%b2%e0%a4%a4%e0%a5%80-%e0%a4%b9%e0%a5%88/",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "response_sha256": "3c71d48715c9599a8871b08edba33cd8cfbec747e8ebc13044afb93e98173b8f",
+      "embedded_book_chapter_page_units": 19,
+      "content_text_committed": false
+    },
+    {
+      "test": "wiki-introduction",
+      "capture_file_mtime_utc": "2026-11-05T00:50:38.398552+00:00",
+      "request_url": "https://en.wikisource.org/w/api.php?action=parse&page=A+History+of+Mathematics+%281893%29%2FIntroduction&prop=text&format=json&maxlag=5",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "response_sha256": "513c9cfd755a6b94cc48766e68f715c18d5644aa703b8f74998f787285c2cb2d",
+      "page_id": 1549318,
+      "title": "A History of Mathematics (1893)/Introduction",
+      "rendered_html_characters": 18376,
+      "content_text_committed": false
+    },
+    {
+      "test": "wiki-ta-reading",
+      "capture_file_mtime_utc": "2026-11-05T00:50:39.159255+00:00",
+      "request_url": "https://ta.wikisource.org/w/api.php?action=parse&page=%E0%AE%A4%E0%AE%BF%E0%AE%B0%E0%AF%81%E0%AE%95%E0%AF%8D%E0%AE%95%E0%AF%81%E0%AE%B1%E0%AE%B3%E0%AF%8D%2C+%E0%AE%AE%E0%AF%82%E0%AE%B2%E0%AE%AE%E0%AF%8D%2F%E0%AE%89%E0%AE%B4%E0%AE%B5%E0%AF%81&prop=text&format=json&maxlag=5",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "response_sha256": "9c58cc7ca89754ea6071cae0ff3e38f4b1add60083b9766c67bb41b6ab0c311c",
+      "page_id": 473053,
+      "title": "திருக்குறள், மூலம்/உழவு",
+      "rendered_html_characters": 7337,
+      "content_text_committed": false
+    }
+  ],
+  "range_checks": [
+    {
+      "name": "pdf-open-book-publishers",
+      "requested_url": "https://books.openbookpublishers.com/10.11647/obp.0408.pdf",
+      "resolved_url": "https://books.openbookpublishers.com/10.11647/obp.0408.pdf",
+      "observed_at": "2026-11-05T00:49:17.953220+00:00",
+      "status": 405,
+      "content_type": "text/html; charset=UTF-8",
+      "content_range": null,
+      "content_length": "2135",
+      "sample_bytes": 2135,
+      "sample_sha256": "4b8b9b56e00a0a55c2418fe7933346b92ace1e765aa7278e6387cee67c358be4",
+      "starts_pdf": false,
+      "seconds": 1.11
+    },
+    {
+      "name": "pdf-african-minds",
+      "requested_url": "https://books.africanminds.co.za/10.47622/9781920051624.pdf",
+      "resolved_url": "https://books.africanminds.co.za/10.47622/9781920051624.pdf",
+      "observed_at": "2026-11-05T00:49:18.475033+00:00",
+      "status": 206,
+      "content_type": "application/pdf",
+      "content_range": "bytes 0-4095/5924291",
+      "content_length": "4096",
+      "sample_bytes": 4096,
+      "sample_sha256": "9c3df9470f088c6971536062eb6c415c1352643fa2a73662d9738e863e6f73ab",
+      "starts_pdf": true,
+      "seconds": 1.63
+    },
+    {
+      "name": "pdf-mattering-press",
+      "requested_url": "https://books.matteringpress.org/10.28938/9781912729340.pdf",
+      "resolved_url": "https://books.matteringpress.org/10.28938/9781912729340.pdf",
+      "observed_at": "2026-11-05T00:49:18.041604+00:00",
+      "status": 206,
+      "content_type": "application/pdf",
+      "content_range": "bytes 0-4095/9214360",
+      "content_length": "4096",
+      "sample_bytes": 4096,
+      "sample_sha256": "f7a961e3b34168940b79dd891990d3601f66582875e4472e2cc49174ddc68c33",
+      "starts_pdf": true,
+      "seconds": 1.2
+    },
+    {
+      "name": "pdf-punctum-books",
+      "requested_url": "https://books.punctumbooks.com/10.53288/0386.1.00.pdf",
+      "resolved_url": "https://books.punctumbooks.com/10.53288/0386.1.00.pdf",
+      "observed_at": "2026-11-05T00:49:19.302445+00:00",
+      "status": 206,
+      "content_type": "application/pdf",
+      "content_range": "bytes 0-4095/24966450",
+      "content_length": "4096",
+      "sample_bytes": 4096,
+      "sample_sha256": "27e2a1999f4bad5a51b23b1efc85fe789cf05583b5dbb3fc2f09740d0558b64e",
+      "starts_pdf": true,
+      "seconds": 1.35
+    },
+    {
+      "name": "pdf-mediastudies",
+      "requested_url": "https://books.mediastudies.press/10.64629/3f8575cb.baaa50ag.pdf",
+      "resolved_url": "https://books.mediastudies.press/10.64629/3f8575cb.baaa50ag.pdf",
+      "observed_at": "2026-11-05T00:49:18.438347+00:00",
+      "status": 206,
+      "content_type": "application/pdf",
+      "content_range": "bytes 0-4095/3053692",
+      "content_length": "4096",
+      "sample_bytes": 4096,
+      "sample_sha256": "9079b3fdca2a625e83b0c3242fd191aee8dde4857abb5eafe9ca1afeeb25d2b9",
+      "starts_pdf": true,
+      "seconds": 0.4
+    },
+    {
+      "name": "loc-pdf",
+      "requested_url": "https://tile.loc.gov/storage-services/public/gdcmassbookdig/introductiontoma00shor/introductiontoma00shor.pdf",
+      "resolved_url": "https://tile.loc.gov/storage-services/public/gdcmassbookdig/introductiontoma00shor/introductiontoma00shor.pdf",
+      "observed_at": "2026-11-05T00:49:18.973754+00:00",
+      "status": 206,
+      "content_type": "application/pdf",
+      "content_range": "bytes 0-4095/44648805",
+      "content_length": "4096",
+      "sample_bytes": 4096,
+      "sample_sha256": "9f840078036fcdbb8e50d8824f506f765e701c64910d4c5b9104cd5992d1771d",
+      "starts_pdf": true,
+      "seconds": 0.54
+    },
+    {
+      "name": "librivox-audio-1",
+      "requested_url": "https://www.archive.org/download/alice_in_wonderland_librivox/wonderland_ch_01_64kb.mp3",
+      "resolved_url": "https://dn710305.ca.archive.org/0/items/alice_in_wonderland_librivox/wonderland_ch_01_64kb.mp3",
+      "observed_at": "2026-11-05T00:49:23.110000+00:00",
+      "status": 206,
+      "content_type": "audio/mpeg",
+      "content_range": "bytes 0-4095/5124992",
+      "content_length": "4096",
+      "sample_bytes": 4096,
+      "sample_sha256": "a894be78fed0f6c2b1a2f6713c3f1d8bdf3c2ec66983125a7c3c0946a05a42c3",
+      "starts_pdf": false,
+      "seconds": 4.63
+    },
+    {
+      "name": "librivox-audio-6",
+      "requested_url": "https://www.archive.org/download/alice_in_wonderland_librivox/wonderland_ch_06_64kb.mp3",
+      "resolved_url": "https://dn601301.us.archive.org/0/items/alice_in_wonderland_librivox/wonderland_ch_06_64kb.mp3",
+      "observed_at": "2026-11-05T00:49:22.480977+00:00",
+      "status": 206,
+      "content_type": "audio/mpeg",
+      "content_range": "bytes 0-4095/6206820",
+      "content_length": "4096",
+      "sample_bytes": 4096,
+      "sample_sha256": "97a3946741d83942dee242c008ba42bb5fddbec5c5e629fe98c1d502e09c8911",
+      "starts_pdf": false,
+      "seconds": 3.51
+    },
+    {
+      "name": "librivox-audio-12",
+      "requested_url": "https://www.archive.org/download/alice_in_wonderland_librivox/wonderland_ch_12_64kb.mp3",
+      "resolved_url": "https://dn710305.ca.archive.org/0/items/alice_in_wonderland_librivox/wonderland_ch_12_64kb.mp3",
+      "observed_at": "2026-11-05T00:49:22.277239+00:00",
+      "status": 206,
+      "content_type": "audio/mpeg",
+      "content_range": "bytes 0-4095/6179840",
+      "content_length": "4096",
+      "sample_bytes": 4096,
+      "sample_sha256": "d89e64072962fff4e47298b8e2b4c5f125f26c24dbdfa9d4e5f32a277c295a69",
+      "starts_pdf": false,
+      "seconds": 2.97
+    },
+    {
+      "name": "obp-cambridge-pdf",
+      "url": "https://thoth-arch.lib.cam.ac.uk/bitstreams/e87068fc-c0a3-4ab1-a4ff-1dd0d3fd6b7e/download",
+      "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+    },
+    {
+      "name": "lse-pdf",
+      "requested_url": "https://books.press.lse.ac.uk/10.31389/lsepress.afg.pdf",
+      "resolved_url": "https://books.press.lse.ac.uk/10.31389/lsepress.afg.pdf",
+      "observed_at": "2026-11-05T00:51:00.245223+00:00",
+      "status": 206,
+      "content_type": "application/pdf",
+      "content_range": "bytes 0-4095/4164034",
+      "content_length": "4096",
+      "sample_bytes": 4096,
+      "sample_sha256": "975f8995bf3b7b5fa08302757d93239ca133e1a67b91343db01542c8424525f0",
+      "starts_pdf": true,
+      "seconds": 1.2
+    },
+    {
+      "name": "bhl-pdf",
+      "requested_url": "https://archive.org/download/exoticbotanyill00hill/exoticbotanyill00hill.pdf",
+      "resolved_url": "https://dn760008.eu.archive.org/0/items/exoticbotanyill00hill/exoticbotanyill00hill.pdf",
+      "observed_at": "2026-11-05T00:53:19.084863+00:00",
+      "status": 206,
+      "content_type": "application/pdf",
+      "content_range": "bytes 0-4095/38543114",
+      "sample_bytes": 4096,
+      "starts_pdf": true,
+      "sample_sha256": "5dd2380b9acef1ee1e4fd9eaaba6bfae2390336fb53abc1e114393bc5511300b"
+    }
+  ],
+  "item_rights_checks": [
+    {
+      "source": "loc",
+      "id": "16017346",
+      "access_restricted": false,
+      "rights_summary": "Item explicitly states public-domain free use/reuse; Library of Congress credit.",
+      "capture_file_mtime_utc": "2026-11-05T00:46:41.944691+00:00",
+      "request_url": "https://www.loc.gov/item/16017346/?fo=json",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "5b8a8288753760a49a54ec3d927eac0ff418aac8a1fd268ff958716a0e8b76ee"
+    },
+    {
+      "source": "bhl",
+      "id": "exoticbotanyill00hill",
+      "rights_summary": "BHL considers the work public domain.",
+      "contributor": "New York Botanical Garden, LuEsther T. Mertz Library",
+      "collection": [
+        "biodiversity",
+        "NY_Botanical_Garden"
+      ],
+      "capture_file_mtime_utc": "2026-11-05T00:52:26.464270+00:00",
+      "request_url": "https://archive.org/metadata/exoticbotanyill00hill",
+      "status": 200,
+      "content_type": "application/json",
+      "response_sha256": "0c662f3cac629b00ba5d97993df8201d6beba15f7d9053dedaa5593601387611"
+    }
+  ]
+}

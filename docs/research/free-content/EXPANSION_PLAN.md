@@ -18,6 +18,11 @@ batches, one active connector family, evidence-based source stories and frequent
 verified releases. M1/M2/M3 overlap; the survey and pilot counts below are
 cumulative limits, not prerequisites to the first source release.
 
+The [discovery backlog](DISCOVERY_BACKLOG.md) now tracks all groups and areas.
+The current owner-authorized phase stops at candidate research and sharing
+[the first ten query-verified sources](batches/G01_FIRST_TEN.md); integration and
+enablement are not part of this batch.
+
 ## 1. Goal and counting rules
 
 The useful outcome is: **a reader searches for something and receives a matching
