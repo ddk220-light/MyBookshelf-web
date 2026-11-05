@@ -9,7 +9,7 @@
     "C06",
     "C07"
   ],
-  "state": "candidate",
+  "state": "deferred",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -29,14 +29,16 @@
   ],
   "limitations": [
     "Homepage inspected; stable Shodhganga external API/OAI route and terms not verified. Do not assume every DSpace version shares one REST route. **High / P2 direct; P1 aggregated**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
+    "The earlier worker skipped the homepage after its policy gate. Robots returned HTTP200 text/plain without truncation; the exact matching rule was not retained. No homepage or thesis query was sent in that attempt. This is analysis of saved evidence, not a new provider test."
   ],
   "evidence": [
-    "analysis/documents.jsonl"
+    "analysis/documents.jsonl",
+    "runs/source-evidence-20261105/observations.jsonl"
   ],
-  "last_reviewed_at": null,
+  "last_reviewed_at": "2026-11-05T10:27:05.205210+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
+  "next_action": "Resolve the saved policy gate only on a useful published permission/documentation change. Find an advertised permitted metadata/OAI contract; never assume a generic DSpace API, bypass access controls or bulk-download theses.",
   "aliases": [
     "Shodhganga"
   ],
@@ -85,7 +87,7 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Existing facts captured; unresolved checks remain explicit. The earlier worker skipped the homepage after its policy gate. Robots returned HTTP200 text/plain without truncation; the exact matching rule was not retained. No homepage or thesis query was sent in that attempt.",
       "facts": {
         "adapter": "unproven",
         "endpoint": null,
@@ -95,10 +97,22 @@
         "supported_and_unsupported_modes": "needs explicit review"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
       "open_questions": [
         "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "bbbad1116a4011d07ed6",
+          "url": "https://shodhganga.inflibnet.ac.in/",
+          "observed_at": "2026-11-05T02:45:26.535850+00:00",
+          "policy_sha256": "89988b155aa8400afbb881bd1c9c8321aa1262cd66103e83184e74ca1225948b",
+          "reviewed_at": "2026-11-05T10:27:05.205210+00:00",
+          "review_type": "semantic-backfill-of-existing-observation-not-new-request"
+        }
       ]
     },
     "rights_and_cost": {
@@ -153,33 +167,55 @@
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Existing facts captured; unresolved checks remain explicit. The earlier worker skipped the homepage after its policy gate. Robots returned HTTP200 text/plain without truncation; the exact matching rule was not retained. No homepage or thesis query was sent in that attempt.",
       "facts": {
         "paging": null,
         "research_pause_seconds": null,
         "provider_quota_refresh_deletion_contract": "needs explicit review"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "analysis/documents.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
       "open_questions": [
         "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "bbbad1116a4011d07ed6",
+          "url": "https://shodhganga.inflibnet.ac.in/",
+          "observed_at": "2026-11-05T02:45:26.535850+00:00",
+          "policy_sha256": "89988b155aa8400afbb881bd1c9c8321aa1262cd66103e83184e74ca1225948b",
+          "reviewed_at": "2026-11-05T10:27:05.205210+00:00",
+          "review_type": "semantic-backfill-of-existing-observation-not-new-request"
+        }
       ]
     },
     "decision_and_followup": {
-      "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "status": "complete",
+      "summary": "The earlier worker skipped the homepage after its policy gate. Robots returned HTTP200 text/plain without truncation; the exact matching rule was not retained. No homepage or thesis query was sent in that attempt. Resolve the saved policy gate only on a useful published permission/documentation change. Find an advertised permitted metadata/OAI contract; never assume a generic DSpace API, bypass access controls or bulk-download theses.",
       "facts": {
-        "state": "candidate",
-        "next_action": "Reconcile all current/historical analysis, identify supported current route, complete the dossier and collect ten fresh query examples or document a specific blocker.",
-        "production_qualification_complete": false
+        "decision": "deferred-existing-policy-evidence",
+        "current_request_sent": false,
+        "activation_approved": false,
+        "owner_action_required": false
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl"
       ],
-      "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
-      ]
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "bbbad1116a4011d07ed6",
+          "url": "https://shodhganga.inflibnet.ac.in/",
+          "observed_at": "2026-11-05T02:45:26.535850+00:00",
+          "policy_sha256": "89988b155aa8400afbb881bd1c9c8321aa1262cd66103e83184e74ca1225948b",
+          "reviewed_at": "2026-11-05T10:27:05.205210+00:00",
+          "review_type": "semantic-backfill-of-existing-observation-not-new-request"
+        }
+      ],
+      "open_questions": []
     }
   },
   "analysis_refs": [
