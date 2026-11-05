@@ -1,3 +1,17 @@
+## 2026-11-05: practical guides, Hindi readers and thesis-policy reconciliation (latest)
+
+**106 source records; 281 current verified examples across26 catalogs; one complete scoped dossier.** All49 areas have candidates and44 have query evidence. C06, C20, P04, P05 and P07 still have no query evidence. All49 full-area closures and18 civic cells remain open. No scarcity shortfall is accepted.
+
+Appropedia adds12 passing bounded anonymous Action API cases: six topic searches and six distinct native-ID/revision lookups, including Hindi. It contributes the first C13 query evidence and explicit agriculture/energy/water-waste case mappings. Topic retrieval covers drip irrigation, solar cooking, composting, biogas and rainwater harvesting. Page two has additional IDs; nonsense search is empty200, missing native ID has missing:true, and invalid ID returns badinteger despite HTTP200. An item-published custom semantic link returned301 without JSON; it remains a negative observation.
+
+Three anonymous WebKit readers show actual Practical Action micro-irrigation, a California solar-cooker project and Hindi drip-irrigation content. Native IDs/revisions match metadata. All have one main landmark and first keyboard focus Jump to content, without overflow/page errors. Cookie banners obscure bottom text, especially mobile; full accessibility remains open. Solar project year2007 differs from2026 wiki revision. Hindi page137946/revision1233507 links to English-parent semantic metadata; translation identity/license must remain separate.
+
+Global default CC BY-SA4.0 does not override explicit item CC BY-SA3.0 labels on the two English guides. Ported content requires original-source credit and compatible permissions; some open-access-only CD3WD/WikiGreen material is not copyable/modifiable. Historical merged wikis and language views do not add independent origins. Practical Action is captured as an original-source lead; no external catalog query verified. Practical safety, translation quality, attribution history and refresh remain open.
+
+Zenodo's current terms, policies, AI notice and full bounded API contract are reconciled with historical evidence. Metadata is CC0 with email exceptions; files can be open/restricted/embargoed/closed with separate licenses. General auth prose conflicts with anonymous Records limits. Its attempted thesis API query was stopped by robots before sending the target request. Zenodo is deferred pending a useful permitted-access trigger; old successful dataset observations remain historical. No alternate route, account or paid service was used.
+
+Five documentation queues process16 jobs:13 captures and3 initial Appropedia robots-redirect skips, retained alongside the exact published same-host redirect ending404. All60 queues/390jobs are now collection-complete. Capture/index/audit and registry validation pass; **109 research tests pass**. No runtime activation or deployment.
+
 ## 2026-11-05: five-language sentence queries and six historical catalog mappings (latest)
 
 **105 source records; 269 current verified examples across 25 catalogs; one complete scoped dossier.** All 49 areas have candidates and 43 have query evidence. C06, C13, C20, P04, P05 and P07 still have no query evidence. All 49 full-area closures and 18 civic cells remain open. No scarcity shortfall is accepted. The existing completion task remains enabled; completed queues/reporter are not restarted.
