@@ -127,12 +127,12 @@ export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
       ensure();
       const binding = hash(JSON.stringify({ ...query, cursor: null, policy: CONTENT_POLICY_REVISION }));
       const state = cursorState(query.cursor, binding);
-      const chosen = Object.entries(LOCAL_SOURCES).filter(([,source]) => query.kinds.includes(source.kind)).map(([id]) => id);
+      const chosen = Object.entries(LOCAL_SOURCES).filter(([id,source]) => query.kinds.includes(source.kind)&&(!query.sourceIds||query.sourceIds.includes(id))).map(([id]) => id);
       if (!chosen.length) throw failure('CONTENT_UNAVAILABLE', 'Paper search is not connected yet. Please try the free-book catalog.');
       if (!catalog.snapshots.some(source => chosen.includes(source.sourceId))) throw failure('CONTENT_UNAVAILABLE', 'The selected free-book catalogs are temporarily unavailable.');
       const phrase = folded(query.query).trim().replace(/\s+/g, ' ');
       const terms = [...new Set(phrase.match(/[\p{L}\p{M}\p{N}]+(?:'[\p{L}\p{M}\p{N}]+|[+#]+)*/gu) || [])];
-      const matching = indexed.filter(row => query.kinds.includes(row.item.kind)
+      const matching = indexed.filter(row => query.kinds.includes(row.item.kind)&&chosen.includes(parseContentKey(row.item.key).sourceId)
         && (!query.languages.length || row.item.languages.some(l => query.languages.includes(l))))
         .map(row => rankedMatch(row, terms, phrase)).filter(Boolean)
         .sort((a,b) => b.score - a.score || a.title.localeCompare(b.title) || a.item.key.localeCompare(b.item.key));

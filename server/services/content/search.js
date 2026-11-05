@@ -1,3 +1,5 @@
+import {createKnowledgeService} from './knowledgeSearch.js';
+import {KNOWLEDGE_SOURCES,LOCAL_CONTENT_SOURCES} from './knowledgeSources.js';
 import {createHash,createHmac,timingSafeEqual} from 'node:crypto';
 import {createLocalContentService,readLocalSnapshots} from './localCatalog.js';
 import {createEuropePmcAdapter} from './europePmc.js';
@@ -15,9 +17,10 @@ const SOURCES={europepmc:{name:'Europe PMC',env:'EUROPEPMC',scope:'Biomedical li
 const PROFILE='direct-live-v1';
 
 export function createContentService({env=process.env,local,paperAdapter=createEuropePmcAdapter(),
-  adapters={},children,now=()=>Date.now()}={}){
+  adapters={},children,knowledge,now=()=>Date.now()}={}){
   local||=createLocalContentService({enabled:env.CONTENT_DISCOVERY_ENABLED==='true',cursorSecret:env.CONTENT_CURSOR_SECRET,now,
     loadSnapshot:()=>readLocalSnapshots({includeChildren:env.CONTENT_CHILDREN_ENABLED==='true',now:now()})});
+  const expanded=knowledge||createKnowledgeService({env,now});
   const providers={europepmc:paperAdapter,openalex:createOpenalexAdapter({apiKey:env.OPENALEX_API_KEY}),...adapters};
   const pilot=children||createChildrenService({enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&env.CONTENT_CHILDREN_ENABLED==='true',cursorSecret:env.CONTENT_CURSOR_SECRET,now});
   const enabled=id=>Boolean(SOURCES[id]?.env&&env['CONTENT_'+SOURCES[id].env+'_ENABLED']==='true');
@@ -81,13 +84,15 @@ export function createContentService({env=process.env,local,paperAdapter=createE
     }
   }
   return {
+    sources(){return {sources:[...expanded.sources(),...Object.entries(SOURCES).map(([id,s])=>({id,name:s.name,scope:s.scope,kinds:['article','preprint','chapter','thesis','report'],languages:id==='openalex'?['en','hi','ta']:[],enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&enabled(id),mode:'live'})),...LOCAL_CONTENT_SOURCES.map(id=>({id,name:({'gutenberg':'Project Gutenberg','open-textbook-library':'Open Textbook Library',bookdash:'Book Dash',storyweaver:'StoryWeaver'})[id],scope:'Reviewed catalog snapshot · coverage and freshness vary',kinds:[id==='open-textbook-library'?'learning_resource':'book'],languages:[],enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&(id!=='storyweaver'||env.CONTENT_CHILDREN_ENABLED==='true'),mode:'snapshot'}))]};},
     locate(input){return local.locate(input);},
     async search(input,{onSource=()=>{},signal}={}){
       const query=parseContentSearch(input);
+      if(query.sourceIds?.some(id=>KNOWLEDGE_SOURCES[id]))return expanded.search(input,{onSource,signal});
       if(query.collection==='children')return pilot.search(input);
       if(query.kinds.includes('book')||query.kinds.includes('learning_resource')){
         if(query.kinds.some(kind=>!['book','learning_resource'].includes(kind)))throw failure('CONTENT_FILTER_UNSUPPORTED','Choose free books or paper kinds for this search.',400);
-        if(query.sourceIds||query.retrySource)throw failure('CONTENT_FILTER_UNSUPPORTED','Paper source filters do not apply to book search.',400);
+        if(query.sourceIds?.some(id=>!LOCAL_CONTENT_SOURCES.includes(id))||query.retrySource)throw failure('CONTENT_FILTER_UNSUPPORTED','Paper source filters do not apply to book search.',400);
         return local.search(input);
       }
       ready();const id=selected(query);
@@ -119,6 +124,7 @@ export function createContentService({env=process.env,local,paperAdapter=createE
     },
     async resolve(input,{signal}={}){
       const request=parseContentResolve(input),id=request.parsed.sourceId;
+      if(KNOWLEDGE_SOURCES[id])return expanded.resolve(input,{signal});
       if(id==='storyweaver')return pilot.resolve(input);
       if(!SOURCES[id])return local.resolve(input);
       ready();

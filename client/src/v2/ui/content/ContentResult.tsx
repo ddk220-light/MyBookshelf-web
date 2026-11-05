@@ -17,7 +17,7 @@ export function ContentResult({ item, to, returnTo, selected = false }: { item: 
   const host = item.locations.find(location => location.id === primary?.locationId)?.host || item.locations[0]?.host || 'Source';
   const index = sourceNames[item.provenance[0]?.sourceId];
   const formats = [...new Set((primary?.downloads || []).map(file => formatNames[file.mimeType]).filter(Boolean))];
-  const readableFormats = [bookLike(item.kind) ? 'Read online' : 'HTML', ...formats.filter(format => format !== 'HTML')];
+  const readableFormats = [item.kind==='audiobook'?'Listen online':bookLike(item.kind) ? 'Read online' : 'HTML', ...formats.filter(format => format !== 'HTML')];
   if (!item.locations.find(location => location.id === primary?.locationId)?.readerUrl) readableFormats.shift();
   return <article className={'content-result' + (selected ? ' is-selected' : '')}>
     {bookLike(item.kind) && <Link tabIndex={-1} aria-hidden="true" to={to} state={{returnTo}}><ContentCover title={item.title} kind={item.kind} unclear={item.access==='unknown'} /></Link>}
