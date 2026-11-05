@@ -59,6 +59,44 @@ def local_search(rows, query):
     return [row for row in rows if row['title'] == query['text']]
 
 
+def review_candidate(accepted_body, accepted_sha256, candidate_body, candidate_http, contract):
+    """Offline refresh review; never replace the accepted inventory or verify queries.
+
+    Missing/changed identities require manual review. A failed response cannot
+    erase the previous catalog or turn its old observations into fresh evidence.
+    """
+    accepted_hash = hashlib.sha256(accepted_body).hexdigest()
+    if accepted_hash != accepted_sha256:
+        raise ValueError('Accepted inventory hash does not match its capture')
+    accepted = parse_inventory(accepted_body, contract['base_url'], contract['version'], contract.get('project'))
+    if not accepted:
+        raise ValueError('Accepted inventory must not be empty')
+    result = {'accepted_sha256': accepted_hash, 'accepted_entries': len(accepted),
+              'candidate_sha256': hashlib.sha256(candidate_body).hexdigest(),
+              'query_verified': False, 'replace_accepted': False,
+              'status': 'candidate-rejected', 'snapshot_stale': True,
+              'removed_ids': [], 'added_ids': [], 'changed_ids': []}
+    try:
+        if (candidate_http.get('status') != 200 or candidate_http.get('truncated')
+                or candidate_http.get('error')):
+            raise ValueError(candidate_http.get('error') or 'Unsuccessful or truncated candidate capture')
+        if candidate_http.get('sampled_bytes_sha256') != result['candidate_sha256']:
+            raise ValueError('Candidate capture hash mismatch')
+        candidate = parse_inventory(candidate_body, contract['base_url'], contract['version'], contract.get('project'))
+        if not candidate:
+            raise ValueError('Empty candidate cannot replace the accepted catalog')
+        before, after = {row['id']: row for row in accepted}, {row['id']: row for row in candidate}
+        removed, added = sorted(before.keys() - after.keys()), sorted(after.keys() - before.keys())
+        changed = sorted(key for key in before.keys() & after.keys() if before[key] != after[key])
+        result.update(candidate_entries=len(candidate), removed_ids=removed, added_ids=added,
+                      changed_ids=changed, snapshot_stale=bool(removed or changed),
+                      status='manual-review-required' if removed or added or changed else 'unchanged',
+                      stale_ids=sorted(set(removed + changed)), error=None)
+    except (ValueError, UnicodeError, zlib.error) as exc:
+        result['error'] = str(exc)
+    return result
+
+
 def probe(source, case_ids=None):
     with LOCK_PATH.open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)

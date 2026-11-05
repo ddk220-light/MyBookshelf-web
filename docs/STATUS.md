@@ -1,5 +1,8 @@
 # MyBookshelf web handoff
 
+**Free-knowledge research checkpoint, 2026-11-05:** isolated expansion worktree / draft PR #161 now has **94 records, 219 current examples across 20 catalogs, and 1 complete scoped dossier**. All 49 areas have candidates; 37 have query evidence, while all 49 full-area closures and 18 civic cells remain open. The Met adds 15 passing native-object examples with failures and rights limits retained; HAL/Commons APIs are policy-blocked and CaltechTHESIS has an unresolved public retrieval/reuse contract. Python gains offline refresh safeguards. All 44 documentation queues / 335 jobs are complete collection passes. Evidence/registry checks and 66 tests pass. The hourly completion task remains enabled. Read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+
 **Free-knowledge research checkpoint, 2026-11-05:** isolated expansion worktree / draft PR #161 now has **92 records, 204 current examples across 19 catalogs, and 1 complete research dossier (O*NET 31.0)**. All 49 areas have candidates, 36 have query evidence; all 49 full-area closures and 18 USA/India civic cells remain open. LOC adds 4 newspaper replays with failed queries preserved. OpenCity India and NYC planning are deferred policy/access candidates. All 38 documentation queues / 312 jobs are complete collection passes. Registry/evidence checks and 60 tests pass. The 100% completion task remains enabled; read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
 
 

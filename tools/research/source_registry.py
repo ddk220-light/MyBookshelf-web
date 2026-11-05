@@ -91,6 +91,22 @@ def normalize(source, data, endpoint=None):
     if not isinstance(data, dict) or data.get('errors') or data.get('error'):
         raise ValueError('Provider returned an error or invalid object')
     adapter = source['query']['adapter']
+    if adapter == 'met-collection':
+        oid = data.get('objectID')
+        if isinstance(oid, bool) or not isinstance(oid, int) or oid <= 0 or not data.get('title'):
+            raise ValueError('Invalid Met object identity/title')
+        image_url = data.get('primaryImage')
+        if data.get('isPublicDomain') is not True or not isinstance(image_url, str) or not image_url.startswith('https://'):
+            raise ValueError('Object is outside the public-domain image subset')
+        return [{'id': str(oid), 'title': data['title'], 'accession_number': data.get('accessionNumber'),
+                 'artist': data.get('artistDisplayName'), 'object_date': data.get('objectDate'),
+                 'culture': data.get('culture'), 'department': data.get('department'),
+                 'medium': data.get('medium'), 'classification': data.get('classification'),
+                 'credit_line': data.get('creditLine'), 'object_url': data.get('objectURL'),
+                 'primary_image': image_url, 'is_public_domain': True,
+                 'metadata_date': data.get('metadataDate'), 'country': data.get('country'),
+                 'rights_and_reproduction': data.get('rightsAndReproduction'),
+                 'reading_access_verified': False}]
     if adapter == 'openalex':
         import re
         rows = data.get('results', [data] if data.get('id') else None)
