@@ -1,16 +1,23 @@
 # Account validation evidence
 
-Current production work and new signup/worker regressions are recorded in
-[PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md). The owner has since authorized
-production completion. The candidate/results below are dated implementation
-evidence, not a claim of completed production account activation.
+## Current release — 2026-11-05
 
-Updated 2026-11-01 UTC. Code candidate: `56915a6785f26daa55b7ea684372a23875c136ee`, branch
-`account-settings`, [PR #57](https://github.com/ddk220-light/MyBookshelf-web/pull/57).
-R02 approved documents/Claude canvas v4 at `36a1436`. **R03 remains pending;
-this is an implemented feature, not production approval. The owner's later rollout
-choices defer Resend to production and keep Google/Apple disabled; see the current
-configuration record below.**
+Email accounts are enabled in production. [RELEASE_ACCEPTANCE.md](RELEASE_ACCEPTANCE.md)
+records exact source/deployment, full CI, actual received-mail workflows, multiple
+devices, privacy/export/deletion, UI/assistive-technology evidence and measured load.
+[PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) records infrastructure and remaining
+Neon retention/independent-operator checks. Google/Apple are explicitly deferred.
+The owner has authorized deployment after clean checks; final project acceptance
+stays open for the listed operational evidence.
+
+## Historical implementation checkpoint — 2026-11-01
+
+The sections below retain dated evidence for candidate
+`56915a6785f26daa55b7ea684372a23875c136ee`, branch `account-settings`, PR #57.
+They describe the earlier staging checkpoint; its former “remaining” entries are
+superseded by the current release record. R02 approved Claude canvas v4 at
+`36a1436`. The owner's later choices use Resend in production only and leave
+Google/Apple disabled.
 
 ## Reproducible local checks
 

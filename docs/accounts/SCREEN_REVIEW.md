@@ -7,6 +7,13 @@ R02 / `36a1436`. The source is
 The source artifact is unchanged. Tested implementation: `56915a6785f26daa55b7ea684372a23875c136ee`; commands and
 results are recorded in [VALIDATION.md](VALIDATION.md).
 
+The 2026-11-05 production repeat adds 390/1440 CSS-pixel settings captures in all
+three lights and bottom controls, live axe/keyboard checks and an actual
+Orca/Chromium assistive-technology equivalent. See [release acceptance](RELEASE_ACCEPTANCE.md)
+for exact evidence, repairs and engine limitations. No native iOS Safari,
+VoiceOver or NVDA result is claimed. The dated matrix below remains the complete
+artifact comparison; the approved artifact is unchanged.
+
 Each browser records 85 paired entries across 33 named screen/state cases, plus
 twelve bottom settings pairs and separate stress captures. Eighteen applicable
 artifact screens map to actual app captures; the external provider simulation is
