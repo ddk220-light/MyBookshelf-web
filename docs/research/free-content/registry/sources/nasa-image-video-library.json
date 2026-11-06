@@ -9,7 +9,7 @@
     "C16",
     "C20"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "media-catalog-candidate",
@@ -19,28 +19,156 @@
     "jurisdiction": "USA"
   },
   "capabilities": [
-    "NASA media-use policy identifies and links this image/video library; actual machine retrieval remains unverified."
+    "First 2 image metadata results from NASA keyword API"
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown for this catalog; generic api.nasa.gov key-signup shell is not this API contract."
+    "adapter": "nasa-images-public",
+    "endpoint": "https://images-api.nasa.gov/search",
+    "cases": [
+      {
+        "id": "public-1",
+        "query_text": "Apollo",
+        "request": {
+          "method": "GET",
+          "url": "https://images-api.nasa.gov/search?q=Apollo&media_type=image&page_size=2"
+        },
+        "expected_ids": [
+          "APOLLO 50th_FULL COLOR_300DPI"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-2",
+        "query_text": "Mars",
+        "request": {
+          "method": "GET",
+          "url": "https://images-api.nasa.gov/search?q=Mars&media_type=image&page_size=2"
+        },
+        "expected_ids": [
+          "NHQ201905310037"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-3",
+        "query_text": "Jupiter",
+        "request": {
+          "method": "GET",
+          "url": "https://images-api.nasa.gov/search?q=Jupiter&media_type=image&page_size=2"
+        },
+        "expected_ids": [
+          "PIA01518"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-4",
+        "query_text": "Saturn",
+        "request": {
+          "method": "GET",
+          "url": "https://images-api.nasa.gov/search?q=Saturn&media_type=image&page_size=2"
+        },
+        "expected_ids": [
+          "PIA01973"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-5",
+        "query_text": "Hubble",
+        "request": {
+          "method": "GET",
+          "url": "https://images-api.nasa.gov/search?q=Hubble&media_type=image&page_size=2"
+        },
+        "expected_ids": [
+          "PIA12110"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-6",
+        "query_text": "Artemis",
+        "request": {
+          "method": "GET",
+          "url": "https://images-api.nasa.gov/search?q=Artemis&media_type=image&page_size=2"
+        },
+        "expected_ids": [
+          "Artemis Logo Color Positive RGB-July 2021"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-7",
+        "query_text": "Orion",
+        "request": {
+          "method": "GET",
+          "url": "https://images-api.nasa.gov/search?q=Orion&media_type=image&page_size=2"
+        },
+        "expected_ids": [
+          "JSC-20160920-PH_JNB01_0002"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-8",
+        "query_text": "Moon",
+        "request": {
+          "method": "GET",
+          "url": "https://images-api.nasa.gov/search?q=Moon&media_type=image&page_size=2"
+        },
+        "expected_ids": [
+          "PIA12235"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-9",
+        "query_text": "Venus",
+        "request": {
+          "method": "GET",
+          "url": "https://images-api.nasa.gov/search?q=Venus&media_type=image&page_size=2"
+        },
+        "expected_ids": [
+          "PIA13001"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-10",
+        "query_text": "Mercury",
+        "request": {
+          "method": "GET",
+          "url": "https://images-api.nasa.gov/search?q=Mercury&media_type=image&page_size=2"
+        },
+        "expected_ids": [
+          "PIA16908"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      }
+    ],
+    "authentication": "Anonymous; no API key, source login or paid account used",
+    "cost": "Public metadata requests; paced serially at three seconds or provider delay",
+    "search_scope": "First 2 image metadata results from NASA keyword API"
   },
   "documentation": [
     "https://www.nasa.gov/nasa-brand-center/images-and-media/",
-    "https://images.nasa.gov/"
+    "https://images.nasa.gov/",
+    "https://api.nasa.gov/",
+    "https://images.nasa.gov/docs/images.nasa.gov_api_docs.pdf"
   ],
   "evidence": [
-    "runs/law-media-contract-20261105al/observations.jsonl"
+    "runs/law-media-contract-20261105al/observations.jsonl",
+    "runs/technical-recovery-20261106/observations.jsonl",
+    "runs/technical-query-recovery-20261106/seeds.jsonl",
+    "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
   ],
   "licensing": "NASA content generally usable for educational/informational purposes with acknowledgment, but third-party copyright, protected insignia/logos, endorsements and recognizable-person use restrictions remain separate. No blanket public-domain or item-license claim.",
   "limitations": [
-    "Catalog robots.txt returned200 text/html exceeding64KiB; policy unavailable and target request not sent.",
-    "No query, reading, caption, item rights or media-language verification; no alternate API host attempted."
+    "Full content/reader access and reuse rights are independent of metadata queryability.",
+    "NASA image metadata only; no media downloads, blanket public-domain or logo/portrait reuse approval."
   ],
-  "last_reviewed_at": "2026-11-05T12:03:47.363230+00:00",
-  "next_action": "Revisit only when a usable published catalog policy and explicitly supported API/export documentation are available. Continue other educational media origins; no accounts/outreach or bypass.",
+  "last_reviewed_at": "2026-11-06T05:45:47.006352+00:00",
+  "next_action": "Research search is working. Future app integration needs its own scoped adapter and production tests; deeper reader/reuse checks remain separate.",
   "analysis_refs": [
     {
       "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
@@ -49,20 +177,42 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [NASA Image and Video Library](https://www.nasa.gov/nasa-brand-center/images-and-media/) | Robots returned a large HTML page, so queries were skipped. | Establish usable policy and the officially published Images API route. Do not assume a NASA API key is needed for this particular library. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "93076963a82c377392f2b334b721fbe01f4f058785f9d5dd14d96211949ec4b6",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106.md",
+      "line": 3,
+      "heading": "Technical connector recovery — 6 November 2026",
+      "text": "The owner resumed hourly completion work on the fixed 44 technical/unfinished connectors. Two were already working at the start (Open Book Publishers and Helsinki University Press). This pass adds three: NASA Image and Video Library, Lever Press and CaltechTHESIS. **Five of the original 44 work; 39 remain open.** A documented failure is not completion.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "93076963a82c377392f2b334b721fbe01f4f058785f9d5dd14d96211949ec4b6",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106.md",
+      "line": 7,
+      "heading": "Technical connector recovery — 6 November 2026",
+      "text": "| NASA Image and Video Library | Use the API explicitly published by NASA (`https://images-api.nasa.gov/search`), whose robots endpoint returns 404, instead of treating the public website’s malformed robots response as an API prohibition | Ten anonymous image-metadata keyword queries, native NASA IDs, empty result and page-two observations. No API key needed; no images/video downloaded. Logos and other rights restrictions still apply. |",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
         "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
         "decision": "deferred",
-        "activation_approved": false
+        "activation_approved": false,
+        "current_query_recovery": {
+          "scope": "First 2 image metadata results from NASA keyword API",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "runs/law-media-contract-20261105al/observations.jsonl"
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "observation_refs": [
         {
@@ -92,19 +242,42 @@
       ],
       "open_questions": [
         "Complete identity_and_duplicates using permitted catalog/item evidence after a useful policy/documentation trigger."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.006367+00:00",
+          "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+          "facts": {
+            "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
+            "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
+            "decision": "deferred",
+            "activation_approved": false,
+            "current_query_recovery": {
+              "scope": "First 2 image metadata results from NASA keyword API",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
         "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
         "decision": "deferred",
-        "activation_approved": false
+        "activation_approved": false,
+        "current_query_recovery": {
+          "scope": "First 2 image metadata results from NASA keyword API",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "runs/law-media-contract-20261105al/observations.jsonl"
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "observation_refs": [
         {
@@ -134,19 +307,42 @@
       ],
       "open_questions": [
         "Complete coverage_and_languages using permitted catalog/item evidence after a useful policy/documentation trigger."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.006397+00:00",
+          "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+          "facts": {
+            "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
+            "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
+            "decision": "deferred",
+            "activation_approved": false,
+            "current_query_recovery": {
+              "scope": "First 2 image metadata results from NASA keyword API",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "query_contract": {
       "status": "partial",
-      "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
         "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
         "decision": "deferred",
-        "activation_approved": false
+        "activation_approved": false,
+        "current_query_recovery": {
+          "scope": "First 2 image metadata results from NASA keyword API",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "runs/law-media-contract-20261105al/observations.jsonl"
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "observation_refs": [
         {
@@ -176,19 +372,42 @@
       ],
       "open_questions": [
         "Complete query_contract using permitted catalog/item evidence after a useful policy/documentation trigger."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.006421+00:00",
+          "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+          "facts": {
+            "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
+            "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
+            "decision": "deferred",
+            "activation_approved": false,
+            "current_query_recovery": {
+              "scope": "First 2 image metadata results from NASA keyword API",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
         "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
         "decision": "deferred",
-        "activation_approved": false
+        "activation_approved": false,
+        "current_query_recovery": {
+          "scope": "First 2 image metadata results from NASA keyword API",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "runs/law-media-contract-20261105al/observations.jsonl"
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "observation_refs": [
         {
@@ -218,19 +437,42 @@
       ],
       "open_questions": [
         "Complete rights_and_cost using permitted catalog/item evidence after a useful policy/documentation trigger."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.006423+00:00",
+          "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+          "facts": {
+            "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
+            "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
+            "decision": "deferred",
+            "activation_approved": false,
+            "current_query_recovery": {
+              "scope": "First 2 image metadata results from NASA keyword API",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
         "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
         "decision": "deferred",
-        "activation_approved": false
+        "activation_approved": false,
+        "current_query_recovery": {
+          "scope": "First 2 image metadata results from NASA keyword API",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "runs/law-media-contract-20261105al/observations.jsonl"
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "observation_refs": [
         {
@@ -260,19 +502,42 @@
       ],
       "open_questions": [
         "Complete reader_access using permitted catalog/item evidence after a useful policy/documentation trigger."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.006470+00:00",
+          "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+          "facts": {
+            "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
+            "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
+            "decision": "deferred",
+            "activation_approved": false,
+            "current_query_recovery": {
+              "scope": "First 2 image metadata results from NASA keyword API",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
         "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
         "decision": "deferred",
-        "activation_approved": false
+        "activation_approved": false,
+        "current_query_recovery": {
+          "scope": "First 2 image metadata results from NASA keyword API",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "runs/law-media-contract-20261105al/observations.jsonl"
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "observation_refs": [
         {
@@ -302,19 +567,42 @@
       ],
       "open_questions": [
         "Complete quality_and_relevance using permitted catalog/item evidence after a useful policy/documentation trigger."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.006471+00:00",
+          "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+          "facts": {
+            "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
+            "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
+            "decision": "deferred",
+            "activation_approved": false,
+            "current_query_recovery": {
+              "scope": "First 2 image metadata results from NASA keyword API",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
         "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
         "decision": "deferred",
-        "activation_approved": false
+        "activation_approved": false,
+        "current_query_recovery": {
+          "scope": "First 2 image metadata results from NASA keyword API",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "runs/law-media-contract-20261105al/observations.jsonl"
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "observation_refs": [
         {
@@ -344,19 +632,42 @@
       ],
       "open_questions": [
         "Complete operating_limits using permitted catalog/item evidence after a useful policy/documentation trigger."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.006472+00:00",
+          "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+          "facts": {
+            "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
+            "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
+            "decision": "deferred",
+            "activation_approved": false,
+            "current_query_recovery": {
+              "scope": "First 2 image metadata results from NASA keyword API",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+      "status": "partial",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
         "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
         "decision": "deferred",
-        "activation_approved": false
+        "activation_approved": false,
+        "current_query_recovery": {
+          "scope": "First 2 image metadata results from NASA keyword API",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "runs/law-media-contract-20261105al/observations.jsonl"
+        "runs/law-media-contract-20261105al/observations.jsonl",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "observation_refs": [
         {
@@ -384,21 +695,48 @@
           "policy_sha256": "6dc53b3acf4ef8cd2d39ef3402e8407c2a2be1d8da87fe9af1df4b26166fee2e"
         }
       ],
-      "open_questions": []
+      "open_questions": [],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.006474+00:00",
+          "summary": "NASA catalog lead and current failed policy gate retained; no fresh item/query qualification.",
+          "facts": {
+            "catalog_link": "Official NASA Images and Media policy links images.nasa.gov.",
+            "policy_result": "Robots HTTP200 text/html,65537 bytes, truncated; target skipped.",
+            "decision": "deferred",
+            "activation_approved": false,
+            "current_query_recovery": {
+              "scope": "First 2 image metadata results from NASA keyword API",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
+      ]
     }
   },
   "recovery": {
-    "reason": "Catalog robots.txt returned200 text/html exceeding64KiB; policy unavailable and target request not sent. | No query, reading, caption, item rights or media-language verification; no alternate API host attempted.",
-    "attempt": "Reviewed the saved provider-policy/access observations and prior decision; no fresh network request in this follow-up.",
-    "result": "Catalog robots.txt returned200 text/html exceeding64KiB; policy unavailable and target request not sent. | No query, reading, caption, item rights or media-language verification; no alternate API host attempted.",
-    "decision": "wait_for_documented_policy_access_or_permitted_export_trigger",
-    "next_action": "Revisit only when a usable published catalog policy and explicitly supported API/export documentation are available. Continue other educational media origins; no accounts/outreach or bypass.",
-    "retry_trigger": "A usable published policy/access recovery or explicitly supported permitted export/API route. Do not repeat unchanged denied requests.",
-    "owner_action_required": false,
-    "evidence": [
-      "runs/law-media-contract-20261105al/observations.jsonl"
-    ],
-    "fresh_provider_test": false
+    "reviewed_at": "2026-11-06T05:45:47.006362+00:00",
+    "reason": "Previous failure was on another route: public-site policy preflight for NASA; empty Thoth publisher subset for Lever Press.",
+    "attempt": "https://images-api.nasa.gov/search",
+    "result": "Ten distinct relevant current queries passed; empty result observed; NASA page 2 returns distinct native IDs.",
+    "decision": "Working within recorded metadata search scope. No owner API signup required."
   },
-  "recovery_reviewed_at": "2026-11-05T20:44:42.717147+00:00"
+  "recovery_reviewed_at": "2026-11-05T20:44:42.717147+00:00",
+  "historical_query_contracts": [
+    {
+      "superseded_at": "2026-11-06T05:41:35.310181+00:00",
+      "query": {
+        "adapter": "unproven",
+        "endpoint": null,
+        "cases": [],
+        "authentication": "Unknown for this catalog; generic api.nasa.gov key-signup shell is not this API contract."
+      },
+      "limitations": [
+        "Catalog robots.txt returned200 text/html exceeding64KiB; policy unavailable and target request not sent.",
+        "No query, reading, caption, item rights or media-language verification; no alternate API host attempted."
+      ],
+      "state": "deferred"
+    }
+  ]
 }

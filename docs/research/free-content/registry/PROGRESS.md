@@ -1,3 +1,7 @@
+## 6 November 2026 — technical recovery resumed
+
+71 working connectors, 747 verified examples. Three new recoveries: NASA Images, Lever Press and CaltechTHESIS. Original 44-item goal: 5 working, 39 remaining. Hourly completion enabled. 272 research tests pass. [Recovery details](../TECHNICAL_RECOVERY_20261106.md).
+
 ## 2026-11-06T02:21:12.414051+00:00: Owner-requested metadata fixes; schedules remain paused
 
 | Group | Working | Blocked/failed | Still checking | Total |

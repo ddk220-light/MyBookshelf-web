@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 42,
+  "remaining": 39,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -99,12 +99,20 @@
       "id": "lever-press",
       "name": "Lever Press",
       "group": "G01",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "The selected publisher/work filters returned no records.",
-      "current_reason": "Selected active-book query and small catalog probe returned no works.",
-      "next_action": "Investigate another supported official catalog route; empty subset does not establish absence.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Research search is working. Future app integration needs its own scoped adapter and production tests; deeper reader/reuse checks remain separate.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T05:45:47.008192+00:00",
+          "reason": "Previous failure was on another route: public-site policy preflight for NASA; empty Thoth publisher subset for Lever Press.",
+          "attempt": "https://www.fulcrum.org/leverpress",
+          "result": "Ten distinct relevant current queries passed; empty result observed; NASA page 2 returns distinct native IDs.",
+          "decision": "Working within recorded metadata search scope. No owner API signup required."
+        }
+      ]
     },
     {
       "id": "ncbi-bookshelf",
@@ -418,12 +426,20 @@
       "id": "caltech-thesis",
       "name": "CaltechTHESIS public static repository",
       "group": "G05",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "A public static repository was found, but no supported import/query contract verified.",
-      "current_reason": "Public static interface is not evidence of a supported machine metadata API/export. | Daily public copy is distinct from campus-only live system; no campus access attempted.",
-      "next_action": "Find an explicitly supported public metadata query/export contract compatible with current reuse conditions. Preserve nonprofit attribution requirements; do not use campus-only routes or harvest full theses. Then verify native identities, embargo/versions and ten examples.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Research keyword search works; retain metadata terms, test empty/paging/filter behavior and review a scoped production adapter separately.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T05:47:36.912878+00:00",
+          "reason": "Previous work stopped at an unsupported machine contract; the published public Pagefind UI supplies normal anonymous search.",
+          "attempt": "Open search.html?q=... in WebKit with proxy CA trust; no campus API calls",
+          "result": "Ten distinct queries produced relevant title/native-thesis URL pairs. Chromium CA setup and WebKit host validation errors were local environment issues; actual WebKit runtime passed with certificate checks enabled.",
+          "decision": "Working for bounded public browser metadata search. Reading/reuse conditions are separate."
+        }
+      ]
     },
     {
       "id": "indcat",
@@ -495,12 +511,20 @@
       "id": "nasa-image-video-library",
       "name": "NASA Image and Video Library",
       "group": "G06",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Robots returned a large HTML page, so queries were skipped.",
-      "current_reason": "Catalog robots.txt returned200 text/html exceeding64KiB; policy unavailable and target request not sent. | No query, reading, caption, item rights or media-language verification; no alternate API host attempted.",
-      "next_action": "Revisit only when a usable published catalog policy and explicitly supported API/export documentation are available. Continue other educational media origins; no accounts/outreach or bypass.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Research search is working. Future app integration needs its own scoped adapter and production tests; deeper reader/reuse checks remain separate.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T05:45:47.006362+00:00",
+          "reason": "Previous failure was on another route: public-site policy preflight for NASA; empty Thoth publisher subset for Lever Press.",
+          "attempt": "https://images-api.nasa.gov/search",
+          "result": "Ten distinct relevant current queries passed; empty result observed; NASA page 2 returns distinct native IDs.",
+          "decision": "Working within recorded metadata search scope. No owner API signup required."
+        }
+      ]
     }
   ],
   "progress": {
@@ -516,5 +540,7 @@
     "collector_active": false
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
-  "native_chat_goal_activated": false
+  "native_chat_goal_activated": false,
+  "working": 5,
+  "updated_at": "2026-11-06T05:47:36.913639+00:00"
 }

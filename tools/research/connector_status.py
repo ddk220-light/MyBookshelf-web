@@ -15,6 +15,9 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'caltech-public-browser': 'Anonymous public browser keyword search, first two rendered title/native thesis links; no campus API, pagination/full-text or blanket reuse permission',
+    'nasa-images-public': 'Live anonymous NASA image-metadata keyword search, first 2 native NASA IDs; page 2 and empty results verified, no media download or reuse approval',
+    'lever-fulcrum': 'Live Lever Press public publisher keyword form, first 15 native Fulcrum monograph IDs; no ebook downloads or private API',
     'madurai-catalog': 'Local title/native PM work-number search in the published Tamil works catalog; component titles grouped, listed format links not fetched',
     'thoth-metadata': 'Live publisher-scoped monograph/edited-book title search via public Thoth API; native work UUID and publisher/DOI outbound links, no reading-access gate',
     'sugamya-public': 'Live anonymous book-title search, first 5 displayed entries; native book IDs/item links are hidden, so local composite keys and outbound search links only; eligible-member login for downloads',

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T02:24:57.770700+00:00",
+  "generated_at": "2026-11-06T05:50:55.070070+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by at least ten current passing examples in this registry. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
@@ -16,21 +16,21 @@
   ],
   "totals": {
     "total": 133,
-    "working": 68,
-    "blocked_or_failed": 65,
+    "working": 71,
+    "blocked_or_failed": 62,
     "still_checking": 0,
-    "not_working_verified": 65,
+    "not_working_verified": 62,
     "assessed_or_deferred": 133,
     "remaining_to_assess": 0,
-    "passing_query_examples": 717
+    "passing_query_examples": 747
   },
   "groups": [
     {
       "id": "G01",
       "name": "Books, children’s books and audiobooks",
       "total": 39,
-      "working": 25,
-      "blocked_or_failed": 14,
+      "working": 26,
+      "blocked_or_failed": 13,
       "still_checking": 0
     },
     {
@@ -61,16 +61,16 @@
       "id": "G05",
       "name": "Research papers and scholarly sources",
       "total": 22,
-      "working": 10,
-      "blocked_or_failed": 12,
+      "working": 11,
+      "blocked_or_failed": 11,
       "still_checking": 0
     },
     {
       "id": "G06",
       "name": "Language, culture and media",
       "total": 12,
-      "working": 4,
-      "blocked_or_failed": 8,
+      "working": 5,
+      "blocked_or_failed": 7,
       "still_checking": 0
     }
   ],
@@ -175,23 +175,6 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T16:56:18.911857+00:00",
       "record": "sources/lets-read.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G01",
-      "group": "Books, children’s books and audiobooks",
-      "connector_id": "lever-press",
-      "connector": "Lever Press",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Selected active-book query and small catalog probe returned no works.",
-      "next_step_or_blocker": "Investigate another supported official catalog route; empty subset does not establish absence.",
-      "block_reason": "Selected active-book query and small catalog probe returned no works.",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": "2026-11-05",
-      "record": "sources/lever-press.json",
       "production_activation_changed": false
     },
     {
@@ -447,6 +430,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T22:10:44.844961+00:00",
       "record": "sources/internet-archive.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G01",
+      "group": "Books, children’s books and audiobooks",
+      "connector_id": "lever-press",
+      "connector": "Lever Press",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Live Lever Press public publisher keyword form, first 15 native Fulcrum monograph IDs; no ebook downloads or private API",
+      "known_limitations": "Full content/reader access and reuse rights are independent of metadata queryability. | Publisher-scoped public form only; native monograph IDs preserved, no private API or ebook downloads.",
+      "next_step_or_blocker": "Research search is working. Future app integration needs its own scoped adapter and production tests; deeper reader/reuse checks remain separate.",
+      "block_reason": "",
+      "last_attempt_and_result": "https://www.fulcrum.org/leverpress / Ten distinct relevant current queries passed; empty result observed; NASA page 2 returns distinct native IDs.",
+      "recovery_decision": "Working within recorded metadata search scope. No owner API signup required.",
+      "last_reviewed_at": "2026-11-06T05:45:47.008187+00:00",
+      "record": "sources/lever-press.json",
       "production_activation_changed": false
     },
     {
@@ -1778,23 +1778,6 @@
     {
       "group_id": "G05",
       "group": "Research papers and scholarly sources",
-      "connector_id": "caltech-thesis",
-      "connector": "CaltechTHESIS public static repository",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Public static interface is not evidence of a supported machine metadata API/export. | Daily public copy is distinct from campus-only live system; no campus access attempted. | No thesis PDF/full-text collection or current query examples. | Metadata reuse conditions constrain future product integration; research inventory is not integration approval.",
-      "next_step_or_blocker": "Find an explicitly supported public metadata query/export contract compatible with current reuse conditions. Preserve nonprofit attribution requirements; do not use campus-only routes or harvest full theses. Then verify native identities, embargo/versions and ten examples.",
-      "block_reason": "Public static interface is not evidence of a supported machine metadata API/export. | Daily public copy is distinct from campus-only live system; no campus access attempted.",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": "2026-11-05T10:06:20.332138+00:00",
-      "record": "sources/caltech-thesis.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G05",
-      "group": "Research papers and scholarly sources",
       "connector_id": "hal",
       "connector": "HAL",
       "status": "blocked_or_failed",
@@ -1977,6 +1960,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T19:01:58.878074+00:00",
       "record": "sources/biorxiv-medrxiv.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G05",
+      "group": "Research papers and scholarly sources",
+      "connector_id": "caltech-thesis",
+      "connector": "CaltechTHESIS public static repository",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Anonymous public browser keyword search, first two rendered title/native thesis links; no campus API, pagination/full-text or blanket reuse permission",
+      "known_limitations": "Only the first two rendered metadata links per title-relevant query are checked; full text, pagination and filters are unverified. | Metadata use conditions remain separate; prior policy says commercial metadata reuse may require permission. No production integration is authorized by queryability alone.",
+      "next_step_or_blocker": "Research keyword search works; retain metadata terms, test empty/paging/filter behavior and review a scoped production adapter separately.",
+      "block_reason": "",
+      "last_attempt_and_result": "Open search.html?q=... in WebKit with proxy CA trust; no campus API calls / Ten distinct queries produced relevant title/native-thesis URL pairs. Chromium CA setup and WebKit host validation errors were local environment issues; actual WebKit runtime passed with certificate checks enabled.",
+      "recovery_decision": "Working for bounded public browser metadata search. Reading/reuse conditions are separate.",
+      "last_reviewed_at": "2026-11-06T05:47:36.912873+00:00",
+      "record": "sources/caltech-thesis.json",
       "production_activation_changed": false
     },
     {
@@ -2237,23 +2237,6 @@
     {
       "group_id": "G06",
       "group": "Language, culture and media",
-      "connector_id": "nasa-image-video-library",
-      "connector": "NASA Image and Video Library",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Catalog robots.txt returned200 text/html exceeding64KiB; policy unavailable and target request not sent. | No query, reading, caption, item rights or media-language verification; no alternate API host attempted.",
-      "next_step_or_blocker": "Revisit only when a usable published catalog policy and explicitly supported API/export documentation are available. Continue other educational media origins; no accounts/outreach or bypass.",
-      "block_reason": "Catalog robots.txt returned200 text/html exceeding64KiB; policy unavailable and target request not sent. | No query, reading, caption, item rights or media-language verification; no alternate API host attempted.",
-      "last_attempt_and_result": "Reviewed the saved provider-policy/access observations and prior decision; no fresh network request in this follow-up. / Catalog robots.txt returned200 text/html exceeding64KiB; policy unavailable and target request not sent. | No query, reading, caption, item rights or media-language verification; no alternate API host attempted.",
-      "recovery_decision": "wait_for_documented_policy_access_or_permitted_export_trigger",
-      "last_reviewed_at": "2026-11-05T12:03:47.363230+00:00",
-      "record": "sources/nasa-image-video-library.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G06",
-      "group": "Language, culture and media",
       "connector_id": "wikimedia-commons",
       "connector": "Wikimedia Commons",
       "status": "blocked_or_failed",
@@ -2283,6 +2266,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T16:22:58.602023+00:00",
       "record": "sources/cleveland-museum-art.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G06",
+      "group": "Language, culture and media",
+      "connector_id": "nasa-image-video-library",
+      "connector": "NASA Image and Video Library",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Live anonymous NASA image-metadata keyword search, first 2 native NASA IDs; page 2 and empty results verified, no media download or reuse approval",
+      "known_limitations": "Full content/reader access and reuse rights are independent of metadata queryability. | NASA image metadata only; no media downloads, blanket public-domain or logo/portrait reuse approval.",
+      "next_step_or_blocker": "Research search is working. Future app integration needs its own scoped adapter and production tests; deeper reader/reuse checks remain separate.",
+      "block_reason": "",
+      "last_attempt_and_result": "https://images-api.nasa.gov/search / Ten distinct relevant current queries passed; empty result observed; NASA page 2 returns distinct native IDs.",
+      "recovery_decision": "Working within recorded metadata search scope. No owner API signup required.",
+      "last_reviewed_at": "2026-11-06T05:45:47.006352+00:00",
+      "record": "sources/nasa-image-video-library.json",
       "production_activation_changed": false
     },
     {

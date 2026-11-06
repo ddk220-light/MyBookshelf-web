@@ -11,7 +11,7 @@
   "areas": [
     "C06"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "institutional-thesis-catalog",
@@ -58,23 +58,145 @@
     ]
   },
   "capabilities": [
-    "Public static thesis catalog with keyword/author/title search and degree/year/option/research-group browsing.",
-    "Homepage says the public static copy refreshes once daily; the live repository is campus-only and excluded."
+    "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Anonymous public static pages observed. Campus-only live service excluded.",
-    "cost": "Metadata access is free; nonprofit reuse with original-record link and CaltechTHESIS attribution only. Commercial reuse requires prior permission.",
-    "request_shape_verified": false,
-    "public_search_page": "https://thesis.caltech.edu/search.html",
-    "observed_public_search_script": "https://thesis.caltech.edu/pagefind/pagefind-component-ui.js",
-    "unsupported_modes": [
-      "Campus-only live search/API",
-      "Assuming Pagefind browser script grants a supported metadata export/API",
-      "Bulk full-thesis harvesting",
-      "Commercial metadata reuse without permission"
+    "adapter": "caltech-public-browser",
+    "endpoint": "https://thesis.caltech.edu/search.html",
+    "authentication": "Anonymous public browser search; campus-only API is not used",
+    "cost": "Public browser queries, serial three-second minimum pause",
+    "search_scope": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded",
+    "cases": [
+      {
+        "id": "public-1",
+        "query_text": "quantum",
+        "request": {
+          "method": "GET",
+          "url": "https://thesis.caltech.edu/search.html?q=quantum",
+          "execution": "public-browser"
+        },
+        "expected_ids": [
+          "3805"
+        ],
+        "intent": "Search relevant native catalog records using the supported public browser query"
+      },
+      {
+        "id": "public-2",
+        "query_text": "galaxies",
+        "request": {
+          "method": "GET",
+          "url": "https://thesis.caltech.edu/search.html?q=galaxies",
+          "execution": "public-browser"
+        },
+        "expected_ids": [
+          "3746"
+        ],
+        "intent": "Search relevant native catalog records using the supported public browser query"
+      },
+      {
+        "id": "public-3",
+        "query_text": "polymer",
+        "request": {
+          "method": "GET",
+          "url": "https://thesis.caltech.edu/search.html?q=polymer",
+          "execution": "public-browser"
+        },
+        "expected_ids": [
+          "3107"
+        ],
+        "intent": "Search relevant native catalog records using the supported public browser query"
+      },
+      {
+        "id": "public-4",
+        "query_text": "gravity",
+        "request": {
+          "method": "GET",
+          "url": "https://thesis.caltech.edu/search.html?q=gravity",
+          "execution": "public-browser"
+        },
+        "expected_ids": [
+          "16712"
+        ],
+        "intent": "Search relevant native catalog records using the supported public browser query"
+      },
+      {
+        "id": "public-5",
+        "query_text": "neural",
+        "request": {
+          "method": "GET",
+          "url": "https://thesis.caltech.edu/search.html?q=neural",
+          "execution": "public-browser"
+        },
+        "expected_ids": [
+          "590"
+        ],
+        "intent": "Search relevant native catalog records using the supported public browser query"
+      },
+      {
+        "id": "public-6",
+        "query_text": "protein",
+        "request": {
+          "method": "GET",
+          "url": "https://thesis.caltech.edu/search.html?q=protein",
+          "execution": "public-browser"
+        },
+        "expected_ids": [
+          "13989"
+        ],
+        "intent": "Search relevant native catalog records using the supported public browser query"
+      },
+      {
+        "id": "public-7",
+        "query_text": "fluid",
+        "request": {
+          "method": "GET",
+          "url": "https://thesis.caltech.edu/search.html?q=fluid",
+          "execution": "public-browser"
+        },
+        "expected_ids": [
+          "2064"
+        ],
+        "intent": "Search relevant native catalog records using the supported public browser query"
+      },
+      {
+        "id": "public-8",
+        "query_text": "chemical",
+        "request": {
+          "method": "GET",
+          "url": "https://thesis.caltech.edu/search.html?q=chemical",
+          "execution": "public-browser"
+        },
+        "expected_ids": [
+          "3265"
+        ],
+        "intent": "Search relevant native catalog records using the supported public browser query"
+      },
+      {
+        "id": "public-9",
+        "query_text": "optical",
+        "request": {
+          "method": "GET",
+          "url": "https://thesis.caltech.edu/search.html?q=optical",
+          "execution": "public-browser"
+        },
+        "expected_ids": [
+          "8227"
+        ],
+        "intent": "Search relevant native catalog records using the supported public browser query"
+      },
+      {
+        "id": "public-10",
+        "query_text": "magnetic",
+        "request": {
+          "method": "GET",
+          "url": "https://thesis.caltech.edu/search.html?q=magnetic",
+          "execution": "public-browser"
+        },
+        "expected_ids": [
+          "519"
+        ],
+        "intent": "Search relevant native catalog records using the supported public browser query"
+      }
     ]
   },
   "licensing": "Metadata: not-for-profit reuse only, with original record link and CaltechTHESIS attribution. Full items: public access stated, but no commercial reproduction/display/distribution permission; robots must not harvest full items except transient full-text indexing/citation analysis. Item rights and embargo exceptions remain distinct.",
@@ -88,15 +210,15 @@
     "runs/museum-collection-contract-20261105ad/observations.jsonl",
     "runs/museum-thesis-access-20261105ae/observations.jsonl",
     "runs/museum-thesis-terms-20261105af/observations.jsonl",
-    "examples/caltech-thesis.contract.jsonl"
+    "examples/caltech-thesis.contract.jsonl",
+    "runs/technical-query-recovery-20261106/caltech-rendered.jsonl",
+    "runs/technical-query-recovery-20261106/caltech-robots.json"
   ],
   "limitations": [
-    "Public static interface is not evidence of a supported machine metadata API/export.",
-    "Daily public copy is distinct from campus-only live system; no campus access attempted.",
-    "No thesis PDF/full-text collection or current query examples.",
-    "Metadata reuse conditions constrain future product integration; research inventory is not integration approval."
+    "Only the first two rendered metadata links per title-relevant query are checked; full text, pagination and filters are unverified.",
+    "Metadata use conditions remain separate; prior policy says commercial metadata reuse may require permission. No production integration is authorized by queryability alone."
   ],
-  "next_action": "Find an explicitly supported public metadata query/export contract compatible with current reuse conditions. Preserve nonprofit attribution requirements; do not use campus-only routes or harvest full theses. Then verify native identities, embargo/versions and ten examples.",
+  "next_action": "Research keyword search works; retain metadata terms, test empty/paging/filter behavior and review a scoped production adapter separately.",
   "analysis_refs": [
     {
       "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
@@ -105,13 +227,31 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [CaltechTHESIS public static repository](https://thesis.caltech.edu/) | A public static repository was found, but no supported import/query contract verified. | Evaluate its documented catalog/export for local metadata search; no campus access. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "93076963a82c377392f2b334b721fbe01f4f058785f9d5dd14d96211949ec4b6",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106.md",
+      "line": 3,
+      "heading": "Technical connector recovery — 6 November 2026",
+      "text": "The owner resumed hourly completion work on the fixed 44 technical/unfinished connectors. Two were already working at the start (Open Book Publishers and Helsinki University Press). This pass adds three: NASA Image and Video Library, Lever Press and CaltechTHESIS. **Five of the original 44 work; 39 remain open.** A documented failure is not completion.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "93076963a82c377392f2b334b721fbe01f4f058785f9d5dd14d96211949ec4b6",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106.md",
+      "line": 9,
+      "heading": "Technical connector recovery — 6 November 2026",
+      "text": "| CaltechTHESIS | Use the published Pagefind browser search, which supports query-string restoration | Ten searches with relevant titles and native thesis URLs; first two rendered links only. No campus API or full thesis download. Commercial metadata reuse conditions remain separate from queryability. |",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Caltech Library operates this CODA thesis repository. Public daily static copy and campus-only live system describe one repository, not two independent origins.",
-      "facts": {},
+      "summary": "Public browser metadata search recovered; full dossier completion remains open.",
+      "facts": {
+        "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+      },
       "open_questions": [
         "Verify stable native record and thesis/version identity from an allowed item."
       ],
@@ -119,7 +259,8 @@
         "runs/museum-collection-contract-20261105ad/observations.jsonl",
         "runs/museum-thesis-access-20261105ae/observations.jsonl",
         "runs/museum-thesis-terms-20261105af/observations.jsonl",
-        "examples/caltech-thesis.contract.jsonl"
+        "examples/caltech-thesis.contract.jsonl",
+        "runs/technical-query-recovery-20261106/caltech-rendered.jsonl"
       ],
       "observation_refs": [
         {
@@ -158,12 +299,23 @@
           "body_sha256": "8ee3fa47b705620a23097748ad2b647c7e65a9e09d51603bb61a7f071deb593d",
           "policy_sha256": "b80fb97b33d36c1138a80a9500eea4abeed15410b6f5be03467e0cd00058b60a"
         }
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:47:36.912881+00:00",
+          "summary": "Caltech Library operates this CODA thesis repository. Public daily static copy and campus-only live system describe one repository, not two independent origins.",
+          "facts": {
+            "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+          }
+        }
       ]
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Public description lists PhD, Engineer, Master, Bachelor/Senior and other Caltech theses. C06 candidate; policy says mainly English.",
-      "facts": {},
+      "summary": "Public browser metadata search recovered; full dossier completion remains open.",
+      "facts": {
+        "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+      },
       "open_questions": [
         "Verify actual discipline/language distribution and USA/India access boundaries."
       ],
@@ -171,7 +323,8 @@
         "runs/museum-collection-contract-20261105ad/observations.jsonl",
         "runs/museum-thesis-access-20261105ae/observations.jsonl",
         "runs/museum-thesis-terms-20261105af/observations.jsonl",
-        "examples/caltech-thesis.contract.jsonl"
+        "examples/caltech-thesis.contract.jsonl",
+        "runs/technical-query-recovery-20261106/caltech-rendered.jsonl"
       ],
       "observation_refs": [
         {
@@ -210,12 +363,23 @@
           "body_sha256": "8ee3fa47b705620a23097748ad2b647c7e65a9e09d51603bb61a7f071deb593d",
           "policy_sha256": "b80fb97b33d36c1138a80a9500eea4abeed15410b6f5be03467e0cd00058b60a"
         }
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:47:36.912884+00:00",
+          "summary": "Public description lists PhD, Engineer, Master, Bachelor/Senior and other Caltech theses. C06 candidate; policy says mainly English.",
+          "facts": {
+            "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+          }
+        }
       ]
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Public search.html has no HTML form and loads a Pagefind component. This identifies the public UI only, not a supported catalog API or export contract.",
-      "facts": {},
+      "summary": "Public browser metadata search recovered; full dossier completion remains open.",
+      "facts": {
+        "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+      },
       "open_questions": [
         "Document an authorized reproducible metadata retrieval/import method before automated item sampling."
       ],
@@ -223,7 +387,8 @@
         "runs/museum-collection-contract-20261105ad/observations.jsonl",
         "runs/museum-thesis-access-20261105ae/observations.jsonl",
         "runs/museum-thesis-terms-20261105af/observations.jsonl",
-        "examples/caltech-thesis.contract.jsonl"
+        "examples/caltech-thesis.contract.jsonl",
+        "runs/technical-query-recovery-20261106/caltech-rendered.jsonl"
       ],
       "observation_refs": [
         {
@@ -262,12 +427,23 @@
           "body_sha256": "8ee3fa47b705620a23097748ad2b647c7e65a9e09d51603bb61a7f071deb593d",
           "policy_sha256": "b80fb97b33d36c1138a80a9500eea4abeed15410b6f5be03467e0cd00058b60a"
         }
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:47:36.912886+00:00",
+          "summary": "Public search.html has no HTML form and loads a Pagefind component. This identifies the public UI only, not a supported catalog API or export contract.",
+          "facts": {
+            "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+          }
+        }
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Metadata is free to access and reusable for nonprofit purposes with record link and CaltechTHESIS credit. Commercial reuse needs formal prior permission. Full-item robot harvesting is restricted; public access is not a commercial content license.",
-      "facts": {},
+      "summary": "Public browser metadata search recovered; full dossier completion remains open.",
+      "facts": {
+        "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+      },
       "open_questions": [
         "Resolve machine metadata reuse scope and representative item-specific rights before qualification."
       ],
@@ -275,7 +451,8 @@
         "runs/museum-collection-contract-20261105ad/observations.jsonl",
         "runs/museum-thesis-access-20261105ae/observations.jsonl",
         "runs/museum-thesis-terms-20261105af/observations.jsonl",
-        "examples/caltech-thesis.contract.jsonl"
+        "examples/caltech-thesis.contract.jsonl",
+        "runs/technical-query-recovery-20261106/caltech-rendered.jsonl"
       ],
       "observation_refs": [
         {
@@ -314,12 +491,23 @@
           "body_sha256": "8ee3fa47b705620a23097748ad2b647c7e65a9e09d51603bb61a7f071deb593d",
           "policy_sha256": "b80fb97b33d36c1138a80a9500eea4abeed15410b6f5be03467e0cd00058b60a"
         }
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:47:36.912888+00:00",
+          "summary": "Metadata is free to access and reusable for nonprofit purposes with record link and CaltechTHESIS credit. Commercial reuse needs formal prior permission. Full-item robot harvesting is restricted; public access is not a commercial content license.",
+          "facts": {
+            "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+          }
+        }
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Policy states full items are free, with embargo exceptions. Anonymous navigation pages work; no full thesis or free-login flow tested. Campus-only live access remains excluded.",
-      "facts": {},
+      "summary": "Public browser metadata search recovered; full dossier completion remains open.",
+      "facts": {
+        "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+      },
       "open_questions": [
         "Verify a representative public thesis, embargo/withdrawal behavior and mobile reading without bulk file collection."
       ],
@@ -327,7 +515,8 @@
         "runs/museum-collection-contract-20261105ad/observations.jsonl",
         "runs/museum-thesis-access-20261105ae/observations.jsonl",
         "runs/museum-thesis-terms-20261105af/observations.jsonl",
-        "examples/caltech-thesis.contract.jsonl"
+        "examples/caltech-thesis.contract.jsonl",
+        "runs/technical-query-recovery-20261106/caltech-rendered.jsonl"
       ],
       "observation_refs": [
         {
@@ -366,12 +555,23 @@
           "body_sha256": "8ee3fa47b705620a23097748ad2b647c7e65a9e09d51603bb61a7f071deb593d",
           "policy_sha256": "b80fb97b33d36c1138a80a9500eea4abeed15410b6f5be03467e0cd00058b60a"
         }
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:47:36.912889+00:00",
+          "summary": "Policy states full items are free, with embargo exceptions. Anonymous navigation pages work; no full thesis or free-login flow tested. Campus-only live access remains excluded.",
+          "facts": {
+            "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+          }
+        }
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No current query examples. Public keyword/author/title search description does not establish relevance, pagination, empty/error or filtered recall.",
-      "facts": {},
+      "summary": "Public browser metadata search recovered; full dossier completion remains open.",
+      "facts": {
+        "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+      },
       "open_questions": [
         "Ten distinct permitted current native-record examples plus boundary/quality tests."
       ],
@@ -379,7 +579,8 @@
         "runs/museum-collection-contract-20261105ad/observations.jsonl",
         "runs/museum-thesis-access-20261105ae/observations.jsonl",
         "runs/museum-thesis-terms-20261105af/observations.jsonl",
-        "examples/caltech-thesis.contract.jsonl"
+        "examples/caltech-thesis.contract.jsonl",
+        "runs/technical-query-recovery-20261106/caltech-rendered.jsonl"
       ],
       "observation_refs": [
         {
@@ -418,12 +619,23 @@
           "body_sha256": "8ee3fa47b705620a23097748ad2b647c7e65a9e09d51603bb61a7f071deb593d",
           "policy_sha256": "b80fb97b33d36c1138a80a9500eea4abeed15410b6f5be03467e0cd00058b60a"
         }
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:47:36.912890+00:00",
+          "summary": "No current query examples. Public keyword/author/title search description does not establish relevance, pagination, empty/error or filtered recall.",
+          "facts": {
+            "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+          }
+        }
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Homepage states once-daily public snapshot; policy retains withdrawn identifiers, removes withdrawn metadata from search and links versions. No rate/SLA inferred.",
-      "facts": {},
+      "summary": "Public browser metadata search recovered; full dossier completion remains open.",
+      "facts": {
+        "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+      },
       "open_questions": [
         "Supported incremental refresh/deletion, numeric limits, current version samples and later-day reliability."
       ],
@@ -431,7 +643,8 @@
         "runs/museum-collection-contract-20261105ad/observations.jsonl",
         "runs/museum-thesis-access-20261105ae/observations.jsonl",
         "runs/museum-thesis-terms-20261105af/observations.jsonl",
-        "examples/caltech-thesis.contract.jsonl"
+        "examples/caltech-thesis.contract.jsonl",
+        "runs/technical-query-recovery-20261106/caltech-rendered.jsonl"
       ],
       "observation_refs": [
         {
@@ -470,22 +683,33 @@
           "body_sha256": "8ee3fa47b705620a23097748ad2b647c7e65a9e09d51603bb61a7f071deb593d",
           "policy_sha256": "b80fb97b33d36c1138a80a9500eea4abeed15410b6f5be03467e0cd00058b60a"
         }
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:47:36.912891+00:00",
+          "summary": "Homepage states once-daily public snapshot; policy retains withdrawn identifiers, removes withdrawn metadata from search and links versions. No rate/SLA inferred.",
+          "facts": {
+            "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+          }
+        }
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Defer machine qualification pending a supported public retrieval contract and reuse-scope resolution. Public UI observation is a lead; campus-only service and bulk theses remain excluded. Continue independent candidates.",
+      "status": "partial",
+      "summary": "Public browser metadata search recovered; full dossier completion remains open.",
       "facts": {
         "decision": "deferred-contract-and-reuse-scope",
         "activation_approved": false,
-        "owner_action_required": false
+        "owner_action_required": false,
+        "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
       },
       "open_questions": [],
       "evidence": [
         "runs/museum-collection-contract-20261105ad/observations.jsonl",
         "runs/museum-thesis-access-20261105ae/observations.jsonl",
         "runs/museum-thesis-terms-20261105af/observations.jsonl",
-        "examples/caltech-thesis.contract.jsonl"
+        "examples/caltech-thesis.contract.jsonl",
+        "runs/technical-query-recovery-20261106/caltech-rendered.jsonl"
       ],
       "observation_refs": [
         {
@@ -524,8 +748,54 @@
           "body_sha256": "8ee3fa47b705620a23097748ad2b647c7e65a9e09d51603bb61a7f071deb593d",
           "policy_sha256": "b80fb97b33d36c1138a80a9500eea4abeed15410b6f5be03467e0cd00058b60a"
         }
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:47:36.912892+00:00",
+          "summary": "Defer machine qualification pending a supported public retrieval contract and reuse-scope resolution. Public UI observation is a lead; campus-only service and bulk theses remain excluded. Continue independent candidates.",
+          "facts": {
+            "decision": "deferred-contract-and-reuse-scope",
+            "activation_approved": false,
+            "owner_action_required": false,
+            "current_query_recovery": "First two rendered native thesis links from the public Pagefind keyword search; titles verified, no full thesis downloaded"
+          }
+        }
       ]
     }
   },
-  "last_reviewed_at": "2026-11-05T10:06:20.332138+00:00"
+  "last_reviewed_at": "2026-11-06T05:47:36.912873+00:00",
+  "historical_query_contracts": [
+    {
+      "superseded_at": "2026-11-06T05:47:36.912407+00:00",
+      "query": {
+        "adapter": "unproven",
+        "endpoint": null,
+        "cases": [],
+        "authentication": "Anonymous public static pages observed. Campus-only live service excluded.",
+        "cost": "Metadata access is free; nonprofit reuse with original-record link and CaltechTHESIS attribution only. Commercial reuse requires prior permission.",
+        "request_shape_verified": false,
+        "public_search_page": "https://thesis.caltech.edu/search.html",
+        "observed_public_search_script": "https://thesis.caltech.edu/pagefind/pagefind-component-ui.js",
+        "unsupported_modes": [
+          "Campus-only live search/API",
+          "Assuming Pagefind browser script grants a supported metadata export/API",
+          "Bulk full-thesis harvesting",
+          "Commercial metadata reuse without permission"
+        ]
+      },
+      "limitations": [
+        "Public static interface is not evidence of a supported machine metadata API/export.",
+        "Daily public copy is distinct from campus-only live system; no campus access attempted.",
+        "No thesis PDF/full-text collection or current query examples.",
+        "Metadata reuse conditions constrain future product integration; research inventory is not integration approval."
+      ]
+    }
+  ],
+  "recovery": {
+    "reviewed_at": "2026-11-06T05:47:36.912878+00:00",
+    "reason": "Previous work stopped at an unsupported machine contract; the published public Pagefind UI supplies normal anonymous search.",
+    "attempt": "Open search.html?q=... in WebKit with proxy CA trust; no campus API calls",
+    "result": "Ten distinct queries produced relevant title/native-thesis URL pairs. Chromium CA setup and WebKit host validation errors were local environment issues; actual WebKit runtime passed with certificate checks enabled.",
+    "decision": "Working for bounded public browser metadata search. Reading/reuse conditions are separate."
+  }
 }

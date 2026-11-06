@@ -7,164 +7,478 @@
   "areas": [
     "C04"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "capabilities": [
-    "Thoth requests completed."
+    "First 15 book metadata results from Lever Press public publisher search"
   ],
   "query": {
-    "adapter": "thoth",
-    "endpoint": "https://api.thoth.pub/graphql",
-    "cases": [],
-    "authentication": "not established for a complete supported route",
-    "cost": "No paid service used in initial review.",
-    "publisher_id": "699975d0-30ae-4968-808b-16faba149700",
-    "metadata_query_template": "{works(limit:3,filter:\"QUERY\",publishers:[\"699975d0-30ae-4968-808b-16faba149700\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} landingPage license}}"
+    "adapter": "lever-fulcrum",
+    "endpoint": "https://www.fulcrum.org/leverpress",
+    "cases": [
+      {
+        "id": "public-1",
+        "query_text": "Otium",
+        "request": {
+          "method": "GET",
+          "url": "https://www.fulcrum.org/leverpress?q=Otium"
+        },
+        "expected_ids": [
+          "08612s29c"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-2",
+        "query_text": "Spring",
+        "request": {
+          "method": "GET",
+          "url": "https://www.fulcrum.org/leverpress?q=Spring"
+        },
+        "expected_ids": [
+          "bv73c390w"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-3",
+        "query_text": "Mina Loy",
+        "request": {
+          "method": "GET",
+          "url": "https://www.fulcrum.org/leverpress?q=Mina+Loy"
+        },
+        "expected_ids": [
+          "pk02cf39x"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-4",
+        "query_text": "Human",
+        "request": {
+          "method": "GET",
+          "url": "https://www.fulcrum.org/leverpress?q=Human"
+        },
+        "expected_ids": [
+          "0c483n96j"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-5",
+        "query_text": "Blind",
+        "request": {
+          "method": "GET",
+          "url": "https://www.fulcrum.org/leverpress?q=Blind"
+        },
+        "expected_ids": [
+          "v979v676b"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-6",
+        "query_text": "Practice Dialogues",
+        "request": {
+          "method": "GET",
+          "url": "https://www.fulcrum.org/leverpress?q=Practice+Dialogues"
+        },
+        "expected_ids": [
+          "s4655m085"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-7",
+        "query_text": "Land",
+        "request": {
+          "method": "GET",
+          "url": "https://www.fulcrum.org/leverpress?q=Land"
+        },
+        "expected_ids": [
+          "jd4731128"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-8",
+        "query_text": "Screen Captures",
+        "request": {
+          "method": "GET",
+          "url": "https://www.fulcrum.org/leverpress?q=Screen+Captures"
+        },
+        "expected_ids": [
+          "3n204246b"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-9",
+        "query_text": "Living Rome",
+        "request": {
+          "method": "GET",
+          "url": "https://www.fulcrum.org/leverpress?q=Living+Rome"
+        },
+        "expected_ids": [
+          "j96024662"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      },
+      {
+        "id": "public-10",
+        "query_text": "Trigger Warnings",
+        "request": {
+          "method": "GET",
+          "url": "https://www.fulcrum.org/leverpress?q=Trigger+Warnings"
+        },
+        "expected_ids": [
+          "jw827g066"
+        ],
+        "intent": "Search relevant native catalog records using the supported public keyword query"
+      }
+    ],
+    "authentication": "Anonymous; no API key, source login or paid account used",
+    "cost": "Public metadata requests; paced serially at three seconds or provider delay",
+    "search_scope": "First 15 book metadata results from Lever Press public publisher search"
   },
   "licensing": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
   "documentation": [
-    "https://www.leverpress.org/"
+    "https://www.leverpress.org/",
+    "https://www.fulcrum.org/leverpress",
+    "https://www.fulcrum.org/terms/"
   ],
   "limitations": [
-    "Selected active-book query and small catalog probe returned no works."
+    "Full content/reader access and reuse rights are independent of metadata queryability.",
+    "Publisher-scoped public form only; native monograph IDs preserved, no private API or ebook downloads."
   ],
   "evidence": [
-    "../batches/G01_FIRST_TEN.md"
+    "../batches/G01_FIRST_TEN.md",
+    "runs/technical-recovery-20261106/observations.jsonl",
+    "runs/technical-query-recovery-20261106/seeds.jsonl",
+    "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05",
-  "next_action": "Investigate another supported official catalog route; empty subset does not establish absence.",
+  "last_reviewed_at": "2026-11-06T05:45:47.008187+00:00",
+  "next_action": "Research search is working. Future app integration needs its own scoped adapter and production tests; deeper reader/reuse checks remain separate.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "id": "lever-press",
         "name": "Lever Press",
         "homepage_reference": "https://www.leverpress.org/",
         "operator": null,
-        "origin_deduplication": "pending"
+        "origin_deduplication": "pending",
+        "current_query_recovery": {
+          "scope": "First 15 book metadata results from Lever Press public publisher search",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "open_questions": [
         "Confirm operator, parent and catalog-versus-origin deduplication."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.008196+00:00",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "id": "lever-press",
+            "name": "Lever Press",
+            "homepage_reference": "https://www.leverpress.org/",
+            "operator": null,
+            "origin_deduplication": "pending",
+            "current_query_recovery": {
+              "scope": "First 15 book metadata results from Lever Press public publisher search",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "category_industry_candidates": [
           "C04"
         ],
         "languages": null,
         "jurisdictions": null,
-        "coverage_evidence": "pending"
+        "coverage_evidence": "pending",
+        "current_query_recovery": {
+          "scope": "First 15 book metadata results from Lever Press public publisher search",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "open_questions": [
         "Verify country/language/subject coverage with item evidence."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.008198+00:00",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "category_industry_candidates": [
+              "C04"
+            ],
+            "languages": null,
+            "jurisdictions": null,
+            "coverage_evidence": "pending",
+            "current_query_recovery": {
+              "scope": "First 15 book metadata results from Lever Press public publisher search",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "adapter": "thoth",
         "endpoint": "https://api.thoth.pub/graphql",
         "capabilities": [
           "Thoth requests completed."
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "supported_and_unsupported_modes": "needs explicit review",
+        "current_query_recovery": {
+          "scope": "First 15 book metadata results from Lever Press public publisher search",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "open_questions": [
         "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.008200+00:00",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "adapter": "thoth",
+            "endpoint": "https://api.thoth.pub/graphql",
+            "capabilities": [
+              "Thoth requests completed."
+            ],
+            "supported_and_unsupported_modes": "needs explicit review",
+            "current_query_recovery": {
+              "scope": "First 15 book metadata results from Lever Press public publisher search",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "license_notes": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
         "authentication_notes": "not established for a complete supported route",
         "cost_notes": "No paid service used in initial review.",
-        "terms_review": "pending current reconciliation"
+        "terms_review": "pending current reconciliation",
+        "current_query_recovery": {
+          "scope": "First 15 book metadata results from Lever Press public publisher search",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "open_questions": [
         "Reconcile current metadata/content terms, free limits and permitted commercial use."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.008201+00:00",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "license_notes": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
+            "authentication_notes": "not established for a complete supported route",
+            "cost_notes": "No paid service used in initial review.",
+            "terms_review": "pending current reconciliation",
+            "current_query_recovery": {
+              "scope": "First 15 book metadata results from Lever Press public publisher search",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "evidence_references": [
           "../batches/G01_FIRST_TEN.md"
         ],
         "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "access_classification": "needs explicit item-level review",
+        "current_query_recovery": {
+          "scope": "First 15 book metadata results from Lever Press public publisher search",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "open_questions": [
         "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.008202+00:00",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "evidence_references": [
+              "../batches/G01_FIRST_TEN.md"
+            ],
+            "free_login_eligible": true,
+            "access_classification": "needs explicit item-level review",
+            "current_query_recovery": {
+              "scope": "First 15 book metadata results from Lever Press public publisher search",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "limitations": [
           "Selected active-book query and small catalog probe returned no works."
         ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "ranking_relevance_completeness": "not fully qualified",
+        "current_query_recovery": {
+          "scope": "First 15 book metadata results from Lever Press public publisher search",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "open_questions": [
         "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.008203+00:00",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "limitations": [
+              "Selected active-book query and small catalog probe returned no works."
+            ],
+            "ranking_relevance_completeness": "not fully qualified",
+            "current_query_recovery": {
+              "scope": "First 15 book metadata results from Lever Press public publisher search",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "paging": null,
         "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "provider_quota_refresh_deletion_contract": "needs explicit review",
+        "current_query_recovery": {
+          "scope": "First 15 book metadata results from Lever Press public publisher search",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "open_questions": [
         "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.008204+00:00",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "paging": null,
+            "research_pause_seconds": null,
+            "provider_quota_refresh_deletion_contract": "needs explicit review",
+            "current_query_recovery": {
+              "scope": "First 15 book metadata results from Lever Press public publisher search",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata search works; historical route failure retained separately. Full dossier completion is not asserted.",
       "facts": {
         "state": "deferred",
         "next_action": "Investigate another supported official catalog route; empty subset does not establish absence.",
-        "production_qualification_complete": false
+        "production_qualification_complete": false,
+        "current_query_recovery": {
+          "scope": "First 15 book metadata results from Lever Press public publisher search",
+          "ten_current_examples": true,
+          "reading_access_is_gate": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-query-recovery-20261106/negative-policy-paging.jsonl"
       ],
       "open_questions": [
         "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+      ],
+      "historical_findings": [
+        {
+          "superseded_at": "2026-11-06T05:45:47.008205+00:00",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "state": "deferred",
+            "next_action": "Investigate another supported official catalog route; empty subset does not establish absence.",
+            "production_qualification_complete": false,
+            "current_query_recovery": {
+              "scope": "First 15 book metadata results from Lever Press public publisher search",
+              "ten_current_examples": true,
+              "reading_access_is_gate": false
+            }
+          }
+        }
       ]
     }
   },
@@ -184,6 +498,47 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [Lever Press](https://www.leverpress.org/) | The selected publisher/work filters returned no records. | Check the publisher identity and query/filter assumptions, or a supported catalog export. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "93076963a82c377392f2b334b721fbe01f4f058785f9d5dd14d96211949ec4b6",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106.md",
+      "line": 3,
+      "heading": "Technical connector recovery — 6 November 2026",
+      "text": "The owner resumed hourly completion work on the fixed 44 technical/unfinished connectors. Two were already working at the start (Open Book Publishers and Helsinki University Press). This pass adds three: NASA Image and Video Library, Lever Press and CaltechTHESIS. **Five of the original 44 work; 39 remain open.** A documented failure is not completion.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "93076963a82c377392f2b334b721fbe01f4f058785f9d5dd14d96211949ec4b6",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106.md",
+      "line": 8,
+      "heading": "Technical connector recovery — 6 November 2026",
+      "text": "| Lever Press | Replace the empty Thoth publisher subset with the publisher’s actual public Fulcrum search form | Ten relevant queries with native monograph IDs; empty search observed. Public terms captured. No books downloaded or private API used. |",
+      "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "historical_query_contracts": [
+    {
+      "superseded_at": "2026-11-06T05:41:35.309696+00:00",
+      "query": {
+        "adapter": "thoth",
+        "endpoint": "https://api.thoth.pub/graphql",
+        "cases": [],
+        "authentication": "not established for a complete supported route",
+        "cost": "No paid service used in initial review.",
+        "publisher_id": "699975d0-30ae-4968-808b-16faba149700",
+        "metadata_query_template": "{works(limit:3,filter:\"QUERY\",publishers:[\"699975d0-30ae-4968-808b-16faba149700\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} landingPage license}}"
+      },
+      "limitations": [
+        "Selected active-book query and small catalog probe returned no works."
+      ],
+      "state": "deferred"
+    }
+  ],
+  "recovery": {
+    "reviewed_at": "2026-11-06T05:45:47.008192+00:00",
+    "reason": "Previous failure was on another route: public-site policy preflight for NASA; empty Thoth publisher subset for Lever Press.",
+    "attempt": "https://www.fulcrum.org/leverpress",
+    "result": "Ten distinct relevant current queries passed; empty result observed; NASA page 2 returns distinct native IDs.",
+    "decision": "Working within recorded metadata search scope. No owner API signup required."
+  }
 }
