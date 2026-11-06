@@ -24,8 +24,8 @@ TERMS = {
  'federal-register':['water'], 'internet-archive':['history'], 'fao-publications':['agriculture'],
  'lever-press':['the','and','a'], 'nalibali':['the','and'], 'la-referencia':['mathematics'],
  'open-book-publishers':['the'], 'helsinki-university-press':['the','and','a'],
- 'project-madurai':['பாடல்கள்'], 'openstax':['algebra','calculus','statistics','prealgebra','contemporary'],
- 'sugamya-pustakalaya':['science'], 'gdl':['the','animal','children'], 'librivox':['the'],
+ 'project-madurai':['பாடல்கள்'], 'openstax':['algebra','calculus','statistics','prealgebra','contemporary','precalculus','data science'],
+ 'sugamya-pustakalaya':['science'], 'gdl':['the','animal','children'], 'librivox':['the','Short Story Collection','Short Poetry Collection','Secret Garden','^Short'],
  'loc':['history','mathematics'], 'bhl':['flora'], 'african-minds':['the','and','a'],
  'lse-press':['the','and','a'], 'mattering-press':['the','and','a'],
  'mediastudies-press':['the','and','communication'], 'punctum-books':['the'],
@@ -83,8 +83,9 @@ def summarize(sources):
  (OUT/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
  return report
 
-def run(source,term):
+def run(source,term,include_unclear=False):
  sid=source['id'];body={'query':term,'sourceIds':[sid],'kinds':source['kinds'],'limit':6,'access':'free'}
+ if include_unclear:body['includeUnclear']=True
  keys=set();page_hashes=set();error=None;reason='page_budget';pages=0;hidden=0
  for page in range(1,(26 if sid=='free-kids-books' else 11)):
   time.sleep(8 if sid=='core' else 2)
@@ -93,7 +94,7 @@ def run(source,term):
   row={**obs,'source':sid,'query':term,'page':page,'limit':6,'usedCursor':bool(body.get('cursor')),'returned':len(items),
        'items':projected,'hasNext':bool(data.get('nextCursor')),'sources':data.get('sources'),
        'hiddenUnclear':data.get('hiddenUnclear'),'error':data.get('error'),'coverage':data.get('coverage')}
-  append('pages.jsonl',row)
+  append('unclear-pages.jsonl' if include_unclear else 'pages.jsonl',row)
   if obs['http']!=200:
    error=data.get('error') or obs.get('transportError') or 'HTTP '+str(obs['http']);reason='error';break
   if not isinstance(items,list) or any(not isinstance(r.get('key'),str) or not r['key'].startswith('fcd:v1:'+sid+':') for r in items):
@@ -107,10 +108,11 @@ def run(source,term):
   if not cursor:reason='no_continuation';break
   body['cursor']=cursor
  result={'source':sid,'query':term,'observedAt':now(),'distinct':len(keys),'keys':sorted(keys),'pages':pages,'stopReason':reason,'hiddenUnclear':hidden,'error':error}
- append('queries.jsonl',result);return result
+ result['includeUnclear']=include_unclear
+ append('unclear-queries.jsonl' if include_unclear else 'queries.jsonl',result);return result
 
 def main():
- parser=argparse.ArgumentParser();parser.add_argument('--source',action='append');parser.add_argument('--retry',action='store_true');args=parser.parse_args();OUT.mkdir(parents=True,exist_ok=True)
+ parser=argparse.ArgumentParser();parser.add_argument('--source',action='append');parser.add_argument('--retry',action='store_true');parser.add_argument('--query');args=parser.parse_args();OUT.mkdir(parents=True,exist_ok=True)
  obs,data=request();assert obs['http']==200,'Source directory failed'
  (OUT/'source-directory.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
  sources=[s for s in data['sources'] if s['enabled']];report=summarize(sources)
@@ -121,6 +123,7 @@ def main():
   if previous['status']=='passed' and not args.source:continue
   tried={q['query'] for q in previous['queries']}
   for term in TERMS[sid]:
+   if args.query and term!=args.query:continue
    if term in tried and not args.retry:continue
    result=run(source,term);report=summarize(sources)
    if result['distinct']>=20 or result['error']:break
