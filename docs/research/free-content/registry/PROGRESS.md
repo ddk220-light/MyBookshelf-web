@@ -1,6 +1,6 @@
 ## Recovery G checkpoint — 6 November 2026
 
-87 Working / 46 Blocked/failed / 0 Still checking of133 active connectors; 899 current passing examples. Original44: 21 Working / 23 remaining. New recoveries: gallica, ncert, india-nqr, nsdc-curricula, scielo. 311 tests and evidence checks pass. Other blockers remain open; research only.
+88 Working / 45 Blocked/failed / 0 Still checking of 133 active connectors; 909 current passing examples. Original44: 22 Working / 22 remaining. New recoveries: gallica, diksha, ncert, india-nqr, nsdc-curricula, scielo. 314 tests and evidence checks pass. Other blockers remain open; research only.
 
 ## Recovery D–F final checkpoint — 6 November 2026
 

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T10:07:07.660693+00:00",
+  "generated_at": "2026-11-06T10:15:12.759645+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by current passing examples. Normally ten examples; an explicitly reviewed one-work publisher subset can use two real searches plus a complete listing and empty control, without padding. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
@@ -16,13 +16,13 @@
   ],
   "totals": {
     "total": 133,
-    "working": 87,
-    "blocked_or_failed": 46,
+    "working": 88,
+    "blocked_or_failed": 45,
     "still_checking": 0,
-    "not_working_verified": 46,
+    "not_working_verified": 45,
     "assessed_or_deferred": 133,
     "remaining_to_assess": 0,
-    "passing_query_examples": 899
+    "passing_query_examples": 909
   },
   "groups": [
     {
@@ -37,8 +37,8 @@
       "id": "G02",
       "name": "Learning and technical documentation",
       "total": 14,
-      "working": 11,
-      "blocked_or_failed": 3,
+      "working": 12,
+      "blocked_or_failed": 2,
       "still_checking": 0
     },
     {
@@ -101,11 +101,11 @@
       "passing_examples": 0,
       "tested_search_scope": "Supported current search method not yet verified",
       "known_limitations": "The official documentation host served HTML at robots.txt, so its policy could not be established. | No key for documented feeds. Harvesting is not interactive search. Identify, formats, ListRecords and one `xoai` record worked. **Medium / P1, first scholarly-book import**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
-      "next_step_or_blocker": "Wait for policy endpoint recovery or a documented reachable export.",
-      "block_reason": "Repository robots timed out; OAI target not requested.",
-      "last_attempt_and_result": "Tried the operator-documented directory.doabooks.org OAI route after finding its metadata documentation. / Repository robots timed out; OAI target not requested.",
-      "recovery_decision": "Wait for policy endpoint recovery or a documented reachable export.",
-      "last_reviewed_at": "2026-11-06T05:55:50.990957+00:00",
+      "next_step_or_blocker": "Wait for policy/service recovery; next timed retry no earlier than2026-11-06T16:00:00Z. Follow a new documented public metadata route if independently available.",
+      "block_reason": "Public policy endpoint still times out; no catalog query sent.",
+      "last_attempt_and_result": "One same-host policy retry after more than 4 hours of backoff from the last recorded attempt. / The read operation timed out; target request withheld.",
+      "recovery_decision": "wait_for_policy_service_recovery",
+      "last_reviewed_at": "2026-11-06T10:10:19.991398+00:00",
       "record": "sources/doab.json",
       "production_activation_changed": false
     },
@@ -758,23 +758,6 @@
     {
       "group_id": "G02",
       "group": "Learning and technical documentation",
-      "connector_id": "diksha",
-      "connector": "DIKSHA",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Site retrieved, production API access/terms unverified. **High / P2**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
-      "next_step_or_blocker": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
-      "block_reason": "Current official help describes anonymous search, but the previously tested Library route requires login. No deployed public API contract verified.",
-      "last_attempt_and_result": "Re-read current operator help/OSS documentation; compared it with saved live redirect and browser evidence. / Documentation is a useful lead but not a live guest-search result; generic Sunbird API availability does not authorize hidden deployment endpoints.",
-      "recovery_decision": "find-documented-guest-route",
-      "last_reviewed_at": "2026-11-06T07:31:01.938205+00:00",
-      "record": "sources/diksha.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G02",
-      "group": "Learning and technical documentation",
       "connector_id": "oer-commons",
       "connector": "OER Commons",
       "status": "blocked_or_failed",
@@ -838,6 +821,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T19:49:46.022808+00:00",
       "record": "sources/book-sprints.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G02",
+      "group": "Learning and technical documentation",
+      "connector_id": "diksha",
+      "connector": "DIKSHA",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Local topic/link-language search over10 reviewed public quiz links for5 featured topics; main Library/course search remains login-gated,4 ambiguous links excluded, no content access tested",
+      "known_limitations": "Only10 reviewed public featured-quiz links across5 topics and2 published link languages; not whole-DIKSHA textbook, course or Library search. | Native course IDs retained; paired languages are not extra origins, confirmed distinct works or verified content-language claims. | Dr sayam prasad/Virasat-and-Vikas and Chandrayaan/National-Space-Day banner relationships remain quarantined; no inferred title correction. | Main Library remains login-gated; no accounts, enrollment, quiz questions, media or full-content requests. | Banner labels identify offered quiz links, not independently verified official course titles, current eligibility or reuse rights.",
+      "next_step_or_blocker": "Maintain explicit featured-quiz subset. Seek a documented permitted main Library/course query method; reconcile quarantined banner labels with operator evidence before admitting them. No activation.",
+      "block_reason": "",
+      "last_attempt_and_result": "Inspect primary homepage and teacher-exploration page. Teacher Search Course is an instructional heading, not a form. Parse actual public banner labels/native links without evaluating JavaScript or entering authenticated routes. / Ten topic-plus-link-language queries over5 featured topics pass, with empty control. Two banner groups/four links are quarantined because their title/tracking-label relationships are conflicting or unreviewed. Main Library and arbitrary course search remain unverified; no quiz/book content fetched.",
+      "recovery_decision": "working_with_recorded_scope",
+      "last_reviewed_at": "2026-11-06T10:14:32.127224+00:00",
+      "record": "sources/diksha.json",
       "production_activation_changed": false
     },
     {
@@ -1376,11 +1376,11 @@
       "passing_examples": 0,
       "tested_search_scope": "Supported current search method not yet verified",
       "known_limitations": "Saved robots request timed out after20.262seconds; target was never requested. This is environment observation, not evidence of a national outage. | One India Code catalog candidate; central/state views, Acts, rules, sections and language renditions do not count as independent origins.",
-      "next_step_or_blocker": "Wait for a policy/service recovery signal or documented public metadata alternative.",
-      "block_reason": "Robots request still times out after20seconds; target not requested.",
-      "last_attempt_and_result": "One retry after overnight backoff. / Still blocked; no current passing query.",
-      "recovery_decision": "wait_for_documented_recovery_or_alternative",
-      "last_reviewed_at": "2026-11-06T06:46:26.573093+00:00",
+      "next_step_or_blocker": "Wait for policy/service recovery; next timed retry no earlier than2026-11-06T16:00:00Z. Follow a new documented public metadata route if independently available.",
+      "block_reason": "Public policy endpoint still times out; no catalog query sent.",
+      "last_attempt_and_result": "One same-host policy retry after more than 3 hours of backoff from the last recorded attempt. / The read operation timed out; target request withheld.",
+      "recovery_decision": "wait_for_policy_service_recovery",
+      "last_reviewed_at": "2026-11-06T10:10:19.991965+00:00",
       "record": "sources/india-code.json",
       "production_activation_changed": false
     },

@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 23,
+  "remaining": 22,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -48,8 +48,8 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned HTML, so policy preflight stopped.",
-      "current_reason": "Repository robots timed out; OAI target not requested.",
-      "next_action": "Wait for policy endpoint recovery or a documented reachable export.",
+      "current_reason": "Public policy endpoint still times out; no catalog query sent.",
+      "next_action": "Wait for policy/service recovery; next timed retry no earlier than2026-11-06T16:00:00Z. Follow a new documented public metadata route if independently available.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -58,6 +58,17 @@
           "attempt": "Tried the operator-documented directory.doabooks.org OAI route after finding its metadata documentation.",
           "result": "Repository robots timed out; OAI target not requested.",
           "decision": "Wait for policy endpoint recovery or a documented reachable export."
+        },
+        {
+          "reviewed_at": "2026-11-06T10:10:19.991390+00:00",
+          "reason": "Public policy endpoint still times out; no catalog query sent.",
+          "attempt": "One same-host policy retry after more than 4 hours of backoff from the last recorded attempt.",
+          "result": "The read operation timed out; target request withheld.",
+          "decision": "wait_for_policy_service_recovery",
+          "retry_trigger": "Published service recovery or a later paced policy check; no repeat before2026-11-06T16:00:00Z without a new recovery signal.",
+          "evidence": [
+            "runs/technical-recovery-20261106g/followups.jsonl"
+          ]
         }
       ]
     },
@@ -363,10 +374,10 @@
       "id": "diksha",
       "name": "DIKSHA",
       "group": "G02",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "The public Library link redirected to sign-in/registration.",
-      "current_reason": "Current official help describes anonymous search, but the previously tested Library route requires login. No deployed public API contract verified.",
-      "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+      "current_reason": "",
+      "next_action": "Maintain explicit featured-quiz subset. Seek a documented permitted main Library/course query method; reconcile quarantined banner labels with operator evidence before admitting them. No activation.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -377,6 +388,19 @@
           "decision": "find-documented-guest-route",
           "evidence": [
             "runs/technical-recovery-20261106e/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:14:32.127209+00:00",
+          "reason": "Main Library requires login. Current public homepage independently offers featured quiz metadata and native course links.",
+          "attempt": "Inspect primary homepage and teacher-exploration page. Teacher Search Course is an instructional heading, not a form. Parse actual public banner labels/native links without evaluating JavaScript or entering authenticated routes.",
+          "result": "Ten topic-plus-link-language queries over5 featured topics pass, with empty control. Two banner groups/four links are quarantined because their title/tracking-label relationships are conflicting or unreviewed. Main Library and arbitrary course search remain unverified; no quiz/book content fetched.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "runs/technical-recovery-20261106g/diksha-featured-homepage.html",
+            "runs/technical-recovery-20261106g/diksha-featured-proof.json",
+            "examples/diksha.jsonl"
           ]
         }
       ]
@@ -800,8 +824,8 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Robots request timed out before any catalog query.",
-      "current_reason": "Robots request still times out after20seconds; target not requested.",
-      "next_action": "Wait for a policy/service recovery signal or documented public metadata alternative.",
+      "current_reason": "Public policy endpoint still times out; no catalog query sent.",
+      "next_action": "Wait for policy/service recovery; next timed retry no earlier than2026-11-06T16:00:00Z. Follow a new documented public metadata route if independently available.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -813,6 +837,17 @@
           "evidence": [
             "runs/technical-recovery-20261106c/observations.jsonl",
             "runs/technical-recovery-20261106c/book-attempts.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:10:19.991960+00:00",
+          "reason": "Public policy endpoint still times out; no catalog query sent.",
+          "attempt": "One same-host policy retry after more than 3 hours of backoff from the last recorded attempt.",
+          "result": "The read operation timed out; target request withheld.",
+          "decision": "wait_for_policy_service_recovery",
+          "retry_trigger": "Published service recovery or a later paced policy check; no repeat before2026-11-06T16:00:00Z without a new recovery signal.",
+          "evidence": [
+            "runs/technical-recovery-20261106g/followups.jsonl"
           ]
         }
       ]
@@ -1102,8 +1137,8 @@
     }
   ],
   "progress": {
-    "working": 21,
-    "blocked_or_failed": 23,
+    "working": 22,
+    "blocked_or_failed": 22,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1111,24 +1146,27 @@
     "revisited_since_goal_started": 42
   },
   "current_run": {
-    "state": "checkpointed-continuing",
+    "state": "checkpointed-awaiting-continuation",
     "started_at": "2026-11-06T09:26:13.506199+00:00",
     "run_id": "technical-recovery-20261106g",
     "phase": "supported alternatives and paced recovery checks",
     "collector_active": false,
-    "heartbeat_at": "2026-11-06T10:07:03.990962+00:00",
-    "checkpointed_at": "2026-11-06T10:07:03.990962+00:00"
+    "heartbeat_at": "2026-11-06T10:15:56.382349+00:00",
+    "checkpointed_at": "2026-11-06T10:15:09.216087+00:00",
+    "completed_at": "2026-11-06T10:15:56.382349+00:00",
+    "active_detached_worker": false
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 21,
-  "updated_at": "2026-11-06T10:07:03.990962+00:00",
+  "working": 22,
+  "updated_at": "2026-11-06T10:15:56.382349+00:00",
   "latest_run": {
     "run_ids": [
       "technical-recovery-20261106g"
     ],
     "new_working": [
       "gallica",
+      "diksha",
       "ncert",
       "india-nqr",
       "nsdc-curricula",
