@@ -64,11 +64,13 @@
     "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
     "examples/gutendex.scouting.jsonl",
     "examples/gutendex.jsonl",
-    "examples/gutendex.boundaries.jsonl"
+    "examples/gutendex.boundaries.jsonl",
+    "runs/technical-recovery-20261106c/observations.jsonl",
+    "runs/technical-recovery-20261106c/book-attempts.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T22:02:28.719287+00:00",
+  "last_reviewed_at": "2026-11-06T06:46:26.574627+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task.",
+  "next_action": "Wait for a useful service recovery signal. Keep historical two successes; intermittent results do not establish reliable search.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -247,21 +249,58 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [Gutendex](https://gutendex.com/) | Two queries passed; other queries exceeded 20/45-second timeouts. | Retry only after a service-recovery signal; do not create repeated hourly load. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "5af0ed4c2c622520b96d3524ab6885cf272a5dd148595b8f564c6fb51ccdee7e",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106B.md",
+      "line": 19,
+      "heading": "Further recovery and backoff checks",
+      "text": "Marg's current active Thoth book subset contains one work, The Chandayan. Two real title queries and a negative control establish working search for that limited subset. Queryability reporting now recognizes this explicitly reviewed one-work case instead of fabricating ten different books. The review requires a complete short listing, two current passing requests, an empty control and matching evidence hashes. It does not turn an intermittent success such as Gutendex into Working. Ten-example and deeper qualification counts stay separate.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "5af0ed4c2c622520b96d3524ab6885cf272a5dd148595b8f564c6fb51ccdee7e",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106B.md",
+      "line": 21,
+      "heading": "Further recovery and backoff checks",
+      "text": "Seven unresolved checks this run: IMO explicitly denies automated search/record routes; LINCS policy403; India Code policy timeout; NHM policy redirects to a legacy HTTP404 page; CMDA policy503; Chicago dataset503; Gutendex still times out after45seconds. All failures and useful revisit triggers are saved. The fixed original44 now have10Working and34remaining. Four recoveries and32new positive examples this run;23 original items have not yet been revisited in this recovery pass. No production changes.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reason": "Search is intermittent: two terms returned relevant books, but other queries repeatedly exceeded20- and45-second limits.",
-    "attempt": "Retried after multi-minute backoff; kept two successful responses; raised the overly short20second request timeout to45seconds for one further controlled attempt.",
-    "result": "Mathematics and algebra succeeded after earlier timeouts. Geometry still timed out at45seconds. The batch stops on transport/server/access errors. No bulk ebook downloads or new server setup.",
-    "decision": "retry_after_service_latency_recovery",
-    "next_action": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task.",
-    "retry_trigger": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task.",
+    "status": "blocked_or_failed",
+    "reason": "A single Frankenstein health search still exceeds the45-second timeout.",
+    "attempt": "One bounded health request after overnight backoff; no full batch repeated.",
+    "result": "Still blocked; no current passing query.",
+    "decision": "wait_for_documented_recovery_or_alternative",
+    "next_action": "Wait for a useful service recovery signal. Keep historical two successes; intermittent results do not establish reliable search.",
     "owner_action_required": false,
+    "evidence_reviewed_at": "2026-11-06T06:46:26.574626+00:00",
+    "fresh_query_verification": false,
     "evidence": [
-      "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
-      "examples/gutendex.scouting.jsonl",
-      "examples/gutendex.jsonl",
-      "examples/gutendex.boundaries.jsonl"
+      "runs/technical-recovery-20261106c/observations.jsonl",
+      "runs/technical-recovery-20261106c/book-attempts.jsonl"
     ]
-  }
+  },
+  "recovery_history": [
+    {
+      "superseded_at": "2026-11-06T06:46:26.574624+00:00",
+      "recovery": {
+        "reason": "Search is intermittent: two terms returned relevant books, but other queries repeatedly exceeded20- and45-second limits.",
+        "attempt": "Retried after multi-minute backoff; kept two successful responses; raised the overly short20second request timeout to45seconds for one further controlled attempt.",
+        "result": "Mathematics and algebra succeeded after earlier timeouts. Geometry still timed out at45seconds. The batch stops on transport/server/access errors. No bulk ebook downloads or new server setup.",
+        "decision": "retry_after_service_latency_recovery",
+        "next_action": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task.",
+        "retry_trigger": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task.",
+        "owner_action_required": false,
+        "evidence": [
+          "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+          "examples/gutendex.scouting.jsonl",
+          "examples/gutendex.jsonl",
+          "examples/gutendex.boundaries.jsonl"
+        ]
+      },
+      "next_action": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task."
+    }
+  ]
 }

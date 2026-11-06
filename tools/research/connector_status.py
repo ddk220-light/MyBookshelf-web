@@ -15,6 +15,7 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'free-kids-wp-metadata': 'Live known-book title queries via advertised public WordPress metadata, first3 records; blog posts coexist, no arbitrary-topic/whole-catalog book-only relevance guarantee',
     'artic-export': 'Local title/artist tokens and native ID search over the complete pinned published artwork metadata export; no images or other API record types',
     'nist-crossref': 'Live title-ranked search of Crossref metadata restricted to NIST DOI prefix10.6028; first3 records, no direct NIST website/full-text access or all-NIST-output guarantee',
     'bharat-electrician-catalog': 'Local title/native resource-URL search over 57 Electrician ebook metadata entries; language/year/syllabus preserved, other trades and book bodies unverified',
@@ -71,8 +72,11 @@ MODES = {
 }
 
 
-def classify(source, audit_row):
+def classify(source, audit_row, registry=REGISTRY):
     if audit_row.get('passing_examples', 0) >= 10:
+        return 'working'
+    from small_catalog_coverage import verified_single_work
+    if verified_single_work(source, audit_row, registry):
         return 'working'
     return 'blocked_or_failed' if source['state'] == 'deferred' else 'still_checking'
 
@@ -89,7 +93,7 @@ def generate(registry=REGISTRY):
     rows = []
     for s in sources:
         a = audit['source_gaps'][s['id']]
-        status = classify(s, a)
+        status = classify(s, a, registry)
         q = s['query']
         mode = MODES.get(q['adapter'])
         if not mode:
@@ -119,7 +123,7 @@ def generate(registry=REGISTRY):
     totals['remaining_to_assess'] = totals['still_checking']
     totals['passing_query_examples'] = sum(row['passing_examples'] for row in rows)
     result = {'generated_at': datetime.now(timezone.utc).isoformat(), 'scope': 'Currently recorded research connectors; discovery can add more. Not deployed-app inventory.',
-              'meaning_of_working': 'Can query offered items within the stated tested scope, backed by at least ten current passing examples in this registry. Exact lookups are distinguished from title/topic search.',
+              'meaning_of_working': 'Can query offered items within the stated tested scope, backed by current passing examples. Normally ten examples; an explicitly reviewed one-work publisher subset can use two real searches plus a complete listing and empty control, without padding. Exact lookups are distinguished from title/topic search.',
               'meaning_of_blocked_or_failed': 'Deferred with a recorded reason; not necessarily permanently unavailable.',
               'coverage_definition': 'Queryability by group and connector, per owner clarification. Deeper research-quality checks remain separate.',
               'inventory_total': len(sources) + len(excluded),

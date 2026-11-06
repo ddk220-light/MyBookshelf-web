@@ -10,7 +10,7 @@
   "areas": [
     "C01"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "named-catalog-candidate",
@@ -20,27 +20,172 @@
     "jurisdiction": "Unverified"
   },
   "capabilities": [
-    "Named by Book Dash as a partner/redistributor/inspiration; supported current query/export capability remains unverified."
+    "Ten relevant known-book title queries return native WordPress publication IDs and source permalinks. Public API discovered from provider Link headers and types directory."
   ],
   "query": {
-    "adapter": "unverified",
-    "endpoint": "https://freekidsbooks.org/bookdash/",
-    "authentication": "Unknown; free-login allowance does not establish this provider’s access conditions.",
-    "cost": "Unverified; no account or payment created.",
-    "cases": []
+    "adapter": "free-kids-wp-metadata",
+    "endpoint": "https://freekidsbooks.org/wp-json/wp/v2/posts",
+    "cases": [
+      {
+        "id": "known-title-01",
+        "query_text": "I Have the Mind of Jesus",
+        "intent": "Known book listed on provider homepage",
+        "expected_ids": [
+          "30375"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://freekidsbooks.org/wp-json/wp/v2/posts?search=I+Have+the+Mind+of+Jesus&per_page=3&_fields=id%2Ctitle%2Clink%2Ctype"
+        }
+      },
+      {
+        "id": "known-title-02",
+        "query_text": "Scary No More – A Halloween tale",
+        "intent": "Known book listed on provider homepage",
+        "expected_ids": [
+          "27191"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://freekidsbooks.org/wp-json/wp/v2/posts?search=Scary+No+More+%E2%80%93+A+Halloween+tale&per_page=3&_fields=id%2Ctitle%2Clink%2Ctype"
+        }
+      },
+      {
+        "id": "known-title-03",
+        "query_text": "Flags of the World Colouring Pages",
+        "intent": "Known book listed on provider homepage",
+        "expected_ids": [
+          "30354"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://freekidsbooks.org/wp-json/wp/v2/posts?search=Flags+of+the+World+Colouring+Pages&per_page=3&_fields=id%2Ctitle%2Clink%2Ctype"
+        }
+      },
+      {
+        "id": "known-title-04",
+        "query_text": "Wally the Werewolf Learns Patience",
+        "intent": "Known book listed on provider homepage",
+        "expected_ids": [
+          "30345"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://freekidsbooks.org/wp-json/wp/v2/posts?search=Wally+the+Werewolf+Learns+Patience&per_page=3&_fields=id%2Ctitle%2Clink%2Ctype"
+        }
+      },
+      {
+        "id": "known-title-05",
+        "query_text": "5 Scary Stories",
+        "intent": "Known book listed on provider homepage",
+        "expected_ids": [
+          "30324"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://freekidsbooks.org/wp-json/wp/v2/posts?search=5+Scary+Stories&per_page=3&_fields=id%2Ctitle%2Clink%2Ctype"
+        }
+      },
+      {
+        "id": "known-title-06",
+        "query_text": "Pluton Lucky",
+        "intent": "Known book listed on provider homepage",
+        "expected_ids": [
+          "30304"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://freekidsbooks.org/wp-json/wp/v2/posts?search=Pluton+Lucky&per_page=3&_fields=id%2Ctitle%2Clink%2Ctype"
+        }
+      },
+      {
+        "id": "known-title-07",
+        "query_text": "Bino Dino",
+        "intent": "Known book listed on provider homepage",
+        "expected_ids": [
+          "30269"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://freekidsbooks.org/wp-json/wp/v2/posts?search=Bino+Dino&per_page=3&_fields=id%2Ctitle%2Clink%2Ctype"
+        }
+      },
+      {
+        "id": "known-title-08",
+        "query_text": "Best Friends",
+        "intent": "Known book listed on provider homepage",
+        "expected_ids": [
+          "30246"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://freekidsbooks.org/wp-json/wp/v2/posts?search=Best+Friends&per_page=3&_fields=id%2Ctitle%2Clink%2Ctype"
+        }
+      },
+      {
+        "id": "known-title-09",
+        "query_text": "Rescue Kitty",
+        "intent": "Known book listed on provider homepage",
+        "expected_ids": [
+          "30214"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://freekidsbooks.org/wp-json/wp/v2/posts?search=Rescue+Kitty&per_page=3&_fields=id%2Ctitle%2Clink%2Ctype"
+        }
+      },
+      {
+        "id": "known-title-10",
+        "query_text": "Hunt Growmore",
+        "intent": "Known book listed on provider homepage",
+        "expected_ids": [
+          "30194"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://freekidsbooks.org/wp-json/wp/v2/posts?search=Hunt+Growmore&per_page=3&_fields=id%2Ctitle%2Clink%2Ctype"
+        }
+      }
+    ],
+    "authentication": "Anonymous advertised public WordPress REST API",
+    "cost": "Free; no account or payment",
+    "supported_modes": [
+      "Known-book title keyword queries, first3 publication metadata records"
+    ],
+    "unsupported_modes": [
+      "General topics guaranteed to return only books",
+      "Full-title exact matching guarantee",
+      "Full text",
+      "Full reading/edition guarantee"
+    ],
+    "request_fields": [
+      "id",
+      "title",
+      "link",
+      "type"
+    ],
+    "research_pause_seconds": 3
   },
   "documentation": [
-    "https://freekidsbooks.org/bookdash/"
+    "https://freekidsbooks.org/bookdash/",
+    "https://freekidsbooks.org/",
+    "https://freekidsbooks.org/wp-json/wp/v2/types"
   ],
-  "licensing": "Unverified metadata/content rights. Book Dash license or partner status does not license the whole partner catalog.",
+  "licensing": "Public metadata access does not establish a blanket metadata or book-content reuse license. Source-specific reading links and rights remain separate.",
   "limitations": [
-    "robots503 prevented target collection; no recovery trigger yet.",
-    "Previously observed evidence reused without new provider requests; no fresh verification claimed.",
-    "Shared Book Dash copies, languages/editions and frontend variants are not extra independent origins."
+    "Blog articles coexist with book records. Tested known-book title queries do not prove arbitrary-topic book-only ranking.",
+    "The full long Edgar Allan Poe title returned0; shorter distinctive title terms returned the listed book. Negative and corrected attempts are retained.",
+    "Free Kids Books distributes works also found in Book Dash/other catalogs; it is an aggregator, not an additional independent origin for each shared book.",
+    "No ebook files, comments, accounts or full post bodies requested through the query API. Item reading/edition/license still needs separate checks."
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
-    "runs/partner-leads-20261105/observations.jsonl"
+    "runs/partner-leads-20261105/observations.jsonl",
+    "runs/technical-recovery-20261106c/observations.jsonl",
+    "runs/technical-recovery-20261106c/followups.jsonl",
+    "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+    "examples/free-kids-books.access.jsonl",
+    "examples/free-kids-books.jsonl"
   ],
   "analysis_refs": [
     {
@@ -50,312 +195,566 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [Free Kids Books](https://freekidsbooks.org/bookdash/) | Robots returned 503. | Wait for service recovery, then test a permitted search/export. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "5af0ed4c2c622520b96d3524ab6885cf272a5dd148595b8f564c6fb51ccdee7e",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106B.md",
+      "line": 17,
+      "heading": "Further recovery and backoff checks",
+      "text": "Free Kids Books policy recovered. Its published BookDash redirect and API Link/type discovery lead to a public WordPress metadata route. Ten title-keyword searches match books listed on the homepage, with native post IDs and permalinks. The API also contains blog articles; broad topic ranking is not claimed. A long-title zero-result failure is retained alongside the shorter successful request and a real empty control. No book or full-post bodies were downloaded through the API.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
-  "last_reviewed_at": "2026-11-05T16:56:18.911857+00:00",
-  "next_action": "Keep deferred. Revisit after a published supported API/export, valid policy/canonical route or documented recovery; then establish identity, rights, reader conditions and ten current native-ID queries.",
+  "last_reviewed_at": "2026-11-06T06:46:26.572032+00:00",
+  "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Named lead and published URL captured; canonical legal operator and independently maintained catalog are not established.",
+      "summary": "Current scoped metadata query recovery; deeper dossier completion is not asserted. Earlier findings retained in review_history.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "robots503 prevented target collection; no recovery trigger yet.",
-        "activation_approved": false
+        "query_scope": "Ten relevant known-book title queries return native WordPress publication IDs and source permalinks. Public API discovered from provider Link headers and types directory.",
+        "identity": "Native WordPress publication ID and permalink; not inferred ebook edition",
+        "reading_verified": false,
+        "limitations": [
+          "Blog articles coexist with book records. Tested known-book title queries do not prove arbitrary-topic book-only ranking.",
+          "The full long Edgar Allan Poe title returned0; shorter distinctive title terms returned the listed book. Negative and corrected attempts are retained.",
+          "Free Kids Books distributes works also found in Book Dash/other catalogs; it is an aggregator, not an additional independent origin for each shared book.",
+          "No ebook files, comments, accounts or full post bodies requested through the query API. Item reading/edition/license still needs separate checks."
+        ],
+        "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "fdd03876d50161f2a1eb",
-          "observed_at": "2026-11-05T04:24:40.026143+00:00",
-          "url": "https://freekidsbooks.org/bookdash/",
-          "outcome": "skipped",
-          "body_sha256": null,
-          "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
-        }
+        "runs/technical-recovery-20261106c/observations.jsonl",
+        "runs/technical-recovery-20261106c/followups.jsonl",
+        "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+        "examples/free-kids-books.access.jsonl",
+        "examples/free-kids-books.jsonl"
       ],
       "open_questions": [
-        "Resolve legal operator and Book Dash overlap without counting mirrored books as origins."
+        "Broader book-only ranking, metadata reuse, reading access and version identity remain separate follow-up."
       ]
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Children’s literacy lead, with no measured native item language/country coverage.",
+      "summary": "Current scoped metadata query recovery; deeper dossier completion is not asserted. Earlier findings retained in review_history.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "robots503 prevented target collection; no recovery trigger yet.",
-        "activation_approved": false
+        "query_scope": "Ten relevant known-book title queries return native WordPress publication IDs and source permalinks. Public API discovered from provider Link headers and types directory.",
+        "identity": "Native WordPress publication ID and permalink; not inferred ebook edition",
+        "reading_verified": false,
+        "limitations": [
+          "Blog articles coexist with book records. Tested known-book title queries do not prove arbitrary-topic book-only ranking.",
+          "The full long Edgar Allan Poe title returned0; shorter distinctive title terms returned the listed book. Negative and corrected attempts are retained.",
+          "Free Kids Books distributes works also found in Book Dash/other catalogs; it is an aggregator, not an additional independent origin for each shared book.",
+          "No ebook files, comments, accounts or full post bodies requested through the query API. Item reading/edition/license still needs separate checks."
+        ],
+        "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "fdd03876d50161f2a1eb",
-          "observed_at": "2026-11-05T04:24:40.026143+00:00",
-          "url": "https://freekidsbooks.org/bookdash/",
-          "outcome": "skipped",
-          "body_sha256": null,
-          "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
-        }
+        "runs/technical-recovery-20261106c/observations.jsonl",
+        "runs/technical-recovery-20261106c/followups.jsonl",
+        "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+        "examples/free-kids-books.access.jsonl",
+        "examples/free-kids-books.jsonl"
       ],
       "open_questions": [
-        "Measure item languages, reader geography and catalog coverage from permitted native records."
+        "Broader book-only ranking, metadata reuse, reading access and version identity remain separate follow-up."
       ]
     },
     "query_contract": {
       "status": "partial",
-      "summary": "No supported current API/export/import and zero verified examples.",
+      "summary": "Current scoped metadata query recovery; deeper dossier completion is not asserted. Earlier findings retained in review_history.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "robots503 prevented target collection; no recovery trigger yet.",
-        "activation_approved": false
+        "query_scope": "Ten relevant known-book title queries return native WordPress publication IDs and source permalinks. Public API discovered from provider Link headers and types directory.",
+        "identity": "Native WordPress publication ID and permalink; not inferred ebook edition",
+        "reading_verified": false,
+        "limitations": [
+          "Blog articles coexist with book records. Tested known-book title queries do not prove arbitrary-topic book-only ranking.",
+          "The full long Edgar Allan Poe title returned0; shorter distinctive title terms returned the listed book. Negative and corrected attempts are retained.",
+          "Free Kids Books distributes works also found in Book Dash/other catalogs; it is an aggregator, not an additional independent origin for each shared book.",
+          "No ebook files, comments, accounts or full post bodies requested through the query API. Item reading/edition/license still needs separate checks."
+        ],
+        "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "fdd03876d50161f2a1eb",
-          "observed_at": "2026-11-05T04:24:40.026143+00:00",
-          "url": "https://freekidsbooks.org/bookdash/",
-          "outcome": "skipped",
-          "body_sha256": null,
-          "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
-        }
+        "runs/technical-recovery-20261106c/observations.jsonl",
+        "runs/technical-recovery-20261106c/followups.jsonl",
+        "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+        "examples/free-kids-books.access.jsonl",
+        "examples/free-kids-books.jsonl"
       ],
       "open_questions": [
-        "Identify documented permitted query shape, fields, native IDs, paging and error/empty behavior."
+        "Broader book-only ranking, metadata reuse, reading access and version identity remain separate follow-up."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Metadata and full-content licenses, free limits and account conditions remain unknown.",
+      "summary": "Current scoped metadata query recovery; deeper dossier completion is not asserted. Earlier findings retained in review_history.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "robots503 prevented target collection; no recovery trigger yet.",
-        "activation_approved": false
+        "query_scope": "Ten relevant known-book title queries return native WordPress publication IDs and source permalinks. Public API discovered from provider Link headers and types directory.",
+        "identity": "Native WordPress publication ID and permalink; not inferred ebook edition",
+        "reading_verified": false,
+        "limitations": [
+          "Blog articles coexist with book records. Tested known-book title queries do not prove arbitrary-topic book-only ranking.",
+          "The full long Edgar Allan Poe title returned0; shorter distinctive title terms returned the listed book. Negative and corrected attempts are retained.",
+          "Free Kids Books distributes works also found in Book Dash/other catalogs; it is an aggregator, not an additional independent origin for each shared book.",
+          "No ebook files, comments, accounts or full post bodies requested through the query API. Item reading/edition/license still needs separate checks."
+        ],
+        "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "fdd03876d50161f2a1eb",
-          "observed_at": "2026-11-05T04:24:40.026143+00:00",
-          "url": "https://freekidsbooks.org/bookdash/",
-          "outcome": "skipped",
-          "body_sha256": null,
-          "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
-        }
+        "runs/technical-recovery-20261106c/observations.jsonl",
+        "runs/technical-recovery-20261106c/followups.jsonl",
+        "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+        "examples/free-kids-books.access.jsonl",
+        "examples/free-kids-books.jsonl"
       ],
       "open_questions": [
-        "Review provider policy plus item-level rights; no inherited partner-wide license."
+        "Broader book-only ranking, metadata reuse, reading access and version identity remain separate follow-up."
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "No complete native book reader/access evidence. robots503 prevented target collection; no recovery trigger yet.",
+      "summary": "Current scoped metadata query recovery; deeper dossier completion is not asserted. Earlier findings retained in review_history.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "robots503 prevented target collection; no recovery trigger yet.",
-        "activation_approved": false
+        "query_scope": "Ten relevant known-book title queries return native WordPress publication IDs and source permalinks. Public API discovered from provider Link headers and types directory.",
+        "identity": "Native WordPress publication ID and permalink; not inferred ebook edition",
+        "reading_verified": false,
+        "limitations": [
+          "Blog articles coexist with book records. Tested known-book title queries do not prove arbitrary-topic book-only ranking.",
+          "The full long Edgar Allan Poe title returned0; shorter distinctive title terms returned the listed book. Negative and corrected attempts are retained.",
+          "Free Kids Books distributes works also found in Book Dash/other catalogs; it is an aggregator, not an additional independent origin for each shared book.",
+          "No ebook files, comments, accounts or full post bodies requested through the query API. Item reading/edition/license still needs separate checks."
+        ],
+        "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "fdd03876d50161f2a1eb",
-          "observed_at": "2026-11-05T04:24:40.026143+00:00",
-          "url": "https://freekidsbooks.org/bookdash/",
-          "outcome": "skipped",
-          "body_sha256": null,
-          "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
-        }
+        "runs/technical-recovery-20261106c/observations.jsonl",
+        "runs/technical-recovery-20261106c/followups.jsonl",
+        "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+        "examples/free-kids-books.access.jsonl",
+        "examples/free-kids-books.jsonl"
       ],
       "open_questions": [
-        "Verify representative full free-item access, including any free-login gate, with no bulk download."
+        "Broader book-only ranking, metadata reuse, reading access and version identity remain separate follow-up."
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Historical partner mention and HTTP/policy outcomes are not search or relevance evidence.",
+      "summary": "Current scoped metadata query recovery; deeper dossier completion is not asserted. Earlier findings retained in review_history.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "robots503 prevented target collection; no recovery trigger yet.",
-        "activation_approved": false
+        "query_scope": "Ten relevant known-book title queries return native WordPress publication IDs and source permalinks. Public API discovered from provider Link headers and types directory.",
+        "identity": "Native WordPress publication ID and permalink; not inferred ebook edition",
+        "reading_verified": false,
+        "limitations": [
+          "Blog articles coexist with book records. Tested known-book title queries do not prove arbitrary-topic book-only ranking.",
+          "The full long Edgar Allan Poe title returned0; shorter distinctive title terms returned the listed book. Negative and corrected attempts are retained.",
+          "Free Kids Books distributes works also found in Book Dash/other catalogs; it is an aggregator, not an additional independent origin for each shared book.",
+          "No ebook files, comments, accounts or full post bodies requested through the query API. Item reading/edition/license still needs separate checks."
+        ],
+        "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "fdd03876d50161f2a1eb",
-          "observed_at": "2026-11-05T04:24:40.026143+00:00",
-          "url": "https://freekidsbooks.org/bookdash/",
-          "outcome": "skipped",
-          "body_sha256": null,
-          "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
-        }
+        "runs/technical-recovery-20261106c/observations.jsonl",
+        "runs/technical-recovery-20261106c/followups.jsonl",
+        "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+        "examples/free-kids-books.access.jsonl",
+        "examples/free-kids-books.jsonl"
       ],
       "open_questions": [
-        "Obtain ten distinct passing native queries and topic/negative/empty tests only after query permission is established."
+        "Broader book-only ranking, metadata reuse, reading access and version identity remain separate follow-up."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "No requests repeated during this backfill; concrete access/route block retained.",
+      "summary": "Current scoped metadata query recovery; deeper dossier completion is not asserted. Earlier findings retained in review_history.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "robots503 prevented target collection; no recovery trigger yet.",
-        "activation_approved": false
+        "query_scope": "Ten relevant known-book title queries return native WordPress publication IDs and source permalinks. Public API discovered from provider Link headers and types directory.",
+        "identity": "Native WordPress publication ID and permalink; not inferred ebook edition",
+        "reading_verified": false,
+        "limitations": [
+          "Blog articles coexist with book records. Tested known-book title queries do not prove arbitrary-topic book-only ranking.",
+          "The full long Edgar Allan Poe title returned0; shorter distinctive title terms returned the listed book. Negative and corrected attempts are retained.",
+          "Free Kids Books distributes works also found in Book Dash/other catalogs; it is an aggregator, not an additional independent origin for each shared book.",
+          "No ebook files, comments, accounts or full post bodies requested through the query API. Item reading/edition/license still needs separate checks."
+        ],
+        "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "fdd03876d50161f2a1eb",
-          "observed_at": "2026-11-05T04:24:40.026143+00:00",
-          "url": "https://freekidsbooks.org/bookdash/",
-          "outcome": "skipped",
-          "body_sha256": null,
-          "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
-        }
+        "runs/technical-recovery-20261106c/observations.jsonl",
+        "runs/technical-recovery-20261106c/followups.jsonl",
+        "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+        "examples/free-kids-books.access.jsonl",
+        "examples/free-kids-books.jsonl"
       ],
       "open_questions": [
-        "Obtain numeric limits if published, serial pacing, refresh/deletion evidence and later-day reliability."
+        "Broader book-only ranking, metadata reuse, reading access and version identity remain separate follow-up."
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Defer catalog qualification with explicit useful revisit triggers. No activation approval.",
+      "status": "partial",
+      "summary": "Current scoped metadata query recovery; deeper dossier completion is not asserted. Earlier findings retained in review_history.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "robots503 prevented target collection; no recovery trigger yet.",
-        "activation_approved": false
+        "query_scope": "Ten relevant known-book title queries return native WordPress publication IDs and source permalinks. Public API discovered from provider Link headers and types directory.",
+        "identity": "Native WordPress publication ID and permalink; not inferred ebook edition",
+        "reading_verified": false,
+        "limitations": [
+          "Blog articles coexist with book records. Tested known-book title queries do not prove arbitrary-topic book-only ranking.",
+          "The full long Edgar Allan Poe title returned0; shorter distinctive title terms returned the listed book. Negative and corrected attempts are retained.",
+          "Free Kids Books distributes works also found in Book Dash/other catalogs; it is an aggregator, not an additional independent origin for each shared book.",
+          "No ebook files, comments, accounts or full post bodies requested through the query API. Item reading/edition/license still needs separate checks."
+        ],
+        "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106c/observations.jsonl",
+        "runs/technical-recovery-20261106c/followups.jsonl",
+        "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+        "examples/free-kids-books.access.jsonl",
+        "examples/free-kids-books.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "fdd03876d50161f2a1eb",
-          "observed_at": "2026-11-05T04:24:40.026143+00:00",
-          "url": "https://freekidsbooks.org/bookdash/",
-          "outcome": "skipped",
-          "body_sha256": null,
-          "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
-        }
-      ],
-      "open_questions": []
+      "open_questions": [
+        "Broader book-only ranking, metadata reuse, reading access and version identity remain separate follow-up."
+      ]
     }
+  },
+  "review_history": [
+    {
+      "superseded_at": "2026-11-06T06:46:26.571639+00:00",
+      "query": {
+        "adapter": "unverified",
+        "endpoint": "https://freekidsbooks.org/bookdash/",
+        "authentication": "Unknown; free-login allowance does not establish this provider’s access conditions.",
+        "cost": "Unverified; no account or payment created.",
+        "cases": []
+      },
+      "limitations": [
+        "robots503 prevented target collection; no recovery trigger yet.",
+        "Previously observed evidence reused without new provider requests; no fresh verification claimed.",
+        "Shared Book Dash copies, languages/editions and frontend variants are not extra independent origins."
+      ],
+      "next_action": "Keep deferred. Revisit after a published supported API/export, valid policy/canonical route or documented recovery; then establish identity, rights, reader conditions and ten current native-ID queries.",
+      "dossier": {
+        "identity_and_duplicates": {
+          "status": "partial",
+          "summary": "Named lead and published URL captured; canonical legal operator and independently maintained catalog are not established.",
+          "facts": {
+            "analysis_only_backfill": true,
+            "new_provider_requests": 0,
+            "current_query_verified": false,
+            "blocker": "robots503 prevented target collection; no recovery trigger yet.",
+            "activation_approved": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/partner-leads-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "8bcce055c56230a33574",
+              "observed_at": "2026-11-05T02:34:13.209236+00:00",
+              "url": "https://bookdash.org/partners/",
+              "outcome": "captured",
+              "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
+              "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
+            },
+            {
+              "path": "runs/partner-leads-20261105/observations.jsonl",
+              "job_id": "fdd03876d50161f2a1eb",
+              "observed_at": "2026-11-05T04:24:40.026143+00:00",
+              "url": "https://freekidsbooks.org/bookdash/",
+              "outcome": "skipped",
+              "body_sha256": null,
+              "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
+            }
+          ],
+          "open_questions": [
+            "Resolve legal operator and Book Dash overlap without counting mirrored books as origins."
+          ]
+        },
+        "coverage_and_languages": {
+          "status": "partial",
+          "summary": "Children’s literacy lead, with no measured native item language/country coverage.",
+          "facts": {
+            "analysis_only_backfill": true,
+            "new_provider_requests": 0,
+            "current_query_verified": false,
+            "blocker": "robots503 prevented target collection; no recovery trigger yet.",
+            "activation_approved": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/partner-leads-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "8bcce055c56230a33574",
+              "observed_at": "2026-11-05T02:34:13.209236+00:00",
+              "url": "https://bookdash.org/partners/",
+              "outcome": "captured",
+              "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
+              "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
+            },
+            {
+              "path": "runs/partner-leads-20261105/observations.jsonl",
+              "job_id": "fdd03876d50161f2a1eb",
+              "observed_at": "2026-11-05T04:24:40.026143+00:00",
+              "url": "https://freekidsbooks.org/bookdash/",
+              "outcome": "skipped",
+              "body_sha256": null,
+              "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
+            }
+          ],
+          "open_questions": [
+            "Measure item languages, reader geography and catalog coverage from permitted native records."
+          ]
+        },
+        "query_contract": {
+          "status": "partial",
+          "summary": "No supported current API/export/import and zero verified examples.",
+          "facts": {
+            "analysis_only_backfill": true,
+            "new_provider_requests": 0,
+            "current_query_verified": false,
+            "blocker": "robots503 prevented target collection; no recovery trigger yet.",
+            "activation_approved": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/partner-leads-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "8bcce055c56230a33574",
+              "observed_at": "2026-11-05T02:34:13.209236+00:00",
+              "url": "https://bookdash.org/partners/",
+              "outcome": "captured",
+              "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
+              "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
+            },
+            {
+              "path": "runs/partner-leads-20261105/observations.jsonl",
+              "job_id": "fdd03876d50161f2a1eb",
+              "observed_at": "2026-11-05T04:24:40.026143+00:00",
+              "url": "https://freekidsbooks.org/bookdash/",
+              "outcome": "skipped",
+              "body_sha256": null,
+              "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
+            }
+          ],
+          "open_questions": [
+            "Identify documented permitted query shape, fields, native IDs, paging and error/empty behavior."
+          ]
+        },
+        "rights_and_cost": {
+          "status": "partial",
+          "summary": "Metadata and full-content licenses, free limits and account conditions remain unknown.",
+          "facts": {
+            "analysis_only_backfill": true,
+            "new_provider_requests": 0,
+            "current_query_verified": false,
+            "blocker": "robots503 prevented target collection; no recovery trigger yet.",
+            "activation_approved": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/partner-leads-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "8bcce055c56230a33574",
+              "observed_at": "2026-11-05T02:34:13.209236+00:00",
+              "url": "https://bookdash.org/partners/",
+              "outcome": "captured",
+              "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
+              "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
+            },
+            {
+              "path": "runs/partner-leads-20261105/observations.jsonl",
+              "job_id": "fdd03876d50161f2a1eb",
+              "observed_at": "2026-11-05T04:24:40.026143+00:00",
+              "url": "https://freekidsbooks.org/bookdash/",
+              "outcome": "skipped",
+              "body_sha256": null,
+              "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
+            }
+          ],
+          "open_questions": [
+            "Review provider policy plus item-level rights; no inherited partner-wide license."
+          ]
+        },
+        "reader_access": {
+          "status": "partial",
+          "summary": "No complete native book reader/access evidence. robots503 prevented target collection; no recovery trigger yet.",
+          "facts": {
+            "analysis_only_backfill": true,
+            "new_provider_requests": 0,
+            "current_query_verified": false,
+            "blocker": "robots503 prevented target collection; no recovery trigger yet.",
+            "activation_approved": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/partner-leads-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "8bcce055c56230a33574",
+              "observed_at": "2026-11-05T02:34:13.209236+00:00",
+              "url": "https://bookdash.org/partners/",
+              "outcome": "captured",
+              "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
+              "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
+            },
+            {
+              "path": "runs/partner-leads-20261105/observations.jsonl",
+              "job_id": "fdd03876d50161f2a1eb",
+              "observed_at": "2026-11-05T04:24:40.026143+00:00",
+              "url": "https://freekidsbooks.org/bookdash/",
+              "outcome": "skipped",
+              "body_sha256": null,
+              "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
+            }
+          ],
+          "open_questions": [
+            "Verify representative full free-item access, including any free-login gate, with no bulk download."
+          ]
+        },
+        "quality_and_relevance": {
+          "status": "partial",
+          "summary": "Historical partner mention and HTTP/policy outcomes are not search or relevance evidence.",
+          "facts": {
+            "analysis_only_backfill": true,
+            "new_provider_requests": 0,
+            "current_query_verified": false,
+            "blocker": "robots503 prevented target collection; no recovery trigger yet.",
+            "activation_approved": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/partner-leads-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "8bcce055c56230a33574",
+              "observed_at": "2026-11-05T02:34:13.209236+00:00",
+              "url": "https://bookdash.org/partners/",
+              "outcome": "captured",
+              "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
+              "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
+            },
+            {
+              "path": "runs/partner-leads-20261105/observations.jsonl",
+              "job_id": "fdd03876d50161f2a1eb",
+              "observed_at": "2026-11-05T04:24:40.026143+00:00",
+              "url": "https://freekidsbooks.org/bookdash/",
+              "outcome": "skipped",
+              "body_sha256": null,
+              "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
+            }
+          ],
+          "open_questions": [
+            "Obtain ten distinct passing native queries and topic/negative/empty tests only after query permission is established."
+          ]
+        },
+        "operating_limits": {
+          "status": "partial",
+          "summary": "No requests repeated during this backfill; concrete access/route block retained.",
+          "facts": {
+            "analysis_only_backfill": true,
+            "new_provider_requests": 0,
+            "current_query_verified": false,
+            "blocker": "robots503 prevented target collection; no recovery trigger yet.",
+            "activation_approved": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/partner-leads-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "8bcce055c56230a33574",
+              "observed_at": "2026-11-05T02:34:13.209236+00:00",
+              "url": "https://bookdash.org/partners/",
+              "outcome": "captured",
+              "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
+              "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
+            },
+            {
+              "path": "runs/partner-leads-20261105/observations.jsonl",
+              "job_id": "fdd03876d50161f2a1eb",
+              "observed_at": "2026-11-05T04:24:40.026143+00:00",
+              "url": "https://freekidsbooks.org/bookdash/",
+              "outcome": "skipped",
+              "body_sha256": null,
+              "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
+            }
+          ],
+          "open_questions": [
+            "Obtain numeric limits if published, serial pacing, refresh/deletion evidence and later-day reliability."
+          ]
+        },
+        "decision_and_followup": {
+          "status": "complete",
+          "summary": "Defer catalog qualification with explicit useful revisit triggers. No activation approval.",
+          "facts": {
+            "analysis_only_backfill": true,
+            "new_provider_requests": 0,
+            "current_query_verified": false,
+            "blocker": "robots503 prevented target collection; no recovery trigger yet.",
+            "activation_approved": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/partner-leads-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "8bcce055c56230a33574",
+              "observed_at": "2026-11-05T02:34:13.209236+00:00",
+              "url": "https://bookdash.org/partners/",
+              "outcome": "captured",
+              "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
+              "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
+            },
+            {
+              "path": "runs/partner-leads-20261105/observations.jsonl",
+              "job_id": "fdd03876d50161f2a1eb",
+              "observed_at": "2026-11-05T04:24:40.026143+00:00",
+              "url": "https://freekidsbooks.org/bookdash/",
+              "outcome": "skipped",
+              "body_sha256": null,
+              "policy_sha256": "2f85832e31ca57711e6107af6b142363351ae516adb71c69afc643fac26be7f6"
+            }
+          ],
+          "open_questions": []
+        }
+      }
+    }
+  ],
+  "recovery": {
+    "status": "working",
+    "reason": "Old robots503 recovered; saved BookDash URL now redirects to its current page. Generic public blog search includes irrelevant substring matches.",
+    "attempt": "Follow the published redirect, inspect public API Link/type metadata, and search catalog-listed book titles while requesting only id/title/link/type.",
+    "result": "Ten passing title-keyword queries; an empty control returns0. Long-title miss retained and shorter query correction passes.",
+    "decision": "working_with_known_book_title_scope",
+    "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation.",
+    "owner_action_required": false,
+    "evidence_reviewed_at": "2026-11-06T06:46:26.572040+00:00",
+    "fresh_query_verification": true,
+    "evidence": [
+      "runs/technical-recovery-20261106c/observations.jsonl",
+      "runs/technical-recovery-20261106c/followups.jsonl",
+      "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+      "examples/free-kids-books.access.jsonl",
+      "examples/free-kids-books.jsonl"
+    ]
   }
 }

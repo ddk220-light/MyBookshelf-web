@@ -8,165 +8,233 @@
     "C04",
     "C16"
   ],
-  "state": "deferred",
+  "state": "scoped-queryability-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "capabilities": [
-    "Thoth returned The Chandayan."
+    "Two live supported title queries return The Chandayan with a native work UUID and publisher link; the current Thoth active-book subset has one work."
   ],
   "query": {
-    "adapter": "thoth",
+    "adapter": "thoth-metadata",
     "endpoint": "https://api.thoth.pub/graphql",
-    "cases": [],
-    "authentication": "not established for a complete supported route",
-    "cost": "No paid service used in initial review.",
     "publisher_id": "8b4e6967-497e-40b5-aafa-954b4983ec1f",
-    "metadata_query_template": "{works(limit:3,filter:\"QUERY\",publishers:[\"8b4e6967-497e-40b5-aafa-954b4983ec1f\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} landingPage license}}"
+    "cases": [
+      {
+        "id": "marg-title-1",
+        "intent": "Title search of the single currently published Thoth work",
+        "query_text": "The Chandayan",
+        "expected_ids": [
+          "0d72007c-f1a2-4179-b8c2-1705cfcfd254"
+        ],
+        "request": {
+          "json": {
+            "query": "{works(limit:3,filter:\"The Chandayan\",publishers:[\"8b4e6967-497e-40b5-aafa-954b4983ec1f\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} imprint{publisherId} workType landingPage doi license}}"
+          },
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql"
+        }
+      },
+      {
+        "id": "marg-title-2",
+        "intent": "Title search of the single currently published Thoth work",
+        "query_text": "Chandayan",
+        "expected_ids": [
+          "0d72007c-f1a2-4179-b8c2-1705cfcfd254"
+        ],
+        "request": {
+          "json": {
+            "query": "{works(limit:3,filter:\"Chandayan\",publishers:[\"8b4e6967-497e-40b5-aafa-954b4983ec1f\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} imprint{publisherId} workType landingPage doi license}}"
+          },
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql"
+        }
+      }
+    ],
+    "authentication": "Anonymous public GraphQL metadata",
+    "cost": "Free; no account",
+    "supported_modes": [
+      "Title-filtered publisher metadata query"
+    ],
+    "unsupported_modes": [
+      "Full-book reading guarantee",
+      "All Marg publisher products",
+      "Full text"
+    ]
   },
-  "licensing": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
+  "licensing": "Thoth metadata CC0; work content license unset and reading access not verified.",
   "documentation": [
     "https://marg-art.org/"
   ],
   "limitations": [
-    "Sample had paperback location only; no free digital edition established."
+    "Only one work currently returned by the reviewed Thoth publisher subset; other Marg products untested.",
+    "No free digital edition or full-book reading established. Metadata discovery and outbound links are separately accepted by the owner."
   ],
   "evidence": [
-    "../batches/G01_FIRST_TEN.md"
+    "../batches/G01_FIRST_TEN.md",
+    "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+    "examples/marg-foundation.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05",
-  "next_action": "Find an official free digital subset or record as unsuitable for free-content discovery.",
+  "last_reviewed_at": "2026-11-06T06:38:57.069270+00:00",
+  "next_action": "Keep Working for the explicit one-work Thoth metadata scope. Expand only when publisher metadata inventory grows; reading conditions remain visible and production is unchanged.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working title metadata search within the one-work Thoth subset. Prior reading and digital-copy gaps remain separate from owner-defined queryability.",
       "facts": {
-        "id": "marg-foundation",
-        "name": "The Marg Foundation",
-        "homepage_reference": "https://marg-art.org/",
-        "operator": null,
-        "origin_deduplication": "pending"
+        "native_work_count": 1,
+        "current_passing_queries": 2,
+        "negative_control": "empty",
+        "reading_access_verified": false,
+        "metadata_license": "CC0",
+        "content_license": "unset",
+        "scope": "Current active monograph/edited-book subset in Thoth, not all publisher products"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+        "examples/marg-foundation.jsonl"
       ],
       "open_questions": [
-        "Confirm operator, parent and catalog-versus-origin deduplication."
+        "Broader publisher inventory and reader/content rights remain unverified."
       ]
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working title metadata search within the one-work Thoth subset. Prior reading and digital-copy gaps remain separate from owner-defined queryability.",
       "facts": {
-        "category_industry_candidates": [
-          "C04",
-          "C16"
-        ],
-        "languages": null,
-        "jurisdictions": null,
-        "coverage_evidence": "pending"
+        "native_work_count": 1,
+        "current_passing_queries": 2,
+        "negative_control": "empty",
+        "reading_access_verified": false,
+        "metadata_license": "CC0",
+        "content_license": "unset",
+        "scope": "Current active monograph/edited-book subset in Thoth, not all publisher products"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+        "examples/marg-foundation.jsonl"
       ],
       "open_questions": [
-        "Verify country/language/subject coverage with item evidence."
+        "Broader publisher inventory and reader/content rights remain unverified."
       ]
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working title metadata search within the one-work Thoth subset. Prior reading and digital-copy gaps remain separate from owner-defined queryability.",
       "facts": {
-        "adapter": "thoth",
-        "endpoint": "https://api.thoth.pub/graphql",
-        "capabilities": [
-          "Thoth returned The Chandayan."
-        ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "native_work_count": 1,
+        "current_passing_queries": 2,
+        "negative_control": "empty",
+        "reading_access_verified": false,
+        "metadata_license": "CC0",
+        "content_license": "unset",
+        "scope": "Current active monograph/edited-book subset in Thoth, not all publisher products"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+        "examples/marg-foundation.jsonl"
       ],
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Broader publisher inventory and reader/content rights remain unverified."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working title metadata search within the one-work Thoth subset. Prior reading and digital-copy gaps remain separate from owner-defined queryability.",
       "facts": {
-        "license_notes": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
-        "authentication_notes": "not established for a complete supported route",
-        "cost_notes": "No paid service used in initial review.",
-        "terms_review": "pending current reconciliation"
+        "native_work_count": 1,
+        "current_passing_queries": 2,
+        "negative_control": "empty",
+        "reading_access_verified": false,
+        "metadata_license": "CC0",
+        "content_license": "unset",
+        "scope": "Current active monograph/edited-book subset in Thoth, not all publisher products"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+        "examples/marg-foundation.jsonl"
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+        "Broader publisher inventory and reader/content rights remain unverified."
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working title metadata search within the one-work Thoth subset. Prior reading and digital-copy gaps remain separate from owner-defined queryability.",
       "facts": {
-        "evidence_references": [
-          "../batches/G01_FIRST_TEN.md"
-        ],
-        "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "native_work_count": 1,
+        "current_passing_queries": 2,
+        "negative_control": "empty",
+        "reading_access_verified": false,
+        "metadata_license": "CC0",
+        "content_license": "unset",
+        "scope": "Current active monograph/edited-book subset in Thoth, not all publisher products"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+        "examples/marg-foundation.jsonl"
       ],
       "open_questions": [
-        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+        "Broader publisher inventory and reader/content rights remain unverified."
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working title metadata search within the one-work Thoth subset. Prior reading and digital-copy gaps remain separate from owner-defined queryability.",
       "facts": {
-        "limitations": [
-          "Sample had paperback location only; no free digital edition established."
-        ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "native_work_count": 1,
+        "current_passing_queries": 2,
+        "negative_control": "empty",
+        "reading_access_verified": false,
+        "metadata_license": "CC0",
+        "content_license": "unset",
+        "scope": "Current active monograph/edited-book subset in Thoth, not all publisher products"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+        "examples/marg-foundation.jsonl"
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+        "Broader publisher inventory and reader/content rights remain unverified."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working title metadata search within the one-work Thoth subset. Prior reading and digital-copy gaps remain separate from owner-defined queryability.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "native_work_count": 1,
+        "current_passing_queries": 2,
+        "negative_control": "empty",
+        "reading_access_verified": false,
+        "metadata_license": "CC0",
+        "content_license": "unset",
+        "scope": "Current active monograph/edited-book subset in Thoth, not all publisher products"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+        "examples/marg-foundation.jsonl"
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Broader publisher inventory and reader/content rights remain unverified."
       ]
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working title metadata search within the one-work Thoth subset. Prior reading and digital-copy gaps remain separate from owner-defined queryability.",
       "facts": {
-        "state": "deferred",
-        "next_action": "Find an official free digital subset or record as unsuitable for free-content discovery.",
-        "production_qualification_complete": false
+        "native_work_count": 1,
+        "current_passing_queries": 2,
+        "negative_control": "empty",
+        "reading_access_verified": false,
+        "metadata_license": "CC0",
+        "content_license": "unset",
+        "scope": "Current active monograph/edited-book subset in Thoth, not all publisher products"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+        "examples/marg-foundation.jsonl"
       ],
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Broader publisher inventory and reader/content rights remain unverified."
       ]
     }
   },
@@ -186,6 +254,186 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [The Marg Foundation](https://marg-art.org/) | Sample only showed a paperback edition. | Identify a genuine free digital catalog and permitted query route before recommending signup. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "review_history": [
+    {
+      "superseded_at": "2026-11-06T06:38:57.069153+00:00",
+      "query": {
+        "adapter": "thoth",
+        "endpoint": "https://api.thoth.pub/graphql",
+        "cases": [],
+        "authentication": "not established for a complete supported route",
+        "cost": "No paid service used in initial review.",
+        "publisher_id": "8b4e6967-497e-40b5-aafa-954b4983ec1f",
+        "metadata_query_template": "{works(limit:3,filter:\"QUERY\",publishers:[\"8b4e6967-497e-40b5-aafa-954b4983ec1f\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} landingPage license}}"
+      },
+      "limitations": [
+        "Sample had paperback location only; no free digital edition established."
+      ],
+      "next_action": "Find an official free digital subset or record as unsuitable for free-content discovery."
+    }
+  ],
+  "queryability_review": {
+    "basis": "exhaustive-single-work-publisher-subset",
+    "evidence_path": "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+    "evidence_sha256": "4af76896eb9e4fa404ca359a9f3354fb72cd8555eb0023d2dac93cce77e76c38",
+    "native_work_count": 1,
+    "note": "Queryability is the owner metric. Do not fabricate ten books or gate a functioning one-work scoped connector on an impossible ten-distinct-work sample."
+  },
+  "recovery": {
+    "status": "working",
+    "reason": "Prior block was a reading/free-edition gate; actual metadata title search had not been counted separately.",
+    "attempt": "Query the published publisher subset, two distinct title filters and a negative control.",
+    "result": "One native work; both title searches pass and negative search returns empty. No ten-work sample fabricated.",
+    "decision": "working_limited_one_work_metadata_catalog",
+    "next_action": "Keep Working for the explicit one-work Thoth metadata scope. Expand only when publisher metadata inventory grows; reading conditions remain visible and production is unchanged.",
+    "owner_action_required": false,
+    "evidence_reviewed_at": "2026-11-06T06:38:57.069273+00:00",
+    "fresh_query_verification": true,
+    "evidence": [
+      "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+      "examples/marg-foundation.jsonl"
+    ]
+  },
+  "dossier_history": [
+    {
+      "superseded_at": "2026-11-06T06:46:26.572708+00:00",
+      "dossier": {
+        "identity_and_duplicates": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "id": "marg-foundation",
+            "name": "The Marg Foundation",
+            "homepage_reference": "https://marg-art.org/",
+            "operator": null,
+            "origin_deduplication": "pending"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Confirm operator, parent and catalog-versus-origin deduplication."
+          ]
+        },
+        "coverage_and_languages": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "category_industry_candidates": [
+              "C04",
+              "C16"
+            ],
+            "languages": null,
+            "jurisdictions": null,
+            "coverage_evidence": "pending"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Verify country/language/subject coverage with item evidence."
+          ]
+        },
+        "query_contract": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "adapter": "thoth",
+            "endpoint": "https://api.thoth.pub/graphql",
+            "capabilities": [
+              "Thoth returned The Chandayan."
+            ],
+            "supported_and_unsupported_modes": "needs explicit review"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+          ]
+        },
+        "rights_and_cost": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "license_notes": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
+            "authentication_notes": "not established for a complete supported route",
+            "cost_notes": "No paid service used in initial review.",
+            "terms_review": "pending current reconciliation"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Reconcile current metadata/content terms, free limits and permitted commercial use."
+          ]
+        },
+        "reader_access": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "evidence_references": [
+              "../batches/G01_FIRST_TEN.md"
+            ],
+            "free_login_eligible": true,
+            "access_classification": "needs explicit item-level review"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+          ]
+        },
+        "quality_and_relevance": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "limitations": [
+              "Sample had paperback location only; no free digital edition established."
+            ],
+            "ranking_relevance_completeness": "not fully qualified"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+          ]
+        },
+        "operating_limits": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "paging": null,
+            "research_pause_seconds": null,
+            "provider_quota_refresh_deletion_contract": "needs explicit review"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+          ]
+        },
+        "decision_and_followup": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "state": "deferred",
+            "next_action": "Find an official free digital subset or record as unsuitable for free-content discovery.",
+            "production_qualification_complete": false
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+          ]
+        }
+      }
     }
   ]
 }

@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 36,
+  "remaining": 34,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -52,12 +52,27 @@
       "id": "free-kids-books",
       "name": "Free Kids Books",
       "group": "G01",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Robots returned 503.",
-      "current_reason": "robots503 prevented target collection; no recovery trigger yet.",
-      "next_action": "Keep deferred. Revisit after a published supported API/export, valid policy/canonical route or documented recovery; then establish identity, rights, reader conditions and ten current native-ID queries.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Working for known-book title metadata search. Keep mixed blog results and long-title matching limits explicit; test any broader ranking/reader scope separately. No production activation.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:46:26.572040+00:00",
+          "reason": "Old robots503 recovered; saved BookDash URL now redirects to its current page. Generic public blog search includes irrelevant substring matches.",
+          "attempt": "Follow the published redirect, inspect public API Link/type metadata, and search catalog-listed book titles while requesting only id/title/link/type.",
+          "result": "Ten passing title-keyword queries; an empty control returns0. Long-title miss retained and shorter query correction passes.",
+          "decision": "working_with_known_book_title_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106c/observations.jsonl",
+            "runs/technical-recovery-20261106c/followups.jsonl",
+            "runs/technical-recovery-20261106c/free-kids-book-seeds.json",
+            "examples/free-kids-books.access.jsonl",
+            "examples/free-kids-books.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "gallica",
@@ -76,10 +91,22 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Two queries passed; other queries exceeded 20/45-second timeouts.",
-      "current_reason": "Search is intermittent: two terms returned relevant books, but other queries repeatedly exceeded20- and45-second limits.",
-      "next_action": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "A single Frankenstein health search still exceeds the45-second timeout.",
+      "next_action": "Wait for a useful service recovery signal. Keep historical two successes; intermittent results do not establish reliable search.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:46:26.574626+00:00",
+          "reason": "A single Frankenstein health search still exceeds the45-second timeout.",
+          "attempt": "One bounded health request after overnight backoff; no full batch repeated.",
+          "result": "Still blocked; no current passing query.",
+          "decision": "wait_for_documented_recovery_or_alternative",
+          "evidence": [
+            "runs/technical-recovery-20261106c/observations.jsonl",
+            "runs/technical-recovery-20261106c/book-attempts.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "helsinki-university-press",
@@ -170,12 +197,24 @@
       "id": "marg-foundation",
       "name": "The Marg Foundation",
       "group": "G01",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Sample only showed a paperback edition.",
-      "current_reason": "Sample had paperback location only; no free digital edition established.",
-      "next_action": "Find an official free digital subset or record as unsuitable for free-content discovery.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Keep Working for the explicit one-work Thoth metadata scope. Expand only when publisher metadata inventory grows; reading conditions remain visible and production is unchanged.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:38:57.069273+00:00",
+          "reason": "Prior block was a reading/free-edition gate; actual metadata title search had not been counted separately.",
+          "attempt": "Query the published publisher subset, two distinct title filters and a negative control.",
+          "result": "One native work; both title searches pass and negative search returns empty. No ten-work sample fabricated.",
+          "decision": "working_limited_one_work_metadata_catalog",
+          "evidence": [
+            "runs/technical-recovery-20261106c/marg-single-work-proof.json",
+            "examples/marg-foundation.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "worldreader",
@@ -318,10 +357,22 @@
       "group": "G03",
       "status": "blocked_or_failed",
       "original_reason": "Robots request timed out.",
-      "current_reason": "Saved robots request timed out; target was skipped. No fresh reader/API evidence and no unchanged retry.",
-      "next_action": "Useful policy/network recovery and published allowed guideline metadata/search/export route; test native guideline editions, current applicability, language and non-personal data scope.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Robots redirects302 to an HTTP legacy404 page; no usable policy returned.",
+      "next_action": "Find a current official policy/catalog export; do not treat a redirect to an error page as permission.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:46:26.573533+00:00",
+          "reason": "Robots redirects302 to an HTTP legacy404 page; no usable policy returned.",
+          "attempt": "One overnight-backoff policy check; inspected exact redirect, without following into an error route.",
+          "result": "Still blocked; no current passing query.",
+          "decision": "wait_for_documented_recovery_or_alternative",
+          "evidence": [
+            "runs/technical-recovery-20261106c/observations.jsonl",
+            "runs/technical-recovery-20261106c/book-attempts.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "india-nqr",
@@ -406,10 +457,22 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Published redirect ended at a 503 page.",
-      "current_reason": "Canonical native landing page returned503 after published redirect; stop this provider until useful recovery evidence. | Foundry documentation page returned only general navigation text; no target API behavior established.",
-      "next_action": "After useful service recovery, confirm current primary terms and supported bounded anonymous or already-authorized query contract. Exclude personal fields and retain zoning native/version identities.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Robots readable, but canonical public dataset landing still returns503.",
+      "next_action": "Wait for service recovery before any documented metadata query; no host-switch bypass.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:46:26.574280+00:00",
+          "reason": "Robots readable, but canonical public dataset landing still returns503.",
+          "attempt": "One retry of the published dataset route after overnight backoff; stopped the host after503.",
+          "result": "Still blocked; no current passing query.",
+          "decision": "wait_for_documented_recovery_or_alternative",
+          "evidence": [
+            "runs/technical-recovery-20261106c/observations.jsonl",
+            "runs/technical-recovery-20261106c/book-attempts.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "cmda-planning",
@@ -417,10 +480,22 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 503.",
-      "current_reason": "Saved robots HTTP503 prevented target request. No publication or dataset content was retrieved.",
-      "next_action": "Published usable policy/service recovery and current official publication/data catalog contract. Test plan edition, amendments, status, geographic coverage and metadata-only lookup; no owner/applicant records.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Robots still returns503; target not requested.",
+      "next_action": "Wait for service/policy recovery or a documented permitted publication catalog.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:46:26.573905+00:00",
+          "reason": "Robots still returns503; target not requested.",
+          "attempt": "One retry after overnight backoff.",
+          "result": "Still blocked; no current passing query.",
+          "decision": "wait_for_documented_recovery_or_alternative",
+          "evidence": [
+            "runs/technical-recovery-20261106c/observations.jsonl",
+            "runs/technical-recovery-20261106c/book-attempts.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "gsa-frpp",
@@ -439,10 +514,22 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Robots request timed out before any catalog query.",
-      "current_reason": "Saved robots request timed out after20.262seconds; target was never requested. This is environment observation, not evidence of a national outage.",
-      "next_action": "Useful documented policy/service recovery and supported public API/export specification; then test exact Act/rule identity, amendments, dates, jurisdictions and bilingual/native-script retrieval.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Robots request still times out after20seconds; target not requested.",
+      "next_action": "Wait for a policy/service recovery signal or documented public metadata alternative.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:46:26.573091+00:00",
+          "reason": "Robots request still times out after20seconds; target not requested.",
+          "attempt": "One retry after overnight backoff.",
+          "result": "Still blocked; no current passing query.",
+          "decision": "wait_for_documented_recovery_or_alternative",
+          "evidence": [
+            "runs/technical-recovery-20261106c/observations.jsonl",
+            "runs/technical-recovery-20261106c/book-attempts.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "nyc-planning-data",
@@ -619,32 +706,43 @@
     }
   ],
   "progress": {
-    "working": 8,
-    "blocked_or_failed": 36,
+    "working": 10,
+    "blocked_or_failed": 34,
     "still_checking": 0,
-    "checked_this_pass": 12,
-    "remaining_to_recheck_this_pass": 30,
+    "checked_this_pass": 19,
+    "remaining_to_recheck_this_pass": 23,
     "baseline_working": 2
   },
   "current_run": {
-    "state": "active-parent-turn",
+    "state": "checkpointed",
     "started_at": "2026-11-06T06:22:34.442606+00:00",
-    "phase": "two-recoveries-checkpointed-then-temporary-failure-rechecks",
-    "collector_active": false
+    "phase": "four-recoveries-and-seven-unresolved-rechecks",
+    "collector_active": false,
+    "finished_at": "2026-11-06T06:46:26.575530+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 8,
-  "updated_at": "2026-11-06T06:31:12.363746+00:00",
+  "working": 10,
+  "updated_at": "2026-11-06T06:46:26.575519+00:00",
   "latest_run": {
-    "run_id": "technical-recovery-20261106b",
+    "run_ids": [
+      "technical-recovery-20261106b",
+      "technical-recovery-20261106c"
+    ],
     "new_working": [
       "art-institute-chicago",
-      "nist-publications"
+      "nist-publications",
+      "marg-foundation",
+      "free-kids-books"
     ],
     "technical_failures_rechecked": [
       "imo-knowledge-centre",
-      "lincs"
+      "lincs",
+      "india-code",
+      "nhm-guidelines",
+      "cmda-planning",
+      "chicago-open-data-zoning",
+      "gutendex"
     ],
     "remaining_goal_open": true
   }

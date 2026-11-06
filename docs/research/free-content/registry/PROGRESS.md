@@ -1,3 +1,7 @@
+## Recovery continuation B/C —6November2026
+
+76Working/57Blocked,789passing examples. Original44goal10Working/34remaining;23still to revisit. Four recoveries,32examples;281tests and evidence checks pass.75catalogs have ten-example samples; Marg is an explicitly reviewed one-work subset with two searches and an empty control. Hourly task enabled; no deployment.
+
 ## Recovery continuation B —6November2026
 
 Art Institute of Chicago and NIST add20current passing queries.74Working/59Blocked,777examples; original44goal8Working/36remaining.277tests and evidence validation pass. IMO catalog search explicitly robots-disallowed; LINCS policy403. Continue independent temporary-failure rechecks.

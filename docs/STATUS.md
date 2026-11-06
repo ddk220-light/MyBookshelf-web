@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Recovery continuation B/C,6November2026:**76Working/57Blocked of133active research connectors;789passing examples. Original44goal10Working/34remaining,23still to revisit. Art Institute,NIST,Free Kids Books and the one-work Marg metadata subset recovered.281tests pass; hourly completion enabled. Research only. [Evidence and limits](research/free-content/TECHNICAL_RECOVERY_20261106B.md). Earlier entries below are historical.
+
 **Recovery continuation B,6November2026:** Art Institute of Chicago and NIST add20passing examples:74Working/59Blocked of133active connectors; original44goal8Working/36remaining. Research only; production unchanged. [Report](research/free-content/TECHNICAL_RECOVERY_20261106B.md). Earlier entries are historical.
 
 **Production and recovery, 6 November 2026:** PR #180 is deployed at mybookshelf.cloud (`d406469`, Vercel `dpl_9ACDFzr9QNmqq9yNg4hzzKCcq9EZ`). All five new anonymous searches pass; 21 app sources connected. Separate research now has 72 working connectors/757 examples; original 44-item recovery goal has 6 working, 38 remaining. Hourly completion enabled. [Report and evidence](research/free-content/TECHNICAL_RECOVERY_20261106.md). Earlier entries below are historical.
