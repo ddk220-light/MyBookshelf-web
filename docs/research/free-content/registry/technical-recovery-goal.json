@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 39,
+  "remaining": 38,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -35,10 +35,18 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned HTML, so policy preflight stopped.",
-      "current_reason": "The official documentation host served HTML at robots.txt, so its policy could not be established.",
-      "next_action": "Retry after the official policy endpoint recovers or a documented permitted export becomes available.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Repository robots timed out; OAI target not requested.",
+      "next_action": "Wait for policy endpoint recovery or a documented reachable export.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T05:55:50.990948+00:00",
+          "reason": "Repository robots timed out; OAI target not requested.",
+          "attempt": "Tried the operator-documented directory.doabooks.org OAI route after finding its metadata documentation.",
+          "result": "Repository robots timed out; OAI target not requested.",
+          "decision": "Wait for policy endpoint recovery or a documented reachable export."
+        }
+      ]
     },
     {
       "id": "free-kids-books",
@@ -80,7 +88,7 @@
       "status": "working",
       "original_reason": "Historical Thoth search returned metadata; digital links were incomplete.",
       "current_reason": "",
-      "next_action": "Retain Working metadata search within the recorded scope. Future scope expansion or reader/access checks remain separate; hourly runs stay paused.",
+      "next_action": "Scoped metadata search deployed in PR #180 and verified anonymously. Preserve recorded search scope and reading conditions; future expansion needs its own tests. The separate 44-connector recovery goal continues hourly.",
       "initial_pass_complete": true,
       "attempts": []
     },
@@ -143,7 +151,7 @@
       "status": "working",
       "original_reason": "Historical Thoth metadata worked; sampled reading destinations challenged access.",
       "current_reason": "",
-      "next_action": "Retain Working metadata search within the recorded scope. Future scope expansion or reader/access checks remain separate; hourly runs stay paused.",
+      "next_action": "Scoped metadata search deployed in PR #180 and verified anonymously. Preserve recorded search scope and reading conditions; future expansion needs its own tests. The separate 44-connector recovery goal continues hourly.",
       "initial_pass_complete": true,
       "attempts": []
     },
@@ -175,21 +183,37 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "The historical mobile-catalog route returned 404.",
-      "current_reason": "Historical published mobile route returns404; current catalog route/query contract not identified.",
-      "next_action": "Keep deferred. Revisit after a published supported API/export, valid policy/canonical route or documented recovery; then establish identity, rights, reader conditions and ten current native-ID queries.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Current official BookSmart link found, but booksmart.world robots returns400.",
+      "next_action": "Establish usable public catalog policy or documented query route; no login/account creation.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T05:55:50.992174+00:00",
+          "reason": "Current official BookSmart link found, but booksmart.world robots returns400.",
+          "attempt": "Followed Worldreader product page to https://booksmart.world/free; target stopped at policy check.",
+          "result": "Current official BookSmart link found, but booksmart.world robots returns400.",
+          "decision": "Establish usable public catalog policy or documented query route; no login/account creation."
+        }
+      ]
     },
     {
       "id": "bharat-skills",
       "name": "Bharat Skills",
       "group": "G02",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Robots request timed out.",
-      "current_reason": "Robots timeout; API/export unverified",
-      "next_action": "Current robots request timed out; do not fetch the catalog while policy is unavailable. Revisit after a useful availability change and supported official API/export discovery; continue other candidates.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Working metadata search over 57 Electrician ebook labels; other trades and reading links require separate scope expansion.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T05:54:31.770303+00:00",
+          "reason": "Earlier robots timeout on the older catalog attempt; current canonical www host returns robots404 and public catalog200.",
+          "attempt": "Published CTS > Electrician trade link; local title queries over listed ebook metadata",
+          "result": "57 native resource URLs captured; ten distinct language/year title queries passed, no book downloaded",
+          "decision": "Working within Electrician catalog scope; other trades stay unverified"
+        }
+      ]
     },
     {
       "id": "diksha",
@@ -208,10 +232,18 @@
       "group": "G02",
       "status": "blocked_or_failed",
       "original_reason": "Catalog returned 503 in this environment.",
-      "current_reason": "Catalog returned HTTP 503 in this environment.",
-      "next_action": "Find documented metadata/feed/import route; do not infer source-wide outage.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Official textbook catalog robots still returns503.",
+      "next_action": "Wait for host/policy recovery; separately review officially linked ePathshala metadata route.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T05:55:50.991414+00:00",
+          "reason": "Official textbook catalog robots still returns503.",
+          "attempt": "Retried canonical textbook.php after overnight backoff; stopped before target.",
+          "result": "Official textbook catalog robots still returns503.",
+          "decision": "Wait for host/policy recovery; separately review officially linked ePathshala metadata route."
+        }
+      ]
     },
     {
       "id": "oer-commons",
@@ -307,10 +339,18 @@
       "group": "G03",
       "status": "blocked_or_failed",
       "original_reason": "Captured navigation pages exposed no curriculum records or supported schema.",
-      "current_reason": "Two saved HTTP200 navigation shells expose no curriculum records or supported query/export schema; a separate saved robots301 skip remains historical. No new requests.",
-      "next_action": "Published current metadata/export or documented API plus material-specific reuse/access terms; then test occupation/qualification-pack versions and withdrawn standards.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Indexed CONTENTAVAILABILITY route now renders navigation only.",
+      "next_action": "Find the new public curriculum search through current navigation; do not call private app APIs.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T05:55:50.991762+00:00",
+          "reason": "Indexed CONTENTAVAILABILITY route now renders navigation only.",
+          "attempt": "Tried current indexed curriculum path on canonical www host; no curriculum records.",
+          "result": "Indexed CONTENTAVAILABILITY route now renders navigation only.",
+          "decision": "Find the new public curriculum search through current navigation; do not call private app APIs."
+        }
+      ]
     },
     {
       "id": "rosa-p",
@@ -528,19 +568,37 @@
     }
   ],
   "progress": {
-    "working": 2,
-    "blocked_or_failed": 42,
+    "working": 6,
+    "blocked_or_failed": 38,
     "still_checking": 0,
-    "checked_this_pass": 0
+    "checked_this_pass": 8,
+    "remaining_to_recheck_this_pass": 34,
+    "baseline_working": 2
   },
   "current_run": {
-    "state": "active-parent-turn",
-    "phase": "release-five-completed-connectors-first",
+    "state": "checkpointed",
+    "phase": "production-verified-and-four-research-recoveries-saved",
     "started_at": "2026-11-06T05:20:53.568628+00:00",
-    "collector_active": false
+    "collector_active": false,
+    "finished_at": "2026-11-06T06:02:02.941271+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 5,
-  "updated_at": "2026-11-06T05:47:36.913639+00:00"
+  "working": 6,
+  "updated_at": "2026-11-06T06:02:02.941271+00:00",
+  "latest_run": {
+    "new_working": [
+      "nasa-image-video-library",
+      "lever-press",
+      "caltech-thesis",
+      "bharat-skills"
+    ],
+    "technical_failures_rechecked": [
+      "doab",
+      "ncert",
+      "nsdc-curricula",
+      "worldreader"
+    ],
+    "remaining_goal_open": true
+  }
 }

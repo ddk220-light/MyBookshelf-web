@@ -15,6 +15,7 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'bharat-electrician-catalog': 'Local title/native resource-URL search over 57 Electrician ebook metadata entries; language/year/syllabus preserved, other trades and book bodies unverified',
     'caltech-public-browser': 'Anonymous public browser keyword search, first two rendered title/native thesis links; no campus API, pagination/full-text or blanket reuse permission',
     'nasa-images-public': 'Live anonymous NASA image-metadata keyword search, first 2 native NASA IDs; page 2 and empty results verified, no media download or reuse approval',
     'lever-fulcrum': 'Live Lever Press public publisher keyword form, first 15 native Fulcrum monograph IDs; no ebook downloads or private API',

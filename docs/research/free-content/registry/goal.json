@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "free-knowledge-source-registry",
   "state": "active",
-  "owner_request": "Work through every identified free-knowledge connector and get supported searches working. Report simple group/connector progress on every hourly run, including unchanged runs. Diagnose blockers and try useful permitted fixes, retries or alternatives; keep making progress independently.",
+  "owner_request": "Deploy the five previously completed connectors, then actively recover all 44 fixed technical/unfinished connectors. Report simple group/connector progress every hourly run; saved failures remain open until working or explicitly accepted by the owner.",
   "tracking_issue": "https://github.com/ddk220-light/MyBookshelf-web/issues/164",
   "branch": "research/free-content-discovery-expansion",
   "milestones": [
@@ -31,7 +31,7 @@
   ],
   "execution": {
     "batch_size": "Actively recover the fixed original 44 connectors each run; checkpoint small batches. No daily quota.",
-    "cursor": "Release PR #180 after GitHub CI; NASA, Lever Press and Caltech recovered with ten examples each. Original44:5working,39remaining. Next: Bharat Skills published trade book metadata, Worldreader BookSmart search, NSDC current curriculum route; retain NCERT503/DOABtimeout. Read technical-recovery-goal.json.",
+    "cursor": "Production PR #180 is deployed and verified; four new research recoveries give original44 goal6working/38remaining. Next: documented USA maps/API alternatives, least-covered groups, and remaining unchecked original44 entries. Avoid blind repeats of NCERT503, DOABtimeout, Worldreaderrobots400 and NSDCnavigation-only. Read technical-recovery-goal.json.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
@@ -50,20 +50,20 @@
         "fallback": "Execution started in this conversation; corpus capture, historical-source backfill and new Python inventory queries performed."
       },
       "last_observed_enabled": true,
-      "verified_at": "2026-11-06T05:20:54Z",
+      "verified_at": "2026-11-06T06:02:02.941271+00:00",
       "next_run_time_reported": null,
       "verification_note": "Automation update succeeded and confirmed is_enabled:true; hourly continuation resumes the fixed44-item goal.",
-      "last_run_time_reported": "2026-11-05T20:34:26.521581+00:00",
-      "automation_prompt_updated_at": "2026-11-05T17:22:03.158466+00:00"
+      "last_run_time_reported": "2026-11-05T21:39:25.674406+00:00",
+      "automation_prompt_updated_at": "2026-11-06T05:21:15.481186+00:00"
     },
     "completion_audit": "completion-audit.json",
     "last_checkpoint": {
-      "observed_at": "2026-11-06T05:50:08.567803+00:00",
+      "observed_at": "2026-11-06T06:02:02.941271+00:00",
       "source_records": 134,
-      "verified_examples": 747,
-      "query_verified_sources": 71,
+      "verified_examples": 757,
+      "query_verified_sources": 72,
       "source_dossiers_complete": 2,
-      "captured_text_documents": 129,
+      "captured_text_documents": 130,
       "indexed_binary_assets": 221,
       "existing_links_triaged": 615,
       "new_untriaged_links": 0,
@@ -84,18 +84,20 @@
         "new_working_connectors": [
           "nasa-image-video-library",
           "lever-press",
-          "caltech-thesis"
+          "caltech-thesis",
+          "bharat-skills"
         ],
-        "new_verified_examples": 30,
-        "research_tests": 272,
-        "production_changed": false
+        "new_verified_examples": 40,
+        "research_tests": 274,
+        "production_release_pr": 180,
+        "production_enabled_sources": 21
       },
-      "validation": "272 research tests and registry/evidence checks pass.",
+      "validation": "274 research tests pass; capture/index/audit, registry validation and git diff --check pass. Zero missing/mismatched capture hashes; historical and partial dossiers remain incomplete.",
       "goal_complete": false,
-      "previous_saved_commit": "efa57c5378e38506b12ba9cceb746b1bbd364355",
-      "backlog_archive": "analysis/external/github-backlog-current.json",
-      "backlog_update_state": "Issues164-170 and PR161 read back and archived after metadata fixes",
-      "research_commit": "a73f406",
+      "previous_saved_commit": "efbed27",
+      "backlog_archive": "runs/technical-recovery-20261106/backlog-checkpoint.json",
+      "backlog_update_state": "Issues #164–170 updated with 72 working, 61 blocked, 6/44 recovery progress and the verified separate production release; updated bodies archived.",
+      "research_commit": "efbed27 (previous saved checkpoint; this checkpoint commit is recorded in Git)",
       "backlog_issues_updated": [
         164,
         165,
@@ -105,20 +107,20 @@
         169,
         170
       ],
-      "backlog_verified_at": "2026-11-06T02:24:54.280795+00:00",
+      "backlog_verified_at": "2026-11-06 05:58:20 UTC",
       "pending_primary_document_entity_reviews": 453,
       "pending_corpus_entity_reviews": 126,
       "query_status": {
         "total": 133,
-        "working": 68,
-        "blocked_or_failed": 65,
+        "working": 72,
+        "blocked_or_failed": 61,
         "still_checking": 0,
-        "not_working_verified": 65,
+        "not_working_verified": 61,
         "assessed_or_deferred": 133,
         "remaining_to_assess": 0,
-        "passing_query_examples": 717
+        "passing_query_examples": 757
       },
-      "owner_pause": true,
+      "owner_pause": false,
       "blocker_access_report": "../BLOCKED_CONNECTOR_ACCESS_REPORT.md",
       "metadata_fix_report": "../METADATA_LINK_FIXES.md"
     },
@@ -127,16 +129,17 @@
       "reason": "No native chat Goal control is exposed in the available tools; scheduler run-now returns HTTP 404. A saved goal and schedule are not the native feature."
     },
     "current_run": {
-      "state": "active",
+      "state": "checkpointed",
       "started_at": "2026-11-06T05:20:53.568628+00:00",
       "scope": "Five-connector production release plus44-connector technical research recovery",
-      "active_detached_worker": false
+      "active_detached_worker": false,
+      "finished_at": "2026-11-06T06:02:02.941271+00:00"
     },
     "coverage_audit": "coverage-audit.json",
     "next_actions": [
       {
         "priority": 1,
-        "task": "All currently recorded connectors have been checked. Prioritize blocked G06 language/culture/media (4 Working) then G02 learning/technical (9 Working). Review official policy/API/export documentation for a permitted alternative or recovery signal; keep unchanged access restrictions waiting."
+        "task": "Continue the fixed original44 list: 6 working,38 remaining. Prioritize the 34 entries not yet rechecked in this pass and permitted alternatives in G06/G04; do not repeat the four fresh unchanged blocks without a useful trigger."
       },
       {
         "priority": 2,
@@ -3248,37 +3251,37 @@
         "priority_reason": "Fullqualification andindependentorigintargetremainopen despitequeryevidence; civiccellsneedUSAandIndiaclosure."
       }
     ],
-    "completion_automation_verified_at": "2026-11-06T02:21:12.414051+00:00",
+    "completion_automation_verified_at": "2026-11-06T06:02:02.941271+00:00",
     "completion_automation_enabled": true,
     "original_status_reporter_enabled": false,
     "scheduled_task_snapshot": "scheduled-task.json",
     "connector_progress": {
-      "observed_at": "2026-11-06T02:21:12.414051+00:00",
+      "observed_at": "2026-11-06T06:02:02.941271+00:00",
       "totals": {
         "total": 133,
-        "working": 68,
-        "blocked_or_failed": 65,
+        "working": 72,
+        "blocked_or_failed": 61,
         "still_checking": 0,
-        "not_working_verified": 65,
+        "not_working_verified": 61,
         "assessed_or_deferred": 133,
         "remaining_to_assess": 0,
-        "passing_query_examples": 717
+        "passing_query_examples": 757
       },
       "groups": [
         {
           "id": "G01",
           "name": "Books, children’s books and audiobooks",
           "total": 39,
-          "working": 25,
-          "blocked_or_failed": 14,
+          "working": 26,
+          "blocked_or_failed": 13,
           "still_checking": 0
         },
         {
           "id": "G02",
           "name": "Learning and technical documentation",
           "total": 14,
-          "working": 9,
-          "blocked_or_failed": 5,
+          "working": 10,
+          "blocked_or_failed": 4,
           "still_checking": 0
         },
         {
@@ -3301,35 +3304,34 @@
           "id": "G05",
           "name": "Research papers and scholarly sources",
           "total": 22,
-          "working": 10,
-          "blocked_or_failed": 12,
+          "working": 11,
+          "blocked_or_failed": 11,
           "still_checking": 0
         },
         {
           "id": "G06",
           "name": "Language, culture and media",
           "total": 12,
-          "working": 4,
-          "blocked_or_failed": 8,
+          "working": 5,
+          "blocked_or_failed": 7,
           "still_checking": 0
         }
       ],
       "previous_report": {
-        "total": 134,
-        "working": 63,
-        "blocked_or_failed": 71,
+        "total": 133,
+        "working": 68,
+        "blocked_or_failed": 65,
         "still_checking": 0,
-        "not_working_verified": 71,
-        "assessed_or_deferred": 134,
+        "not_working_verified": 65,
+        "assessed_or_deferred": 133,
         "remaining_to_assess": 0,
-        "passing_query_examples": 667
+        "passing_query_examples": 717
       },
       "new_working": [
-        "open-book-publishers",
-        "helsinki-university-press",
-        "project-madurai",
-        "sugamya-pustakalaya",
-        "openstax"
+        "nasa-image-video-library",
+        "lever-press",
+        "caltech-thesis",
+        "bharat-skills"
       ],
       "new_blocked": [],
       "excluded": [
@@ -3350,15 +3352,16 @@
       "requested_by": "owner",
       "reason": "Pause hourly runs; report 71 blocked/failed and public signup/permission/restriction routes",
       "observed_at": "2026-11-05T22:42:52.422848+00:00",
-      "completion_automation_enabled": true,
+      "completion_automation_enabled": false,
       "legacy_status_reporter_enabled": false,
       "resumption": "Owner requested active completion of all44 technical cases on2026-11-06",
-      "resumed_at": "2026-11-06T05:20:53.568628+00:00"
+      "resumed_at": "2026-11-06T05:20:53.568628+00:00",
+      "historical_note": "This object records the earlier owner pause. Current completion automation resumed at resumed_at; current state is in continuation and completion_automation_enabled."
     },
     "active_recovery_goal": "technical-recovery-goal.json"
   },
   "constraints": [
-    "Research only; do not enable app sources, import runtime catalogs or deploy.",
+    "The five-connector production release was separately authorized, deployed and verified in PR #180. Recurring recovery work remains research only: no automatic runtime imports, activation or deployment.",
     "No new database service, SQL, Redis, paid API or account setup.",
     "No CAPTCHA/WAF bypass or bulk full-work copying; retain small metadata evidence.",
     "Free reader login is acceptable when the catalog is queryable; label account requirements and do not create accounts automatically."
@@ -3405,10 +3408,10 @@
       "blocked_or_failed": "Investigation deferred with a concrete access/policy/API/rights limitation; not a permanent outage claim.",
       "still_checking": "Known candidate without completed current query verification and not deferred."
     },
-    "remaining_definition": "0 Still checking connectors remain unassessed; 71 Blocked/failed have concrete recorded blockers. 71 lack working-query verification; blocked does not mean unchecked.",
+    "remaining_definition": "0 Still checking remain unassessed; 61 Blocked/failed still lack working queries. The fixed technical-recovery subset has 6 Working and 38 remaining of44.",
     "supported_scope_required": true,
     "deeper_dossier_and_geography_audits": "Retained as separate research-quality follow-up; do not describe them as the number of working search connectors.",
-    "production_note": "Research-query verification does not imply activation in the app. Existing production state unchanged.",
+    "production_note": "21 app sources connected after PR #180, including the five previously completed metadata connectors. The72 working research connectors are a separate inventory, not72 deployed sources.",
     "status_files": [
       "connector-status.json",
       "connector-status.csv"
@@ -3424,7 +3427,7 @@
     ],
     "blocker_reporting": "Give plain causes, changed/new blocked connectors, attempts and next decisions; group recurring reasons and link the full connector list.",
     "pause_when_provider_blocked": false,
-    "scheduled_reporting_paused_by_owner": true
+    "scheduled_reporting_paused_by_owner": false
   },
-  "updated_at": "2026-11-06T05:20:53.568628+00:00"
+  "updated_at": "2026-11-06T06:02:02.941271+00:00"
 }

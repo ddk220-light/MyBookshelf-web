@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Production and recovery, 6 November 2026:** PR #180 is deployed at mybookshelf.cloud (`d406469`, Vercel `dpl_9ACDFzr9QNmqq9yNg4hzzKCcq9EZ`). All five new anonymous searches pass; 21 app sources connected. Separate research now has 72 working connectors/757 examples; original 44-item recovery goal has 6 working, 38 remaining. Hourly completion enabled. [Report and evidence](research/free-content/TECHNICAL_RECOVERY_20261106.md). Earlier entries below are historical.
+
 **Technical recovery, 6 November 2026:** NASA Images, Lever Press and CaltechTHESIS add 30 verified queries: 71 working of 133 active connectors. The fixed original 44 now have 5 working and 39 remaining. Hourly completion is enabled; [current recovery report](research/free-content/TECHNICAL_RECOVERY_20261106.md). PR #180 is the separate five-connector production release and is awaiting final CI. Earlier entries below are historical.
 
 **Owner resumed work, 6 November 2026:** The five newly completed connectors are being integrated in isolated `feat/metadata-connector-release` from current main. The fixed 44-item technical-recovery goal is active (2 already Working, 42 remaining); hourly completion is enabled again, legacy documentation reporter remains disabled. See [recovery goal](research/free-content/registry/technical-recovery-goal.json). Research collectors must check locks/remote freshness; production release uses its separate worktree.

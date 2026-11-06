@@ -33,11 +33,12 @@
   ],
   "evidence": [
     "analysis/documents.jsonl",
-    "runs/books-query-export-docs-20261105eq/observations.jsonl"
+    "runs/books-query-export-docs-20261105eq/observations.jsonl",
+    "runs/technical-recovery-20261106/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T22:02:28.718842+00:00",
+  "last_reviewed_at": "2026-11-06T05:55:50.990957+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Retry after the official policy endpoint recovers or a documented permitted export becomes available.",
+  "next_action": "Wait for policy endpoint recovery or a documented reachable export.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -359,7 +360,7 @@
       "status": "historical-context-needs-reconciliation"
     },
     {
-      "document_id": "93076963a82c377392f2b334b721fbe01f4f058785f9d5dd14d96211949ec4b6",
+      "document_id": "aeea5513c1fe5883792c59fba66c2853a683fb21ba3851ed4bbb07183691dadd",
       "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106.md",
       "line": 10,
       "heading": "Technical connector recovery — 6 November 2026",
@@ -368,15 +369,24 @@
     }
   ],
   "recovery": {
-    "reason": "The official documentation host served HTML at robots.txt, so its policy could not be established.",
-    "attempt": "Checked the existing official metadata documentation URL and validated the robots response type.",
-    "result": "robots200 was54147bytes of HTML instead of usable policy. Documentation/query calls skipped; no alternate hostname or hidden repository API used.",
-    "decision": "wait_for_usable_policy",
-    "next_action": "Retry after the official policy endpoint recovers or a documented permitted export becomes available.",
-    "retry_trigger": "Retry after the official policy endpoint recovers or a documented permitted export becomes available.",
-    "owner_action_required": false,
-    "evidence": [
-      "runs/books-query-export-docs-20261105eq/observations.jsonl"
-    ]
-  }
+    "reviewed_at": "2026-11-06T05:55:50.990948+00:00",
+    "reason": "Repository robots timed out; OAI target not requested.",
+    "attempt": "Tried the operator-documented directory.doabooks.org OAI route after finding its metadata documentation.",
+    "result": "Repository robots timed out; OAI target not requested.",
+    "decision": "Wait for policy endpoint recovery or a documented reachable export."
+  },
+  "historical_recovery": [
+    {
+      "reason": "The official documentation host served HTML at robots.txt, so its policy could not be established.",
+      "attempt": "Checked the existing official metadata documentation URL and validated the robots response type.",
+      "result": "robots200 was54147bytes of HTML instead of usable policy. Documentation/query calls skipped; no alternate hostname or hidden repository API used.",
+      "decision": "wait_for_usable_policy",
+      "next_action": "Retry after the official policy endpoint recovers or a documented permitted export becomes available.",
+      "retry_trigger": "Retry after the official policy endpoint recovers or a documented permitted export becomes available.",
+      "owner_action_required": false,
+      "evidence": [
+        "runs/books-query-export-docs-20261105eq/observations.jsonl"
+      ]
+    }
+  ]
 }

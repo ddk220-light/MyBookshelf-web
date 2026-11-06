@@ -1,3 +1,7 @@
+## 6 November 2026 — production verified, recovery continues
+
+Production PR #180: five new connectors, 21 total; anonymous API and mobile checks pass. Research: 72 working, 757 examples, 274 tests. Original 44 recovery: 6 working, 38 remaining. Hourly task remains enabled.
+
 ## 6 November 2026 — technical recovery resumed
 
 71 working connectors, 747 verified examples. Three new recoveries: NASA Images, Lever Press and CaltechTHESIS. Original 44-item goal: 5 working, 39 remaining. Hourly completion enabled. 272 research tests pass. [Recovery details](../TECHNICAL_RECOVERY_20261106.md).
