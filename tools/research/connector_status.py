@@ -15,6 +15,8 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'cmda-opencity-catalog': 'Local title/OpenCity resource-UUID search over29 CMDA-attributed Chennai Master Plan2026 publication records; third-party index IDs, no native CMDA edition-ID, direct catalog, PDF, parcel/owner or legal-currency verification',
+    'openalex-repository-books': 'Live OpenAlex location title search restricted to the mapped repository, reported-OA books and verified native OAI IDs; first5 rows filtered to literal title tokens. Direct repository access, complete holdings and reading remain unverified',
     'usgs-topo-metadata': 'Local title/state/native product-auth-ID search over65240 current US Topo map metadata records; version UUIDs preserved, no map downloads, historical maps or other National Map layers',
     'nhm-nuhm-catalog': 'Local title-token/native file-URL search over11 published NHSRC NUHM guideline links; central NHM catalog, site-wide search, document content and clinical currency not verified',
     'chicago-zoning': 'Live Chicago SODA zoning-class equality queries; first2 native GLOBALID/OBJECTID features, five metadata fields; no geometry/address/personal-owner data',

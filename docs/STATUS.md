@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Recovery K checkpoint, 6 November 2026:** 99 Working / 34 Blocked/failed / 0 Still checking of 133 active connectors; 1024 current passing examples. Original44: 33 Working / 11 remaining. Newly recovered: doab, oapen. 395 research tests and evidence checks pass. Research only; paused by owner. [Evidence and scope](research/free-content/TECHNICAL_RECOVERY_20261106K.md). Earlier entries are historical.
+
 **Recovery J checkpoint, 6 November 2026:** 97 Working / 36 Blocked/failed / 0 Still checking of 133 active connectors; 1004 current passing examples. Original44: 31 Working / 13 remaining. Newly recovered: nhm-guidelines, usgs-national-map. 382 research tests and evidence checks pass. Research only; continuation enabled. [Evidence and scope](research/free-content/TECHNICAL_RECOVERY_20261106J.md). Earlier entries are historical.
 
 **Recovery I checkpoint, 6 November 2026:** 95 Working / 38 Blocked/failed / 0 Still checking of 133 active connectors; 984 current passing examples. Original44: 29 Working / 15 remaining. Newly recovered: snapplify, worldreader, shodhganga. 368 research tests and evidence checks pass. Research only; continuation enabled. [Evidence and scope](research/free-content/TECHNICAL_RECOVERY_20261106I.md). Earlier entries are historical.

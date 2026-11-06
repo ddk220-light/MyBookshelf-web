@@ -46,18 +46,22 @@
     "runs/coverage-gap-docs-20261105p/observations.jsonl",
     "runs/technical-recovery-20261106c/observations.jsonl",
     "runs/technical-recovery-20261106c/book-attempts.jsonl",
-    "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
+    "runs/technical-recovery-20261106h/policy-diagnostics.jsonl",
+    "runs/technical-recovery-20261106k/observations.jsonl",
+    "runs/technical-recovery-20261106k/opencity-policy-review.json",
+    "runs/technical-recovery-20261106k/cmda-opencity-catalog.html",
+    "runs/technical-recovery-20261106k/cmda-opencity-resource.html"
   ],
   "limitations": [
     "Saved robots HTTP503 prevented target request. No publication or dataset content was retrieved.",
     "One municipal planning publication candidate; master-plan volumes, sheets, amendments, zones and ward layers are records/views, not independent origins."
   ],
-  "last_reviewed_at": "2026-11-06T10:50:45.872381+00:00",
+  "last_reviewed_at": "2026-11-06T13:31:43.009741+00:00",
   "evidence_observation_dates": [
     "2026-11-05T08:33:13.773411+00:00"
   ],
   "fresh_query_verification": false,
-  "next_action": "Wait for provider recovery; next timed policy check no earlier than16:00UTC, then inspect public planning-map metadata only.",
+  "next_action": "If owner resumes, finish bounded publication-title query verification against the saved public metadata capture. Keep OpenCity attribution/IDs explicit; do not call disallowed API or download PDFs.",
   "analysis_refs": [
     {
       "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
@@ -89,6 +93,22 @@
       "line": 11,
       "heading": "Technical recovery J — 6 November 2026",
       "text": "USGS investigation follows the primary National Map page’s documented US Topo Availability service. Provider failures, source scope and query outcomes are recorded separately. Timed retries for Gutendex, Chicago and India Code remain due no earlier than18:00UTC; FDIC, CMDA and Tamil Nadu map policy retries no earlier than16:00UTC. No repeated denied requests or account creation.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "4dd0c39878ff12a65f6f5d20c98323e7276260b9c67e15e94a796f2a1d69cd39",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106K.md",
+      "line": 13,
+      "heading": "Saved unfinished alternatives",
+      "text": "- CMDA: the alternate official portal policy redirects to a session route. OpenCity publicly attributes29 Chennai Master Plan2026 publication records toCMDA. Its public HTML catalog is allowed and its API is disallowed. A bounded metadata parser and5 tests are saved; native OpenCity UUIDs are explicit, CMDA publication-native IDs are unknown. No ten-case verification or PDF request was completed before pause. License is not provided; no content reuse or legal-currency claim.\n- FDIC: the separately published Money Smart games homepage returned200 after policy404. Its14-game metadata is saved for later analysis; no game, parser/query verification, account or content download occurred.\n- Bloom: current docs describe public browser search independently of the key-required OPDS API. Main-site policy still redirects to an app fragment, so no browser query was sent. A key is not asserted as mandatory for every public search path.\n- Other unresolved sources retain their saved backoff and policy/access triggers. No timed retries were due during this run.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "4dd0c39878ff12a65f6f5d20c98323e7276260b9c67e15e94a796f2a1d69cd39",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106K.md",
+      "line": 18,
+      "heading": "Saved unfinished alternatives",
+      "text": "Two tests initially collided with the active collector lock. Rerunning after collection finished passed390 tests; the final suite also includes the5 CMDA prototype tests. No duplicate collector was launched. Evidence, failures, prototypes and pause state are saved in [the run directory](registry/runs/technical-recovery-20261106k/). [Per-connector status](registry/connector-status.csv).",
       "status": "historical-context-needs-reconciliation"
     }
   ],
@@ -426,17 +446,36 @@
           "runs/technical-recovery-20261106c/book-attempts.jsonl"
         ]
       }
+    },
+    {
+      "superseded_at": "2026-11-06T13:31:43.009741+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T10:50:45.872381+00:00",
+        "reason": "Policy service still returns503 with upstream connection timeout after more than4hours backoff.",
+        "attempt": "One bounded policy check after the prior06:46 failure.",
+        "result": "503 body identifies upstream connection timeout; no planning catalog request sent.",
+        "decision": "wait_for_documented_recovery",
+        "next_action": "Wait for provider recovery; next timed policy check no earlier than16:00UTC, then inspect public planning-map metadata only.",
+        "evidence": [
+          "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
+        ]
+      },
+      "next_action": "Wait for provider recovery; next timed policy check no earlier than16:00UTC, then inspect public planning-map metadata only."
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T10:50:45.872381+00:00",
-    "reason": "Policy service still returns503 with upstream connection timeout after more than4hours backoff.",
-    "attempt": "One bounded policy check after the prior06:46 failure.",
-    "result": "503 body identifies upstream connection timeout; no planning catalog request sent.",
-    "decision": "wait_for_documented_recovery",
-    "next_action": "Wait for provider recovery; next timed policy check no earlier than16:00UTC, then inspect public planning-map metadata only.",
+    "reviewed_at": "2026-11-06T13:31:43.009741+00:00",
+    "reason": "Official alternate portal policy redirects to a session/sign-out route; main-site503 backoff preserved. Public OpenCity page is accessible, but its API is robots-disallowed.",
+    "attempt": "Inspect the independent public OpenCity CMDA-attributed catalog, search form and representative resource metadata.",
+    "result": "29 metadata records parsed with explicit OpenCity UUIDs; native CMDA IDs/edition links unverified. Metadata-only parser prototype and5 tests saved; ten real query cases not executed before owner pause.",
+    "decision": "paused_by_owner_with_unfinished_documented_alternative",
+    "next_action": "If owner resumes, finish bounded publication-title query verification against the saved public metadata capture. Keep OpenCity attribution/IDs explicit; do not call disallowed API or download PDFs.",
     "evidence": [
-      "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
-    ]
+      "runs/technical-recovery-20261106k/observations.jsonl",
+      "runs/technical-recovery-20261106k/opencity-policy-review.json",
+      "runs/technical-recovery-20261106k/cmda-opencity-catalog.html",
+      "runs/technical-recovery-20261106k/cmda-opencity-resource.html"
+    ],
+    "owner_action_required": false
   }
 }

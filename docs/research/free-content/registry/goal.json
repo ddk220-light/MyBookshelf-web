@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "free-knowledge-source-registry",
-  "state": "active",
+  "state": "paused-by-owner",
   "owner_request": "Deploy the five previously completed connectors, then actively recover all 44 fixed technical/unfinished connectors. Report simple group/connector progress every hourly run; saved failures remain open until working or explicitly accepted by the owner.",
   "tracking_issue": "https://github.com/ddk220-light/MyBookshelf-web/issues/164",
   "branch": "research/free-content-discovery-expansion",
@@ -31,7 +31,7 @@
   ],
   "execution": {
     "batch_size": "Actively recover the fixed original 44 connectors each run; checkpoint small batches. No daily quota.",
-    "cursor": "Original44: 31 Working, 13 remaining. All have an initial recovery assessment. New recoveries: NHM through11 NHSRC NUHM guideline records and USGS through65240 current-US-Topo map metadata records; ten passing title queries each. Central NHM catalog, other National Map layers and full reading remain unverified. LINCS ERIC policy503 and USGS availability policy403 preserved. FDIC official module table remains a lead awaiting policy recovery. Continue documented alternatives for remaining blocked providers, with backoff for temporary failures. Do not repeat denied routes.",
+    "cursor": "Paused by owner. Original44:33 Working,11 unresolved. DOAB/OAPEN indexed book searches recovered; CMDA metadata prototype and FDIC games capture saved unfinished. Resume only on owner instruction; retain backoff/access restrictions.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
@@ -49,49 +49,49 @@
         "scheduler_trigger": "failed: HTTP 404 Action not found",
         "fallback": "Execution started in this conversation; corpus capture, historical-source backfill and new Python inventory queries performed."
       },
-      "last_observed_enabled": true,
-      "verified_at": "2026-11-06T12:38:00.271Z",
+      "last_observed_enabled": false,
+      "verified_at": "2026-11-06T13:29:59.815089+00:00",
       "next_run_time_reported": null,
-      "verification_note": "Read-only automation peek confirms hourly recovery enabled; old status reporter disabled. No schedule mutation in run J.",
-      "last_run_time_reported": "2026-11-06T12:19:18.043559+00:00",
+      "verification_note": "Owner requested pause; automation update confirmed is_enabled:false. No automatic resumption.",
+      "last_run_time_reported": "2026-11-06T13:16:38.791542+00:00",
       "automation_prompt_updated_at": "2026-11-06T05:21:15.481186+00:00"
     },
     "completion_audit": "completion-audit.json",
     "last_checkpoint": {
-      "observed_at": "2026-11-06T12:39:05.237846+00:00",
-      "research_commit": "b2aa9b2c8a7f96788cb4a9cff5418b3d27411b54",
-      "previous_saved_commit": "b2aa9b2c8a7f96788cb4a9cff5418b3d27411b54",
+      "observed_at": "2026-11-06T13:33:40.116404+00:00",
+      "research_commit": "dc11c8a15867a17131ea11b2ff0e825bf3e96a20",
+      "previous_saved_commit": "dc11c8a15867a17131ea11b2ff0e825bf3e96a20",
       "source_records": 134,
-      "verified_examples": 1004,
-      "query_verified_sources": 96,
+      "verified_examples": 1024,
+      "query_verified_sources": 98,
       "source_dossiers_complete": 2,
-      "captured_text_documents": 136,
+      "captured_text_documents": 137,
       "indexed_binary_assets": 221,
       "query_status": {
         "total": 133,
-        "working": 97,
-        "blocked_or_failed": 36,
+        "working": 99,
+        "blocked_or_failed": 34,
         "still_checking": 0,
-        "not_working_verified": 36,
+        "not_working_verified": 34,
         "assessed_or_deferred": 133,
         "remaining_to_assess": 0,
-        "passing_query_examples": 1004
+        "passing_query_examples": 1024
       },
-      "original44_working": 31,
-      "original44_remaining": 13,
+      "original44_working": 33,
+      "original44_remaining": 11,
       "current_batch": {
         "new_working_connectors": [
-          "nhm-guidelines",
-          "usgs-national-map"
+          "doab",
+          "oapen"
         ],
         "new_verified_examples": 20,
-        "research_tests": 382,
-        "original44_working": 31,
-        "original44_remaining": 13
+        "research_tests": 395,
+        "original44_working": 33,
+        "original44_remaining": 11
       },
-      "validation": "Capture/index/audit and registry validation pass; 382 research tests pass; supported scoped queries, no activation.",
+      "validation": "Capture/index/audit and registry validation pass; 395 research tests pass; supported scoped queries, no activation.",
       "goal_complete": false,
-      "backlog_archive": "runs/technical-recovery-20261106j/backlog-checkpoint.json",
+      "backlog_archive": "runs/technical-recovery-20261106k/backlog-checkpoint.json",
       "backlog_issues_updated": [
         164,
         165,
@@ -101,42 +101,30 @@
         169,
         170
       ],
-      "backlog_verified_at": "2026-11-06T12:39:05.237846+00:00",
-      "backlog_update_state": "Issues164–170 and PR161 updated and read back:97 Working/36 Blocked; original44 31 Working/13 unresolved;1004 passing examples;382 tests.",
-      "automation_verified_at": "2026-11-06T12:38:00.271Z",
-      "research_commit_role": "Previous successfully pushed checkpoint; final continuation commit is branch HEAD containing this file"
+      "backlog_verified_at": "2026-11-06T13:33:40.116404+00:00",
+      "backlog_update_state": "Issues164–170 and PR161 updated for owner pause:99Working/34Blocked;33/44Working;1024examples;395tests.",
+      "automation_verified_at": "2026-11-06T13:29:59.815089+00:00",
+      "research_commit_role": "Previous pushed checkpoint; final pause commit is branch HEAD containing this file"
     },
     "native_chat_goal": {
       "activated": false,
       "reason": "No native chat Goal control is exposed in the available tools; scheduler run-now returns HTTP 404. A saved goal and schedule are not the native feature."
     },
     "current_run": {
-      "state": "checkpointed-awaiting-continuation",
-      "run_id": "technical-recovery-20261106j",
-      "started_at": "2026-11-06T12:20:26.011176+00:00",
-      "heartbeat_at": "2026-11-06T12:39:05.237846+00:00",
+      "run_id": "technical-recovery-20261106k",
+      "state": "paused-by-owner-checkpointed",
+      "started_at": "2026-11-06T13:18:19.801303+00:00",
+      "heartbeat_at": "2026-11-06T13:33:40.116404+00:00",
       "collector_active": false,
       "active_detached_worker": false,
-      "scope": "Research-only documented query recovery; no production activation; saved service backoff respected",
-      "checkpointed_at": "2026-11-06T12:39:05.237846+00:00"
+      "scope": "Research-only documented alternatives; retries16:00/18:00UTC not due, respect saved backoff",
+      "checkpointed_at": "2026-11-06T13:33:40.116404+00:00"
     },
     "coverage_audit": "coverage-audit.json",
     "next_actions": [
       {
-        "priority": 1,
-        "task": "Original44: 31 Working, 13 remaining. All have an initial recovery assessment. New recoveries: NHM through11 NHSRC NUHM guideline records and USGS through65240 current-US-Topo map metadata records; ten passing title queries each. Central NHM catalog, other National Map layers and full reading remain unverified. LINCS ERIC policy503 and USGS availability policy403 preserved. FDIC official module table remains a lead awaiting policy recovery. Continue documented alternatives for remaining blocked providers, with backoff for temporary failures. Do not repeat denied routes. Saved backoff:16:00UTC FDIC/CMDA/Tamil Nadu;18:00UTC Gutendex/Chicago/India Code/LINCS. No active detached collector."
-      },
-      {
-        "priority": 2,
-        "task": "Investigate blocked connectors only with a useful policy/access/recovery/documented-alternative trigger. Retry temporary failures with backoff; never bypass denied paths or create accounts."
-      },
-      {
-        "priority": 3,
-        "task": "Keep exact native work/edition/version IDs, scoped relevance and bounded page/empty/error observations. Gutendex and Project Gutenberg share a content origin; do not count the shared catalog as independent supply."
-      },
-      {
-        "priority": 4,
-        "task": "Fetch and verify writer/lock/remote freshness. Validate evidence, refresh all status/goal counts, push small research checkpoints, update164-170/PR and report all six groups every run."
+        "task": "Paused. Preserve this checkpoint; resume saved original44 work only on owner instruction.",
+        "blocked_by": "owner_pause"
       }
     ],
     "last_dossier_run": {
@@ -3236,29 +3224,29 @@
         "priority_reason": "Fullqualification andindependentorigintargetremainopen despitequeryevidence; civiccellsneedUSAandIndiaclosure."
       }
     ],
-    "completion_automation_verified_at": "2026-11-06T12:38:00.271Z",
-    "completion_automation_enabled": true,
+    "completion_automation_verified_at": "2026-11-06T13:29:59.815089+00:00",
+    "completion_automation_enabled": false,
     "original_status_reporter_enabled": false,
     "scheduled_task_snapshot": "scheduled-task.json",
     "connector_progress": {
-      "observed_at": "2026-11-06T12:36:35.445698+00:00",
+      "observed_at": "2026-11-06T13:31:44.250711+00:00",
       "totals": {
         "total": 133,
-        "working": 97,
-        "blocked_or_failed": 36,
+        "working": 99,
+        "blocked_or_failed": 34,
         "still_checking": 0,
-        "not_working_verified": 36,
+        "not_working_verified": 34,
         "assessed_or_deferred": 133,
         "remaining_to_assess": 0,
-        "passing_query_examples": 1004
+        "passing_query_examples": 1024
       },
       "groups": [
         {
           "id": "G01",
           "name": "Books, children’s books and audiobooks",
           "total": 39,
-          "working": 32,
-          "blocked_or_failed": 7,
+          "working": 34,
+          "blocked_or_failed": 5,
           "still_checking": 0
         },
         {
@@ -3304,17 +3292,17 @@
       ],
       "previous_report": {
         "total": 133,
-        "working": 95,
-        "blocked_or_failed": 38,
+        "working": 97,
+        "blocked_or_failed": 36,
         "still_checking": 0,
-        "not_working_verified": 38,
+        "not_working_verified": 36,
         "assessed_or_deferred": 133,
         "remaining_to_assess": 0,
-        "passing_query_examples": 984
+        "passing_query_examples": 1004
       },
       "new_working": [
-        "nhm-guidelines",
-        "usgs-national-map"
+        "doab",
+        "oapen"
       ],
       "status_list": "connector-status.csv",
       "new_provider_errors_require_owner_action": false
@@ -3329,15 +3317,25 @@
     ],
     "pause": {
       "requested_by": "owner",
-      "reason": "Pause hourly runs; report 71 blocked/failed and public signup/permission/restriction routes",
-      "observed_at": "2026-11-05T22:42:52.422848+00:00",
+      "reason": "Pause the scheduled task then",
+      "observed_at": "2026-11-06T13:33:40.116404+00:00",
       "completion_automation_enabled": false,
       "legacy_status_reporter_enabled": false,
-      "resumption": "Owner requested active completion of all44 technical cases on2026-11-06",
-      "resumed_at": "2026-11-06T05:20:53.568628+00:00",
-      "historical_note": "This object records the earlier owner pause. Current completion automation resumed at resumed_at; current state is in continuation and completion_automation_enabled."
+      "resumption": "Only on new owner instruction"
     },
-    "active_recovery_goal": "technical-recovery-goal.json"
+    "active_recovery_goal": "technical-recovery-goal.json",
+    "pause_history": [
+      {
+        "requested_by": "owner",
+        "reason": "Pause hourly runs; report 71 blocked/failed and public signup/permission/restriction routes",
+        "observed_at": "2026-11-05T22:42:52.422848+00:00",
+        "completion_automation_enabled": false,
+        "legacy_status_reporter_enabled": false,
+        "resumption": "Owner requested active completion of all44 technical cases on2026-11-06",
+        "resumed_at": "2026-11-06T05:20:53.568628+00:00",
+        "historical_note": "This object records the earlier owner pause. Current completion automation resumed at resumed_at; current state is in continuation and completion_automation_enabled."
+      }
+    ]
   },
   "constraints": [
     "The five-connector production release was separately authorized, deployed and verified in PR #180. Recurring recovery work remains research only: no automatic runtime imports, activation or deployment.",
@@ -3387,7 +3385,7 @@
       "blocked_or_failed": "Investigation deferred with a concrete access/policy/API/rights limitation; not a permanent outage claim.",
       "still_checking": "Known candidate without completed current query verification and not deferred."
     },
-    "remaining_definition": "Original44: 31 Working / 13 open. Overall 97 Working / 36 Blocked / 0 Still checking.",
+    "remaining_definition": "Original44: 33 Working / 11 open. Overall 99 Working / 34 Blocked / 0 Still checking.",
     "supported_scope_required": true,
     "deeper_dossier_and_geography_audits": "Retained as separate research-quality follow-up; do not describe them as the number of working search connectors.",
     "production_note": "Research queryability only; no production activation or deployment in this continuation.",
@@ -3408,5 +3406,5 @@
     "pause_when_provider_blocked": false,
     "scheduled_reporting_paused_by_owner": false
   },
-  "updated_at": "2026-11-06T12:39:05.237846+00:00"
+  "updated_at": "2026-11-06T13:33:40.116404+00:00"
 }

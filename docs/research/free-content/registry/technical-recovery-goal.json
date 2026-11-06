@@ -1,12 +1,12 @@
 {
   "id": "technical-connector-recovery-20261106",
-  "state": "active",
+  "state": "paused-by-owner",
   "owner_request": "For the 44 technical failure or unfinished research connectors, do another pass to make searches work; complete them all. Deploy the five newly completed connectors.",
   "created_at": "2026-11-06T05:20:53.568628+00:00",
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 13,
+  "remaining": 11,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -24,8 +24,8 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Robots redirects into the app instead of yielding a usable policy.",
-      "current_reason": "Documented OPDS metadata API requires an operator-issued account/key through enterprise subscription or content-sharing partnership; it is not open self-service API signup.",
-      "next_action": "Remain blocked pending approved partnership API key. Do not purchase enterprise service, create an account or send outreach under this research continuation.",
+      "current_reason": "Published browser search exists independently of the partnership OPDS key, but robots301 still redirects to an app-fragment URL.",
+      "next_action": "If resumed, inspect a usable public policy/anonymous browser route or an approved operator key; no account/outreach.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -39,6 +39,19 @@
           "evidence": [
             "runs/technical-recovery-20261106e/observations.jsonl"
           ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:31:43.009741+00:00",
+          "reason": "Published browser search exists independently of the partnership OPDS key, but robots301 still redirects to an app-fragment URL.",
+          "attempt": "Read current public search instructions and check main-site policy once for this newly documented route.",
+          "result": "No browser search sent; API access key requirement is not a blanket claim that all public search requires a key.",
+          "decision": "paused_by_owner_with_unfinished_documented_alternative",
+          "next_action": "If resumed, inspect a usable public policy/anonymous browser route or an approved operator key; no account/outreach.",
+          "evidence": [
+            "runs/technical-recovery-20261106k/observations.jsonl",
+            "runs/technical-recovery-20261106k/primary-contract-excerpts.json"
+          ],
+          "owner_action_required": false
         }
       ]
     },
@@ -46,10 +59,10 @@
       "id": "doab",
       "name": "DOAB",
       "group": "G01",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Robots returned HTML, so policy preflight stopped.",
-      "current_reason": "Officially documented Penn State metadata-export alternative reaches a public dataset page but file access returns a traffic-control/Turnstile challenge. Listed export is May2024 with updates explicitly paused; current primary catalog remains unavailable.",
-      "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
+      "current_reason": "",
+      "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -81,6 +94,23 @@
             "runs/technical-recovery-20261106h/observations.jsonl",
             "runs/technical-recovery-20261106h/psu-file-inventory.json",
             "runs/technical-recovery-20261106h/psu-export-access-review.json"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:25:53.106860+00:00",
+          "reason": "Direct repository/export access remains unavailable; current OpenAlex documentation supports independent repository-native location searches.",
+          "attempt": "Verify mapped repository source ID, available free allowance and native OAI records; add type:book,is_oa:true filters after scouting exposed nonbook/OA=false metadata; execute ten distinct title queries plus zero-result control.",
+          "result": "Ten passing live queries with literal title relevance and native IDs; both empty controls return0. OAPEN second page for a two-record title returns0 while retaining count2. No repository/reader/PDF requests.",
+          "decision": "working_with_openalex_repository_book_subset",
+          "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+            "runs/technical-recovery-20261106k/observations.jsonl",
+            "runs/technical-recovery-20261106k/query-controls.jsonl",
+            "examples/doab.jsonl",
+            "examples/doab.budget.jsonl",
+            "runs/technical-recovery-20261106k/repository-books-analysis.json"
           ]
         }
       ]
@@ -303,10 +333,10 @@
       "id": "oapen",
       "name": "OAPEN",
       "group": "G01",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Export-host policy redirects to login; repository policy timed out twice.",
-      "current_reason": "Officially documented Penn State metadata-export alternative reaches a public dataset page but file access returns a traffic-control/Turnstile challenge.",
-      "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
+      "current_reason": "",
+      "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -332,6 +362,23 @@
             "runs/technical-recovery-20261106h/psu-file-inventory.json",
             "runs/technical-recovery-20261106h/psu-export-access-review.json",
             "runs/technical-recovery-20261106h/oapen-official-export-contract.json"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:25:53.106860+00:00",
+          "reason": "Direct repository/export access remains unavailable; current OpenAlex documentation supports independent repository-native location searches.",
+          "attempt": "Verify mapped repository source ID, available free allowance and native OAI records; add type:book,is_oa:true filters after scouting exposed nonbook/OA=false metadata; execute ten distinct title queries plus zero-result control.",
+          "result": "Ten passing live queries with literal title relevance and native IDs; both empty controls return0. OAPEN second page for a two-record title returns0 while retaining count2. No repository/reader/PDF requests.",
+          "decision": "working_with_openalex_repository_book_subset",
+          "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+            "runs/technical-recovery-20261106k/observations.jsonl",
+            "runs/technical-recovery-20261106k/query-controls.jsonl",
+            "examples/oapen.jsonl",
+            "examples/oapen.budget.jsonl",
+            "runs/technical-recovery-20261106k/repository-books-analysis.json"
           ]
         }
       ]
@@ -643,8 +690,8 @@
       "group": "G03",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 403 before catalog retrieval.",
-      "current_reason": "Main FDIC policy403 and catalog policy503 remain; no new provider request without a useful recovery trigger.",
-      "next_action": "After a useful FDIC policy recovery signal, inspect the official adult/young-adult module metadata table and its published Download Data option. Separate catalog.fdic.gov timed policy retry remains no earlier than16:00UTC. No proxy or content download.",
+      "current_reason": "Main-site403 and catalog503 remain historical; independently published Money Smart games catalog returned200 after policy404.",
+      "next_action": "If resumed, inspect saved14-game metadata list for supported native identities and title queries. No accounts, gameplay, content harvesting or early catalog503 retry.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -678,6 +725,19 @@
           "retry_not_before": "2026-11-06T16:00:00Z",
           "evidence": [
             "runs/technical-recovery-20261106j/alternative-leads.json"
+          ],
+          "owner_action_required": false
+        },
+        {
+          "reviewed_at": "2026-11-06T13:31:43.009741+00:00",
+          "reason": "Main-site403 and catalog503 remain historical; independently published Money Smart games catalog returned200 after policy404.",
+          "attempt": "Discover and capture official playmoneysmart.fdic.gov as a documented alternative to denied curriculum/download routes.",
+          "result": "Public game-catalog HTML captured; record parser, native IDs and query examples not analyzed before owner pause. No game, account or content download.",
+          "decision": "paused_by_owner_with_unfinished_documented_alternative",
+          "next_action": "If resumed, inspect saved14-game metadata list for supported native identities and title queries. No accounts, gameplay, content harvesting or early catalog503 retry.",
+          "evidence": [
+            "runs/technical-recovery-20261106k/observations.jsonl",
+            "runs/technical-recovery-20261106k/fdic-public-games.html"
           ],
           "owner_action_required": false
         }
@@ -972,8 +1032,8 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 503.",
-      "current_reason": "Policy service still returns503 with upstream connection timeout after more than4hours backoff.",
-      "next_action": "Wait for provider recovery; next timed policy check no earlier than16:00UTC, then inspect public planning-map metadata only.",
+      "current_reason": "Official alternate portal policy redirects to a session/sign-out route; main-site503 backoff preserved. Public OpenCity page is accessible, but its API is robots-disallowed.",
+      "next_action": "If owner resumes, finish bounded publication-title query verification against the saved public metadata capture. Keep OpenCity attribution/IDs explicit; do not call disallowed API or download PDFs.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -997,6 +1057,21 @@
           "evidence": [
             "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
           ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:31:43.009741+00:00",
+          "reason": "Official alternate portal policy redirects to a session/sign-out route; main-site503 backoff preserved. Public OpenCity page is accessible, but its API is robots-disallowed.",
+          "attempt": "Inspect the independent public OpenCity CMDA-attributed catalog, search form and representative resource metadata.",
+          "result": "29 metadata records parsed with explicit OpenCity UUIDs; native CMDA IDs/edition links unverified. Metadata-only parser prototype and5 tests saved; ten real query cases not executed before owner pause.",
+          "decision": "paused_by_owner_with_unfinished_documented_alternative",
+          "next_action": "If owner resumes, finish bounded publication-title query verification against the saved public metadata capture. Keep OpenCity attribution/IDs explicit; do not call disallowed API or download PDFs.",
+          "evidence": [
+            "runs/technical-recovery-20261106k/observations.jsonl",
+            "runs/technical-recovery-20261106k/opencity-policy-review.json",
+            "runs/technical-recovery-20261106k/cmda-opencity-catalog.html",
+            "runs/technical-recovery-20261106k/cmda-opencity-resource.html"
+          ],
+          "owner_action_required": false
         }
       ]
     },
@@ -1471,8 +1546,8 @@
     }
   ],
   "progress": {
-    "working": 31,
-    "blocked_or_failed": 13,
+    "working": 33,
+    "blocked_or_failed": 11,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1480,38 +1555,41 @@
     "revisited_since_goal_started": 42
   },
   "current_run": {
-    "state": "checkpointed-awaiting-continuation",
-    "run_id": "technical-recovery-20261106j",
-    "started_at": "2026-11-06T12:20:26.011176+00:00",
-    "heartbeat_at": "2026-11-06T12:39:05.237846+00:00",
+    "run_id": "technical-recovery-20261106k",
+    "state": "paused-by-owner-checkpointed",
+    "started_at": "2026-11-06T13:18:19.801303+00:00",
+    "heartbeat_at": "2026-11-06T13:33:40.116404+00:00",
     "collector_active": false,
     "active_detached_worker": false,
-    "scope": "Research-only documented query recovery; no production activation; saved service backoff respected",
-    "checkpointed_at": "2026-11-06T12:39:05.237846+00:00"
+    "scope": "Research-only documented alternatives; retries16:00/18:00UTC not due, respect saved backoff",
+    "checkpointed_at": "2026-11-06T13:33:40.116404+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 31,
-  "updated_at": "2026-11-06T12:39:05.237846+00:00",
+  "working": 33,
+  "updated_at": "2026-11-06T13:33:40.116404+00:00",
   "latest_run": {
     "run_ids": [
-      "technical-recovery-20261106j"
+      "technical-recovery-20261106k"
     ],
     "new_working": [
-      "nhm-guidelines",
-      "usgs-national-map"
+      "doab",
+      "oapen"
     ],
     "remaining_goal_open": true,
     "new_verified_examples": 20,
     "validation": {
-      "research_tests": 382,
+      "research_tests": 395,
       "capture_index_audit": "pass",
       "registry_validation": "pass",
       "capture_hash_errors": []
     },
-    "checkpoint_commit": "b2aa9b2c8a7f96788cb4a9cff5418b3d27411b54",
-    "checkpoint_commit_role": "Previous successfully pushed checkpoint; final checkpoint is branch HEAD containing this file",
-    "automation_verified_at": "2026-11-06T12:38:00.271Z",
-    "backlog_archive": "runs/technical-recovery-20261106j/backlog-checkpoint.json"
+    "owner_paused": true,
+    "backlog_archive": "runs/technical-recovery-20261106k/backlog-checkpoint.json"
+  },
+  "owner_pause": {
+    "requested": true,
+    "automation_disabled_at": "2026-11-06T13:29:59.815089+00:00",
+    "no_automatic_resumption": true
   }
 }

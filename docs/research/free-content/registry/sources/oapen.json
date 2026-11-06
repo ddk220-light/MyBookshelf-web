@@ -8,28 +8,256 @@
   "areas": [
     "C04"
   ],
-  "state": "deferred",
+  "state": "query-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
   "capabilities": [
-    "Imported historical retrieval analysis: Official metadata exports or `https://library.oapen.org/oai/request`; local search. [Metadata docs](https://oapen.org/librarians/metadata)"
+    "Live title search over OpenAlex-indexed OAPEN native repository records reported as OA books; first5 upstream rows filtered to literal title tokens. Ten distinct current queries pass."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "historical_contract": "Official metadata exports or `https://library.oapen.org/oai/request`; local search. [Metadata docs](https://oapen.org/librarians/metadata)",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "adapter": "openalex-repository-books",
+    "endpoint": "https://api.openalex.org/locations",
+    "authentication": "Existing configured free OpenAlex bearer key; value never stored; verify free budget before searches",
+    "cases": [
+      {
+        "id": "indexed-title-01",
+        "intent": "Find a reported-OA book in the explicitly mapped repository index; preserve native OAI ID and aggregator provenance",
+        "query_text": "Denmark Greenland twentieth century",
+        "expected_ids": [
+          "oai:oapen:342354"
+        ],
+        "expected_work_type": "book",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "Denmark Greenland twentieth century",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        }
+      },
+      {
+        "id": "indexed-title-02",
+        "intent": "Find a reported-OA book in the explicitly mapped repository index; preserve native OAI ID and aggregator provenance",
+        "query_text": "Regulatory Pathways Smart Grid China",
+        "expected_ids": [
+          "oai:oapen:1002012"
+        ],
+        "expected_work_type": "book",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "Regulatory Pathways Smart Grid China",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        }
+      },
+      {
+        "id": "indexed-title-03",
+        "intent": "Find a reported-OA book in the explicitly mapped repository index; preserve native OAI ID and aggregator provenance",
+        "query_text": "Transformatieprocessen Midden Oost Europa",
+        "expected_ids": [
+          "oai:oapen:439537"
+        ],
+        "expected_work_type": "book",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "Transformatieprocessen Midden Oost Europa",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        }
+      },
+      {
+        "id": "indexed-title-04",
+        "intent": "Find a reported-OA book in the explicitly mapped repository index; preserve native OAI ID and aggregator provenance",
+        "query_text": "Filmkomponist Max Steiner",
+        "expected_ids": [
+          "oai:oapen:1001293"
+        ],
+        "expected_work_type": "book",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "Filmkomponist Max Steiner",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        }
+      },
+      {
+        "id": "indexed-title-05",
+        "intent": "Find a reported-OA book in the explicitly mapped repository index; preserve native OAI ID and aggregator provenance",
+        "query_text": "Ambiguous Citizenship Global Migration",
+        "expected_ids": [
+          "oai:oapen:642694"
+        ],
+        "expected_work_type": "book",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "Ambiguous Citizenship Global Migration",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        }
+      },
+      {
+        "id": "indexed-title-06",
+        "intent": "Find a reported-OA book in the explicitly mapped repository index; preserve native OAI ID and aggregator provenance",
+        "query_text": "monument land Overheidsstatistiek België",
+        "expected_ids": [
+          "oai:oapen:366390"
+        ],
+        "expected_work_type": "book",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "monument land Overheidsstatistiek België",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        }
+      },
+      {
+        "id": "indexed-title-07",
+        "intent": "Find a reported-OA book in the explicitly mapped repository index; preserve native OAI ID and aggregator provenance",
+        "query_text": "Regionaloekonomische Effekte Flughaefen",
+        "expected_ids": [
+          "oai:oapen:1002998"
+        ],
+        "expected_work_type": "book",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "Regionaloekonomische Effekte Flughaefen",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        }
+      },
+      {
+        "id": "indexed-title-08",
+        "intent": "Find a reported-OA book in the explicitly mapped repository index; preserve native OAI ID and aggregator provenance",
+        "query_text": "City Darkness City Light",
+        "expected_ids": [
+          "oai:oapen:340228"
+        ],
+        "expected_work_type": "book",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "City Darkness City Light",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        }
+      },
+      {
+        "id": "indexed-title-09",
+        "intent": "Find a reported-OA book in the explicitly mapped repository index; preserve native OAI ID and aggregator provenance",
+        "query_text": "Nomads Empires States",
+        "expected_ids": [
+          "oai:oapen:642716"
+        ],
+        "expected_work_type": "book",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "Nomads Empires States",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        }
+      },
+      {
+        "id": "indexed-title-10",
+        "intent": "Find a reported-OA book in the explicitly mapped repository index; preserve native OAI ID and aggregator provenance",
+        "query_text": "Cultural Production Intellectual Property Rights",
+        "expected_ids": [
+          "oai:oapen:1005383"
+        ],
+        "expected_work_type": "book",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "Cultural Production Intellectual Property Rights",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        }
+      }
+    ],
+    "supported_modes": [
+      "Live repository-filtered book title search; first5 rows locally checked for literal title tokens and native OAI IDs"
+    ],
+    "unsupported_modes": [
+      "Direct repository API/export",
+      "Whole repository inventory, full-text, full reading or currently valid outbound links",
+      "Publisher PDF downloads, historical export import, new account/payment"
+    ],
+    "area_case_ids": {
+      "C04": [
+        "indexed-title-01",
+        "indexed-title-02",
+        "indexed-title-03",
+        "indexed-title-04",
+        "indexed-title-05",
+        "indexed-title-06",
+        "indexed-title-07",
+        "indexed-title-08",
+        "indexed-title-09",
+        "indexed-title-10"
+      ]
+    }
   },
-  "licensing": "Landing handles/download links; separate chapters and books. Some exports explicitly contain records without download links. Metadata CC0, content licenses vary.",
+  "licensing": "OpenAlex metadata reuse is governed by its previously captured CC0 terms; this run verifies existing free allowance and zero prepaid balance. Book license labels remain per-record provider claims; no repository content, full reading or third-party rights verified.",
   "documentation": [
-    "https://oapen.org/librarians/metadata"
+    "https://oapen.org/librarians/metadata",
+    "https://help.openalex.org/data/locations/",
+    "https://help.openalex.org/how-to/repositories/",
+    "https://help.openalex.org/api/authentication/",
+    "https://openalex.org/S4306402535"
   ],
   "limitations": [
-    "Both documented metadata routes are blocked at policy preflight: export-host robots redirects to login; repository robots repeatedly times out.",
-    "No key for feeds. Overlaps DOAB: reconcile DOI/handle/ISBN and retain both sources. Only OAI Identify tested. **Medium / P1**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "Secondary OpenAlex repository index only; direct repository API/download/export routes still blocked. No complete/current-holdings or working-reader guarantee.",
+    "Native OAI records and OpenAlex work IDs remain distinct; same title/work can have multiple native versions. Cross-repository overlap is not an additional independent origin.",
+    "Only reported-OA book records are retained; source-only filtering returned article/file-name metadata and OA=false records, which are not treated as suitable book search results.",
+    "SubmittedVersion and license labels are OpenAlex-reported metadata, not verified book-edition or reuse judgments. Older native IDs and HTTP links remain as published; no guessed migration.",
+    "Per-query first5 metadata rows; unmatched tokens are excluded locally. Empty control proves only this scoped query result."
   ],
   "evidence": [
     "analysis/documents.jsonl",
@@ -42,11 +270,17 @@
     "runs/technical-recovery-20261106h/observations.jsonl",
     "runs/technical-recovery-20261106h/psu-file-inventory.json",
     "runs/technical-recovery-20261106h/psu-export-access-review.json",
-    "runs/technical-recovery-20261106h/oapen-official-export-contract.json"
+    "runs/technical-recovery-20261106h/oapen-official-export-contract.json",
+    "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+    "runs/technical-recovery-20261106k/observations.jsonl",
+    "runs/technical-recovery-20261106k/query-controls.jsonl",
+    "examples/oapen.jsonl",
+    "examples/oapen.budget.jsonl",
+    "runs/technical-recovery-20261106k/repository-books-analysis.json"
   ],
-  "last_reviewed_at": "2026-11-06T10:48:39.194597+00:00",
+  "last_reviewed_at": "2026-11-06T13:25:53.106860+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
+  "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -57,140 +291,231 @@
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Mapped repository source and native OAI IDs establish indexed catalog membership; aggregator work identity is separate.",
       "facts": {
-        "id": "oapen",
-        "name": "OAPEN",
-        "homepage_reference": "https://oapen.org/librarians/metadata",
-        "operator": null,
-        "origin_deduplication": "pending"
+        "openalex_source_id": "https://openalex.org/S4306402535",
+        "native_id_namespace": "pmh",
+        "native_id_examples": [
+          "oai:oapen:342354",
+          "oai:oapen:1002012",
+          "oai:oapen:439537"
+        ],
+        "canonical_source_alias": {
+          "requested": "S4306400039",
+          "returned": "S4306402535"
+        },
+        "deduplication": "No same-title or same-work merging; DOAB/OAPEN overlap retained, no added origin"
       },
-      "evidence": [
-        "analysis/documents.jsonl"
-      ],
       "open_questions": [
-        "Confirm operator, parent and catalog-versus-origin deduplication."
-      ]
+        "Catalog-wide edition/merge relations remain unverified."
+      ],
+      "evidence": [
+        "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+        "runs/technical-recovery-20261106k/observations.jsonl",
+        "runs/technical-recovery-20261106k/query-controls.jsonl",
+        "examples/oapen.jsonl",
+        "examples/oapen.budget.jsonl",
+        "runs/technical-recovery-20261106k/repository-books-analysis.json"
+      ],
+      "historical_snapshot": "runs/technical-recovery-20261106k/oapen-before.json",
+      "fresh_query_verification": true
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Ten current title queries over explicitly mapped indexed book records; observed languages are metadata labels.",
       "facts": {
-        "category_industry_candidates": [
-          "C04"
+        "verified_languages": [
+          "de",
+          "en"
         ],
-        "languages": null,
-        "jurisdictions": null,
-        "coverage_evidence": "pending"
+        "scope": "OpenAlex-indexed OAPEN reported-OA books, first5 title results",
+        "full_catalog_coverage": false
       },
-      "evidence": [
-        "analysis/documents.jsonl"
-      ],
       "open_questions": [
-        "Verify country/language/subject coverage with item evidence."
-      ]
+        "Source indexing completeness and all-country reading availability remain unverified."
+      ],
+      "evidence": [
+        "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+        "runs/technical-recovery-20261106k/observations.jsonl",
+        "runs/technical-recovery-20261106k/query-controls.jsonl",
+        "examples/oapen.jsonl",
+        "examples/oapen.budget.jsonl",
+        "runs/technical-recovery-20261106k/repository-books-analysis.json"
+      ],
+      "historical_snapshot": "runs/technical-recovery-20261106k/oapen-before.json",
+      "fresh_query_verification": true
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Supported /locations GET with exact source/type/OA filters and title search, followed by literal-token relevance check.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Imported historical retrieval analysis: Official metadata exports or `https://library.oapen.org/oai/request`; local search. [Metadata docs](https://oapen.org/librarians/metadata)"
+        "representative_request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/locations",
+          "params": {
+            "filter": "source_id:S4306402535,type:book,is_oa:true",
+            "search": "Denmark Greenland twentieth century",
+            "select": "id,title,source_id,source_name,work_id,native_id,native_id_namespace,provenance,landing_page_url,pdf_url,is_oa,version,license,language,type",
+            "per_page": 5,
+            "page": 1
+          }
+        },
+        "verified_examples": 10,
+        "supported_modes": [
+          "Live repository-filtered book title search; first5 rows locally checked for literal title tokens and native OAI IDs"
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "unsupported_modes": [
+          "Direct repository API/export",
+          "Whole repository inventory, full-text, full reading or currently valid outbound links",
+          "Publisher PDF downloads, historical export import, new account/payment"
+        ]
       },
-      "evidence": [
-        "analysis/documents.jsonl"
-      ],
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
-      ]
+        "No direct repository API guarantee or arbitrary-topic ranking validation."
+      ],
+      "evidence": [
+        "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+        "runs/technical-recovery-20261106k/observations.jsonl",
+        "runs/technical-recovery-20261106k/query-controls.jsonl",
+        "examples/oapen.jsonl",
+        "examples/oapen.budget.jsonl",
+        "runs/technical-recovery-20261106k/repository-books-analysis.json"
+      ],
+      "historical_snapshot": "runs/technical-recovery-20261106k/oapen-before.json",
+      "fresh_query_verification": true
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Existing OpenAlex key and free allowance used; no paid balance or account/plan changes.",
       "facts": {
-        "license_notes": "Landing handles/download links; separate chapters and books. Some exports explicitly contain records without download links. Metadata CC0, content licenses vary.",
-        "authentication_notes": "See historical notes; current contract must be reconciled with newer evidence.",
-        "cost_notes": null,
-        "terms_review": "pending current reconciliation"
+        "metadata_rights": "Previously captured OpenAlex CC0 finding, not re-fetched this run",
+        "content_rights": "Reported per-record licenses only; full content not accessed",
+        "free_budget_before_scouting_usd": 1,
+        "prepaid_balance_usd": 0,
+        "documented_search_allowance_cost_usd": 0.001,
+        "authentication": "Existing configured bearer key, never stored"
       },
-      "evidence": [
-        "analysis/documents.jsonl"
-      ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
-      ]
+        "Per-book rights and territorial reading eligibility remain open."
+      ],
+      "evidence": [
+        "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+        "runs/technical-recovery-20261106k/observations.jsonl",
+        "runs/technical-recovery-20261106k/query-controls.jsonl",
+        "examples/oapen.jsonl",
+        "examples/oapen.budget.jsonl",
+        "runs/technical-recovery-20261106k/repository-books-analysis.json"
+      ],
+      "historical_snapshot": "runs/technical-recovery-20261106k/oapen-before.json",
+      "fresh_query_verification": true
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Published outbound links saved without fetching repository or book bodies.",
       "facts": {
-        "evidence_references": [
-          "analysis/documents.jsonl"
-        ],
-        "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "full_item_access_verified": false,
+        "full_content_downloaded": false,
+        "access_flags": "Reported OA=true, not independent reading verification",
+        "representative_item": {
+          "id": "oai:oapen:342354",
+          "landing_page": "http://www.oapen.org/search?identifier=342354",
+          "language": null,
+          "location_id": "pmh:oai:oapen:342354",
+          "native_id_namespace": "pmh",
+          "openalex_source_id": "https://openalex.org/S4306402535",
+          "openalex_work_id": "https://openalex.org/W1009186450",
+          "provenance": "repo",
+          "published_landing_page": "http://www.oapen.org/search?identifier=342354",
+          "reading_access_verified": false,
+          "reported_license": "cc-by",
+          "reported_open_access": true,
+          "reported_version": "submittedVersion",
+          "title": "Denmark-Greenland in the twentieth century (Vol. 341)",
+          "type": "book"
+        }
       },
-      "evidence": [
-        "analysis/documents.jsonl"
-      ],
       "open_questions": [
-        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
-      ]
+        "Verify native link/version and reader access separately."
+      ],
+      "evidence": [
+        "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+        "runs/technical-recovery-20261106k/observations.jsonl",
+        "runs/technical-recovery-20261106k/query-controls.jsonl",
+        "examples/oapen.jsonl",
+        "examples/oapen.budget.jsonl",
+        "runs/technical-recovery-20261106k/repository-books-analysis.json"
+      ],
+      "historical_snapshot": "runs/technical-recovery-20261106k/oapen-before.json",
+      "fresh_query_verification": true
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Ten literal-title matches with native IDs; negative/OA/type findings preserved.",
       "facts": {
-        "limitations": [
-          "No key for feeds. Overlaps DOAB: reconcile DOI/handle/ISBN and retain both sources. Only OAI Identify tested. **Medium / P1**.",
-          "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
-        ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "current_query_examples": 10,
+        "first_page_size": 5,
+        "empty_control": true,
+        "multiple_versions": "OAPEN Filmkomponist query retains two native IDs for same title/work; not merged",
+        "local_filter": "Whole NFKC/casefold tokens AND"
       },
-      "evidence": [
-        "analysis/documents.jsonl"
-      ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
-      ]
+        "Stale links, cross-source indexing duplicates and full-catalog relevance remain unverified."
+      ],
+      "evidence": [
+        "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+        "runs/technical-recovery-20261106k/observations.jsonl",
+        "runs/technical-recovery-20261106k/query-controls.jsonl",
+        "examples/oapen.jsonl",
+        "examples/oapen.budget.jsonl",
+        "runs/technical-recovery-20261106k/repository-books-analysis.json"
+      ],
+      "historical_snapshot": "runs/technical-recovery-20261106k/oapen-before.json",
+      "fresh_query_verification": true
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Serial paced metadata requests, first5 rows; free-budget check before each probe.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "pacing_seconds": 3,
+        "max_response_bytes": 1048576,
+        "stop_conditions": "Unavailable robots, missing free allowance/key, HTTP/error response; no immediate denial retry",
+        "paging": "OAPEN page2 of a2-record title returned0; other paging not claimed"
       },
-      "evidence": [
-        "analysis/documents.jsonl"
-      ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
-      ]
+        "Long-run free quota exhaustion and deletion/update propagation not measured."
+      ],
+      "evidence": [
+        "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+        "runs/technical-recovery-20261106k/observations.jsonl",
+        "runs/technical-recovery-20261106k/query-controls.jsonl",
+        "examples/oapen.jsonl",
+        "examples/oapen.budget.jsonl",
+        "runs/technical-recovery-20261106k/repository-books-analysis.json"
+      ],
+      "historical_snapshot": "runs/technical-recovery-20261106k/oapen-before.json",
+      "fresh_query_verification": true
     },
     "decision_and_followup": {
-      "status": "partial",
-      "summary": "Both documented metadata routes are blocked at policy preflight: export-host robots redirects to login; repository robots repeatedly times out.",
+      "status": "complete",
+      "summary": "Working for the scoped secondary repository index; broader dossier remains partial.",
       "facts": {
-        "decision": "blocked_or_failed",
-        "blocker": "Both documented metadata routes are blocked at policy preflight: export-host robots redirects to login; repository robots repeatedly times out.",
-        "next_action": "Wait for policy/host recovery, then retry a single documented KBART export or OAI metadata-format probe. No credentials/account creation or alternate hidden API.",
-        "activation_approved": false
+        "decision": "working_with_openalex_repository_book_subset",
+        "full_qualification_complete": false,
+        "activation_approved": false,
+        "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
+        "owner_action_required": false
       },
+      "open_questions": [],
       "evidence": [
-        "runs/books-query-export-docs-20261105eq/observations.jsonl",
-        "examples/oapen.access.jsonl",
-        "runs/bookdash-title-queries-20261105es/observations.jsonl",
-        "runs/final-children-docs-20261105et/observations.jsonl"
+        "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+        "runs/technical-recovery-20261106k/observations.jsonl",
+        "runs/technical-recovery-20261106k/query-controls.jsonl",
+        "examples/oapen.jsonl",
+        "examples/oapen.budget.jsonl",
+        "runs/technical-recovery-20261106k/repository-books-analysis.json"
       ],
-      "open_questions": [
-        "Current queryability unresolved; login redirect on robots does not establish that the published export itself requires an account."
-      ]
+      "historical_snapshot": "runs/technical-recovery-20261106k/oapen-before.json",
+      "fresh_query_verification": true
     }
   },
   "analysis_refs": [
@@ -337,20 +662,47 @@
       "heading": "Blocker investigation",
       "text": "- **FDIC Money Smart:** official documentation points to a separate catalog service. Its policy endpoint returned503, so no catalog/product query was sent. Wait for recovery; next timed check no earlier than16:00UTC without a new service signal.\n- **LINCS:** API/RSS documentation searches did not establish a supported new interface. Unrelated third-party feeds, staging sites and host switching are not adopted as alternatives. CERT-In was subsequently recovered through its public metadata list after manual policy diagnosis.\n- **Tamil Nadu land records:** the separate map-only Survey and Settlement service has policy503. No map/parcel/owner query was sent; wait until16:00UTC or a concrete recovery signal.\n- **DOAB/OAPEN:** the officially documented Penn State export dataset pages are accessible, but their file routes return a traffic-control/Turnstile challenge. HTTP200 is not a metadata success. No files or signed-token alternatives were fetched after recognizing the challenge. OAPEN lists an October2026 snapshot; DOAB still lists May2024 with updates paused. A provider-permitted or owner-supplied export could unblock local metadata search.\n- **NHM:** the exact published policy redirect timed out; no catalog request. **CMDA:** another policy503 after more than4hours backoff, with upstream connection timeout. **Let’s Read:** the response identifies a login-page app shell; no hidden API or login attempted.",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "4dd0c39878ff12a65f6f5d20c98323e7276260b9c67e15e94a796f2a1d69cd39",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106K.md",
+      "line": 3,
+      "heading": "Technical recovery K — owner paused, 6 November 2026",
+      "text": "DOAB and OAPEN each now have ten passing live title queries through OpenAlex’s documented repository-location index. Native OAI identifiers remain separate from OpenAlex work IDs; the old OAPEN source alias resolves to canonicalS4306402535. Queries use the canonical source plus book and reported-open-access filters, then literal title-token checks over the first5 results. One title returns two distinct OAPEN records; neither is merged.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "4dd0c39878ff12a65f6f5d20c98323e7276260b9c67e15e94a796f2a1d69cd39",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106K.md",
+      "line": 5,
+      "heading": "Technical recovery K — owner paused, 6 November 2026",
+      "text": "Both nonsense-title controls return zero. OAPEN page2 for a two-record title returns zero with count2. Scouting failures in metadata quality are preserved: some source-only rows are nonbook filename metadata or report OA=false. These are excluded from book-search results. Direct repository/export access, current completeness, reading and per-book rights remain unverified. Current index queries do not make historical source assertions fresh.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "4dd0c39878ff12a65f6f5d20c98323e7276260b9c67e15e94a796f2a1d69cd39",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106K.md",
+      "line": 9,
+      "heading": "Technical recovery K — owner paused, 6 November 2026",
+      "text": "At the owner’s request, hourly recovery is paused. The completed documentation queue and its reporter remain stopped. DOAB/OAPEN bring original44 to33 Working and11 unresolved; overall99 Working,34 Blocked/failed,0 Still checking across133 active connectors, with1024 passing examples. Production is unchanged.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T10:48:39.194597+00:00",
-    "reason": "Officially documented Penn State metadata-export alternative reaches a public dataset page but file access returns a traffic-control/Turnstile challenge.",
-    "attempt": "Follow published metadata DOI to Penn State, review dataset license/version/files and request the published small README view route.",
-    "result": "Landing page and native file identities captured; README response is bot-challenge HTML, not metadata. No MARC/book files downloaded. Historical direct-route failures retained.",
-    "decision": "wait_for_permitted_service_recovery",
-    "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
+    "reviewed_at": "2026-11-06T13:25:53.106860+00:00",
+    "reason": "Direct repository/export access remains unavailable; current OpenAlex documentation supports independent repository-native location searches.",
+    "attempt": "Verify mapped repository source ID, available free allowance and native OAI records; add type:book,is_oa:true filters after scouting exposed nonbook/OA=false metadata; execute ten distinct title queries plus zero-result control.",
+    "result": "Ten passing live queries with literal title relevance and native IDs; both empty controls return0. OAPEN second page for a two-record title returns0 while retaining count2. No repository/reader/PDF requests.",
+    "decision": "working_with_openalex_repository_book_subset",
+    "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
+    "owner_action_required": false,
     "evidence": [
-      "runs/technical-recovery-20261106h/observations.jsonl",
-      "runs/technical-recovery-20261106h/psu-file-inventory.json",
-      "runs/technical-recovery-20261106h/psu-export-access-review.json",
-      "runs/technical-recovery-20261106h/oapen-official-export-contract.json"
+      "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+      "runs/technical-recovery-20261106k/observations.jsonl",
+      "runs/technical-recovery-20261106k/query-controls.jsonl",
+      "examples/oapen.jsonl",
+      "examples/oapen.budget.jsonl",
+      "runs/technical-recovery-20261106k/repository-books-analysis.json"
     ]
   },
   "recovery_history": [
@@ -386,6 +738,42 @@
           "runs/technical-recovery-20261106e/followups.jsonl"
         ]
       }
+    },
+    {
+      "superseded_at": "2026-11-06T13:25:53.106860+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T10:48:39.194597+00:00",
+        "reason": "Officially documented Penn State metadata-export alternative reaches a public dataset page but file access returns a traffic-control/Turnstile challenge.",
+        "attempt": "Follow published metadata DOI to Penn State, review dataset license/version/files and request the published small README view route.",
+        "result": "Landing page and native file identities captured; README response is bot-challenge HTML, not metadata. No MARC/book files downloaded. Historical direct-route failures retained.",
+        "decision": "wait_for_permitted_service_recovery",
+        "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
+        "evidence": [
+          "runs/technical-recovery-20261106h/observations.jsonl",
+          "runs/technical-recovery-20261106h/psu-file-inventory.json",
+          "runs/technical-recovery-20261106h/psu-export-access-review.json",
+          "runs/technical-recovery-20261106h/oapen-official-export-contract.json"
+        ]
+      },
+      "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
+      "source_snapshot": "runs/technical-recovery-20261106k/oapen-before.json"
     }
+  ],
+  "fresh_query_verification": true,
+  "languages": [
+    "de",
+    "en"
+  ],
+  "evidence_observation_dates": [
+    "2026-11-06T13:23:26.552747+00:00",
+    "2026-11-06T13:23:30.123748+00:00",
+    "2026-11-06T13:23:33.500759+00:00",
+    "2026-11-06T13:23:37.203557+00:00",
+    "2026-11-06T13:23:40.792452+00:00",
+    "2026-11-06T13:23:44.482122+00:00",
+    "2026-11-06T13:23:48.180310+00:00",
+    "2026-11-06T13:23:51.662266+00:00",
+    "2026-11-06T13:23:55.200910+00:00",
+    "2026-11-06T13:23:59.012838+00:00"
   ]
 }

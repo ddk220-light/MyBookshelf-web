@@ -1,3 +1,7 @@
+## Recovery K checkpoint — 6 November 2026
+
+99 Working / 34 Blocked/failed / 0 Still checking of 133 active connectors; 1024 current passing examples. Original44: 33 Working / 11 remaining. New recoveries: doab, oapen. 395 tests and evidence checks pass. Other blockers remain open; research only. Owner paused hourly recovery; no automatic resumption.
+
 ## Recovery J checkpoint — 6 November 2026
 
 97 Working / 36 Blocked/failed / 0 Still checking of 133 active connectors; 1004 current passing examples. Original44: 31 Working / 13 remaining. New recoveries: nhm-guidelines, usgs-national-map. 382 tests and evidence checks pass. Other blockers remain open; research only.
