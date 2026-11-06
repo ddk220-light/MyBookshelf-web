@@ -15,6 +15,8 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'artic-export': 'Local title/artist tokens and native ID search over the complete pinned published artwork metadata export; no images or other API record types',
+    'nist-crossref': 'Live title-ranked search of Crossref metadata restricted to NIST DOI prefix10.6028; first3 records, no direct NIST website/full-text access or all-NIST-output guarantee',
     'bharat-electrician-catalog': 'Local title/native resource-URL search over 57 Electrician ebook metadata entries; language/year/syllabus preserved, other trades and book bodies unverified',
     'caltech-public-browser': 'Anonymous public browser keyword search, first two rendered title/native thesis links; no campus API, pagination/full-text or blanket reuse permission',
     'nasa-images-public': 'Live anonymous NASA image-metadata keyword search, first 2 native NASA IDs; page 2 and empty results verified, no media download or reuse approval',

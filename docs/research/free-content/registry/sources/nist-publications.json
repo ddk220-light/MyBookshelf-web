@@ -10,7 +10,7 @@
     "I06",
     "I18"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -37,314 +37,401 @@
   },
   "aliases": [],
   "capabilities": [
-    "NIST research publications and the CSRC security-publication subset expose series, status and publication identities. The CSRC page advertises a current-publication spreadsheet and feeds."
+    "Live title search over the NIST-registered Crossref DOI subset10.6028, including historical NBS records; native DOI revision/draft suffixes preserved."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown; no query executed",
-    "request_shape_verified": false
+    "adapter": "nist-crossref",
+    "endpoint": "https://api.crossref.org/works",
+    "cases": [
+      {
+        "id": "title-cybersecurity",
+        "intent": "NIST technical-series title keyword: cybersecurity",
+        "query_text": "cybersecurity",
+        "expected_ids": [
+          "10.6028/nist.sp.1331.ipd"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "filter": "prefix:10.6028",
+            "query.title": "cybersecurity",
+            "rows": 3
+          },
+          "url": "https://api.crossref.org/works"
+        }
+      },
+      {
+        "id": "title-cryptographic",
+        "intent": "NIST technical-series title keyword: cryptographic",
+        "query_text": "cryptographic",
+        "expected_ids": [
+          "10.6028/nist.sp.800-175b"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "filter": "prefix:10.6028",
+            "query.title": "cryptographic",
+            "rows": 3
+          },
+          "url": "https://api.crossref.org/works"
+        }
+      },
+      {
+        "id": "title-fire",
+        "intent": "NIST technical-series title keyword: fire",
+        "query_text": "fire",
+        "expected_ids": [
+          "10.6028/nbs.sp.749"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "filter": "prefix:10.6028",
+            "query.title": "fire",
+            "rows": 3
+          },
+          "url": "https://api.crossref.org/works"
+        }
+      },
+      {
+        "id": "title-manufacturing",
+        "intent": "NIST technical-series title keyword: manufacturing",
+        "query_text": "manufacturing",
+        "expected_ids": [
+          "10.6028/nist.ams.600-7"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "filter": "prefix:10.6028",
+            "query.title": "manufacturing",
+            "rows": 3
+          },
+          "url": "https://api.crossref.org/works"
+        }
+      },
+      {
+        "id": "title-quantum",
+        "intent": "NIST technical-series title keyword: quantum",
+        "query_text": "quantum",
+        "expected_ids": [
+          "10.6028/nbs.rpt.2188"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "filter": "prefix:10.6028",
+            "query.title": "quantum",
+            "rows": 3
+          },
+          "url": "https://api.crossref.org/works"
+        }
+      },
+      {
+        "id": "title-measurement",
+        "intent": "NIST technical-series title keyword: measurement",
+        "query_text": "measurement",
+        "expected_ids": [
+          "10.6028/nbs.ir.85-3028"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "filter": "prefix:10.6028",
+            "query.title": "measurement",
+            "rows": 3
+          },
+          "url": "https://api.crossref.org/works"
+        }
+      },
+      {
+        "id": "title-temperature",
+        "intent": "NIST technical-series title keyword: temperature",
+        "query_text": "temperature",
+        "expected_ids": [
+          "10.6028/nist.sp.759"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "filter": "prefix:10.6028",
+            "query.title": "temperature",
+            "rows": 3
+          },
+          "url": "https://api.crossref.org/works"
+        }
+      },
+      {
+        "id": "title-calibration",
+        "intent": "NIST technical-series title keyword: calibration",
+        "query_text": "calibration",
+        "expected_ids": [
+          "10.6028/jres.124.027"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "filter": "prefix:10.6028",
+            "query.title": "calibration",
+            "rows": 3
+          },
+          "url": "https://api.crossref.org/works"
+        }
+      },
+      {
+        "id": "title-concrete",
+        "intent": "NIST technical-series title keyword: concrete",
+        "query_text": "concrete",
+        "expected_ids": [
+          "10.6028/nbst.1496"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "filter": "prefix:10.6028",
+            "query.title": "concrete",
+            "rows": 3
+          },
+          "url": "https://api.crossref.org/works"
+        }
+      },
+      {
+        "id": "title-steel",
+        "intent": "NIST technical-series title keyword: steel",
+        "query_text": "steel",
+        "expected_ids": [
+          "10.6028/jres.001.014"
+        ],
+        "request": {
+          "method": "GET",
+          "params": {
+            "filter": "prefix:10.6028",
+            "query.title": "steel",
+            "rows": 3
+          },
+          "url": "https://api.crossref.org/works"
+        }
+      }
+    ],
+    "authentication": "Anonymous Crossref public API",
+    "cost": "Free public pool; no account or paid Metadata Plus",
+    "supported_modes": [
+      "Live title-ranked queries restricted to prefix10.6028",
+      "Bounded offset paging"
+    ],
+    "unsupported_modes": [
+      "Direct NIST website query",
+      "All papers authored by NIST staff",
+      "Full-text or reading guarantee",
+      "Current/superseded status guarantee"
+    ],
+    "operating_limits": "One serial request at a time; >=3seconds between requests; stop on access/rate denial; first3 metadata items only"
   },
   "documentation": [
     "https://www.nist.gov/publications",
-    "https://csrc.nist.gov/publications"
+    "https://csrc.nist.gov/publications",
+    "https://csrc.nist.gov/Publications/DOI",
+    "https://www.crossref.org/documentation/retrieve-metadata/rest-api/",
+    "https://api.crossref.org/prefixes/10.6028"
   ],
-  "licensing": "Metadata and content rights require separate evidence; no blanket reuse license established.",
+  "licensing": "Public Crossref bibliographic metadata is distinct from NIST publication content. No blanket full-text license or public-domain claim; retained DOI may identify a draft or historical version.",
   "limitations": [
-    "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
-    "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
+    "No claim this is all NIST-authored output; papers registered by other publishers are outside prefix10.6028.",
+    "Drafts, reports, journal records and historical versions may coexist; current status must be checked separately.",
+    "Crossref public metadata service is shared with the existing Crossref connector; not another independent origin."
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
-    "runs/retrieval-doc-links-20261105b/observations.jsonl"
+    "runs/retrieval-doc-links-20261105b/observations.jsonl",
+    "runs/technical-recovery-20261106b/observations.jsonl",
+    "runs/technical-recovery-20261106b/followups.jsonl",
+    "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+    "examples/nist-publications.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T05:50:26.972137+00:00",
-  "next_action": "Wait for a usable CSRC policy response or an explicit supported export-policy trigger before requesting its advertised XLSX/feeds. Meanwhile review general NIST metadata rights and revision semantics without assuming all government-hosted third-party works are public domain.",
+  "last_reviewed_at": "2026-11-06T06:28:40.511519+00:00",
+  "next_action": "Retain Working research metadata search within its recorded scope. Check version/rights and app adapter separately; no activation in this run.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "NIST research publications and the CSRC security-publication subset expose series, status and publication identities. The CSRC page advertises a current-publication spreadsheet and feeds.",
+      "summary": "Current scoped query recovery; deeper dossier completion is not claimed. Prior findings retained in review_history.",
       "facts": {
-        "operator": "National Institute of Standards and Technology, US Department of Commerce",
-        "identity_and_overlap": "General NIST and CSRC are one catalog family here, not two independent origins."
+        "operator": {
+          "name": "National Institute of Standards and Technology, US Department of Commerce",
+          "jurisdiction": "USA",
+          "evidence": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "c903967dc43641a71a37",
+              "observed_at": "2026-11-05T02:27:55.272537+00:00"
+            },
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T02:33:12.197176+00:00"
+            },
+            {
+              "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T05:43:48.959487+00:00"
+            }
+          ]
+        },
+        "identity_scope": "NIST-owned DOI prefix10.6028; Crossref is the metadata service, not another NIST content origin",
+        "deduplication": "Existing source record recovered; no new origin created."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "c903967dc43641a71a37",
-          "observed_at": "2026-11-05T02:27:55.272537+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T02:33:12.197176+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T05:43:48.959487+00:00"
-        }
+        "runs/technical-recovery-20261106b/observations.jsonl",
+        "runs/technical-recovery-20261106b/followups.jsonl",
+        "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+        "examples/nist-publications.jsonl"
       ],
       "open_questions": [
-        "Complete item/version/translation mapping and establish legal operator details where unresolved."
+        "Deeper rights, reader, language and version coverage remain separate follow-up."
       ]
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Candidate area associations from captured catalog text; not qualified supply.",
+      "summary": "Current scoped query recovery; deeper dossier completion is not claimed. Prior findings retained in review_history.",
       "facts": {
-        "areas": [
-          "C12",
-          "C13",
-          "I06",
-          "I18"
+        "search_scope": [
+          "Live title search over the NIST-registered Crossref DOI subset10.6028, including historical NBS records; native DOI revision/draft suffixes preserved."
         ],
         "jurisdiction": "USA",
-        "observed_facts": {
-          "statuses": [
-            "Final",
-            "Public Draft",
-            "Withdrawn"
-          ],
-          "series": [
-            "FIPS",
-            "SP 800",
-            "SP 1800",
-            "SP 500",
-            "NISTIR",
-            "CSWP"
-          ],
-          "documented_exports": "CSRC current draft/final FIPS, SPs, NISTIRs, ITL bulletins and CSWP spreadsheet (XLSX); draft-comment RSS/Atom/JSON feeds. Exact export URLs were not preserved in the older text capture.",
-          "identity": "Publication number, DOI, revision and status must be retained. Withdrawn includes superseded and retired material; pre-2008 coverage may be incomplete.",
-          "overlap": "General NIST and CSRC are one catalog family here, not two independent origins.",
-          "current_blocker": "2026-11-05 follow-up robots request returned HTTP 301 to /; no publication/export request sent on that host. Earlier HTTP 200 capture remains historical evidence, not proof of current permission."
-        }
+        "language_observation": "Sample titles are English; no exhaustive language coverage established."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "c903967dc43641a71a37",
-          "observed_at": "2026-11-05T02:27:55.272537+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T02:33:12.197176+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T05:43:48.959487+00:00"
-        }
+        "runs/technical-recovery-20261106b/observations.jsonl",
+        "runs/technical-recovery-20261106b/followups.jsonl",
+        "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+        "examples/nist-publications.jsonl"
       ],
       "open_questions": [
-        "Verify actual item languages and USA/India access/applicability; one cloud vantage does not prove global access."
+        "Deeper rights, reader, language and version coverage remain separate follow-up."
       ]
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documented catalog capabilities retained; exact executed machine contract remains open.",
+      "summary": "Current scoped query recovery; deeper dossier completion is not claimed. Prior findings retained in review_history.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "cases": [],
-        "authentication": "Unknown; no query executed",
-        "request_shape_verified": false
+        "adapter": "nist-crossref",
+        "endpoint": "https://api.crossref.org/works",
+        "supported_modes": [
+          "Live title-ranked queries restricted to prefix10.6028",
+          "Bounded offset paging"
+        ],
+        "unsupported_modes": [
+          "Direct NIST website query",
+          "All papers authored by NIST staff",
+          "Full-text or reading guarantee",
+          "Current/superseded status guarantee"
+        ],
+        "exact_request_shapes": "query.cases[].request"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "c903967dc43641a71a37",
-          "observed_at": "2026-11-05T02:27:55.272537+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T02:33:12.197176+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T05:43:48.959487+00:00"
-        }
+        "runs/technical-recovery-20261106b/observations.jsonl",
+        "runs/technical-recovery-20261106b/followups.jsonl",
+        "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+        "examples/nist-publications.jsonl"
       ],
       "open_questions": [
-        "Obtain supported public request shapes and verify ten distinct native-ID examples plus paging/empty/error behavior."
+        "Deeper rights, reader, language and version coverage remain separate follow-up."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Metadata and content rights require separate evidence; no blanket reuse license established.",
+      "summary": "Current scoped query recovery; deeper dossier completion is not claimed. Prior findings retained in review_history.",
       "facts": {
-        "rights": "Metadata and content rights require separate evidence; no blanket reuse license established.",
-        "cost": "Unknown per item/service"
+        "metadata_and_content_distinction": "Public Crossref bibliographic metadata is distinct from NIST publication content. No blanket full-text license or public-domain claim; retained DOI may identify a draft or historical version.",
+        "authentication": "Anonymous Crossref public API",
+        "cost": "Free public pool; no account or paid Metadata Plus"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "c903967dc43641a71a37",
-          "observed_at": "2026-11-05T02:27:55.272537+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T02:33:12.197176+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T05:43:48.959487+00:00"
-        }
+        "runs/technical-recovery-20261106b/observations.jsonl",
+        "runs/technical-recovery-20261106b/followups.jsonl",
+        "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+        "examples/nist-publications.jsonl"
       ],
       "open_questions": [
-        "Resolve metadata reuse, item license, free access, login and any paid-service boundaries separately."
+        "Deeper rights, reader, language and version coverage remain separate follow-up."
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Public documentation was readable; full-item reading has not been verified.",
+      "summary": "Current scoped query recovery; deeper dossier completion is not claimed. Prior findings retained in review_history.",
       "facts": {
-        "reading_verified": false,
-        "scope_caution": "No blanket reading-access claim"
+        "full_item_access_verified": false,
+        "source_links": "Outbound native item/DOI links retained; reading and image reuse are separate from searchable metadata."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "c903967dc43641a71a37",
-          "observed_at": "2026-11-05T02:27:55.272537+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T02:33:12.197176+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T05:43:48.959487+00:00"
-        }
+        "runs/technical-recovery-20261106b/observations.jsonl",
+        "runs/technical-recovery-20261106b/followups.jsonl",
+        "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+        "examples/nist-publications.jsonl"
       ],
       "open_questions": [
-        "Verify permitted representative item access, or retain a reasoned deferred decision."
+        "Deeper rights, reader, language and version coverage remain separate follow-up."
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No current query assertions; observed listing identities are not passing examples.",
+      "summary": "Current scoped query recovery; deeper dossier completion is not claimed. Prior findings retained in review_history.",
       "facts": {
-        "positive_examples": 0,
-        "native_identity_samples": [],
-        "version_caution": "Publication number, DOI, revision and status must be retained. Withdrawn includes superseded and retired material; pre-2008 coverage may be incomplete."
+        "current_passing_examples": 10,
+        "result": "Ten distinct live title keyword queries returned relevant NIST-prefixed DOIs; first3 results each.",
+        "limitations": [
+          "No claim this is all NIST-authored output; papers registered by other publishers are outside prefix10.6028.",
+          "Drafts, reports, journal records and historical versions may coexist; current status must be checked separately.",
+          "Crossref public metadata service is shared with the existing Crossref connector; not another independent origin."
+        ],
+        "controls": "Current empty query returns0; offset3 returns three distinct native DOIs beyond the first page."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "c903967dc43641a71a37",
-          "observed_at": "2026-11-05T02:27:55.272537+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T02:33:12.197176+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T05:43:48.959487+00:00"
-        }
+        "runs/technical-recovery-20261106b/observations.jsonl",
+        "runs/technical-recovery-20261106b/followups.jsonl",
+        "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+        "examples/nist-publications.jsonl"
       ],
       "open_questions": [
-        "Test known-item and topical relevance, negative queries and native identities without counting documentation samples as examples."
+        "Deeper rights, reader, language and version coverage remain separate follow-up."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Original policy-checked documentation captures retained; current restrictions can supersede earlier reachability.",
+      "summary": "Current scoped query recovery; deeper dossier completion is not claimed. Prior findings retained in review_history.",
       "facts": {
-        "numeric_quota": null,
-        "bulk_content_downloaded": false,
-        "current_restriction": "2026-11-05 follow-up robots request returned HTTP 301 to /; no publication/export request sent on that host. Earlier HTTP 200 capture remains historical evidence, not proof of current permission."
+        "serial_request_pacing_seconds": 3,
+        "request_limits": "One serial request at a time; >=3seconds between requests; stop on access/rate denial; first3 metadata items only",
+        "previous_access_gate": "CSRC policy still redirects to /; direct NIST route remains unavailable to the collector.",
+        "permitted_alternative": "Use documented Crossref metadata API; prefix singleton explicitly identifies National Institute of Standards and Technology (NIST)."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "c903967dc43641a71a37",
-          "observed_at": "2026-11-05T02:27:55.272537+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T02:33:12.197176+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T05:43:48.959487+00:00"
-        }
+        "runs/technical-recovery-20261106b/observations.jsonl",
+        "runs/technical-recovery-20261106b/followups.jsonl",
+        "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+        "examples/nist-publications.jsonl"
       ],
       "open_questions": [
-        "Verify allowed machine route, refresh/delete/version semantics and provider backoff requirements."
+        "Deeper rights, reader, language and version coverage remain separate follow-up."
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Candidate/deferred triage only; no runtime activation or qualification.",
+      "status": "partial",
+      "summary": "Current scoped query recovery; deeper dossier completion is not claimed. Prior findings retained in review_history.",
       "facts": {
-        "decision": "deferred",
-        "next_action": "Wait for a usable CSRC policy response or an explicit supported export-policy trigger before requesting its advertised XLSX/feeds. Meanwhile review general NIST metadata rights and revision semantics without assuming all government-hosted third-party works are public domain.",
-        "activation_approved": false
+        "decision": "Working for recorded metadata search scope",
+        "production_enabled_changed": false,
+        "next_action": "Retain Working research metadata search within its recorded scope. Check version/rights and app adapter separately; no activation in this run."
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/retrieval-doc-links-20261105b/observations.jsonl"
+        "runs/technical-recovery-20261106b/observations.jsonl",
+        "runs/technical-recovery-20261106b/followups.jsonl",
+        "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+        "examples/nist-publications.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "c903967dc43641a71a37",
-          "observed_at": "2026-11-05T02:27:55.272537+00:00"
-        },
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T02:33:12.197176+00:00"
-        },
-        {
-          "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
-          "job_id": "79b65c49eb001114ea40",
-          "observed_at": "2026-11-05T05:43:48.959487+00:00"
-        }
-      ],
-      "open_questions": []
+      "open_questions": [
+        "Deeper rights, reader, language and version coverage remain separate follow-up."
+      ]
     }
   },
   "analysis_refs": [
@@ -364,5 +451,326 @@
       "text": "| [NIST publications](https://www.nist.gov/publications) | Robots redirected to the homepage. | Establish the official publication/export policy and route; redirect alone is not a ban. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "review_history": [
+    {
+      "superseded_at": "2026-11-06T06:28:40.511362+00:00",
+      "query": {
+        "adapter": "unproven",
+        "endpoint": null,
+        "cases": [],
+        "authentication": "Unknown; no query executed",
+        "request_shape_verified": false
+      },
+      "limitations": [
+        "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
+        "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
+      ],
+      "next_action": "Wait for a usable CSRC policy response or an explicit supported export-policy trigger before requesting its advertised XLSX/feeds. Meanwhile review general NIST metadata rights and revision semantics without assuming all government-hosted third-party works are public domain.",
+      "recovery": null,
+      "dossier": {
+        "identity_and_duplicates": {
+          "status": "partial",
+          "summary": "NIST research publications and the CSRC security-publication subset expose series, status and publication identities. The CSRC page advertises a current-publication spreadsheet and feeds.",
+          "facts": {
+            "operator": "National Institute of Standards and Technology, US Department of Commerce",
+            "identity_and_overlap": "General NIST and CSRC are one catalog family here, not two independent origins."
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/retrieval-doc-links-20261105b/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "c903967dc43641a71a37",
+              "observed_at": "2026-11-05T02:27:55.272537+00:00"
+            },
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T02:33:12.197176+00:00"
+            },
+            {
+              "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T05:43:48.959487+00:00"
+            }
+          ],
+          "open_questions": [
+            "Complete item/version/translation mapping and establish legal operator details where unresolved."
+          ]
+        },
+        "coverage_and_languages": {
+          "status": "partial",
+          "summary": "Candidate area associations from captured catalog text; not qualified supply.",
+          "facts": {
+            "areas": [
+              "C12",
+              "C13",
+              "I06",
+              "I18"
+            ],
+            "jurisdiction": "USA",
+            "observed_facts": {
+              "statuses": [
+                "Final",
+                "Public Draft",
+                "Withdrawn"
+              ],
+              "series": [
+                "FIPS",
+                "SP 800",
+                "SP 1800",
+                "SP 500",
+                "NISTIR",
+                "CSWP"
+              ],
+              "documented_exports": "CSRC current draft/final FIPS, SPs, NISTIRs, ITL bulletins and CSWP spreadsheet (XLSX); draft-comment RSS/Atom/JSON feeds. Exact export URLs were not preserved in the older text capture.",
+              "identity": "Publication number, DOI, revision and status must be retained. Withdrawn includes superseded and retired material; pre-2008 coverage may be incomplete.",
+              "overlap": "General NIST and CSRC are one catalog family here, not two independent origins.",
+              "current_blocker": "2026-11-05 follow-up robots request returned HTTP 301 to /; no publication/export request sent on that host. Earlier HTTP 200 capture remains historical evidence, not proof of current permission."
+            }
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/retrieval-doc-links-20261105b/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "c903967dc43641a71a37",
+              "observed_at": "2026-11-05T02:27:55.272537+00:00"
+            },
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T02:33:12.197176+00:00"
+            },
+            {
+              "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T05:43:48.959487+00:00"
+            }
+          ],
+          "open_questions": [
+            "Verify actual item languages and USA/India access/applicability; one cloud vantage does not prove global access."
+          ]
+        },
+        "query_contract": {
+          "status": "partial",
+          "summary": "Documented catalog capabilities retained; exact executed machine contract remains open.",
+          "facts": {
+            "adapter": "unproven",
+            "endpoint": null,
+            "cases": [],
+            "authentication": "Unknown; no query executed",
+            "request_shape_verified": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/retrieval-doc-links-20261105b/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "c903967dc43641a71a37",
+              "observed_at": "2026-11-05T02:27:55.272537+00:00"
+            },
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T02:33:12.197176+00:00"
+            },
+            {
+              "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T05:43:48.959487+00:00"
+            }
+          ],
+          "open_questions": [
+            "Obtain supported public request shapes and verify ten distinct native-ID examples plus paging/empty/error behavior."
+          ]
+        },
+        "rights_and_cost": {
+          "status": "partial",
+          "summary": "Metadata and content rights require separate evidence; no blanket reuse license established.",
+          "facts": {
+            "rights": "Metadata and content rights require separate evidence; no blanket reuse license established.",
+            "cost": "Unknown per item/service"
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/retrieval-doc-links-20261105b/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "c903967dc43641a71a37",
+              "observed_at": "2026-11-05T02:27:55.272537+00:00"
+            },
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T02:33:12.197176+00:00"
+            },
+            {
+              "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T05:43:48.959487+00:00"
+            }
+          ],
+          "open_questions": [
+            "Resolve metadata reuse, item license, free access, login and any paid-service boundaries separately."
+          ]
+        },
+        "reader_access": {
+          "status": "partial",
+          "summary": "Public documentation was readable; full-item reading has not been verified.",
+          "facts": {
+            "reading_verified": false,
+            "scope_caution": "No blanket reading-access claim"
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/retrieval-doc-links-20261105b/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "c903967dc43641a71a37",
+              "observed_at": "2026-11-05T02:27:55.272537+00:00"
+            },
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T02:33:12.197176+00:00"
+            },
+            {
+              "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T05:43:48.959487+00:00"
+            }
+          ],
+          "open_questions": [
+            "Verify permitted representative item access, or retain a reasoned deferred decision."
+          ]
+        },
+        "quality_and_relevance": {
+          "status": "partial",
+          "summary": "No current query assertions; observed listing identities are not passing examples.",
+          "facts": {
+            "positive_examples": 0,
+            "native_identity_samples": [],
+            "version_caution": "Publication number, DOI, revision and status must be retained. Withdrawn includes superseded and retired material; pre-2008 coverage may be incomplete."
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/retrieval-doc-links-20261105b/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "c903967dc43641a71a37",
+              "observed_at": "2026-11-05T02:27:55.272537+00:00"
+            },
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T02:33:12.197176+00:00"
+            },
+            {
+              "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T05:43:48.959487+00:00"
+            }
+          ],
+          "open_questions": [
+            "Test known-item and topical relevance, negative queries and native identities without counting documentation samples as examples."
+          ]
+        },
+        "operating_limits": {
+          "status": "partial",
+          "summary": "Original policy-checked documentation captures retained; current restrictions can supersede earlier reachability.",
+          "facts": {
+            "numeric_quota": null,
+            "bulk_content_downloaded": false,
+            "current_restriction": "2026-11-05 follow-up robots request returned HTTP 301 to /; no publication/export request sent on that host. Earlier HTTP 200 capture remains historical evidence, not proof of current permission."
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/retrieval-doc-links-20261105b/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "c903967dc43641a71a37",
+              "observed_at": "2026-11-05T02:27:55.272537+00:00"
+            },
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T02:33:12.197176+00:00"
+            },
+            {
+              "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T05:43:48.959487+00:00"
+            }
+          ],
+          "open_questions": [
+            "Verify allowed machine route, refresh/delete/version semantics and provider backoff requirements."
+          ]
+        },
+        "decision_and_followup": {
+          "status": "complete",
+          "summary": "Candidate/deferred triage only; no runtime activation or qualification.",
+          "facts": {
+            "decision": "deferred",
+            "next_action": "Wait for a usable CSRC policy response or an explicit supported export-policy trigger before requesting its advertised XLSX/feeds. Meanwhile review general NIST metadata rights and revision semantics without assuming all government-hosted third-party works are public domain.",
+            "activation_approved": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "runs/retrieval-doc-links-20261105b/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "c903967dc43641a71a37",
+              "observed_at": "2026-11-05T02:27:55.272537+00:00"
+            },
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T02:33:12.197176+00:00"
+            },
+            {
+              "path": "runs/retrieval-doc-links-20261105b/observations.jsonl",
+              "job_id": "79b65c49eb001114ea40",
+              "observed_at": "2026-11-05T05:43:48.959487+00:00"
+            }
+          ],
+          "open_questions": []
+        }
+      }
+    }
+  ],
+  "recovery": {
+    "status": "working",
+    "reason": "CSRC policy still redirects to /; direct NIST route remains unavailable to the collector.",
+    "attempt": "Use documented Crossref metadata API; prefix singleton explicitly identifies National Institute of Standards and Technology (NIST).",
+    "result": "Ten distinct live title keyword queries returned relevant NIST-prefixed DOIs; first3 results each.",
+    "decision": "working_with_recorded_scope",
+    "next_action": "Retain Working research metadata search within its recorded scope. Check version/rights and app adapter separately; no activation in this run.",
+    "owner_action_required": false,
+    "evidence_reviewed_at": "2026-11-06T06:28:40.511529+00:00",
+    "fresh_query_verification": true,
+    "evidence": [
+      "runs/technical-recovery-20261106b/observations.jsonl",
+      "runs/technical-recovery-20261106b/followups.jsonl",
+      "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+      "examples/nist-publications.jsonl"
+    ]
+  }
 }

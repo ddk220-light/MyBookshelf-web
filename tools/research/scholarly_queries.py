@@ -17,6 +17,7 @@ from run_source_reviews import now, pacing_seconds, request, robots
 from source_registry import REGISTRY, USER_AGENT, evaluate, request_url
 
 ENDPOINTS = {'crossref-public': 'https://api.crossref.org/works',
+             'nist-crossref': 'https://api.crossref.org/works',
              'arxiv-atom': 'https://export.arxiv.org/api/query'}
 
 
@@ -38,6 +39,16 @@ def parse_crossref(body):
                      'reading_access_verified': False})
     return {'results': rows, 'total_results': message['total-results'],
             'query': message.get('query'), 'next_cursor': message.get('next-cursor')}
+
+
+def parse_nist(body):
+    data = parse_crossref(body)
+    if any(not r['id'].startswith('10.6028/') for r in data['results']):
+        raise ValueError('Result outside NIST registered DOI prefix')
+    for row in data['results']:
+        row['metadata_provider'] = 'Crossref'
+        row['publisher_scope'] = 'NIST technical series registered under 10.6028 only'
+    return data
 
 
 def parse_arxiv(body):
@@ -87,6 +98,8 @@ def collect(source, cases, suffix='scouting'):
         policy, proof = robots(endpoint)
         for case in cases:
             req = case['request']
+            if adapter == 'nist-crossref' and (req.get('params', {}).get('filter') != 'prefix:10.6028' or not 1 <= req.get('params', {}).get('rows', 0) <= 3):
+                raise ValueError('NIST requests must restrict the registered DOI prefix and first three results')
             if req['method'] != 'GET' or req['url'] != endpoint:
                 raise ValueError('Unreviewed request')
             url = request_url(req)
@@ -96,12 +109,12 @@ def collect(source, cases, suffix='scouting'):
                 error = 'Unavailable/disallowing robots policy; no query sent'
             else:
                 time.sleep(pacing_seconds(policy))
-                http, body = request(url, 512 * 1024, {'Accept': 'application/json' if adapter == 'crossref-public' else 'application/atom+xml'})
+                http, body = request(url, 512 * 1024, {'Accept': 'application/json' if adapter in ('crossref-public', 'nist-crossref') else 'application/atom+xml'})
                 if http['status'] != 200 or http['truncated']:
                     error = http.get('error') or 'Non-200 or oversized metadata response'
                 else:
                     try:
-                        parsed = (parse_crossref if adapter == 'crossref-public' else parse_arxiv)(body)
+                        parsed = {'crossref-public': parse_crossref, 'nist-crossref': parse_nist, 'arxiv-atom': parse_arxiv}[adapter](body)
                     except (ValueError, TypeError, KeyError, ET.ParseError) as exc:
                         error = str(exc)
             capture = {'source_id': source['id'], 'case_id': case['id'], 'observed_at': now(),

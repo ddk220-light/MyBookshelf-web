@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T06:02:06.637071+00:00",
+  "generated_at": "2026-11-06T06:31:16.555943+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by at least ten current passing examples in this registry. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
@@ -16,13 +16,13 @@
   ],
   "totals": {
     "total": 133,
-    "working": 72,
-    "blocked_or_failed": 61,
+    "working": 74,
+    "blocked_or_failed": 59,
     "still_checking": 0,
-    "not_working_verified": 61,
+    "not_working_verified": 59,
     "assessed_or_deferred": 133,
     "remaining_to_assess": 0,
-    "passing_query_examples": 757
+    "passing_query_examples": 777
   },
   "groups": [
     {
@@ -45,8 +45,8 @@
       "id": "G03",
       "name": "Industry and job knowledge",
       "total": 20,
-      "working": 10,
-      "blocked_or_failed": 10,
+      "working": 11,
+      "blocked_or_failed": 9,
       "still_checking": 0
     },
     {
@@ -69,8 +69,8 @@
       "id": "G06",
       "name": "Language, culture and media",
       "total": 12,
-      "working": 5,
-      "blocked_or_failed": 7,
+      "working": 6,
+      "blocked_or_failed": 6,
       "still_checking": 0
     }
   ],
@@ -1036,11 +1036,11 @@
       "passing_examples": 0,
       "tested_search_scope": "Supported current search method not yet verified",
       "known_limitations": "Saved robots request returned301 and target was skipped under conservative redirect policy. Original redirect destination must be inspected before any future policy follow-up; no denial-bypass assumption. | One knowledge-centre catalog candidate; conventions, instruments, committee papers and editions are not independent origins.",
-      "next_step_or_blocker": "Exact published policy redirect resolution or supported permitted catalog/export documentation; distinguish paid titles from free whole documents and preserve edition/amendment identity.",
-      "block_reason": "Saved robots request returned301 and target was skipped under conservative redirect policy. Original redirect destination must be inspected before any future policy follow-up; no denial-bypass assumption.",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": "2026-11-05T13:54:02.057399+00:00",
+      "next_step_or_blocker": "Wait for an explicitly permitted export/API or changed provider policy. No account or outreach requested.",
+      "block_reason": "The published IMO catalog loads, but robots explicitly disallows /search and /record=; an additional bot block is present.",
+      "last_attempt_and_result": "Followed the official MKC catalog link to imo.iii.com and inspected the actual public search form and policy; no search request sent. / No searchable items retrieved; remains open.",
+      "recovery_decision": "wait_for_documented_permitted_method",
+      "last_reviewed_at": "2026-11-06T06:31:12.362669+00:00",
       "record": "sources/imo-knowledge-centre.json",
       "production_activation_changed": false
     },
@@ -1076,23 +1076,6 @@
       "recovery_decision": "wait-for-policy-access-recovery",
       "last_reviewed_at": "2026-11-05T20:02:11.010672+00:00",
       "record": "sources/india-nqr.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G03",
-      "group": "Industry and job knowledge",
-      "connector_id": "nist-publications",
-      "connector": "NIST publications",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "No current verified item-query examples. Catalog identity and documentation do not establish qualification. | Reading availability, jurisdiction, language, native version identity and machine-use limits remain open.",
-      "next_step_or_blocker": "Wait for a usable CSRC policy response or an explicit supported export-policy trigger before requesting its advertised XLSX/feeds. Meanwhile review general NIST metadata rights and revision semantics without assuming all government-hosted third-party works are public domain.",
-      "block_reason": "2026-11-05 follow-up robots request returned HTTP 301 to /; no publication/export request sent on that host. Earlier HTTP 200 capture remains historical evidence, not proof of current permission.",
-      "last_attempt_and_result": "",
-      "recovery_decision": "",
-      "last_reviewed_at": "2026-11-05T05:50:26.972137+00:00",
-      "record": "sources/nist-publications.json",
       "production_activation_changed": false
     },
     {
@@ -1263,6 +1246,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T20:45:57.135655+00:00",
       "record": "sources/msha-digital-library.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G03",
+      "group": "Industry and job knowledge",
+      "connector_id": "nist-publications",
+      "connector": "NIST publications",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Live title-ranked search of Crossref metadata restricted to NIST DOI prefix10.6028; first3 records, no direct NIST website/full-text access or all-NIST-output guarantee",
+      "known_limitations": "No claim this is all NIST-authored output; papers registered by other publishers are outside prefix10.6028. | Drafts, reports, journal records and historical versions may coexist; current status must be checked separately. | Crossref public metadata service is shared with the existing Crossref connector; not another independent origin.",
+      "next_step_or_blocker": "Retain Working research metadata search within its recorded scope. Check version/rights and app adapter separately; no activation in this run.",
+      "block_reason": "",
+      "last_attempt_and_result": "Use documented Crossref metadata API; prefix singleton explicitly identifies National Institute of Standards and Technology (NIST). / Ten distinct live title keyword queries returned relevant NIST-prefixed DOIs; first3 results each.",
+      "recovery_decision": "working_with_recorded_scope",
+      "last_reviewed_at": "2026-11-06T06:28:40.511519+00:00",
+      "record": "sources/nist-publications.json",
       "production_activation_changed": false
     },
     {
@@ -2152,23 +2152,6 @@
     {
       "group_id": "G06",
       "group": "Language, culture and media",
-      "connector_id": "art-institute-chicago",
-      "connector": "Art Institute of Chicago collection",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "No APIcontract,rights,records orquerysuccessverified. | Unnecessarysame-daypolicyrepeat retainedasfailure; no targetdoc/catalogrequest.",
-      "next_step_or_blocker": "Wait forusefulpublishedAPI/policyrecoverytrigger; thenverifyexactquery/export,rights,readerand10examples. Noalternatehostoraccount.",
-      "block_reason": "The API host refused its robots-policy request with HTTP403.",
-      "last_attempt_and_result": "Policy preflight failed; API documentation and queries were not requested. / Blocked on existing evidence; no new provider request in this review.",
-      "recovery_decision": "wait",
-      "last_reviewed_at": "2026-11-05T16:19:41.230914+00:00",
-      "record": "sources/art-institute-chicago.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G06",
-      "group": "Language, culture and media",
       "connector_id": "dpla",
       "connector": "Digital Public Library of America metadata aggregation",
       "status": "blocked_or_failed",
@@ -2209,11 +2192,11 @@
       "passing_examples": 0,
       "tested_search_scope": "Supported current search method not yet verified",
       "known_limitations": "Saved robots HTTP403 prevented target retrieval. No current catalog/API body is available. | One LINCS collection candidate; contributing programs, language tabs and external producers must be separately identified and deduplicated before any independent-origin count.",
-      "next_step_or_blocker": "Published accessible policy and explicitly permitted catalog/export documentation, or a useful documented recovery trigger; no unchanged-policy retry.",
-      "block_reason": "Saved robots HTTP403 prevented target retrieval. No current catalog/API body is available.",
-      "last_attempt_and_result": "Reviewed the saved provider-policy/access observations and prior decision; no fresh network request in this follow-up. / Saved robots HTTP403 prevented target retrieval. No current catalog/API body is available.",
-      "recovery_decision": "wait_for_documented_policy_access_or_permitted_export_trigger",
-      "last_reviewed_at": "2026-11-05T12:08:50.155149+00:00",
+      "next_step_or_blocker": "Wait for a documented permitted export or meaningful policy/access recovery.",
+      "block_reason": "Robots still returns403; no resource-collection request sent.",
+      "last_attempt_and_result": "Checked the official current resource-collection entry point; policy preflight failed. / No searchable items retrieved; remains open.",
+      "recovery_decision": "wait_for_documented_permitted_method",
+      "last_reviewed_at": "2026-11-06T06:31:12.362997+00:00",
       "record": "sources/lincs.json",
       "production_activation_changed": false
     },
@@ -2249,6 +2232,23 @@
       "recovery_decision": "wait_for_documented_policy_access_or_permitted_export_trigger",
       "last_reviewed_at": "2026-11-05T10:06:20.332138+00:00",
       "record": "sources/wikimedia-commons.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G06",
+      "group": "Language, culture and media",
+      "connector_id": "art-institute-chicago",
+      "connector": "Art Institute of Chicago collection",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Local title/artist tokens and native ID search over the complete pinned published artwork metadata export; no images or other API record types",
+      "known_limitations": "Live API policy remains403; this uses the provider-documented independent metadata export. | Export version pinned to Git commit; current observation does not mean every artwork was updated today. | Artist fields can be missing; no image rights/access inferred.",
+      "next_step_or_blocker": "Retain Working research metadata search within its recorded scope. Check version/rights and app adapter separately; no activation in this run.",
+      "block_reason": "",
+      "last_attempt_and_result": "Follow operator README to complete allArtworks.jsonl export; retrieve pinned official GitHub version. / Ten distinct title-token queries returned relevant native artwork IDs; exact-ID/artist modes supported; empty local query checked.",
+      "recovery_decision": "working_with_recorded_scope",
+      "last_reviewed_at": "2026-11-06T06:28:38.569472+00:00",
+      "record": "sources/art-institute-chicago.json",
       "production_activation_changed": false
     },
     {

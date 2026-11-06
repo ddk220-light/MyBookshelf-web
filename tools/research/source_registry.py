@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('bharat-electrician-catalog', 'caltech-public-browser', 'nasa-images-public', 'lever-fulcrum', 'madurai-catalog', 'sugamya-public', 'thoth-metadata', 'openstax-catalog', 'sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
+    if adapter in ('artic-export', 'nist-crossref', 'bharat-electrician-catalog', 'caltech-public-browser', 'nasa-images-public', 'lever-fulcrum', 'madurai-catalog', 'sugamya-public', 'thoth-metadata', 'openstax-catalog', 'sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -322,6 +322,9 @@ def probe(source_id, case_ids=None):
     source = json.loads((REGISTRY / 'sources' / f'{source_id}.json').read_text())
     if source.get('research_selection', {}).get('included') is False:
         raise ValueError('Source excluded by owner; no query permitted: ' + source_id)
+    if source['query']['adapter'] == 'artic-export':
+        from artic_catalog import probe as artic_probe
+        return artic_probe(source, case_ids)
     if source['query']['adapter'] == 'bharat-electrician-catalog':
         from bharat_catalog import probe as bharat_probe
         return bharat_probe(source, case_ids)
@@ -345,7 +348,7 @@ def probe(source_id, case_ids=None):
                 raise ValueError('Select map cases explicitly; mixed LOC batches cannot bypass the map policy gate')
             from loc_maps import probe as probe_maps
             return probe_maps(source, maps)
-    if source['query']['adapter'] in ('crossref-public', 'arxiv-atom'):
+    if source['query']['adapter'] in ('crossref-public', 'nist-crossref', 'arxiv-atom'):
         from scholarly_queries import probe as probe_scholarly
         return probe_scholarly(source, case_ids)
     if source['query']['adapter'] == 'core-public':

@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 38,
+  "remaining": 36,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -295,10 +295,22 @@
       "group": "G03",
       "status": "blocked_or_failed",
       "original_reason": "Robots redirected and the conservative collector stopped.",
-      "current_reason": "Saved robots request returned301 and target was skipped under conservative redirect policy. Original redirect destination must be inspected before any future policy follow-up; no denial-bypass assumption.",
-      "next_action": "Exact published policy redirect resolution or supported permitted catalog/export documentation; distinguish paid titles from free whole documents and preserve edition/amendment identity.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "The published IMO catalog loads, but robots explicitly disallows /search and /record=; an additional bot block is present.",
+      "next_action": "Wait for an explicitly permitted export/API or changed provider policy. No account or outreach requested.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:31:12.362667+00:00",
+          "reason": "The published IMO catalog loads, but robots explicitly disallows /search and /record=; an additional bot block is present.",
+          "attempt": "Followed the official MKC catalog link to imo.iii.com and inspected the actual public search form and policy; no search request sent.",
+          "result": "No searchable items retrieved; remains open.",
+          "decision": "wait_for_documented_permitted_method",
+          "evidence": [
+            "runs/technical-recovery-20261106b/observations.jsonl",
+            "runs/technical-recovery-20261106b/followups.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "nhm-guidelines",
@@ -326,12 +338,26 @@
       "id": "nist-publications",
       "name": "NIST publications",
       "group": "G03",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Robots redirected to the homepage.",
-      "current_reason": "2026-11-05 follow-up robots request returned HTTP 301 to /; no publication/export request sent on that host. Earlier HTTP 200 capture remains historical evidence, not proof of current permission.",
-      "next_action": "Wait for a usable CSRC policy response or an explicit supported export-policy trigger before requesting its advertised XLSX/feeds. Meanwhile review general NIST metadata rights and revision semantics without assuming all government-hosted third-party works are public domain.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Retain Working research metadata search within its recorded scope. Check version/rights and app adapter separately; no activation in this run.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:28:40.511529+00:00",
+          "reason": "CSRC policy still redirects to /; direct NIST route remains unavailable to the collector.",
+          "attempt": "Use documented Crossref metadata API; prefix singleton explicitly identifies National Institute of Standards and Technology (NIST).",
+          "result": "Ten distinct live title keyword queries returned relevant NIST-prefixed DOIs; first3 results each.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106b/observations.jsonl",
+            "runs/technical-recovery-20261106b/followups.jsonl",
+            "examples/nist-publications.recovery-scouting-20261106b.jsonl",
+            "examples/nist-publications.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "nsdc-curricula",
@@ -529,12 +555,25 @@
       "id": "art-institute-chicago",
       "name": "Art Institute of Chicago collection",
       "group": "G06",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "API-host robots returned 403 before any query.",
-      "current_reason": "The API host refused its robots-policy request with HTTP403.",
-      "next_action": "Wait forusefulpublishedAPI/policyrecoverytrigger; thenverifyexactquery/export,rights,readerand10examples. Noalternatehostoraccount.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Retain Working research metadata search within its recorded scope. Check version/rights and app adapter separately; no activation in this run.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:28:38.569484+00:00",
+          "reason": "Original API-host robots403 prevented direct API queries.",
+          "attempt": "Follow operator README to complete allArtworks.jsonl export; retrieve pinned official GitHub version.",
+          "result": "Ten distinct title-token queries returned relevant native artwork IDs; exact-ID/artist modes supported; empty local query checked.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106b/followups.jsonl",
+            "runs/technical-recovery-20261106b/art-export-capture.json",
+            "examples/art-institute-chicago.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "lincs",
@@ -542,10 +581,22 @@
       "group": "G06",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 403, leaving no catalog contract.",
-      "current_reason": "Saved robots HTTP403 prevented target retrieval. No current catalog/API body is available.",
-      "next_action": "Published accessible policy and explicitly permitted catalog/export documentation, or a useful documented recovery trigger; no unchanged-policy retry.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Robots still returns403; no resource-collection request sent.",
+      "next_action": "Wait for a documented permitted export or meaningful policy/access recovery.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T06:31:12.362995+00:00",
+          "reason": "Robots still returns403; no resource-collection request sent.",
+          "attempt": "Checked the official current resource-collection entry point; policy preflight failed.",
+          "result": "No searchable items retrieved; remains open.",
+          "decision": "wait_for_documented_permitted_method",
+          "evidence": [
+            "runs/technical-recovery-20261106b/observations.jsonl",
+            "runs/technical-recovery-20261106b/followups.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "nasa-image-video-library",
@@ -568,36 +619,32 @@
     }
   ],
   "progress": {
-    "working": 6,
-    "blocked_or_failed": 38,
+    "working": 8,
+    "blocked_or_failed": 36,
     "still_checking": 0,
-    "checked_this_pass": 8,
-    "remaining_to_recheck_this_pass": 34,
+    "checked_this_pass": 12,
+    "remaining_to_recheck_this_pass": 30,
     "baseline_working": 2
   },
   "current_run": {
-    "state": "checkpointed",
-    "phase": "production-verified-and-four-research-recoveries-saved",
-    "started_at": "2026-11-06T05:20:53.568628+00:00",
-    "collector_active": false,
-    "finished_at": "2026-11-06T06:02:02.941271+00:00"
+    "state": "active-parent-turn",
+    "started_at": "2026-11-06T06:22:34.442606+00:00",
+    "phase": "two-recoveries-checkpointed-then-temporary-failure-rechecks",
+    "collector_active": false
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 6,
-  "updated_at": "2026-11-06T06:02:02.941271+00:00",
+  "working": 8,
+  "updated_at": "2026-11-06T06:31:12.363746+00:00",
   "latest_run": {
+    "run_id": "technical-recovery-20261106b",
     "new_working": [
-      "nasa-image-video-library",
-      "lever-press",
-      "caltech-thesis",
-      "bharat-skills"
+      "art-institute-chicago",
+      "nist-publications"
     ],
     "technical_failures_rechecked": [
-      "doab",
-      "ncert",
-      "nsdc-curricula",
-      "worldreader"
+      "imo-knowledge-centre",
+      "lincs"
     ],
     "remaining_goal_open": true
   }

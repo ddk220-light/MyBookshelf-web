@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Recovery continuation B,6November2026:** Art Institute of Chicago and NIST add20passing examples:74Working/59Blocked of133active connectors; original44goal8Working/36remaining. Research only; production unchanged. [Report](research/free-content/TECHNICAL_RECOVERY_20261106B.md). Earlier entries are historical.
+
 **Production and recovery, 6 November 2026:** PR #180 is deployed at mybookshelf.cloud (`d406469`, Vercel `dpl_9ACDFzr9QNmqq9yNg4hzzKCcq9EZ`). All five new anonymous searches pass; 21 app sources connected. Separate research now has 72 working connectors/757 examples; original 44-item recovery goal has 6 working, 38 remaining. Hourly completion enabled. [Report and evidence](research/free-content/TECHNICAL_RECOVERY_20261106.md). Earlier entries below are historical.
 
 **Technical recovery, 6 November 2026:** NASA Images, Lever Press and CaltechTHESIS add 30 verified queries: 71 working of 133 active connectors. The fixed original 44 now have 5 working and 39 remaining. Hourly completion is enabled; [current recovery report](research/free-content/TECHNICAL_RECOVERY_20261106.md). PR #180 is the separate five-connector production release and is awaiting final CI. Earlier entries below are historical.

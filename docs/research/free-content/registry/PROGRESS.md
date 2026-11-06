@@ -1,3 +1,7 @@
+## Recovery continuation B —6November2026
+
+Art Institute of Chicago and NIST add20current passing queries.74Working/59Blocked,777examples; original44goal8Working/36remaining.277tests and evidence validation pass. IMO catalog search explicitly robots-disallowed; LINCS policy403. Continue independent temporary-failure rechecks.
+
 ## 6 November 2026 — production verified, recovery continues
 
 Production PR #180: five new connectors, 21 total; anonymous API and mobile checks pass. Research: 72 working, 757 examples, 274 tests. Original 44 recovery: 6 working, 38 remaining. Hourly task remains enabled.
