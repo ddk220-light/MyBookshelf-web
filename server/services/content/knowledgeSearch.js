@@ -35,7 +35,8 @@ export function createKnowledgeService({env=process.env,adapters,now=()=>Date.no
       const page=await request(id,query,{sourceCursor:state.native,signal});
       const items=[],seen=new Set();let hiddenUnclear=0;
       for(const raw of page.items){if(seen.has(raw.key)||!query.kinds.includes(raw.kind))continue;seen.add(raw.key);const item=present(raw,query);
-        if(isReadableAccess(item.access)&&(query.access!=='free_full_text'||item.access==='free_full_text'))items.push(item);
+        if(config.metadataDiscovery&&query.access!=='free_full_text')items.push(item);
+        else if(isReadableAccess(item.access)&&(query.access!=='free_full_text'||item.access==='free_full_text'))items.push(item);
         else if(!item.locations.length||item.locations.some(location=>['unknown','metadata_only'].includes(observedAccess(location,{...query,now:now()})))){hiddenUnclear++;if(query.includeUnclear)items.push(item);}}
       const native=page.nextSourceCursor;
       if(native!=null&&(typeof native!=='string'||!native||native.length>1000))throw fail('CONTENT_UNAVAILABLE','This source returned an invalid continuation.');

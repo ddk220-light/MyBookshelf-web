@@ -16,6 +16,9 @@ export type ContentItem = {
   provenance: Array<{ sourceId: string; sourceRecordId: string; recordUrl: string; retrievedAt: string }>;
   relations: Array<{ kind: string; targetKey?: string; targetUrl?:string; evidence: string }>;
   readingActions: Array<{ locationId: string; label: string; url: string; requiresAccount?:boolean; downloads: Array<{ url: string; mimeType: string }> }>;
+  sourceActions?: Array<{label:string;url:string;scope:'record'|'search'|'catalog'}>;
+  accessNote?: string;
+  externalOnly?: boolean;
 };
 export type ContentPage = { items: ContentItem[]; nextCursor: string | null; hiddenUnclear: number;
   coverage: string; sources: ContentSourceStatus[]; policyRevision: string;sessionCursor?:string;availableLevels?:string[];searchMode?:'live' };

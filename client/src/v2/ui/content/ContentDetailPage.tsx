@@ -30,6 +30,7 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
   if(!item)return <section className="content-detail"><p role="status">Checking reading links…</p></section>;
   const saved=state.savedContent.some(value=>value.contentKey===item.key);
   const primary=primaryReadingAction(item);
+  const sourceActions=(item.sourceActions||[]).filter(action=>safeSource(action.url));
   const downloads=(primary?.downloads||[]).filter((file,index,files)=>file.url!==primary?.url&&files.findIndex(other=>other.mimeType===file.mimeType)===index);
   const primaryLocation=item.locations.find(location=>location.id===primary?.locationId);
   const rights=primaryLocation?.license||(!primary?item.locations[0]?.license:undefined);
@@ -66,6 +67,7 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
     {primary&&!primary.requiresAccount&&<p className="content-access access-free"><span aria-hidden="true">● </span>{item.kind==='audiobook'?'Free to listen':'Free to read'}{primaryLocation?.readerUrl?' online':''}</p>}
     {primary?.requiresAccount&&<p className="content-access access-free">Free account required at {primaryLocation?.host||'the source'}. Sign in there to read this book.</p>}
     {primary&&safeSource(primary.url)?<a className="button-link content-read" href={safeSource(primary.url)} target="_blank" rel="noopener noreferrer" aria-label={`${primary.label}${primary.requiresAccount?' · free account required':''} (opens ${primaryLocation?.host||'source'})`}>{primary.label} <ExternalLinkIcon/></a>
+      :sourceActions.length?<><p className="content-access access-unclear">{item.accessNote||'Check the source for reading options.'}</p>{sourceActions.map(action=><a className="button-link content-read" key={action.url} href={safeSource(action.url)} target="_blank" rel="noopener noreferrer" aria-label={`${action.label} (opens source)`}>{action.label} <ExternalLinkIcon/></a>)}</>
       :<p className="content-access access-unclear">○ Access is unclear. Check the source for current reading options.</p>}
     {downloads.length>0&&<div className="content-formats" aria-label="Available formats">{downloads.map(file=>safeSource(file.url)&&<a key={file.url} href={safeSource(file.url)} target="_blank" rel="noopener noreferrer" aria-label={`${formatNames[file.mimeType]||'Format'} (opens ${new URL(file.url).hostname})`}>{formatNames[file.mimeType]||'Format'} <ExternalLinkIcon/></a>)}</div>}
     {primary&&safeSource(primary.url)&&<p className="content-host-note">Opens {new URL(primary.url).hostname}. {['book','learning_resource'].includes(item.kind)?m.noHost:'MyBookshelf doesn’t host or download this content.'}</p>}

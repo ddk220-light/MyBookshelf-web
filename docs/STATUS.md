@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Metadata search release, 6 November 2026:** Five completed connectors are integrated for production release: Open Book Publishers, Helsinki University Press, Project Madurai, OpenStax and Sugamya Pustakalaya. Live queries, detail/source links, client/server tests, type checking, build, SEO and desktop/mobile browser journeys pass. [Release scope and evidence](research/free-content/METADATA_CONNECTOR_RELEASE.md). Deployment verification is still pending. The separate research branch owns the 44-item recovery goal. Earlier entries are historical.
+
 **Cross-source knowledge search, 2026-11-05:** the owner authorized implementation and production release in the separate `feat/free-knowledge-search` worktree. [Release design and verification](research/free-content/KNOWLEDGE_RELEASE.md) records the new All knowledge view, ten additional supported integrations, independent source paging/errors, policy exclusions and hosted release state. The research registry completion goal continues separately; no candidate count is treated as proof of production readiness.
 
 **Current free-content direction, 2026-11-03:** the owner requested a simpler
