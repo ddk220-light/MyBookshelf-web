@@ -1,0 +1,30 @@
+{
+  "reviewed_at": "2026-11-06T10:31:43.586452+00:00",
+  "source_id": "indcat",
+  "decision": "Correct an API-router response misclassification; no explicit exclusion/access restriction is overridden",
+  "exact_scope": "https://indcatsru.inflibnet.ac.in/biblio anonymous bounded bibliographic metadata GET requests",
+  "policy_url": "https://indcatsru.inflibnet.ac.in/robots.txt",
+  "response_sha256": "b8388aea14fce9b3c2dae97f37ca612735937a5f4ef86c9a8c10c282cd5ba6fe",
+  "observed_response": "HTTP200 text/xml SRU2.0 explainResponse with an empty Zeerex serverInfo description and database name robots.txt. No user-agent groups, allow/disallow lines, challenge or authentication fields.",
+  "operator_documentation": {
+    "url": "https://indcat.inflibnet.ac.in/index.php/main/sruManual",
+    "reused_evidence": "runs/technical-recovery-20261106d/observations.jsonl",
+    "captured_at": "2026-11-06T07:20:08.989050+00:00",
+    "claim": "IndCat-GEN is openly available for general use without authentication and supports application bibliographic queries through documented SRU/CQL."
+  },
+  "standard": {
+    "url": "https://www.rfc-editor.org/rfc/rfc9309",
+    "sections": [
+      "2.2.1",
+      "2.3.1.5"
+    ],
+    "interpretation": "No matching group or groups at all means no rules apply; parseable rules must still be used if present. This exact observed document contains none."
+  },
+  "implementation_limits": [
+    "Only the exact reviewed response hash, URL, HTTP200 and content type can resolve this virtual-path response as no published exclusion rules.",
+    "All other HTML/XML/challenge/error responses retain existing conservative handling.",
+    "Explicit robots directives,401/403/429,rate/service failures and changed content remain blocked.",
+    "No user-agent substitution, proxy change, hidden API, login or full-book request."
+  ],
+  "historical_correction": "Earlier policy-unavailable failures remain preserved; they are not current successful query evidence. Real query examples still required."
+}

@@ -15,6 +15,8 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'nai-reference-table': 'Local title-token/native RT-ID search over78 published NAI reference tools and finding aids;9 ambiguous rows excluded, full Abhilekh archival-file catalog and reader access still blocked',
+    'indcat-sru': 'Live quoted CQL title search, first2 provider records filtered to all literal title tokens; native bibliographic IDs, no catalog-wide absence or free-reading guarantee',
     'diksha-featured': 'Local topic/link-language search over10 reviewed public quiz links for5 featured topics; main Library/course search remains login-gated,4 ambiguous links excluded, no content access tested',
     'nsdc-reports-ui': 'Live public title-word form over sector-wise industry-skills reports, first10 rows and native report-file URLs; original occupational standards/model curricula remain unverified, no PDF downloads',
     'scielo-articlemeta': 'Live exact SciELO article-PID lookup within Brazil collection scl through documented ArticleMeta REST, body=false; no upstream keyword or whole-network search guarantee',

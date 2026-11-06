@@ -290,6 +290,15 @@ def inventory_capture_audit(registry=REGISTRY):
     return errors
 
 
+def primary_document_reference(row, relative_path):
+    """Keep queued and ad-hoc observations auditable without inventing queue jobs."""
+    identity = 'primary:' + digest(json.dumps(row, ensure_ascii=False, sort_keys=True).encode())
+    reference = {'document_id': identity, 'path': relative_path, 'job_id': row.get('job_id')}
+    if 'job_id' not in row:
+        reference['observation_id'] = row.get('id', identity)
+    return reference
+
+
 def audit():
     manifest = json.loads((REGISTRY / 'analysis/manifest.json').read_text())
     history = documents()
@@ -366,9 +375,9 @@ def audit():
     pending_primary_documents = []
     for output in sorted((REGISTRY / 'runs').glob('*/observations.jsonl')):
         for row in read_jsonl(output):
-            identity = 'primary:' + digest(json.dumps(row, ensure_ascii=False, sort_keys=True).encode())
-            if entity_status(identity) != 'complete':
-                pending_primary_documents.append({'document_id': identity, 'path': str(output.relative_to(REGISTRY)), 'job_id': row['job_id']})
+            reference = primary_document_reference(row, str(output.relative_to(REGISTRY)))
+            if entity_status(reference['document_id']) != 'complete':
+                pending_primary_documents.append(reference)
     named_complete = not pending_entity_documents and not pending_primary_documents
     jurisdiction_file = REGISTRY / 'analysis/jurisdiction-reviews.jsonl'
     jurisdiction_reviews = {}

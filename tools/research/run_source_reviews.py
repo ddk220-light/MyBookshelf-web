@@ -111,6 +111,11 @@ def robots(url):
     parsed = urllib.parse.urlsplit(url)
     address = f'{parsed.scheme}://{parsed.netloc}/robots.txt'
     observation, body = request(address, 64 * 1024)
+    return parse_robots_response(address, observation, body)
+
+
+def parse_robots_response(address, observation, body):
+    """Interpret a saved policy response without repeating the network request."""
     if observation['status'] == 404:
         return None, observation
     if observation['status'] != 200 or observation['truncated']:

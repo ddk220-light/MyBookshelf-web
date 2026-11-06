@@ -8,7 +8,7 @@
     "C15",
     "C18"
   ],
-  "state": "deferred",
+  "state": "query-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -28,20 +28,193 @@
     "NAI archival repository: reference-tool indexes, structured record metadata and a digitized subset; not every listed archive record has an available scan."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown; no query executed",
-    "request_shape_verified": false
+    "adapter": "nai-reference-table",
+    "endpoint": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+    "authentication": "Anonymous public NAI HTML metadata table; restricted portal not queried",
+    "request_shape_verified": true,
+    "search_scope": "Local title-token or exact RT-ID search over78 unambiguous published reference-tool/finding-aid records.9 ambiguous records excluded. Full archival-file catalog and reader access remain unavailable.",
+    "supported_modes": [
+      "Local title-token AND search over published reference-tool titles",
+      "Exact native RT identifier lookup"
+    ],
+    "unsupported_modes": [
+      "Full Abhilekh archival-file search",
+      "PDF/body search",
+      "Reader access verification",
+      "Excluded conflicting links and unpublished reference tools"
+    ],
+    "cases": [
+      {
+        "id": "books-fort-william",
+        "intent": "Find a listed reference-tool publication by title words; not search individual archival files",
+        "query_text": "books Fort William",
+        "expected_ids": [
+          "RT_000000000046"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+          "local_query": {
+            "field": "title",
+            "value": "books Fort William"
+          }
+        }
+      },
+      {
+        "id": "manuscripts-fort-william",
+        "intent": "Find a listed reference-tool publication by title words; not search individual archival files",
+        "query_text": "manuscripts Fort William",
+        "expected_ids": [
+          "RT_000000000047"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+          "local_query": {
+            "field": "title",
+            "value": "manuscripts Fort William"
+          }
+        }
+      },
+      {
+        "id": "mutiny-bhopal",
+        "intent": "Find a listed reference-tool publication by title words; not search individual archival files",
+        "query_text": "mutiny Bhopal 1859 I",
+        "expected_ids": [
+          "RT_000000000038"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+          "local_query": {
+            "field": "title",
+            "value": "mutiny Bhopal 1859 I"
+          }
+        }
+      },
+      {
+        "id": "acquired-1402",
+        "intent": "Find a listed reference-tool publication by title words; not search individual archival files",
+        "query_text": "acquired 1402",
+        "expected_ids": [
+          "RT_000000000048"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+          "local_query": {
+            "field": "title",
+            "value": "acquired 1402"
+          }
+        }
+      },
+      {
+        "id": "secret-1776",
+        "intent": "Find a listed reference-tool publication by title words; not search individual archival files",
+        "query_text": "secret 1776",
+        "expected_ids": [
+          "RT_000000000056"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+          "local_query": {
+            "field": "title",
+            "value": "secret 1776"
+          }
+        }
+      },
+      {
+        "id": "court-directors",
+        "intent": "Find a listed reference-tool publication by title words; not search individual archival files",
+        "query_text": "court directors",
+        "expected_ids": [
+          "RT_000000000054"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+          "local_query": {
+            "field": "title",
+            "value": "court directors"
+          }
+        }
+      },
+      {
+        "id": "finance-guide",
+        "intent": "Find a listed reference-tool publication by title words; not search individual archival files",
+        "query_text": "guide finance",
+        "expected_ids": [
+          "RT_000000000006"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+          "local_query": {
+            "field": "title",
+            "value": "guide finance"
+          }
+        }
+      },
+      {
+        "id": "railways-guide",
+        "intent": "Find a listed reference-tool publication by title words; not search individual archival files",
+        "query_text": "guide railways",
+        "expected_ids": [
+          "RT_000000000007"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+          "local_query": {
+            "field": "title",
+            "value": "guide railways"
+          }
+        }
+      },
+      {
+        "id": "persian-calendar",
+        "intent": "Find a listed reference-tool publication by title words; not search individual archival files",
+        "query_text": "calendar persian 1766",
+        "expected_ids": [
+          "RT_000000000066"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+          "local_query": {
+            "field": "title",
+            "value": "calendar persian 1766"
+          }
+        }
+      },
+      {
+        "id": "seals-foreign",
+        "intent": "Find a listed reference-tool publication by title words; not search individual archival files",
+        "query_text": "seals foreign",
+        "expected_ids": [
+          "RT_000000000087"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+          "local_query": {
+            "field": "title",
+            "value": "seals foreign"
+          }
+        }
+      }
+    ]
   },
   "documentation": [
-    "https://nationalarchives.nic.in/en/online-portal-abhilekh-patal"
+    "https://nationalarchives.nic.in/en/online-portal-abhilekh-patal",
+    "https://nationalarchives.nic.in/en/research-and-references/reference-tools"
   ],
   "licensing": "No blanket metadata/content reuse license established; inspect source and item terms separately.",
   "limitations": [
-    "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
-    "The National Archives description has a placeholder # link, but its homepage publishes https://www.abhilekh-patal.in/.",
-    "Catalog search was not requested; metadata listing, digitized pages and paid/on-demand delivery must be distinguished."
+    "Working only for local title-token/native RT-ID search over78 unambiguous NAI reference tools/finding aids; not the full archival-file catalog.",
+    "Nine missing/conflicting linked identities are excluded; native reference IDs, legacy handles and current published targets are retained separately.",
+    "Abhilekh portal remains access-blocked; no landing page, PDF, archival-file body or reader access was requested. No blanket metadata/content reuse license inferred."
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
@@ -49,10 +222,13 @@
     "runs/abhilekh-entrypoint-20261105dj/observations.jsonl",
     "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
     "runs/pmc-query-contract-20261105dl/observations.jsonl",
-    "runs/technical-recovery-20261106e/observations.jsonl"
+    "runs/technical-recovery-20261106e/observations.jsonl",
+    "runs/technical-recovery-20261106h/observations.jsonl",
+    "runs/technical-recovery-20261106h/nai-reference-metadata.json",
+    "examples/abhilekh-patal.jsonl"
   ],
-  "last_reviewed_at": "2026-11-06T07:31:01.938205+00:00",
-  "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+  "last_reviewed_at": "2026-11-06T10:38:36.281947+00:00",
+  "next_action": "Maintain the bounded reference-tool metadata search. Broader archival-file search waits for a documented permitted catalog route or policy recovery; no portal bypass. Research only.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -127,16 +303,18 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documentation/listing reviewed; exact supported public query/export request remains open.",
+      "summary": "Local title-token or exact RT-ID search over78 unambiguous published reference-tool/finding-aid records.9 ambiguous records excluded. Full archival-file catalog and reader access remain unavailable.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "cases": [],
-        "authentication": "Unknown; no query executed",
-        "request_shape_verified": false
+        "endpoint": "https://nationalarchives.nic.in/en/research-and-references/reference-tools",
+        "method": "GET once, then local title-token AND/native RT-ID queries",
+        "authentication": "None for metadata table",
+        "full_archival_catalog_verified": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/nai-reference-metadata.json",
+        "examples/abhilekh-patal.jsonl"
       ],
       "observation_refs": [
         {
@@ -146,7 +324,7 @@
         }
       ],
       "open_questions": [
-        "Read supported machine access contract; capture ten distinct native-ID results plus paging/empty/error behavior."
+        "Broader archival-file query contract remains access-blocked."
       ]
     },
     "rights_and_cost": {
@@ -181,7 +359,10 @@
         "observed_samples": []
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/nai-reference-metadata.json",
+        "examples/abhilekh-patal.jsonl"
       ],
       "observation_refs": [
         {
@@ -196,14 +377,18 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No fresh query assertions. Preserve version, language, date and jurisdiction before making relevance claims.",
+      "summary": "Ten distinct title-token requests return expected native reference-tool IDs; ambiguous link mappings excluded.",
       "facts": {
-        "positive_examples": 0,
-        "native_identity_hint": null,
-        "historical_claims": "Retained separately in corpus; provider statements not independently enumerated"
+        "passing_current_examples": 10,
+        "indexed_reference_tools": 78,
+        "excluded_rows": 9,
+        "paging": "Single complete published table; no upstream keyword paging implemented"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/nai-reference-metadata.json",
+        "examples/abhilekh-patal.jsonl"
       ],
       "observation_refs": [
         {
@@ -213,7 +398,7 @@
         }
       ],
       "open_questions": [
-        "Verify five known-item/five topical intents, ten passing distinct examples and negative results under the supported method."
+        "No ranking quality or full archival topic coverage claim."
       ]
     },
     "operating_limits": {
@@ -226,7 +411,10 @@
         "bulk_items_copied": false
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/nai-reference-metadata.json",
+        "examples/abhilekh-patal.jsonl"
       ],
       "observation_refs": [
         {
@@ -241,21 +429,24 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
+      "summary": "Working for public reference-tool metadata subset; deeper archive access remains open.",
       "facts": {
-        "decision": "blocked_or_failed",
-        "blocker": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
+        "decision": "working",
         "activation_approved": false,
-        "next_action": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order."
+        "tested_scope": "Local title-token or exact RT-ID search over78 unambiguous published reference-tool/finding-aid records.9 ambiguous records excluded. Full archival-file catalog and reader access remain unavailable.",
+        "next_action": "Maintain the bounded reference-tool metadata search. Broader archival-file search waits for a documented permitted catalog route or policy recovery; no portal bypass. Research only."
       },
       "evidence": [
         "runs/abhilekh-official-links-20261105di/observations.jsonl",
         "runs/abhilekh-entrypoint-20261105dj/observations.jsonl",
         "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
-        "runs/pmc-query-contract-20261105dl/observations.jsonl"
+        "runs/pmc-query-contract-20261105dl/observations.jsonl",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/nai-reference-metadata.json",
+        "examples/abhilekh-patal.jsonl"
       ],
       "open_questions": [
-        "Usable policy and supported current search/export route remain unavailable."
+        "Full archival-file catalog and reader access are not established."
       ]
     }
   },
@@ -291,16 +482,26 @@
       "heading": "Access and documentation findings",
       "text": "| FDIC, SciELO Spain OAI, Abhilekh Patal | Policy responses are respectively 403, 503 and empty 202. No protected target queries were sent. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "bf635f1ec4ba0be09d4c9c0cf743500d90558badd3f6063c9708f29bf783f229",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106H.md",
+      "line": 7,
+      "heading": "Recovered searches",
+      "text": "- **IndCat:** ten supported anonymous SRU/CQL title searches return relevant native bibliographic records. The exact `/robots.txt` response is an empty SRU virtual-database description, not an exclusion or challenge; the operator explicitly documents general no-auth API use. A narrowly reviewed response hash corrects the earlier policy misclassification; real restrictions and changed/challenge responses still stop requests. A second fix accepts a unique agency-qualified MARC035 identity when001/003 are absent and rejects conflicting IDs. The failed Organic chemistry parser output remains saved. An empty-control query exposed unrelated provider results; the adapter now requires every literal query token in the returned title. A filtered-empty page does not prove catalog-wide absence. Distinct page2 and invalid-index diagnostic controls are saved. This proves bounded bibliographic search, not free full-book access.\n- **Abhilekh Patal / NAI reference tools:** the operator's public reference page contains78 unambiguous finding-aid/reference-tool records. Ten title-token queries pass. Nine missing/conflicting link mappings are excluded rather than repaired by guessing. Current targets, legacy handles and RT identifiers remain distinct. This is a local search over the published reference-tool list; the main archival-file catalog and reader access remain blocked. No request was sent to the restricted portal or linked PDFs.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
-    "reason": "Archives catalog policy still returns empty HTTP202.",
-    "attempt": "Official National Archives reference page confirms the public search URL; independently checked catalog policy.",
-    "result": "Reference page200 captured; catalog robots202 with zero bytes. No query, CAPTCHA bypass or demo-host workaround.",
-    "decision": "wait-for-policy-recovery",
+    "reviewed_at": "2026-11-06T10:38:36.281947+00:00",
+    "reason": "Main archival portal policy remains empty202; the operator publishes a separate public reference-tool metadata table.",
+    "attempt": "Read official NAI reference page, parse native RT identifiers with current/legacy links, quarantine ambiguous rows, and run ten title-token queries over a fresh permitted capture.",
+    "result": "Ten distinct relevant queries pass over78 unambiguous reference-tool records;9 ambiguous rows excluded. Full archival-file search and reader access remain unverified.",
+    "decision": "working_with_reference_tool_subset",
     "evidence": [
-      "runs/technical-recovery-20261106e/observations.jsonl"
+      "runs/technical-recovery-20261106h/observations.jsonl",
+      "runs/technical-recovery-20261106h/nai-reference-metadata.json",
+      "examples/abhilekh-patal.jsonl"
     ]
   },
   "recovery_history": [
@@ -315,6 +516,32 @@
         "owner_action_required": false
       },
       "next_action": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order."
+    },
+    {
+      "superseded_at": "2026-11-06T10:38:36.281947+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+        "reason": "Archives catalog policy still returns empty HTTP202.",
+        "attempt": "Official National Archives reference page confirms the public search URL; independently checked catalog policy.",
+        "result": "Reference page200 captured; catalog robots202 with zero bytes. No query, CAPTCHA bypass or demo-host workaround.",
+        "decision": "wait-for-policy-recovery",
+        "evidence": [
+          "runs/technical-recovery-20261106e/observations.jsonl"
+        ]
+      }
+    }
+  ],
+  "query_history": [
+    {
+      "superseded_at": "2026-11-06T10:36:52.350528+00:00",
+      "query": {
+        "adapter": "unproven",
+        "endpoint": null,
+        "cases": [],
+        "authentication": "Unknown; no query executed",
+        "request_shape_verified": false
+      },
+      "reason": "Testing bounded official reference-tool metadata alternative; full archival portal still inaccessible."
     }
   ]
 }

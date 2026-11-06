@@ -10,6 +10,18 @@ from capture_analysis import paragraphs, snapshot, source_mentions, dossier_gaps
 from sphinx_inventory import local_search, parse_inventory, probe
 
 
+class AdHocObservationTests(unittest.TestCase):
+    def test_ad_hoc_observation_has_stable_identity_without_queue_job(self):
+        from capture_analysis import primary_document_reference
+        row={'id':'manual-review','http':{'status':503}}
+        a=primary_document_reference(row,'runs/manual/observations.jsonl')
+        self.assertIsNone(a['job_id'])
+        self.assertEqual(a['observation_id'],'manual-review')
+        self.assertEqual(a,primary_document_reference(row,'runs/manual/observations.jsonl'))
+        self.assertNotEqual(a['document_id'],primary_document_reference({**row,'http':{'status':200}},a['path'])['document_id'])
+        self.assertEqual(primary_document_reference({'job_id':'queued'},a['path'])['job_id'],'queued')
+
+
 class CorpusTests(unittest.TestCase):
     def test_coverage_requires_qualified_origins_and_manual_review(self):
         with tempfile.TemporaryDirectory() as tmp:

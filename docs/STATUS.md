@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Recovery H checkpoint, 6 November 2026:** 90 Working / 43 Blocked/failed / 0 Still checking of 133 active connectors; 929 current passing examples. Original44: 24 Working / 20 remaining. Newly recovered: indcat, abhilekh-patal. 325 research tests and evidence checks pass. Research only; continuation enabled. [Evidence and scope](research/free-content/TECHNICAL_RECOVERY_20261106H.md). Earlier entries are historical.
+
 **Recovery G checkpoint, 6 November 2026:** 88 Working / 45 Blocked/failed / 0 Still checking of 133 active connectors; 909 current passing examples. Original44: 22 Working / 22 remaining. Newly recovered: gallica, diksha, ncert, india-nqr, nsdc-curricula, scielo. 314 research tests and evidence checks pass. Research only; continuation enabled. [Evidence and scope](research/free-content/TECHNICAL_RECOVERY_20261106G.md). Earlier entries are historical.
 
 **Recovery D–F checkpoint, 6 November 2026:** 82 Working / 51 Blocked/failed / 0 Still checking of 133 active research connectors; 857 current passing examples. Original 44: 16 Working, 28 remaining; 0 not yet revisited. Newly recovered: Directorate General of Shipping training circulars and guidelines, ROSA P, Bhuvan Indian Geoportal, GSA Federal Real Property Profile public asset inventory, NYC City Planning open datasets, Seattle GeoData municipal catalog. 299 research tests pass. Research only; hourly recovery remains enabled. [Evidence and limits](research/free-content/TECHNICAL_RECOVERY_20261106D.md). Earlier entries are historical.

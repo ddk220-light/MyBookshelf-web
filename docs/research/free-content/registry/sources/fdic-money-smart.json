@@ -43,18 +43,19 @@
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
     "docs/research/free-content/discovery/INDUSTRIES.md",
-    "runs/technical-recovery-20261106e/observations.jsonl"
+    "runs/technical-recovery-20261106e/observations.jsonl",
+    "runs/technical-recovery-20261106h/observations.jsonl"
   ],
   "limitations": [
     "Saved robots HTTP403 prevented target retrieval. Neither catalog fields nor lessons were captured.",
     "One named program candidate; individual lessons, age groups, translations and licensing partners are not additional origins."
   ],
-  "last_reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+  "last_reviewed_at": "2026-11-06T10:40:19.246097+00:00",
   "evidence_observation_dates": [
     "2026-11-05T02:33:39.063656+00:00"
   ],
   "fresh_query_verification": false,
-  "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+  "next_action": "Wait for catalog.fdic.gov policy/service recovery; one timed policy recheck no earlier than16:00UTC unless new recovery evidence. Then inspect anonymous metadata search without ordering materials.",
   "analysis_refs": [
     {
       "document_id": "f1277973934e66ee1006136955e0ff90f7f5ed63acdd9dc16f1fa61728f4c7fe",
@@ -70,6 +71,14 @@
       "line": 98,
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [FDIC Money Smart](https://www.fdic.gov/consumer-resource-center/money-smart) | Robots returned 403 before catalog retrieval. | Review documented machine access or ask technical support if the official route remains inaccessible. Owner action: engineering/research first; no owner signup required yet. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "bf635f1ec4ba0be09d4c9c0cf743500d90558badd3f6063c9708f29bf783f229",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106H.md",
+      "line": 12,
+      "heading": "Blocker investigation",
+      "text": "- **FDIC Money Smart:** official documentation points to a separate catalog service. Its policy endpoint returned503, so no catalog/product query was sent. Wait for recovery; next timed check no earlier than16:00UTC without a new service signal.\n- **LINCS and CERT-In:** API/RSS documentation searches did not establish a supported new interface. Unrelated third-party feeds, staging sites and host switching are not adopted as alternatives.\n- **Tamil Nadu land records:** discovery found leads for a separate Survey and Settlement map service. These are leads pending primary policy/interface verification; no personal-owner or parcel-detail queries were sent.",
       "status": "historical-context-needs-reconciliation"
     }
   ],
@@ -396,16 +405,30 @@
       "superseded_at": "2026-11-06T07:31:01.938205+00:00",
       "recovery": {},
       "next_action": "Usable published policy and a documented supported metadata/API/export route; then evaluate learner versus professional intent and full lesson rights."
+    },
+    {
+      "superseded_at": "2026-11-06T10:40:19.246097+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+        "reason": "FDIC policy endpoint still returns HTTP403.",
+        "attempt": "Located current public Money Smart adult curriculum page; policy check after overnight interval stopped the request.",
+        "result": "No curriculum metadata requested; no alternative documented public export established.",
+        "decision": "wait-for-policy-recovery",
+        "evidence": [
+          "runs/technical-recovery-20261106e/observations.jsonl"
+        ]
+      }
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
-    "reason": "FDIC policy endpoint still returns HTTP403.",
-    "attempt": "Located current public Money Smart adult curriculum page; policy check after overnight interval stopped the request.",
-    "result": "No curriculum metadata requested; no alternative documented public export established.",
-    "decision": "wait-for-policy-recovery",
+    "reviewed_at": "2026-11-06T10:40:19.246097+00:00",
+    "reason": "The official separate Money Smart catalog policy endpoint returns503; primary FDIC policy403 remains historical.",
+    "attempt": "Find catalog.fdic.gov links in official Money Smart documentation; check catalog policy before any title/product request.",
+    "result": "Documented public catalog alternative identified, but policy503 prevented catalog queries. No account, order, fee or content download.",
+    "decision": "wait_for_catalog_policy_service_recovery",
+    "retry_trigger": "Published recovery or paced policy check after2026-11-06T16:00:00Z; no retry every hour.",
     "evidence": [
-      "runs/technical-recovery-20261106e/observations.jsonl"
+      "runs/technical-recovery-20261106h/observations.jsonl"
     ]
   }
 }

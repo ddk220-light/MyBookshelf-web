@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T10:15:12.759645+00:00",
+  "generated_at": "2026-11-06T10:45:19.830106+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by current passing examples. Normally ten examples; an explicitly reviewed one-work publisher subset can use two real searches plus a complete listing and empty control, without padding. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
@@ -16,13 +16,13 @@
   ],
   "totals": {
     "total": 133,
-    "working": 88,
-    "blocked_or_failed": 45,
+    "working": 90,
+    "blocked_or_failed": 43,
     "still_checking": 0,
-    "not_working_verified": 45,
+    "not_working_verified": 43,
     "assessed_or_deferred": 133,
     "remaining_to_assess": 0,
-    "passing_query_examples": 909
+    "passing_query_examples": 929
   },
   "groups": [
     {
@@ -61,16 +61,16 @@
       "id": "G05",
       "name": "Research papers and scholarly sources",
       "total": 22,
-      "working": 12,
-      "blocked_or_failed": 10,
+      "working": 13,
+      "blocked_or_failed": 9,
       "still_checking": 0
     },
     {
       "id": "G06",
       "name": "Language, culture and media",
       "total": 12,
-      "working": 6,
-      "blocked_or_failed": 6,
+      "working": 7,
+      "blocked_or_failed": 5,
       "still_checking": 0
     }
   ],
@@ -1002,11 +1002,11 @@
       "passing_examples": 0,
       "tested_search_scope": "Supported current search method not yet verified",
       "known_limitations": "Saved robots HTTP403 prevented target retrieval. Neither catalog fields nor lessons were captured. | One named program candidate; individual lessons, age groups, translations and licensing partners are not additional origins.",
-      "next_step_or_blocker": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
-      "block_reason": "FDIC policy endpoint still returns HTTP403.",
-      "last_attempt_and_result": "Located current public Money Smart adult curriculum page; policy check after overnight interval stopped the request. / No curriculum metadata requested; no alternative documented public export established.",
-      "recovery_decision": "wait-for-policy-recovery",
-      "last_reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+      "next_step_or_blocker": "Wait for catalog.fdic.gov policy/service recovery; one timed policy recheck no earlier than16:00UTC unless new recovery evidence. Then inspect anonymous metadata search without ordering materials.",
+      "block_reason": "The official separate Money Smart catalog policy endpoint returns503; primary FDIC policy403 remains historical.",
+      "last_attempt_and_result": "Find catalog.fdic.gov links in official Money Smart documentation; check catalog policy before any title/product request. / Documented public catalog alternative identified, but policy503 prevented catalog queries. No account, order, fee or content download.",
+      "recovery_decision": "wait_for_catalog_policy_service_recovery",
+      "last_reviewed_at": "2026-11-06T10:40:19.246097+00:00",
       "record": "sources/fdic-money-smart.json",
       "production_activation_changed": false
     },
@@ -1795,23 +1795,6 @@
     {
       "group_id": "G05",
       "group": "Research papers and scholarly sources",
-      "connector_id": "indcat",
-      "connector": "IndCat union catalogue",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Known-title intent; bibliographic retrieval only / Topical title-field intent; bibliographic retrieval only",
-      "known_limitations": "No current verified item-query examples. Catalog identity and documentation do not establish qualification. | Reading availability, jurisdiction, language, native version identity and machine-use limits remain open.",
-      "next_step_or_blocker": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
-      "block_reason": "SRU API robots endpoint returns XML instead of a usable robots policy.",
-      "last_attempt_and_result": "Re-read official SRU manual; checked public API policy after overnight backoff. / Manual confirms public unauthenticated SRU, but current policy response is683-byte XML; no query sent.",
-      "recovery_decision": "wait-for-valid-api-policy",
-      "last_reviewed_at": "2026-11-06T07:28:04.358484+00:00",
-      "record": "sources/indcat.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G05",
-      "group": "Research papers and scholarly sources",
       "connector_id": "repec",
       "connector": "RePEc metadata network",
       "status": "blocked_or_failed",
@@ -2033,6 +2016,23 @@
     {
       "group_id": "G05",
       "group": "Research papers and scholarly sources",
+      "connector_id": "indcat",
+      "connector": "IndCat union catalogue",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Live quoted CQL title search, first2 provider records filtered to all literal title tokens; native bibliographic IDs, no catalog-wide absence or free-reading guarantee",
+      "known_limitations": "Bibliographic holdings metadata only: free full-item access is not verified. | MARC records may have repeated title fields, incomplete edition fields or only agency-qualified035 identity; retain native evidence without merging works. | Provider broadens unknown terms and can return unrelated titles. Local whole-token AND relevance filter rejects them. Paging works; filtered-empty page does not prove full catalog absence. Metadata/content rights remain unresolved.",
+      "next_step_or_blocker": "Maintain literal-title-filtered SRU metadata search with native IDs. Broader ranking/paging expansion and full-item access need separate verification; no production activation.",
+      "block_reason": "",
+      "last_attempt_and_result": "Review exact policy response against provider public no-auth SRU manual; narrowly recognize that exact response, preserve all actual denials; add unique agency-qualified035 fallback and replay title queries. / Ten relevant native title examples; policy and MARC identity fixes. Negative control exposed unrelated provider results: all literal title tokens now required. Page2 distinct; invalid index diagnostic retained. No full-reader guarantee.",
+      "recovery_decision": "working_with_bibliographic_title_scope",
+      "last_reviewed_at": "2026-11-06T10:40:19.246097+00:00",
+      "record": "sources/indcat.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G05",
+      "group": "Research papers and scholarly sources",
       "connector_id": "la-referencia",
       "connector": "LA Referencia",
       "status": "working",
@@ -2135,23 +2135,6 @@
     {
       "group_id": "G06",
       "group": "Language, culture and media",
-      "connector_id": "abhilekh-patal",
-      "connector": "Abhilekh Patal",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established. | The National Archives description has a placeholder # link, but its homepage publishes https://www.abhilekh-patal.in/. | Catalog search was not requested; metadata listing, digitized pages and paid/on-demand delivery must be distinguished.",
-      "next_step_or_blocker": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
-      "block_reason": "Archives catalog policy still returns empty HTTP202.",
-      "last_attempt_and_result": "Official National Archives reference page confirms the public search URL; independently checked catalog policy. / Reference page200 captured; catalog robots202 with zero bytes. No query, CAPTCHA bypass or demo-host workaround.",
-      "recovery_decision": "wait-for-policy-recovery",
-      "last_reviewed_at": "2026-11-06T07:31:01.938205+00:00",
-      "record": "sources/abhilekh-patal.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G06",
-      "group": "Language, culture and media",
       "connector_id": "dpla",
       "connector": "Digital Public Library of America metadata aggregation",
       "status": "blocked_or_failed",
@@ -2232,6 +2215,23 @@
       "recovery_decision": "wait_for_documented_policy_access_or_permitted_export_trigger",
       "last_reviewed_at": "2026-11-05T10:06:20.332138+00:00",
       "record": "sources/wikimedia-commons.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G06",
+      "group": "Language, culture and media",
+      "connector_id": "abhilekh-patal",
+      "connector": "Abhilekh Patal",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Local title-token/native RT-ID search over78 published NAI reference tools and finding aids;9 ambiguous rows excluded, full Abhilekh archival-file catalog and reader access still blocked",
+      "known_limitations": "Working only for local title-token/native RT-ID search over78 unambiguous NAI reference tools/finding aids; not the full archival-file catalog. | Nine missing/conflicting linked identities are excluded; native reference IDs, legacy handles and current published targets are retained separately. | Abhilekh portal remains access-blocked; no landing page, PDF, archival-file body or reader access was requested. No blanket metadata/content reuse license inferred.",
+      "next_step_or_blocker": "Maintain the bounded reference-tool metadata search. Broader archival-file search waits for a documented permitted catalog route or policy recovery; no portal bypass. Research only.",
+      "block_reason": "",
+      "last_attempt_and_result": "Read official NAI reference page, parse native RT identifiers with current/legacy links, quarantine ambiguous rows, and run ten title-token queries over a fresh permitted capture. / Ten distinct relevant queries pass over78 unambiguous reference-tool records;9 ambiguous rows excluded. Full archival-file search and reader access remain unverified.",
+      "recovery_decision": "working_with_reference_tool_subset",
+      "last_reviewed_at": "2026-11-06T10:38:36.281947+00:00",
+      "record": "sources/abhilekh-patal.json",
       "production_activation_changed": false
     },
     {

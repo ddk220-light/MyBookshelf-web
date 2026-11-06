@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 22,
+  "remaining": 20,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -524,8 +524,8 @@
       "group": "G03",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 403 before catalog retrieval.",
-      "current_reason": "FDIC policy endpoint still returns HTTP403.",
-      "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+      "current_reason": "The official separate Money Smart catalog policy endpoint returns503; primary FDIC policy403 remains historical.",
+      "next_action": "Wait for catalog.fdic.gov policy/service recovery; one timed policy recheck no earlier than16:00UTC unless new recovery evidence. Then inspect anonymous metadata search without ordering materials.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -536,6 +536,17 @@
           "decision": "wait-for-policy-recovery",
           "evidence": [
             "runs/technical-recovery-20261106e/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:40:19.246097+00:00",
+          "reason": "The official separate Money Smart catalog policy endpoint returns503; primary FDIC policy403 remains historical.",
+          "attempt": "Find catalog.fdic.gov links in official Money Smart documentation; check catalog policy before any title/product request.",
+          "result": "Documented public catalog alternative identified, but policy503 prevented catalog queries. No account, order, fee or content download.",
+          "decision": "wait_for_catalog_policy_service_recovery",
+          "retry_trigger": "Published recovery or paced policy check after2026-11-06T16:00:00Z; no retry every hour.",
+          "evidence": [
+            "runs/technical-recovery-20261106h/observations.jsonl"
           ]
         }
       ]
@@ -970,10 +981,10 @@
       "id": "indcat",
       "name": "IndCat union catalogue",
       "group": "G05",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "SRU requests timed out/returned 503; a MARC identity shape also needs repair.",
-      "current_reason": "SRU API robots endpoint returns XML instead of a usable robots policy.",
-      "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+      "current_reason": "",
+      "next_action": "Maintain literal-title-filtered SRU metadata search with native IDs. Broader ranking/paging expansion and full-item access need separate verification; no production activation.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -985,6 +996,20 @@
           "evidence": [
             "runs/technical-recovery-20261106d/observations.jsonl",
             "runs/technical-recovery-20261106d/scout-observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:40:19.246097+00:00",
+          "reason": "Policy checker misclassified an exact empty SRU virtual-database description as a restriction; MARC parser rejected records with native identity in035 instead of001/003. Old service503 had more than24hours backoff.",
+          "attempt": "Review exact policy response against provider public no-auth SRU manual; narrowly recognize that exact response, preserve all actual denials; add unique agency-qualified035 fallback and replay title queries.",
+          "result": "Ten distinct current title queries return relevant native bibliographic records; Organic chemistry parser failure preserved with correction evidence. No free-reader guarantee.",
+          "decision": "working_with_bibliographic_title_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106h/indcat-policy-review.json",
+            "runs/technical-recovery-20261106h/indcat-policy-response.xml",
+            "runs/technical-recovery-20261106h/indcat-scouting.jsonl",
+            "runs/technical-recovery-20261106h/indcat-parser-review.json",
+            "examples/indcat.jsonl"
           ]
         }
       ]
@@ -1051,10 +1076,10 @@
       "id": "abhilekh-patal",
       "name": "Abhilekh Patal",
       "group": "G06",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Both policy checks returned empty HTTP 202 responses.",
-      "current_reason": "Archives catalog policy still returns empty HTTP202.",
-      "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+      "current_reason": "",
+      "next_action": "Maintain the bounded reference-tool metadata search. Broader archival-file search waits for a documented permitted catalog route or policy recovery; no portal bypass. Research only.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1065,6 +1090,18 @@
           "decision": "wait-for-policy-recovery",
           "evidence": [
             "runs/technical-recovery-20261106e/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:38:36.281947+00:00",
+          "reason": "Main archival portal policy remains empty202; the operator publishes a separate public reference-tool metadata table.",
+          "attempt": "Read official NAI reference page, parse native RT identifiers with current/legacy links, quarantine ambiguous rows, and run ten title-token queries over a fresh permitted capture.",
+          "result": "Ten distinct relevant queries pass over78 unambiguous reference-tool records;9 ambiguous rows excluded. Full archival-file search and reader access remain unverified.",
+          "decision": "working_with_reference_tool_subset",
+          "evidence": [
+            "runs/technical-recovery-20261106h/observations.jsonl",
+            "runs/technical-recovery-20261106h/nai-reference-metadata.json",
+            "examples/abhilekh-patal.jsonl"
           ]
         }
       ]
@@ -1137,8 +1174,8 @@
     }
   ],
   "progress": {
-    "working": 22,
-    "blocked_or_failed": 22,
+    "working": 24,
+    "blocked_or_failed": 20,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1146,33 +1183,26 @@
     "revisited_since_goal_started": 42
   },
   "current_run": {
-    "state": "checkpointed-awaiting-continuation",
-    "started_at": "2026-11-06T09:26:13.506199+00:00",
-    "run_id": "technical-recovery-20261106g",
-    "phase": "supported alternatives and paced recovery checks",
+    "state": "checkpointed-continuing",
+    "run_id": "technical-recovery-20261106h",
+    "started_at": "2026-11-06T10:27:27.745190+00:00",
+    "heartbeat_at": "2026-11-06T10:45:16.315178+00:00",
     "collector_active": false,
-    "heartbeat_at": "2026-11-06T10:15:56.382349+00:00",
-    "checkpointed_at": "2026-11-06T10:15:09.216087+00:00",
-    "completed_at": "2026-11-06T10:15:56.382349+00:00",
     "active_detached_worker": false,
-    "evidence_checkpoint_commit": "9399141f645e92b5254a96b86ddf3acec57534ff",
-    "evidence_checkpoint_pushed": true
+    "scope": "Research-only supported query recovery",
+    "checkpointed_at": "2026-11-06T10:45:16.315178+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 22,
-  "updated_at": "2026-11-06T10:15:56.382349+00:00",
+  "working": 24,
+  "updated_at": "2026-11-06T10:45:16.315178+00:00",
   "latest_run": {
     "run_ids": [
-      "technical-recovery-20261106g"
+      "technical-recovery-20261106h"
     ],
     "new_working": [
-      "gallica",
-      "diksha",
-      "ncert",
-      "india-nqr",
-      "nsdc-curricula",
-      "scielo"
+      "indcat",
+      "abhilekh-patal"
     ],
     "remaining_goal_open": true
   }

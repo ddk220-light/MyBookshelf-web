@@ -8,7 +8,7 @@
     "C02",
     "C06"
   ],
-  "state": "deferred",
+  "state": "query-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -165,10 +165,90 @@
           },
           "url": "https://indcatsru.inflibnet.ac.in/biblio"
         }
+      },
+      {
+        "id": "title-organic-chemistry",
+        "intent": "Find relevant bibliographic records using provider-documented title CQL; not free-reader discovery",
+        "expected_ids": [
+          "4844667"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcatsru.inflibnet.ac.in/biblio",
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"Organic chemistry\"",
+            "recordSchema": "marcxml"
+          }
+        }
+      },
+      {
+        "id": "title-agriculture",
+        "intent": "Find relevant bibliographic records using provider-documented title CQL; not free-reader discovery",
+        "expected_ids": [
+          "772158"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcatsru.inflibnet.ac.in/biblio",
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"Agriculture\"",
+            "recordSchema": "marcxml"
+          }
+        }
+      },
+      {
+        "id": "title-geology",
+        "intent": "Find relevant bibliographic records using provider-documented title CQL; not free-reader discovery",
+        "expected_ids": [
+          "7207508"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcatsru.inflibnet.ac.in/biblio",
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"Geology\"",
+            "recordSchema": "marcxml"
+          }
+        }
+      },
+      {
+        "id": "title-logistics",
+        "intent": "Find relevant bibliographic records using provider-documented title CQL; not free-reader discovery",
+        "expected_ids": [
+          "19242231"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcatsru.inflibnet.ac.in/biblio",
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"Logistics\"",
+            "recordSchema": "marcxml"
+          }
+        }
       }
     ],
     "authentication": "Anonymous IndCat-GEN, explicitly documented",
-    "request_shape_verified": false,
+    "request_shape_verified": true,
     "method": "GET",
     "supported_modes": [
       "CQL title/ISBN/publisher/date metadata queries"
@@ -176,10 +256,12 @@
     "unsupported_modes": [
       "full-book reading guarantee",
       "full-text book search",
-      "semantic ranking"
+      "semantic ranking",
+      "Unfiltered provider fuzzy title matches",
+      "Catalog-wide absence inferred from filtered first2 results"
     ],
     "research_pause_seconds": 3,
-    "research_hold": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified."
+    "search_scope": "Live anonymous quoted CQL title search, first2 provider records filtered to all literal casefolded query tokens. Bibliographic holdings only; filtered-empty page is not catalog-wide absence."
   },
   "documentation": [
     "https://indcat.inflibnet.ac.in/index.php/main/features",
@@ -188,8 +270,9 @@
   ],
   "licensing": "Metadata and content rights require separate evidence; no blanket reuse license established.",
   "limitations": [
-    "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
-    "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
+    "Bibliographic holdings metadata only: free full-item access is not verified.",
+    "MARC records may have repeated title fields, incomplete edition fields or only agency-qualified035 identity; retain native evidence without merging works.",
+    "Provider broadens unknown terms and can return unrelated titles. Local whole-token AND relevance filter rejects them. Paging works; filtered-empty page does not prove full catalog absence. Metadata/content rights remain unresolved."
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
@@ -198,10 +281,17 @@
     "examples/indcat.scouting.jsonl",
     "examples/indcat.topic-scouting.jsonl",
     "runs/technical-recovery-20261106d/observations.jsonl",
-    "runs/technical-recovery-20261106d/scout-observations.jsonl"
+    "runs/technical-recovery-20261106d/scout-observations.jsonl",
+    "runs/technical-recovery-20261106h/indcat-policy-review.json",
+    "runs/technical-recovery-20261106h/indcat-policy-response.xml",
+    "runs/technical-recovery-20261106h/indcat-scouting.jsonl",
+    "runs/technical-recovery-20261106h/indcat-parser-review.json",
+    "examples/indcat.jsonl",
+    "runs/technical-recovery-20261106h/indcat-controls.jsonl",
+    "runs/technical-recovery-20261106h/indcat-relevance-review.json"
   ],
-  "last_reviewed_at": "2026-11-06T07:28:04.358484+00:00",
-  "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+  "last_reviewed_at": "2026-11-06T10:40:19.246097+00:00",
+  "next_action": "Maintain literal-title-filtered SRU metadata search with native IDs. Broader ranking/paging expansion and full-item access need separate verification; no production activation.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -295,166 +385,35 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Official IndCat-GEN manual explicitly documents anonymous general-use bibliographic SRU, CQL and MARCXML for all IndCat Books records. One current title request returned native bibliographic records; free-copy access remains unverified.",
+      "summary": "Live anonymous quoted CQL title search, first2 provider records filtered to all literal casefolded query tokens. Bibliographic holdings only; filtered-empty page is not catalog-wide absence.",
       "facts": {
-        "adapter": "indcat-sru",
         "endpoint": "https://indcatsru.inflibnet.ac.in/biblio",
-        "cases": [
-          {
-            "id": "title-indian-polyporaceae",
-            "intent": "Known-title intent; bibliographic retrieval only",
-            "expected_ids": [
-              "772049"
-            ],
-            "request": {
-              "headers": {
-                "Accept": "application/xml"
-              },
-              "method": "GET",
-              "params": {
-                "maximumRecords": 2,
-                "operation": "searchRetrieve",
-                "query": "dc.title=\"Indian Polyporaceae\"",
-                "recordSchema": "marcxml"
-              },
-              "url": "https://indcatsru.inflibnet.ac.in/biblio"
-            }
-          },
-          {
-            "id": "title-indian-constitution",
-            "intent": "Known-title intent; bibliographic retrieval only",
-            "expected_ids": [
-              "25006310"
-            ],
-            "request": {
-              "headers": {
-                "Accept": "application/xml"
-              },
-              "method": "GET",
-              "params": {
-                "maximumRecords": 2,
-                "operation": "searchRetrieve",
-                "query": "dc.title=\"Indian constitution\"",
-                "recordSchema": "marcxml"
-              },
-              "url": "https://indcatsru.inflibnet.ac.in/biblio"
-            }
-          },
-          {
-            "id": "title-database-system-concepts",
-            "intent": "Known-title intent; bibliographic retrieval only",
-            "expected_ids": [
-              "9430624"
-            ],
-            "request": {
-              "headers": {
-                "Accept": "application/xml"
-              },
-              "method": "GET",
-              "params": {
-                "maximumRecords": 2,
-                "operation": "searchRetrieve",
-                "query": "dc.title=\"Database system concepts\"",
-                "recordSchema": "marcxml"
-              },
-              "url": "https://indcatsru.inflibnet.ac.in/biblio"
-            }
-          },
-          {
-            "id": "title-machine-design",
-            "intent": "Known-title intent; bibliographic retrieval only",
-            "expected_ids": [
-              "20142477"
-            ],
-            "request": {
-              "headers": {
-                "Accept": "application/xml"
-              },
-              "method": "GET",
-              "params": {
-                "maximumRecords": 2,
-                "operation": "searchRetrieve",
-                "query": "dc.title=\"Machine design\"",
-                "recordSchema": "marcxml"
-              },
-              "url": "https://indcatsru.inflibnet.ac.in/biblio"
-            }
-          },
-          {
-            "id": "title-construction",
-            "intent": "Topical title-field intent; bibliographic retrieval only",
-            "expected_ids": [
-              "5166212"
-            ],
-            "request": {
-              "headers": {
-                "Accept": "application/xml"
-              },
-              "method": "GET",
-              "params": {
-                "maximumRecords": 2,
-                "operation": "searchRetrieve",
-                "query": "dc.title=\"construction\"",
-                "recordSchema": "marcxml"
-              },
-              "url": "https://indcatsru.inflibnet.ac.in/biblio"
-            }
-          },
-          {
-            "id": "title-manufacturing",
-            "intent": "Topical title-field intent; bibliographic retrieval only",
-            "expected_ids": [
-              "14980379"
-            ],
-            "request": {
-              "headers": {
-                "Accept": "application/xml"
-              },
-              "method": "GET",
-              "params": {
-                "maximumRecords": 2,
-                "operation": "searchRetrieve",
-                "query": "dc.title=\"manufacturing\"",
-                "recordSchema": "marcxml"
-              },
-              "url": "https://indcatsru.inflibnet.ac.in/biblio"
-            }
-          }
-        ],
-        "authentication": "Anonymous IndCat-GEN, explicitly documented",
-        "request_shape_verified": false,
-        "documented_endpoint": "https://indcatsru.inflibnet.ac.in/biblio",
         "method": "GET",
-        "protocol": "SRU 2.0 advertised; ISBN example explicitly specifies version=1.2",
-        "documented_indexes": [
-          "dc.title",
-          "bath.isbn",
-          "dc.publisher",
-          "dc.date"
-        ],
-        "documented_request": {
-          "query": "dc.title=Indian Polyporaceae",
-          "maximumRecords": 10,
-          "operation": "searchRetrieve",
-          "recordSchema": "marcxml"
-        },
-        "observed_probe": "examples/indcat.scouting.jsonl",
-        "supported_modes": [
-          "CQL title/ISBN/publisher/date metadata queries"
-        ],
-        "unsupported_modes": [
-          "full-book reading guarantee",
-          "full-text book search",
-          "semantic ranking"
-        ],
-        "research_pause_seconds": 3,
-        "research_hold": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified."
+        "authentication": "Anonymous documented IndCat-GEN",
+        "request_shape": {
+          "headers": {
+            "Accept": "application/xml"
+          },
+          "method": "GET",
+          "params": {
+            "maximumRecords": 2,
+            "operation": "searchRetrieve",
+            "query": "dc.title=\"Indian Polyporaceae\"",
+            "recordSchema": "marcxml"
+          },
+          "url": "https://indcatsru.inflibnet.ac.in/biblio"
+        }
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl",
         "runs/retrieval-doc-links-20261105b/observations.jsonl",
         "runs/retrieval-contracts-20261105b/observations.jsonl",
-        "examples/indcat.scouting.jsonl"
+        "examples/indcat.scouting.jsonl",
+        "runs/technical-recovery-20261106h/indcat-policy-review.json",
+        "runs/technical-recovery-20261106h/indcat-policy-response.xml",
+        "runs/technical-recovery-20261106h/indcat-scouting.jsonl",
+        "runs/technical-recovery-20261106h/indcat-parser-review.json",
+        "examples/indcat.jsonl"
       ],
       "observation_refs": [
         {
@@ -479,7 +438,7 @@
         }
       ],
       "open_questions": [
-        "Obtain supported public request shapes and verify ten distinct native-ID examples plus paging/empty/error behavior."
+        "ISBN/publisher/Boolean/date modes not currently verified."
       ]
     },
     "rights_and_cost": {
@@ -561,26 +520,23 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No current query assertions; observed listing identities are not passing examples.",
+      "summary": "Provider broadens unknown terms; enforce all literal title tokens. Saved controls prove distinct page2 native IDs, reject unrelated nonsense-query matches, and preserve unsupported-index diagnostic.",
       "facts": {
-        "positive_examples": 0,
-        "native_identity_samples": [],
-        "version_caution": "Version and overlap unresolved",
-        "duplicate_example": "First title probe returned 22 records; 772049 and 995468 both describe Indian Polyporaceae (1971), with different native bibliographic IDs. Do not call these distinct works or origins.",
-        "scouting_results": {
-          "attempted_topics": 9,
-          "parsed_results_queries": 6,
-          "timeouts": 1,
-          "http_503": 1,
-          "parse_failures": 1,
-          "current_verified_examples": 0,
-          "health_query": "Not attempted after 503"
-        }
+        "passing_current_examples": 10,
+        "relevance_filter": "All literal title tokens, first2 provider results",
+        "empty_scope": "Bounded page only; no catalog-wide absence inference",
+        "paging": "startRecord3 returned distinct IDs3483447 and24068752 with nextRecordPosition5",
+        "error": "Unsupported index returns SRU diagnostic, never counted as empty success"
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl",
         "runs/retrieval-doc-links-20261105b/observations.jsonl",
-        "runs/retrieval-contracts-20261105b/observations.jsonl"
+        "runs/retrieval-contracts-20261105b/observations.jsonl",
+        "runs/technical-recovery-20261106h/indcat-policy-review.json",
+        "runs/technical-recovery-20261106h/indcat-policy-response.xml",
+        "runs/technical-recovery-20261106h/indcat-scouting.jsonl",
+        "runs/technical-recovery-20261106h/indcat-parser-review.json",
+        "examples/indcat.jsonl"
       ],
       "observation_refs": [
         {
@@ -605,7 +561,7 @@
         }
       ],
       "open_questions": [
-        "Test known-item and topical relevance, negative queries and native identities without counting documentation samples as examples."
+        "Broad catalog ranking and exhaustive filtered pagination are unverified."
       ]
     },
     "operating_limits": {
@@ -620,7 +576,12 @@
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl",
         "runs/retrieval-doc-links-20261105b/observations.jsonl",
-        "runs/retrieval-contracts-20261105b/observations.jsonl"
+        "runs/retrieval-contracts-20261105b/observations.jsonl",
+        "runs/technical-recovery-20261106h/indcat-policy-review.json",
+        "runs/technical-recovery-20261106h/indcat-policy-response.xml",
+        "runs/technical-recovery-20261106h/indcat-scouting.jsonl",
+        "runs/technical-recovery-20261106h/indcat-parser-review.json",
+        "examples/indcat.jsonl"
       ],
       "observation_refs": [
         {
@@ -649,17 +610,23 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Candidate/deferred triage only; no runtime activation or qualification.",
+      "status": "partial",
+      "summary": "Working for documented bibliographic title search.",
       "facts": {
-        "decision": "deferred",
-        "next_action": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified.",
-        "activation_approved": false
+        "decision": "working",
+        "activation_approved": false,
+        "next_action": "Maintain bounded anonymous SRU title search; add paging/empty/error controls, preserve MARC identity variations, and investigate full-item access only through permitted routes. No production activation.",
+        "scope": "Live anonymous documented CQL title search over IndCat bibliographic library holdings; first2 native records. Not free-reading discovery or full-text search."
       },
       "evidence": [
         "runs/source-evidence-20261105/observations.jsonl",
         "runs/retrieval-doc-links-20261105b/observations.jsonl",
-        "runs/retrieval-contracts-20261105b/observations.jsonl"
+        "runs/retrieval-contracts-20261105b/observations.jsonl",
+        "runs/technical-recovery-20261106h/indcat-policy-review.json",
+        "runs/technical-recovery-20261106h/indcat-policy-response.xml",
+        "runs/technical-recovery-20261106h/indcat-scouting.jsonl",
+        "runs/technical-recovery-20261106h/indcat-parser-review.json",
+        "examples/indcat.jsonl"
       ],
       "observation_refs": [
         {
@@ -683,7 +650,9 @@
           "observed_at": "2026-11-05T05:48:12.714029+00:00"
         }
       ],
-      "open_questions": []
+      "open_questions": [
+        "Free full-item access and reuse rights remain separate."
+      ]
     }
   },
   "analysis_refs": [
@@ -697,14 +666,17 @@
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
-    "reason": "SRU API robots endpoint returns XML instead of a usable robots policy.",
-    "attempt": "Re-read official SRU manual; checked public API policy after overnight backoff.",
-    "result": "Manual confirms public unauthenticated SRU, but current policy response is683-byte XML; no query sent.",
-    "decision": "wait-for-valid-api-policy",
+    "reviewed_at": "2026-11-06T10:40:19.246097+00:00",
+    "reason": "Policy checker misclassified an exact empty SRU virtual-database description as a restriction; MARC parser rejected records with native identity in035 instead of001/003. Old service503 had more than24hours backoff.",
+    "attempt": "Review exact policy response against provider public no-auth SRU manual; narrowly recognize that exact response, preserve all actual denials; add unique agency-qualified035 fallback and replay title queries.",
+    "result": "Ten relevant native title examples; policy and MARC identity fixes. Negative control exposed unrelated provider results: all literal title tokens now required. Page2 distinct; invalid index diagnostic retained. No full-reader guarantee.",
+    "decision": "working_with_bibliographic_title_scope",
     "evidence": [
-      "runs/technical-recovery-20261106d/observations.jsonl",
-      "runs/technical-recovery-20261106d/scout-observations.jsonl"
+      "runs/technical-recovery-20261106h/indcat-policy-review.json",
+      "runs/technical-recovery-20261106h/indcat-policy-response.xml",
+      "runs/technical-recovery-20261106h/indcat-scouting.jsonl",
+      "runs/technical-recovery-20261106h/indcat-parser-review.json",
+      "examples/indcat.jsonl"
     ]
   },
   "recovery_history": [
@@ -730,6 +702,28 @@
         ]
       },
       "next_action": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified."
+    },
+    {
+      "superseded_at": "2026-11-06T10:40:19.246097+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+        "reason": "SRU API robots endpoint returns XML instead of a usable robots policy.",
+        "attempt": "Re-read official SRU manual; checked public API policy after overnight backoff.",
+        "result": "Manual confirms public unauthenticated SRU, but current policy response is683-byte XML; no query sent.",
+        "decision": "wait-for-valid-api-policy",
+        "evidence": [
+          "runs/technical-recovery-20261106d/observations.jsonl",
+          "runs/technical-recovery-20261106d/scout-observations.jsonl"
+        ]
+      }
+    }
+  ],
+  "research_hold_history": [
+    {
+      "hold": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified.",
+      "released_at": "2026-11-06T10:34:19.341965+00:00",
+      "reason": "Previous query-service failure was on November5, more than24hours ago. Current policy body is identical to reviewed empty SRU router description and operator documents anonymous general-use SRU. One bounded health query then serial supported cases; stop on first failure.",
+      "evidence": "runs/technical-recovery-20261106h/indcat-policy-review.json"
     }
   ]
 }

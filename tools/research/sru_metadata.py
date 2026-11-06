@@ -5,6 +5,7 @@ Research only. A bibliographic record or an 856 link is not free-reader evidence
 import xml.etree.ElementTree as ET
 import hashlib
 import time
+import re
 
 MAX_BYTES = 512 * 1024
 SRU = {'http://docs.oasis-open.org/ns/search-ws/sruResponse', 'http://www.loc.gov/zing/srw/'}
@@ -52,11 +53,25 @@ def parse_sru(body):
             return [text for code, text in fields.get(tag, []) if code in codes and text]
         native = controls.get('001')
         agency = controls.get('003')
+        # Some provider records omit 001/003 but retain the agency-qualified
+        # native control number in MARC035. Accept only its unique exact form;
+        # never invent identity from title, ISBN or result position.
+        native_035 = {m[1] for value in values('035', {'a'})
+                      if (m := re.fullmatch(r'\(IN-AhILN\)bk_(\d+)', value))}
+        identity_field = 'MARC001/003'
+        if len(native_035) > 1 or native and native_035 and native not in native_035:
+            raise ValueError('Conflicting agency-qualified native identity')
+        if not native or not agency:
+            if len(native_035) != 1 or agency not in (None, '', 'IN-AhILN'):
+                raise ValueError('Missing unambiguous agency-qualified native identity')
+            native = native or next(iter(native_035))
+            agency = 'IN-AhILN'
+            identity_field = 'MARC035 (IN-AhILN)bk_ identifier; 001/003 incomplete'
         title = ' '.join(values('245', {'a', 'b', 'n', 'p'}))
         if not native or not agency or not title or native in seen:
             raise ValueError('Missing or duplicate native bibliographic identity/title')
         seen.add(native)
-        results.append({'id': native, 'agency': agency, 'title': title,
+        results.append({'id': native, 'agency': agency, 'title': title, 'identity_field': identity_field,
                         'native_control_numbers': values('035', {'a'}),
                         'isbns': values('020', {'a'}), 'editions': values('250', {'a'}),
                         'publication_dates': values('260', {'c'}) + values('264', {'c'}),
@@ -72,11 +87,68 @@ def parse_sru(body):
             'next_record_position': int(next_position) if next_position else None}
 
 
+def filter_title_results(data, query):
+    """The provider may broaden unknown terms. Require literal title tokens.
+
+    Preserve the provider page and total separately; a filtered-empty page does
+    not prove the complete catalog has no match.
+    """
+    match = re.fullmatch(r'dc\.title="([^"\r\n]+)"', query)
+    if not match:
+        raise ValueError('Only reviewed quoted title-CQL search is supported')
+    terms = set(re.findall(r'\w+', match[1].casefold()))
+    if not terms:
+        raise ValueError('Title query needs literal tokens')
+    original = data['results']
+    relevant = [row for row in original if terms <= set(re.findall(r'\w+', row['title'].casefold()))]
+    return {**data, 'results': relevant, 'provider_page_results': original,
+            'relevance_filter': 'All literal casefolded title tokens; no prefix/fuzzy acceptance',
+            'provider_returned_count': len(original),
+            'filtered_empty_scope': 'No literal match in this bounded provider page; not a catalog-wide absence claim'}
+
+
+POLICY_URL = 'https://indcatsru.inflibnet.ac.in/robots.txt'
+EMPTY_SRU_EXPLAIN_SHA256 = 'b8388aea14fce9b3c2dae97f37ca612735937a5f4ef86c9a8c10c282cd5ba6fe'
+
+
+def interpret_policy(http, body):
+    """Recognize only the reviewed empty SRU virtual-database description.
+
+    IndCat explicitly publishes this API for anonymous general use. Its router
+    interprets /robots.txt as the SRU database name and returns an empty Zeerex
+    description, not an exclusion policy or access challenge. RFC9309 2.2.1 and
+    2.3.1.5 apply no rules when no groups/rules exist. A changed response, any
+    actual directives, denial, redirect or challenge continues to fail closed.
+    Evidence: runs/technical-recovery-20261106h/indcat-policy-review.json.
+    """
+    from run_source_reviews import parse_robots_response
+    policy, proof = parse_robots_response(POLICY_URL, dict(http), body)
+    if (http.get('status') == 200 and http.get('url') == POLICY_URL
+            and not http.get('truncated') and http.get('content_type') == 'text/xml'
+            and hashlib.sha256(body).hexdigest() == EMPTY_SRU_EXPLAIN_SHA256):
+        root = ET.fromstring(body)
+        db = root.find('.//{http://explain.z3950.org/dtd/2.0/}database')
+        if root.tag == '{http://docs.oasis-open.org/ns/search-ws/sruResponse}explainResponse' and db is not None and db.text == 'robots.txt':
+            proof.update(policy_interpretation='Reviewed empty SRU virtual-database description; no robots groups/rules present',
+                         documentation='https://indcat.inflibnet.ac.in/index.php/main/sruManual',
+                         review_evidence='runs/technical-recovery-20261106h/indcat-policy-review.json',
+                         access_restriction_overridden=False)
+            proof.pop('policy_error',None)
+            return None, proof
+    return policy, proof
+
+
+def sru_policy():
+    from run_source_reviews import request
+    http, body = request(POLICY_URL, 64*1024)
+    return interpret_policy(http, body)
+
+
 class SRUSession:
     """Serial, bounded requests to the exact provider-documented public route."""
     def __init__(self):
-        from run_source_reviews import robots, pacing_seconds
-        self.policy, self.proof = robots(ENDPOINT)
+        from run_source_reviews import pacing_seconds
+        self.policy, self.proof = sru_policy()
         self.pause = pacing_seconds(self.policy)
         self.blocked = False
         time.sleep(self.pause)
@@ -91,7 +163,7 @@ class SRUSession:
         http = {'status': None, 'truncated': False}
         error, data = None, None
         observed_at = now()
-        if self.blocked or self.policy is False or self.policy is not None and not self.policy.can_fetch(USER_AGENT, url):
+        if self.blocked or self.policy is False or self.policy is not None and not all(self.policy.can_fetch(a, url) for a in [USER_AGENT, 'ChatGPT-User', 'OAI-SearchBot']):
             error = 'Policy unavailable/disallows request, or previous access/rate response; no request sent'
         else:
             http, body = request(url, limit=MAX_BYTES, headers={'Accept': 'application/xml'})
@@ -101,13 +173,15 @@ class SRUSession:
                 error = http.get('error') or 'Non-200 or oversized SRU response'
             else:
                 try:
-                    data = parse_sru(body)
+                    data = filter_title_results(parse_sru(body), req.get('params', {}).get('query', ''))
                 except ValueError as exc:
                     error = str(exc)
             time.sleep(self.pause)
         observation = {'observed_at': observed_at, 'request': req, 'http': http,
                        'response_sha256': hashlib.sha256(body).hexdigest(),
                        'robots_evidence': self.proof, 'error': error}
+        if data is not None:
+            observation['relevance_evidence'] = {key: data[key] for key in ('provider_page_results', 'provider_returned_count', 'relevance_filter', 'filtered_empty_scope')}
         if error and http.get('status') == 200 and not http.get('truncated') and b'<html' not in body.lower():
             observation['invalid_metadata_xml_excerpt'] = body.decode(errors='replace')[:12000]
         return observation, data
@@ -133,5 +207,5 @@ def probe(source, case_ids=None):
             with (REGISTRY / 'examples' / f'{source["id"]}.jsonl').open('a') as stream:
                 stream.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + '\n')
             print(f'{source["id"]}/{case["id"]}: {row["verdict"]} HTTP {obs["http"]["status"]}', flush=True)
-            if session.blocked or session.policy is False:
+            if row['verdict'] != 'verified' or session.blocked or session.policy is False:
                 break
