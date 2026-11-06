@@ -85,3 +85,28 @@ Chromium and WebKit, in daylight/lamplight/ink, with accessibility and overflow
 checks. A test initially matched the navigation tab “Free to read”; it was corrected
 to inspect result cards. Hosted deployment identity and anonymous production
 verification will be appended after release.
+
+## Push blocker — owner decision required
+
+Application checkpoint `1a7a528` is committed locally on
+`feat/all-available-connectors`; GitHub rejected its push. Two public LA Referencia
+Spanish record IDs in live-checks.jsonl line 12 match GitHub's hCaptcha secret
+pattern. A fresh unauthenticated HTTP 200 request to
+`https://buscador.lareferencia.info/Search/Results?lookfor=mathematics&type=Title&page=1`
+confirmed both exact strings as native catalog record IDs.
+
+Automatic approval review rejected both changing the evidence encoding and
+registering GitHub's supported false-positive exceptions without explicit owner
+approval. Neither action ran. Preserve the evidence as-is. Ask the owner to approve
+the two narrowly scoped false-positive exceptions before pushing and deploying.
+GitHub placeholder IDs: `3LhltubQ5S4UKnzFMp8IH1oJ7fQ` and
+`3LjkQd1zMAOcqWqbsPMwRr4PDHH`. Use the documented
+`POST /repos/ddk220-light/MyBookshelf-web/secret-scanning/push-protection-bypasses`
+with reason `false_positive` only after approval, then normal push (no force).
+
+No release PR exists yet. Production is still deployment
+`dpl_GyZsBKjLa6cpAst6o2ta44v8M4cy`, main `962d185`. After push, create the scoped
+release PR, check CI and preview, merge, verify Vercel's production SHA, then test
+all 18 anonymous production searches and source links. Research automation remains
+paused. All local release checks passed, including the isolated client-service
+build. Hosted verification remains open.
