@@ -1,5 +1,7 @@
+import {FULL_COLLECTION_SOURCES} from './fullCollectionSources.js';
 // Explicitly reviewed integrations, never runtime imports of research candidates.
 export const KNOWLEDGE_SOURCES = {
+  ...FULL_COLLECTION_SOURCES,
   'open-book-publishers': {name:'Open Book Publishers',scope:'Scholarly book titles · open publisher metadata and links',kinds:['book'],adapter:'thoth',publisherId:'85fd969a-a16c-480b-b641-cb9adf979c3b',hosts:['www.openbookpublishers.com'],metadataDiscovery:true},
   'helsinki-university-press': {name:'Helsinki University Press',scope:'Scholarly book titles · publisher metadata and DOI links',kinds:['book'],adapter:'thoth',publisherId:'7c0b2d93-3264-4d83-beb5-7c18898d995a',hosts:['hup.fi'],metadataDiscovery:true},
   'project-madurai': {name:'Project Madurai',scope:'Tamil title catalog · 1,149 published work labels · snapshot 6 Nov 2026',kinds:['book'],adapter:'metadata-catalog',mode:'snapshot',metadataDiscovery:true},

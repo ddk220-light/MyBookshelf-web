@@ -1,3 +1,4 @@
+import {createFullCollectionAdapters} from './fullCollectionAdapters.js';
 import {createHash} from 'node:crypto';
 import {inflateSync} from 'node:zlib';
 import {setTimeout as sleep} from 'node:timers/promises';
@@ -47,7 +48,7 @@ export function createKnowledgeTransport({fetchImpl=globalThis.fetch,paceMs=2000
       if(response.status===404){if(data?.error==='Audiobooks could not be found')return {books:[]};throw sourceError('not_found');}
       return data;
     }catch(error){if(error.sourceStatus)throw error;if(combined.aborted)throw sourceError('timeout');throw sourceError('unavailable');}
-    finally{if(acquired)prior.next=Math.max(prior.next,Date.now()+paceMs);prior.pending--;release();}
+    finally{if(acquired)prior.next=Math.max(prior.next,Date.now()+Math.max(paceMs,host==='api.core.ac.uk'?7500:0));prior.pending--;release();}
   };
 }
 export function mapThoth(id,row,observedAt){
@@ -127,5 +128,6 @@ export function createKnowledgeAdapters({fetchImpl=globalThis.fetch,now=()=>Date
     }else throw sourceError('unsupported');
     return {items:rows.filter(Boolean).slice(0,query.limit),nextSourceCursor:next};
   }};
+  Object.assign(adapters,createFullCollectionAdapters(request,{now}));
   return adapters;
 }

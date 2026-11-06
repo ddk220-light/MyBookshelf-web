@@ -9,7 +9,7 @@ import {SearchIcon} from '../icons';
 import {sourceStatus} from './presentation';
 import './content.css';
 type Row={source:KnowledgeSource;page?:ContentPage;error?:PublicApiError;busy:boolean;visible:number};
-const kinds:ContentKind[]=['book','learning_resource','audiobook','article','preprint','chapter','thesis','report'];
+const kinds:ContentKind[]=['book','learning_resource','audiobook','article','preprint','chapter','thesis','report','other'];
 export function KnowledgeSearchPage(){
   const location=useLocation(),navigate=useNavigate();const params=new URLSearchParams(location.search);
   const query=params.get('q')||'',sourceId=params.get('source')||'',language=params.get('language')||'';
