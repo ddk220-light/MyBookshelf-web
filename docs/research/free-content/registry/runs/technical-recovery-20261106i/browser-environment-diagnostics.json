@@ -1,0 +1,26 @@
+{
+  "observed_at": "2026-11-06T11:33:55.990813+00:00",
+  "source_id": "worldreader",
+  "http_client_result": "Current documented public dashboard HTTP200, same reviewed app-shell body as fallback policy",
+  "browser_failures": [
+    {
+      "browser": "Chromium",
+      "cause": "ERR_CERT_AUTHORITY_INVALID before page render; local certificate-store compatibility, not provider search failure"
+    },
+    {
+      "browser": "WebKit",
+      "cause": "Required shared libraries absent; checking isolated local dependency setup using existing system certificate configuration"
+    }
+  ],
+  "approval_review": {
+    "action": "Persistently trust the current environment proxy CA in the user NSS database",
+    "decision": "rejected",
+    "reason": "Changes certificate trust beyond the authorized research task, with ongoing blast radius",
+    "action_performed": false
+  },
+  "query_verified": false,
+  "next_action": "Use existing TLS trust with a compatible browser; do not alter the certificate store or disable TLS validation.",
+  "resolved_at": "2026-11-06T11:37:19.680782+00:00",
+  "safer_resolution": "WebKit launched using temporary extracted Debian libraries, Node22 and the environment\u2019s existing system TLS trust. HTTPS dashboard returned200 with TLS verification intact. No certificate-store changes or ignore-certificate flags.",
+  "remaining_source_observation": "Application startup attempts an auth endpoint on a separate user-api host. Blocked pending public-flow/policy review; no auth/startup request, account or token created."
+}

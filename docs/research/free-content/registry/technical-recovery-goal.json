@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 17,
+  "remaining": 15,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -396,10 +396,10 @@
       "id": "worldreader",
       "name": "Worldreader mobile catalog lead",
       "group": "G01",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "The historical mobile-catalog route returned 404.",
-      "current_reason": "Current official BookSmart link found, but booksmart.world robots returns400.",
-      "next_action": "Establish usable public catalog policy or documented query route; no login/account creation.",
+      "current_reason": "",
+      "next_action": "Maintain anonymous US/English visible title search. Empty/paging, additional territories/languages, reading and reuse rights need separate tests. Preserve old route failures; no production activation.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -408,6 +408,22 @@
           "attempt": "Followed Worldreader product page to https://booksmart.world/free; target stopped at policy check.",
           "result": "Current official BookSmart link found, but booksmart.world robots returns400.",
           "decision": "Establish usable public catalog policy or documented query route; no login/account creation."
+        },
+        {
+          "reviewed_at": "2026-11-06T12:00:47.873571+00:00",
+          "reason": "Dead historical mobile route and400 old BookSmart link replaced by operator-published current dashboard; local browser timing/selector mistakes prevented early form tests.",
+          "attempt": "Review exact generic app-shell policy and optional-sign-in documentation; use verified TLS WebKit, dismiss visible intro/tour, wait for Ionic navigation, submit visible title form, parse only whitelisted metadata.",
+          "result": "Ten distinct title searches return relevant expected native UUIDs/versions; broad cat search demonstrates non-title hits filtered out. Early navigation/timing failures retained. No account, direct restricted-host request or book download.",
+          "decision": "working-with-anonymous-US-English-BookSmart-search-scope",
+          "evidence": [
+            "runs/technical-recovery-20261106i/observations.jsonl",
+            "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+            "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+            "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+            "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+            "examples/worldreader.browser.jsonl",
+            "examples/worldreader.jsonl"
+          ]
         }
       ]
     },
@@ -944,8 +960,8 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Robots request timed out before any catalog query.",
-      "current_reason": "Public policy endpoint still times out; no catalog query sent.",
-      "next_action": "Wait for policy/service recovery; next timed retry no earlier than2026-11-06T16:00:00Z. Follow a new documented public metadata route if independently available.",
+      "current_reason": "The official old homepage now announces migration to indiacode.gov.in, but the newly published host policy returns HTTP500; no catalog query sent.",
+      "next_action": "Wait for indiacode.gov.in policy/service recovery; next timed retry no earlier than2026-11-06T18:00:00Z absent a new recovery signal. No denial bypass.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -968,6 +984,18 @@
           "retry_trigger": "Published service recovery or a later paced policy check; no repeat before2026-11-06T16:00:00Z without a new recovery signal.",
           "evidence": [
             "runs/technical-recovery-20261106g/followups.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T11:59:34.807165+00:00",
+          "reason": "The official old homepage now announces migration to indiacode.gov.in, but the newly published host policy returns HTTP500; no catalog query sent.",
+          "attempt": "Follow a newly discovered official migration notice as a useful alternative-route trigger, instead of repeating the old nic.in timeout.",
+          "result": "Policy endpoint HTTP500 with148-byte HTML; new catalog remains unqueried. Separate commercial IndiaCode-branded services are not substitutes.",
+          "decision": "wait_for_new_official_host_policy_recovery",
+          "next_action": "Wait for indiacode.gov.in policy/service recovery; next timed retry no earlier than2026-11-06T18:00:00Z absent a new recovery signal. No denial bypass.",
+          "evidence": [
+            "runs/technical-recovery-20261106i/alternative-discovery.json",
+            "runs/technical-recovery-20261106i/observations.jsonl"
           ]
         }
       ]
@@ -1185,10 +1213,10 @@
       "id": "shodhganga",
       "name": "Shodhganga / university repositories",
       "group": "G05",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Historical research did not establish the actual external OAI/API route and terms.",
-      "current_reason": "Current repository robots policy disallows the attempted route; no supported permitted metadata query established.",
-      "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+      "current_reason": "",
+      "next_action": "Maintain supported IndCat Shodhganga-filtered metadata search. Direct repository restrictions, reading/rights, paging, refresh and wider language coverage remain separate; no production activation.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1200,6 +1228,19 @@
           "evidence": [
             "runs/technical-recovery-20261106d/observations.jsonl",
             "runs/technical-recovery-20261106d/scout-observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T12:01:43.202846+00:00",
+          "reason": "Direct Shodhganga route is robots-restricted, but operator documentation publishes an independent IndCat thesis search with explicit Shodhganga filtering.",
+          "attempt": "Capture provider form and metadata seeds; use GET All Fields keyword search with its Shodhganga checkbox, bind each title to exactly one native handle and separate IndCat ID, filter literal title tokens.",
+          "result": "Ten distinct title queries return expected native Shodhganga handles and relevant thesis titles. No direct repository request; native links remain untested.",
+          "decision": "working-with-IndCat-indexed-Shodhganga-thesis-metadata",
+          "evidence": [
+            "runs/technical-recovery-20261106i/observations.jsonl",
+            "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+            "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+            "examples/shodhganga.jsonl"
           ]
         }
       ]
@@ -1327,8 +1368,8 @@
     }
   ],
   "progress": {
-    "working": 27,
-    "blocked_or_failed": 17,
+    "working": 29,
+    "blocked_or_failed": 15,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1339,22 +1380,24 @@
     "state": "checkpointed-continuing",
     "run_id": "technical-recovery-20261106i",
     "started_at": "2026-11-06T11:18:45.699129+00:00",
-    "heartbeat_at": "2026-11-06T11:29:05.786047+00:00",
+    "heartbeat_at": "2026-11-06T12:02:11.725162+00:00",
     "collector_active": false,
     "active_detached_worker": false,
     "scope": "Research-only supported search recovery; investigate documented alternatives and obey saved backoff",
-    "checkpointed_at": "2026-11-06T11:29:05.786047+00:00"
+    "checkpointed_at": "2026-11-06T12:02:11.725162+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 27,
-  "updated_at": "2026-11-06T11:29:05.786047+00:00",
+  "working": 29,
+  "updated_at": "2026-11-06T12:02:11.725162+00:00",
   "latest_run": {
     "run_ids": [
       "technical-recovery-20261106i"
     ],
     "new_working": [
-      "snapplify"
+      "snapplify",
+      "worldreader",
+      "shodhganga"
     ],
     "remaining_goal_open": true
   }

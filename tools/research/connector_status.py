@@ -15,6 +15,8 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'shodhganga-indcat': 'IndCat public keyword form with explicit Shodhganga checkbox; first20 records filtered to literal title tokens and native Shodhganga handles; no repository requests or full-catalog/reader guarantee',
+    'worldreader-public-browser': 'Anonymous BookSmart browser title search, US/English default library, first20 results with native UUID/version; reading, other countries/languages, paging and standalone API not verified',
     'snapplify-shop': 'Anonymous public shop title searches, first page filtered to available zero-price items; Book Dash examples; checkout, reading, other territories and full catalog not verified',
     'bookshelf-epmc': 'Europe PMC-indexed Bookshelf book/chapter metadata with native NBK IDs, open-access flag and title queries; direct NCBI queries/readers remain unverified/restricted',
     'certin-booklets': 'Local title-token/language-label search over44 public cyber-safety booklet links covering12 topic groups; no PDF/full-text/advisory searches or reader verification',

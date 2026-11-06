@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "shodhganga",
-  "name": "Shodhganga / university repositories",
+  "name": "Shodhganga theses via IndCat metadata",
   "homepage": "https://shodhganga.inflibnet.ac.in/",
   "homepage_status": "historical-reference; canonical homepage/operator needs review",
   "group": "G05",
@@ -9,40 +9,171 @@
     "C06",
     "C07"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
   "capabilities": [
-    "Imported historical retrieval analysis: [Shodhganga](https://shodhganga.inflibnet.ac.in/), institution-specific DSpace/EPrints; discover advertised OAI endpoint/formats, import locally. CORE/OpenAlex can cover first."
+    "Published anonymous IndCat keyword form with explicit Shodhganga checkbox",
+    "Literal title-token postfilter on first20 records; preserve native Shodhganga handle and separate IndCat thesis ID"
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "historical_contract": "[Shodhganga](https://shodhganga.inflibnet.ac.in/), institution-specific DSpace/EPrints; discover advertised OAI endpoint/formats, import locally. CORE/OpenAlex can cover first.",
-    "authentication": "See historical notes; current contract must be reconciled with newer evidence."
+    "adapter": "shodhganga-indcat",
+    "endpoint": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch",
+    "authentication": "Anonymous published IndCat GET search form",
+    "cost": "No API key or payment",
+    "cases": [
+      {
+        "id": "indcat-linked-01",
+        "query_text": "Capital formation in agricultural sector of Manipur",
+        "intent": "Find this native Shodhganga-linked thesis in independently published IndCat metadata, with literal title relevance",
+        "expected_ids": [
+          "10603/104233"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch?src=free&word=Capital+formation+in+agricultural+sector+of+Manipur&field=allfields&url=fulltextsource_str_mv%3A%2AShodhganga%2A&search=simple"
+        }
+      },
+      {
+        "id": "indcat-linked-02",
+        "query_text": "Design And Development Of Networking Model For Agricultural Library And Information System In India",
+        "intent": "Find this native Shodhganga-linked thesis in independently published IndCat metadata, with literal title relevance",
+        "expected_ids": [
+          "10603/160763"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch?src=free&word=Design+And+Development+Of+Networking+Model+For+Agricultural+Library+And+Information+System+In+India&field=allfields&url=fulltextsource_str_mv%3A%2AShodhganga%2A&search=simple"
+        }
+      },
+      {
+        "id": "indcat-linked-03",
+        "query_text": "Agricultural development in Hailakandi district Assam during",
+        "intent": "Find this native Shodhganga-linked thesis in independently published IndCat metadata, with literal title relevance",
+        "expected_ids": [
+          "10603/104245"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch?src=free&word=Agricultural+development+in+Hailakandi+district+Assam+during&field=allfields&url=fulltextsource_str_mv%3A%2AShodhganga%2A&search=simple"
+        }
+      },
+      {
+        "id": "indcat-linked-04",
+        "query_text": "Pattern of agricultural development in nanded district",
+        "intent": "Find this native Shodhganga-linked thesis in independently published IndCat metadata, with literal title relevance",
+        "expected_ids": [
+          "10603/74667"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch?src=free&word=Pattern+of+agricultural+development+in+nanded+district&field=allfields&url=fulltextsource_str_mv%3A%2AShodhganga%2A&search=simple"
+        }
+      },
+      {
+        "id": "indcat-linked-05",
+        "query_text": "Agricultural development in the north eastern region of India",
+        "intent": "Find this native Shodhganga-linked thesis in independently published IndCat metadata, with literal title relevance",
+        "expected_ids": [
+          "10603/104243"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch?src=free&word=Agricultural+development+in+the+north+eastern+region+of+India&field=allfields&url=fulltextsource_str_mv%3A%2AShodhganga%2A&search=simple"
+        }
+      },
+      {
+        "id": "indcat-linked-06",
+        "query_text": "A study of agricultural land use in aurangabad district a geographical review",
+        "intent": "Find this native Shodhganga-linked thesis in independently published IndCat metadata, with literal title relevance",
+        "expected_ids": [
+          "10603/76813"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch?src=free&word=A+study+of+agricultural+land+use+in+aurangabad+district+a+geographical+review&field=allfields&url=fulltextsource_str_mv%3A%2AShodhganga%2A&search=simple"
+        }
+      },
+      {
+        "id": "indcat-linked-07",
+        "query_text": "Cropping Pattern And Agricultural Development In Karnataka State A Study Of Hyderabad Karnataka Region",
+        "intent": "Find this native Shodhganga-linked thesis in independently published IndCat metadata, with literal title relevance",
+        "expected_ids": [
+          "10603/142648"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch?src=free&word=Cropping+Pattern+And+Agricultural+Development+In+Karnataka+State+A+Study+Of+Hyderabad+Karnataka+Region&field=allfields&url=fulltextsource_str_mv%3A%2AShodhganga%2A&search=simple"
+        }
+      },
+      {
+        "id": "indcat-linked-08",
+        "query_text": "Critical study of agricultural land use in north thane district a geographical analysis",
+        "intent": "Find this native Shodhganga-linked thesis in independently published IndCat metadata, with literal title relevance",
+        "expected_ids": [
+          "10603/81027"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch?src=free&word=Critical+study+of+agricultural+land+use+in+north+thane+district+a+geographical+analysis&field=allfields&url=fulltextsource_str_mv%3A%2AShodhganga%2A&search=simple"
+        }
+      },
+      {
+        "id": "indcat-linked-09",
+        "query_text": "Science Technology and Culture in the Field of agriculture A Study of Ranbir Singh Pura Jammu",
+        "intent": "Find this native Shodhganga-linked thesis in independently published IndCat metadata, with literal title relevance",
+        "expected_ids": [
+          "10603/136954"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch?src=free&word=Science+Technology+and+Culture+in+the+Field+of+agriculture+A+Study+of+Ranbir+Singh+Pura+Jammu&field=allfields&url=fulltextsource_str_mv%3A%2AShodhganga%2A&search=simple"
+        }
+      },
+      {
+        "id": "indcat-linked-10",
+        "query_text": "A study of performance evaluation of co operative agriculture produce market committeees in marathwada region",
+        "intent": "Find this native Shodhganga-linked thesis in independently published IndCat metadata, with literal title relevance",
+        "expected_ids": [
+          "10603/77548"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://indcat.inflibnet.ac.in/index.php/search/thesesSearch?src=free&word=A+study+of+performance+evaluation+of+co+operative+agriculture+produce+market+committeees+in+marathwada+region&field=allfields&url=fulltextsource_str_mv%3A%2AShodhganga%2A&search=simple"
+        }
+      }
+    ]
   },
-  "licensing": "Handles/PDFs when deposited/unrestricted; embargoes, language, rights and metadata-only records need per-record handling.",
+  "licensing": "Public IndCat bibliographic metadata search is observed. Repository full-text license, metadata redistribution rights and item reading conditions remain separate and unverified.",
   "documentation": [
-    "https://shodhganga.inflibnet.ac.in/"
+    "https://shodhganga.inflibnet.ac.in/",
+    "https://indcat.inflibnet.ac.in/index.php/main/features",
+    "https://indcat.inflibnet.ac.in/index.php/main/theses"
   ],
   "limitations": [
-    "Homepage inspected; stable Shodhganga external API/OAI route and terms not verified. Do not assume every DSpace version shares one REST route. **High / P2 direct; P1 aggregated**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
-    "The earlier worker skipped the homepage after its policy gate. Robots returned HTTP200 text/plain without truncation; the exact matching rule was not retained. No homepage or thesis query was sent in that attempt. This is analysis of saved evidence, not a new provider test."
+    "Scope is the explicitly Shodhganga-linked subset indexed by IndCat, not the whole Shodhganga repository. Shared IndCat metadata is not another independent origin.",
+    "Direct repository robots restrictions remain in force. No request followed a Shodhganga link; no full thesis downloaded.",
+    "Native handle and IndCat ID are separate; original reported HTTP URLs preserved, not silently upgraded or claimed accessible. Edition/version not established.",
+    "Initial requested title field rendered the All Fields selector. Current verified contract uses the published All Fields mode plus exact literal title-token relevance filtering.",
+    "First20 provider records only; filtered empty does not prove catalog-wide absence. Paging, refresh, later-day reliability and broader language coverage unverified."
   ],
   "evidence": [
     "analysis/documents.jsonl",
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/technical-recovery-20261106d/observations.jsonl",
-    "runs/technical-recovery-20261106d/scout-observations.jsonl"
+    "runs/technical-recovery-20261106d/scout-observations.jsonl",
+    "runs/technical-recovery-20261106i/observations.jsonl",
+    "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+    "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+    "examples/shodhganga.jsonl"
   ],
-  "last_reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+  "last_reviewed_at": "2026-11-06T12:01:43.202846+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+  "next_action": "Maintain supported IndCat Shodhganga-filtered metadata search. Direct repository restrictions, reading/rights, paging, refresh and wider language coverage remain separate; no production activation.",
   "aliases": [
-    "Shodhganga"
+    "Shodhganga",
+    "Shodhganga / university repositories"
   ],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -53,171 +184,171 @@
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "INFLIBNET independently publishes IndCat thesis metadata explicitly linked to Shodhganga native handles. Keep handle and IndCat ID separate; shared connector not a new origin.",
       "facts": {
-        "id": "shodhganga",
-        "name": "Shodhganga / university repositories",
-        "homepage_reference": "https://shodhganga.inflibnet.ac.in/",
-        "operator": null,
-        "origin_deduplication": "pending"
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/shodhganga-previous-record.json",
+        "scope": "First20 IndCat Shodhganga-linked thesis metadata; no direct repository requests"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+        "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+        "examples/shodhganga.jsonl"
       ],
       "open_questions": [
-        "Confirm operator, parent and catalog-versus-origin deduplication."
-      ]
+        "Reader rights, complete coverage, paging/refresh and operating limits remain separate from verified metadata queries."
+      ],
+      "observation_refs": []
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Ten known English thesis titles return relevant records from Indian universities. Full Shodhganga, all universities and other language coverage not inferred.",
       "facts": {
-        "category_industry_candidates": [
-          "C06",
-          "C07"
-        ],
-        "languages": null,
-        "jurisdictions": null,
-        "coverage_evidence": "pending"
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/shodhganga-previous-record.json",
+        "scope": "First20 IndCat Shodhganga-linked thesis metadata; no direct repository requests"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+        "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+        "examples/shodhganga.jsonl"
       ],
       "open_questions": [
-        "Verify country/language/subject coverage with item evidence."
-      ]
+        "Reader rights, complete coverage, paging/refresh and operating limits remain separate from verified metadata queries."
+      ],
+      "observation_refs": []
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit. The earlier worker skipped the homepage after its policy gate. Robots returned HTTP200 text/plain without truncation; the exact matching rule was not retained. No homepage or thesis query was sent in that attempt.",
+      "summary": "Published GET /index.php/search/thesesSearch with src=free, word=title terms, field=allfields, url=fulltextsource_str_mv:*Shodhganga*, search=simple. First20 only.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Imported historical retrieval analysis: [Shodhganga](https://shodhganga.inflibnet.ac.in/), institution-specific DSpace/EPrints; discover advertised OAI endpoint/formats, import locally. CORE/OpenAlex can cover first."
-        ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/shodhganga-previous-record.json",
+        "scope": "First20 IndCat Shodhganga-linked thesis metadata; no direct repository requests"
       },
       "evidence": [
-        "analysis/documents.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+        "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+        "examples/shodhganga.jsonl"
       ],
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Reader rights, complete coverage, paging/refresh and operating limits remain separate from verified metadata queries."
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "bbbad1116a4011d07ed6",
-          "url": "https://shodhganga.inflibnet.ac.in/",
-          "observed_at": "2026-11-05T02:45:26.535850+00:00",
-          "policy_sha256": "89988b155aa8400afbb881bd1c9c8321aa1262cd66103e83184e74ca1225948b",
-          "reviewed_at": "2026-11-05T10:27:05.205210+00:00",
-          "review_type": "semantic-backfill-of-existing-observation-not-new-request"
-        }
-      ]
+      "observation_refs": []
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Anonymous metadata form works without key/account/payment. Metadata reuse and thesis-content licenses remain unverified.",
       "facts": {
-        "license_notes": "Handles/PDFs when deposited/unrestricted; embargoes, language, rights and metadata-only records need per-record handling.",
-        "authentication_notes": "See historical notes; current contract must be reconciled with newer evidence.",
-        "cost_notes": null,
-        "terms_review": "pending current reconciliation"
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/shodhganga-previous-record.json",
+        "scope": "First20 IndCat Shodhganga-linked thesis metadata; no direct repository requests"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+        "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+        "examples/shodhganga.jsonl"
       ],
       "open_questions": [
-        "Reconcile current metadata/content terms, free limits and permitted commercial use."
-      ]
+        "Reader rights, complete coverage, paging/refresh and operating limits remain separate from verified metadata queries."
+      ],
+      "observation_refs": []
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Only indexed metadata and explicit native handles captured. No Shodhganga URL or thesis file requested; reader availability unverified.",
       "facts": {
-        "evidence_references": [
-          "analysis/documents.jsonl"
-        ],
-        "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/shodhganga-previous-record.json",
+        "scope": "First20 IndCat Shodhganga-linked thesis metadata; no direct repository requests"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+        "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+        "examples/shodhganga.jsonl"
       ],
       "open_questions": [
-        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
-      ]
+        "Reader rights, complete coverage, paging/refresh and operating limits remain separate from verified metadata queries."
+      ],
+      "observation_refs": []
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Ten distinct native-handle title queries pass; exact handle/IndCat identity mapping and all-literal-title-token postfilter avoid generic thesis matches.",
       "facts": {
-        "limitations": [
-          "Homepage inspected; stable Shodhganga external API/OAI route and terms not verified. Do not assume every DSpace version shares one REST route. **High / P2 direct; P1 aggregated**.",
-          "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
-        ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/shodhganga-previous-record.json",
+        "scope": "First20 IndCat Shodhganga-linked thesis metadata; no direct repository requests"
       },
       "evidence": [
-        "analysis/documents.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+        "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+        "examples/shodhganga.jsonl"
       ],
       "open_questions": [
-        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
-      ]
+        "Reader rights, complete coverage, paging/refresh and operating limits remain separate from verified metadata queries."
+      ],
+      "observation_refs": []
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit. The earlier worker skipped the homepage after its policy gate. Robots returned HTTP200 text/plain without truncation; the exact matching rule was not retained. No homepage or thesis query was sent in that attempt.",
+      "summary": "Serial3-second-or-slower pacing,512KB cap,20 returned records. Stop access failures. Provider quotas, refresh and later-day stability unknown.",
       "facts": {
-        "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/shodhganga-previous-record.json",
+        "scope": "First20 IndCat Shodhganga-linked thesis metadata; no direct repository requests"
       },
       "evidence": [
-        "analysis/documents.jsonl",
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+        "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+        "examples/shodhganga.jsonl"
       ],
       "open_questions": [
-        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+        "Reader rights, complete coverage, paging/refresh and operating limits remain separate from verified metadata queries."
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "bbbad1116a4011d07ed6",
-          "url": "https://shodhganga.inflibnet.ac.in/",
-          "observed_at": "2026-11-05T02:45:26.535850+00:00",
-          "policy_sha256": "89988b155aa8400afbb881bd1c9c8321aa1262cd66103e83184e74ca1225948b",
-          "reviewed_at": "2026-11-05T10:27:05.205210+00:00",
-          "review_type": "semantic-backfill-of-existing-observation-not-new-request"
-        }
-      ]
+      "observation_refs": []
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "The earlier worker skipped the homepage after its policy gate. Robots returned HTTP200 text/plain without truncation; the exact matching rule was not retained. No homepage or thesis query was sent in that attempt. Resolve the saved policy gate only on a useful published permission/documentation change. Find an advertised permitted metadata/OAI contract; never assume a generic DSpace API, bypass access controls or bulk-download theses.",
+      "status": "partial",
+      "summary": "Working within independently published IndCat Shodhganga-linked metadata scope. Full qualification and activation remain incomplete.",
       "facts": {
-        "decision": "deferred-existing-policy-evidence",
-        "current_request_sent": false,
+        "current_query_verified": true,
+        "passing_current_examples": 10,
         "activation_approved": false,
-        "owner_action_required": false
+        "historical_record": "runs/technical-recovery-20261106i/shodhganga-previous-record.json",
+        "scope": "First20 IndCat Shodhganga-linked thesis metadata; no direct repository requests"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+        "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+        "examples/shodhganga.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "bbbad1116a4011d07ed6",
-          "url": "https://shodhganga.inflibnet.ac.in/",
-          "observed_at": "2026-11-05T02:45:26.535850+00:00",
-          "policy_sha256": "89988b155aa8400afbb881bd1c9c8321aa1262cd66103e83184e74ca1225948b",
-          "reviewed_at": "2026-11-05T10:27:05.205210+00:00",
-          "review_type": "semantic-backfill-of-existing-observation-not-new-request"
-        }
-      ],
-      "open_questions": []
+      "observation_refs": [],
+      "open_questions": [
+        "Reader rights, complete coverage, paging/refresh and operating limits remain separate from verified metadata queries."
+      ]
     }
   },
   "analysis_refs": [
@@ -276,6 +407,30 @@
       "heading": "Access and documentation findings",
       "text": "| NCBI Bookshelf, Gallica, USGS National Map, Shodhganga | Tested routes or documented alternatives have explicit robots restrictions. NCBI web docs also show a browser challenge. Do not change agents or use mirrors to bypass restrictions. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c1ed26015470702ec1f0b157f5a9158ea76a93919241b82e879ae8b886f11f13",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106I.md",
+      "line": 28,
+      "heading": "Shodhganga metadata recovered through IndCat",
+      "text": "## Shodhganga metadata recovered through IndCat",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c1ed26015470702ec1f0b157f5a9158ea76a93919241b82e879ae8b886f11f13",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106I.md",
+      "line": 30,
+      "heading": "Shodhganga metadata recovered through IndCat",
+      "text": "INFLIBNET’s feature documentation describes Shodhganga links, and its thesis form includes an explicit Shodhganga checkbox. That independently published search returns native repository handles alongside separate IndCat thesis IDs. Ten distinct title queries now pass. No request followed a Shodhganga link, and repository restrictions remain in force.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c1ed26015470702ec1f0b157f5a9158ea76a93919241b82e879ae8b886f11f13",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106I.md",
+      "line": 32,
+      "heading": "Shodhganga metadata recovered through IndCat",
+      "text": "The verified mode uses the published All Fields keyword form with Shodhganga filtering, then requires every literal title token. An initial title-field request rendered All Fields; this mismatch is saved and no server-side title-only promise is made. The parser rejects ambiguous/missing/duplicate native mappings and retains original reported links. Scope is first20 indexed records, not whole-repository coverage, reading access or a new independent origin.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery_history": [
@@ -286,14 +441,33 @@
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
-    "reason": "Current repository robots policy disallows the attempted route; no supported permitted metadata query established.",
-    "attempt": "Rechecked current public repository robots policy after overnight interval.",
-    "result": "Policy response200 received; route disallowed. No repository query sent.",
-    "decision": "wait-for-permitted-metadata-method",
+    "reviewed_at": "2026-11-06T12:01:43.202846+00:00",
+    "reason": "Direct Shodhganga route is robots-restricted, but operator documentation publishes an independent IndCat thesis search with explicit Shodhganga filtering.",
+    "attempt": "Capture provider form and metadata seeds; use GET All Fields keyword search with its Shodhganga checkbox, bind each title to exactly one native handle and separate IndCat ID, filter literal title tokens.",
+    "result": "Ten distinct title queries return expected native Shodhganga handles and relevant thesis titles. No direct repository request; native links remain untested.",
+    "decision": "working-with-IndCat-indexed-Shodhganga-thesis-metadata",
     "evidence": [
-      "runs/technical-recovery-20261106d/observations.jsonl",
-      "runs/technical-recovery-20261106d/scout-observations.jsonl"
+      "runs/technical-recovery-20261106i/observations.jsonl",
+      "runs/technical-recovery-20261106i/indcat-shodhganga-form-contract.json",
+      "runs/technical-recovery-20261106i/shodhganga-seed-metadata.json",
+      "examples/shodhganga.jsonl"
     ]
-  }
+  },
+  "operator": {
+    "name": "INFLIBNET Centre (Shodhganga and independently published IndCat thesis index)",
+    "jurisdiction": "India"
+  },
+  "historical_recovery": [
+    {
+      "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+      "reason": "Current repository robots policy disallows the attempted route; no supported permitted metadata query established.",
+      "attempt": "Rechecked current public repository robots policy after overnight interval.",
+      "result": "Policy response200 received; route disallowed. No repository query sent.",
+      "decision": "wait-for-permitted-metadata-method",
+      "evidence": [
+        "runs/technical-recovery-20261106d/observations.jsonl",
+        "runs/technical-recovery-20261106d/scout-observations.jsonl"
+      ]
+    }
+  ]
 }

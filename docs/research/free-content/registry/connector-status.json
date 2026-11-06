@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T11:29:09.678757+00:00",
+  "generated_at": "2026-11-06T12:02:15.324360+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by current passing examples. Normally ten examples; an explicitly reviewed one-work publisher subset can use two real searches plus a complete listing and empty control, without padding. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
@@ -16,21 +16,21 @@
   ],
   "totals": {
     "total": 133,
-    "working": 93,
-    "blocked_or_failed": 40,
+    "working": 95,
+    "blocked_or_failed": 38,
     "still_checking": 0,
-    "not_working_verified": 40,
+    "not_working_verified": 38,
     "assessed_or_deferred": 133,
     "remaining_to_assess": 0,
-    "passing_query_examples": 961
+    "passing_query_examples": 981
   },
   "groups": [
     {
       "id": "G01",
       "name": "Books, children’s books and audiobooks",
       "total": 39,
-      "working": 31,
-      "blocked_or_failed": 8,
+      "working": 32,
+      "blocked_or_failed": 7,
       "still_checking": 0
     },
     {
@@ -61,8 +61,8 @@
       "id": "G05",
       "name": "Research papers and scholarly sources",
       "total": 22,
-      "working": 13,
-      "blocked_or_failed": 9,
+      "working": 14,
+      "blocked_or_failed": 8,
       "still_checking": 0
     },
     {
@@ -192,23 +192,6 @@
       "recovery_decision": "wait_for_permitted_search_or_export",
       "last_reviewed_at": "2026-11-05T22:02:28.718279+00:00",
       "record": "sources/open-library.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G01",
-      "group": "Books, children’s books and audiobooks",
-      "connector_id": "worldreader",
-      "connector": "Worldreader mobile catalog lead",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Historical published mobile route returns404; current catalog route/query contract not identified. | Previously observed evidence reused without new provider requests; no fresh verification claimed. | Shared Book Dash copies, languages/editions and frontend variants are not extra independent origins.",
-      "next_step_or_blocker": "Establish usable public catalog policy or documented query route; no login/account creation.",
-      "block_reason": "Current official BookSmart link found, but booksmart.world robots returns400.",
-      "last_attempt_and_result": "Followed Worldreader product page to https://booksmart.world/free; target stopped at policy check. / Current official BookSmart link found, but booksmart.world robots returns400.",
-      "recovery_decision": "Establish usable public catalog policy or documented query route; no login/account creation.",
-      "last_reviewed_at": "2026-11-06T05:55:50.992176+00:00",
-      "record": "sources/worldreader.json",
       "production_activation_changed": false
     },
     {
@@ -736,6 +719,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05",
       "record": "sources/wikisource.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G01",
+      "group": "Books, children’s books and audiobooks",
+      "connector_id": "worldreader",
+      "connector": "Worldreader / BookSmart",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Anonymous BookSmart browser title search, US/English default library, first20 results with native UUID/version; reading, other countries/languages, paging and standalone API not verified",
+      "known_limitations": "Observed US/English anonymous default library only; other countries, languages, partner codes and full catalog unverified. | Provider keyword results include matches beyond titles; adapter requires every literal query title token in the returned title. First20 filtered results do not prove catalog-wide absence. | No independent public developer API permission inferred from normal UI requests. Browser initializes its own anonymous session; no tokens, account data or startup bodies stored. | No book contents downloaded; reader access, rights, edition changes and paging remain unverified. Native UUID/version retained. | Book Dash overlap is possible; mirrors and shared content are not additional independent origins. | App-shell policy exception is exact-hash scoped; changed policy, denial or challenge must stop the probe.",
+      "next_step_or_blocker": "Maintain anonymous US/English visible title search. Empty/paging, additional territories/languages, reading and reuse rights need separate tests. Preserve old route failures; no production activation.",
+      "block_reason": "",
+      "last_attempt_and_result": "Review exact generic app-shell policy and optional-sign-in documentation; use verified TLS WebKit, dismiss visible intro/tour, wait for Ionic navigation, submit visible title form, parse only whitelisted metadata. / Ten distinct title searches return relevant expected native UUIDs/versions; broad cat search demonstrates non-title hits filtered out. Early navigation/timing failures retained. No account, direct restricted-host request or book download.",
+      "recovery_decision": "working-with-anonymous-US-English-BookSmart-search-scope",
+      "last_reviewed_at": "2026-11-06T12:00:47.873571+00:00",
+      "record": "sources/worldreader.json",
       "production_activation_changed": false
     },
     {
@@ -1376,11 +1376,11 @@
       "passing_examples": 0,
       "tested_search_scope": "Supported current search method not yet verified",
       "known_limitations": "Saved robots request timed out after20.262seconds; target was never requested. This is environment observation, not evidence of a national outage. | One India Code catalog candidate; central/state views, Acts, rules, sections and language renditions do not count as independent origins.",
-      "next_step_or_blocker": "Wait for policy/service recovery; next timed retry no earlier than2026-11-06T16:00:00Z. Follow a new documented public metadata route if independently available.",
-      "block_reason": "Public policy endpoint still times out; no catalog query sent.",
-      "last_attempt_and_result": "One same-host policy retry after more than 3 hours of backoff from the last recorded attempt. / The read operation timed out; target request withheld.",
-      "recovery_decision": "wait_for_policy_service_recovery",
-      "last_reviewed_at": "2026-11-06T10:10:19.991965+00:00",
+      "next_step_or_blocker": "Wait for indiacode.gov.in policy/service recovery; next timed retry no earlier than2026-11-06T18:00:00Z absent a new recovery signal. No denial bypass.",
+      "block_reason": "The official old homepage now announces migration to indiacode.gov.in, but the newly published host policy returns HTTP500; no catalog query sent.",
+      "last_attempt_and_result": "Follow a newly discovered official migration notice as a useful alternative-route trigger, instead of repeating the old nic.in timeout. / Policy endpoint HTTP500 with148-byte HTML; new catalog remains unqueried. Separate commercial IndiaCode-branded services are not substitutes.",
+      "recovery_decision": "wait_for_new_official_host_policy_recovery",
+      "last_reviewed_at": "2026-11-06T11:59:34.807165+00:00",
       "record": "sources/india-code.json",
       "production_activation_changed": false
     },
@@ -1829,23 +1829,6 @@
     {
       "group_id": "G05",
       "group": "Research papers and scholarly sources",
-      "connector_id": "shodhganga",
-      "connector": "Shodhganga / university repositories",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Homepage inspected; stable Shodhganga external API/OAI route and terms not verified. Do not assume every DSpace version shares one REST route. **High / P2 direct; P1 aggregated**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open. | The earlier worker skipped the homepage after its policy gate. Robots returned HTTP200 text/plain without truncation; the exact matching rule was not retained. No homepage or thesis query was sent in that attempt. This is analysis of saved evidence, not a new provider test.",
-      "next_step_or_blocker": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
-      "block_reason": "Current repository robots policy disallows the attempted route; no supported permitted metadata query established.",
-      "last_attempt_and_result": "Rechecked current public repository robots policy after overnight interval. / Policy response200 received; route disallowed. No repository query sent.",
-      "recovery_decision": "wait-for-permitted-metadata-method",
-      "last_reviewed_at": "2026-11-06T07:28:04.358484+00:00",
-      "record": "sources/shodhganga.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G05",
-      "group": "Research papers and scholarly sources",
       "connector_id": "unpaywall",
       "connector": "Unpaywall",
       "status": "blocked_or_failed",
@@ -2130,6 +2113,23 @@
       "recovery_decision": "working_with_recorded_scope",
       "last_reviewed_at": "2026-11-06T09:57:02.577928+00:00",
       "record": "sources/scielo.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G05",
+      "group": "Research papers and scholarly sources",
+      "connector_id": "shodhganga",
+      "connector": "Shodhganga theses via IndCat metadata",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "IndCat public keyword form with explicit Shodhganga checkbox; first20 records filtered to literal title tokens and native Shodhganga handles; no repository requests or full-catalog/reader guarantee",
+      "known_limitations": "Scope is the explicitly Shodhganga-linked subset indexed by IndCat, not the whole Shodhganga repository. Shared IndCat metadata is not another independent origin. | Direct repository robots restrictions remain in force. No request followed a Shodhganga link; no full thesis downloaded. | Native handle and IndCat ID are separate; original reported HTTP URLs preserved, not silently upgraded or claimed accessible. Edition/version not established. | Initial requested title field rendered the All Fields selector. Current verified contract uses the published All Fields mode plus exact literal title-token relevance filtering. | First20 provider records only; filtered empty does not prove catalog-wide absence. Paging, refresh, later-day reliability and broader language coverage unverified.",
+      "next_step_or_blocker": "Maintain supported IndCat Shodhganga-filtered metadata search. Direct repository restrictions, reading/rights, paging, refresh and wider language coverage remain separate; no production activation.",
+      "block_reason": "",
+      "last_attempt_and_result": "Capture provider form and metadata seeds; use GET All Fields keyword search with its Shodhganga checkbox, bind each title to exactly one native handle and separate IndCat ID, filter literal title tokens. / Ten distinct title queries return expected native Shodhganga handles and relevant thesis titles. No direct repository request; native links remain untested.",
+      "recovery_decision": "working-with-IndCat-indexed-Shodhganga-thesis-metadata",
+      "last_reviewed_at": "2026-11-06T12:01:43.202846+00:00",
+      "record": "sources/shodhganga.json",
       "production_activation_changed": false
     },
     {

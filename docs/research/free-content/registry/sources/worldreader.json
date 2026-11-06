@@ -1,48 +1,206 @@
 {
   "schema_version": 1,
   "id": "worldreader",
-  "name": "Worldreader mobile catalog lead",
-  "homepage": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
+  "name": "Worldreader / BookSmart",
+  "homepage": "https://www.worldreader.org/booksmart/",
   "aliases": [
-    "Worldreader"
+    "Worldreader",
+    "Worldreader mobile catalog lead",
+    "BookSmart"
   ],
   "group": "G01",
   "areas": [
     "C01"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "named-catalog-candidate",
   "origin_family": "worldreader",
   "operator": {
-    "name": "Unverified legal operator; named catalog/organization lead only",
-    "jurisdiction": "Unverified"
+    "name": "Worldreader",
+    "jurisdiction": "United States nonprofit, as declared in current operator-page footer"
   },
   "capabilities": [
-    "Named by Book Dash as a partner/redistributor/inspiration; supported current query/export capability remains unverified."
+    "Anonymous public BookSmart title/keyword form with native book UUID and integer version",
+    "Verified US/English default library; first20 results filtered to all literal title tokens"
   ],
   "query": {
-    "adapter": "unverified",
-    "endpoint": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
-    "authentication": "Unknown; free-login allowance does not establish this provider’s access conditions.",
-    "cost": "Unverified; no account or payment created.",
-    "cases": []
+    "adapter": "worldreader-public-browser",
+    "endpoint": "https://booksmart.worldreader.org/explore",
+    "authentication": "Anonymous visible UI initializes its own ephemeral session; no registration, credentials or session data saved",
+    "cost": "No payment or account needed for observed metadata UI",
+    "cases": [
+      {
+        "id": "booksmart-title-01",
+        "query_text": "100 Things",
+        "intent": "Known title search in anonymous BookSmart US/English default library; retain native UUID/version",
+        "expected_ids": [
+          "93750aae-dcf8-4e76-bfe5-84eeccec6f03"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://booksmart.worldreader.org/explore",
+          "execution": "public-browser",
+          "form_query": "100 Things"
+        }
+      },
+      {
+        "id": "booksmart-title-02",
+        "query_text": "21 Cousins",
+        "intent": "Known title search in anonymous BookSmart US/English default library; retain native UUID/version",
+        "expected_ids": [
+          "e45fe48c-6ea9-46c9-a24b-6b3860fdf5b2"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://booksmart.worldreader.org/explore",
+          "execution": "public-browser",
+          "form_query": "21 Cousins"
+        }
+      },
+      {
+        "id": "booksmart-title-03",
+        "query_text": "26-Letter Alphabet",
+        "intent": "Known title search in anonymous BookSmart US/English default library; retain native UUID/version",
+        "expected_ids": [
+          "bae45db7-0b7c-4fc5-87bf-3122c38ffb61"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://booksmart.worldreader.org/explore",
+          "execution": "public-browser",
+          "form_query": "26-Letter Alphabet"
+        }
+      },
+      {
+        "id": "booksmart-title-04",
+        "query_text": "7 Days till Ice Cream (Makers Make it Work: Coding)",
+        "intent": "Known title search in anonymous BookSmart US/English default library; retain native UUID/version",
+        "expected_ids": [
+          "afb70fe1-b6bc-492f-8f25-72d2081d104f"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://booksmart.worldreader.org/explore",
+          "execution": "public-browser",
+          "form_query": "7 Days till Ice Cream (Makers Make it Work: Coding)"
+        }
+      },
+      {
+        "id": "booksmart-title-05",
+        "query_text": "Aaloo-Maaloo-Kaaloo",
+        "intent": "Known title search in anonymous BookSmart US/English default library; retain native UUID/version",
+        "expected_ids": [
+          "c5d79224-b818-45b2-93d8-59d87dfd23d0"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://booksmart.worldreader.org/explore",
+          "execution": "public-browser",
+          "form_query": "Aaloo-Maaloo-Kaaloo"
+        }
+      },
+      {
+        "id": "booksmart-title-06",
+        "query_text": "A Barcelona Adventure",
+        "intent": "Known title search in anonymous BookSmart US/English default library; retain native UUID/version",
+        "expected_ids": [
+          "244b28e8-3a3c-4fd2-acdf-d42c5f48ff24"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://booksmart.worldreader.org/explore",
+          "execution": "public-browser",
+          "form_query": "A Barcelona Adventure"
+        }
+      },
+      {
+        "id": "booksmart-title-07",
+        "query_text": "ABC Power",
+        "intent": "Known title search in anonymous BookSmart US/English default library; retain native UUID/version",
+        "expected_ids": [
+          "5e1f5e0b-1deb-48dc-b150-5746e198f0e7"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://booksmart.worldreader.org/explore",
+          "execution": "public-browser",
+          "form_query": "ABC Power"
+        }
+      },
+      {
+        "id": "booksmart-title-08",
+        "query_text": "A Big Fan",
+        "intent": "Known title search in anonymous BookSmart US/English default library; retain native UUID/version",
+        "expected_ids": [
+          "f9fe2849-5ddc-4709-8060-2d6878a1f870"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://booksmart.worldreader.org/explore",
+          "execution": "public-browser",
+          "form_query": "A Big Fan"
+        }
+      },
+      {
+        "id": "booksmart-title-09",
+        "query_text": "A Birthday Picnic",
+        "intent": "Known title search in anonymous BookSmart US/English default library; retain native UUID/version",
+        "expected_ids": [
+          "d690e133-8d7d-4db1-8ca6-f88f90112f62"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://booksmart.worldreader.org/explore",
+          "execution": "public-browser",
+          "form_query": "A Birthday Picnic"
+        }
+      },
+      {
+        "id": "booksmart-title-10",
+        "query_text": "A Birthday Riddle",
+        "intent": "Known title search in anonymous BookSmart US/English default library; retain native UUID/version",
+        "expected_ids": [
+          "15571865-119c-4c38-9e61-f80494b38ad9"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://booksmart.worldreader.org/explore",
+          "execution": "public-browser",
+          "form_query": "A Birthday Riddle"
+        }
+      }
+    ]
   },
   "documentation": [
-    "https://www.worldreader.org/what-we-do/worldreader-mobile/"
+    "https://www.worldreader.org/what-we-do/worldreader-mobile/",
+    "https://www.worldreader.org/booksmart/",
+    "https://www.worldreader.org/privacy-notice-apps-full-english/",
+    "https://www.worldreader.org/now/building-a-digital-library-tips-and-tricks-for-maximizing-your-booksmart-experience/",
+    "https://booksmart.worldreader.org/explore"
   ],
-  "licensing": "Unverified metadata/content rights. Book Dash license or partner status does not license the whole partner catalog.",
+  "licensing": "Operator describes free digital books and optional sign-in. No metadata/content redistribution license inferred. Territorial publisher rights, full book reading and reuse remain unverified.",
   "limitations": [
-    "Historical published mobile route returns404; current catalog route/query contract not identified.",
-    "Previously observed evidence reused without new provider requests; no fresh verification claimed.",
-    "Shared Book Dash copies, languages/editions and frontend variants are not extra independent origins."
+    "Observed US/English anonymous default library only; other countries, languages, partner codes and full catalog unverified.",
+    "Provider keyword results include matches beyond titles; adapter requires every literal query title token in the returned title. First20 filtered results do not prove catalog-wide absence.",
+    "No independent public developer API permission inferred from normal UI requests. Browser initializes its own anonymous session; no tokens, account data or startup bodies stored.",
+    "No book contents downloaded; reader access, rights, edition changes and paging remain unverified. Native UUID/version retained.",
+    "Book Dash overlap is possible; mirrors and shared content are not additional independent origins.",
+    "App-shell policy exception is exact-hash scoped; changed policy, denial or challenge must stop the probe."
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/partner-leads-20261105/observations.jsonl",
     "runs/technical-recovery-india-20261106/observations.jsonl",
-    "runs/technical-recovery-india-20261106/followups.jsonl"
+    "runs/technical-recovery-india-20261106/followups.jsonl",
+    "runs/technical-recovery-20261106i/observations.jsonl",
+    "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+    "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+    "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+    "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+    "examples/worldreader.browser.jsonl",
+    "examples/worldreader.jsonl"
   ],
   "analysis_refs": [
     {
@@ -60,322 +218,244 @@
       "heading": "Technical connector recovery — 6 November 2026",
       "text": "| Worldreader | Current official BookSmart product page replaces the obsolete mobile catalog | Official product page links booksmart.world/free, whose robots returns400; actual item search remains blocked. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c1ed26015470702ec1f0b157f5a9158ea76a93919241b82e879ae8b886f11f13",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106I.md",
+      "line": 20,
+      "heading": "Worldreader / BookSmart recovered",
+      "text": "## Worldreader / BookSmart recovered",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c1ed26015470702ec1f0b157f5a9158ea76a93919241b82e879ae8b886f11f13",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106I.md",
+      "line": 22,
+      "heading": "Worldreader / BookSmart recovered",
+      "text": "The current operator page links BookSmart’s dashboard. Its policy URL returns an exact generic Angular shell with no REP directives or access challenge; a narrowly hashed review permits only the published anonymous UI. API origins return404 for policy. The privacy notice explicitly makes sign-in optional, and operator documentation describes title/keyword search.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
-  "last_reviewed_at": "2026-11-06T05:55:50.992176+00:00",
-  "next_action": "Establish usable public catalog policy or documented query route; no login/account creation.",
+  "last_reviewed_at": "2026-11-06T12:00:47.873571+00:00",
+  "next_action": "Maintain anonymous US/English visible title search. Empty/paging, additional territories/languages, reading and reuse rights need separate tests. Preserve old route failures; no production activation.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Named lead and published URL captured; canonical legal operator and independently maintained catalog are not established.",
+      "summary": "Current operator identifies Worldreader and links BookSmart; preserve native UUID/version, known Book Dash overlap and obsolete route history.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "Historical published mobile route returns404; current catalog route/query contract not identified.",
-        "activation_approved": false
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/worldreader-previous-record.json",
+        "scope": "Anonymous US/English first20 BookSmart title-matching metadata"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+        "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+        "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+        "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+        "examples/worldreader.browser.jsonl",
+        "examples/worldreader.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "273783c23d7b0c265bc6",
-          "observed_at": "2026-11-05T04:24:56.836203+00:00",
-          "url": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
-          "outcome": "blocked-or-failed",
-          "body_sha256": "ad76d953256c1ed0cd245a4045ba6f73c6d18080b7685e023ffd0514f62848f6",
-          "policy_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        }
-      ],
+      "observation_refs": [],
       "open_questions": [
-        "Resolve legal operator and Book Dash overlap without counting mirrored books as origins."
+        "Broader search/territory/language coverage, reader rights and operating limits remain separate from these verified queries."
       ]
     },
     "coverage_and_languages": {
       "status": "partial",
-      "summary": "Children’s literacy lead, with no measured native item language/country coverage.",
+      "summary": "Ten passing title searches in the provider default project760, countryUS and languageeng. No other territory/language inferred.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "Historical published mobile route returns404; current catalog route/query contract not identified.",
-        "activation_approved": false
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/worldreader-previous-record.json",
+        "scope": "Anonymous US/English first20 BookSmart title-matching metadata"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+        "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+        "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+        "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+        "examples/worldreader.browser.jsonl",
+        "examples/worldreader.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "273783c23d7b0c265bc6",
-          "observed_at": "2026-11-05T04:24:56.836203+00:00",
-          "url": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
-          "outcome": "blocked-or-failed",
-          "body_sha256": "ad76d953256c1ed0cd245a4045ba6f73c6d18080b7685e023ffd0514f62848f6",
-          "policy_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        }
-      ],
+      "observation_refs": [],
       "open_questions": [
-        "Measure item languages, reader geography and catalog coverage from permitted native records."
+        "Broader search/territory/language coverage, reader rights and operating limits remain separate from these verified queries."
       ]
     },
     "query_contract": {
       "status": "partial",
-      "summary": "No supported current API/export/import and zero verified examples.",
+      "summary": "Visible Explore form requires settled Ionic navigation and Enter submission. Normal UI issues bounded GET /v1/books searches; this is not a claimed standalone API contract.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "Historical published mobile route returns404; current catalog route/query contract not identified.",
-        "activation_approved": false
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/worldreader-previous-record.json",
+        "scope": "Anonymous US/English first20 BookSmart title-matching metadata"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+        "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+        "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+        "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+        "examples/worldreader.browser.jsonl",
+        "examples/worldreader.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "273783c23d7b0c265bc6",
-          "observed_at": "2026-11-05T04:24:56.836203+00:00",
-          "url": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
-          "outcome": "blocked-or-failed",
-          "body_sha256": "ad76d953256c1ed0cd245a4045ba6f73c6d18080b7685e023ffd0514f62848f6",
-          "policy_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        }
-      ],
+      "observation_refs": [],
       "open_questions": [
-        "Identify documented permitted query shape, fields, native IDs, paging and error/empty behavior."
+        "Broader search/territory/language coverage, reader rights and operating limits remain separate from these verified queries."
       ]
     },
     "rights_and_cost": {
       "status": "partial",
-      "summary": "Metadata and full-content licenses, free limits and account conditions remain unknown.",
+      "summary": "Anonymous metadata search works without registration/payment. Operator calls books free; no blanket metadata or content reuse license established.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "Historical published mobile route returns404; current catalog route/query contract not identified.",
-        "activation_approved": false
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/worldreader-previous-record.json",
+        "scope": "Anonymous US/English first20 BookSmart title-matching metadata"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+        "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+        "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+        "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+        "examples/worldreader.browser.jsonl",
+        "examples/worldreader.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "273783c23d7b0c265bc6",
-          "observed_at": "2026-11-05T04:24:56.836203+00:00",
-          "url": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
-          "outcome": "blocked-or-failed",
-          "body_sha256": "ad76d953256c1ed0cd245a4045ba6f73c6d18080b7685e023ffd0514f62848f6",
-          "policy_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        }
-      ],
+      "observation_refs": [],
       "open_questions": [
-        "Review provider policy plus item-level rights; no inherited partner-wide license."
+        "Broader search/territory/language coverage, reader rights and operating limits remain separate from these verified queries."
       ]
     },
     "reader_access": {
       "status": "partial",
-      "summary": "No complete native book reader/access evidence. Historical published mobile route returns404; current catalog route/query contract not identified.",
+      "summary": "Search metadata verified; no full book opened or downloaded. Free optional account is described by operator but no account created.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "Historical published mobile route returns404; current catalog route/query contract not identified.",
-        "activation_approved": false
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/worldreader-previous-record.json",
+        "scope": "Anonymous US/English first20 BookSmart title-matching metadata"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+        "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+        "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+        "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+        "examples/worldreader.browser.jsonl",
+        "examples/worldreader.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "273783c23d7b0c265bc6",
-          "observed_at": "2026-11-05T04:24:56.836203+00:00",
-          "url": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
-          "outcome": "blocked-or-failed",
-          "body_sha256": "ad76d953256c1ed0cd245a4045ba6f73c6d18080b7685e023ffd0514f62848f6",
-          "policy_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        }
-      ],
+      "observation_refs": [],
       "open_questions": [
-        "Verify representative full free-item access, including any free-login gate, with no bulk download."
+        "Broader search/territory/language coverage, reader rights and operating limits remain separate from these verified queries."
       ]
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Historical partner mention and HTTP/policy outcomes are not search or relevance evidence.",
+      "summary": "Ten distinct expected UUID/title examples pass. Broad keyword cat includes non-title matches; literal title-token postfilter excludes them. Empty and paging remain unverified.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "Historical published mobile route returns404; current catalog route/query contract not identified.",
-        "activation_approved": false
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/worldreader-previous-record.json",
+        "scope": "Anonymous US/English first20 BookSmart title-matching metadata"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+        "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+        "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+        "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+        "examples/worldreader.browser.jsonl",
+        "examples/worldreader.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "273783c23d7b0c265bc6",
-          "observed_at": "2026-11-05T04:24:56.836203+00:00",
-          "url": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
-          "outcome": "blocked-or-failed",
-          "body_sha256": "ad76d953256c1ed0cd245a4045ba6f73c6d18080b7685e023ffd0514f62848f6",
-          "policy_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        }
-      ],
+      "observation_refs": [],
       "open_questions": [
-        "Obtain ten distinct passing native queries and topic/negative/empty tests only after query permission is established."
+        "Broader search/territory/language coverage, reader rights and operating limits remain separate from these verified queries."
       ]
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "No requests repeated during this backfill; concrete access/route block retained.",
+      "summary": "Serial3-second pacing, bounded20-row metadata, no accounts/tracking/full files. Published numeric quotas and later-day reliability remain unknown.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "Historical published mobile route returns404; current catalog route/query contract not identified.",
-        "activation_approved": false
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/worldreader-previous-record.json",
+        "scope": "Anonymous US/English first20 BookSmart title-matching metadata"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+        "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+        "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+        "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+        "examples/worldreader.browser.jsonl",
+        "examples/worldreader.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "273783c23d7b0c265bc6",
-          "observed_at": "2026-11-05T04:24:56.836203+00:00",
-          "url": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
-          "outcome": "blocked-or-failed",
-          "body_sha256": "ad76d953256c1ed0cd245a4045ba6f73c6d18080b7685e023ffd0514f62848f6",
-          "policy_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        }
-      ],
+      "observation_refs": [],
       "open_questions": [
-        "Obtain numeric limits if published, serial pacing, refresh/deletion evidence and later-day reliability."
+        "Broader search/territory/language coverage, reader rights and operating limits remain separate from these verified queries."
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Defer catalog qualification with explicit useful revisit triggers. No activation approval.",
+      "status": "partial",
+      "summary": "Working research metadata search within recorded scope. Research activation stays false; deeper qualification remains partial.",
       "facts": {
-        "analysis_only_backfill": true,
-        "new_provider_requests": 0,
-        "current_query_verified": false,
-        "blocker": "Historical published mobile route returns404; current catalog route/query contract not identified.",
-        "activation_approved": false
+        "current_query_verified": true,
+        "passing_current_examples": 10,
+        "activation_approved": false,
+        "historical_record": "runs/technical-recovery-20261106i/worldreader-previous-record.json",
+        "scope": "Anonymous US/English first20 BookSmart title-matching metadata"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "runs/partner-leads-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+        "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+        "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+        "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+        "examples/worldreader.browser.jsonl",
+        "examples/worldreader.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "8bcce055c56230a33574",
-          "observed_at": "2026-11-05T02:34:13.209236+00:00",
-          "url": "https://bookdash.org/partners/",
-          "outcome": "captured",
-          "body_sha256": "b7d730327783b7a1a4c85c94f825490a471f82ee240e09e2f188e17bcb38f807",
-          "policy_sha256": "a858880bf834b52b0844f930867cf3401d18f7dec3095979325149b6485b0c8f"
-        },
-        {
-          "path": "runs/partner-leads-20261105/observations.jsonl",
-          "job_id": "273783c23d7b0c265bc6",
-          "observed_at": "2026-11-05T04:24:56.836203+00:00",
-          "url": "https://www.worldreader.org/what-we-do/worldreader-mobile/",
-          "outcome": "blocked-or-failed",
-          "body_sha256": "ad76d953256c1ed0cd245a4045ba6f73c6d18080b7685e023ffd0514f62848f6",
-          "policy_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        }
-      ],
-      "open_questions": []
+      "observation_refs": [],
+      "open_questions": [
+        "Broader search/territory/language coverage, reader rights and operating limits remain separate from these verified queries."
+      ]
     }
   },
   "historical_recovery": [
-    {}
+    {},
+    {
+      "reviewed_at": "2026-11-06T05:55:50.992174+00:00",
+      "reason": "Current official BookSmart link found, but booksmart.world robots returns400.",
+      "attempt": "Followed Worldreader product page to https://booksmart.world/free; target stopped at policy check.",
+      "result": "Current official BookSmart link found, but booksmart.world robots returns400.",
+      "decision": "Establish usable public catalog policy or documented query route; no login/account creation."
+    }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T05:55:50.992174+00:00",
-    "reason": "Current official BookSmart link found, but booksmart.world robots returns400.",
-    "attempt": "Followed Worldreader product page to https://booksmart.world/free; target stopped at policy check.",
-    "result": "Current official BookSmart link found, but booksmart.world robots returns400.",
-    "decision": "Establish usable public catalog policy or documented query route; no login/account creation."
+    "reviewed_at": "2026-11-06T12:00:47.873571+00:00",
+    "reason": "Dead historical mobile route and400 old BookSmart link replaced by operator-published current dashboard; local browser timing/selector mistakes prevented early form tests.",
+    "attempt": "Review exact generic app-shell policy and optional-sign-in documentation; use verified TLS WebKit, dismiss visible intro/tour, wait for Ionic navigation, submit visible title form, parse only whitelisted metadata.",
+    "result": "Ten distinct title searches return relevant expected native UUIDs/versions; broad cat search demonstrates non-title hits filtered out. Early navigation/timing failures retained. No account, direct restricted-host request or book download.",
+    "decision": "working-with-anonymous-US-English-BookSmart-search-scope",
+    "evidence": [
+      "runs/technical-recovery-20261106i/observations.jsonl",
+      "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+      "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+      "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+      "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+      "examples/worldreader.browser.jsonl",
+      "examples/worldreader.jsonl"
+    ]
   }
 }

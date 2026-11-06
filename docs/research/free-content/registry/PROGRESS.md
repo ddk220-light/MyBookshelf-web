@@ -1,6 +1,6 @@
 ## Recovery I checkpoint — 6 November 2026
 
-93 Working / 40 Blocked/failed / 0 Still checking of 133 active connectors; 961 current passing examples. Original44: 27 Working / 17 remaining. New recoveries: snapplify. 349 tests and evidence checks pass. Other blockers remain open; research only.
+95 Working / 38 Blocked/failed / 0 Still checking of 133 active connectors; 981 current passing examples. Original44: 29 Working / 15 remaining. New recoveries: snapplify, worldreader, shodhganga. 364 tests and evidence checks pass. Other blockers remain open; research only.
 
 ## Recovery H checkpoint — 6 November 2026
 
