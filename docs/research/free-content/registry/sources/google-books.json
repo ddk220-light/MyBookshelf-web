@@ -1,0 +1,406 @@
+{
+  "schema_version": 1,
+  "id": "google-books",
+  "name": "Google Books",
+  "homepage": "https://developers.google.com/books/docs/v1/using",
+  "homepage_status": "historical-reference; canonical homepage/operator needs review",
+  "group": "G01",
+  "areas": [
+    "C02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "capabilities": [
+    "Live bibliographic title searches over Google Books, first3 native volume records; ten distinct relevant title examples. This is catalog metadata queryability only: free-ebook/full-view filters returned zero from the current environment."
+  ],
+  "query": {
+    "adapter": "google-books-metadata",
+    "endpoint": "https://www.googleapis.com/books/v1/volumes",
+    "cases": [
+      {
+        "id": "title-01",
+        "intent": "Bibliographic title search; free-copy discovery unverified: mathematics",
+        "expected_ids": [
+          "lew5IC5piCwC"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "mathematics",
+          "url": "https://www.googleapis.com/books/v1/volumes?q=intitle%3Amathematics&printType=books&maxResults=3&startIndex=0"
+        }
+      },
+      {
+        "id": "title-02",
+        "intent": "Bibliographic title search; free-copy discovery unverified: agriculture",
+        "expected_ids": [
+          "3ps-XDgT6VcC"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "agriculture",
+          "url": "https://www.googleapis.com/books/v1/volumes?q=intitle%3Aagriculture&printType=books&maxResults=3&startIndex=0"
+        }
+      },
+      {
+        "id": "title-03",
+        "intent": "Bibliographic title search; free-copy discovery unverified: construction",
+        "expected_ids": [
+          "v0dDAAAAIAAJ"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "construction",
+          "url": "https://www.googleapis.com/books/v1/volumes?q=intitle%3Aconstruction&printType=books&maxResults=3&startIndex=0"
+        }
+      },
+      {
+        "id": "title-04",
+        "intent": "Bibliographic title search; free-copy discovery unverified: logistics",
+        "expected_ids": [
+          "bO1aEQAAQBAJ"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "logistics",
+          "url": "https://www.googleapis.com/books/v1/volumes?q=intitle%3Alogistics&printType=books&maxResults=3&startIndex=0"
+        }
+      },
+      {
+        "id": "title-05",
+        "intent": "Bibliographic title search; free-copy discovery unverified: mining",
+        "expected_ids": [
+          "N9Xpi6a5304C"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "mining",
+          "url": "https://www.googleapis.com/books/v1/volumes?q=intitle%3Amining&printType=books&maxResults=3&startIndex=0"
+        }
+      },
+      {
+        "id": "title-06",
+        "intent": "Bibliographic title search; free-copy discovery unverified: chemistry",
+        "expected_ids": [
+          "1dHUAvz_CXwC"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "chemistry",
+          "url": "https://www.googleapis.com/books/v1/volumes?q=intitle%3Achemistry&printType=books&maxResults=3&startIndex=0"
+        }
+      },
+      {
+        "id": "title-07",
+        "intent": "Bibliographic title search; free-copy discovery unverified: astronomy",
+        "expected_ids": [
+          "nPQ0AQAAIAAJ"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "astronomy",
+          "url": "https://www.googleapis.com/books/v1/volumes?q=intitle%3Aastronomy&printType=books&maxResults=3&startIndex=0"
+        }
+      },
+      {
+        "id": "title-08",
+        "intent": "Bibliographic title search; free-copy discovery unverified: botany",
+        "expected_ids": [
+          "XrcRGtA9rjkC"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "botany",
+          "url": "https://www.googleapis.com/books/v1/volumes?q=intitle%3Abotany&printType=books&maxResults=3&startIndex=0"
+        }
+      },
+      {
+        "id": "title-09",
+        "intent": "Bibliographic title search; free-copy discovery unverified: music",
+        "expected_ids": [
+          "BLvyEQAAQBAJ"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "music",
+          "url": "https://www.googleapis.com/books/v1/volumes?q=intitle%3Amusic&printType=books&maxResults=3&startIndex=0"
+        }
+      },
+      {
+        "id": "title-10",
+        "intent": "Bibliographic title search; free-copy discovery unverified: poetry",
+        "expected_ids": [
+          "Xn5KAAAAcAAJ"
+        ],
+        "request": {
+          "method": "GET",
+          "page": 1,
+          "query_text": "poetry",
+          "url": "https://www.googleapis.com/books/v1/volumes?q=intitle%3Apoetry&printType=books&maxResults=3&startIndex=0"
+        }
+      }
+    ],
+    "historical_contract": "`/books/v1/volumes?q=...&filter=free-ebooks`, `startIndex`; inspect `accessInfo`, `saleInfo`. [Usage](https://developers.google.com/books/docs/v1/using), [fields](https://developers.google.com/books/docs/v1/reference/volumes)",
+    "authentication": "Existing authorized GOOGLE_BOOKS_API_KEY used privately in transport. Credential values never stored in evidence; no new account/payment.",
+    "request_shape_verified": true,
+    "free_subset_query_status": "blocked_or_failed",
+    "free_subset_reason": "Documented free-ebooks and full filters returned no items for the saved current requests; catalog metadata works.",
+    "public_catalog_working": true
+  },
+  "licensing": "Google API response metadata subject to Google Books API policies; individual books retain their own rights. Catalog discoverability and partial preview are not free-content/reuse permissions.",
+  "documentation": [
+    "https://developers.google.com/books/docs/v1/using",
+    "https://developers.google.com/books/docs/v1/reference/volumes"
+  ],
+  "limitations": [
+    "Ten topic queries with filter=free-ebooks returned HTTP200 totalItems0; an additional filter=full mathematics control also returned0. Unfiltered title searches returned relevant volumes; free-copy discovery is not working/verified here.",
+    "Preserve actual country, viewability, saleability, publicDomain, contentVersion and native volume IDs; partial/no preview metadata does not prove free full reading.",
+    "API result restrictions depend on requester location. No country/IP spoofing, account creation, reader purchase, or production activation.",
+    "Selected literal-title matches verified; other top results may match subtitle or broad provider relevance. Three results per page; no guarantee of complete recall."
+  ],
+  "evidence": [
+    "analysis/documents.jsonl",
+    "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+    "examples/google-books.scouting.jsonl",
+    "examples/google-books.boundaries.jsonl",
+    "examples/google-books.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T21:56:48.662874+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 20,
+    "text": "| **Google Books — index/reader host** | `/books/v1/volumes?q=...&filter=free-ebooks`, `startIndex`; inspect `accessInfo`, `saleInfo`. [Usage](https://developers.google.com/books/docs/v1/using), [fields](https://developers.google.com/books/docs/v1/reference/volumes) | Returned `webReaderLink` or appropriate `infoLink`. Check full access, not previews or purchase offers. | Existing server key worked. Project-specific quotas; `accessInfo.country` is request context, not global access. Do not persist signed download URLs as identity. **Low/medium / P1 enrichment; already integrated**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "google-books",
+        "name": "Google Books",
+        "homepage_reference": "https://developers.google.com/books/docs/v1/using",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C02"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Live bibliographic title searches over Google Books, first3 native volume records; ten distinct relevant title examples. This is catalog metadata queryability only: free-ebook/full-view filters returned zero from the current environment.",
+      "facts": {
+        "adapter": "google-books-metadata",
+        "endpoint": "https://www.googleapis.com/books/v1/volumes",
+        "cases": [
+          "title-01",
+          "title-02",
+          "title-03",
+          "title-04",
+          "title-05",
+          "title-06",
+          "title-07",
+          "title-08",
+          "title-09",
+          "title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live bibliographic title searches over Google Books, first3 native volume records; ten distinct relevant title examples. This is catalog metadata queryability only: free-ebook/full-view filters returned zero from the current environment.",
+        "authentication": "Existing authorized GOOGLE_BOOKS_API_KEY used privately in transport. Credential values never stored in evidence; no new account/payment.",
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/google-books.scouting.jsonl",
+        "examples/google-books.boundaries.jsonl",
+        "examples/google-books.jsonl"
+      ],
+      "open_questions": [
+        "Additional search modes and full-item reader access remain separate from working-query status."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Google API response metadata subject to Google Books API policies; individual books retain their own rights. Catalog discoverability and partial preview are not free-content/reuse permissions.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Existing authorized GOOGLE_BOOKS_API_KEY used privately in transport. Credential values never stored in evidence; no new account/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
+      "evidence": [
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/google-books.scouting.jsonl",
+        "examples/google-books.boundaries.jsonl",
+        "examples/google-books.jsonl"
+      ],
+      "open_questions": [
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "analysis/documents.jsonl"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live bibliographic title searches over Google Books, first3 native volume records; ten distinct relevant title examples. This is catalog metadata queryability only: free-ebook/full-view filters returned zero from the current environment.",
+        "empty_and_boundary_evidence": "examples/google-books.boundaries.jsonl"
+      },
+      "evidence": [
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/google-books.scouting.jsonl",
+        "examples/google-books.boundaries.jsonl",
+        "examples/google-books.jsonl"
+      ],
+      "open_questions": [
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "Ten topic queries with filter=free-ebooks returned HTTP200 totalItems0; an additional filter=full mathematics control also returned0. Unfiltered title searches returned relevant volumes; free-copy discovery is not working/verified here.",
+          "Preserve actual country, viewability, saleability, publicDomain, contentVersion and native volume IDs; partial/no preview metadata does not prove free full reading.",
+          "API result restrictions depend on requester location. No country/IP spoofing, account creation, reader purchase, or production activation.",
+          "Selected literal-title matches verified; other top results may match subtitle or broad provider relevance. Three results per page; no guarantee of complete recall."
+        ],
+        "no_bulk_content": true
+      },
+      "evidence": [
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/google-books.scouting.jsonl",
+        "examples/google-books.boundaries.jsonl",
+        "examples/google-books.jsonl"
+      ],
+      "open_questions": [
+        "Production load/freshness is outside this research checkpoint."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Live bibliographic title searches over Google Books, first3 native volume records; ten distinct relevant title examples. This is catalog metadata queryability only: free-ebook/full-view filters returned zero from the current environment.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
+      "evidence": [
+        "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+        "examples/google-books.scouting.jsonl",
+        "examples/google-books.boundaries.jsonl",
+        "examples/google-books.jsonl"
+      ],
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 20,
+      "heading": "1. General ebooks and public-domain literature",
+      "text": "| **Google Books — index/reader host** | `/books/v1/volumes?q=...&filter=free-ebooks`, `startIndex`; inspect `accessInfo`, `saleInfo`. [Usage](https://developers.google.com/books/docs/v1/using), [fields](https://developers.google.com/books/docs/v1/reference/volumes) | Returned `webReaderLink` or appropriate `infoLink`. Check full access, not previews or purchase offers. | Existing server key worked. Project-specific quotas; `accessInfo.country` is request context, not global access. Do not persist signed download URLs as identity. **Low/medium / P1 enrichment; already integrated**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 64,
+      "heading": "Recommendation",
+      "text": "Reuse Google Books and Open Library selectively to enrich book records and resolve existing saved books to candidate free editions. Their general catalogs contain previews, borrowing offers, and metadata-only records; they should not define the free-reading collection by themselves.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 85,
+      "heading": "What the original checks established",
+      "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 100,
+      "heading": "Credentials and implementation inputs",
+      "text": "No additional credentials are needed to review this plan. The original Google Books free-ebook query succeeded using the configured key. For implementation:",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "recovery": {
+    "reason": "The free-ebooks and full-view filters return no items from this environment; general catalog search works.",
+    "attempt": "Used the existing authorized key for ten free-ebook title searches; compared full-view and unfiltered mathematics controls, then ten unfiltered title searches.",
+    "result": "Ten current bibliographic title queries pass. All free-ebook/full-view responses remain saved as zero-result negatives.",
+    "decision": "working_bibliographic_search_free_subset_unresolved",
+    "next_action": "Revisit free-copy discovery on a documented provider recovery/region explanation; keep actual item access flags visible. Do not spoof location or label partial/no-preview items free.",
+    "retry_trigger": "Provider guidance or confirmed free-view availability change; no blind repeat of all-zero filters.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/public-data-recovery-books-docs-20261105ep/observations.jsonl",
+      "examples/google-books.scouting.jsonl",
+      "examples/google-books.boundaries.jsonl",
+      "examples/google-books.jsonl"
+    ]
+  }
+}

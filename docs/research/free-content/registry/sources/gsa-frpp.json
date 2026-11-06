@@ -1,0 +1,600 @@
+{
+  "schema_version": 1,
+  "id": "gsa-frpp",
+  "name": "GSA Federal Real Property Profile public asset inventory",
+  "homepage": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+  "aliases": [
+    "FRPP",
+    "Federal Real Property Public Data Set"
+  ],
+  "group": "G04",
+  "areas": [
+    "C18",
+    "C19",
+    "P04"
+  ],
+  "state": "deferred",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "federal-government-property-inventory",
+  "origin_family": "gsa-frpp",
+  "operator": {
+    "name": "US General Services Administration; reporting executive agencies own/validate their submissions",
+    "jurisdiction": "USA federal; overseas government assets subject to redaction"
+  },
+  "capabilities": [
+    "Official annually published XLSX asset-level export; FAQ explicitly allows searching the downloaded detailed file. Actual records not yet obtained/query-verified."
+  ],
+  "licensing": "GSA-published Data.gov FY2025 metadata declares CC0 for dataset/distribution. GSA general policy says federal employee work generally public domain; licensed illustrations and linked third-party content are separate. Export bytes/embedded license not yet verified.",
+  "documentation": [
+    "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+    "https://catalog.data.gov/dataset/fy-2025-federal-real-property-profile-frpp-public-dataset",
+    "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-council/frpc-guidance-library",
+    "https://www.gsa.gov/system/files/FY%202025%20FRPP%20DATA%20DICTIONARY%20v2.pdf",
+    "https://www.gsa.gov/system/files/FY25%20FRPP%20Public%20Dataset%20FAQs.docx",
+    "https://www.gsa.gov/website-information/website-policies"
+  ],
+  "evidence": [
+    "runs/gsa-property-contract-20261105cf/observations.jsonl",
+    "runs/gsa-property-reader-20261105cg/observations.jsonl",
+    "examples/gsa-frpp.access.jsonl",
+    "docs/research/free-content/evidence/2026-11-05-gsa-frpp/schema-observations.jsonl"
+  ],
+  "analysis_refs": [
+    {
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
+      "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
+      "line": 108,
+      "heading": "Technical failure or unfinished research — 44",
+      "text": "| [GSA Federal Real Property Profile public asset inventory](https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set) | The published spreadsheet redirected to storage whose robots returned 403. | Clarify permitted access to the official public export; do not fetch asset records around the restriction. Owner action: engineering/research first; no owner signup required yet. |",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "limitations": [
+    "No export records, native RPUIDs, query outputs or full-reader validation yet; documentation and search snippets do not establish P04 query coverage.",
+    "Owned codeG is federal fee-simple interest; leasedL,other-governmentS/F,tribalT,museumM,withdrawnW are distinct. Restrict any future sample to government-ownedG; exclude owner/lessor persons,addresses,coordinates,contacts and full-property text.",
+    "Annual September30 snapshot is not current title proof; public extract excludes FOIA/national-security records. Missing values may be not-applicable orredacted.",
+    "Maprobots301 left unresolved; published XLSX redirects to S3host whose robots403 stopped collection before target download. No alternate host/path attempted."
+  ],
+  "last_reviewed_at": "2026-11-05T15:57:40.533488+00:00",
+  "next_action": "Revisit only after primary export-host policy recovery/published permitted successor route; inspect exact XLSX columns then government-ownedG nonpersonal projection, native RPUID/year identities,10 distinct queries,negative/paging/version/reader checks. Independently continue other property catalogs.",
+  "query": {
+    "adapter": "unverified-published-xlsx",
+    "endpoint": "https://inventory.data.gov/dataset/f9c6364b-7d88-4621-b649-f1282a9132f6/resource/ab42c97a-445f-42d1-81c7-bc8fc92f5407/download/frpp_public_dataset_fy25_final.xlsx",
+    "authentication": "Publisher download anonymously returns302 temporary signed S3 URL; no new account/key. Sensitive temporary query values omitted. Actual target never requested because policy403.",
+    "cost": "No fee advertised; numeric quota/SLA unknown. Respect publisher10-second crawl delay; source-host3second minimum.",
+    "supported_modes": [
+      "Published annual XLSX download plus local research filtering explicitly described by FAQ"
+    ],
+    "unsupported_modes": [
+      "Undocumented live API",
+      "Private owner/lessor/contact data",
+      "Title certification/current legal determination",
+      "Production runtime import",
+      "Restricted FRPP management system login"
+    ],
+    "cases": [],
+    "area_case_ids": {
+      "C18": [],
+      "C19": [],
+      "P04": []
+    }
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "One annual executive-agency government-asset inventory managed by GSA; annual editions,Data.gov mirror andmap are not independent origins.",
+      "facts": {
+        "operator": {
+          "name": "US General Services Administration; reporting executive agencies own/validate their submissions",
+          "jurisdiction": "USA federal; overseas government assets subject to redaction"
+        },
+        "native_identity": "Dictionary RPUID unique for asset,never reused after disposal; preserveFY/snapshot. No actual RPUID observed.",
+        "dataset_identifier": "GSA-26-09-24-01; FY2025 public dataset; modified2026-10-27 in publisher metadata.",
+        "overlap": "Reporting agencies anddatasets are provenance; independent agency catalogs require separate support/rights/query qualification."
+      },
+      "evidence": [
+        "runs/gsa-property-contract-20261105cf/observations.jsonl",
+        "runs/gsa-property-reader-20261105cg/observations.jsonl",
+        "examples/gsa-frpp.access.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-gsa-frpp/schema-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "1f8b2dd8d9fe3fe0e28c",
+          "observed_at": "2026-11-05T15:47:56.075660+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+          "body_sha256": "3c3074c56868bcc894616d9b0288e130160f1c55742b8152e43ae2a9acf3f03e",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "eab851ff7baf2f733544",
+          "observed_at": "2026-11-05T15:48:12.592341+00:00",
+          "url": "https://catalog.data.gov/dataset/fy-2025-federal-real-property-profile-frpp-public-dataset",
+          "body_sha256": "8538614451558234f985ca2e4a8ad5f02de11262c44c32b756f777df37882239",
+          "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "63e0583519bb09267032",
+          "observed_at": "2026-11-05T15:48:24.466907+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-council/frpc-guidance-library",
+          "body_sha256": "36f173ba5cb679d3316d118c3a32cbc71267986d8fa065b8b9a89f8eafc02f54",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "017661ca33bdd466591b",
+          "observed_at": "2026-11-05T15:49:41.491745+00:00",
+          "url": "https://frppmap.gsa.gov/frppmap/",
+          "body_sha256": null,
+          "policy_sha256": "f4268a4a7d50fbd13e4d2b466b71d7b391ea4f767206b33fd68a9b041f0514d1"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "aceef8c59f7102613fd5",
+          "observed_at": "2026-11-05T15:49:49.118537+00:00",
+          "url": "https://www.gsa.gov/website-information/website-policies",
+          "body_sha256": "079bcb78c11aa68c0af397ca96580271da495ef635d5873573d02cd20a2eb7bd",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "English published metadata for annual federal civilian asset inventory; worldwide scope with exclusions.",
+      "facts": {
+        "jurisdictions": [
+          "USA federal",
+          "overseas federal properties subject to exclusions"
+        ],
+        "languages": [
+          "en"
+        ],
+        "categories": [
+          "public property inventory",
+          "datasets"
+        ],
+        "scope": "Land parcels and constructed building/structure assets; country/year/legal-interest filtering must precede retained samples.",
+        "freshness": "Inventory asofSeptember30FY2025,not website2026update=dateofownership."
+      },
+      "evidence": [
+        "runs/gsa-property-contract-20261105cf/observations.jsonl",
+        "runs/gsa-property-reader-20261105cg/observations.jsonl",
+        "examples/gsa-frpp.access.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-gsa-frpp/schema-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "1f8b2dd8d9fe3fe0e28c",
+          "observed_at": "2026-11-05T15:47:56.075660+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+          "body_sha256": "3c3074c56868bcc894616d9b0288e130160f1c55742b8152e43ae2a9acf3f03e",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "eab851ff7baf2f733544",
+          "observed_at": "2026-11-05T15:48:12.592341+00:00",
+          "url": "https://catalog.data.gov/dataset/fy-2025-federal-real-property-profile-frpp-public-dataset",
+          "body_sha256": "8538614451558234f985ca2e4a8ad5f02de11262c44c32b756f777df37882239",
+          "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "63e0583519bb09267032",
+          "observed_at": "2026-11-05T15:48:24.466907+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-council/frpc-guidance-library",
+          "body_sha256": "36f173ba5cb679d3316d118c3a32cbc71267986d8fa065b8b9a89f8eafc02f54",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "017661ca33bdd466591b",
+          "observed_at": "2026-11-05T15:49:41.491745+00:00",
+          "url": "https://frppmap.gsa.gov/frppmap/",
+          "body_sha256": null,
+          "policy_sha256": "f4268a4a7d50fbd13e4d2b466b71d7b391ea4f767206b33fd68a9b041f0514d1"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "aceef8c59f7102613fd5",
+          "observed_at": "2026-11-05T15:49:49.118537+00:00",
+          "url": "https://www.gsa.gov/website-information/website-policies",
+          "body_sha256": "079bcb78c11aa68c0af397ca96580271da495ef635d5873573d02cd20a2eb7bd",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        }
+      ],
+      "open_questions": [
+        "Actual export distributions andgovernment-owned subset not inspected; India cell absent."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Official FAQ permits downloading detailed file andsearching individual assets; public request/redirect observed but target gated.",
+      "facts": {
+        "request": {
+          "method": "GET",
+          "url": "https://inventory.data.gov/dataset/f9c6364b-7d88-4621-b649-f1282a9132f6/resource/ab42c97a-445f-42d1-81c7-bc8fc92f5407/download/frpp_public_dataset_fy25_final.xlsx"
+        },
+        "probe": "HEAD publisher302 only; S3robots403, no targetGET.",
+        "local_query_plan": "Read-only XLSX, exactlegalinterestG plus fixed nonpersonal RPUID,FY,agency,type,use/state fields; stable RPUID/year order and explicit pagination. No implementation/query counts yet."
+      },
+      "evidence": [
+        "runs/gsa-property-contract-20261105cf/observations.jsonl",
+        "runs/gsa-property-reader-20261105cg/observations.jsonl",
+        "examples/gsa-frpp.access.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-gsa-frpp/schema-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "1f8b2dd8d9fe3fe0e28c",
+          "observed_at": "2026-11-05T15:47:56.075660+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+          "body_sha256": "3c3074c56868bcc894616d9b0288e130160f1c55742b8152e43ae2a9acf3f03e",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "eab851ff7baf2f733544",
+          "observed_at": "2026-11-05T15:48:12.592341+00:00",
+          "url": "https://catalog.data.gov/dataset/fy-2025-federal-real-property-profile-frpp-public-dataset",
+          "body_sha256": "8538614451558234f985ca2e4a8ad5f02de11262c44c32b756f777df37882239",
+          "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "63e0583519bb09267032",
+          "observed_at": "2026-11-05T15:48:24.466907+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-council/frpc-guidance-library",
+          "body_sha256": "36f173ba5cb679d3316d118c3a32cbc71267986d8fa065b8b9a89f8eafc02f54",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "017661ca33bdd466591b",
+          "observed_at": "2026-11-05T15:49:41.491745+00:00",
+          "url": "https://frppmap.gsa.gov/frppmap/",
+          "body_sha256": null,
+          "policy_sha256": "f4268a4a7d50fbd13e4d2b466b71d7b391ea4f767206b33fd68a9b041f0514d1"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "aceef8c59f7102613fd5",
+          "observed_at": "2026-11-05T15:49:49.118537+00:00",
+          "url": "https://www.gsa.gov/website-information/website-policies",
+          "body_sha256": "079bcb78c11aa68c0af397ca96580271da495ef635d5873573d02cd20a2eb7bd",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        }
+      ],
+      "open_questions": [
+        "Exact XLSX headers/content, supportedlocalfilter,10 outputs,empty/error/paging tests missing."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "CC0 is explicitly declared by GSA metadata; distinguish general federal-text rights from protected third-party works.",
+      "facts": {
+        "metadata_license": "CC0 per publisher Data.gov dataset anddistribution",
+        "content_license": "DeclaredCC0 for XLSX;actual exportembeddednotices unavailable",
+        "limits": "No fee/account used; public robots/pacing respected; no paid service.",
+        "primary_schema": "Dictionary/FAQ retrieved200complete under4MiB/128KiB caps."
+      },
+      "evidence": [
+        "runs/gsa-property-contract-20261105cf/observations.jsonl",
+        "runs/gsa-property-reader-20261105cg/observations.jsonl",
+        "examples/gsa-frpp.access.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-gsa-frpp/schema-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "1f8b2dd8d9fe3fe0e28c",
+          "observed_at": "2026-11-05T15:47:56.075660+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+          "body_sha256": "3c3074c56868bcc894616d9b0288e130160f1c55742b8152e43ae2a9acf3f03e",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "eab851ff7baf2f733544",
+          "observed_at": "2026-11-05T15:48:12.592341+00:00",
+          "url": "https://catalog.data.gov/dataset/fy-2025-federal-real-property-profile-frpp-public-dataset",
+          "body_sha256": "8538614451558234f985ca2e4a8ad5f02de11262c44c32b756f777df37882239",
+          "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "63e0583519bb09267032",
+          "observed_at": "2026-11-05T15:48:24.466907+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-council/frpc-guidance-library",
+          "body_sha256": "36f173ba5cb679d3316d118c3a32cbc71267986d8fa065b8b9a89f8eafc02f54",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "017661ca33bdd466591b",
+          "observed_at": "2026-11-05T15:49:41.491745+00:00",
+          "url": "https://frppmap.gsa.gov/frppmap/",
+          "body_sha256": null,
+          "policy_sha256": "f4268a4a7d50fbd13e4d2b466b71d7b391ea4f767206b33fd68a9b041f0514d1"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "aceef8c59f7102613fd5",
+          "observed_at": "2026-11-05T15:49:49.118537+00:00",
+          "url": "https://www.gsa.gov/website-information/website-policies",
+          "body_sha256": "079bcb78c11aa68c0af397ca96580271da495ef635d5873573d02cd20a2eb7bd",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        }
+      ],
+      "open_questions": [
+        "Reconcile actualexportnotices/rights beforecontentqualification."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Official HTML documentation andschema/FAQ public; publicassetmap/export notsuccessfullyaccessed.",
+      "facts": {
+        "login": "No login on reviewed documentation; restrictedFRPPMSseparate andnotaccessed",
+        "map": "robots301, targetskipped",
+        "export": "publisher302;redirecthostrobots403;targetskipped",
+        "free_login_policy": "Free loginacceptable inresearch,butnoaccountcreationauthorized."
+      },
+      "evidence": [
+        "runs/gsa-property-contract-20261105cf/observations.jsonl",
+        "runs/gsa-property-reader-20261105cg/observations.jsonl",
+        "examples/gsa-frpp.access.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-gsa-frpp/schema-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "1f8b2dd8d9fe3fe0e28c",
+          "observed_at": "2026-11-05T15:47:56.075660+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+          "body_sha256": "3c3074c56868bcc894616d9b0288e130160f1c55742b8152e43ae2a9acf3f03e",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "eab851ff7baf2f733544",
+          "observed_at": "2026-11-05T15:48:12.592341+00:00",
+          "url": "https://catalog.data.gov/dataset/fy-2025-federal-real-property-profile-frpp-public-dataset",
+          "body_sha256": "8538614451558234f985ca2e4a8ad5f02de11262c44c32b756f777df37882239",
+          "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "63e0583519bb09267032",
+          "observed_at": "2026-11-05T15:48:24.466907+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-council/frpc-guidance-library",
+          "body_sha256": "36f173ba5cb679d3316d118c3a32cbc71267986d8fa065b8b9a89f8eafc02f54",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "017661ca33bdd466591b",
+          "observed_at": "2026-11-05T15:49:41.491745+00:00",
+          "url": "https://frppmap.gsa.gov/frppmap/",
+          "body_sha256": null,
+          "policy_sha256": "f4268a4a7d50fbd13e4d2b466b71d7b391ea4f767206b33fd68a9b041f0514d1"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "aceef8c59f7102613fd5",
+          "observed_at": "2026-11-05T15:49:49.118537+00:00",
+          "url": "https://www.gsa.gov/website-information/website-policies",
+          "body_sha256": "079bcb78c11aa68c0af397ca96580271da495ef635d5873573d02cd20a2eb7bd",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        }
+      ],
+      "open_questions": [
+        "Native record/fullasset reader andmobile/keyboardaccess untested."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Dictionary andFAQ establish legal-interest distinctions andannualredaction limitations;no queryevidence.",
+      "facts": {
+        "legal_interest": "G=Federal Government fee-simple;L=leasedfromprivateentity;S/F/T/M/W distinct",
+        "blank_values": "Notapplicable oragencyredacted,not0/absence",
+        "detailed_vs_summary": "FAQ says totals deliberatelydiffer:summarycoversassets excludedfromdetailedreport",
+        "native_id": "RPUIDnotreused perdata dictionary; no observedrecord/sample yet"
+      },
+      "evidence": [
+        "runs/gsa-property-contract-20261105cf/observations.jsonl",
+        "runs/gsa-property-reader-20261105cg/observations.jsonl",
+        "examples/gsa-frpp.access.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-gsa-frpp/schema-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "1f8b2dd8d9fe3fe0e28c",
+          "observed_at": "2026-11-05T15:47:56.075660+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+          "body_sha256": "3c3074c56868bcc894616d9b0288e130160f1c55742b8152e43ae2a9acf3f03e",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "eab851ff7baf2f733544",
+          "observed_at": "2026-11-05T15:48:12.592341+00:00",
+          "url": "https://catalog.data.gov/dataset/fy-2025-federal-real-property-profile-frpp-public-dataset",
+          "body_sha256": "8538614451558234f985ca2e4a8ad5f02de11262c44c32b756f777df37882239",
+          "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "63e0583519bb09267032",
+          "observed_at": "2026-11-05T15:48:24.466907+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-council/frpc-guidance-library",
+          "body_sha256": "36f173ba5cb679d3316d118c3a32cbc71267986d8fa065b8b9a89f8eafc02f54",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "017661ca33bdd466591b",
+          "observed_at": "2026-11-05T15:49:41.491745+00:00",
+          "url": "https://frppmap.gsa.gov/frppmap/",
+          "body_sha256": null,
+          "policy_sha256": "f4268a4a7d50fbd13e4d2b466b71d7b391ea4f767206b33fd68a9b041f0514d1"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "aceef8c59f7102613fd5",
+          "observed_at": "2026-11-05T15:49:49.118537+00:00",
+          "url": "https://www.gsa.gov/website-information/website-policies",
+          "body_sha256": "079bcb78c11aa68c0af397ca96580271da495ef635d5873573d02cd20a2eb7bd",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        }
+      ],
+      "open_questions": [
+        "Ten distinctnativeoutputs, relevance,paging,empty,error,versionandrefresh checks missing."
+      ]
+    },
+    "operating_limits": {
+      "status": "complete",
+      "summary": "Research hasconcrete policyboundaries andretainsnegativeevidence.",
+      "facts": {
+        "pacing": "inventoryrobotsCrawl-delay10;otherhostminimum3seconds",
+        "document_bounds": "4MiBdictionary;128KiBFAQ;complete200captures",
+        "stop_conditions": "Maprobots301unresolved;S3robots403;no targetrecords downloaded",
+        "provider_quota": "NumericAPIquota/SLAunknown,notassumedunlimited",
+        "revisit_trigger": "Published policyrecovery orsupportedpublicsuccessor export; no repeateddeniedrequests."
+      },
+      "evidence": [
+        "runs/gsa-property-contract-20261105cf/observations.jsonl",
+        "runs/gsa-property-reader-20261105cg/observations.jsonl",
+        "examples/gsa-frpp.access.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-gsa-frpp/schema-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "1f8b2dd8d9fe3fe0e28c",
+          "observed_at": "2026-11-05T15:47:56.075660+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+          "body_sha256": "3c3074c56868bcc894616d9b0288e130160f1c55742b8152e43ae2a9acf3f03e",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "eab851ff7baf2f733544",
+          "observed_at": "2026-11-05T15:48:12.592341+00:00",
+          "url": "https://catalog.data.gov/dataset/fy-2025-federal-real-property-profile-frpp-public-dataset",
+          "body_sha256": "8538614451558234f985ca2e4a8ad5f02de11262c44c32b756f777df37882239",
+          "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "63e0583519bb09267032",
+          "observed_at": "2026-11-05T15:48:24.466907+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-council/frpc-guidance-library",
+          "body_sha256": "36f173ba5cb679d3316d118c3a32cbc71267986d8fa065b8b9a89f8eafc02f54",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "017661ca33bdd466591b",
+          "observed_at": "2026-11-05T15:49:41.491745+00:00",
+          "url": "https://frppmap.gsa.gov/frppmap/",
+          "body_sha256": null,
+          "policy_sha256": "f4268a4a7d50fbd13e4d2b466b71d7b391ea4f767206b33fd68a9b041f0514d1"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "aceef8c59f7102613fd5",
+          "observed_at": "2026-11-05T15:49:49.118537+00:00",
+          "url": "https://www.gsa.gov/website-information/website-policies",
+          "body_sha256": "079bcb78c11aa68c0af397ca96580271da495ef635d5873573d02cd20a2eb7bd",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        }
+      ],
+      "open_questions": []
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Defer currentassetqualification withspecificpolicyandmissing-evidence blockers;continueindependentorigins.",
+      "facts": {
+        "decision": "deferred",
+        "activation_approved": false,
+        "owner_action_required": false,
+        "next_action": "Revisit only after primary export-host policy recovery/published permitted successor route; inspect exact XLSX columns then government-ownedG nonpersonal projection, native RPUID/year identities,10 distinct queries,negative/paging/version/reader checks. Independently continue other property catalogs."
+      },
+      "evidence": [
+        "runs/gsa-property-contract-20261105cf/observations.jsonl",
+        "runs/gsa-property-reader-20261105cg/observations.jsonl",
+        "examples/gsa-frpp.access.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-gsa-frpp/schema-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "1f8b2dd8d9fe3fe0e28c",
+          "observed_at": "2026-11-05T15:47:56.075660+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+          "body_sha256": "3c3074c56868bcc894616d9b0288e130160f1c55742b8152e43ae2a9acf3f03e",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "eab851ff7baf2f733544",
+          "observed_at": "2026-11-05T15:48:12.592341+00:00",
+          "url": "https://catalog.data.gov/dataset/fy-2025-federal-real-property-profile-frpp-public-dataset",
+          "body_sha256": "8538614451558234f985ca2e4a8ad5f02de11262c44c32b756f777df37882239",
+          "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+        },
+        {
+          "path": "runs/gsa-property-contract-20261105cf/observations.jsonl",
+          "job_id": "63e0583519bb09267032",
+          "observed_at": "2026-11-05T15:48:24.466907+00:00",
+          "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-council/frpc-guidance-library",
+          "body_sha256": "36f173ba5cb679d3316d118c3a32cbc71267986d8fa065b8b9a89f8eafc02f54",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "017661ca33bdd466591b",
+          "observed_at": "2026-11-05T15:49:41.491745+00:00",
+          "url": "https://frppmap.gsa.gov/frppmap/",
+          "body_sha256": null,
+          "policy_sha256": "f4268a4a7d50fbd13e4d2b466b71d7b391ea4f767206b33fd68a9b041f0514d1"
+        },
+        {
+          "path": "runs/gsa-property-reader-20261105cg/observations.jsonl",
+          "job_id": "aceef8c59f7102613fd5",
+          "observed_at": "2026-11-05T15:49:49.118537+00:00",
+          "url": "https://www.gsa.gov/website-information/website-policies",
+          "body_sha256": "079bcb78c11aa68c0af397ca96580271da495ef635d5873573d02cd20a2eb7bd",
+          "policy_sha256": "17f7b0b22f4a02e7b9d4b252bf47b78870c738d7f35dcfdb043b02470e347603"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "recovery": {
+    "status": "blocked_or_failed",
+    "reason": "The published spreadsheet redirects to a storage host whose robots request returned403.",
+    "attempt": "Followed the publisher redirect only; stopped before downloading asset records.",
+    "result": "Blocked on existing evidence; no new provider request in this review.",
+    "decision": "wait_for_export_policy",
+    "next_action": "Revisit only after primary export-host policy recovery/published permitted successor route; inspect exact XLSX columns then government-ownedG nonpersonal projection, native RPUID/year identities,10 distinct queries,negative/paging/version/reader checks. Independently continue other property catalogs.",
+    "owner_action_required": false,
+    "evidence_reviewed_at": "2026-11-05T18:19:00.905577+00:00",
+    "new_provider_requests": 0,
+    "fresh_query_verification": false,
+    "evidence": [
+      "runs/gsa-property-contract-20261105cf/observations.jsonl",
+      "runs/gsa-property-reader-20261105cg/observations.jsonl",
+      "examples/gsa-frpp.access.jsonl",
+      "docs/research/free-content/evidence/2026-11-05-gsa-frpp/schema-observations.jsonl"
+    ]
+  }
+}

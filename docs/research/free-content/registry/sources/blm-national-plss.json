@@ -1,0 +1,878 @@
+{
+  "schema_version": 1,
+  "id": "blm-national-plss",
+  "name": "BLM National Public Land Survey System catalog",
+  "homepage": "https://www.blm.gov/services/geospatial",
+  "aliases": [
+    "BLM PLSS",
+    "BLM National PLSS CadNSDI"
+  ],
+  "group": "G04",
+  "areas": [
+    "C19",
+    "P04",
+    "P07"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "federal-cadastral-reference-catalog",
+  "origin_family": "blm-national-plss",
+  "operator": {
+    "name": "Bureau of Land Management, U.S. Department of the Interior",
+    "jurisdiction": "USA federal / participating public-land states"
+  },
+  "capabilities": [
+    "Published anonymous ArcGIS township-grid metadata queries by state or nativePLSSID; GlobalID/OBJECTID/maplayer identities kept separate."
+  ],
+  "query": {
+    "adapter": "plss-townships",
+    "endpoint": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query",
+    "authentication": "Anonymous public layer andbounded queries observed; no account orkey.",
+    "cost": "No payment; numeric quota/SLA not established. Serial3seconds,128KiB cap,5rows.",
+    "cases": [
+      {
+        "id": "state-AZ",
+        "intent": "Bounded state-filtered public survey-grid metadata",
+        "request": {
+          "method": "GET",
+          "params": {
+            "f": "json",
+            "orderByFields": "OBJECTID ASC",
+            "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "returnGeometry": "false",
+            "where": "STATEABBR = 'AZ'"
+          },
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+        },
+        "expected_ids": [
+          "{1E08C8F0-7899-446F-B55D-1DC958771487}"
+        ]
+      },
+      {
+        "id": "native-AZ",
+        "intent": "Exact native PLSS survey identity, not owner or legal title",
+        "request": {
+          "method": "GET",
+          "params": {
+            "f": "json",
+            "orderByFields": "OBJECTID ASC",
+            "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "returnGeometry": "false",
+            "where": "PLSSID = 'AZ140120S0190W0'"
+          },
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+        },
+        "expected_ids": [
+          "{2B9D6C5D-E510-485C-8C1A-15EF3918B32C}"
+        ]
+      },
+      {
+        "id": "state-CA",
+        "intent": "Bounded state-filtered public survey-grid metadata",
+        "request": {
+          "method": "GET",
+          "params": {
+            "f": "json",
+            "orderByFields": "OBJECTID ASC",
+            "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "returnGeometry": "false",
+            "where": "STATEABBR = 'CA'"
+          },
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+        },
+        "expected_ids": [
+          "{F4F75017-C3FC-482F-92DA-A03DC08A30E2}"
+        ]
+      },
+      {
+        "id": "native-CA",
+        "intent": "Exact native PLSS survey identity, not owner or legal title",
+        "request": {
+          "method": "GET",
+          "params": {
+            "f": "json",
+            "orderByFields": "OBJECTID ASC",
+            "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "returnGeometry": "false",
+            "where": "PLSSID = 'CA210480N0080E0'"
+          },
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+        },
+        "expected_ids": [
+          "{3EA4B6A5-6184-4B78-809A-69D1AD86EBAB}"
+        ]
+      },
+      {
+        "id": "state-CO",
+        "intent": "Bounded state-filtered public survey-grid metadata",
+        "request": {
+          "method": "GET",
+          "params": {
+            "f": "json",
+            "orderByFields": "OBJECTID ASC",
+            "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "returnGeometry": "false",
+            "where": "STATEABBR = 'CO'"
+          },
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+        },
+        "expected_ids": [
+          "{5F4E3C5D-809C-42C9-8019-66D7D06250B8}"
+        ]
+      },
+      {
+        "id": "native-CO",
+        "intent": "Exact native PLSS survey identity, not owner or legal title",
+        "request": {
+          "method": "GET",
+          "params": {
+            "f": "json",
+            "orderByFields": "OBJECTID ASC",
+            "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "returnGeometry": "false",
+            "where": "PLSSID = 'CO060020N0580W0'"
+          },
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+        },
+        "expected_ids": [
+          "{1A8DE38A-5930-4C0F-B5B7-D8460895993F}"
+        ]
+      },
+      {
+        "id": "state-MT",
+        "intent": "Bounded state-filtered public survey-grid metadata",
+        "request": {
+          "method": "GET",
+          "params": {
+            "f": "json",
+            "orderByFields": "OBJECTID ASC",
+            "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "returnGeometry": "false",
+            "where": "STATEABBR = 'MT'"
+          },
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+        },
+        "expected_ids": [
+          "{3B87627A-2250-4CDB-AAAD-1E05B73A09A5}"
+        ]
+      },
+      {
+        "id": "native-MT",
+        "intent": "Exact native PLSS survey identity, not owner or legal title",
+        "request": {
+          "method": "GET",
+          "params": {
+            "f": "json",
+            "orderByFields": "OBJECTID ASC",
+            "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "returnGeometry": "false",
+            "where": "PLSSID = 'MT200360N0420E0'"
+          },
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+        },
+        "expected_ids": [
+          "{757A765C-1571-48F3-AF06-BD633052DCC9}"
+        ]
+      },
+      {
+        "id": "state-UT",
+        "intent": "Bounded state-filtered public survey-grid metadata",
+        "request": {
+          "method": "GET",
+          "params": {
+            "f": "json",
+            "orderByFields": "OBJECTID ASC",
+            "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "returnGeometry": "false",
+            "where": "STATEABBR = 'UT'"
+          },
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+        },
+        "expected_ids": [
+          "{449126CB-0BDB-4536-9735-06840381BDA1}"
+        ]
+      },
+      {
+        "id": "native-UT",
+        "intent": "Exact native PLSS survey identity, not owner or legal title",
+        "request": {
+          "method": "GET",
+          "params": {
+            "f": "json",
+            "orderByFields": "OBJECTID ASC",
+            "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "returnGeometry": "false",
+            "where": "PLSSID = 'UT260020S0180W0'"
+          },
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+        },
+        "expected_ids": [
+          "{7960A615-3325-4C61-8D04-D0E25B2B9359}"
+        ]
+      }
+    ],
+    "supported_modes": [
+      "Exact STATEABBR",
+      "Exact PLSSID",
+      "Stable OBJECTID sort andbounded offset",
+      "Explicit nonpersonal field projection"
+    ],
+    "unsupported_modes": [
+      "Owner,title-holder,claimant,editor orparcel-party data",
+      "Survey-name/source-reference free text",
+      "Legal title orboundary determination",
+      "Other layers,attachments,edits,bulkgeometry",
+      "Country coverage inferred from state code"
+    ],
+    "area_case_ids": {
+      "C19": [
+        "state-AZ",
+        "native-AZ",
+        "state-CA",
+        "native-CA",
+        "state-CO",
+        "native-CO",
+        "state-MT",
+        "native-MT",
+        "state-UT",
+        "native-UT"
+      ],
+      "P07": [
+        "state-AZ",
+        "native-AZ",
+        "state-CA",
+        "native-CA",
+        "state-CO",
+        "native-CO",
+        "state-MT",
+        "native-MT",
+        "state-UT",
+        "native-UT"
+      ],
+      "P04": []
+    }
+  },
+  "licensing": "BLM attribution and public API availability observed; reconcile primary item-level metadata/content reuse terms and contributed state/local records before fullqualification. Do not assume every contributor has federal public-domain status.",
+  "documentation": [
+    "https://www.blm.gov/services/geospatial",
+    "https://www.usgs.gov/faqs/are-public-land-survey-system-plss-section-lines-us-topo-maps-a-legal-record",
+    "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer",
+    "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+    "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+  ],
+  "evidence": [
+    "runs/land-survey-contract-20261105cc/observations.jsonl",
+    "runs/land-survey-layer-20261105cd/observations.jsonl",
+    "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+    "examples/blm-national-plss.scouting.jsonl",
+    "examples/blm-national-plss.jsonl",
+    "examples/blm-national-plss.benchmark.jsonl"
+  ],
+  "analysis_refs": [],
+  "last_reviewed_at": "2026-11-05T15:24:04.258954+00:00",
+  "limitations": [
+    "Survey-grid reference is not a title/ownership register. P04 candidate only; no P04 query credit.",
+    "USGS explicitly says its US Topo PLSS portrayal is not legally authoritative; native BLM legal boundaries still need primary qualification.",
+    "SOURCEDATE andlast_edited_date oftennull; edit time is not survey/title-effective date.",
+    "Different state supplies,coordinate services,mirrors andlayers do not automatically add independent origins."
+  ],
+  "next_action": "Complete primary rights, actual map/record reader, source/version/date reconciliation and later-session refresh evidence. C19/P07 metadata queries pass; P04 ownership/land-rights gap remains open.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "One BLM national survey-grid origin with state contributions; identifiers retain their separate roles.",
+      "facts": {
+        "operator": {
+          "name": "Bureau of Land Management, U.S. Department of the Interior",
+          "jurisdiction": "USA federal / participating public-land states"
+        },
+        "service_item_id": "64b66a3763b74b26b9d4cf39529827f2",
+        "layer": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+        "identity": "GlobalID + PLSSID + OBJECTID + layer and response hash; no permanence across releases assumed.",
+        "migration": "Official BLM page instructs migration from/arcgis/rest/services to/natlplss/rest/services beforeFeb1,2027. Both endpoints are oneorigin,not two.",
+        "mirrors": "USGS topographic portrayal,ArcGIS hosted copies andNAD83variant are not additional origins."
+      },
+      "evidence": [
+        "runs/land-survey-contract-20261105cc/observations.jsonl",
+        "runs/land-survey-layer-20261105cd/observations.jsonl",
+        "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+        "examples/blm-national-plss.scouting.jsonl",
+        "examples/blm-national-plss.jsonl",
+        "examples/blm-national-plss.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "b524f369556210874805",
+          "observed_at": "2026-11-05T15:13:45.643287+00:00",
+          "url": "https://www.blm.gov/services/geospatial",
+          "body_sha256": "1d3cd141670096aaaccb31848b262bb91124dc43ddc5fc2f36dc8a5db0ceeba0",
+          "policy_sha256": "4bf95726e1fe590e941b5bda09efeb21fb7255ad15b38e41aaa0f63158edd87d"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "ee9da0245effe35f55cf",
+          "observed_at": "2026-11-05T15:13:55.406293+00:00",
+          "url": "https://www.usgs.gov/faqs/are-public-land-survey-system-plss-section-lines-us-topo-maps-a-legal-record",
+          "body_sha256": "5889ca73bcf79617f9bdfae110655507a0de0f7bdaceb9e3c9244f29193eccb9",
+          "policy_sha256": "20fea4f9e919c333a73389ce5c419f5f653451423d5116a837d4548f8f0d0c57"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "a9f75b16bac915383e76",
+          "observed_at": "2026-11-05T15:14:05.341736+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer",
+          "body_sha256": "0c396ee5abb500859c082d4f2435c763342c4d78cf67203424265cb57045fda3",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-layer-20261105cd/observations.jsonl",
+          "job_id": "4b0cdc826389d3c1483d",
+          "observed_at": "2026-11-05T15:15:53.156060+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+          "body_sha256": "a5243d4735ed79ef0881daadf1d4135c93da6bfc395f49a04c22a71d452ec8a8",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+          "job_id": "667b319f8fa9489e7b97",
+          "observed_at": "2026-11-05T15:17:08.744388+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query",
+          "body_sha256": "9b5da7d3bc83d36702afb630e7dcb46984c1e323a8e973e161320c957e006d8e",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "complete",
+      "summary": "Actual bounded state samples coverAZ,CA,CO,MT,UT English survey labels; no all-USA orIndia completeness claim.",
+      "facts": {
+        "query_areas": [
+          "C19",
+          "P07"
+        ],
+        "P04": "Candidate only; cadastral framework is not direct ownership/land-rights record evidence.",
+        "states": [
+          "AZ",
+          "CA",
+          "CO",
+          "MT",
+          "UT"
+        ],
+        "scout_rows": 25,
+        "country_network_vantage": "Managedcloudproxy; country not independently established.",
+        "labels": "Township/range abbreviations andmeridian names,not natural-language legal descriptions."
+      },
+      "evidence": [
+        "runs/land-survey-contract-20261105cc/observations.jsonl",
+        "runs/land-survey-layer-20261105cd/observations.jsonl",
+        "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+        "examples/blm-national-plss.scouting.jsonl",
+        "examples/blm-national-plss.jsonl",
+        "examples/blm-national-plss.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "b524f369556210874805",
+          "observed_at": "2026-11-05T15:13:45.643287+00:00",
+          "url": "https://www.blm.gov/services/geospatial",
+          "body_sha256": "1d3cd141670096aaaccb31848b262bb91124dc43ddc5fc2f36dc8a5db0ceeba0",
+          "policy_sha256": "4bf95726e1fe590e941b5bda09efeb21fb7255ad15b38e41aaa0f63158edd87d"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "ee9da0245effe35f55cf",
+          "observed_at": "2026-11-05T15:13:55.406293+00:00",
+          "url": "https://www.usgs.gov/faqs/are-public-land-survey-system-plss-section-lines-us-topo-maps-a-legal-record",
+          "body_sha256": "5889ca73bcf79617f9bdfae110655507a0de0f7bdaceb9e3c9244f29193eccb9",
+          "policy_sha256": "20fea4f9e919c333a73389ce5c419f5f653451423d5116a837d4548f8f0d0c57"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "a9f75b16bac915383e76",
+          "observed_at": "2026-11-05T15:14:05.341736+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer",
+          "body_sha256": "0c396ee5abb500859c082d4f2435c763342c4d78cf67203424265cb57045fda3",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-layer-20261105cd/observations.jsonl",
+          "job_id": "4b0cdc826389d3c1483d",
+          "observed_at": "2026-11-05T15:15:53.156060+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+          "body_sha256": "a5243d4735ed79ef0881daadf1d4135c93da6bfc395f49a04c22a71d452ec8a8",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+          "job_id": "667b319f8fa9489e7b97",
+          "observed_at": "2026-11-05T15:17:08.744388+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query",
+          "body_sha256": "9b5da7d3bc83d36702afb630e7dcb46984c1e323a8e973e161320c957e006d8e",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        }
+      ],
+      "open_questions": []
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Official layer publishes fixed schema andquery form; bounded public projections omit editor names,owners andfree-text reference fields.",
+      "facts": {
+        "request_shapes": [
+          {
+            "method": "GET",
+            "params": {
+              "f": "json",
+              "orderByFields": "OBJECTID ASC",
+              "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+              "resultOffset": 0,
+              "resultRecordCount": 5,
+              "returnGeometry": "false",
+              "where": "STATEABBR = 'AZ'"
+            },
+            "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+          },
+          {
+            "method": "GET",
+            "params": {
+              "f": "json",
+              "orderByFields": "OBJECTID ASC",
+              "outFields": "OBJECTID,STATEABBR,PRINMERCD,PRINMER,PLSSID,TWNSHPLAB,SURVTYP,SURVTYPTXT,SOURCEDATE,last_edited_date,GlobalID",
+              "resultOffset": 0,
+              "resultRecordCount": 5,
+              "returnGeometry": "false",
+              "where": "PLSSID = 'AZ140120S0190W0'"
+            },
+            "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query"
+          }
+        ],
+        "fields": [
+          "OBJECTID",
+          "STATEABBR",
+          "PRINMERCD",
+          "PRINMER",
+          "PLSSID",
+          "TWNSHPLAB",
+          "SURVTYP",
+          "SURVTYPTXT",
+          "SOURCEDATE",
+          "last_edited_date",
+          "GlobalID"
+        ],
+        "privacy_exclusions": [
+          "created_user",
+          "last_edited_user",
+          "SOURCEREF",
+          "SRVNAME",
+          "SECSRVNAME",
+          "STEWARD",
+          "geometry"
+        ],
+        "provider_max_records": 2000,
+        "research_max_records": 5,
+        "backfill": "Five state examples reuse original scouts with original observation dates/hashes; only five distinct native round trips need new requests.",
+        "current_distinct_examples": 10,
+        "reused_current_state_captures": 5,
+        "new_native_roundtrips": 5,
+        "negative_tests": "Empty predicate, missingPLSSID andunknownstate returnHTTP200/empty features.",
+        "paging": "Arizona offset0/5 pages contain10 distinctGlobalIDs; nooverlap.",
+        "native_projection": "Provider fields matched fixed nonpersonal projection. Future unexpected fields/geometry cause response-value omission before evidence storage."
+      },
+      "evidence": [
+        "runs/land-survey-contract-20261105cc/observations.jsonl",
+        "runs/land-survey-layer-20261105cd/observations.jsonl",
+        "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+        "examples/blm-national-plss.scouting.jsonl",
+        "examples/blm-national-plss.jsonl",
+        "examples/blm-national-plss.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "b524f369556210874805",
+          "observed_at": "2026-11-05T15:13:45.643287+00:00",
+          "url": "https://www.blm.gov/services/geospatial",
+          "body_sha256": "1d3cd141670096aaaccb31848b262bb91124dc43ddc5fc2f36dc8a5db0ceeba0",
+          "policy_sha256": "4bf95726e1fe590e941b5bda09efeb21fb7255ad15b38e41aaa0f63158edd87d"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "ee9da0245effe35f55cf",
+          "observed_at": "2026-11-05T15:13:55.406293+00:00",
+          "url": "https://www.usgs.gov/faqs/are-public-land-survey-system-plss-section-lines-us-topo-maps-a-legal-record",
+          "body_sha256": "5889ca73bcf79617f9bdfae110655507a0de0f7bdaceb9e3c9244f29193eccb9",
+          "policy_sha256": "20fea4f9e919c333a73389ce5c419f5f653451423d5116a837d4548f8f0d0c57"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "a9f75b16bac915383e76",
+          "observed_at": "2026-11-05T15:14:05.341736+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer",
+          "body_sha256": "0c396ee5abb500859c082d4f2435c763342c4d78cf67203424265cb57045fda3",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-layer-20261105cd/observations.jsonl",
+          "job_id": "4b0cdc826389d3c1483d",
+          "observed_at": "2026-11-05T15:15:53.156060+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+          "body_sha256": "a5243d4735ed79ef0881daadf1d4135c93da6bfc395f49a04c22a71d452ec8a8",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+          "job_id": "667b319f8fa9489e7b97",
+          "observed_at": "2026-11-05T15:17:08.744388+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query",
+          "body_sha256": "9b5da7d3bc83d36702afb630e7dcb46984c1e323a8e973e161320c957e006d8e",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Current BLM attribution/free query access does not establish every contributed record right.",
+      "facts": {
+        "native_copyright_text": "Bureau of Land Management(BLM),Headquarters(HQ)",
+        "metadata": "Public supported schema/API; retain attribution andprovenance.",
+        "content": "Survey plats,field notes andpersonal land conveyances are separate andnot fetched.",
+        "free_access": "Anonymous scouts200; no key,account orcost."
+      },
+      "evidence": [
+        "runs/land-survey-contract-20261105cc/observations.jsonl",
+        "runs/land-survey-layer-20261105cd/observations.jsonl",
+        "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+        "examples/blm-national-plss.scouting.jsonl",
+        "examples/blm-national-plss.jsonl",
+        "examples/blm-national-plss.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "b524f369556210874805",
+          "observed_at": "2026-11-05T15:13:45.643287+00:00",
+          "url": "https://www.blm.gov/services/geospatial",
+          "body_sha256": "1d3cd141670096aaaccb31848b262bb91124dc43ddc5fc2f36dc8a5db0ceeba0",
+          "policy_sha256": "4bf95726e1fe590e941b5bda09efeb21fb7255ad15b38e41aaa0f63158edd87d"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "ee9da0245effe35f55cf",
+          "observed_at": "2026-11-05T15:13:55.406293+00:00",
+          "url": "https://www.usgs.gov/faqs/are-public-land-survey-system-plss-section-lines-us-topo-maps-a-legal-record",
+          "body_sha256": "5889ca73bcf79617f9bdfae110655507a0de0f7bdaceb9e3c9244f29193eccb9",
+          "policy_sha256": "20fea4f9e919c333a73389ce5c419f5f653451423d5116a837d4548f8f0d0c57"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "a9f75b16bac915383e76",
+          "observed_at": "2026-11-05T15:14:05.341736+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer",
+          "body_sha256": "0c396ee5abb500859c082d4f2435c763342c4d78cf67203424265cb57045fda3",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-layer-20261105cd/observations.jsonl",
+          "job_id": "4b0cdc826389d3c1483d",
+          "observed_at": "2026-11-05T15:15:53.156060+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+          "body_sha256": "a5243d4735ed79ef0881daadf1d4135c93da6bfc395f49a04c22a71d452ec8a8",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+          "job_id": "667b319f8fa9489e7b97",
+          "observed_at": "2026-11-05T15:17:08.744388+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query",
+          "body_sha256": "9b5da7d3bc83d36702afb630e7dcb46984c1e323a8e973e161320c957e006d8e",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        }
+      ],
+      "open_questions": [
+        "Primary item-level reuse license andcontributor exceptions;numeric free limits."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Public metadata andlayer directory available; actual map/township reader is unverified.",
+      "facts": {
+        "native_layer": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+        "map_crs": "102100(latest3857) per native service; no geometry queried.",
+        "record_access": "Only selected public attributes; actual map andlegal source documents not tested."
+      },
+      "evidence": [
+        "runs/land-survey-contract-20261105cc/observations.jsonl",
+        "runs/land-survey-layer-20261105cd/observations.jsonl",
+        "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+        "examples/blm-national-plss.scouting.jsonl",
+        "examples/blm-national-plss.jsonl",
+        "examples/blm-national-plss.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "b524f369556210874805",
+          "observed_at": "2026-11-05T15:13:45.643287+00:00",
+          "url": "https://www.blm.gov/services/geospatial",
+          "body_sha256": "1d3cd141670096aaaccb31848b262bb91124dc43ddc5fc2f36dc8a5db0ceeba0",
+          "policy_sha256": "4bf95726e1fe590e941b5bda09efeb21fb7255ad15b38e41aaa0f63158edd87d"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "ee9da0245effe35f55cf",
+          "observed_at": "2026-11-05T15:13:55.406293+00:00",
+          "url": "https://www.usgs.gov/faqs/are-public-land-survey-system-plss-section-lines-us-topo-maps-a-legal-record",
+          "body_sha256": "5889ca73bcf79617f9bdfae110655507a0de0f7bdaceb9e3c9244f29193eccb9",
+          "policy_sha256": "20fea4f9e919c333a73389ce5c419f5f653451423d5116a837d4548f8f0d0c57"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "a9f75b16bac915383e76",
+          "observed_at": "2026-11-05T15:14:05.341736+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer",
+          "body_sha256": "0c396ee5abb500859c082d4f2435c763342c4d78cf67203424265cb57045fda3",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-layer-20261105cd/observations.jsonl",
+          "job_id": "4b0cdc826389d3c1483d",
+          "observed_at": "2026-11-05T15:15:53.156060+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+          "body_sha256": "a5243d4735ed79ef0881daadf1d4135c93da6bfc395f49a04c22a71d452ec8a8",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+          "job_id": "667b319f8fa9489e7b97",
+          "observed_at": "2026-11-05T15:17:08.744388+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query",
+          "body_sha256": "9b5da7d3bc83d36702afb630e7dcb46984c1e323a8e973e161320c957e006d8e",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        }
+      ],
+      "open_questions": [
+        "Permitted native reader/map desktop/mobile access andaccessibility; no owner orparcel-party browsing."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "State andsurvey IDs are exact; dates andland-rights meaning remain constrained.",
+      "facts": {
+        "null_dates": "SOURCEDATE null in observed samples; last_edited_date differs by state andmay be null.",
+        "meridians": [
+          "Gila-Salt River Meridian",
+          "Mount Diablo",
+          "6th Meridian",
+          "Montana Meridian",
+          "Salt Lake Meridian"
+        ],
+        "source_vs_law": "Gridmetadata andUSGSportrayal are not legal-title/ownership verification.",
+        "date_semantics": "Raw epoch milliseconds retained; no fabricated effective date orcurrent title status.",
+        "relevance_review": "Five state-filtered sets andfive distinct exactPLSSID round trips matched expectedstate/survey IDs. Native survey strings andGlobalIDs are distinct identifiers; source/edit dates remain nullable."
+      },
+      "evidence": [
+        "runs/land-survey-contract-20261105cc/observations.jsonl",
+        "runs/land-survey-layer-20261105cd/observations.jsonl",
+        "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+        "examples/blm-national-plss.scouting.jsonl",
+        "examples/blm-national-plss.jsonl",
+        "examples/blm-national-plss.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "b524f369556210874805",
+          "observed_at": "2026-11-05T15:13:45.643287+00:00",
+          "url": "https://www.blm.gov/services/geospatial",
+          "body_sha256": "1d3cd141670096aaaccb31848b262bb91124dc43ddc5fc2f36dc8a5db0ceeba0",
+          "policy_sha256": "4bf95726e1fe590e941b5bda09efeb21fb7255ad15b38e41aaa0f63158edd87d"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "ee9da0245effe35f55cf",
+          "observed_at": "2026-11-05T15:13:55.406293+00:00",
+          "url": "https://www.usgs.gov/faqs/are-public-land-survey-system-plss-section-lines-us-topo-maps-a-legal-record",
+          "body_sha256": "5889ca73bcf79617f9bdfae110655507a0de0f7bdaceb9e3c9244f29193eccb9",
+          "policy_sha256": "20fea4f9e919c333a73389ce5c419f5f653451423d5116a837d4548f8f0d0c57"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "a9f75b16bac915383e76",
+          "observed_at": "2026-11-05T15:14:05.341736+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer",
+          "body_sha256": "0c396ee5abb500859c082d4f2435c763342c4d78cf67203424265cb57045fda3",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-layer-20261105cd/observations.jsonl",
+          "job_id": "4b0cdc826389d3c1483d",
+          "observed_at": "2026-11-05T15:15:53.156060+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+          "body_sha256": "a5243d4735ed79ef0881daadf1d4135c93da6bfc395f49a04c22a71d452ec8a8",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+          "job_id": "667b319f8fa9489e7b97",
+          "observed_at": "2026-11-05T15:17:08.744388+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query",
+          "body_sha256": "9b5da7d3bc83d36702afb630e7dcb46984c1e323a8e973e161320c957e006d8e",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        }
+      ],
+      "open_questions": [
+        "Reconcile actual map andsource survey-record context; retain non-ownership/legal-status boundary."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "New published endpoint,serial robots-aware GETs,exclusive lease andstrict nonpersonal projection.",
+      "facts": {
+        "pause_seconds": 3,
+        "max_bytes": 131072,
+        "max_rows": 5,
+        "automatic_retries": 0,
+        "migration_deadline": "2027-02-01 per current official BLM notice",
+        "research_owner": "Program164/civic168; no runtime owner orimport authorized."
+      },
+      "evidence": [
+        "runs/land-survey-contract-20261105cc/observations.jsonl",
+        "runs/land-survey-layer-20261105cd/observations.jsonl",
+        "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+        "examples/blm-national-plss.scouting.jsonl",
+        "examples/blm-national-plss.jsonl",
+        "examples/blm-national-plss.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "b524f369556210874805",
+          "observed_at": "2026-11-05T15:13:45.643287+00:00",
+          "url": "https://www.blm.gov/services/geospatial",
+          "body_sha256": "1d3cd141670096aaaccb31848b262bb91124dc43ddc5fc2f36dc8a5db0ceeba0",
+          "policy_sha256": "4bf95726e1fe590e941b5bda09efeb21fb7255ad15b38e41aaa0f63158edd87d"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "ee9da0245effe35f55cf",
+          "observed_at": "2026-11-05T15:13:55.406293+00:00",
+          "url": "https://www.usgs.gov/faqs/are-public-land-survey-system-plss-section-lines-us-topo-maps-a-legal-record",
+          "body_sha256": "5889ca73bcf79617f9bdfae110655507a0de0f7bdaceb9e3c9244f29193eccb9",
+          "policy_sha256": "20fea4f9e919c333a73389ce5c419f5f653451423d5116a837d4548f8f0d0c57"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "a9f75b16bac915383e76",
+          "observed_at": "2026-11-05T15:14:05.341736+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer",
+          "body_sha256": "0c396ee5abb500859c082d4f2435c763342c4d78cf67203424265cb57045fda3",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-layer-20261105cd/observations.jsonl",
+          "job_id": "4b0cdc826389d3c1483d",
+          "observed_at": "2026-11-05T15:15:53.156060+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+          "body_sha256": "a5243d4735ed79ef0881daadf1d4135c93da6bfc395f49a04c22a71d452ec8a8",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+          "job_id": "667b319f8fa9489e7b97",
+          "observed_at": "2026-11-05T15:17:08.744388+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query",
+          "body_sha256": "9b5da7d3bc83d36702afb630e7dcb46984c1e323a8e973e161320c957e006d8e",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        }
+      ],
+      "open_questions": [
+        "Refresh/update/removal/outage rehearsal,later-session reliability andsource-specific maintenance cadence."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain bounded nonpersonal survey metadata candidate; ownership coverage remains open.",
+      "facts": {
+        "decision": "ten-query-examples-verified",
+        "activation_approved": false,
+        "owner_action_required": false,
+        "next_action": "Complete primary rights, actual map/record reader, source/version/date reconciliation and later-session refresh evidence. C19/P07 metadata queries pass; P04 ownership/land-rights gap remains open."
+      },
+      "evidence": [
+        "runs/land-survey-contract-20261105cc/observations.jsonl",
+        "runs/land-survey-layer-20261105cd/observations.jsonl",
+        "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+        "examples/blm-national-plss.scouting.jsonl",
+        "examples/blm-national-plss.jsonl",
+        "examples/blm-national-plss.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "b524f369556210874805",
+          "observed_at": "2026-11-05T15:13:45.643287+00:00",
+          "url": "https://www.blm.gov/services/geospatial",
+          "body_sha256": "1d3cd141670096aaaccb31848b262bb91124dc43ddc5fc2f36dc8a5db0ceeba0",
+          "policy_sha256": "4bf95726e1fe590e941b5bda09efeb21fb7255ad15b38e41aaa0f63158edd87d"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "ee9da0245effe35f55cf",
+          "observed_at": "2026-11-05T15:13:55.406293+00:00",
+          "url": "https://www.usgs.gov/faqs/are-public-land-survey-system-plss-section-lines-us-topo-maps-a-legal-record",
+          "body_sha256": "5889ca73bcf79617f9bdfae110655507a0de0f7bdaceb9e3c9244f29193eccb9",
+          "policy_sha256": "20fea4f9e919c333a73389ce5c419f5f653451423d5116a837d4548f8f0d0c57"
+        },
+        {
+          "path": "runs/land-survey-contract-20261105cc/observations.jsonl",
+          "job_id": "a9f75b16bac915383e76",
+          "observed_at": "2026-11-05T15:14:05.341736+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer",
+          "body_sha256": "0c396ee5abb500859c082d4f2435c763342c4d78cf67203424265cb57045fda3",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-layer-20261105cd/observations.jsonl",
+          "job_id": "4b0cdc826389d3c1483d",
+          "observed_at": "2026-11-05T15:15:53.156060+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1",
+          "body_sha256": "a5243d4735ed79ef0881daadf1d4135c93da6bfc395f49a04c22a71d452ec8a8",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        },
+        {
+          "path": "runs/land-survey-query-contract-20261105ce/observations.jsonl",
+          "job_id": "667b319f8fa9489e7b97",
+          "observed_at": "2026-11-05T15:17:08.744388+00:00",
+          "url": "https://gis.blm.gov/natlplss/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/1/query",
+          "body_sha256": "9b5da7d3bc83d36702afb630e7dcb46984c1e323a8e973e161320c957e006d8e",
+          "policy_sha256": "1165507fa59659fc90c712d2eb4d2a186f4bcaa7073f3d6a7e4bdc848e668cf3"
+        }
+      ],
+      "open_questions": []
+    }
+  }
+}

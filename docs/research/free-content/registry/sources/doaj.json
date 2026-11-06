@@ -1,0 +1,541 @@
+{
+  "schema_version": 1,
+  "id": "doaj",
+  "name": "DOAJ",
+  "homepage": "https://doaj.org/api/v4/docs",
+  "homepage_status": "historical-reference; canonical homepage/operator needs review",
+  "group": "G05",
+  "areas": [
+    "C03"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "capabilities": [
+    "Live documented public article title-field search, pageSize3 with native DOAJ article IDs; ten distinct title queries, page2 and empty response verified."
+  ],
+  "query": {
+    "adapter": "doaj-public",
+    "endpoint": "https://doaj.org/api/search/articles/",
+    "cases": [
+      {
+        "id": "article-title-01",
+        "intent": "Title-field article search: title:mathematics",
+        "expected_ids": [
+          "00006371859e4a78a5412408b4cd7667"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://doaj.org/api/search/articles/title%3Amathematics?page=1&pageSize=3"
+        }
+      },
+      {
+        "id": "article-title-02",
+        "intent": "Title-field article search: title:agriculture",
+        "expected_ids": [
+          "0000922c23694131a6f14241b75eaaf5"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://doaj.org/api/search/articles/title%3Aagriculture?page=1&pageSize=3"
+        }
+      },
+      {
+        "id": "article-title-03",
+        "intent": "Title-field article search: title:manufacturing",
+        "expected_ids": [
+          "0001ef501d91449e8e4b2102fa304588"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://doaj.org/api/search/articles/title%3Amanufacturing?page=1&pageSize=3"
+        }
+      },
+      {
+        "id": "article-title-04",
+        "intent": "Title-field article search: title:logistics",
+        "expected_ids": [
+          "0007cb6771384a41ab0560f918ab4046"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://doaj.org/api/search/articles/title%3Alogistics?page=1&pageSize=3"
+        }
+      },
+      {
+        "id": "article-title-05",
+        "intent": "Title-field article search: title:nursing",
+        "expected_ids": [
+          "000154ce7d254109bda8fd8bbd53b80a"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://doaj.org/api/search/articles/title%3Anursing?page=1&pageSize=3"
+        }
+      },
+      {
+        "id": "article-title-06",
+        "intent": "Title-field article search: title:linguistics",
+        "expected_ids": [
+          "002d865b90de4534911c38046aa3c7c3"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://doaj.org/api/search/articles/title%3Alinguistics?page=1&pageSize=3"
+        }
+      },
+      {
+        "id": "article-title-07",
+        "intent": "Title-field article search: title:astronomy",
+        "expected_ids": [
+          "000127060bca4c0a875d4412b5657a04"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://doaj.org/api/search/articles/title%3Aastronomy?page=1&pageSize=3"
+        }
+      },
+      {
+        "id": "article-title-08",
+        "intent": "Title-field article search: title:ecology",
+        "expected_ids": [
+          "00087c736b4b4b12ac43cb291a0761c2"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://doaj.org/api/search/articles/title%3Aecology?page=1&pageSize=3"
+        }
+      },
+      {
+        "id": "article-title-09",
+        "intent": "Title-field article search: title:education",
+        "expected_ids": [
+          "0000c41ae7fc45f48e52eaf1d36bacd8"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://doaj.org/api/search/articles/title%3Aeducation?page=1&pageSize=3"
+        }
+      },
+      {
+        "id": "article-title-10",
+        "intent": "Title-field article search: bibjson.title:\"construction safety\"",
+        "expected_ids": [
+          "00d5cc24cf614a0e94e995998302ee37"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://doaj.org/api/search/articles/bibjson.title%3A%22construction%20safety%22?page=1&pageSize=3"
+        }
+      }
+    ],
+    "historical_contract": "`/api/search/articles/{query}`, journal search, fields such as `bibjson.title`, page/pageSize. [API docs](https://doaj.org/api/v4/docs)",
+    "authentication": "Anonymous documented public read API.",
+    "request_shape_verified": true,
+    "page_size": 3,
+    "public_search_max_page_size": 50
+  },
+  "licensing": "Current API documentation allows public read search without a key. Metadata redistribution and each article full-content license are separate; no blanket rights promotion in this query checkpoint.",
+  "documentation": [
+    "https://doaj.org/api/v4/docs"
+  ],
+  "limitations": [
+    "No API key used; write/publisher endpoints have separate authentication and were not used.",
+    "No full papers downloaded; journal inclusion is not a freshly verified individual reader/license guarantee.",
+    "Default result ordering is not a demonstrated relevance ranking. Construction alone mixes physical building, databases and textual construction; phrase construction safety narrows the intended topic.",
+    "DOAJ article records are an index; journals, publishers and copies are not counted as additional origins."
+  ],
+  "evidence": [
+    "analysis/documents.jsonl",
+    "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+    "runs/scholarly-api-specs-20261105eb/observations.jsonl",
+    "analysis/external/doaj-swagger-20261105.json",
+    "examples/doaj.raw-queries.jsonl",
+    "examples/doaj.jsonl",
+    "examples/doaj.boundaries.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T20:15:48.803019+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 36,
+    "text": "| **DOAJ — journal/article index** | `/api/search/articles/{query}`, journal search, fields such as `bibjson.title`, page/pageSize. [API docs](https://doaj.org/api/v4/docs) | `bibjson.link` entries marked `fulltext`, usually publisher HTML/PDF. Journals are containers. Article coverage depends on metadata deposits. | No key for public read search; write APIs differ. Legacy-compatible route sample worked. Confirm supported version, quotas and metadata terms. **Low / P0**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "doaj",
+        "name": "DOAJ",
+        "homepage_reference": "https://doaj.org/api/v4/docs",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C03"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Live documented public article title-field search, pageSize3 with native DOAJ article IDs; ten distinct title queries, page2 and empty response verified.",
+      "facts": {
+        "adapter": "doaj-public",
+        "endpoint": "https://doaj.org/api/search/articles/",
+        "cases": [
+          "article-title-01",
+          "article-title-02",
+          "article-title-03",
+          "article-title-04",
+          "article-title-05",
+          "article-title-06",
+          "article-title-07",
+          "article-title-08",
+          "article-title-09",
+          "article-title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live documented public article title-field search, pageSize3 with native DOAJ article IDs; ten distinct title queries, page2 and empty response verified.",
+        "authentication": "Anonymous documented public read API.",
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-api-specs-20261105eb/observations.jsonl",
+        "analysis/external/doaj-swagger-20261105.json",
+        "examples/doaj.raw-queries.jsonl",
+        "examples/doaj.jsonl",
+        "examples/doaj.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Additional search modes and full-item reader access remain separate from working-query status."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Current API documentation allows public read search without a key. Metadata redistribution and each article full-content license are separate; no blanket rights promotion in this query checkpoint.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous documented public read API.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
+      "evidence": [
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-api-specs-20261105eb/observations.jsonl",
+        "analysis/external/doaj-swagger-20261105.json",
+        "examples/doaj.raw-queries.jsonl",
+        "examples/doaj.jsonl",
+        "examples/doaj.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "analysis/documents.jsonl"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live documented public article title-field search, pageSize3 with native DOAJ article IDs; ten distinct title queries, page2 and empty response verified.",
+        "empty_and_boundary_evidence": "examples/doaj.boundaries.jsonl"
+      },
+      "evidence": [
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-api-specs-20261105eb/observations.jsonl",
+        "analysis/external/doaj-swagger-20261105.json",
+        "examples/doaj.raw-queries.jsonl",
+        "examples/doaj.jsonl",
+        "examples/doaj.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "No API key used; write/publisher endpoints have separate authentication and were not used.",
+          "No full papers downloaded; journal inclusion is not a freshly verified individual reader/license guarantee.",
+          "Default result ordering is not a demonstrated relevance ranking. Construction alone mixes physical building, databases and textual construction; phrase construction safety narrows the intended topic.",
+          "DOAJ article records are an index; journals, publishers and copies are not counted as additional origins."
+        ],
+        "no_bulk_content": true
+      },
+      "evidence": [
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-api-specs-20261105eb/observations.jsonl",
+        "analysis/external/doaj-swagger-20261105.json",
+        "examples/doaj.raw-queries.jsonl",
+        "examples/doaj.jsonl",
+        "examples/doaj.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production load/freshness is outside this research checkpoint."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Live documented public article title-field search, pageSize3 with native DOAJ article IDs; ten distinct title queries, page2 and empty response verified.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
+      "evidence": [
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-api-specs-20261105eb/observations.jsonl",
+        "analysis/external/doaj-swagger-20261105.json",
+        "examples/doaj.raw-queries.jsonl",
+        "examples/doaj.jsonl",
+        "examples/doaj.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "fd8535ec9c649383f404c1736bfa3722c5459a1092cbd2250f0fbbd5ba658ae3",
+      "path": "docs/design/2026-11-free-content/README.md",
+      "line": 85,
+      "heading": "2. Scope",
+      "text": "- Free to read: Project Gutenberg (local metadata import), Open Textbook\n  Library and the bounded Book Dash catalog (owner-approved source expansion). Other free versions (LibriVox, Wikisource) appear only on detail\n  pages as separate items, when a source links them.\n- Papers: OpenAlex (when its key and budget are verified), Europe PMC, DOAJ,\n  arXiv.\n- Children's stories: the reviewed pilot set only, labelled as such.\n- The library book page gains an \"Also free to read\" section.\n- Desktop and mobile layouts, all three reading lights.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 84,
+      "heading": "2. Twenty categories and how to find candidates for each",
+      "text": "| C03 Published research articles | OpenDOAR, DOAJ publisher/journal discovery, OpenAlex origins, SciELO country collections and disciplinary indexes | INFLIBNET/institution directories, Indian learned societies, university and research-institute OA journals | Attributed aggregator query first; native article search or permitted journal metadata harvest where justified |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 199,
+      "heading": "3. Discovery engines to use before broad web searching",
+      "text": "Also investigate DOAJ, CORE/OpenAIRE/BASE, national libraries, professional\nassociations and ministry directories as leads. Choose an aggregator only after\nchecking current external-use terms, quotas, origin attribution and completeness.\nExisting direct arXiv/DOAJ deferral remains in force until its stated constraint\nhas a supported solution; this plan does not quietly re-enable those connectors.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 205,
+      "heading": "3. Discovery engines to use before broad web searching",
+      "text": "Documentation review limitations on 2026-11-05: the older DOAB metadata URL\nreturned 404; the linked `doab-metadata` page worked. AISHE and data.gov.in opens\ntimed out; DOAJ/CORE documentation opens returned 403 in this research tool.\nThose remain leads, not verified integrations or evidence that the services are\ndown. No source-search API qualification probes were run for this plan.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "227b750d9102e98485e6cc6c70fe0bc58741f75633992e02f0891d38028f6771",
+      "path": "docs/research/free-content/IMPLEMENTATION.md",
+      "line": 80,
+      "heading": "Delivery state",
+      "text": "| FCD05 expanded sources | [#107](https://github.com/ddk220-light/MyBookshelf-web/issues/107): OTL [#108](https://github.com/ddk220-light/MyBookshelf-web/issues/108), [#109](https://github.com/ddk220-light/MyBookshelf-web/issues/109); planner [#112](https://github.com/ddk220-light/MyBookshelf-web/issues/112), DOAJ [#113](https://github.com/ddk220-light/MyBookshelf-web/issues/113), arXiv [#114](https://github.com/ddk220-light/MyBookshelf-web/issues/114), broad index [#115](https://github.com/ddk220-light/MyBookshelf-web/issues/115) | Code/protocol and actual-source checks pass; flags remain off pending hosted coordination/budget enablement |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "943c4340f9c8a3dc13aa17a6c5d7b7af8ded6b60b61b79548a6061908f272447",
+      "path": "docs/research/free-content/LIVE_VALIDATION.md",
+      "line": 54,
+      "heading": "Hosted release",
+      "text": "No paid service/store was provisioned. Account resources, credentials, activation\nand security settings are outside this change. Direct arXiv/DOAJ automation stays\ndeferred; the UI offers searches at their own websites.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "7d009e0c173238584b41259d85805653725f23e35657f2bf95bb15735a95da4f",
+      "path": "docs/research/free-content/OPERATIONS.md",
+      "line": 13,
+      "heading": "Current free live profile — 2026-11-03",
+      "text": "One source is queried at a time. Signed native cursors support Show more across\nprocess restarts without server state. Replaying makes another live request;\nlive indexes can change. Source throttles/timeouts remain explicit. Direct\narXiv/DOAJ automation is deferred; use their source website search links.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "7d009e0c173238584b41259d85805653725f23e35657f2bf95bb15735a95da4f",
+      "path": "docs/research/free-content/OPERATIONS.md",
+      "line": 35,
+      "heading": "Historical shared-store profile (superseded)",
+      "text": "| DOAJ | `CONTENT_DOAJ_ENABLED` | `CONTENT_DOAJ_DAILY_LIMIT`, `CONTENT_DOAJ_PER_MINUTE` | At least 500 ms between dispatches across instances |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "7d009e0c173238584b41259d85805653725f23e35657f2bf95bb15735a95da4f",
+      "path": "docs/research/free-content/OPERATIONS.md",
+      "line": 59,
+      "heading": "Historical shared-store profile (superseded)",
+      "text": "The planner selects at most three live providers. Biomedical terms prefer\nEurope PMC; general queries prefer the broad source and arXiv; DOAJ supplies\nOA journal coverage. Recognized arXiv identifiers select arXiv. Sources not\nchosen are explicit and can be searched independently from the source sheet.\nDOIs select DOI-capable indexes; PMCIDs select Europe PMC using its PMCID field,\npreserving the article's native MED identity. Bare versioned legacy arXiv IDs\nalso route directly to arXiv.\nLanguage context is only supported by the broad adapter today; other paper\nsources report unsupported rather than silently ignoring it.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "001c847a97e62d9c227cbf184a236b97919c31c301d4ab18613cd17488c5e504",
+      "path": "docs/research/free-content/SIMPLE_LIVE_PLAN.md",
+      "line": 10,
+      "heading": "Product requirements",
+      "text": "- Search one selected paper source live. General searches use OpenAlex;\n  biomedical searches and PMCIDs use Europe PMC. The Sources sheet switches\n  sources. Explicit selection never silently searches a different source.\n- Show more carries the provider's paging token in a signed browser token.\n  Opening a result resolves its native record directly at that provider.\n- No new database, Redis account, paid integration, shared cache or stored search\n  session. Existing account features/resources are outside this change.\n- Direct arXiv/DOAJ automation stays off because its aggregate pacing rules need\n  coordination across deployments. Offer searches on their source websites;\n  these connectors do not block other paper sources.\n- Keep current source identities, verified free-reading rules, credits, versions,\n  separate translations, source errors and browser shelf behavior.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c686b333a7fef814327a9e18ca574a86edf6fc032a6cc5659ff5cbb327df41c0",
+      "path": "docs/research/free-content/VALIDATION.md",
+      "line": 107,
+      "heading": "Multi-source papers follow-up",
+      "text": "DOAJ, arXiv and OpenAlex now have bounded adapters, source-native identities and\nper-location access/licence handling. Fresh [policy observations](evidence/2026-11-01/source-policies.json)\nverify DOAJ's 2 RPS and arXiv's 3-second/single-connection aggregate rules. The\nconfigured OpenAlex key reported $1/day free allowance, $0.001 ordinary search\nand zero prepaid funds; runtime rechecks those conditions before dispatch.\nOperational limits and caveats are in [OPERATIONS.md](OPERATIONS.md).",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c686b333a7fef814327a9e18ca574a86edf6fc032a6cc5659ff5cbb327df41c0",
+      "path": "docs/research/free-content/VALIDATION.md",
+      "line": 156,
+      "heading": "Final source and refresh checks",
+      "text": "[HEAD/header-only sampling](evidence/2026-11-01/host-head-checks.json) returned\n200 from the textbook, DOAJ publisher, arXiv and Europe PMC hosts. It found a\nGutenberg legacy HTML 404; GET response headers confirmed it. The supplied direct\nHTML and EPUB routes returned 200. Importer v2 removes virtual HTML links and\nuses supplied direct HTML/landing URLs; a fresh 1,000-record import and runtime\naudit passed. The primary location's licence and downloads now stay together;\nother hosts/versions retain their own licence, and retraction flags appear on\ndirect detail visits. No full-text content was stored.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 168,
+      "heading": "5. Search and item resolution",
+      "text": "1. Validate query length, filters, page size (initial max 40), country and cursor binding. Detect ISBN/DOI/arXiv/PMCID before broad search. Country is access context, not legal assurance.\n2. Choose providers by user scope/capabilities. Books start from local catalogs; papers use OpenAlex when configured plus at most two relevant specialists. Without the broad index, disclose narrower DOAJ/Europe PMC/arXiv coverage.\n3. Use shared cached results. Acquire global quota tokens for uncached requests; arXiv pacing includes all replicas/jobs. Skip with explicit status if the queue cannot run before the deadline.\n4. Bound fan-out: proposed 5-second total search deadline, shorter per-provider limits where feasible, at most 3 live providers and one source page each. These are design targets, not measured guarantees. Busy arXiv queues cannot delay every result indefinitely.\n5. Map, filter, reconcile and rank. Avoid detail requests for every hit; resolve uncertain access for bounded visible candidates or on item open. Unknown candidates cannot be advertised as free.\n6. Return items, source statuses and freshness. Empty, timeout, throttled, quota-exhausted, unsupported and disabled differ. If all sources fail with no local/cached result, return retriable unavailable, not zero matches.\n7. On item open, enrich locations as needed; surface editions/versions and host actions. Cache bibliography separately from access observations.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 178,
+      "heading": "5. Search and item resolution",
+      "text": "```json\n{\n  \"items\": [],\n  \"nextCursor\": null,\n  \"coverage\": \"partial\",\n  \"sources\": [\n    { \"id\": \"doaj\", \"status\": \"ok\", \"returned\": 0 },\n    { \"id\": \"arxiv\", \"status\": \"timeout\", \"retryable\": true }\n  ]\n}\n```",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 202,
+      "heading": "Reading actions",
+      "text": "Show index and host separately when useful, e.g. Found via DOAJ / Read at publisher. Preserve required attribution. Broken PDF links should fall back to evidenced landing/alternate locations, never invented files. Expose freshness/country limits in details. A public-domain US scan is not a universal legal-access assertion.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 247,
+      "heading": "Phase B — initial coverage",
+      "text": "Add Open Textbook Library, DOAJ and arXiv; OpenAlex after key/budget verification. Then DOAB/OAPEN imports and optional Unpaywall resolver with real contact email. Keep Google/Open Library enrichment bounded.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "294c264153c5370142469a75c1723cd9f3bf6482aa24f18c4a3b7253eae9c28b",
+      "path": "docs/research/free-content/discovery/SCHOLARLY_RESEARCH.md",
+      "line": 11,
+      "heading": "C03 — Published research articles",
+      "text": "**Start with publisher and repository discovery, then prove individual holdings.**\n[OpenDOAR](https://opendoar.ac.uk/help/about) supplies institutional repository\nleads. [SciELO](https://www.scielo.org/en/) supplies country, publisher and subject\nentry points, particularly useful for Latin American and regional-language\ncoverage. DOAJ remains a directory lead; the current direct DOAJ connector\ndeferral is unchanged. Separate the publisher, journal collection, repository\ncopy and index that found it.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 36,
+      "heading": "3. Journal articles and broad scholarly discovery",
+      "text": "| **DOAJ — journal/article index** | `/api/search/articles/{query}`, journal search, fields such as `bibjson.title`, page/pageSize. [API docs](https://doaj.org/api/v4/docs) | `bibjson.link` entries marked `fulltext`, usually publisher HTML/PDF. Journals are containers. Article coverage depends on metadata deposits. | No key for public read search; write APIs differ. Legacy-compatible route sample worked. Confirm supported version, quotas and metadata terms. **Low / P0**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 89,
+      "heading": "Standard connection patterns",
+      "text": "| REST/JSON search | DOAJ, Europe PMC, OpenAlex, Google, CORE, HAL | HTTP budgets/retries/response limits/paging | Query grammar, mapping, access, terms |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 58,
+      "heading": "Recommendation",
+      "text": "| DOAJ | Live article search | OA journal articles with publisher full-text links |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 72,
+      "heading": "Categories",
+      "text": "| Journal articles | Published research and reviews | DOAJ, Europe PMC/PMC, OpenAlex |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 85,
+      "heading": "What the original checks established",
+      "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 89,
+      "heading": "What the original checks established",
+      "text": "- An Open Library work returned `ebook_access: public` alongside many Internet Archive identifiers. That does not identify which edition is freely readable.\n- A HAL hit had a record URL and DOI but no `fileMain_s`: a repository hit is not necessarily full text.\n- Zenodo returned a dataset; item-type filtering is essential.\n- DOAJ supplied an older HTTP publisher URL; metadata alone does not prove the destination still works.\n- Semantic Scholar returned **429**, and Gutendex timed out. Those checks do not establish general service availability.\n- Some documentation URLs moved; corrected DOAB/OAPEN URLs appear in the catalog. Some sites returned only a JavaScript shell. NCERT/ERIC/OER Commons could not be fully inspected.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 31,
+      "heading": "Behavior",
+      "text": "Wikipedia, Wikibooks and Wikisource remain disconnected: the current robots\npolicies disallow the reviewed `/w/api.php` search route. No alternate route was\nused to evade this restriction. arXiv/DOAJ retain their existing pacing-related\nexclusion from live requests. Other registry candidates require supported query,\naccess or credential work before integration. This release does not make an\nunverified directory or research lead searchable by merely listing it.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

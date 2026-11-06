@@ -1,0 +1,572 @@
+{
+  "schema_version": 1,
+  "id": "open-textbook-library",
+  "name": "Open Textbook Library",
+  "homepage": "https://open.umn.edu/opentextbooks/",
+  "homepage_status": "official operator confirmed in current discovery documentation",
+  "group": "G01",
+  "areas": [
+    "C04"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "metadata-aggregator",
+  "capabilities": [
+    "Documented CC0 CSV metadata export can be queried locally by title or subject to return native OTL IDs and canonical book catalog links.",
+    "Ten distinct actual metadata queries passed against a 1,910-record export; query outputs preserve publisher, year, ISBN, license label and metadata-reported free digital links."
+  ],
+  "query": {
+    "adapter": "otl-csv",
+    "endpoint": "https://open.umn.edu/opentextbooks/download.csv",
+    "method": "GET",
+    "authentication": "none used for documented public export",
+    "cost": "Catalog metadata is CC0; no paid account or service used. Numeric request allowance not established.",
+    "paging": "One bounded catalog metadata export; local result slicing is not a provider paging API.",
+    "research_pause_seconds": 3,
+    "cases": [
+      {
+        "id": "title-01",
+        "intent": "Find textbook titles containing Calculus; catalog retrieval only, not proof of reader access",
+        "expected_ids": [
+          "10"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Calculus"
+          }
+        }
+      },
+      {
+        "id": "title-02",
+        "intent": "Find textbook titles containing Biology; catalog retrieval only, not proof of reader access",
+        "expected_ids": [
+          "167"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Biology"
+          }
+        }
+      },
+      {
+        "id": "title-03",
+        "intent": "Find textbook titles containing Chemistry; catalog retrieval only, not proof of reader access",
+        "expected_ids": [
+          "22"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Chemistry"
+          }
+        }
+      },
+      {
+        "id": "title-04",
+        "intent": "Find textbook titles containing Economics; catalog retrieval only, not proof of reader access",
+        "expected_ids": [
+          "28"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Economics"
+          }
+        }
+      },
+      {
+        "id": "title-05",
+        "intent": "Find textbook titles containing Psychology; catalog retrieval only, not proof of reader access",
+        "expected_ids": [
+          "48"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Psychology"
+          }
+        }
+      },
+      {
+        "id": "title-06",
+        "intent": "Find textbook titles containing Sociology; catalog retrieval only, not proof of reader access",
+        "expected_ids": [
+          "38"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Sociology"
+          }
+        }
+      },
+      {
+        "id": "title-07",
+        "intent": "Find textbook titles containing Nursing; catalog retrieval only, not proof of reader access",
+        "expected_ids": [
+          "246"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Nursing"
+          }
+        }
+      },
+      {
+        "id": "title-08",
+        "intent": "Find textbook titles containing Writing; catalog retrieval only, not proof of reader access",
+        "expected_ids": [
+          "45"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Writing"
+          }
+        }
+      },
+      {
+        "id": "title-09",
+        "intent": "Find textbook titles containing Spanish; catalog retrieval only, not proof of reader access",
+        "expected_ids": [
+          "779"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Spanish"
+          }
+        }
+      },
+      {
+        "id": "title-10",
+        "intent": "Find textbook titles containing Computer; catalog retrieval only, not proof of reader access",
+        "expected_ids": [
+          "43"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "local_query": {
+            "mode": "title_contains",
+            "text": "Computer"
+          }
+        }
+      }
+    ],
+    "historical_contract": "[Discovery docs](https://open.umn.edu/opentextbooks/discovery): MARC, CSV, textbook/subject `.json`, RSS/Atom, deleted lists. Prefer import/local search.",
+    "supported_modes": [
+      "title_contains",
+      "title_or_subject"
+    ],
+    "unsupported_modes": [
+      "full-text book search",
+      "exact page/section search",
+      "language filter (CSV lacks language field)",
+      "edition/version comparison beyond supplied title/year/ISBN"
+    ],
+    "refresh": "Re-fetch permitted export with its robots pacing; validate size/schema/native identities and replace the research metadata snapshot atomically. Compare removed IDs with provider deletion notices. Never treat an unavailable export as an empty catalog."
+  },
+  "licensing": "Discovery page explicitly licenses catalog records CC0. Individual books have differing licenses including noncommercial/no-derivatives/GNU labels; no prose, full books or audio imported. A free-price metadata link is not proof of working access or reuse permission.",
+  "documentation": [
+    "https://open.umn.edu/opentextbooks/discovery"
+  ],
+  "limitations": [
+    "No CSV language field; a Spanish title or language-learning subject is not proof of content language. No India-origin/India-network coverage established.",
+    "Catalog contains paid print links alongside free digital links; research samples exclude paid/print links and label all reader destinations unverified.",
+    "Current export has 1,910 records; no claim every book is current, accessible, globally licensed or independent of existing sources.",
+    "Book reading, rights/version checks and provider numeric quota remain open. Ten searches verify catalog retrieval only."
+  ],
+  "evidence": [
+    "examples/open-textbook-library.access.jsonl",
+    "examples/open-textbook-library.jsonl",
+    "examples/open-textbook-library.benchmark.jsonl",
+    "runs/dossier-evidence-20261105/observations.jsonl",
+    "analysis/dossier-reviews.jsonl",
+    "analysis/primary-document-reviews.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T03:31:24.495339+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Retain query-verified candidate; finish bounded PDF/representative reader checks, country/language evidence and refresh/deletion contract. Preserve CC0 metadata versus NC/SA book licenses and pedagogical versus practical intent.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 64,
+    "text": "| **Open Textbook Library — textbook index** | [Discovery docs](https://open.umn.edu/opentextbooks/discovery): MARC, CSV, textbook/subject `.json`, RSS/Atom, deleted lists. Prefer import/local search. | Catalog CC0; books have individual licenses/hosts. Preserve edition/subject/language/license. Docs reviewed, JSON search semantics not probed. | No credential specified for public resources. **Medium / P0 education**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "Official University of Minnesota/Open Education Network textbook metadata catalog; separate aggregate catalog from underlying publisher origins.",
+      "facts": {
+        "operator": "University of Minnesota Center for Open Education / Open Education Network",
+        "native_identity": "Otl id, canonical Library URL; preserve ISBN/year/title, do not merge books by title alone",
+        "deduplication": {
+          "independent_catalog": true,
+          "publisher_origin": false,
+          "publisher_origins_qualified": 0,
+          "overlap": "Indexes books hosted by OpenStax, LibreTexts, university publishers and other origins. These appearances do not qualify or multiply publisher origins."
+        }
+      },
+      "evidence": [
+        "examples/open-textbook-library.access.jsonl",
+        "examples/open-textbook-library.jsonl",
+        "examples/open-textbook-library.benchmark.jsonl"
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "The CSV has no language field; canonical detail pages for OTL 10 and 22 explicitly identify English. This does not establish catalog-wide language or geographic coverage.",
+      "facts": {
+        "categories": [
+          "C04"
+        ],
+        "country_of_operator": "USA",
+        "records_observed": 1910,
+        "languages": "Not a CSV field; unknown for individual records",
+        "industries": "Nursing/finance/computing examples are overlap leads, not qualified industry origins",
+        "representative_languages": {
+          "10": "English",
+          "22": "English"
+        },
+        "geographic_probe": "One cloud network; no USA/India location comparison."
+      },
+      "evidence": [
+        "examples/open-textbook-library.access.jsonl",
+        "examples/open-textbook-library.jsonl",
+        "examples/open-textbook-library.benchmark.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
+      ],
+      "open_questions": [
+        "Measure India-origin and non-English coverage; verify regional availability without inferring absence from missing metadata."
+      ]
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Official CSV metadata export supports bounded import followed by explicit local title/subject search; unsupported full-text/language modes remain excluded.",
+      "facts": {
+        "request": {
+          "method": "GET",
+          "url": "https://open.umn.edu/opentextbooks/download.csv",
+          "authentication": "none"
+        },
+        "supported": [
+          "title_contains",
+          "title_or_subject"
+        ],
+        "unsupported": [
+          "full-text book search",
+          "exact page/section search",
+          "language filter (CSV lacks language field)",
+          "edition/version comparison beyond supplied title/year/ISBN"
+        ],
+        "native_id": "Otl id",
+        "pagination": "One bounded catalog metadata export; local result slicing is not a provider paging API.",
+        "empty_query": "Local empty/whitespace query returns no results, rather than the whole catalog",
+        "failure_behavior": "Abort on missing fields, duplicate/noncanonical IDs, access failure or oversize export; retain failed observation"
+      },
+      "evidence": [
+        "examples/open-textbook-library.access.jsonl",
+        "examples/open-textbook-library.jsonl",
+        "examples/open-textbook-library.benchmark.jsonl"
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "CC0 catalog metadata is separate from per-book licenses. Calculus/MIT terms specify CC BY-NC-SA 4.0; the Chemistry HTML adaptation specifies CC BY-NC-SA 3.0, with its own attribution and version notes.",
+      "facts": {
+        "metadata": "CC0 explicitly documented",
+        "content": "Per-book license labels, no blanket reuse grant",
+        "cost": "No key/account/payment used",
+        "scope": "Research metadata only",
+        "representative_content_licenses": {
+          "10": {
+            "label": "CC BY-NC-SA 4.0",
+            "terms_url": "https://ocw.mit.edu/pages/privacy-and-terms-of-use/",
+            "conditions": [
+              "attribution",
+              "noncommercial",
+              "share-alike"
+            ],
+            "limits": "Check item/third-party exclusions; no blanket commercial republication grant."
+          },
+          "22": {
+            "label": "CC BY-NC-SA 3.0",
+            "terms_url": "https://saylordotorg.github.io/text_introductory-chemistry/s00-license.html",
+            "attribution": "Saylor Academy adaptation; page says original creator requested no attribution; acknowledge Andy Schmitz HTML maintenance as stated.",
+            "conditions": [
+              "noncommercial",
+              "share-alike",
+              "preserve stated license/citation"
+            ]
+          }
+        }
+      },
+      "evidence": [
+        "examples/open-textbook-library.access.jsonl",
+        "examples/open-textbook-library.jsonl",
+        "examples/open-textbook-library.benchmark.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
+      ],
+      "open_questions": [
+        "Review any item-specific third-party exceptions before reuse; determine published numeric quota if available."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "OTL 10/22 detail pages, MIT Calculus resource/TOC and Saylor Chemistry TOC plus first/middle/final HTML sections returned HTTP 200 anonymously. Complete works were not copied; not every chapter or PDF byte was verified.",
+      "facts": {
+        "catalog_http": 200,
+        "reader_links": "Export links remain access_verified=false by default; these checks apply only to the identified destinations, not every catalog result.",
+        "free_login": "Acceptable if documented, but no new accounts created",
+        "reader_checks": {
+          "10": {
+            "version": "Updated third edition, first published 1991; course Fall 2023 is not publication year",
+            "isbn13": "9780961408824",
+            "complete_pdf_link": "https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/mitres_18_001_f17_full_book.pdf",
+            "pdf_bytes_requested": 0,
+            "observed": "Public chapter list 0–16, index and whole-book PDF resource page"
+          },
+          "22": {
+            "version": "HTML v1.0; catalog copyright 2011, Saylor adaptation citation 2012",
+            "isbn13": "9781453311073",
+            "observed": "TOC and three sampled complete HTML section responses; no login/paywall observed"
+          }
+        }
+      },
+      "evidence": [
+        "examples/open-textbook-library.access.jsonl",
+        "examples/open-textbook-library.jsonl",
+        "examples/open-textbook-library.benchmark.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
+      ],
+      "open_questions": [
+        "Test bounded Calculus PDF response without downloading a whole book; confirm representative availability in USA/India."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten known-title searches re-passed; five topical metadata searches were manually reviewed. Numeric-ID ordering is deterministic, not relevance ranking; broad Agriculture retrieves teaching pedagogy as well as subject texts.",
+      "facts": {
+        "positive_examples": 10,
+        "known_item_expectations": "Selected from current export, then actual local searches executed; not ten network API requests",
+        "ranking": "Stable native numeric ID order; no semantic relevance ranking claimed",
+        "version": "Copyright year and ISBN are not sufficient to infer a complete edition history",
+        "topic_benchmark": {
+          "topics": 5,
+          "reviewed_results": 21,
+          "scope": "First five title/subject matches per query (or all when fewer); judgments concern visible metadata, not full text or curriculum suitability.",
+          "topic_counts": {
+            "Mathematics": 191,
+            "Nursing": 33,
+            "Geology": 5,
+            "Agriculture": 3,
+            "Manufacturing": 3
+          }
+        },
+        "representative_version_distinctions": "OTL 10 copyright 1991 versus updated third edition/course 2023; OTL 22 copyright 2011 versus Saylor adaptation 2012. Preserve separate fields."
+      },
+      "evidence": [
+        "examples/open-textbook-library.access.jsonl",
+        "examples/open-textbook-library.jsonl",
+        "examples/open-textbook-library.benchmark.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
+      ],
+      "open_questions": [
+        "Add grade/level/language intent checks and edition-aware ranking; broad-domain matching does not imply practical field guidance."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Two permitted metadata exports 41 minutes apart were identical (1,910 entries, same SHA-256); no observed deletion event. Current robots pacing was 120 seconds, respected for requests to the host.",
+      "facts": {
+        "bytes": 2735950,
+        "body_sha256": "2721f1af482787e4fe328905a8feb0bde3ccf5168dcbb9fd3949ac47e7cca8f6",
+        "refresh": "Re-fetch permitted export with its robots pacing; validate size/schema/native identities and replace the research metadata snapshot atomically. Compare removed IDs with provider deletion notices. Never treat an unavailable export as an empty catalog.",
+        "numeric_api_quota": null,
+        "repeat_export": {
+          "first_requested_at": "2026-11-05T02:46:53.019138+00:00",
+          "second_requested_at": "2026-11-05T03:28:04.467569+00:00",
+          "identical_hash": true,
+          "deleted_ids_observed": 0,
+          "limitation": "Unchanged export cannot validate deletion/tombstone handling."
+        },
+        "robots_delay_seconds": 120
+      },
+      "evidence": [
+        "examples/open-textbook-library.access.jsonl",
+        "examples/open-textbook-library.jsonl",
+        "examples/open-textbook-library.benchmark.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
+      ],
+      "open_questions": [
+        "Review provider refresh/deletion policy and any published numeric allowance; test real deletion/version changes when observed."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain as a query-verified metadata catalog candidate; full research qualification and new source activation remain false.",
+      "facts": {
+        "decision": "retain-for-reader-and-rights-review",
+        "query_examples_complete": true,
+        "full_qualification_complete": false,
+        "activation_approved": false,
+        "blockers": "Retain query-verified candidate; finish bounded PDF/representative reader checks, country/language evidence and refresh/deletion contract. Preserve CC0 metadata versus NC/SA book licenses and pedagogical versus practical intent.",
+        "revisit_trigger": "Permitted reader/detail review and new rights/refresh evidence; no owner action required to continue other sources"
+      },
+      "evidence": [
+        "examples/open-textbook-library.access.jsonl",
+        "examples/open-textbook-library.jsonl",
+        "examples/open-textbook-library.benchmark.jsonl"
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 85,
+      "heading": "2. Twenty categories and how to find candidates for each",
+      "text": "| C04 Textbooks and scholarly books/chapters | DOAB publisher records, OAPEN, Open Textbook Library, open university presses and OER collections | NCERT, university presses, e-PG Pathshala, open course-text projects and state textbook bodies | Official exports/OAI-PMH plus bounded local search, or supported API; edition/chapter identity and per-book access |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "7d009e0c173238584b41259d85805653725f23e35657f2bf95bb15735a95da4f",
+      "path": "docs/research/free-content/OPERATIONS.md",
+      "line": 24,
+      "heading": "Historical shared-store profile (superseded)",
+      "text": "All flags default off. No hosted Redis service or production deployment has\nbeen created by this implementation. Gutenberg, Open Textbook Library and Book Dash use\nbundled metadata and require no database. The reviewed StoryWeaver set also\nsearches locally, including ordinary Free to read searches when its flag is on. Live paper sources need the shared\nRedis REST URL/token and a strong random `CONTENT_CURSOR_SECRET` (at least 32\ncharacters), plus an explicit daily/minute budget for each enabled source.\nThe build's `VITE_CONTENT_DISCOVERY_ENABLED` controls the Search scopes.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "8f370ecffd15217872a95e7988889f9c9bcc300280b1a4cf3e03a9e590ee0ede",
+      "path": "docs/research/free-content/RELEASE.md",
+      "line": 50,
+      "heading": "Enablement",
+      "text": "Enable `CONTENT_DISCOVERY_ENABLED`, `CONTENT_CHILDREN_ENABLED`,\n`VITE_CONTENT_DISCOVERY_ENABLED` and `VITE_CHILDREN_PILOT_ENABLED` for the checked\npreview/production build, with separate strong server-only cursor signing secrets.\nThis publishes Gutenberg, Open Textbook Library, Book Dash and the reviewed\nStoryWeaver set. Source-account requirements remain visible.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c686b333a7fef814327a9e18ca574a86edf6fc032a6cc5659ff5cbb327df41c0",
+      "path": "docs/research/free-content/VALIDATION.md",
+      "line": 88,
+      "heading": "Open Textbook Library follow-up",
+      "text": "## Open Textbook Library follow-up",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 247,
+      "heading": "Phase B — initial coverage",
+      "text": "Add Open Textbook Library, DOAJ and arXiv; OpenAlex after key/budget verification. Then DOAB/OAPEN imports and optional Unpaywall resolver with real contact email. Keep Google/Open Library enrichment bounded.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "bc9fc5b79faad6eb7e4ca7da71ee7d8ca37b617fe707629d433f910056832bd1",
+      "path": "docs/research/free-content/discovery/BOOKS_AND_AUDIO.md",
+      "line": 111,
+      "heading": "C04. Textbooks and scholarly books/chapters",
+      "text": "**Best starting points.** [DOAB metadata](https://doabooks.org/en/librarians/doab-metadata)\ndocuments CC0 exports and OAI-PMH, including selective publisher/subject exports.\nUse publisher identities to discover origins and verify their actual OA subsets.\n[Open Textbook Library discovery](https://open.umn.edu/opentextbooks/discovery)\ndocuments MARC/CSV, JSON resources and change feeds. Follow textbook publisher and\ninstitution links into university presses and open-education programs. These\ncatalogs expose different kinds of books; keep textbooks, monographs and chapters\ndistinct even when the same publisher supplies all three.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 64,
+      "heading": "5. Textbooks, education and children's reading",
+      "text": "| **Open Textbook Library — textbook index** | [Discovery docs](https://open.umn.edu/opentextbooks/discovery): MARC, CSV, textbook/subject `.json`, RSS/Atom, deleted lists. Prefer import/local search. | Catalog CC0; books have individual licenses/hosts. Preserve edition/subject/language/license. Docs reviewed, JSON search semantics not probed. | No credential specified for public resources. **Medium / P0 education**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 65,
+      "heading": "5. Textbooks, education and children's reading",
+      "text": "| **OpenStax — textbook host** | [Subjects](https://openstax.org/subjects); curated book records or Open Textbook Library coverage, then request supported machine catalog. | Free web/PDF vs paid print/products; inspect individual licenses. [Licensing page](https://openstax.org/license) rendered only app shell. | No public search API verified; internal website requests are not a supported contract. **Low curated, high full connector / P1**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 93,
+      "heading": "Standard connection patterns",
+      "text": "| Bulk catalog | Gutenberg, DOAB/OAPEN, Open Textbook Library | Validation, staging, atomic index swap | Schema and allowed cadence |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 52,
+      "heading": "Recommendation",
+      "text": "Start with **Free books** and **Research papers**. Add **Textbooks & learning** through the Open Textbook Library catalog, then a curated **Children's books** collection. Treat language, subject, reading level, format, and access conditions as separate filters rather than mutually exclusive categories.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 57,
+      "heading": "Recommendation",
+      "text": "| Open Textbook Library | Official CSV/JSON metadata; local search | Documented CC0 catalog for educational material |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 75,
+      "heading": "Categories",
+      "text": "| Textbooks and open educational resources | Textbooks, lessons, course readings, exercises | Open Textbook Library, OpenStax, LibreTexts, OER Commons, NCERT, DIKSHA |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 21,
+      "heading": "Behavior",
+      "text": "Ten new integrations are released behind `CONTENT_KNOWLEDGE_ENABLED=true`:\nGlobal Digital Library, LibriVox, Library of Congress digital books, Biodiversity\nHeritage Library's Internet Archive collection, African Minds, LSE Press,\nMattering Press, mediastudies.press, punctum books and Python 3.15 documentation.\nFive publisher catalogs share Thoth; this is not five separate API infrastructures.\nThe existing Gutenberg, Open Textbook Library, Book Dash and StoryWeaver snapshots\nand the existing OpenAlex/Europe PMC integrations are also selectable. With the\nexisting production flags, this gives 16 connected sources, not 16 fully audited\norigins or complete catalogs.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "operator": {
+    "name": "University of Minnesota Center for Open Education / Open Education Network",
+    "jurisdiction": "USA",
+    "evidence": "examples/open-textbook-library.access.jsonl"
+  },
+  "origin_counting": {
+    "independent_catalog": true,
+    "publisher_origin": false,
+    "publisher_origins_qualified": 0,
+    "overlap": "Indexes books hosted by OpenStax, LibreTexts, university publishers and other origins. These appearances do not qualify or multiply publisher origins."
+  }
+}

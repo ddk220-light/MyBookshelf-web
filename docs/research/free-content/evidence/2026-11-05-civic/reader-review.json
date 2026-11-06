@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-11-05T12:04:03.758767+00:00",
+  "scope": "Anonymous representative item readers only; no production UI or new query examples. Browser scope excluded awards/recipients and media payloads.",
+  "observations": 7,
+  "findings": [
+    {
+      "source_id": "federal-register",
+      "native_ids": [
+        "2024-31419",
+        "2024-27864"
+      ],
+      "finding": "Desktop FDA and mobile FSIS pages show their respective titles, issuing agencies, publication dates and document numbers. Equal titles do not imply same issuing agency or rule. Mobile DOM horizontal overflow remains open. One three-page official FDA PDF contains adjacent-document ending as well as requested rule.",
+      "complete_reader_qualification": false
+    },
+    {
+      "source_id": "usaspending",
+      "finding": "Metadata replays render correct USDA/NASA agency headings and FY2024, but numeric cards show -- and error panels. Harness blocked the budget endpoint without trailing slash, so those errors are test-induced. One precise optional-slash replay failed with React error185/blank viewport before agency budget requests occurred; cause is unresolved within this restricted browser context, not established provider downtime. API numeric examples remain separately verified.",
+      "complete_reader_qualification": false,
+      "no_further_retry_without_trigger": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "evidence/2026-11-05-civic/desktop-fda.png",
+      "sha256": "7e3f7dccc970ab44bc544a939691cfeb1e9c717034690a8636b83dbca166d8bf"
+    },
+    {
+      "path": "evidence/2026-11-05-civic/desktop-usda-budget-slash-replay-failure.png",
+      "sha256": "003601da568f533b2c12b64335b7ac40cb34ebe2e45ec71881309908963a4642"
+    },
+    {
+      "path": "evidence/2026-11-05-civic/desktop-usda-metadata-replay.png",
+      "sha256": "93e2531ffb82b19c25f38ef874c63a120f8702910803c885a521ec629edc58c3"
+    },
+    {
+      "path": "evidence/2026-11-05-civic/mobile-fsis.png",
+      "sha256": "cfbd624ed53a3ba36c98257097f4510fae380559d2ca480279f8ea1a5b8a8e88"
+    },
+    {
+      "path": "evidence/2026-11-05-civic/mobile-nasa-metadata-replay.png",
+      "sha256": "4edbb30a74aea3c9d98fa99bcfc74abcb1676a25fa3b7299c0f8792dff0799ce"
+    }
+  ],
+  "open_questions": [
+    "Mobile overflow and keyboard/screen-reader/table access",
+    "USAspending exact FY2024 reader values and units in a functioning permitted reader context",
+    "Federal Register withdrawal/correction and official-edition status checks"
+  ],
+  "all_screens_successful": false,
+  "fresh_query_verification": false
+}

@@ -28,6 +28,16 @@ retired authentication and unrelated research archives are outside its scope.
 
 ## Free ebooks and scientific papers: implementation
 
+- [Discovery backlog](research/free-content/DISCOVERY_BACKLOG.md): six groups and
+  49 tracked areas, linked to GitHub issues; [first ten queried candidates](research/free-content/batches/G01_FIRST_TEN.md)
+  and request/access evidence. Discovery only; no sources added to the app.
+- [Free-knowledge expansion plan](research/free-content/EXPANSION_PLAN.md): 20
+  content categories, 20 industry tags, six detailed discovery playbooks and a
+  route to 100 qualified sources per category. Dedicated USA/India civic, property
+  and geological-map coverage; [review template](research/free-content/SOURCE_REVIEW_TEMPLATE.md).
+- [Expansion execution workflow](research/free-content/EXECUTION_PLAN.md): research
+  cadence, work-in-progress limits, source stories, delivery waves and release checks.
+
 - [Overview and source categories](research/free-content/README.md).
 - [Repository catalog, APIs and access requirements](research/free-content/source-catalog.md).
 - [Metadata discovery architecture and delivery phases](research/free-content/architecture.md).

@@ -1,5 +1,33 @@
 # Free books and research discovery
 
+**Ongoing source registry (2026-11-05):** the owner requested capabilities,
+query instructions and ten verified examples per source, continued discovery,
+and simple files instead of a database. Use the [JSON registry](registry/README.md),
+[current evidence checkpoint](registry/PROGRESS.md) and [saved goal](registry/goal.json).
+Source details are JSON; timestamped observations are append-only JSONL in Git.
+No SQL or hosted datastore is needed. Continue research through the backlog;
+source activation remains outside this authorization.
+The follow-up completion goal captures all existing research/design analysis with
+provenance and exposes missing fields through a [completion audit](registry/completion-audit.json).
+The worker now resumes hourly and continues past small checkpoint batches.
+
+**Discovery backlog and first batch (2026-11-05):** the
+[six-group backlog](DISCOVERY_BACKLOG.md) tracks all 49 content, industry and
+public-information areas. [G01's first ten](batches/G01_FIRST_TEN.md) have live
+query and representative reading-access evidence for owner review. This phase
+is research only; do not integrate or enable these candidates.
+
+**Expansion planning (2026-11-05):** [100-source-per-category roadmap](EXPANSION_PLAN.md)
+defines 20 content categories, a group of 20 industry tags, six detailed discovery
+playbooks, and dedicated USA/India civic-record, property and geological-map
+tracks. It includes queryability gates and staged qualification/enablement.
+Use the [source review template](SOURCE_REVIEW_TEMPLATE.md)
+for future candidates. It is a planning proposal; named leads are not enabled sources.
+
+The [execution workflow](EXECUTION_PLAN.md) recommends rolling research batches,
+one active connector family and frequent verified releases, with timeboxes,
+story definitions, operating checks and a bounded first-cycle sequence.
+
 **Current implementation direction (2026-11-03):** use the
 [simple free live plan](SIMPLE_LIVE_PLAN.md), authorized by the owner. Live paper
 requests and signed provider cursors require no Redis/database. Shared-store

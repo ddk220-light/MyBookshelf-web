@@ -1,0 +1,109 @@
+{
+  "observed_at": "2026-11-05 22:42:51 UTC",
+  "scope": "Documentation-only access-action review; no provider queries, account creation or outreach.",
+  "documents": [
+    {
+      "url": "https://resources.data.gov/catalog-api/",
+      "basis": "official documentation returned by search index; no live catalog query",
+      "ref": "turn945156search0",
+      "finding": "Personal free api.data.gov key required for automated v4 catalog queries; X-Api-Key header; 1,000 requests/hour. DEMO_KEY is for initial exploration."
+    },
+    {
+      "url": "https://api.data.gov/signup/",
+      "basis": "official signup page returned by search index",
+      "ref": "turn945156search2",
+      "finding": "Public API-key signup page exists. No form submitted."
+    },
+    {
+      "url": "https://api.census.gov/data/key_signup.html",
+      "basis": "direct primary-page read via web tool",
+      "ref": "turn291861view0",
+      "finding": "Public key form asks for organization, email and acceptance of terms. No form submitted."
+    },
+    {
+      "url": "https://cdn.www.census.gov/library/video/2026/adrm/requesting-a-census-data-api-key.html",
+      "basis": "official 2026 documentation returned by search index",
+      "ref": "turn945156search13",
+      "finding": "Current Census guidance says all data queries require an API key and directs users to request a free key. Older no-key quotas should not be substituted."
+    },
+    {
+      "url": "https://www.europeana.eu/en/apis",
+      "basis": "direct primary-page read via web tool",
+      "ref": "turn707171view0",
+      "finding": "Free Europeana account needed to request/manage API keys; documented APIs support public app/service use. Personal and project keys are distinct."
+    },
+    {
+      "url": "https://pro.europeana.eu/page/get-api",
+      "basis": "direct primary-page read via web tool; page updated 2026-10-21",
+      "ref": "turn814141view1",
+      "finding": "Account registration/confirmation precedes key request. Project-key option provides increased access; no approval outcome or current limits tested."
+    },
+    {
+      "url": "https://pro.dp.la/developers/policies",
+      "basis": "indexed official policy; direct read returned HTTP403",
+      "ref": "turn321432search0 / turn814141view2",
+      "finding": "Indexed policy documents POST https://api.dp.la/v2/api_key/<email>, with key automatically delivered by email. Current endpoint functionality was not tested."
+    },
+    {
+      "url": "https://www.data.gov.in/help",
+      "basis": "indexed official help; direct read returned HTTP503",
+      "ref": "turn848173search0 / turn707171view2",
+      "finding": "Official help describes account and API-request functions. Current account setup and LGD resource API are unverified."
+    },
+    {
+      "url": "https://www.data.gov.in/apis/940af02e-d15e-4ed4-8d01-afd57d81ed2b",
+      "basis": "indexed official API page",
+      "ref": "turn662303search1",
+      "finding": "Official resource page advertises Generate API Key. This does not establish that every dataset, including LGD, has a supported API."
+    },
+    {
+      "url": "https://www.archives.gov/research/catalog/help/api",
+      "basis": "direct primary-page read via web tool; last reviewed 2026-05-01",
+      "ref": "turn814141view0",
+      "finding": "Anyone may request an assigned read-only API key; Catalog_API@nara.gov is the published API contact. Default 10,000 queries/month. Terms prohibit scraping/downloading entire catalog via API and say not to cache/store returned content; evidence retention needs clarification."
+    },
+    {
+      "url": "https://www.semanticscholar.org/product/api",
+      "basis": "saved registry document plus indexed official product content at webflow.semanticscholar.org; canonical direct read returned403",
+      "ref": "turn623435search0 / turn814141view3",
+      "finding": "Public API-key request form; anonymous users share throttling; advertised introductory authenticated allowance 1 request/second. A key request is not proof of approval, access or permitted app use."
+    },
+    {
+      "url": "https://api.semanticscholar.org/license/",
+      "basis": "direct primary-page read via web tool",
+      "ref": "turn146758view0",
+      "finding": "Default license describes internal noncommercial research/education/model-evaluation uses. Expanded uses including commercial use are directed to the API-key form. MyBookshelf public search should be explicitly described in the request."
+    },
+    {
+      "url": "https://unpaywall.org/api",
+      "basis": "indexed official API documentation; other official product pages rendered JS shells",
+      "ref": "turn172384search0",
+      "finding": "Free API requires a real contact email; DOI lookup remains documented. Indexed current docs state keyword search retired 2026-09-18 and direct keyword queries to OpenAlex. No DOI/query attempt made."
+    },
+    {
+      "url": "https://ideas.repec.org/getdata.html",
+      "basis": "direct primary-page read via web tool",
+      "ref": "turn291861view2",
+      "finding": "Commercial use requires contacting repec@repec.org first. Website scraping discouraged; publisher ReDIF archives and OAI/rsync alternatives documented. Neither contact nor queries performed."
+    },
+    {
+      "url": "https://swayam.gov.in/terms_of_use",
+      "basis": "direct primary-page read via web tool",
+      "ref": "turn291861view3",
+      "finding": "Terms prohibit scraping/bulk downloading SWAYAM site content. No supported external metadata API was established; learner registration does not remove this restriction."
+    },
+    {
+      "url": "https://opencity.in/terms-and-conditions/",
+      "basis": "saved current registry evidence; web tool reports robots exclusion, no new page read",
+      "ref": "sources/opencity-india.json",
+      "finding": "Saved terms section2(j) prohibits automated retrieval/indexing; saved robots disallows /api/. Published CKAN links do not resolve that conflict. Permission request is a recommendation, not evidence that an exception is available."
+    }
+  ],
+  "failed_reads": [
+    {
+      "url": "https://www.projectmadurai.org/pmintro.html",
+      "outcome": "not accessible through web tool; no current permission rule established"
+    }
+  ],
+  "query_verified": false
+}

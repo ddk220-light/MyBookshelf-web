@@ -1,0 +1,890 @@
+{
+  "schema_version": 1,
+  "id": "siyavula",
+  "name": "Siyavula textbooks",
+  "homepage": "https://www.siyavula.com/",
+  "group": "G02",
+  "areas": [
+    "C04",
+    "C09"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "operator": {
+    "name": "Siyavula Education (Pty) Ltd, identified in website terms",
+    "jurisdiction": "South Africa",
+    "evidence": [
+      {
+        "path": "runs/canonical-books-policy-20261105b/observations.jsonl",
+        "job_id": "1d0cea93dd488b183461",
+        "observed_at": "2026-11-05T06:02:25.898299+00:00"
+      },
+      {
+        "path": "runs/siyavula-catalog-terms-20261105b/observations.jsonl",
+        "job_id": "2b99d445eb8588c08056",
+        "observed_at": "2026-11-05T06:10:33.889322+00:00"
+      }
+    ]
+  },
+  "aliases": [],
+  "capabilities": [
+    "One explicitly CC BY3.0 licensed Mathematics Grade10 table of contents supports bounded local metadata queries over14 chapters.",
+    "This research route is an attributed licensed HTML metadata import, not a hidden API, full-text search or whole-site export."
+  ],
+  "query": {
+    "adapter": "siyavula-toc",
+    "endpoint": "https://www.siyavula.com/read/za/mathematics/grade-10",
+    "authentication": "Anonymous licensed textbook table of contents; no account/practice service used.",
+    "cost": "Free public textbook metadata access; no paid account/hosted store.",
+    "research_pause_seconds": 3,
+    "expected_inventory_sha256": "635983a0c8f77c6ad3c01db2d06512dc2a8d13879533c3bfcf3b08802e90d122",
+    "expected_entry_count": 14,
+    "import_limits": {
+      "maximum_bytes": 524288,
+      "no_full_book_download": true,
+      "changed_hash_or_count": "reject and require manual review"
+    },
+    "identity": "Native curriculum/subject/grade/chapter URL. Same title can identify different parts; snapshot hash preserves mutable TOC, HTML edition year unknown.",
+    "supported_modes": [
+      "Bounded licensed table-of-contents metadata import",
+      "Local chapter-title token search",
+      "Exact native chapter URL lookup"
+    ],
+    "unsupported_modes": [
+      "Whole-site or all-grade recall",
+      "Full-text chapter/body search",
+      "Practice questions/accounts",
+      "External embedded videos/simulations",
+      "Assuming PDFversion1.1 describes HTML edition",
+      "CAT/IT closed-copyright imports"
+    ],
+    "cases": [
+      {
+        "id": "chapter-topic-01",
+        "intent": "Find Grade10 mathematics chapter metadata matching algebraic expressions; preserve every matching native part.",
+        "expected_ids": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "algebraic expressions"
+          }
+        }
+      },
+      {
+        "id": "chapter-topic-02",
+        "intent": "Find Grade10 mathematics chapter metadata matching exponents; preserve every matching native part.",
+        "expected_ids": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/exponents"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "exponents"
+          }
+        }
+      },
+      {
+        "id": "chapter-topic-03",
+        "intent": "Find Grade10 mathematics chapter metadata matching number patterns; preserve every matching native part.",
+        "expected_ids": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/number-patterns"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "number patterns"
+          }
+        }
+      },
+      {
+        "id": "chapter-topic-04",
+        "intent": "Find Grade10 mathematics chapter metadata matching equations inequalities; preserve every matching native part.",
+        "expected_ids": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/equations-and-inequalities"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "equations inequalities"
+          }
+        }
+      },
+      {
+        "id": "chapter-topic-05",
+        "intent": "Find Grade10 mathematics chapter metadata matching trigonometry; preserve every matching native part.",
+        "expected_ids": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/trigonometry-part-1"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "trigonometry"
+          }
+        }
+      },
+      {
+        "id": "chapter-topic-06",
+        "intent": "Find Grade10 mathematics chapter metadata matching functions; preserve every matching native part.",
+        "expected_ids": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/functions"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "functions"
+          }
+        }
+      },
+      {
+        "id": "chapter-topic-07",
+        "intent": "Find Grade10 mathematics chapter metadata matching euclidean geometry; preserve every matching native part.",
+        "expected_ids": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/euclidean-geometry-part-1"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "euclidean geometry"
+          }
+        }
+      },
+      {
+        "id": "chapter-topic-08",
+        "intent": "Find Grade10 mathematics chapter metadata matching analytical geometry; preserve every matching native part.",
+        "expected_ids": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/analytical-geometry"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "analytical geometry"
+          }
+        }
+      },
+      {
+        "id": "chapter-topic-09",
+        "intent": "Find Grade10 mathematics chapter metadata matching finance growth; preserve every matching native part.",
+        "expected_ids": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/finance-and-growth"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "finance growth"
+          }
+        }
+      },
+      {
+        "id": "chapter-topic-10",
+        "intent": "Find Grade10 mathematics chapter metadata matching statistics; preserve every matching native part.",
+        "expected_ids": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/statistics"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "statistics"
+          }
+        }
+      }
+    ]
+  },
+  "documentation": [
+    "https://www.siyavula.com/",
+    "https://www.siyavula.com/read",
+    "https://www.siyavula.com/info/terms-and-conditions"
+  ],
+  "licensing": "Selected textbook TOC content is explicitly CC BY3.0. Attribute Siyavula and link the source/license; preserve revision and any changes. Site chrome/trademarks, external embeds and CAT/IT content are not granted this license. Download-format CC BY-ND versus CC BY conditions remain distinct.",
+  "limitations": [
+    "Ten local chapter-title examples cover one explicitly licensed English Grade10 mathematics TOC, not whole-site/full-text search.",
+    "HTML edition year and curriculum revision are unknown; site geography prompt is not user location or India applicability.",
+    "IT/CAT, site chrome/trademarks and external embedded media are outside the selected CC BY3.0 scope.",
+    "Rendered accessibility, refresh behavior and broad reader coverage remain open."
+  ],
+  "evidence": [
+    "runs/canonical-books-policy-20261105b/observations.jsonl",
+    "runs/siyavula-catalog-terms-20261105b/observations.jsonl",
+    "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+    "runs/school-chapter-reader-20261105aj/observations.jsonl",
+    "runs/school-section-access-20261105ak/observations.jsonl",
+    "examples/siyavula.access.jsonl",
+    "examples/siyavula.jsonl",
+    "examples/siyavula.benchmark.jsonl",
+    "docs/research/free-content/evidence/2026-11-05-statistics-school/reader-observations.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T16:49:35.531787+00:00",
+  "next_action": "Preserve measured title-only recall limits; inspect remaining chapter/edition/curriculum and actual screen-reader access. Later-day reliability remains pending. No runtime activation.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "One Siyavula Education textbook catalog. Fourteen chapter URLs in one Grade10 mathematics book retain their part identities; grades, chapters and formats are not independent origins.",
+      "facts": {
+        "operator": "Siyavula Education (Pty) Ltd, South Africa, identified in saved website terms",
+        "book": "Mathematics Grade 10",
+        "chapter_count": 14,
+        "native_identity": "Canonical published chapter URL; snapshot body hash for mutable HTML.",
+        "same_title_parts": "Trigonometry and Euclidean geometry each have two separate native part URLs; no title-only merging.",
+        "edition": "HTML edition year unknown. PDF version labels 1.0/1.1 do not prove HTML edition/version."
+      },
+      "evidence": [
+        "runs/canonical-books-policy-20261105b/observations.jsonl",
+        "runs/siyavula-catalog-terms-20261105b/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/school-chapter-reader-20261105aj/observations.jsonl",
+        "runs/school-section-access-20261105ak/observations.jsonl",
+        "examples/siyavula.access.jsonl",
+        "examples/siyavula.jsonl",
+        "examples/siyavula.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "f3d4826936adf9bd8e8a",
+          "observed_at": "2026-11-05T10:43:42.771886+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "body_sha256": "e2ca46979972df21b4ed3ac8b9d189bd9384c4aa3090eb45d4fb2a58bf065e79",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "553e99ad22001a80dff6",
+          "observed_at": "2026-11-05T10:59:30.222476+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions",
+          "body_sha256": "58afa52e511c0db11356d157433f16e71e1dd2e7667ab3f0bc589ceb696a5fab",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "83bb7602ee2711078242",
+          "observed_at": "2026-11-05T10:59:35.006077+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics",
+          "body_sha256": "4a8342f89a75e6bfb2b0121396a28ca9f08654e50dd9daf4cb1ee7e75cdbb1b3",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "b9baa68f80089473060d",
+          "observed_at": "2026-11-05T11:05:00.848161+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+          "body_sha256": "7438c248b9947161eeb479a424eba87dc00fb0bfba335bbe814ad61d69a0647b",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "fba9f42ed9a849b03a2a",
+          "observed_at": "2026-11-05T11:05:06.364998+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01",
+          "body_sha256": "e50993ae021f8cbc7b3d2b18e93c9e9b554a18f1dc8d45751a5f5853e6b793e4",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "complete",
+      "summary": "Observed query scope is English South African Grade10 mathematics. Earlier catalog English/Afrikaans and grades4–12 claims are preserved but not ten-example coverage of those variants.",
+      "facts": {
+        "areas": [
+          "C04",
+          "C09"
+        ],
+        "observed_item_language": "en",
+        "grade": 10,
+        "country_curriculum": "South Africa",
+        "curriculum_claim": "Catalog refers to CAPS; current curriculum revision/year not established.",
+        "country_access": "One cloud vantage; site suggests South Africa without proving the reader location. No USA/India curriculum equivalence.",
+        "industry_tags": [],
+        "query_scope": "14 published chapter titles, not all subjects, grades, languages, exams or practice products."
+      },
+      "evidence": [
+        "runs/canonical-books-policy-20261105b/observations.jsonl",
+        "runs/siyavula-catalog-terms-20261105b/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/school-chapter-reader-20261105aj/observations.jsonl",
+        "runs/school-section-access-20261105ak/observations.jsonl",
+        "examples/siyavula.access.jsonl",
+        "examples/siyavula.jsonl",
+        "examples/siyavula.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "f3d4826936adf9bd8e8a",
+          "observed_at": "2026-11-05T10:43:42.771886+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "body_sha256": "e2ca46979972df21b4ed3ac8b9d189bd9384c4aa3090eb45d4fb2a58bf065e79",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "553e99ad22001a80dff6",
+          "observed_at": "2026-11-05T10:59:30.222476+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions",
+          "body_sha256": "58afa52e511c0db11356d157433f16e71e1dd2e7667ab3f0bc589ceb696a5fab",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "83bb7602ee2711078242",
+          "observed_at": "2026-11-05T10:59:35.006077+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics",
+          "body_sha256": "4a8342f89a75e6bfb2b0121396a28ca9f08654e50dd9daf4cb1ee7e75cdbb1b3",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "b9baa68f80089473060d",
+          "observed_at": "2026-11-05T11:05:00.848161+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+          "body_sha256": "7438c248b9947161eeb479a424eba87dc00fb0bfba335bbe814ad61d69a0647b",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "fba9f42ed9a849b03a2a",
+          "observed_at": "2026-11-05T11:05:06.364998+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01",
+          "body_sha256": "e50993ae021f8cbc7b3d2b18e93c9e9b554a18f1dc8d45751a5f5853e6b793e4",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        }
+      ],
+      "open_questions": []
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "A bounded import of an explicitly licensed textbook TOC supports local whole-token chapter-title and exact native-URL lookup. No undocumented server search or whole-book import is used.",
+      "facts": {
+        "request": {
+          "method": "GET",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10"
+        },
+        "parser": "English Mathematics Grade10 h1, explicit CC BY3.0 link, a.chapter-title native links; reject changed pinned hash/count, duplicate/foreign identities.",
+        "snapshot_sha256": "635983a0c8f77c6ad3c01db2d06512dc2a8d13879533c3bfcf3b08802e90d122",
+        "entry_count": 14,
+        "supported_modes": [
+          "title_tokens: all whole tokens in chapter_title",
+          "native_id: exact canonical chapter URL"
+        ],
+        "unsupported_modes": [
+          "Full-text",
+          "Fuzzy/synonym matching",
+          "Whole-site API",
+          "Personalized practice",
+          "Other languages/grades not reviewed"
+        ],
+        "paging": "Single complete 14-entry TOC snapshot; no remote paging endpoint observed or required for this bounded import.",
+        "empty": "Blank and outside-title queries return []; sine/cosine title miss does not mean no such content exists."
+      },
+      "evidence": [
+        "runs/canonical-books-policy-20261105b/observations.jsonl",
+        "runs/siyavula-catalog-terms-20261105b/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/school-chapter-reader-20261105aj/observations.jsonl",
+        "runs/school-section-access-20261105ak/observations.jsonl",
+        "examples/siyavula.access.jsonl",
+        "examples/siyavula.jsonl",
+        "examples/siyavula.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "f3d4826936adf9bd8e8a",
+          "observed_at": "2026-11-05T10:43:42.771886+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "body_sha256": "e2ca46979972df21b4ed3ac8b9d189bd9384c4aa3090eb45d4fb2a58bf065e79",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "553e99ad22001a80dff6",
+          "observed_at": "2026-11-05T10:59:30.222476+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions",
+          "body_sha256": "58afa52e511c0db11356d157433f16e71e1dd2e7667ab3f0bc589ceb696a5fab",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "83bb7602ee2711078242",
+          "observed_at": "2026-11-05T10:59:35.006077+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics",
+          "body_sha256": "4a8342f89a75e6bfb2b0121396a28ca9f08654e50dd9daf4cb1ee7e75cdbb1b3",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "b9baa68f80089473060d",
+          "observed_at": "2026-11-05T11:05:00.848161+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+          "body_sha256": "7438c248b9947161eeb479a424eba87dc00fb0bfba335bbe814ad61d69a0647b",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "fba9f42ed9a849b03a2a",
+          "observed_at": "2026-11-05T11:05:06.364998+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01",
+          "body_sha256": "e50993ae021f8cbc7b3d2b18e93c9e9b554a18f1dc8d45751a5f5853e6b793e4",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "complete",
+      "summary": "Selected textbook HTML/TOC explicitly uses CC BY3.0. Saved terms permit clearly CC-marked content with attribution; broader site and download-format exceptions are preserved.",
+      "facts": {
+        "metadata_rights": "Chapter titles/native links extracted from the explicitly CC BY3.0 textbook TOC; preserve source/author/license and changed-field notice.",
+        "content_rights": "Selected textbook footer grants CC Attribution; external videos/simulations/presentations not necessarily covered. No whole-book content imported.",
+        "attribution": "Siyavula Education, Mathematics Grade10; From siyavula.com; CC BY3.0; metadata selection and normalized field names.",
+        "exceptions": "Branded downloads CC BY-ND, unbranded downloads CC BY; IT/CAT closed copyright and trademarks remain distinct.",
+        "free_access": "TOC, chapter navigation and two representative section bodies returned without credentials. Paid educator/practice services and free signup are separate.",
+        "no_account_created": true
+      },
+      "evidence": [
+        "runs/canonical-books-policy-20261105b/observations.jsonl",
+        "runs/siyavula-catalog-terms-20261105b/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/school-chapter-reader-20261105aj/observations.jsonl",
+        "runs/school-section-access-20261105ak/observations.jsonl",
+        "examples/siyavula.access.jsonl",
+        "examples/siyavula.jsonl",
+        "examples/siyavula.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "f3d4826936adf9bd8e8a",
+          "observed_at": "2026-11-05T10:43:42.771886+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "body_sha256": "e2ca46979972df21b4ed3ac8b9d189bd9384c4aa3090eb45d4fb2a58bf065e79",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "553e99ad22001a80dff6",
+          "observed_at": "2026-11-05T10:59:30.222476+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions",
+          "body_sha256": "58afa52e511c0db11356d157433f16e71e1dd2e7667ab3f0bc589ceb696a5fab",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "83bb7602ee2711078242",
+          "observed_at": "2026-11-05T10:59:35.006077+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics",
+          "body_sha256": "4a8342f89a75e6bfb2b0121396a28ca9f08654e50dd9daf4cb1ee7e75cdbb1b3",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "b9baa68f80089473060d",
+          "observed_at": "2026-11-05T11:05:00.848161+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+          "body_sha256": "7438c248b9947161eeb479a424eba87dc00fb0bfba335bbe814ad61d69a0647b",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "fba9f42ed9a849b03a2a",
+          "observed_at": "2026-11-05T11:05:06.364998+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01",
+          "body_sha256": "e50993ae021f8cbc7b3d2b18e93c9e9b554a18f1dc8d45751a5f5853e6b793e4",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        }
+      ],
+      "open_questions": []
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Two actual lesson bodies render anonymously. Lower-page desktop number sets and mobile mean formulas were visually inspected; native MathML and ARIA math roles are present. Diagram alternative text and assistive-technology speech remain limited/unverified.",
+      "facts": {
+        "chapter_tocs": [
+          "algebraic-expressions",
+          "statistics"
+        ],
+        "section_native_urls": [
+          "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+          "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01"
+        ],
+        "section_identities": [
+          "1.2 The real number system (EMA3)",
+          "10.2 Measures of central tendency (EMA6Y)"
+        ],
+        "login_boundary": "Signup calls to action refer to practice; captured instructional text is available before login.",
+        "scope": "Two representative sections, not full verification of every chapter or media embed. No bulk book/audio download.",
+        "rendered_checks": [
+          {
+            "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+            "observed_at": "2026-11-05T11:19:13.333Z",
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            },
+            "horizontal_overflow": false,
+            "screenshot": "evidence/2026-11-05-statistics-school/desktop-real-numbers.png",
+            "main_landmarks": 1,
+            "math_nodes": 9,
+            "page_errors": [],
+            "failed_requests": []
+          },
+          {
+            "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01",
+            "observed_at": "2026-11-05T11:19:31.831Z",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontal_overflow": false,
+            "screenshot": "evidence/2026-11-05-statistics-school/mobile-statistics.png",
+            "main_landmarks": 1,
+            "math_nodes": 180,
+            "page_errors": [],
+            "failed_requests": []
+          }
+        ],
+        "lower_page_review": {
+          "source_id": "siyavula",
+          "observed_at": "2026-11-05T16:49:35.531787+00:00",
+          "event": "visual-and-accessibility-evidence-review",
+          "query_verified": false,
+          "evidence_kind": "manual-screenshot-plus-DOM-review",
+          "initial_attempt_limitation": "First two window.scrollTo attempts did not move the site nested scroll container (window scroll_y=0); screenshots show navigation, not equations. Preserve those attempts. Subsequent scrollIntoViewIfNeeded moved the nested DIV by705px desktop/782px mobile.",
+          "visually_reviewed_screenshots": [
+            "evidence/2026-11-05-school-math/real-numbers-desktop-scroll.png",
+            "evidence/2026-11-05-school-math/mean-mobile-scroll.png"
+          ],
+          "findings": [
+            "Desktop number-set diagram and natural/whole/integer definitions and square roots are visually legible; the diagram accessible name is a filename, not a description.",
+            "Mobile mean definition and two-line summation/fraction formula fit the390px viewport; no page horizontal overflow.",
+            "Native MathML markup includes fractions, subscripts and sums. WebKit ARIA snapshot exposes math roles, but flattened text omits structural cues; this is not NVDA/VoiceOver speech verification.",
+            "No login gate for the two lesson bodies; practice signup remains separate. Video2DBH is an external link and was not played or relicensed.",
+            "No HTML edition year or current CAPS curriculum revision was established."
+          ],
+          "screen_reader_certified": false,
+          "full_book_verified": false
+        }
+      },
+      "evidence": [
+        "runs/canonical-books-policy-20261105b/observations.jsonl",
+        "runs/siyavula-catalog-terms-20261105b/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/school-chapter-reader-20261105aj/observations.jsonl",
+        "runs/school-section-access-20261105ak/observations.jsonl",
+        "examples/siyavula.access.jsonl",
+        "examples/siyavula.jsonl",
+        "examples/siyavula.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-statistics-school/reader-observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-school-math/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "f3d4826936adf9bd8e8a",
+          "observed_at": "2026-11-05T10:43:42.771886+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "body_sha256": "e2ca46979972df21b4ed3ac8b9d189bd9384c4aa3090eb45d4fb2a58bf065e79",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "553e99ad22001a80dff6",
+          "observed_at": "2026-11-05T10:59:30.222476+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions",
+          "body_sha256": "58afa52e511c0db11356d157433f16e71e1dd2e7667ab3f0bc589ceb696a5fab",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "83bb7602ee2711078242",
+          "observed_at": "2026-11-05T10:59:35.006077+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics",
+          "body_sha256": "4a8342f89a75e6bfb2b0121396a28ca9f08654e50dd9daf4cb1ee7e75cdbb1b3",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "b9baa68f80089473060d",
+          "observed_at": "2026-11-05T11:05:00.848161+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+          "body_sha256": "7438c248b9947161eeb479a424eba87dc00fb0bfba335bbe814ad61d69a0647b",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "fba9f42ed9a849b03a2a",
+          "observed_at": "2026-11-05T11:05:06.364998+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01",
+          "body_sha256": "e50993ae021f8cbc7b3d2b18e93c9e9b554a18f1dc8d45751a5f5853e6b793e4",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        }
+      ],
+      "open_questions": [
+        "Verify actual assistive-technology math speech/interaction; the number-set diagram has only a filename accessible name.",
+        "Review remaining chapter access and HTML edition/curriculum revision before complete source qualification; external media is outside the observed free-text scope."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct chapter-title cases pass against the captured14-entry TOC. Two-part titles remain distinct and empty/full-text-intent negatives are retained.",
+      "facts": {
+        "passing_examples": 10,
+        "distinct_primary_expected_ids": 10,
+        "same_title_parts_preserved": true,
+        "benchmark_cases": [
+          "Two trigonometry parts",
+          "Two euclidean geometry parts",
+          "Blank",
+          "Quantum mechanics outside scope",
+          "Sine/cosine not chapter titles"
+        ],
+        "content_quality_observation": "Statistics text includes literal “temp text” placeholders in the captured page. Preserve as provider content-quality evidence, not parser error.",
+        "scope_warning": "Chapter titles are coarse discovery metadata. A failed title query cannot establish absence from the book body.",
+        "rendered_quality_correction": "Literal temp text appears in HTTP extraction but not the captured rendered visible-text excerpt; treat it as an HTML-content observation, not proof of a visible user-facing placeholder.",
+        "intent_evaluation": {
+          "cases": 16,
+          "exact_title_retrieval_cases": 4,
+          "body_witnessed_missed_topics": [
+            "mean",
+            "median",
+            "mode",
+            "arithmetic mean",
+            "real numbers",
+            "integers",
+            "imaginary numbers"
+          ],
+          "empty_boundary_cases": 5,
+          "finding": "Title-only retrieval cannot answer body-topic, book-title or translated-language requests reliably; do not imply that an empty search means content absence.",
+          "evidence": "examples/siyavula.relevance.jsonl"
+        },
+        "rendered_math": "Number-set notation and the mean summation/fraction formula were visually legible on the sampled desktop/mobile lower pages. No general curriculum suitability or screen-reader claim."
+      },
+      "evidence": [
+        "runs/canonical-books-policy-20261105b/observations.jsonl",
+        "runs/siyavula-catalog-terms-20261105b/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/school-chapter-reader-20261105aj/observations.jsonl",
+        "runs/school-section-access-20261105ak/observations.jsonl",
+        "examples/siyavula.access.jsonl",
+        "examples/siyavula.jsonl",
+        "examples/siyavula.benchmark.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-school-math/reader-observations.jsonl",
+        "examples/siyavula.relevance.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "f3d4826936adf9bd8e8a",
+          "observed_at": "2026-11-05T10:43:42.771886+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "body_sha256": "e2ca46979972df21b4ed3ac8b9d189bd9384c4aa3090eb45d4fb2a58bf065e79",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "553e99ad22001a80dff6",
+          "observed_at": "2026-11-05T10:59:30.222476+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions",
+          "body_sha256": "58afa52e511c0db11356d157433f16e71e1dd2e7667ab3f0bc589ceb696a5fab",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "83bb7602ee2711078242",
+          "observed_at": "2026-11-05T10:59:35.006077+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics",
+          "body_sha256": "4a8342f89a75e6bfb2b0121396a28ca9f08654e50dd9daf4cb1ee7e75cdbb1b3",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "b9baa68f80089473060d",
+          "observed_at": "2026-11-05T11:05:00.848161+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+          "body_sha256": "7438c248b9947161eeb479a424eba87dc00fb0bfba335bbe814ad61d69a0647b",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "fba9f42ed9a849b03a2a",
+          "observed_at": "2026-11-05T11:05:06.364998+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01",
+          "body_sha256": "e50993ae021f8cbc7b3d2b18e93c9e9b554a18f1dc8d45751a5f5853e6b793e4",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        }
+      ],
+      "open_questions": [
+        "Assess version/current curriculum suitability and remaining chapters. Broad semantic/full-text/translated search remains unsupported; seven witnessed topic misses are a documented limitation."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "One pinned bounded TOC import supports all local queries. Current retrieval is policy-checked and uncredentialed; no hidden APIs or repeated full-text crawling.",
+      "facts": {
+        "max_bytes": 524288,
+        "min_pause_seconds": 3,
+        "numeric_provider_quota": null,
+        "refresh_guard": "Changed SHA256 or chapter count fails verification until reviewed; no silent replacement.",
+        "retry_policy": "No automatic retries; stop policy/access controls.",
+        "full_book_imported": false,
+        "offline_query_cost": "Local file search after one bounded TOC capture, ordinary Git JSON/JSONL.",
+        "refresh_rehearsal": {
+          "cases": 10,
+          "evidence": "examples/siyavula.refresh.jsonl",
+          "method": "Offline mutations of the hash-pinned14-entry TOC; no actual provider change claimed.",
+          "outcomes": "Chapter deletion/rename and navigation-only body changes require manual review; missing license, wrong grade/language, access403, truncation and hash mismatch reject; unchanged snapshot remains unchanged. No accepted file replaced and no prior example reverified."
+        }
+      },
+      "evidence": [
+        "runs/canonical-books-policy-20261105b/observations.jsonl",
+        "runs/siyavula-catalog-terms-20261105b/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/school-chapter-reader-20261105aj/observations.jsonl",
+        "runs/school-section-access-20261105ak/observations.jsonl",
+        "examples/siyavula.access.jsonl",
+        "examples/siyavula.jsonl",
+        "examples/siyavula.benchmark.jsonl",
+        "examples/siyavula.refresh.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "f3d4826936adf9bd8e8a",
+          "observed_at": "2026-11-05T10:43:42.771886+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "body_sha256": "e2ca46979972df21b4ed3ac8b9d189bd9384c4aa3090eb45d4fb2a58bf065e79",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "553e99ad22001a80dff6",
+          "observed_at": "2026-11-05T10:59:30.222476+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions",
+          "body_sha256": "58afa52e511c0db11356d157433f16e71e1dd2e7667ab3f0bc589ceb696a5fab",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "83bb7602ee2711078242",
+          "observed_at": "2026-11-05T10:59:35.006077+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics",
+          "body_sha256": "4a8342f89a75e6bfb2b0121396a28ca9f08654e50dd9daf4cb1ee7e75cdbb1b3",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "b9baa68f80089473060d",
+          "observed_at": "2026-11-05T11:05:00.848161+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+          "body_sha256": "7438c248b9947161eeb479a424eba87dc00fb0bfba335bbe814ad61d69a0647b",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "fba9f42ed9a849b03a2a",
+          "observed_at": "2026-11-05T11:05:06.364998+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01",
+          "body_sha256": "e50993ae021f8cbc7b3d2b18e93c9e9b554a18f1dc8d45751a5f5853e6b793e4",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        }
+      ],
+      "open_questions": [
+        "Obtain later-day reliability/refresh evidence on a genuinely later day; same-day browser and offline tests do not satisfy it.",
+        "Review an actual published version/curriculum change when available; synthetic deletion/rights-loss tests only establish local fail-closed handling."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Promote the existing candidate only to ten current local-query examples for one licensed TOC. Full qualification and activation remain open.",
+      "facts": {
+        "decision": "ten-query-examples-verified",
+        "activation_approved": false,
+        "owner_action_required": false,
+        "next_actions": [
+          "Rendered readers and math accessibility",
+          "Relevance/edition/curriculum analysis",
+          "Refresh/license-removal rehearsal"
+        ],
+        "revisit_trigger": "New published edition/license evidence or bounded qualification checks; no repeated access-denied routes."
+      },
+      "evidence": [
+        "runs/canonical-books-policy-20261105b/observations.jsonl",
+        "runs/siyavula-catalog-terms-20261105b/observations.jsonl",
+        "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+        "runs/school-chapter-reader-20261105aj/observations.jsonl",
+        "runs/school-section-access-20261105ak/observations.jsonl",
+        "examples/siyavula.access.jsonl",
+        "examples/siyavula.jsonl",
+        "examples/siyavula.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/statistics-rights-reader-20261105ah/observations.jsonl",
+          "job_id": "f3d4826936adf9bd8e8a",
+          "observed_at": "2026-11-05T10:43:42.771886+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10",
+          "body_sha256": "e2ca46979972df21b4ed3ac8b9d189bd9384c4aa3090eb45d4fb2a58bf065e79",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "553e99ad22001a80dff6",
+          "observed_at": "2026-11-05T10:59:30.222476+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions",
+          "body_sha256": "58afa52e511c0db11356d157433f16e71e1dd2e7667ab3f0bc589ceb696a5fab",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-chapter-reader-20261105aj/observations.jsonl",
+          "job_id": "83bb7602ee2711078242",
+          "observed_at": "2026-11-05T10:59:35.006077+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics",
+          "body_sha256": "4a8342f89a75e6bfb2b0121396a28ca9f08654e50dd9daf4cb1ee7e75cdbb1b3",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "b9baa68f80089473060d",
+          "observed_at": "2026-11-05T11:05:00.848161+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/algebraic-expressions/01-algebraic-expressions-01",
+          "body_sha256": "7438c248b9947161eeb479a424eba87dc00fb0bfba335bbe814ad61d69a0647b",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        },
+        {
+          "path": "runs/school-section-access-20261105ak/observations.jsonl",
+          "job_id": "fba9f42ed9a849b03a2a",
+          "observed_at": "2026-11-05T11:05:06.364998+00:00",
+          "url": "https://www.siyavula.com/read/za/mathematics/grade-10/statistics/10-statistics-01",
+          "body_sha256": "e50993ae021f8cbc7b3d2b18e93c9e9b554a18f1dc8d45751a5f5853e6b793e4",
+          "policy_sha256": "dd53c8365c63b750ac907c6171d22f59f30a86067bb02d6288ea075ca799e530"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [],
+  "origin_family": "siyavula-education"
+}

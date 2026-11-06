@@ -1,0 +1,1275 @@
+{
+  "schema_version": 1,
+  "id": "punctum-books",
+  "name": "punctum books",
+  "homepage": "https://punctumbooks.com/",
+  "group": "G01",
+  "areas": [
+    "C04",
+    "C02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "Publisher-scoped Thoth GraphQL keyword/title search with active book-type filters; digital publication locations and per-work license."
+  ],
+  "query": {
+    "adapter": "thoth",
+    "endpoint": "https://api.thoth.pub/graphql",
+    "authentication": "none for sampled public queries",
+    "cost": "No fee or API key used; respect current provider policies and rate limits.",
+    "research_pause_seconds": 3,
+    "cases": [
+      {
+        "id": "known-title-01",
+        "intent": "Find the known catalog record for (((",
+        "expected_ids": [
+          "b5c810e1-c847-4553-a24e-9893164d9786"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"(((\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-02",
+        "intent": "Find the known catalog record for 100 Chinese Silences",
+        "expected_ids": [
+          "4071e86c-433e-4a46-a84a-47f69ac945ac"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"100 Chinese Silences\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-03",
+        "intent": "Find the known catalog record for 2×6",
+        "expected_ids": [
+          "24e119ea-a0f2-4df7-8789-3ceb35e2500b"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"2\\u00d76\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-04",
+        "intent": "Find the known catalog record for A Bibliography for After Jews and Arabs",
+        "expected_ids": [
+          "e0f748b2-984f-45cc-8b9e-13989c31dda4"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Bibliography for After Jews and Arabs\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-05",
+        "intent": "Find the known catalog record for About That Life",
+        "expected_ids": [
+          "ca2f9ad1-a5fd-45b6-a662-4991cf1767a3"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"About That Life\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-06",
+        "intent": "Find the known catalog record for A Boy Asleep under the Sun",
+        "expected_ids": [
+          "5402ea62-7a1b-48b4-b5fb-7b114c04bc27"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Boy Asleep under the Sun\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-07",
+        "intent": "Find the known catalog record for A Brief Genealogy of Jewish Republicanism",
+        "expected_ids": [
+          "f02786d4-3bcc-473e-8d43-3da66c7e877c"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Brief Genealogy of Jewish Republicanism\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-08",
+        "intent": "Find the known catalog record for Abruptly Dogen",
+        "expected_ids": [
+          "010b08ba-0eed-4d21-8104-0a7913e10909"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Abruptly Dogen\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-09",
+        "intent": "Find the known catalog record for A Buddha Land in This World",
+        "expected_ids": [
+          "8a27431b-b1f9-4fed-a8e0-0a0aadc9d98c"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Buddha Land in This World\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-10",
+        "intent": "Find the known catalog record for A Credible Utopia",
+        "expected_ids": [
+          "88a8657d-d73d-4be1-b893-678b35fd709a"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Credible Utopia\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      }
+    ],
+    "paging": "offset, limit",
+    "publisher_id": "9c41b13c-cecc-4f6a-a151-be4682915ef5",
+    "official_content_hosts": [
+      "books.punctumbooks.com"
+    ],
+    "supported_modes": [
+      "publisher-scoped literal metadata filter",
+      "exact native work UUID resolution",
+      "active monograph/edited-book type restriction",
+      "limit/offset paging"
+    ],
+    "unsupported_modes": [
+      "semantic relevance ranking",
+      "full book-text search",
+      "untested author-specific search",
+      "unverified language/territory eligibility filters",
+      "unreviewed format/mirror access"
+    ],
+    "detail_request": {
+      "method": "POST",
+      "url": "https://api.thoth.pub/graphql",
+      "json": {
+        "query": "{work(workId:\"b5c810e1-c847-4553-a24e-9893164d9786\"){workId workType workStatus titles{fullTitle} doi edition publicationDate updatedAtWithRelations withdrawnDate license copyrightHolder languages{languageCode languageRelation} imprint{imprintId publisherId imprintName} publications{publicationType locations{canonical fullTextUrl landingPage}}}}"
+      }
+    },
+    "identity": "publisherId + workId, with edition, DOI, publication date and publication-format IDs kept distinct; title equality never implies identity"
+  },
+  "licensing": "Thoth metadata CC0; each book has separate content license, including possible NC/SA terms.",
+  "documentation": [
+    "https://thoth.pub/docs",
+    "https://api.thoth.pub/graphiql",
+    "https://thoth.pub/docs/policies/terms-thoth-metadata",
+    "https://punctumbooks.com/"
+  ],
+  "limitations": [
+    "Keyword filter can match descriptions and does not guarantee relevance order.",
+    "Exclude retail/print and unreviewed mirror locations. Preserve edition and volume IDs.",
+    "Ten known-item searches are not the full topic-relevance/reliability/rights qualification benchmark."
+  ],
+  "evidence": [
+    "../batches/G01_QUERY_EVIDENCE.json",
+    "../batches/G01_ACCESS_EVIDENCE.json",
+    "../batches/G01_FIRST_TEN.md",
+    "examples/thoth.contract-review.jsonl",
+    "runs/thoth-contract-20261105n/observations.jsonl",
+    "runs/publisher-identity-20261105o/observations.jsonl",
+    "examples/punctum-books.jsonl",
+    "examples/thoth.relevance-review.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T08:13:56.754031+00:00",
+  "next_action": "Continue full topic/reader/rights qualification for this publisher: five topic queries, representative full-item browser/reading and territory checks, contributor metadata, license exceptions, update/deletion and error/maintainer review. Retain all evidence and separate publisher identity from the shared Thoth platform.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "Current Thoth publisher UUID/name/homepage and matching work imprint establish the catalog attribution. Thoth is a shared metadata service, not a sixth publisher.",
+      "facts": {
+        "publisher": {
+          "createdAt": "2021-01-07T16:32:40.853895Z",
+          "publisherId": "9c41b13c-cecc-4f6a-a151-be4682915ef5",
+          "publisherName": "punctum books",
+          "publisherShortname": null,
+          "publisherUrl": "https://punctumbooks.com/",
+          "updatedAt": "2026-08-25T15:12:45.478340Z"
+        },
+        "representative_imprint": {
+          "imprintId": "e76c3f59-c8ae-4887-b62c-43ce7b8dbdb1",
+          "imprintName": "Uitgeverij",
+          "publisherId": "9c41b13c-cecc-4f6a-a151-be4682915ef5"
+        },
+        "deduplication": "Distinct publisher catalog scope; same publisher across Thoth, native website and OAPEN/DOAB mirrors is not counted again. Cross-provider work merging requires DOI/native edition evidence.",
+        "homepage_observation": {
+          "outcome": "captured",
+          "http_status": 200,
+          "robots_status": 200
+        },
+        "publisher_self_description": "Non-profit public benefit corporation registered in California, USA; observed on current homepage."
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/punctum-books.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:known-title-replay",
+          "observed_at": "2026-11-05T08:08:36.651071+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:native-work-detail",
+          "observed_at": "2026-11-05T08:08:40.337363+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:topic-philosophy",
+          "observed_at": "2026-11-05T08:08:43.646459+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1a49fc047d0599b8903",
+          "observed_at": "2026-11-05T08:10:07.305435+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing category memberships retained. A current native work establishes sampled language and format, not catalog-wide language/country coverage.",
+      "facts": {
+        "categories": [
+          "C04",
+          "C02"
+        ],
+        "sample_languages": [
+          {
+            "languageCode": "ENG",
+            "languageRelation": "TRANSLATED_INTO"
+          },
+          {
+            "languageCode": "FRE",
+            "languageRelation": "TRANSLATED_INTO"
+          },
+          {
+            "languageCode": "ITA",
+            "languageRelation": "ORIGINAL"
+          }
+        ],
+        "sample_work_type": "MONOGRAPH",
+        "publisher_country": "USA (California), provider-stated",
+        "access_country": "Managed cloud vantage unknown; USA/India end-user access not tested.",
+        "non_English_lead": null
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/punctum-books.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:known-title-replay",
+          "observed_at": "2026-11-05T08:08:36.651071+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:native-work-detail",
+          "observed_at": "2026-11-05T08:08:40.337363+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:topic-philosophy",
+          "observed_at": "2026-11-05T08:08:43.646459+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1a49fc047d0599b8903",
+          "observed_at": "2026-11-05T08:10:07.305435+00:00"
+        }
+      ],
+      "open_questions": [
+        "Measure catalog language/subject and country gaps; avoid equating sampled ENG metadata with English-only catalog coverage."
+      ]
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Fifty previously captured known-title cases across five publishers remain separate evidence; this publisher has ten current passing cases, one newly replayed title and a native-work detail round trip. Public schema confirms publisher/type/status/limit/offset arguments.",
+      "facts": {
+        "contract": {
+          "adapter": "thoth",
+          "endpoint": "https://api.thoth.pub/graphql",
+          "authentication": "none for sampled public queries",
+          "cost": "No fee or API key used; respect current provider policies and rate limits.",
+          "research_pause_seconds": 3,
+          "cases": [
+            {
+              "id": "known-title-01",
+              "intent": "Find the known catalog record for (((",
+              "expected_ids": [
+                "b5c810e1-c847-4553-a24e-9893164d9786"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"(((\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-02",
+              "intent": "Find the known catalog record for 100 Chinese Silences",
+              "expected_ids": [
+                "4071e86c-433e-4a46-a84a-47f69ac945ac"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"100 Chinese Silences\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-03",
+              "intent": "Find the known catalog record for 2×6",
+              "expected_ids": [
+                "24e119ea-a0f2-4df7-8789-3ceb35e2500b"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"2\\u00d76\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-04",
+              "intent": "Find the known catalog record for A Bibliography for After Jews and Arabs",
+              "expected_ids": [
+                "e0f748b2-984f-45cc-8b9e-13989c31dda4"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"A Bibliography for After Jews and Arabs\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-05",
+              "intent": "Find the known catalog record for About That Life",
+              "expected_ids": [
+                "ca2f9ad1-a5fd-45b6-a662-4991cf1767a3"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"About That Life\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-06",
+              "intent": "Find the known catalog record for A Boy Asleep under the Sun",
+              "expected_ids": [
+                "5402ea62-7a1b-48b4-b5fb-7b114c04bc27"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"A Boy Asleep under the Sun\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-07",
+              "intent": "Find the known catalog record for A Brief Genealogy of Jewish Republicanism",
+              "expected_ids": [
+                "f02786d4-3bcc-473e-8d43-3da66c7e877c"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"A Brief Genealogy of Jewish Republicanism\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-08",
+              "intent": "Find the known catalog record for Abruptly Dogen",
+              "expected_ids": [
+                "010b08ba-0eed-4d21-8104-0a7913e10909"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Abruptly Dogen\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-09",
+              "intent": "Find the known catalog record for A Buddha Land in This World",
+              "expected_ids": [
+                "8a27431b-b1f9-4fed-a8e0-0a0aadc9d98c"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"A Buddha Land in This World\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-10",
+              "intent": "Find the known catalog record for A Credible Utopia",
+              "expected_ids": [
+                "88a8657d-d73d-4be1-b893-678b35fd709a"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"A Credible Utopia\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            }
+          ],
+          "paging": "offset, limit",
+          "publisher_id": "9c41b13c-cecc-4f6a-a151-be4682915ef5",
+          "official_content_hosts": [
+            "books.punctumbooks.com"
+          ],
+          "supported_modes": [
+            "publisher-scoped literal metadata filter",
+            "exact native work UUID resolution",
+            "active monograph/edited-book type restriction",
+            "limit/offset paging"
+          ],
+          "unsupported_modes": [
+            "semantic relevance ranking",
+            "full book-text search",
+            "untested author-specific search",
+            "unverified language/territory eligibility filters",
+            "unreviewed format/mirror access"
+          ],
+          "detail_request": {
+            "method": "POST",
+            "url": "https://api.thoth.pub/graphql",
+            "json": {
+              "query": "{work(workId:\"b5c810e1-c847-4553-a24e-9893164d9786\"){workId workType workStatus titles{fullTitle} doi edition publicationDate updatedAtWithRelations withdrawnDate license copyrightHolder languages{languageCode languageRelation} imprint{imprintId publisherId imprintName} publications{publicationType locations{canonical fullTextUrl landingPage}}}}"
+            }
+          },
+          "identity": "publisherId + workId, with edition, DOI, publication date and publication-format IDs kept distinct; title equality never implies identity"
+        },
+        "current_passing_examples": 10,
+        "sample_detail": {
+          "workId": "b5c810e1-c847-4553-a24e-9893164d9786",
+          "doi": "https://doi.org/10.53288/0370.1.00",
+          "edition": 1,
+          "workType": "MONOGRAPH",
+          "workStatus": "ACTIVE",
+          "publicationDate": "2021-09-02",
+          "updatedAtWithRelations": "2026-08-25T15:12:45.478340Z",
+          "withdrawnDate": null,
+          "languages": [
+            {
+              "languageCode": "ENG",
+              "languageRelation": "TRANSLATED_INTO"
+            },
+            {
+              "languageCode": "FRE",
+              "languageRelation": "TRANSLATED_INTO"
+            },
+            {
+              "languageCode": "ITA",
+              "languageRelation": "ORIGINAL"
+            }
+          ],
+          "imprint": {
+            "imprintId": "e76c3f59-c8ae-4887-b62c-43ce7b8dbdb1",
+            "imprintName": "Uitgeverij",
+            "publisherId": "9c41b13c-cecc-4f6a-a151-be4682915ef5"
+          }
+        },
+        "schema_correction": "Abstract.content is the public field. The failed Abstract.abstract request returned400; no empty-result inference. Initial wrong root type Query returned data:null; current QueryRoot schema was read separately.",
+        "authentication": "No account/key or paid metadata service used."
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/punctum-books.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:known-title-replay",
+          "observed_at": "2026-11-05T08:08:36.651071+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:native-work-detail",
+          "observed_at": "2026-11-05T08:08:40.337363+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:topic-philosophy",
+          "observed_at": "2026-11-05T08:08:43.646459+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1a49fc047d0599b8903",
+          "observed_at": "2026-11-05T08:10:07.305435+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Fresh Thoth clauses3–5 state metadata is CC0 and freely accessible via public APIs/catalogs. This does not relicense the books; per-work content licenses stay separate and may be NC/SA.",
+      "facts": {
+        "metadata_license": "CC0 1.0 Universal",
+        "website_license": "Thoth website content CC BY4.0; not the same as metadata or book content.",
+        "content_license_observed": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "licenses_in_saved_example_sample": [
+          "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+          "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+        ],
+        "attribution": "Preserve publisher/native work/DOI, creator where supplied and each book license; CC0 metadata is reusable without adopting a blanket content-reuse grant.",
+        "cost": "Anonymous query route without fee/key; publisher-management/dissemination services are separate and were not purchased.",
+        "numeric_query_quota": "Not specified in reviewed terms; not an unlimited-SLA claim.",
+        "representative_copyright_holder": "De Francesco, Alessandro"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/punctum-books.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:known-title-replay",
+          "observed_at": "2026-11-05T08:08:36.651071+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:native-work-detail",
+          "observed_at": "2026-11-05T08:08:40.337363+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:topic-philosophy",
+          "observed_at": "2026-11-05T08:08:43.646459+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1a49fc047d0599b8903",
+          "observed_at": "2026-11-05T08:10:07.305435+00:00"
+        }
+      ],
+      "open_questions": [
+        "Reconcile representative full-item license/attribution and third-party exceptions against the actual book/reader; metadata declarations alone do not certify every work."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Earlier 4KiB PDF-header/range evidence is backfilled with its original observation date; it is not a fresh full-book read. Current metadata provides digital and print destinations, which must remain distinct.",
+      "facts": {
+        "historical_range_observations": [
+          {
+            "name": "pdf-punctum-books",
+            "requested_url": "https://books.punctumbooks.com/10.53288/0386.1.00.pdf",
+            "resolved_url": "https://books.punctumbooks.com/10.53288/0386.1.00.pdf",
+            "observed_at": "2026-11-05T00:49:19.302445+00:00",
+            "status": 206,
+            "content_type": "application/pdf",
+            "content_range": "bytes 0-4095/24966450",
+            "content_length": "4096",
+            "sample_bytes": 4096,
+            "sample_sha256": "27e2a1999f4bad5a51b23b1efc85fe789cf05583b5dbb3fc2f09740d0558b64e",
+            "starts_pdf": true,
+            "seconds": 1.35
+          }
+        ],
+        "current_digital_locations": [
+          {
+            "format": "PDF",
+            "locations": [
+              {
+                "canonical": false,
+                "fullTextUrl": "https://library.oapen.org/bitstream/handle/20.500.12657/50523/0370.1.00.pdf?sequence=1&isAllowed=y",
+                "landingPage": "https://library.oapen.org/handle/20.500.12657/50523"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": null,
+                "landingPage": "https://directory.doabooks.org/handle/20.500.12854/71795"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": null,
+                "landingPage": "https://www.jstor.org/stable/10.2307/j.ctv21fqj7f"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://thoth-arch.lib.cam.ac.uk/bitstreams/9ba546fe-7f8f-4998-bacf-e2d6318a3324/download",
+                "landingPage": "https://thoth-arch.lib.cam.ac.uk/handle/1811/685"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://archive.org/download/b5c810e1-c847-4553-a24e-9893164d9786/b5c810e1-c847-4553-a24e-9893164d9786.pdf",
+                "landingPage": "https://archive.org/details/b5c810e1-c847-4553-a24e-9893164d9786"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://zenodo.org/records/19848993/files/b5c810e1-c847-4553-a24e-9893164d9786_book.pdf",
+                "landingPage": "https://zenodo.org/records/19848993"
+              },
+              {
+                "canonical": true,
+                "fullTextUrl": "https://books.punctumbooks.com/10.53288/0370.1.00.pdf",
+                "landingPage": "https://punctumbooks.com/titles/three-opening-parentheses/"
+              }
+            ]
+          }
+        ],
+        "access_class": "Anonymous metadata confirmed; per-item free reading and regional eligibility require destination checks.",
+        "print_rule": "PAPERBACK/HARDBACK fullTextUrl can be a shop/landing page; never classify those as free digital full text.",
+        "homepage_policy": {
+          "outcome": "captured",
+          "http_status": 200,
+          "robots_status": 200
+        },
+        "bulk_content_downloaded": false
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/punctum-books.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:known-title-replay",
+          "observed_at": "2026-11-05T08:08:36.651071+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:native-work-detail",
+          "observed_at": "2026-11-05T08:08:40.337363+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:topic-philosophy",
+          "observed_at": "2026-11-05T08:08:43.646459+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1a49fc047d0599b8903",
+          "observed_at": "2026-11-05T08:10:07.305435+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify representative complete readable item destinations on desktop/mobile; identify free-login, preview, territory and accessibility conditions without buying accounts or bulk files."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "One fresh topic query per publisher exposes subject/edition limitations. Ten known-title cases cannot substitute for the full five-topic acceptance pack.",
+      "facts": {
+        "topic_review": {
+          "source_id": "punctum-books",
+          "reviewed_at": "2026-11-05T08:13:56.754031+00:00",
+          "query_observed_at": "2026-11-05T08:08:43.646459+00:00",
+          "query_request": {
+            "json": {
+              "query": "{works(limit:5,offset:0,filter:\"philosophy\",publishers:[\"9c41b13c-cecc-4f6a-a151-be4682915ef5\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} abstracts{content} license landingPage}}"
+            },
+            "method": "POST",
+            "url": "https://api.thoth.pub/graphql"
+          },
+          "result_ids": [
+            "e0f748b2-984f-45cc-8b9e-13989c31dda4",
+            "ca2f9ad1-a5fd-45b6-a662-4991cf1767a3",
+            "8a27431b-b1f9-4fed-a8e0-0a0aadc9d98c",
+            "20dab41d-2267-4a68-befa-d787b7c98599",
+            "f712541c-07b4-477c-8b8c-8c1a307810d0"
+          ],
+          "sample_titles": [
+            "A Bibliography for After Jews and Arabs",
+            "About That Life: Barry Lopez and the Art of Community",
+            "A Buddha Land in This World: Philosophy, Utopia, and Radical Buddhism",
+            "After the \"Speculative Turn\": Realism, Philosophy, and Feminism",
+            "And Another Thing: Nonanthropocentrism and Art"
+          ],
+          "assessment": "Philosophy returns a bibliography on Jewish/Arab intellectual history, Barry Lopez/community ethics, radical Buddhist philosophy, speculative realism/feminism, and nonanthropocentrism/art. At least the bibliography is adjacent; titles and abstracts cannot establish broad introductory philosophy coverage.",
+          "method": "Manual title/abstract reading; not a blinded relevance benchmark or full-item accessibility check.",
+          "query_verified": false
+        },
+        "known_title_replay": "First declared case replayed at 2026-11-05T08:08:36.651071+00:00",
+        "book_vs_chapter": "MONOGRAPH/EDITED_BOOK and ACTIVE filters; chapter identities not merged into books.",
+        "negative_empty": "Current shared impossible filter returns HTTP200 with works:[]; distinct from GraphQL400/data:null failures.",
+        "paging": "Current LSE politics offset0/5 pages checked separately; do not generalize to every publisher."
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/punctum-books.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:known-title-replay",
+          "observed_at": "2026-11-05T08:08:36.651071+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:native-work-detail",
+          "observed_at": "2026-11-05T08:08:40.337363+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:topic-philosophy",
+          "observed_at": "2026-11-05T08:08:43.646459+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1a49fc047d0599b8903",
+          "observed_at": "2026-11-05T08:10:07.305435+00:00"
+        }
+      ],
+      "open_questions": [
+        "Complete five predeclared topic queries per source with per-result access checks, language/Unicode edge cases, coverage/ordering and recall limits."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Live serial requests have hashes, policy evidence and bounded metadata responses. Revision/withdrawal fields are observed but no actual deletion transition or runtime refresh owner is established.",
+      "facts": {
+        "request_pacing_seconds": 3,
+        "response_bound_bytes": 524288,
+        "metadata_update_fields": [
+          "updatedAtWithRelations",
+          "workStatus",
+          "withdrawnDate"
+        ],
+        "current_record_timestamps": {
+          "publicationDate": "2021-09-02",
+          "updatedAtWithRelations": "2026-08-25T15:12:45.478340Z",
+          "withdrawnDate": null
+        },
+        "observed_failures": "Wrong root type returned data:null; wrong Abstract field returned400, then correction followed published schema. The original400 body was not retained, only status/hash/request.",
+        "refresh_design": "Future qualified integration must review ACTIVE/withdrawn transitions, preserve publisher/work/edition IDs, and retain prior evidence after errors.",
+        "reader_host_blockers": {
+          "outcome": "captured",
+          "http_status": 200,
+          "robots_status": 200
+        }
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/punctum-books.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:known-title-replay",
+          "observed_at": "2026-11-05T08:08:36.651071+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:native-work-detail",
+          "observed_at": "2026-11-05T08:08:40.337363+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:topic-philosophy",
+          "observed_at": "2026-11-05T08:08:43.646459+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1a49fc047d0599b8903",
+          "observed_at": "2026-11-05T08:10:07.305435+00:00"
+        }
+      ],
+      "open_questions": [
+        "Establish provider numeric quotas if published, bounded outage/throttle behavior, refresh/deletion reconciliation and accountable maintenance before full qualification."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain the attributed publisher catalog and its real query evidence; full qualification and research activation approval remain false.",
+      "facts": {
+        "decision": "retain-publisher-scoped-query-candidate",
+        "full_qualification_complete": false,
+        "activation_approved": false,
+        "existing_production_state": "Not changed by research approval fields.",
+        "remaining_gates": [
+          "coverage_and_languages",
+          "rights_and_cost",
+          "reader_access",
+          "quality_and_relevance",
+          "operating_limits"
+        ],
+        "next_action": "Continue full topic/reader/rights qualification for this publisher: five topic queries, representative full-item browser/reading and territory checks, contributor metadata, license exceptions, update/deletion and error/maintainer review. Retain all evidence and separate publisher identity from the shared Thoth platform."
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/punctum-books.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:known-title-replay",
+          "observed_at": "2026-11-05T08:08:36.651071+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:native-work-detail",
+          "observed_at": "2026-11-05T08:08:40.337363+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "punctum-books:topic-philosophy",
+          "observed_at": "2026-11-05T08:08:43.646459+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1a49fc047d0599b8903",
+          "observed_at": "2026-11-05T08:10:07.305435+00:00"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 39,
+      "heading": "The ten candidates",
+      "text": "| 10 | [punctum books](https://punctumbooks.com/) | Humanities, architecture, arts and cultural scholarship | `Analogical City` → **Analogical City** | Thoth GraphQL search scoped to this publisher |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 66,
+      "heading": "Reading evidence and source-specific limits",
+      "text": "| punctum books | **Analogical City** had CC BY-NC-SA 4.0 and a canonical publisher PDF returning HTTP 206/PDF bytes. | Returned location lists also contain retail and unreviewed third-party hosts. Only approved official/authorized locations can become reading links. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 21,
+      "heading": "Behavior",
+      "text": "Ten new integrations are released behind `CONTENT_KNOWLEDGE_ENABLED=true`:\nGlobal Digital Library, LibriVox, Library of Congress digital books, Biodiversity\nHeritage Library's Internet Archive collection, African Minds, LSE Press,\nMattering Press, mediastudies.press, punctum books and Python 3.15 documentation.\nFive publisher catalogs share Thoth; this is not five separate API infrastructures.\nThe existing Gutenberg, Open Textbook Library, Book Dash and StoryWeaver snapshots\nand the existing OpenAlex/Europe PMC integrations are also selectable. With the\nexisting production flags, this gives 16 connected sources, not 16 fully audited\norigins or complete catalogs.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "operator": {
+    "name": "punctum books",
+    "role": "Publisher catalog attribution returned by Thoth; legal parent/domicile only claimed where the publisher site states it.",
+    "metadata_service": "Thoth Open Metadata Community Interest Company (UK company14549556)",
+    "publisher_id": "9c41b13c-cecc-4f6a-a151-be4682915ef5",
+    "evidence": [
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "query-root-schema",
+        "observed_at": "2026-11-05T08:04:26.744717+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "five-publisher-identities",
+        "observed_at": "2026-11-05T08:05:33.267324+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "punctum-books:known-title-replay",
+        "observed_at": "2026-11-05T08:08:36.651071+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "punctum-books:native-work-detail",
+        "observed_at": "2026-11-05T08:08:40.337363+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "punctum-books:topic-philosophy",
+        "observed_at": "2026-11-05T08:08:43.646459+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "shared-empty-filter",
+        "observed_at": "2026-11-05T08:08:51.383617+00:00"
+      },
+      {
+        "path": "runs/thoth-contract-20261105n/observations.jsonl",
+        "job_id": "ffb7a4a4bbcc5f24b181",
+        "observed_at": "2026-11-05T08:02:28.063101+00:00"
+      },
+      {
+        "path": "runs/thoth-contract-20261105n/observations.jsonl",
+        "job_id": "5527e47600f6b61b4868",
+        "observed_at": "2026-11-05T08:02:35.709895+00:00"
+      },
+      {
+        "path": "runs/thoth-contract-20261105n/observations.jsonl",
+        "job_id": "9d71268ae9f708f5f587",
+        "observed_at": "2026-11-05T08:02:39.879524+00:00"
+      },
+      {
+        "path": "runs/publisher-identity-20261105o/observations.jsonl",
+        "job_id": "e1a49fc047d0599b8903",
+        "observed_at": "2026-11-05T08:10:07.305435+00:00"
+      }
+    ]
+  },
+  "record_kind": "publisher-catalog-via-shared-metadata-service"
+}

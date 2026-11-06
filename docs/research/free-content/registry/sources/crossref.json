@@ -1,0 +1,436 @@
+{
+  "schema_version": 1,
+  "id": "crossref",
+  "name": "Crossref",
+  "homepage": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/",
+  "homepage_status": "historical-reference; canonical homepage/operator needs review",
+  "group": "G05",
+  "areas": [
+    "C03"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "capabilities": [
+    "Live title-ranked scholarly bibliographic search, first3 records, across work types; DOI identity retained. Does not prove free full-text access or resolve an exact citation from title alone."
+  ],
+  "query": {
+    "adapter": "crossref-public",
+    "endpoint": "https://api.crossref.org/works",
+    "cases": [
+      {
+        "id": "title-01",
+        "intent": "Search title metadata: Molecular Structure of Nucleic Acids",
+        "request": {
+          "method": "GET",
+          "params": {
+            "query.title": "Molecular Structure of Nucleic Acids",
+            "rows": 3,
+            "select": "DOI,title,type,URL"
+          },
+          "url": "https://api.crossref.org/works"
+        },
+        "expected_ids": [
+          "10.1038/171738a0"
+        ]
+      },
+      {
+        "id": "title-02",
+        "intent": "Search title metadata: Deep learning",
+        "request": {
+          "method": "GET",
+          "params": {
+            "query.title": "Deep learning",
+            "rows": 3,
+            "select": "DOI,title,type,URL"
+          },
+          "url": "https://api.crossref.org/works"
+        },
+        "expected_ids": [
+          "10.1590/1806-9126-rbef-2022-0101"
+        ]
+      },
+      {
+        "id": "title-03",
+        "intent": "Search title metadata: ImageNet Classification with Deep Convolutional Neural Networks",
+        "request": {
+          "method": "GET",
+          "params": {
+            "query.title": "ImageNet Classification with Deep Convolutional Neural Networks",
+            "rows": 3,
+            "select": "DOI,title,type,URL"
+          },
+          "url": "https://api.crossref.org/works"
+        },
+        "expected_ids": [
+          "10.1145/3065386"
+        ]
+      },
+      {
+        "id": "title-04",
+        "intent": "Search title metadata: A mathematical theory of communication",
+        "request": {
+          "method": "GET",
+          "params": {
+            "query.title": "A mathematical theory of communication",
+            "rows": 3,
+            "select": "DOI,title,type,URL"
+          },
+          "url": "https://api.crossref.org/works"
+        },
+        "expected_ids": [
+          "10.1007/978-3-540-29678-2_3338"
+        ]
+      },
+      {
+        "id": "title-05",
+        "intent": "Search title metadata: A fast learning algorithm for deep belief nets",
+        "request": {
+          "method": "GET",
+          "params": {
+            "query.title": "A fast learning algorithm for deep belief nets",
+            "rows": 3,
+            "select": "DOI,title,type,URL"
+          },
+          "url": "https://api.crossref.org/works"
+        },
+        "expected_ids": [
+          "10.1162/neco.2006.18.7.1527"
+        ]
+      },
+      {
+        "id": "title-06",
+        "intent": "Search title metadata: Random Forests",
+        "request": {
+          "method": "GET",
+          "params": {
+            "query.title": "Random Forests",
+            "rows": 3,
+            "select": "DOI,title,type,URL"
+          },
+          "url": "https://api.crossref.org/works"
+        },
+        "expected_ids": [
+          "10.4324/9781003109396-5"
+        ]
+      },
+      {
+        "id": "title-07",
+        "intent": "Search title metadata: The Hallmarks of Cancer",
+        "request": {
+          "method": "GET",
+          "params": {
+            "query.title": "The Hallmarks of Cancer",
+            "rows": 3,
+            "select": "DOI,title,type,URL"
+          },
+          "url": "https://api.crossref.org/works"
+        },
+        "expected_ids": [
+          "10.1097/01.cej.0000816704.67680.d7"
+        ]
+      },
+      {
+        "id": "title-08",
+        "intent": "Search title metadata: A programmable dual RNA guided DNA endonuclease in adaptive bacterial immunity",
+        "request": {
+          "method": "GET",
+          "params": {
+            "query.title": "A programmable dual RNA guided DNA endonuclease in adaptive bacterial immunity",
+            "rows": 3,
+            "select": "DOI,title,type,URL"
+          },
+          "url": "https://api.crossref.org/works"
+        },
+        "expected_ids": [
+          "10.1126/science.1225829"
+        ]
+      },
+      {
+        "id": "title-09",
+        "intent": "Search title metadata: Clustal W and Clustal X version 2.0",
+        "request": {
+          "method": "GET",
+          "params": {
+            "query.title": "Clustal W and Clustal X version 2.0",
+            "rows": 3,
+            "select": "DOI,title,type,URL"
+          },
+          "url": "https://api.crossref.org/works"
+        },
+        "expected_ids": [
+          "10.1093/bioinformatics/btm404"
+        ]
+      },
+      {
+        "id": "title-10",
+        "intent": "Search title metadata: The human genome project",
+        "request": {
+          "method": "GET",
+          "params": {
+            "query.title": "The human genome project",
+            "rows": 3,
+            "select": "DOI,title,type,URL"
+          },
+          "url": "https://api.crossref.org/works"
+        },
+        "expected_ids": [
+          "10.1007/978-3-540-29678-2_2265"
+        ]
+      }
+    ],
+    "historical_contract": "`/works?query.title=...`, `/works/{doi}`, filters/cursors. [REST docs](https://www.crossref.org/documentation/retrieve-metadata/rest-api/)",
+    "authentication": "Free anonymous public pool; no key/account/mailto fabrication."
+  },
+  "licensing": "Crossref says almost all descriptive metadata may be used for any purpose, with copyright exceptions for abstracts. OnlyDOI/title/type/URL retained. DOI landing/metadata presence does not establish open-access or content redistribution rights.",
+  "documentation": [
+    "https://www.crossref.org/documentation/retrieve-metadata/rest-api/"
+  ],
+  "limitations": [
+    "Public pool is single-connection; currentdocs report5 rate limit with interval in response headers; research uses >=3seconds spacing.",
+    "Title matching is ranked/fuzzy: similarly titled chapters, articles and encyclopedia records can outrank the intended original work.",
+    "OnlyDOI/title/type/URL selected; no abstracts, PDFs or full text retained.",
+    "Offset paging and empty nonsense query verified; malformed negative rows400 retained."
+  ],
+  "evidence": [
+    "analysis/documents.jsonl",
+    "runs/scholarly-contracts-20261105db/observations.jsonl",
+    "runs/scholarly-policy-20261105dc/observations.jsonl",
+    "analysis/external/crossref-openapi-20261105.json",
+    "examples/crossref.scouting.jsonl",
+    "examples/crossref.jsonl",
+    "examples/crossref.boundaries.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T18:54:29.287156+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 40,
+    "text": "| **Crossref — DOI metadata index** | `/works?query.title=...`, `/works/{doi}`, filters/cursors. [REST docs](https://www.crossref.org/documentation/retrieve-metadata/rest-api/) | DOI landing URLs, relations and licensing enrich records. A `link` or `license` field alone does not establish free reading. | Public reads without key; real `mailto` contact recommended for polite pool. Observe rate/concurrency headers. Search worked. **Low / P1 enrichment**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "crossref",
+        "name": "Crossref",
+        "homepage_reference": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C03"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Live title-ranked scholarly bibliographic search, first3 records, across work types; DOI identity retained. Does not prove free full-text access or resolve an exact citation from title alone.",
+      "facts": {
+        "adapter": "crossref-public",
+        "endpoint": "https://api.crossref.org/works",
+        "cases": [
+          "title-01",
+          "title-02",
+          "title-03",
+          "title-04",
+          "title-05",
+          "title-06",
+          "title-07",
+          "title-08",
+          "title-09",
+          "title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live title-ranked scholarly bibliographic search, first3 records, across work types; DOI identity retained. Does not prove free full-text access or resolve an exact citation from title alone.",
+        "authentication": "Free anonymous public pool; no key/account/mailto fabrication.",
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "runs/scholarly-policy-20261105dc/observations.jsonl",
+        "analysis/external/crossref-openapi-20261105.json",
+        "examples/crossref.scouting.jsonl",
+        "examples/crossref.jsonl",
+        "examples/crossref.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Additional search modes and full-item reader access remain separate from working-query status."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Crossref says almost all descriptive metadata may be used for any purpose, with copyright exceptions for abstracts. OnlyDOI/title/type/URL retained. DOI landing/metadata presence does not establish open-access or content redistribution rights.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Free anonymous public pool; no key/account/mailto fabrication.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
+      "evidence": [
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "runs/scholarly-policy-20261105dc/observations.jsonl",
+        "analysis/external/crossref-openapi-20261105.json",
+        "examples/crossref.scouting.jsonl",
+        "examples/crossref.jsonl",
+        "examples/crossref.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "analysis/documents.jsonl"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live title-ranked scholarly bibliographic search, first3 records, across work types; DOI identity retained. Does not prove free full-text access or resolve an exact citation from title alone.",
+        "empty_and_boundary_evidence": "examples/crossref.boundaries.jsonl"
+      },
+      "evidence": [
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "runs/scholarly-policy-20261105dc/observations.jsonl",
+        "analysis/external/crossref-openapi-20261105.json",
+        "examples/crossref.scouting.jsonl",
+        "examples/crossref.jsonl",
+        "examples/crossref.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "Public pool is single-connection; currentdocs report5 rate limit with interval in response headers; research uses >=3seconds spacing.",
+          "Title matching is ranked/fuzzy: similarly titled chapters, articles and encyclopedia records can outrank the intended original work.",
+          "OnlyDOI/title/type/URL selected; no abstracts, PDFs or full text retained.",
+          "Offset paging and empty nonsense query verified; malformed negative rows400 retained."
+        ],
+        "no_bulk_content": true
+      },
+      "evidence": [
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "runs/scholarly-policy-20261105dc/observations.jsonl",
+        "analysis/external/crossref-openapi-20261105.json",
+        "examples/crossref.scouting.jsonl",
+        "examples/crossref.jsonl",
+        "examples/crossref.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production load/freshness is outside this research checkpoint."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Live title-ranked scholarly bibliographic search, first3 records, across work types; DOI identity retained. Does not prove free full-text access or resolve an exact citation from title alone.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
+      "evidence": [
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "runs/scholarly-policy-20261105dc/observations.jsonl",
+        "analysis/external/crossref-openapi-20261105.json",
+        "examples/crossref.scouting.jsonl",
+        "examples/crossref.jsonl",
+        "examples/crossref.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 155,
+      "heading": "4. Source registry and adapters",
+      "text": "Unpaywall implements `locate`, not search. Crossref enriches bibliography. OAI implements `harvest` and feeds a local-index search adapter. Unsupported filters must be rejected or disclosed, never silently ignored while presenting supposedly filtered results.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 40,
+      "heading": "3. Journal articles and broad scholarly discovery",
+      "text": "| **Crossref — DOI metadata index** | `/works?query.title=...`, `/works/{doi}`, filters/cursors. [REST docs](https://www.crossref.org/documentation/retrieve-metadata/rest-api/) | DOI landing URLs, relations and licensing enrich records. A `link` or `license` field alone does not establish free reading. | Public reads without key; real `mailto` contact recommended for polite pool. Observe rate/concurrency headers. Search worked. **Low / P1 enrichment**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 44,
+      "heading": "3. Journal articles and broad scholarly discovery",
+      "text": "Start with one broad index plus selected specialists. Calling OpenAlex, Crossref, CORE, Semantic Scholar and all repositories on every query would multiply duplicates, cost and latency.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 94,
+      "heading": "Standard connection patterns",
+      "text": "| Identifier resolver | Unpaywall, Crossref | DOI normalization, lookup/cache | OA resolution vs bibliographic enrichment |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 85,
+      "heading": "What the original checks established",
+      "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

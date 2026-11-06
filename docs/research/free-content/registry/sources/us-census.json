@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "id": "us-census",
+  "name": "US Census Bureau Data API",
+  "homepage": "https://www.census.gov/data/developers.html",
+  "group": "G04",
+  "areas": [
+    "C19",
+    "P08"
+  ],
+  "state": "deferred",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "aliases": [
+    "Census Data API",
+    "U.S. Census Bureau"
+  ],
+  "capabilities": [
+    "Official structured geographic/statistical data API. Current examples require an API key for all data queries; dataset/variable documentation is public."
+  ],
+  "query": {
+    "adapter": "unproven",
+    "endpoint": "https://api.census.gov/data/2020/dec/pl",
+    "cases": [],
+    "authentication": "Official examples page states all data queries now require an API key. No credential provisioned or used.",
+    "request_shape_verified": "documentation only; no item queries executed",
+    "documented_request": {
+      "method": "GET",
+      "url": "https://api.census.gov/data/2020/dec/pl",
+      "params": {
+        "get": "NAME,P1_001N",
+        "for": "state:06",
+        "key": "<authorized-key-required>"
+      }
+    },
+    "supported_modes": [
+      "dataset/year/variable/geography predicates"
+    ],
+    "unsupported_modes": [
+      "natural-language full-text book search",
+      "individual respondent/property-owner lookup"
+    ],
+    "paging": "Geographic predicates; pagination untested. Do not invent page/offset parameters."
+  },
+  "licensing": "Metadata and content rights remain separate and unverified unless specified below.",
+  "documentation": [
+    "https://www.census.gov/data/developers/about/terms-of-service.html",
+    "https://api.census.gov/data/2020/dec/pl/examples.html",
+    "https://api.census.gov/data/2020/dec/pl/variables/P1_001N.json"
+  ],
+  "limitations": [
+    "No current item query examples. Documentation responses are not qualified origins.",
+    "No country-specific access or complete language coverage established."
+  ],
+  "evidence": [
+    "runs/census-policy-20261105/observations.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T04:31:47.556068+00:00",
+  "next_action": "Revisit when an already-authorized Census API credential is available, or official policy documents a keyless dataset route. Continue other sources meanwhile; no account creation or owner action needed to continue the program.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "One federal statistical catalog; dataset vintages, tables and states are not independent origins.",
+      "facts": {
+        "operator": {
+          "name": "United States Census Bureau",
+          "jurisdiction": "USA"
+        },
+        "catalog_identity": "api.census.gov",
+        "native_identity_contract": "dataset path + vintage + table/variable + geographic key; preserve each component"
+      },
+      "evidence": [
+        "runs/census-policy-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "d587bbb09b60509b6eeb",
+          "observed_at": "2026-11-05T04:26:10.285021+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "e8851d9f2fb4f720179a",
+          "observed_at": "2026-11-05T04:26:18.276905+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "9fe873a06ab26fa4642c",
+          "observed_at": "2026-11-05T04:26:21.849886+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "2020 decennial redistricting dataset and P1 total-population variable documented; data not queried.",
+      "facts": {
+        "jurisdiction": "USA",
+        "metadata_language_observed": "English",
+        "vintage": 2020,
+        "variable": "P1_001N",
+        "concept": "RACE",
+        "predicate_type": "int",
+        "industries": [],
+        "India_scope": "Not an India statistical catalog"
+      },
+      "evidence": [
+        "runs/census-policy-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "d587bbb09b60509b6eeb",
+          "observed_at": "2026-11-05T04:26:10.285021+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "e8851d9f2fb4f720179a",
+          "observed_at": "2026-11-05T04:26:18.276905+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "9fe873a06ab26fa4642c",
+          "observed_at": "2026-11-05T04:26:21.849886+00:00"
+        }
+      ],
+      "open_questions": [
+        "Measure supported geographies/languages/datasets only after permitted data queries."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Exact documented geography request combined with independently fetched variable metadata; never executed as a data request.",
+      "facts": {
+        "adapter": "unproven",
+        "endpoint": "https://api.census.gov/data/2020/dec/pl",
+        "cases": [],
+        "authentication": "Official examples page states all data queries now require an API key. No credential provisioned or used.",
+        "request_shape_verified": "documentation only; no item queries executed",
+        "documented_request": {
+          "method": "GET",
+          "url": "https://api.census.gov/data/2020/dec/pl",
+          "params": {
+            "get": "NAME,P1_001N",
+            "for": "state:06",
+            "key": "<authorized-key-required>"
+          }
+        },
+        "supported_modes": [
+          "dataset/year/variable/geography predicates"
+        ],
+        "unsupported_modes": [
+          "natural-language full-text book search",
+          "individual respondent/property-owner lookup"
+        ],
+        "paging": "Geographic predicates; pagination untested. Do not invent page/offset parameters."
+      },
+      "evidence": [
+        "runs/census-policy-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "d587bbb09b60509b6eeb",
+          "observed_at": "2026-11-05T04:26:10.285021+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "e8851d9f2fb4f720179a",
+          "observed_at": "2026-11-05T04:26:18.276905+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "9fe873a06ab26fa4642c",
+          "observed_at": "2026-11-05T04:26:21.849886+00:00"
+        }
+      ],
+      "open_questions": [
+        "Execute ten distinct geographic queries after authorized key availability; inspect native keys, empty/invalid/error responses and any paging rules."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Terms permit search/display/retrieval for statistical use, require a nonendorsement notice, and prohibit respondent identification/linkage. Price/quota and copyright terms remain open.",
+      "facts": {
+        "attribution": "This product uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.",
+        "prohibited": "Identify or link any individual person, household, business or respondent; no such records collected",
+        "cost": null,
+        "numeric_quota": null,
+        "authentication": "Official examples page states all data queries now require an API key. No credential provisioned or used."
+      },
+      "evidence": [
+        "runs/census-policy-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "d587bbb09b60509b6eeb",
+          "observed_at": "2026-11-05T04:26:10.285021+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "e8851d9f2fb4f720179a",
+          "observed_at": "2026-11-05T04:26:18.276905+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "9fe873a06ab26fa4642c",
+          "observed_at": "2026-11-05T04:26:21.849886+00:00"
+        }
+      ],
+      "open_questions": [
+        "Review linked website policies/data reuse rights and any key limits; do not assume unlimited access."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Public documentation and schema accessible anonymously; data reading not attempted after explicit key requirement.",
+      "facts": {
+        "documentation_http": 200,
+        "data_queries_attempted": 0,
+        "accounts_created": 0,
+        "free_login_allowed_if_disclosed": true
+      },
+      "evidence": [
+        "runs/census-policy-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "d587bbb09b60509b6eeb",
+          "observed_at": "2026-11-05T04:26:10.285021+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "e8851d9f2fb4f720179a",
+          "observed_at": "2026-11-05T04:26:18.276905+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "9fe873a06ab26fa4642c",
+          "observed_at": "2026-11-05T04:26:21.849886+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify authorized aggregate response access and display."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "No passing data examples. A current observation of 2020 documentation does not make those statistics 2026 data.",
+      "facts": {
+        "positive_examples": 0,
+        "vintage": 2020,
+        "representative_variable": "P1_001N",
+        "relevance": "Structured geography lookup; general keyword discovery not established"
+      },
+      "evidence": [
+        "runs/census-policy-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "d587bbb09b60509b6eeb",
+          "observed_at": "2026-11-05T04:26:10.285021+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "e8851d9f2fb4f720179a",
+          "observed_at": "2026-11-05T04:26:18.276905+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "9fe873a06ab26fa4642c",
+          "observed_at": "2026-11-05T04:26:21.849886+00:00"
+        }
+      ],
+      "open_questions": [
+        "Preserve source vintage/unit/geography; verify ten distinct native aggregate outputs and negative tests."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Three serial documentation captures; no calls made through a required-key endpoint.",
+      "facts": {
+        "research_spacing_seconds": 3,
+        "response_bound_bytes": 524288,
+        "authentication_gate": "stop before data query",
+        "numeric_quota": null
+      },
+      "evidence": [
+        "runs/census-policy-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "d587bbb09b60509b6eeb",
+          "observed_at": "2026-11-05T04:26:10.285021+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "e8851d9f2fb4f720179a",
+          "observed_at": "2026-11-05T04:26:18.276905+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "9fe873a06ab26fa4642c",
+          "observed_at": "2026-11-05T04:26:21.849886+00:00"
+        }
+      ],
+      "open_questions": [
+        "Review official numeric allowance and schema/vintage update rules."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Defer data querying on an explicit authentication requirement; preserve primary evidence and useful revisit trigger.",
+      "facts": {
+        "decision": "deferred-authentication-required",
+        "trigger": "Revisit when an already-authorized Census API credential is available, or official policy documents a keyless dataset route. Continue other sources meanwhile; no account creation or owner action needed to continue the program.",
+        "qualified": false,
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/census-policy-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "d587bbb09b60509b6eeb",
+          "observed_at": "2026-11-05T04:26:10.285021+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "e8851d9f2fb4f720179a",
+          "observed_at": "2026-11-05T04:26:18.276905+00:00"
+        },
+        {
+          "path": "runs/census-policy-20261105/observations.jsonl",
+          "job_id": "9fe873a06ab26fa4642c",
+          "observed_at": "2026-11-05T04:26:21.849886+00:00"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "operator": {
+    "name": "United States Census Bureau",
+    "jurisdiction": "USA"
+  },
+  "analysis_refs": [
+    {
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
+      "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
+      "line": 33,
+      "heading": "Public API key, application or contact-email route — 8",
+      "text": "| [US Census Bureau Data API](https://api.census.gov/data/key_signup.html) | The current dataset API requires a key; none configured. | Request the free Census key using organization/email. Then verify dataset, variable and geography queries. This is statistical-data lookup, not book keyword search. Owner action: self-service signup. |",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "recovery": {
+    "status": "blocked_or_failed",
+    "reason": "Current official examples require a data API key; none is available to this run.",
+    "attempt": "Reviewed dataset/geography/variable documentation; stopped before a key-required query.",
+    "result": "Blocked on existing evidence; no new provider request in this review.",
+    "decision": "use_existing_authorized_key_or_documented_keyless_route",
+    "next_action": "Revisit when an already-authorized Census API credential is available, or official policy documents a keyless dataset route. Continue other sources meanwhile; no account creation or owner action needed to continue the program.",
+    "owner_action_required": false,
+    "evidence_reviewed_at": "2026-11-05T18:19:00.905577+00:00",
+    "new_provider_requests": 0,
+    "fresh_query_verification": false,
+    "evidence": [
+      "runs/census-policy-20261105/observations.jsonl"
+    ]
+  }
+}

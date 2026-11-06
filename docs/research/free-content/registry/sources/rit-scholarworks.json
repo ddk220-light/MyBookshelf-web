@@ -1,0 +1,442 @@
+{
+  "schema_version": 1,
+  "id": "rit-scholarworks",
+  "name": "Rochester Institute of Technology Scholar Works",
+  "homepage": "https://repository.rit.edu/theses/44/",
+  "homepage_scope": "Representative native item; catalog homepage/contract still requires review.",
+  "aliases": [
+    "https://scholarworks.rit.edu/theses/44"
+  ],
+  "group": "G05",
+  "areas": [
+    "C06"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "attributed-repository-candidate",
+  "origin_family": "rit-scholarworks",
+  "operator": {
+    "name": "Rochester Institute of Technology Scholar Works",
+    "jurisdiction": "USA",
+    "verification": "Native institution metadata, not complete legal/operator review"
+  },
+  "languages": [],
+  "capabilities": [
+    "Local title-token search over 11042 distinct thesis metadata records from all 111 published catalog pages; native thesis numbers and listed year groups preserved."
+  ],
+  "query": {
+    "adapter": "rit-thesis-catalog",
+    "endpoint": "https://repository.rit.edu/theses/",
+    "cases": [
+      {
+        "id": "thesis-title-01",
+        "intent": "Literal catalog title-token search: mathematics",
+        "expected_ids": [
+          "12827"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://repository.rit.edu/theses/",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "mathematics"
+          }
+        }
+      },
+      {
+        "id": "thesis-title-02",
+        "intent": "Literal catalog title-token search: agriculture",
+        "expected_ids": [
+          "12282"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://repository.rit.edu/theses/",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "agriculture"
+          }
+        }
+      },
+      {
+        "id": "thesis-title-03",
+        "intent": "Literal catalog title-token search: construction",
+        "expected_ids": [
+          "12813"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://repository.rit.edu/theses/",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "construction"
+          }
+        }
+      },
+      {
+        "id": "thesis-title-04",
+        "intent": "Literal catalog title-token search: logistics",
+        "expected_ids": [
+          "12473"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://repository.rit.edu/theses/",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "logistics"
+          }
+        }
+      },
+      {
+        "id": "thesis-title-05",
+        "intent": "Literal catalog title-token search: mining (including data mining)",
+        "expected_ids": [
+          "11439"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://repository.rit.edu/theses/",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "mining"
+          }
+        }
+      },
+      {
+        "id": "thesis-title-06",
+        "intent": "Literal catalog title-token search: renewable",
+        "expected_ids": [
+          "12725"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://repository.rit.edu/theses/",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "renewable"
+          }
+        }
+      },
+      {
+        "id": "thesis-title-07",
+        "intent": "Literal catalog title-token search: music",
+        "expected_ids": [
+          "12553"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://repository.rit.edu/theses/",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "music"
+          }
+        }
+      },
+      {
+        "id": "thesis-title-08",
+        "intent": "Literal catalog title-token search: chemistry",
+        "expected_ids": [
+          "12308"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://repository.rit.edu/theses/",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "chemistry"
+          }
+        }
+      },
+      {
+        "id": "thesis-title-09",
+        "intent": "Literal catalog title-token search: software",
+        "expected_ids": [
+          "12555"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://repository.rit.edu/theses/",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "software"
+          }
+        }
+      },
+      {
+        "id": "thesis-title-10",
+        "intent": "Literal catalog title-token search: robots",
+        "expected_ids": [
+          "12789"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://repository.rit.edu/theses/",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "robots"
+          }
+        }
+      }
+    ],
+    "authentication": "Anonymous policy-permitted static catalog GETs, paced serially; no key/login/payment.",
+    "request_shape_verified": true,
+    "catalog_pages": 111,
+    "catalog_entries": 11042
+  },
+  "licensing": "Public RIT catalog metadata and its linked RSS copyright notice observed; no blanket content-reuse license inferred. Titles/native URLs/year groups are retained for research search only; no full works retrieved.",
+  "documentation": [
+    "https://repository.rit.edu/theses/44/"
+  ],
+  "evidence": [
+    "examples/openalex.rit-reader.jsonl",
+    "examples/openalex.jsonl",
+    "runs/thesis-index-readers-20261105ba/observations.jsonl",
+    "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+    "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+    "runs/rit-canonical-thesis-catalog-20261105ek/observations.jsonl",
+    "runs/rit-thesis-catalog-20261105el/observations.jsonl",
+    "analysis/external/rit-thesis-catalog-20261105.json",
+    "examples/rit-scholarworks.jsonl",
+    "examples/rit-scholarworks.boundaries.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T21:02:50.103438+00:00",
+  "fresh_query_verification": false,
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+  "analysis_refs": [],
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Map the attributed OpenAlex location and captured native repository to one candidate institution catalog.",
+      "facts": {
+        "operator": "Rochester Institute of Technology Scholar Works",
+        "jurisdiction": "USA",
+        "representative_native_url": "https://repository.rit.edu/theses/44/",
+        "identity": "scholarworks.rit.edu/theses/44 -> repository.rit.edu/theses/44 -> trailing-slash canonical page via published redirects. One repository, not three origins.",
+        "origin_count": "No new qualified origin. OpenAlex location mirrors, institutional namespaces, handles,files and languages are not additional origins.",
+        "native_import_note": "Original item comments: imported from RIT Digital Media Library on DSpace to RIT Scholar Works. Migration is not another origin."
+      },
+      "evidence": [
+        "examples/openalex.rit-reader.jsonl",
+        "examples/openalex.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/openalex.rit-reader.jsonl",
+          "job_id": null,
+          "url": "https://repository.rit.edu/theses/44/",
+          "observed_at": "2026-11-05T13:15:03.066315+00:00",
+          "body_sha256": "daeaa6b54677bb1cd125a1571562d4135ddb3469e6ec315516787cbfb3d4a374",
+          "policy_sha256": "3235dc267a0b76cb293c794d833c2eff9e1a49d0a1f181168b933363fe91b72d"
+        }
+      ],
+      "fresh_query_verification": false,
+      "open_questions": [
+        "Confirm catalog-level operator/legal identity and supported current catalog boundaries, beyond the single native item."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "One previously captured native thesis record is available as provenance; broad repository scope and languages remain unmeasured.",
+      "facts": {
+        "areas": [
+          "C06"
+        ],
+        "native_title": "Demarcating Computer Science",
+        "publication_date": "2012-05-21",
+        "degree_type": "Undergraduate Philosophy Bachelor of Science thesis, not a PhD.",
+        "jurisdiction": "USA",
+        "language_caution": "UI translation choices are not proof of thesis languages; current full-text language is not established.",
+        "country_access": "One managed cloud viewpoint; no independent USA/India network availability."
+      },
+      "evidence": [
+        "examples/openalex.rit-reader.jsonl",
+        "examples/openalex.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/openalex.rit-reader.jsonl",
+          "job_id": null,
+          "url": "https://repository.rit.edu/theses/44/",
+          "observed_at": "2026-11-05T13:15:03.066315+00:00",
+          "body_sha256": "daeaa6b54677bb1cd125a1571562d4135ddb3469e6ec315516787cbfb3d4a374",
+          "policy_sha256": "3235dc267a0b76cb293c794d833c2eff9e1a49d0a1f181168b933363fe91b72d"
+        }
+      ],
+      "fresh_query_verification": false,
+      "open_questions": [
+        "Measure supported item types,languages,country holdings and overlap without extrapolating from one record."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Local title-token search over 11042 distinct thesis metadata records from all 111 published catalog pages; native thesis numbers and listed year groups preserved.",
+      "facts": {
+        "adapter": "rit-thesis-catalog",
+        "endpoint": "https://repository.rit.edu/theses/",
+        "cases": [
+          "thesis-title-01",
+          "thesis-title-02",
+          "thesis-title-03",
+          "thesis-title-04",
+          "thesis-title-05",
+          "thesis-title-06",
+          "thesis-title-07",
+          "thesis-title-08",
+          "thesis-title-09",
+          "thesis-title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Local title-token search over 11042 distinct thesis metadata records from all 111 published catalog pages; native thesis numbers and listed year groups preserved.",
+        "authentication": "Anonymous policy-permitted static catalog GETs, paced serially; no key/login/payment.",
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+        "runs/rit-canonical-thesis-catalog-20261105ek/observations.jsonl",
+        "runs/rit-thesis-catalog-20261105el/observations.jsonl",
+        "analysis/external/rit-thesis-catalog-20261105.json",
+        "examples/rit-scholarworks.jsonl",
+        "examples/rit-scholarworks.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Additional search modes and full-item reader access remain separate from working-query status."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Public RIT catalog metadata and its linked RSS copyright notice observed; no blanket content-reuse license inferred. Titles/native URLs/year groups are retained for research search only; no full works retrieved.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous policy-permitted static catalog GETs, paced serially; no key/login/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
+      "evidence": [
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+        "runs/rit-canonical-thesis-catalog-20261105ek/observations.jsonl",
+        "runs/rit-thesis-catalog-20261105el/observations.jsonl",
+        "analysis/external/rit-thesis-catalog-20261105.json",
+        "examples/rit-scholarworks.jsonl",
+        "examples/rit-scholarworks.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Native metadata title/degree were captured anonymously after resolving the exact robots/host redirect. Full thesis reading remains false.",
+      "facts": {
+        "native_metadata_only": true,
+        "full_thesis_reading_verified": false,
+        "query_examples_verified_here": 0,
+        "new_requests_in_this_review": 0
+      },
+      "evidence": [
+        "examples/openalex.rit-reader.jsonl",
+        "examples/openalex.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/openalex.rit-reader.jsonl",
+          "job_id": null,
+          "url": "https://repository.rit.edu/theses/44/",
+          "observed_at": "2026-11-05T13:15:03.066315+00:00",
+          "body_sha256": "daeaa6b54677bb1cd125a1571562d4135ddb3469e6ec315516787cbfb3d4a374",
+          "policy_sha256": "3235dc267a0b76cb293c794d833c2eff9e1a49d0a1f181168b933363fe91b72d"
+        }
+      ],
+      "fresh_query_verification": false,
+      "open_questions": [
+        "Read a permitted representative full item and verify exact edition,language,accessibility and complete-versus-chapter identity."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Local title-token search over 11042 distinct thesis metadata records from all 111 published catalog pages; native thesis numbers and listed year groups preserved.",
+        "empty_and_boundary_evidence": "examples/rit-scholarworks.boundaries.jsonl"
+      },
+      "evidence": [
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+        "runs/rit-canonical-thesis-catalog-20261105ek/observations.jsonl",
+        "runs/rit-thesis-catalog-20261105el/observations.jsonl",
+        "analysis/external/rit-thesis-catalog-20261105.json",
+        "examples/rit-scholarworks.jsonl",
+        "examples/rit-scholarworks.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "The live /do/search form is disallowed by robots. The public linked static thesis catalog is permitted; no denied query request or private API replay.",
+          "A complete traversal of the published thesis listing is not the entire institutional repository. The recent RSS feed has17 records, mostly senate reports, and is not used as the thesis catalog.",
+          "No PDF/EPUB or other full work downloaded. Native thesis number differs from download CGI article number; retain exact record links.",
+          "Literal title tokens only; no full-text, translated or semantic search. Mining can mean data mining, not mineral-industry coverage.",
+          "The crawl is a dated metadata snapshot rather than an atomic database export; catalog updates require a newly checked traversal. Item reader access, embargoes, content rights and edition versions remain separate."
+        ],
+        "no_bulk_content": true
+      },
+      "evidence": [
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+        "runs/rit-canonical-thesis-catalog-20261105ek/observations.jsonl",
+        "runs/rit-thesis-catalog-20261105el/observations.jsonl",
+        "analysis/external/rit-thesis-catalog-20261105.json",
+        "examples/rit-scholarworks.jsonl",
+        "examples/rit-scholarworks.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production load/freshness is outside this research checkpoint."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Local title-token search over 11042 distinct thesis metadata records from all 111 published catalog pages; native thesis numbers and listed year groups preserved.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
+      "evidence": [
+        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+        "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+        "runs/rit-canonical-thesis-catalog-20261105ek/observations.jsonl",
+        "runs/rit-thesis-catalog-20261105el/observations.jsonl",
+        "analysis/external/rit-thesis-catalog-20261105.json",
+        "examples/rit-scholarworks.jsonl",
+        "examples/rit-scholarworks.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
+    }
+  },
+  "limitations": [
+    "The live /do/search form is disallowed by robots. The public linked static thesis catalog is permitted; no denied query request or private API replay.",
+    "A complete traversal of the published thesis listing is not the entire institutional repository. The recent RSS feed has17 records, mostly senate reports, and is not used as the thesis catalog.",
+    "No PDF/EPUB or other full work downloaded. Native thesis number differs from download CGI article number; retain exact record links.",
+    "Literal title tokens only; no full-text, translated or semantic search. Mining can mean data mining, not mineral-industry coverage.",
+    "The crawl is a dated metadata snapshot rather than an atomic database export; catalog updates require a newly checked traversal. Item reader access, embargoes, content rights and edition versions remain separate."
+  ]
+}

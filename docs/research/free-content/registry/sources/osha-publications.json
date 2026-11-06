@@ -1,0 +1,752 @@
+{
+  "schema_version": 1,
+  "id": "osha-publications",
+  "name": "OSHA Publications",
+  "homepage": "https://www.osha.gov/publications",
+  "group": "G03",
+  "areas": [
+    "C13",
+    "I04",
+    "I06",
+    "I08",
+    "I17"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "operator": {
+    "name": "US Department of Labor, Occupational Safety and Health Administration",
+    "jurisdiction": "USA",
+    "evidence": [
+      {
+        "path": "runs/source-evidence-20261105/observations.jsonl",
+        "job_id": "f05160b724f1e1746633",
+        "observed_at": "2026-11-05T02:27:43.860302+00:00"
+      }
+    ]
+  },
+  "aliases": [],
+  "capabilities": [
+    "Live public title/keyword/number search across OSHA publications; ten tested topics, exact publication date/language/native link preserved."
+  ],
+  "query": {
+    "adapter": "osha-publications",
+    "endpoint": "https://www.osha.gov/publications/publication-products",
+    "authentication": "Public GET form; no login, key or print transaction.",
+    "cost": "Free public publication metadata search.",
+    "request_shape_verified": true,
+    "research_pause_seconds": 3,
+    "supported_modes": [
+      "Published title/keyword/publication-number GET search",
+      "Published pagination links, when present"
+    ],
+    "unsupported_modes": [
+      "Whole-document full-text search",
+      "Print orders",
+      "Unreviewed hidden endpoints",
+      "Inference that all editions are current law"
+    ],
+    "cases": [
+      {
+        "id": "topic-01",
+        "intent": "Find OSHA publication metadata about asbestos",
+        "expected_ids": [
+          "https://www.osha.gov/sites/default/files/publications/OSHA3507.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.osha.gov/publications/publication-products",
+          "params": {
+            "publication_title": "asbestos"
+          }
+        }
+      },
+      {
+        "id": "topic-02",
+        "intent": "Find OSHA publication metadata about silica",
+        "expected_ids": [
+          "https://www.osha.gov/sites/default/files/publications/OSHA3768.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.osha.gov/publications/publication-products",
+          "params": {
+            "publication_title": "silica"
+          }
+        }
+      },
+      {
+        "id": "topic-03",
+        "intent": "Find OSHA publication metadata about lithium-ion",
+        "expected_ids": [
+          "https://www.osha.gov/sites/default/files/publications/OSHA4480.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.osha.gov/publications/publication-products",
+          "params": {
+            "publication_title": "lithium-ion"
+          }
+        }
+      },
+      {
+        "id": "topic-04",
+        "intent": "Find OSHA publication metadata about hearing protector",
+        "expected_ids": [
+          "https://www.osha.gov/sites/default/files/publications/HEARING_PROTECTOR_FIT_TESTING_SHIB.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.osha.gov/publications/publication-products",
+          "params": {
+            "publication_title": "hearing protector"
+          }
+        }
+      },
+      {
+        "id": "topic-05",
+        "intent": "Find OSHA publication metadata about lockout",
+        "expected_ids": [
+          "https://www.osha.gov/sites/default/files/publications/OSHAFS3529.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.osha.gov/publications/publication-products",
+          "params": {
+            "publication_title": "lockout"
+          }
+        }
+      },
+      {
+        "id": "topic-06",
+        "intent": "Find OSHA publication metadata about workers' rights",
+        "expected_ids": [
+          "https://www.osha.gov/sites/default/files/publications/OSHA3021.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.osha.gov/publications/publication-products",
+          "params": {
+            "publication_title": "workers' rights"
+          }
+        }
+      },
+      {
+        "id": "topic-07",
+        "intent": "Find OSHA publication metadata about fall prevention",
+        "expected_ids": [
+          "https://www.osha.gov/sites/default/files/publications/FACTSHEET.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.osha.gov/publications/publication-products",
+          "params": {
+            "publication_title": "fall prevention"
+          }
+        }
+      },
+      {
+        "id": "topic-08",
+        "intent": "Find OSHA publication metadata about pictogram",
+        "expected_ids": [
+          "https://www.osha.gov/sites/default/files/publications/OSHA3491QUICKCARDPICTOGRAM.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.osha.gov/publications/publication-products",
+          "params": {
+            "publication_title": "pictogram"
+          }
+        }
+      },
+      {
+        "id": "topic-09",
+        "intent": "Find OSHA publication metadata about inspections",
+        "expected_ids": [
+          "https://www.osha.gov/sites/default/files/publications/FACTSHEET-INSPECTIONS.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.osha.gov/publications/publication-products",
+          "params": {
+            "publication_title": "inspections"
+          }
+        }
+      },
+      {
+        "id": "topic-10",
+        "intent": "Find OSHA publication metadata about recommended practices",
+        "expected_ids": [
+          "https://www.osha.gov/sites/default/files/publications/OSHA3885.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.osha.gov/publications/publication-products",
+          "params": {
+            "publication_title": "recommended practices"
+          }
+        }
+      }
+    ],
+    "tested_scope": "Live public title/keyword/number search across OSHA publications; ten tested topics, exact publication date/language/native link preserved."
+  },
+  "documentation": [
+    "https://www.osha.gov/publications",
+    "https://www.dol.gov/general/aboutdol/website-policies",
+    "https://www.dol.gov/general/aboutdol/copyright"
+  ],
+  "licensing": "DOL policy permits reuse of federally created public-domain materials with no implied endorsement; some third-party text/images and seals are excluded. Store factual publication metadata and links, not bulk publication content. Item-specific full-content rights remain separate.",
+  "limitations": [
+    "Public form search, not a documented JSON API or full-document semantic search.",
+    "Some published PDF links differ in filename capitalization between homepage and search. Preserve exact returned URL; language page fragments remain separate identities.",
+    "Nonsense query returns HTTP200 with a query form but no explicit empty-state marker; parser rejects ambiguous empty markup. Broad safety query yielded230 linked versions and no pager links; total catalog recall is not asserted.",
+    "Printed orders, bulk PDFs and accounts are excluded. Language variants are not additional origins."
+  ],
+  "evidence": [
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+    "runs/industry-search-policy-20261105cs/observations.jsonl",
+    "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+    "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+    "examples/osha-publications.jsonl",
+    "examples/osha-publications.benchmark.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T17:57:15.867146+00:00",
+  "next_action": "Working scoped search. Improve explicit handling of observed empty markup without masking schema errors; review representative reading links and published catalog changes. Preserve case-sensitive filenames and language-page anchors.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Primary document identifies this catalog/operator; related formats, languages and services are not extra origins.",
+      "facts": {
+        "operator": {
+          "name": "US Department of Labor, Occupational Safety and Health Administration",
+          "jurisdiction": "USA",
+          "evidence": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "f05160b724f1e1746633",
+              "observed_at": "2026-11-05T02:27:43.860302+00:00"
+            }
+          ]
+        },
+        "catalog": "OSHA Publications",
+        "deduplication": "One catalog record; publisher/format overlap not yet measured"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T02:27:43.860302+00:00"
+        }
+      ],
+      "open_questions": [
+        "Complete canonical item/format/version and cross-catalog overlap mapping."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Official occupational-safety publications catalog displays publication numbers/year, languages and some EPUB/MOBI options, alongside print ordering.",
+      "facts": {
+        "area_candidates": [
+          "C13",
+          "I04",
+          "I06",
+          "I08",
+          "I17"
+        ],
+        "operator_country": "USA",
+        "observed_catalog_facts": {
+          "representative_identity": "OSHA FS-4497 — Safety Champions Fact Sheet — 2026 — English",
+          "related_translation_id": "OSHA FS-4503 — 2026 — Español",
+          "named_languages": [
+            "English",
+            "Spanish",
+            "Chinese Simplified",
+            "Chinese Traditional",
+            "Haitian Creole",
+            "Korean",
+            "Portuguese",
+            "Samoan",
+            "Tagalog"
+          ],
+          "unsupported": "Publication/translation IDs are distinct versions; guidance is not a substitute for current legally applicable standards"
+        },
+        "qualification": "Area associations remain candidate coverage, not qualified supply"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T02:27:43.860302+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify representative item languages and actual USA/India access/applicability; no remote probe implies worldwide access."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Live public title/keyword/number search across OSHA publications; ten tested topics, exact publication date/language/native link preserved.",
+      "facts": {
+        "adapter": "osha-publications",
+        "endpoint": "https://www.osha.gov/publications/publication-products",
+        "cases": [
+          "topic-01",
+          "topic-02",
+          "topic-03",
+          "topic-04",
+          "topic-05",
+          "topic-06",
+          "topic-07",
+          "topic-08",
+          "topic-09",
+          "topic-10"
+        ],
+        "authentication": "Public GET form; no login, key or print transaction.",
+        "request_shape_verified": true,
+        "current_passing_examples": 10,
+        "query_coverage": "working",
+        "tested_scope": "Live public title/keyword/number search across OSHA publications; ten tested topics, exact publication date/language/native link preserved.",
+        "activation_approved": false,
+        "method": "osha-publications",
+        "supported_modes": [
+          "Published title/keyword/publication-number GET search",
+          "Published pagination links, when present"
+        ],
+        "unsupported_modes": [
+          "Whole-document full-text search",
+          "Print orders",
+          "Unreviewed hidden endpoints",
+          "Inference that all editions are current law"
+        ]
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-policy-20261105cs/observations.jsonl",
+        "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+        "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+        "examples/osha-publications.jsonl",
+        "examples/osha-publications.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T02:27:43.860302+00:00"
+        },
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T17:45:25.206647+00:00",
+          "url": "https://www.osha.gov/publications",
+          "body_sha256": "83f42f62cbd63b5cb5985016be2ace13f3725914ee372294ac443d2c00d4d8ba",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "0d40c8100bfa884b302b",
+          "observed_at": "2026-11-05T17:47:09.740807+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=asbestos",
+          "body_sha256": "34030db01b35b13506d9d5a7a5494e18f626eb3b3952289c1c2bdf6b7052ed50",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "0376aa409400709736a2",
+          "observed_at": "2026-11-05T17:47:26.043108+00:00",
+          "url": "https://www.dol.gov/general/aboutdol/website-policies",
+          "body_sha256": "041f60ad170602fd9393503c077e8ae0a0f7f1d9bd23d8630e51671cf4468f6b",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        },
+        {
+          "path": "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+          "job_id": "ec8005f7068b03166589",
+          "observed_at": "2026-11-05T17:48:12.756434+00:00",
+          "url": "https://www.dol.gov/general/aboutdol/copyright",
+          "body_sha256": "3d5ccb16fc5e489647aaf8c096dd8c24b75e6159ee99833f97b5ef685ac4310d",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "4d2b8d193252fc3b18fd",
+          "observed_at": "2026-11-05T17:54:31.869382+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=workers%27+rights",
+          "body_sha256": "4421161a9e4f4a90dad432475531dbd7ddf1eafdb121790f9f543c521affbdbb",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "7133b7126dd3b69737a2",
+          "observed_at": "2026-11-05T17:54:43.600534+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=pictogram",
+          "body_sha256": "128d469ec5b59d8323c031321423cf5d482bdfb1b2843999341425e6d67934db",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "d595323fa64d37d5ae42",
+          "observed_at": "2026-11-05T17:54:54.867653+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=zzznobook481276",
+          "body_sha256": "57bdef46dbfc864d904b689e331566992cc9fc41c3616a81cb36807af1052339",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "4f56555cf357f43576a0",
+          "observed_at": "2026-11-05T17:55:07.258099+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=safety",
+          "body_sha256": "97ae87508acb6f984f7177f253422795ef98d42dec4f7feb6c8ccce412fb1694",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        }
+      ],
+      "open_questions": [
+        "Later-day source changes and additional scopes remain untested."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "DOL policy permits reuse of federally created public-domain materials with no implied endorsement; some third-party text/images and seals are excluded. Store factual publication metadata and links, not bulk publication content. Item-specific full-content rights remain separate.",
+      "facts": {
+        "rights": "Unverified per item",
+        "cost": "Unknown",
+        "authentication": "Unknown; no query executed",
+        "observed_policy_facts": {}
+      },
+      "evidence": [
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-policy-20261105cs/observations.jsonl",
+        "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+        "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+        "examples/osha-publications.jsonl",
+        "examples/osha-publications.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T17:45:25.206647+00:00",
+          "url": "https://www.osha.gov/publications",
+          "body_sha256": "83f42f62cbd63b5cb5985016be2ace13f3725914ee372294ac443d2c00d4d8ba",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "0d40c8100bfa884b302b",
+          "observed_at": "2026-11-05T17:47:09.740807+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=asbestos",
+          "body_sha256": "34030db01b35b13506d9d5a7a5494e18f626eb3b3952289c1c2bdf6b7052ed50",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "0376aa409400709736a2",
+          "observed_at": "2026-11-05T17:47:26.043108+00:00",
+          "url": "https://www.dol.gov/general/aboutdol/website-policies",
+          "body_sha256": "041f60ad170602fd9393503c077e8ae0a0f7f1d9bd23d8630e51671cf4468f6b",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        },
+        {
+          "path": "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+          "job_id": "ec8005f7068b03166589",
+          "observed_at": "2026-11-05T17:48:12.756434+00:00",
+          "url": "https://www.dol.gov/general/aboutdol/copyright",
+          "body_sha256": "3d5ccb16fc5e489647aaf8c096dd8c24b75e6159ee99833f97b5ef685ac4310d",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "4d2b8d193252fc3b18fd",
+          "observed_at": "2026-11-05T17:54:31.869382+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=workers%27+rights",
+          "body_sha256": "4421161a9e4f4a90dad432475531dbd7ddf1eafdb121790f9f543c521affbdbb",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "7133b7126dd3b69737a2",
+          "observed_at": "2026-11-05T17:54:43.600534+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=pictogram",
+          "body_sha256": "128d469ec5b59d8323c031321423cf5d482bdfb1b2843999341425e6d67934db",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "d595323fa64d37d5ae42",
+          "observed_at": "2026-11-05T17:54:54.867653+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=zzznobook481276",
+          "body_sha256": "57bdef46dbfc864d904b689e331566992cc9fc41c3616a81cb36807af1052339",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "4f56555cf357f43576a0",
+          "observed_at": "2026-11-05T17:55:07.258099+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=safety",
+          "body_sha256": "97ae87508acb6f984f7177f253422795ef98d42dec4f7feb6c8ccce412fb1694",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        }
+      ],
+      "open_questions": [
+        "Separate metadata rights, reading access, reuse license and paid services."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Anonymous documentation/listing response observed; no complete item access verified.",
+      "facts": {
+        "http_status": 200,
+        "reading_condition": "Unknown per item",
+        "observed_samples": []
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T02:27:43.860302+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify permitted representative item reading and precise account/eligibility/price conditions."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Live public title/keyword/number search across OSHA publications; ten tested topics, exact publication date/language/native link preserved.",
+      "facts": {
+        "positive_examples": 10,
+        "native_identity_hint": "OSHA FS-4497 — Safety Champions Fact Sheet — 2026 — English",
+        "historical_claims": "Retained separately in corpus; provider statements not independently enumerated",
+        "current_passing_examples": 10,
+        "query_coverage": "working",
+        "tested_scope": "Live public title/keyword/number search across OSHA publications; ten tested topics, exact publication date/language/native link preserved.",
+        "activation_approved": false,
+        "negative_evidence": "examples/osha-publications.benchmark.jsonl"
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-policy-20261105cs/observations.jsonl",
+        "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+        "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+        "examples/osha-publications.jsonl",
+        "examples/osha-publications.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T02:27:43.860302+00:00"
+        },
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T17:45:25.206647+00:00",
+          "url": "https://www.osha.gov/publications",
+          "body_sha256": "83f42f62cbd63b5cb5985016be2ace13f3725914ee372294ac443d2c00d4d8ba",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "0d40c8100bfa884b302b",
+          "observed_at": "2026-11-05T17:47:09.740807+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=asbestos",
+          "body_sha256": "34030db01b35b13506d9d5a7a5494e18f626eb3b3952289c1c2bdf6b7052ed50",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "0376aa409400709736a2",
+          "observed_at": "2026-11-05T17:47:26.043108+00:00",
+          "url": "https://www.dol.gov/general/aboutdol/website-policies",
+          "body_sha256": "041f60ad170602fd9393503c077e8ae0a0f7f1d9bd23d8630e51671cf4468f6b",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        },
+        {
+          "path": "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+          "job_id": "ec8005f7068b03166589",
+          "observed_at": "2026-11-05T17:48:12.756434+00:00",
+          "url": "https://www.dol.gov/general/aboutdol/copyright",
+          "body_sha256": "3d5ccb16fc5e489647aaf8c096dd8c24b75e6159ee99833f97b5ef685ac4310d",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "4d2b8d193252fc3b18fd",
+          "observed_at": "2026-11-05T17:54:31.869382+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=workers%27+rights",
+          "body_sha256": "4421161a9e4f4a90dad432475531dbd7ddf1eafdb121790f9f543c521affbdbb",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "7133b7126dd3b69737a2",
+          "observed_at": "2026-11-05T17:54:43.600534+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=pictogram",
+          "body_sha256": "128d469ec5b59d8323c031321423cf5d482bdfb1b2843999341425e6d67934db",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "d595323fa64d37d5ae42",
+          "observed_at": "2026-11-05T17:54:54.867653+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=zzznobook481276",
+          "body_sha256": "57bdef46dbfc864d904b689e331566992cc9fc41c3616a81cb36807af1052339",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "4f56555cf357f43576a0",
+          "observed_at": "2026-11-05T17:55:07.258099+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=safety",
+          "body_sha256": "97ae87508acb6f984f7177f253422795ef98d42dec4f7feb6c8ccce412fb1694",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        }
+      ],
+      "open_questions": [
+        "Per-item current applicability and native reading access remain separate."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Current primary document evidence captured under checked robots policy; API allowance and refresh behavior unknown.",
+      "facts": {
+        "robots_status": 200,
+        "capture_http": 200,
+        "numeric_quota": null,
+        "bulk_items_copied": false,
+        "current_restriction": "No login/access denial in current catalog/search responses; serial policy pacing observed.",
+        "maximum_response_bytes": 524288,
+        "automatic_retries": 0
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T02:27:43.860302+00:00"
+        }
+      ],
+      "open_questions": [
+        "Review machine-access policy, paging limits, refresh/deletion and backoff rules."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Working query connector in stated scope; deeper content/access checks remain open and do not gate query coverage.",
+      "facts": {
+        "decision": "working-in-tested-scope",
+        "next_action": "Working scoped search. Improve explicit handling of observed empty markup without masking schema errors; review representative reading links and published catalog changes. Preserve case-sensitive filenames and language-page anchors.",
+        "qualification": false,
+        "activation_approved": false,
+        "current_passing_examples": 10,
+        "query_coverage": "working",
+        "tested_scope": "Live public title/keyword/number search across OSHA publications; ten tested topics, exact publication date/language/native link preserved.",
+        "owner_action_required": false
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+        "runs/industry-search-policy-20261105cs/observations.jsonl",
+        "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+        "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+        "examples/osha-publications.jsonl",
+        "examples/osha-publications.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T02:27:43.860302+00:00"
+        },
+        {
+          "path": "runs/industry-catalog-inspection-20261105cr/observations.jsonl",
+          "job_id": "f05160b724f1e1746633",
+          "observed_at": "2026-11-05T17:45:25.206647+00:00",
+          "url": "https://www.osha.gov/publications",
+          "body_sha256": "83f42f62cbd63b5cb5985016be2ace13f3725914ee372294ac443d2c00d4d8ba",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "0d40c8100bfa884b302b",
+          "observed_at": "2026-11-05T17:47:09.740807+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=asbestos",
+          "body_sha256": "34030db01b35b13506d9d5a7a5494e18f626eb3b3952289c1c2bdf6b7052ed50",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/industry-search-policy-20261105cs/observations.jsonl",
+          "job_id": "0376aa409400709736a2",
+          "observed_at": "2026-11-05T17:47:26.043108+00:00",
+          "url": "https://www.dol.gov/general/aboutdol/website-policies",
+          "body_sha256": "041f60ad170602fd9393503c077e8ae0a0f7f1d9bd23d8630e51671cf4468f6b",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        },
+        {
+          "path": "runs/industry-reuse-policy-20261105ct/observations.jsonl",
+          "job_id": "ec8005f7068b03166589",
+          "observed_at": "2026-11-05T17:48:12.756434+00:00",
+          "url": "https://www.dol.gov/general/aboutdol/copyright",
+          "body_sha256": "3d5ccb16fc5e489647aaf8c096dd8c24b75e6159ee99833f97b5ef685ac4310d",
+          "policy_sha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "4d2b8d193252fc3b18fd",
+          "observed_at": "2026-11-05T17:54:31.869382+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=workers%27+rights",
+          "body_sha256": "4421161a9e4f4a90dad432475531dbd7ddf1eafdb121790f9f543c521affbdbb",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "7133b7126dd3b69737a2",
+          "observed_at": "2026-11-05T17:54:43.600534+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=pictogram",
+          "body_sha256": "128d469ec5b59d8323c031321423cf5d482bdfb1b2843999341425e6d67934db",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "d595323fa64d37d5ae42",
+          "observed_at": "2026-11-05T17:54:54.867653+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=zzznobook481276",
+          "body_sha256": "57bdef46dbfc864d904b689e331566992cc9fc41c3616a81cb36807af1052339",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        },
+        {
+          "path": "runs/osha-parser-recovery-20261105cv/observations.jsonl",
+          "job_id": "4f56555cf357f43576a0",
+          "observed_at": "2026-11-05T17:55:07.258099+00:00",
+          "url": "https://www.osha.gov/publications/publication-products?publication_title=safety",
+          "body_sha256": "97ae87508acb6f984f7177f253422795ef98d42dec4f7feb6c8ccce412fb1694",
+          "policy_sha256": "db47a9caf3af7133b8c7615e5d3182317b1d1e2728eb044458d007d43c00dcc2"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "f1277973934e66ee1006136955e0ff90f7f5ed63acdd9dc16f1fa61728f4c7fe",
+      "path": "docs/research/free-content/discovery/INDUSTRIES.md",
+      "line": 63,
+      "heading": "Industry-specific discovery matrix",
+      "text": "| **I04 Construction and civil infrastructure** — site supervision, concrete, scaffolding, roads | [OSHA publications](https://www.osha.gov/publications); [NIST publications](https://www.nist.gov/publications); ILO construction guidance | NQR Construction; [CPWD](https://cpwd.gov.in/) publications and state public-works departments | `site:{public-works-domain} \"concrete\" (handbook OR specification)`. Resolve document number, amendments and issuing jurisdiction. A reference to a paid building standard does not make that standard freely accessible. |",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

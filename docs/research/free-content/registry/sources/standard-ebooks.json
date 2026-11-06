@@ -1,0 +1,432 @@
+{
+  "schema_version": 1,
+  "id": "standard-ebooks",
+  "name": "Standard Ebooks",
+  "homepage": "https://standardebooks.org/feeds",
+  "homepage_status": "historical-reference; canonical homepage/operator needs review",
+  "group": "G01",
+  "areas": [
+    "C02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "capabilities": [
+    "Local title-token and native edition-URL search over the15 entries in the openly available Standard Ebooks New Releases Atom feed. Only this recent-release subset is Working; full-catalog search remains unavailable without membership."
+  ],
+  "query": {
+    "adapter": "standard-new-releases",
+    "endpoint": "https://standardebooks.org/feeds/atom/new-releases",
+    "cases": [
+      {
+        "id": "title-01",
+        "intent": "Local exported metadata title search: Green Mummy",
+        "expected_ids": [
+          "https://standardebooks.org/ebooks/fergus-hume/the-green-mummy"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://standardebooks.org/feeds/atom/new-releases",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Green Mummy"
+          }
+        }
+      },
+      {
+        "id": "title-02",
+        "intent": "Local exported metadata title search: Prisoner Opal",
+        "expected_ids": [
+          "https://standardebooks.org/ebooks/a-e-w-mason/the-prisoner-in-the-opal"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://standardebooks.org/feeds/atom/new-releases",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Prisoner Opal"
+          }
+        }
+      },
+      {
+        "id": "title-03",
+        "intent": "Local exported metadata title search: Ivanov",
+        "expected_ids": [
+          "https://standardebooks.org/ebooks/anton-chekhov/ivanov/constance-garnett"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://standardebooks.org/feeds/atom/new-releases",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Ivanov"
+          }
+        }
+      },
+      {
+        "id": "title-04",
+        "intent": "Local exported metadata title search: Vultures",
+        "expected_ids": [
+          "https://standardebooks.org/ebooks/henry-seton-merriman/the-vultures"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://standardebooks.org/feeds/atom/new-releases",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Vultures"
+          }
+        }
+      },
+      {
+        "id": "title-05",
+        "intent": "Local exported metadata title search: Suspense",
+        "expected_ids": [
+          "https://standardebooks.org/ebooks/henry-seton-merriman/suspense"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://standardebooks.org/feeds/atom/new-releases",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Suspense"
+          }
+        }
+      },
+      {
+        "id": "title-06",
+        "intent": "Local exported metadata title search: Emperor Portugallia",
+        "expected_ids": [
+          "https://standardebooks.org/ebooks/selma-lagerlof/the-emperor-of-portugallia/velma-swanston-howard"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://standardebooks.org/feeds/atom/new-releases",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Emperor Portugallia"
+          }
+        }
+      },
+      {
+        "id": "title-07",
+        "intent": "Local exported metadata title search: Mystery Barranca",
+        "expected_ids": [
+          "https://standardebooks.org/ebooks/herman-whitaker/the-mystery-of-the-barranca"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://standardebooks.org/feeds/atom/new-releases",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Mystery Barranca"
+          }
+        }
+      },
+      {
+        "id": "title-08",
+        "intent": "Local exported metadata title search: Moral Letters",
+        "expected_ids": [
+          "https://standardebooks.org/ebooks/seneca/moral-letters-to-lucilius/richard-m-gummere"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://standardebooks.org/feeds/atom/new-releases",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Moral Letters"
+          }
+        }
+      },
+      {
+        "id": "title-09",
+        "intent": "Local exported metadata title search: Robur",
+        "expected_ids": [
+          "https://standardebooks.org/ebooks/jules-verne/robur-the-conqueror/sampson-low-marston-searle-rivington"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://standardebooks.org/feeds/atom/new-releases",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "Robur"
+          }
+        }
+      },
+      {
+        "id": "title-10",
+        "intent": "Local exported metadata title search: One Blood",
+        "expected_ids": [
+          "https://standardebooks.org/ebooks/pauline-e-hopkins/of-one-blood"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://standardebooks.org/feeds/atom/new-releases",
+          "local_query": {
+            "mode": "title_tokens",
+            "text": "One Blood"
+          }
+        }
+      }
+    ],
+    "historical_contract": "OPDS 1/2 `/feeds/opds`; public new-release RSS/Atom. [Feed rules](https://standardebooks.org/feeds)",
+    "authentication": "Public metadata export/feed; no account, API key or payment.",
+    "request_shape_verified": true,
+    "catalog_rows": 15,
+    "export_response_sha256": "26af87d0bc050c5a7624e48b092a33599bc35925fc42a4c04a9d50c9df9a5f77",
+    "metadata_archive": "analysis/external/standard-new-releases-20261105.json"
+  },
+  "licensing": "Feed entries state public domain in USA and CC0 for original Standard Ebooks content. Users elsewhere must check local laws. The public feed exception is documented; it does not grant access to member-only catalog feeds.",
+  "documentation": [
+    "https://standardebooks.org/feeds"
+  ],
+  "limitations": [
+    "Free feed contains only15 latest releases; older catalog titles are not searched by this connector.",
+    "Full OPDS/other catalog feeds require Patrons Circle, contributor or sponsor access. None requested or bypassed; no paid account/outreach.",
+    "Native URL includes author/title/translator identity; separate editions and two Short Fiction entries remain distinct. Published/updated feed dates are not original print dates.",
+    "USA public domain and CC0 statements retained from each entry; outside-USA content rights remain a separate check. No ebook files/audio downloaded."
+  ],
+  "evidence": [
+    "analysis/documents.jsonl",
+    "runs/books-query-export-docs-20261105eq/observations.jsonl",
+    "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+    "analysis/external/standard-new-releases-20261105.json",
+    "examples/standard-ebooks.jsonl",
+    "examples/standard-ebooks.boundaries.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T22:00:24.103146+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 17,
+    "text": "| **Standard Ebooks — host** | OPDS 1/2 `/feeds/opds`; public new-release RSS/Atom. [Feed rules](https://standardebooks.org/feeds) | Canonical ebook page and formats. Publisher-produced content is CC0; third-party material and public-domain jurisdiction need separate care. | Full feeds are a Patrons Circle/producer/sponsor benefit. Personal membership is not automatic permission to redistribute a catalog through an app. Confirm integration terms; new-release feed alone is incomplete. **Medium/high / P2**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "standard-ebooks",
+        "name": "Standard Ebooks",
+        "homepage_reference": "https://standardebooks.org/feeds",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C02"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Local title-token and native edition-URL search over the15 entries in the openly available Standard Ebooks New Releases Atom feed. Only this recent-release subset is Working; full-catalog search remains unavailable without membership.",
+      "facts": {
+        "adapter": "standard-new-releases",
+        "endpoint": "https://standardebooks.org/feeds/atom/new-releases",
+        "cases": [
+          "title-01",
+          "title-02",
+          "title-03",
+          "title-04",
+          "title-05",
+          "title-06",
+          "title-07",
+          "title-08",
+          "title-09",
+          "title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Local title-token and native edition-URL search over the15 entries in the openly available Standard Ebooks New Releases Atom feed. Only this recent-release subset is Working; full-catalog search remains unavailable without membership.",
+        "authentication": "Public metadata export/feed; no account, API key or payment.",
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+        "analysis/external/standard-new-releases-20261105.json",
+        "examples/standard-ebooks.jsonl",
+        "examples/standard-ebooks.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Additional search modes and full-item reader access remain separate from working-query status."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Feed entries state public domain in USA and CC0 for original Standard Ebooks content. Users elsewhere must check local laws. The public feed exception is documented; it does not grant access to member-only catalog feeds.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Public metadata export/feed; no account, API key or payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
+      "evidence": [
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+        "analysis/external/standard-new-releases-20261105.json",
+        "examples/standard-ebooks.jsonl",
+        "examples/standard-ebooks.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "analysis/documents.jsonl"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Local title-token and native edition-URL search over the15 entries in the openly available Standard Ebooks New Releases Atom feed. Only this recent-release subset is Working; full-catalog search remains unavailable without membership.",
+        "empty_and_boundary_evidence": "examples/standard-ebooks.boundaries.jsonl"
+      },
+      "evidence": [
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+        "analysis/external/standard-new-releases-20261105.json",
+        "examples/standard-ebooks.jsonl",
+        "examples/standard-ebooks.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "Free feed contains only15 latest releases; older catalog titles are not searched by this connector.",
+          "Full OPDS/other catalog feeds require Patrons Circle, contributor or sponsor access. None requested or bypassed; no paid account/outreach.",
+          "Native URL includes author/title/translator identity; separate editions and two Short Fiction entries remain distinct. Published/updated feed dates are not original print dates.",
+          "USA public domain and CC0 statements retained from each entry; outside-USA content rights remain a separate check. No ebook files/audio downloaded."
+        ],
+        "no_bulk_content": true
+      },
+      "evidence": [
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+        "analysis/external/standard-new-releases-20261105.json",
+        "examples/standard-ebooks.jsonl",
+        "examples/standard-ebooks.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production load/freshness is outside this research checkpoint."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Local title-token and native edition-URL search over the15 entries in the openly available Standard Ebooks New Releases Atom feed. Only this recent-release subset is Working; full-catalog search remains unavailable without membership.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
+      "evidence": [
+        "runs/books-query-export-docs-20261105eq/observations.jsonl",
+        "runs/bookdash-standard-query-contracts-20261105er/observations.jsonl",
+        "analysis/external/standard-new-releases-20261105.json",
+        "examples/standard-ebooks.jsonl",
+        "examples/standard-ebooks.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "fd8535ec9c649383f404c1736bfa3722c5459a1092cbd2250f0fbbd5ba658ae3",
+      "path": "docs/design/2026-11-free-content/README.md",
+      "line": 94,
+      "heading": "2. Scope",
+      "text": "Not in the first release: previews/loans, Standard Ebooks, DIKSHA/NCERT, CORE,\nHAL, Zenodo, bioRxiv/medRxiv as live sources (show \"Not connected yet\" if\nlisted), embedded readers, downloads proxied through our server, accounts.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 17,
+      "heading": "1. General ebooks and public-domain literature",
+      "text": "| **Standard Ebooks — host** | OPDS 1/2 `/feeds/opds`; public new-release RSS/Atom. [Feed rules](https://standardebooks.org/feeds) | Canonical ebook page and formats. Publisher-produced content is CC0; third-party material and public-domain jurisdiction need separate care. | Full feeds are a Patrons Circle/producer/sponsor benefit. Personal membership is not automatic permission to redistribute a catalog through an app. Confirm integration terms; new-release feed alone is incomplete. **Medium/high / P2**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 91,
+      "heading": "Standard connection patterns",
+      "text": "| OPDS | Gutenberg, approved Standard Ebooks | OPDS 1/2 navigation/acquisition parsing | Feed permissions; not every feed supports text search |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 70,
+      "heading": "Categories",
+      "text": "| General ebooks and public-domain literature | Novels, poetry, essays, historical nonfiction | Gutenberg, Standard Ebooks, Wikisource, Internet Archive |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 96,
+      "heading": "What the original checks established",
+      "text": "Two current details make older integration advice unreliable: Standard Ebooks' full OPDS feeds require membership/access arrangements, and Unpaywall's documentation said its title-search endpoint retired on **2026-09-18**. Use Unpaywall for DOI resolution and another index for search. Recheck these policies before implementation.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 102,
+      "heading": "Credentials and implementation inputs",
+      "text": "1. Verify **`OPENALEX_API_KEY`** in the backend. The replacement environment reports the variable configured; no authenticated OpenAlex request was made during this repository transfer. At the research date the free account included $1/day of API usage, roughly 1,000 ordinary search requests before caching. Disable paid overages unless deliberately budgeted.\n2. Choose a real **application contact email** for request identification and, if enabled, Unpaywall's required `email` parameter. No email was invented, registered, or sent during this work.\n3. Optional later: Semantic Scholar, BHL and Europeana keys; CORE upgrade/eligibility confirmation. Standard Ebooks feed access and children's/OER catalog feeds need provider-specific arrangements.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

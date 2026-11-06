@@ -1,0 +1,379 @@
+{
+  "schema_version": 1,
+  "id": "biorxiv-medrxiv",
+  "name": "bioRxiv / medRxiv",
+  "homepage": "https://api.biorxiv.org/",
+  "homepage_status": "historical-reference; canonical homepage/operator needs review",
+  "group": "G05",
+  "areas": [
+    "C06",
+    "C07"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "source-family-needs-splitting",
+  "capabilities": [
+    "Live native DOI lookups on bioRxiv and medRxiv preserve returned versions. Date-filtered pages and local title tokens over the saved bioRxiv page also tested; no upstream whole-corpus title search."
+  ],
+  "query": {
+    "adapter": "preprint-details",
+    "endpoint": "https://api.biorxiv.org/details/",
+    "cases": [
+      {
+        "id": "biorxiv-doi-01",
+        "intent": "Lookup native preprint DOI and version for Auditing Biomedical Literature with Blinded AI Peer Review: Where Peer Review Works, Where It Fails, and How to Strengthen It",
+        "expected_ids": [
+          "10.64898/2026.11.02.763753:v1"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.biorxiv.org/details/biorxiv/10.64898/2026.11.02.763753/na/json"
+        }
+      },
+      {
+        "id": "biorxiv-doi-02",
+        "intent": "Lookup native preprint DOI and version for Conserved synaptic modifications by humanized tau through diverse isoform- and mutation-specific intracellular interactions",
+        "expected_ids": [
+          "10.64898/2026.11.03.763730:v1"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.biorxiv.org/details/biorxiv/10.64898/2026.11.03.763730/na/json"
+        }
+      },
+      {
+        "id": "biorxiv-doi-03",
+        "intent": "Lookup native preprint DOI and version for Serial dependence carries the action that produced the previous report",
+        "expected_ids": [
+          "10.64898/2026.10.27.762257:v2"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.biorxiv.org/details/biorxiv/10.64898/2026.10.27.762257/na/json"
+        }
+      },
+      {
+        "id": "biorxiv-doi-04",
+        "intent": "Lookup native preprint DOI and version for Mitochondria-Coupled Hitchhiking Drives Vimentin Intermediate Filament Transport",
+        "expected_ids": [
+          "10.64898/2026.11.02.763800:v1"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.biorxiv.org/details/biorxiv/10.64898/2026.11.02.763800/na/json"
+        }
+      },
+      {
+        "id": "biorxiv-doi-05",
+        "intent": "Lookup native preprint DOI and version for Sex-specific bone marrow populations regulate skeletal phenotype and identify CD74-marked osteoclast precursor subsets",
+        "expected_ids": [
+          "10.64898/2026.11.03.763975:v1"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.biorxiv.org/details/biorxiv/10.64898/2026.11.03.763975/na/json"
+        }
+      },
+      {
+        "id": "medrxiv-doi-02",
+        "intent": "Lookup native preprint DOI and version for DB-ATRG: The Density and BI-RADS-Aware Triage and Automatic Report Generation System for Mammography",
+        "expected_ids": [
+          "10.64898/2026.07.22.26358655:v2"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.biorxiv.org/details/medrxiv/10.64898/2026.07.22.26358655/na/json"
+        }
+      },
+      {
+        "id": "medrxiv-doi-03",
+        "intent": "Lookup native preprint DOI and version for Genomic epidemiology as a tool for understanding drivers of hepatitis A community outbreaks in Massachusetts and New Hampshire",
+        "expected_ids": [
+          "10.64898/2026.05.14.26352933:v2"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.biorxiv.org/details/medrxiv/10.64898/2026.05.14.26352933/na/json"
+        }
+      },
+      {
+        "id": "medrxiv-doi-04",
+        "intent": "Lookup native preprint DOI and version for Multi-omics reveals selective metabolic remodelling with trace element supplementation in chronic kidney disease",
+        "expected_ids": [
+          "10.64898/2026.10.19.26365915:v2"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.biorxiv.org/details/medrxiv/10.64898/2026.10.19.26365915/na/json"
+        }
+      },
+      {
+        "id": "medrxiv-doi-05",
+        "intent": "Lookup native preprint DOI and version for Self-supervised pretraining for dermoscopic lesion segmentation with limited labels: A controlled comparison of initialisation strategies",
+        "expected_ids": [
+          "10.64898/2026.10.14.26365443:v2"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.biorxiv.org/details/medrxiv/10.64898/2026.10.14.26365443/na/json"
+        }
+      },
+      {
+        "id": "medrxiv-doi-06",
+        "intent": "Lookup preprint DOI and version for deprescribing simulation study",
+        "expected_ids": [
+          "10.64898/2026.11.02.26367054:v2"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.biorxiv.org/details/medrxiv/10.64898/2026.11.02.26367054/na/json"
+        }
+      }
+    ],
+    "historical_contract": "Official DOI/date-interval API `/details/{server}/{interval}/{cursor}`. [API](https://api.biorxiv.org/)",
+    "authentication": "Anonymous published API; no key/account/payment used."
+  },
+  "licensing": "Public documentation publishes anonymous metadata endpoints. Response license codes vary per version (including cc_no); there is no blanket content reuse permission. Only small factual title/DOI/version/date/category/license samples retained; no full-text/abstract distribution.",
+  "documentation": [
+    "https://api.biorxiv.org/"
+  ],
+  "limitations": [
+    "No upstream title-query API documented; broad keyword search needs a permitted metadata index beyond this bounded research sample.",
+    "Observed a medRxiv record with version0; parser deliberately rejects that unsupported version and retains the failed attempt. Do not infer a valid v0 or full-item availability.",
+    "DOI prefixes10.1101 and10.64898 occur in actual responses; journal published DOI is a relation, not a substitute preprint identity.",
+    "Date API returns30 records per page; first and second pages tested, not the entire dated result set.",
+    "Full text, withdrawal handling across all versions and blanket metadata reuse rights remain separate unverified checks."
+  ],
+  "evidence": [
+    "analysis/documents.jsonl",
+    "runs/scholarly-contracts-20261105db/observations.jsonl",
+    "examples/biorxiv-medrxiv.scouting.jsonl",
+    "examples/biorxiv-medrxiv.access.jsonl",
+    "examples/biorxiv-medrxiv.jsonl",
+    "examples/biorxiv-medrxiv.boundaries.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T19:01:58.878074+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+  "aliases": [
+    "bioRxiv",
+    "medRxiv"
+  ],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 51,
+    "text": "| **bioRxiv / medRxiv — preprint hosts** | Official DOI/date-interval API `/details/{server}/{interval}/{cursor}`. [API](https://api.biorxiv.org/) | DOI, versions and supplied links; label preprints, especially medical material. Per-article licenses. | No public-endpoint key documented in reviewed material. Feed/lookup interface, not generic title-search replacement. Use aggregator coverage first or import date-window metadata. Docs reviewed; no query tested. **Medium / P1**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "biorxiv-medrxiv",
+        "name": "bioRxiv / medRxiv",
+        "homepage_reference": "https://api.biorxiv.org/",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C06",
+          "C07"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Live native DOI lookups on bioRxiv and medRxiv preserve returned versions. Date-filtered pages and local title tokens over the saved bioRxiv page also tested; no upstream whole-corpus title search.",
+      "facts": {
+        "adapter": "preprint-details",
+        "endpoint": "https://api.biorxiv.org/details/",
+        "cases": [
+          "biorxiv-doi-01",
+          "biorxiv-doi-02",
+          "biorxiv-doi-03",
+          "biorxiv-doi-04",
+          "biorxiv-doi-05",
+          "medrxiv-doi-02",
+          "medrxiv-doi-03",
+          "medrxiv-doi-04",
+          "medrxiv-doi-05",
+          "medrxiv-doi-06"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live native DOI lookups on bioRxiv and medRxiv preserve returned versions. Date-filtered pages and local title tokens over the saved bioRxiv page also tested; no upstream whole-corpus title search.",
+        "authentication": "Anonymous published API; no key/account/payment used.",
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "examples/biorxiv-medrxiv.scouting.jsonl",
+        "examples/biorxiv-medrxiv.access.jsonl",
+        "examples/biorxiv-medrxiv.jsonl",
+        "examples/biorxiv-medrxiv.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Additional search modes and full-item reader access remain separate from working-query status."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Public documentation publishes anonymous metadata endpoints. Response license codes vary per version (including cc_no); there is no blanket content reuse permission. Only small factual title/DOI/version/date/category/license samples retained; no full-text/abstract distribution.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous published API; no key/account/payment used.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
+      "evidence": [
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "examples/biorxiv-medrxiv.scouting.jsonl",
+        "examples/biorxiv-medrxiv.access.jsonl",
+        "examples/biorxiv-medrxiv.jsonl",
+        "examples/biorxiv-medrxiv.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "analysis/documents.jsonl"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live native DOI lookups on bioRxiv and medRxiv preserve returned versions. Date-filtered pages and local title tokens over the saved bioRxiv page also tested; no upstream whole-corpus title search.",
+        "empty_and_boundary_evidence": "examples/biorxiv-medrxiv.boundaries.jsonl"
+      },
+      "evidence": [
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "examples/biorxiv-medrxiv.scouting.jsonl",
+        "examples/biorxiv-medrxiv.access.jsonl",
+        "examples/biorxiv-medrxiv.jsonl",
+        "examples/biorxiv-medrxiv.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "No upstream title-query API documented; broad keyword search needs a permitted metadata index beyond this bounded research sample.",
+          "Observed a medRxiv record with version0; parser deliberately rejects that unsupported version and retains the failed attempt. Do not infer a valid v0 or full-item availability.",
+          "DOI prefixes10.1101 and10.64898 occur in actual responses; journal published DOI is a relation, not a substitute preprint identity.",
+          "Date API returns30 records per page; first and second pages tested, not the entire dated result set.",
+          "Full text, withdrawal handling across all versions and blanket metadata reuse rights remain separate unverified checks."
+        ],
+        "no_bulk_content": true
+      },
+      "evidence": [
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "examples/biorxiv-medrxiv.scouting.jsonl",
+        "examples/biorxiv-medrxiv.access.jsonl",
+        "examples/biorxiv-medrxiv.jsonl",
+        "examples/biorxiv-medrxiv.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production load/freshness is outside this research checkpoint."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Live native DOI lookups on bioRxiv and medRxiv preserve returned versions. Date-filtered pages and local title tokens over the saved bioRxiv page also tested; no upstream whole-corpus title search.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
+      "evidence": [
+        "runs/scholarly-contracts-20261105db/observations.jsonl",
+        "examples/biorxiv-medrxiv.scouting.jsonl",
+        "examples/biorxiv-medrxiv.access.jsonl",
+        "examples/biorxiv-medrxiv.jsonl",
+        "examples/biorxiv-medrxiv.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "fd8535ec9c649383f404c1736bfa3722c5459a1092cbd2250f0fbbd5ba658ae3",
+      "path": "docs/design/2026-11-free-content/README.md",
+      "line": 94,
+      "heading": "2. Scope",
+      "text": "Not in the first release: previews/loans, Standard Ebooks, DIKSHA/NCERT, CORE,\nHAL, Zenodo, bioRxiv/medRxiv as live sources (show \"Not connected yet\" if\nlisted), embedded readers, downloads proxied through our server, accounts.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "294c264153c5370142469a75c1723cd9f3bf6482aa24f18c4a3b7253eae9c28b",
+      "path": "docs/research/free-content/discovery/SCHOLARLY_RESEARCH.md",
+      "line": 133,
+      "heading": "C07 — Preprints and working papers",
+      "text": "**Retrieval strategy.** Prefer existing attributed aggregator search where its\ncoverage passes. The [bioRxiv/medRxiv API documentation](https://api.biorxiv.org/)\nsupports date-window/DOI metadata retrieval and version information; it is not a\ngeneric keyword search interface. A permitted bounded metadata import can make\nthat feed searchable locally. [RePEc's metadata policy](https://ideas.repec.org/getdata.html)\nprefers publisher archives/ReDIF over website scraping and requires prior contact\nfor commercial use. Review applicability before use; no outreach is sent as part\nof this plan. Direct arXiv automation remains deferred under the current plan.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 51,
+      "heading": "4. Preprints, theses, repositories and reports",
+      "text": "| **bioRxiv / medRxiv — preprint hosts** | Official DOI/date-interval API `/details/{server}/{interval}/{cursor}`. [API](https://api.biorxiv.org/) | DOI, versions and supplied links; label preprints, especially medical material. Per-article licenses. | No public-endpoint key documented in reviewed material. Feed/lookup interface, not generic title-search replacement. Use aggregator coverage first or import date-window metadata. Docs reviewed; no query tested. **Medium / P1**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 73,
+      "heading": "Categories",
+      "text": "| Preprints and working papers | Research before or outside formal journal publication | arXiv, bioRxiv/medRxiv, HAL, Zenodo |",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

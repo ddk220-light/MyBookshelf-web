@@ -1,0 +1,1320 @@
+{
+  "schema_version": 1,
+  "id": "lse-press",
+  "name": "LSE Press",
+  "homepage": "https://press.lse.ac.uk/",
+  "group": "G01",
+  "areas": [
+    "C04",
+    "C02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "Publisher-scoped Thoth GraphQL keyword/title search with active book-type filters; digital publication locations and per-work license."
+  ],
+  "query": {
+    "adapter": "thoth",
+    "endpoint": "https://api.thoth.pub/graphql",
+    "authentication": "none for sampled public queries",
+    "cost": "No fee or API key used; respect current provider policies and rate limits.",
+    "research_pause_seconds": 3,
+    "cases": [
+      {
+        "id": "known-title-01",
+        "intent": "Find the known catalog record for Advanced Macroeconomics",
+        "expected_ids": [
+          "87ba80cb-eebd-4576-a8c4-a82a1b5bf19a"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Advanced Macroeconomics\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-02",
+        "intent": "Find the known catalog record for A Fair Bargain",
+        "expected_ids": [
+          "113eb387-dad9-4034-9ce0-5933f7a9b24d"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"A Fair Bargain\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-03",
+        "intent": "Find the known catalog record for Afghanistan",
+        "expected_ids": [
+          "8375f936-b472-4ee5-98d4-69576359e240"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Afghanistan\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-04",
+        "intent": "Find the known catalog record for Australia's Evolving Democracy",
+        "expected_ids": [
+          "80be8f95-dbeb-42d7-b843-a70e79e46edb"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Australia's Evolving Democracy\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-05",
+        "intent": "Find the known catalog record for Climate Hegemony",
+        "expected_ids": [
+          "89b1ceef-8795-4501-a870-a7ce30dc8380"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Climate Hegemony\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-06",
+        "intent": "Find the known catalog record for Conflict, War and Revolution",
+        "expected_ids": [
+          "0a9846b7-0034-4a41-803a-19f19db22f8f"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Conflict, War and Revolution\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-07",
+        "intent": "Find the known catalog record for COVID-19 in Southeast Asia",
+        "expected_ids": [
+          "2f6323bb-bf0d-4036-9d9a-3d7fdbc0bba2"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"COVID-19 in Southeast Asia\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-08",
+        "intent": "Find the known catalog record for Dead Men’s Propaganda",
+        "expected_ids": [
+          "2f52138f-d56a-4c5b-bf02-abdd1dd81af3"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Dead Men\\u2019s Propaganda\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-09",
+        "intent": "Find the known catalog record for Decentralised Governance",
+        "expected_ids": [
+          "f8247f73-0f29-4090-9cfb-92d7d600d9d8"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Decentralised Governance\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-10",
+        "intent": "Find the known catalog record for Doing Open Social Science",
+        "expected_ids": [
+          "c48d127f-71a0-410a-ad5b-2596f5da78c3"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Doing Open Social Science\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      }
+    ],
+    "paging": "offset, limit",
+    "publisher_id": "5da5617c-306b-4f68-b60b-abc74faf49f8",
+    "official_content_hosts": [
+      "books.press.lse.ac.uk",
+      "press.lse.ac.uk"
+    ],
+    "supported_modes": [
+      "publisher-scoped literal metadata filter",
+      "exact native work UUID resolution",
+      "active monograph/edited-book type restriction",
+      "limit/offset paging"
+    ],
+    "unsupported_modes": [
+      "semantic relevance ranking",
+      "full book-text search",
+      "untested author-specific search",
+      "unverified language/territory eligibility filters",
+      "unreviewed format/mirror access"
+    ],
+    "detail_request": {
+      "method": "POST",
+      "url": "https://api.thoth.pub/graphql",
+      "json": {
+        "query": "{work(workId:\"87ba80cb-eebd-4576-a8c4-a82a1b5bf19a\"){workId workType workStatus titles{fullTitle} doi edition publicationDate updatedAtWithRelations withdrawnDate license copyrightHolder languages{languageCode languageRelation} imprint{imprintId publisherId imprintName} publications{publicationType locations{canonical fullTextUrl landingPage}}}}"
+      }
+    },
+    "identity": "publisherId + workId, with edition, DOI, publication date and publication-format IDs kept distinct; title equality never implies identity"
+  },
+  "licensing": "Thoth metadata CC0; each book has separate content license, including possible NC/SA terms.",
+  "documentation": [
+    "https://thoth.pub/docs",
+    "https://api.thoth.pub/graphiql",
+    "https://thoth.pub/docs/policies/terms-thoth-metadata",
+    "https://press.lse.ac.uk/"
+  ],
+  "limitations": [
+    "Keyword filter can match descriptions and does not guarantee relevance order.",
+    "Exclude retail/print and unreviewed mirror locations. Preserve edition and volume IDs.",
+    "Ten known-item searches are not the full topic-relevance/reliability/rights qualification benchmark."
+  ],
+  "evidence": [
+    "../batches/G01_QUERY_EVIDENCE.json",
+    "../batches/G01_ACCESS_EVIDENCE.json",
+    "../batches/G01_FIRST_TEN.md",
+    "examples/thoth.contract-review.jsonl",
+    "runs/thoth-contract-20261105n/observations.jsonl",
+    "runs/publisher-identity-20261105o/observations.jsonl",
+    "examples/lse-press.jsonl",
+    "examples/thoth.relevance-review.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T08:13:56.754031+00:00",
+  "next_action": "Continue full topic/reader/rights qualification for this publisher: five topic queries, representative full-item browser/reading and territory checks, contributor metadata, license exceptions, update/deletion and error/maintainer review. Retain all evidence and separate publisher identity from the shared Thoth platform. Publisher-home policy check is blocked; defer that host until recovery, without treating the independently public Thoth API as proof of reader access.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Current Thoth publisher UUID/name/homepage and matching work imprint establish the catalog attribution. Thoth is a shared metadata service, not a sixth publisher.",
+      "facts": {
+        "publisher": {
+          "createdAt": "2023-08-18T08:50:31.862906Z",
+          "publisherId": "5da5617c-306b-4f68-b60b-abc74faf49f8",
+          "publisherName": "LSE Press",
+          "publisherShortname": null,
+          "publisherUrl": "https://press.lse.ac.uk/",
+          "updatedAt": "2026-08-25T15:12:43.807334Z"
+        },
+        "representative_imprint": {
+          "imprintId": "8c81aab5-9800-4512-87e9-9690910db1e5",
+          "imprintName": "LSE Press",
+          "publisherId": "5da5617c-306b-4f68-b60b-abc74faf49f8"
+        },
+        "deduplication": "Distinct publisher catalog scope; same publisher across Thoth, native website and OAPEN/DOAB mirrors is not counted again. Cross-provider work merging requires DOI/native edition evidence.",
+        "homepage_observation": {
+          "outcome": "skipped",
+          "http_status": null,
+          "robots_status": 403
+        }
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/lse-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:02.103755+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:06.556219+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics",
+          "observed_at": "2026-11-05T08:08:10.252871+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics-page2",
+          "observed_at": "2026-11-05T08:08:47.345518+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "3f6a7511fb57e5715495",
+          "observed_at": "2026-11-05T08:09:37.885305+00:00"
+        }
+      ],
+      "open_questions": [
+        "Publisher legal/operator/parent details remain unconfirmed beyond current Thoth attribution; revisit its site only after policy/access recovery."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing category memberships retained. A current native work establishes sampled language and format, not catalog-wide language/country coverage.",
+      "facts": {
+        "categories": [
+          "C04",
+          "C02"
+        ],
+        "sample_languages": [
+          {
+            "languageCode": "ENG",
+            "languageRelation": "ORIGINAL"
+          }
+        ],
+        "sample_work_type": "MONOGRAPH",
+        "publisher_country": "Not newly verified in this review; do not infer publisher country from Thoth UK domicile.",
+        "access_country": "Managed cloud vantage unknown; USA/India end-user access not tested.",
+        "non_English_lead": null
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/lse-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:02.103755+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:06.556219+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics",
+          "observed_at": "2026-11-05T08:08:10.252871+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics-page2",
+          "observed_at": "2026-11-05T08:08:47.345518+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "3f6a7511fb57e5715495",
+          "observed_at": "2026-11-05T08:09:37.885305+00:00"
+        }
+      ],
+      "open_questions": [
+        "Measure catalog language/subject and country gaps; avoid equating sampled ENG metadata with English-only catalog coverage."
+      ]
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Fifty previously captured known-title cases across five publishers remain separate evidence; this publisher has ten current passing cases, one newly replayed title and a native-work detail round trip. Public schema confirms publisher/type/status/limit/offset arguments.",
+      "facts": {
+        "contract": {
+          "adapter": "thoth",
+          "endpoint": "https://api.thoth.pub/graphql",
+          "authentication": "none for sampled public queries",
+          "cost": "No fee or API key used; respect current provider policies and rate limits.",
+          "research_pause_seconds": 3,
+          "cases": [
+            {
+              "id": "known-title-01",
+              "intent": "Find the known catalog record for Advanced Macroeconomics",
+              "expected_ids": [
+                "87ba80cb-eebd-4576-a8c4-a82a1b5bf19a"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Advanced Macroeconomics\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-02",
+              "intent": "Find the known catalog record for A Fair Bargain",
+              "expected_ids": [
+                "113eb387-dad9-4034-9ce0-5933f7a9b24d"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"A Fair Bargain\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-03",
+              "intent": "Find the known catalog record for Afghanistan",
+              "expected_ids": [
+                "8375f936-b472-4ee5-98d4-69576359e240"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Afghanistan\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-04",
+              "intent": "Find the known catalog record for Australia's Evolving Democracy",
+              "expected_ids": [
+                "80be8f95-dbeb-42d7-b843-a70e79e46edb"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Australia's Evolving Democracy\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-05",
+              "intent": "Find the known catalog record for Climate Hegemony",
+              "expected_ids": [
+                "89b1ceef-8795-4501-a870-a7ce30dc8380"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Climate Hegemony\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-06",
+              "intent": "Find the known catalog record for Conflict, War and Revolution",
+              "expected_ids": [
+                "0a9846b7-0034-4a41-803a-19f19db22f8f"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Conflict, War and Revolution\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-07",
+              "intent": "Find the known catalog record for COVID-19 in Southeast Asia",
+              "expected_ids": [
+                "2f6323bb-bf0d-4036-9d9a-3d7fdbc0bba2"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"COVID-19 in Southeast Asia\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-08",
+              "intent": "Find the known catalog record for Dead Men’s Propaganda",
+              "expected_ids": [
+                "2f52138f-d56a-4c5b-bf02-abdd1dd81af3"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Dead Men\\u2019s Propaganda\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-09",
+              "intent": "Find the known catalog record for Decentralised Governance",
+              "expected_ids": [
+                "f8247f73-0f29-4090-9cfb-92d7d600d9d8"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Decentralised Governance\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-10",
+              "intent": "Find the known catalog record for Doing Open Social Science",
+              "expected_ids": [
+                "c48d127f-71a0-410a-ad5b-2596f5da78c3"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Doing Open Social Science\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            }
+          ],
+          "paging": "offset, limit",
+          "publisher_id": "5da5617c-306b-4f68-b60b-abc74faf49f8",
+          "official_content_hosts": [
+            "books.press.lse.ac.uk",
+            "press.lse.ac.uk"
+          ],
+          "supported_modes": [
+            "publisher-scoped literal metadata filter",
+            "exact native work UUID resolution",
+            "active monograph/edited-book type restriction",
+            "limit/offset paging"
+          ],
+          "unsupported_modes": [
+            "semantic relevance ranking",
+            "full book-text search",
+            "untested author-specific search",
+            "unverified language/territory eligibility filters",
+            "unreviewed format/mirror access"
+          ],
+          "detail_request": {
+            "method": "POST",
+            "url": "https://api.thoth.pub/graphql",
+            "json": {
+              "query": "{work(workId:\"87ba80cb-eebd-4576-a8c4-a82a1b5bf19a\"){workId workType workStatus titles{fullTitle} doi edition publicationDate updatedAtWithRelations withdrawnDate license copyrightHolder languages{languageCode languageRelation} imprint{imprintId publisherId imprintName} publications{publicationType locations{canonical fullTextUrl landingPage}}}}"
+            }
+          },
+          "identity": "publisherId + workId, with edition, DOI, publication date and publication-format IDs kept distinct; title equality never implies identity"
+        },
+        "current_passing_examples": 10,
+        "sample_detail": {
+          "workId": "87ba80cb-eebd-4576-a8c4-a82a1b5bf19a",
+          "doi": "https://doi.org/10.31389/lsepress.ame",
+          "edition": 1,
+          "workType": "MONOGRAPH",
+          "workStatus": "ACTIVE",
+          "publicationDate": "2021-10-11",
+          "updatedAtWithRelations": "2026-08-25T15:12:43.807334Z",
+          "withdrawnDate": null,
+          "languages": [
+            {
+              "languageCode": "ENG",
+              "languageRelation": "ORIGINAL"
+            }
+          ],
+          "imprint": {
+            "imprintId": "8c81aab5-9800-4512-87e9-9690910db1e5",
+            "imprintName": "LSE Press",
+            "publisherId": "5da5617c-306b-4f68-b60b-abc74faf49f8"
+          }
+        },
+        "schema_correction": "Abstract.content is the public field. The failed Abstract.abstract request returned400; no empty-result inference. Initial wrong root type Query returned data:null; current QueryRoot schema was read separately.",
+        "authentication": "No account/key or paid metadata service used."
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/lse-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:02.103755+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:06.556219+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics",
+          "observed_at": "2026-11-05T08:08:10.252871+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics-page2",
+          "observed_at": "2026-11-05T08:08:47.345518+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "3f6a7511fb57e5715495",
+          "observed_at": "2026-11-05T08:09:37.885305+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Fresh Thoth clauses3–5 state metadata is CC0 and freely accessible via public APIs/catalogs. This does not relicense the books; per-work content licenses stay separate and may be NC/SA.",
+      "facts": {
+        "metadata_license": "CC0 1.0 Universal",
+        "website_license": "Thoth website content CC BY4.0; not the same as metadata or book content.",
+        "content_license_observed": "https://creativecommons.org/licenses/by-nc/4.0/",
+        "licenses_in_saved_example_sample": [
+          "http://creativecommons.org/licenses/by-nc/4.0",
+          "http://creativecommons.org/licenses/by-nc/4.0/",
+          "https://creativecommons.org/licenses/by-nc/4.0/",
+          "https://creativecommons.org/licenses/by/4.0/"
+        ],
+        "attribution": "Preserve publisher/native work/DOI, creator where supplied and each book license; CC0 metadata is reusable without adopting a blanket content-reuse grant.",
+        "cost": "Anonymous query route without fee/key; publisher-management/dissemination services are separate and were not purchased.",
+        "numeric_query_quota": "Not specified in reviewed terms; not an unlimited-SLA claim.",
+        "representative_copyright_holder": "Author(s)"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/lse-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:02.103755+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:06.556219+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics",
+          "observed_at": "2026-11-05T08:08:10.252871+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics-page2",
+          "observed_at": "2026-11-05T08:08:47.345518+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "3f6a7511fb57e5715495",
+          "observed_at": "2026-11-05T08:09:37.885305+00:00"
+        }
+      ],
+      "open_questions": [
+        "Reconcile representative full-item license/attribution and third-party exceptions against the actual book/reader; metadata declarations alone do not certify every work."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Earlier 4KiB PDF-header/range evidence is backfilled with its original observation date; it is not a fresh full-book read. Current metadata provides digital and print destinations, which must remain distinct.",
+      "facts": {
+        "historical_range_observations": [
+          {
+            "name": "lse-pdf",
+            "requested_url": "https://books.press.lse.ac.uk/10.31389/lsepress.afg.pdf",
+            "resolved_url": "https://books.press.lse.ac.uk/10.31389/lsepress.afg.pdf",
+            "observed_at": "2026-11-05T00:51:00.245223+00:00",
+            "status": 206,
+            "content_type": "application/pdf",
+            "content_range": "bytes 0-4095/4164034",
+            "content_length": "4096",
+            "sample_bytes": 4096,
+            "sample_sha256": "975f8995bf3b7b5fa08302757d93239ca133e1a67b91343db01542c8424525f0",
+            "starts_pdf": true,
+            "seconds": 1.2
+          }
+        ],
+        "current_digital_locations": [
+          {
+            "format": "PDF",
+            "locations": [
+              {
+                "canonical": false,
+                "fullTextUrl": "https://library.oapen.org/bitstream/20.500.12657/51426/1/9781909890695.pdf",
+                "landingPage": "https://library.oapen.org/handle/20.500.12657/51426"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": null,
+                "landingPage": "https://directory.doabooks.org/handle/20.500.12854/72760"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://archive.org/download/87ba80cb-eebd-4576-a8c4-a82a1b5bf19a/87ba80cb-eebd-4576-a8c4-a82a1b5bf19a.pdf",
+                "landingPage": "https://archive.org/details/87ba80cb-eebd-4576-a8c4-a82a1b5bf19a"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://press.lse.ac.uk/books/2/files/1c02f042-52d8-49f6-8986-a97aa90d6a73.pdf",
+                "landingPage": "https://doi.org/10.31389/lsepress.ame"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://zenodo.org/records/19849034/files/87ba80cb-eebd-4576-a8c4-a82a1b5bf19a_book.pdf",
+                "landingPage": "https://zenodo.org/records/19849034"
+              },
+              {
+                "canonical": true,
+                "fullTextUrl": "https://books.press.lse.ac.uk/10.31389/lsepress.ame.pdf",
+                "landingPage": "https://doi.org/10.31389/lsepress.ame"
+              }
+            ]
+          },
+          {
+            "format": "EPUB",
+            "locations": [
+              {
+                "canonical": false,
+                "fullTextUrl": "https://press.lse.ac.uk/books/2/files/6ce0728f-48b6-4a69-88da-f065e2ef0c92.epub",
+                "landingPage": "https://doi.org/10.31389/lsepress.ame"
+              },
+              {
+                "canonical": true,
+                "fullTextUrl": "https://books.press.lse.ac.uk/10.31389/lsepress.ame.epub",
+                "landingPage": "https://press.lse.ac.uk/books/m/10.31389/lsepress.ame"
+              }
+            ]
+          }
+        ],
+        "access_class": "Anonymous metadata confirmed; per-item free reading and regional eligibility require destination checks.",
+        "print_rule": "PAPERBACK/HARDBACK fullTextUrl can be a shop/landing page; never classify those as free digital full text.",
+        "homepage_policy": {
+          "outcome": "skipped",
+          "http_status": null,
+          "robots_status": 403
+        },
+        "bulk_content_downloaded": false
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/lse-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:02.103755+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:06.556219+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics",
+          "observed_at": "2026-11-05T08:08:10.252871+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics-page2",
+          "observed_at": "2026-11-05T08:08:47.345518+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "3f6a7511fb57e5715495",
+          "observed_at": "2026-11-05T08:09:37.885305+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify representative complete readable item destinations on desktop/mobile; identify free-login, preview, territory and accessibility conditions without buying accounts or bulk files."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "One fresh topic query per publisher exposes subject/edition limitations. Ten known-title cases cannot substitute for the full five-topic acceptance pack.",
+      "facts": {
+        "topic_review": {
+          "source_id": "lse-press",
+          "reviewed_at": "2026-11-05T08:13:56.754031+00:00",
+          "query_observed_at": "2026-11-05T08:08:10.252871+00:00",
+          "query_request": {
+            "json": {
+              "query": "{works(limit:5,offset:0,filter:\"politics\",publishers:[\"5da5617c-306b-4f68-b60b-abc74faf49f8\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} abstracts{content} license landingPage}}"
+            },
+            "method": "POST",
+            "url": "https://api.thoth.pub/graphql"
+          },
+          "result_ids": [
+            "8375f936-b472-4ee5-98d4-69576359e240",
+            "80be8f95-dbeb-42d7-b843-a70e79e46edb",
+            "89b1ceef-8795-4501-a870-a7ce30dc8380",
+            "0a9846b7-0034-4a41-803a-19f19db22f8f",
+            "69108498-9fd5-4494-9879-9cae7c800179"
+          ],
+          "sample_titles": [
+            "Afghanistan: Long War, Forgotten Peace",
+            "Australia's Evolving Democracy: A New Democratic Audit",
+            "Climate Hegemony: Confronting the Politics of Environmental Impasse",
+            "Conflict, War and Revolution: The problem of politics in international political thought",
+            "Reading Wars"
+          ],
+          "assessment": "Politics returns Afghanistan conflict/peace, an Australian democracy audit, environmental politics, international political thought and political struggles over reading. All five concern politics; relevance ranking and topic recall are not measured.",
+          "method": "Manual title/abstract reading; not a blinded relevance benchmark or full-item accessibility check.",
+          "query_verified": false
+        },
+        "known_title_replay": "First declared case replayed at 2026-11-05T08:08:02.103755+00:00",
+        "book_vs_chapter": "MONOGRAPH/EDITED_BOOK and ACTIVE filters; chapter identities not merged into books.",
+        "negative_empty": "Current shared impossible filter returns HTTP200 with works:[]; distinct from GraphQL400/data:null failures.",
+        "paging": "Current LSE politics offset0/5 pages checked separately; do not generalize to every publisher."
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/lse-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:02.103755+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:06.556219+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics",
+          "observed_at": "2026-11-05T08:08:10.252871+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics-page2",
+          "observed_at": "2026-11-05T08:08:47.345518+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "3f6a7511fb57e5715495",
+          "observed_at": "2026-11-05T08:09:37.885305+00:00"
+        }
+      ],
+      "open_questions": [
+        "Complete five predeclared topic queries per source with per-result access checks, language/Unicode edge cases, coverage/ordering and recall limits."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Live serial requests have hashes, policy evidence and bounded metadata responses. Revision/withdrawal fields are observed but no actual deletion transition or runtime refresh owner is established.",
+      "facts": {
+        "request_pacing_seconds": 3,
+        "response_bound_bytes": 524288,
+        "metadata_update_fields": [
+          "updatedAtWithRelations",
+          "workStatus",
+          "withdrawnDate"
+        ],
+        "current_record_timestamps": {
+          "publicationDate": "2021-10-11",
+          "updatedAtWithRelations": "2026-08-25T15:12:43.807334Z",
+          "withdrawnDate": null
+        },
+        "observed_failures": "Wrong root type returned data:null; wrong Abstract field returned400, then correction followed published schema. The original400 body was not retained, only status/hash/request.",
+        "refresh_design": "Future qualified integration must review ACTIVE/withdrawn transitions, preserve publisher/work/edition IDs, and retain prior evidence after errors.",
+        "reader_host_blockers": {
+          "outcome": "skipped",
+          "http_status": null,
+          "robots_status": 403
+        }
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/lse-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:02.103755+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:06.556219+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics",
+          "observed_at": "2026-11-05T08:08:10.252871+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics-page2",
+          "observed_at": "2026-11-05T08:08:47.345518+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "3f6a7511fb57e5715495",
+          "observed_at": "2026-11-05T08:09:37.885305+00:00"
+        }
+      ],
+      "open_questions": [
+        "Establish provider numeric quotas if published, bounded outage/throttle behavior, refresh/deletion reconciliation and accountable maintenance before full qualification."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain the attributed publisher catalog and its real query evidence; full qualification and research activation approval remain false.",
+      "facts": {
+        "decision": "retain-publisher-scoped-query-candidate",
+        "full_qualification_complete": false,
+        "activation_approved": false,
+        "existing_production_state": "Not changed by research approval fields.",
+        "remaining_gates": [
+          "identity_and_duplicates",
+          "coverage_and_languages",
+          "rights_and_cost",
+          "reader_access",
+          "quality_and_relevance",
+          "operating_limits"
+        ],
+        "next_action": "Continue full topic/reader/rights qualification for this publisher: five topic queries, representative full-item browser/reading and territory checks, contributor metadata, license exceptions, update/deletion and error/maintainer review. Retain all evidence and separate publisher identity from the shared Thoth platform. Publisher-home policy check is blocked; defer that host until recovery, without treating the independently public Thoth API as proof of reader access."
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/lse-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:02.103755+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:06.556219+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics",
+          "observed_at": "2026-11-05T08:08:10.252871+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "lse-press:topic-politics-page2",
+          "observed_at": "2026-11-05T08:08:47.345518+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "3f6a7511fb57e5715495",
+          "observed_at": "2026-11-05T08:09:37.885305+00:00"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 36,
+      "heading": "The ten candidates",
+      "text": "| 7 | [LSE Press](https://press.lse.ac.uk/) | Politics, economics, development and social-science books | `politics` → **Afghanistan: Long War, Forgotten Peace** | Thoth GraphQL search scoped to this publisher |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 63,
+      "heading": "Reading evidence and source-specific limits",
+      "text": "| LSE Press | Sample **Afghanistan** record had CC BY 4.0 and a canonical PDF returning HTTP 206/PDF bytes. | Other titles have other CC terms. Select digital editions rather than paid print formats. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 21,
+      "heading": "Behavior",
+      "text": "Ten new integrations are released behind `CONTENT_KNOWLEDGE_ENABLED=true`:\nGlobal Digital Library, LibriVox, Library of Congress digital books, Biodiversity\nHeritage Library's Internet Archive collection, African Minds, LSE Press,\nMattering Press, mediastudies.press, punctum books and Python 3.15 documentation.\nFive publisher catalogs share Thoth; this is not five separate API infrastructures.\nThe existing Gutenberg, Open Textbook Library, Book Dash and StoryWeaver snapshots\nand the existing OpenAlex/Europe PMC integrations are also selectable. With the\nexisting production flags, this gives 16 connected sources, not 16 fully audited\norigins or complete catalogs.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "operator": {
+    "name": "LSE Press",
+    "role": "Publisher catalog attribution returned by Thoth; legal parent/domicile only claimed where the publisher site states it.",
+    "metadata_service": "Thoth Open Metadata Community Interest Company (UK company14549556)",
+    "publisher_id": "5da5617c-306b-4f68-b60b-abc74faf49f8",
+    "evidence": [
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "query-root-schema",
+        "observed_at": "2026-11-05T08:04:26.744717+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "five-publisher-identities",
+        "observed_at": "2026-11-05T08:05:33.267324+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "lse-press:known-title-replay",
+        "observed_at": "2026-11-05T08:08:02.103755+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "lse-press:native-work-detail",
+        "observed_at": "2026-11-05T08:08:06.556219+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "lse-press:topic-politics",
+        "observed_at": "2026-11-05T08:08:10.252871+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "lse-press:topic-politics-page2",
+        "observed_at": "2026-11-05T08:08:47.345518+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "shared-empty-filter",
+        "observed_at": "2026-11-05T08:08:51.383617+00:00"
+      },
+      {
+        "path": "runs/thoth-contract-20261105n/observations.jsonl",
+        "job_id": "ffb7a4a4bbcc5f24b181",
+        "observed_at": "2026-11-05T08:02:28.063101+00:00"
+      },
+      {
+        "path": "runs/thoth-contract-20261105n/observations.jsonl",
+        "job_id": "5527e47600f6b61b4868",
+        "observed_at": "2026-11-05T08:02:35.709895+00:00"
+      },
+      {
+        "path": "runs/thoth-contract-20261105n/observations.jsonl",
+        "job_id": "9d71268ae9f708f5f587",
+        "observed_at": "2026-11-05T08:02:39.879524+00:00"
+      },
+      {
+        "path": "runs/publisher-identity-20261105o/observations.jsonl",
+        "job_id": "3f6a7511fb57e5715495",
+        "observed_at": "2026-11-05T08:09:37.885305+00:00"
+      }
+    ]
+  },
+  "record_kind": "publisher-catalog-via-shared-metadata-service"
+}

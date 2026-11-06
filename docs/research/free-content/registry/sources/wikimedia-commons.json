@@ -1,0 +1,766 @@
+{
+  "schema_version": 1,
+  "id": "wikimedia-commons",
+  "name": "Wikimedia Commons",
+  "homepage": "https://commons.wikimedia.org/wiki/Commons:API",
+  "group": "G06",
+  "areas": [
+    "C16",
+    "C20"
+  ],
+  "state": "deferred",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "operator": {
+    "name": "Wikimedia Foundation / Wikimedia Commons community",
+    "jurisdiction": "International",
+    "evidence": [
+      {
+        "path": "runs/source-evidence-20261105/observations.jsonl",
+        "job_id": "c908bb969330955f6927",
+        "observed_at": "2026-11-05T02:20:52.924156+00:00"
+      }
+    ]
+  },
+  "aliases": [],
+  "capabilities": [
+    "Shared freely licensed media repository with a documented MediaWiki API and file-specific licensing; not a blanket public-domain image collection."
+  ],
+  "query": {
+    "adapter": "unproven",
+    "endpoint": "https://commons.wikimedia.org/w/api.php",
+    "cases": [],
+    "authentication": "Unknown; no query executed",
+    "request_shape_verified": false,
+    "documented_request": {
+      "method": "GET",
+      "params": {
+        "action": "query",
+        "list": "categorymembers",
+        "cmtitle": "Category:Problem tags",
+        "cmnamespace": 10,
+        "cmlimit": 500,
+        "format": "json",
+        "maxlag": 5
+      }
+    },
+    "policy_status": "Fresh robots parser disallowed the exact planned categorymembers URL; no API request was sent.",
+    "supported_modes": [
+      "Documented MediaWiki title/full-text search and imageinfo metadata; not exercised against this deployment."
+    ],
+    "unsupported_modes": [
+      "Inferring global media rights from CC0 structured metadata",
+      "Using search results without copyright-problem template/redirect exclusions",
+      "Bypassing blocked /w/api.php through other hosts"
+    ]
+  },
+  "documentation": [
+    "https://commons.wikimedia.org/wiki/Commons:API",
+    "https://www.mediawiki.org/wiki/API:Imageinfo",
+    "https://commons.wikimedia.org/wiki/Commons:API/donotuse",
+    "https://commons.wikimedia.org/wiki/Commons:API/license",
+    "https://www.mediawiki.org/wiki/API:Search",
+    "https://commons.wikimedia.org/wiki/Commons:Licensing",
+    "https://commons.wikimedia.org/wiki/Category:Problem_tags"
+  ],
+  "licensing": "Structured file-namespace data CC0; unstructured site text CC BY-SA; media files have individual description-page licenses and additional terms. Do not use/index files flagged as questionable copyright.",
+  "limitations": [
+    "API request skipped before execution because robots disallowed the exact URL.",
+    "No current media-file examples, paging, empty/error responses or representative reading checks.",
+    "File-page revision, file-version timestamp/hash and individual license/attribution must all remain distinct.",
+    "API/license page contains unfinished pseudocode; it is not a validated license parser."
+  ],
+  "evidence": [
+    "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+    "runs/hal-commons-permission-20261105ab/observations.jsonl",
+    "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+    "runs/source-evidence-20261105/observations.jsonl",
+    "examples/wikimedia-commons.scouting.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T10:06:20.332138+00:00",
+  "next_action": "Wait for a useful published policy/permission or permitted metadata-export change. Then implement and verify problem-template/redirect exclusion, file-specific licensing, revision identity, bounded media searches and ten current examples. No unchanged API retries.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Commons is one Wikimedia Foundation/community media repository; MediaWiki software, language views and API modules are not additional origins.",
+      "facts": {},
+      "open_questions": [
+        "Verify native page ID plus file timestamp/SHA identity on an allowed current item."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/wikimedia-commons.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "c908bb969330955f6927",
+          "observed_at": "2026-11-05T09:43:09.053153+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API",
+          "outcome": "captured",
+          "body_sha256": "41fa716c324af4c2199a0b0dafb08eabf369a8d1ae0ac762acaad3f3f06895c6",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "43b9d9cb72c39a514876",
+          "observed_at": "2026-11-05T09:43:17.244727+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Imageinfo",
+          "outcome": "captured",
+          "body_sha256": "7e4500941b2f6c02028c37d1e398b0be3d21ca61b4951572d8c2eed7c7d63a52",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8d081982273e3e21e252",
+          "observed_at": "2026-11-05T09:45:33.969071+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/donotuse",
+          "outcome": "captured",
+          "body_sha256": "49f103c7ffbe87e62cd0da6f12f88a12fe6a3efc2f92d7abd29d6780dcd785cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8dd3105aa73f2b5fcb6a",
+          "observed_at": "2026-11-05T09:45:37.717058+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/license",
+          "outcome": "captured",
+          "body_sha256": "99cd33d7f6862ad46a310bacdf6a664ee8fa0314d924518d0cf0dc90b3488639",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "f5fb681993046cc02ef1",
+          "observed_at": "2026-11-05T09:45:45.809010+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Search",
+          "outcome": "captured",
+          "body_sha256": "7f18486939a223580fbadcea475ce73ec031d450a439507db16e09fec981d180",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "8468504ae46ee9b976a0",
+          "observed_at": "2026-11-05T09:47:52.012974+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+          "outcome": "captured",
+          "body_sha256": "9594ab7bb936a1358e0c21f62c08e0668fe80eac8f885f1765a0269d612721a1",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c0e4453c944ed405241c",
+          "observed_at": "2026-11-05T09:47:55.790051+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Category:Problem_tags",
+          "outcome": "captured",
+          "body_sha256": "7edfa95e7a5c89c7977a3bf6fa6051bb9238a143c70c51ef858c0db40539f7cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        }
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "C16 art/cultural media and C20 educational media are candidate uses. Current documentation is English; actual language, USA/India and educational subset coverage is unmeasured.",
+      "facts": {},
+      "open_questions": [
+        "Current permitted samples and jurisdiction/language boundaries."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/wikimedia-commons.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "c908bb969330955f6927",
+          "observed_at": "2026-11-05T09:43:09.053153+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API",
+          "outcome": "captured",
+          "body_sha256": "41fa716c324af4c2199a0b0dafb08eabf369a8d1ae0ac762acaad3f3f06895c6",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "43b9d9cb72c39a514876",
+          "observed_at": "2026-11-05T09:43:17.244727+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Imageinfo",
+          "outcome": "captured",
+          "body_sha256": "7e4500941b2f6c02028c37d1e398b0be3d21ca61b4951572d8c2eed7c7d63a52",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8d081982273e3e21e252",
+          "observed_at": "2026-11-05T09:45:33.969071+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/donotuse",
+          "outcome": "captured",
+          "body_sha256": "49f103c7ffbe87e62cd0da6f12f88a12fe6a3efc2f92d7abd29d6780dcd785cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8dd3105aa73f2b5fcb6a",
+          "observed_at": "2026-11-05T09:45:37.717058+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/license",
+          "outcome": "captured",
+          "body_sha256": "99cd33d7f6862ad46a310bacdf6a664ee8fa0314d924518d0cf0dc90b3488639",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "f5fb681993046cc02ef1",
+          "observed_at": "2026-11-05T09:45:45.809010+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Search",
+          "outcome": "captured",
+          "body_sha256": "7f18486939a223580fbadcea475ce73ec031d450a439507db16e09fec981d180",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "8468504ae46ee9b976a0",
+          "observed_at": "2026-11-05T09:47:52.012974+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+          "outcome": "captured",
+          "body_sha256": "9594ab7bb936a1358e0c21f62c08e0668fe80eac8f885f1765a0269d612721a1",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c0e4453c944ed405241c",
+          "observed_at": "2026-11-05T09:47:55.790051+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Category:Problem_tags",
+          "outcome": "captured",
+          "body_sha256": "7edfa95e7a5c89c7977a3bf6fa6051bb9238a143c70c51ef858c0db40539f7cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        }
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Search and imageinfo contracts are documented; exact categorymembers request for copyright-problem exclusions was saved but skipped by robots.",
+      "facts": {
+        "request_sent": false,
+        "robots_body_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+      },
+      "open_questions": [
+        "Resolve API policy, then verify current imageinfo/search/continuation shapes."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/wikimedia-commons.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "c908bb969330955f6927",
+          "observed_at": "2026-11-05T09:43:09.053153+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API",
+          "outcome": "captured",
+          "body_sha256": "41fa716c324af4c2199a0b0dafb08eabf369a8d1ae0ac762acaad3f3f06895c6",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "43b9d9cb72c39a514876",
+          "observed_at": "2026-11-05T09:43:17.244727+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Imageinfo",
+          "outcome": "captured",
+          "body_sha256": "7e4500941b2f6c02028c37d1e398b0be3d21ca61b4951572d8c2eed7c7d63a52",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8d081982273e3e21e252",
+          "observed_at": "2026-11-05T09:45:33.969071+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/donotuse",
+          "outcome": "captured",
+          "body_sha256": "49f103c7ffbe87e62cd0da6f12f88a12fe6a3efc2f92d7abd29d6780dcd785cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8dd3105aa73f2b5fcb6a",
+          "observed_at": "2026-11-05T09:45:37.717058+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/license",
+          "outcome": "captured",
+          "body_sha256": "99cd33d7f6862ad46a310bacdf6a664ee8fa0314d924518d0cf0dc90b3488639",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "f5fb681993046cc02ef1",
+          "observed_at": "2026-11-05T09:45:45.809010+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Search",
+          "outcome": "captured",
+          "body_sha256": "7f18486939a223580fbadcea475ce73ec031d450a439507db16e09fec981d180",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "8468504ae46ee9b976a0",
+          "observed_at": "2026-11-05T09:47:52.012974+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+          "outcome": "captured",
+          "body_sha256": "9594ab7bb936a1358e0c21f62c08e0668fe80eac8f885f1765a0269d612721a1",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c0e4453c944ed405241c",
+          "observed_at": "2026-11-05T09:47:55.790051+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Category:Problem_tags",
+          "outcome": "captured",
+          "body_sha256": "7edfa95e7a5c89c7977a3bf6fa6051bb9238a143c70c51ef858c0db40539f7cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        }
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Structured file-namespace data is CC0; unstructured text is CC BY-SA and files retain individual licenses. Official API guidance says exclude files transcluding problem templates or their redirects. No account/payment used.",
+      "facts": {},
+      "open_questions": [
+        "Validate license/credit extraction and copyright-problem exclusions for actual retained files."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/wikimedia-commons.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "c908bb969330955f6927",
+          "observed_at": "2026-11-05T09:43:09.053153+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API",
+          "outcome": "captured",
+          "body_sha256": "41fa716c324af4c2199a0b0dafb08eabf369a8d1ae0ac762acaad3f3f06895c6",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "43b9d9cb72c39a514876",
+          "observed_at": "2026-11-05T09:43:17.244727+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Imageinfo",
+          "outcome": "captured",
+          "body_sha256": "7e4500941b2f6c02028c37d1e398b0be3d21ca61b4951572d8c2eed7c7d63a52",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8d081982273e3e21e252",
+          "observed_at": "2026-11-05T09:45:33.969071+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/donotuse",
+          "outcome": "captured",
+          "body_sha256": "49f103c7ffbe87e62cd0da6f12f88a12fe6a3efc2f92d7abd29d6780dcd785cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8dd3105aa73f2b5fcb6a",
+          "observed_at": "2026-11-05T09:45:37.717058+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/license",
+          "outcome": "captured",
+          "body_sha256": "99cd33d7f6862ad46a310bacdf6a664ee8fa0314d924518d0cf0dc90b3488639",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "f5fb681993046cc02ef1",
+          "observed_at": "2026-11-05T09:45:45.809010+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Search",
+          "outcome": "captured",
+          "body_sha256": "7f18486939a223580fbadcea475ce73ec031d450a439507db16e09fec981d180",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "8468504ae46ee9b976a0",
+          "observed_at": "2026-11-05T09:47:52.012974+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+          "outcome": "captured",
+          "body_sha256": "9594ab7bb936a1358e0c21f62c08e0668fe80eac8f885f1765a0269d612721a1",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c0e4453c944ed405241c",
+          "observed_at": "2026-11-05T09:47:55.790051+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Category:Problem_tags",
+          "outcome": "captured",
+          "body_sha256": "7edfa95e7a5c89c7977a3bf6fa6051bb9238a143c70c51ef858c0db40539f7cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        }
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Public documentation does not prove that an individual original image/audio/video is accessible or usable. No bulk files downloaded.",
+      "facts": {},
+      "open_questions": [
+        "Representative anonymous reading, per-file restrictions and country availability."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/wikimedia-commons.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "c908bb969330955f6927",
+          "observed_at": "2026-11-05T09:43:09.053153+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API",
+          "outcome": "captured",
+          "body_sha256": "41fa716c324af4c2199a0b0dafb08eabf369a8d1ae0ac762acaad3f3f06895c6",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "43b9d9cb72c39a514876",
+          "observed_at": "2026-11-05T09:43:17.244727+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Imageinfo",
+          "outcome": "captured",
+          "body_sha256": "7e4500941b2f6c02028c37d1e398b0be3d21ca61b4951572d8c2eed7c7d63a52",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8d081982273e3e21e252",
+          "observed_at": "2026-11-05T09:45:33.969071+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/donotuse",
+          "outcome": "captured",
+          "body_sha256": "49f103c7ffbe87e62cd0da6f12f88a12fe6a3efc2f92d7abd29d6780dcd785cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8dd3105aa73f2b5fcb6a",
+          "observed_at": "2026-11-05T09:45:37.717058+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/license",
+          "outcome": "captured",
+          "body_sha256": "99cd33d7f6862ad46a310bacdf6a664ee8fa0314d924518d0cf0dc90b3488639",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "f5fb681993046cc02ef1",
+          "observed_at": "2026-11-05T09:45:45.809010+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Search",
+          "outcome": "captured",
+          "body_sha256": "7f18486939a223580fbadcea475ce73ec031d450a439507db16e09fec981d180",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "8468504ae46ee9b976a0",
+          "observed_at": "2026-11-05T09:47:52.012974+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+          "outcome": "captured",
+          "body_sha256": "9594ab7bb936a1358e0c21f62c08e0668fe80eac8f885f1765a0269d612721a1",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c0e4453c944ed405241c",
+          "observed_at": "2026-11-05T09:47:55.790051+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Category:Problem_tags",
+          "outcome": "captured",
+          "body_sha256": "7edfa95e7a5c89c7977a3bf6fa6051bb9238a143c70c51ef858c0db40539f7cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        }
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "No query sent; no relevance, empty, paging or native-file samples exist. License sample code is incomplete and cannot establish filter correctness.",
+      "facts": {},
+      "open_questions": [
+        "Ten distinct current examples plus relevance/continuation/error and exclusion tests."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/wikimedia-commons.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "c908bb969330955f6927",
+          "observed_at": "2026-11-05T09:43:09.053153+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API",
+          "outcome": "captured",
+          "body_sha256": "41fa716c324af4c2199a0b0dafb08eabf369a8d1ae0ac762acaad3f3f06895c6",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "43b9d9cb72c39a514876",
+          "observed_at": "2026-11-05T09:43:17.244727+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Imageinfo",
+          "outcome": "captured",
+          "body_sha256": "7e4500941b2f6c02028c37d1e398b0be3d21ca61b4951572d8c2eed7c7d63a52",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8d081982273e3e21e252",
+          "observed_at": "2026-11-05T09:45:33.969071+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/donotuse",
+          "outcome": "captured",
+          "body_sha256": "49f103c7ffbe87e62cd0da6f12f88a12fe6a3efc2f92d7abd29d6780dcd785cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8dd3105aa73f2b5fcb6a",
+          "observed_at": "2026-11-05T09:45:37.717058+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/license",
+          "outcome": "captured",
+          "body_sha256": "99cd33d7f6862ad46a310bacdf6a664ee8fa0314d924518d0cf0dc90b3488639",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "f5fb681993046cc02ef1",
+          "observed_at": "2026-11-05T09:45:45.809010+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Search",
+          "outcome": "captured",
+          "body_sha256": "7f18486939a223580fbadcea475ce73ec031d450a439507db16e09fec981d180",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "8468504ae46ee9b976a0",
+          "observed_at": "2026-11-05T09:47:52.012974+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+          "outcome": "captured",
+          "body_sha256": "9594ab7bb936a1358e0c21f62c08e0668fe80eac8f885f1765a0269d612721a1",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c0e4453c944ed405241c",
+          "observed_at": "2026-11-05T09:47:55.790051+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Category:Problem_tags",
+          "outcome": "captured",
+          "body_sha256": "7edfa95e7a5c89c7977a3bf6fa6051bb9238a143c70c51ef858c0db40539f7cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        }
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Collector respected current robots and stopped before API execution. maxlag=5 was proposed, not tested.",
+      "facts": {},
+      "open_questions": [
+        "Permitted rate/authentication contract, deletion/rights-change handling and later-day reliability."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/wikimedia-commons.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "c908bb969330955f6927",
+          "observed_at": "2026-11-05T09:43:09.053153+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API",
+          "outcome": "captured",
+          "body_sha256": "41fa716c324af4c2199a0b0dafb08eabf369a8d1ae0ac762acaad3f3f06895c6",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "43b9d9cb72c39a514876",
+          "observed_at": "2026-11-05T09:43:17.244727+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Imageinfo",
+          "outcome": "captured",
+          "body_sha256": "7e4500941b2f6c02028c37d1e398b0be3d21ca61b4951572d8c2eed7c7d63a52",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8d081982273e3e21e252",
+          "observed_at": "2026-11-05T09:45:33.969071+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/donotuse",
+          "outcome": "captured",
+          "body_sha256": "49f103c7ffbe87e62cd0da6f12f88a12fe6a3efc2f92d7abd29d6780dcd785cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8dd3105aa73f2b5fcb6a",
+          "observed_at": "2026-11-05T09:45:37.717058+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/license",
+          "outcome": "captured",
+          "body_sha256": "99cd33d7f6862ad46a310bacdf6a664ee8fa0314d924518d0cf0dc90b3488639",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "f5fb681993046cc02ef1",
+          "observed_at": "2026-11-05T09:45:45.809010+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Search",
+          "outcome": "captured",
+          "body_sha256": "7f18486939a223580fbadcea475ce73ec031d450a439507db16e09fec981d180",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "8468504ae46ee9b976a0",
+          "observed_at": "2026-11-05T09:47:52.012974+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+          "outcome": "captured",
+          "body_sha256": "9594ab7bb936a1358e0c21f62c08e0668fe80eac8f885f1765a0269d612721a1",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c0e4453c944ed405241c",
+          "observed_at": "2026-11-05T09:47:55.790051+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Category:Problem_tags",
+          "outcome": "captured",
+          "body_sha256": "7edfa95e7a5c89c7977a3bf6fa6051bb9238a143c70c51ef858c0db40539f7cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        }
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Defer this API route on current robots evidence; independent providers continue. Revisit only after explicit published policy/export permission changes; no alternate-host workaround.",
+      "facts": {
+        "decision": "deferred-policy-disallow",
+        "activation_approved": false,
+        "owner_action_required": false
+      },
+      "open_questions": [],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/wikimedia-commons.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "c908bb969330955f6927",
+          "observed_at": "2026-11-05T09:43:09.053153+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API",
+          "outcome": "captured",
+          "body_sha256": "41fa716c324af4c2199a0b0dafb08eabf369a8d1ae0ac762acaad3f3f06895c6",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "43b9d9cb72c39a514876",
+          "observed_at": "2026-11-05T09:43:17.244727+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Imageinfo",
+          "outcome": "captured",
+          "body_sha256": "7e4500941b2f6c02028c37d1e398b0be3d21ca61b4951572d8c2eed7c7d63a52",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8d081982273e3e21e252",
+          "observed_at": "2026-11-05T09:45:33.969071+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/donotuse",
+          "outcome": "captured",
+          "body_sha256": "49f103c7ffbe87e62cd0da6f12f88a12fe6a3efc2f92d7abd29d6780dcd785cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "8dd3105aa73f2b5fcb6a",
+          "observed_at": "2026-11-05T09:45:37.717058+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:API/license",
+          "outcome": "captured",
+          "body_sha256": "99cd33d7f6862ad46a310bacdf6a664ee8fa0314d924518d0cf0dc90b3488639",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "f5fb681993046cc02ef1",
+          "observed_at": "2026-11-05T09:45:45.809010+00:00",
+          "url": "https://www.mediawiki.org/wiki/API:Search",
+          "outcome": "captured",
+          "body_sha256": "7f18486939a223580fbadcea475ce73ec031d450a439507db16e09fec981d180",
+          "policy_sha256": "c2243c647fd8d9c59c03f08fb31bcaf80fc8388a3f08331a201017f37e3c8793"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "8468504ae46ee9b976a0",
+          "observed_at": "2026-11-05T09:47:52.012974+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+          "outcome": "captured",
+          "body_sha256": "9594ab7bb936a1358e0c21f62c08e0668fe80eac8f885f1765a0269d612721a1",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c0e4453c944ed405241c",
+          "observed_at": "2026-11-05T09:47:55.790051+00:00",
+          "url": "https://commons.wikimedia.org/wiki/Category:Problem_tags",
+          "outcome": "captured",
+          "body_sha256": "7edfa95e7a5c89c7977a3bf6fa6051bb9238a143c70c51ef858c0db40539f7cb",
+          "policy_sha256": "89c0b6b55d04a401346110c36c8cd8663a3443f4b69cb2909a26ff79ac8f3884"
+        }
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "a1152262daa2c2e9e30dc6b14a7917fa8e5d2b068757757dfc590f307a445834",
+      "path": "docs/research/free-content/discovery/LANGUAGE_CULTURE_MEDIA.md",
+      "line": 153,
+      "heading": "C20 — Educational podcasts, lectures and documentaries",
+      "text": "**Where to start.** Begin with universities, public educational broadcasters and\ninstitutional media producers, following their series/catalog links. In India,\n[NPTEL's course catalog](https://nptel.ac.in/courses) provides instructor/course\nand institutional discovery leads; investigate official educational broadcaster\nand university series alongside it. For international and US material, inspect\nuniversity lecture catalogs and public-media learning collections. The\n[Internet Archive developer portal](https://archive.org/developers/) documents\nmetadata tools for archive-hosted media; [Wikimedia Commons API guidance](https://commons.wikimedia.org/wiki/Commons:API)\nsupports another metadata route, with license and exclusion markers to review.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
+      "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
+      "line": 64,
+      "heading": "Tested automated route disallowed — 11",
+      "text": "| [Wikimedia Commons](https://commons.wikimedia.org/wiki/Commons:API) | API request skipped before execution because robots disallowed the exact URL. / No current media-file examples, paging, empty/error responses or representative reading checks. | Do not automate the blocked route. Review an explicitly permitted documented alternative or seek operator clarification/permission. API documentation and website availability do not override this route restriction. Owner action: no signup fix established; permission or permitted alternative. |",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "recovery": {
+    "reason": "API request skipped before execution because robots disallowed the exact URL. | No current media-file examples, paging, empty/error responses or representative reading checks.",
+    "attempt": "Reviewed the saved provider-policy/access observations and prior decision; no fresh network request in this follow-up.",
+    "result": "API request skipped before execution because robots disallowed the exact URL. | No current media-file examples, paging, empty/error responses or representative reading checks.",
+    "decision": "wait_for_documented_policy_access_or_permitted_export_trigger",
+    "next_action": "Wait for a useful published policy/permission or permitted metadata-export change. Then implement and verify problem-template/redirect exclusion, file-specific licensing, revision identity, bounded media searches and ten current examples. No unchanged API retries.",
+    "retry_trigger": "A usable published policy/access recovery or explicitly supported permitted export/API route. Do not repeat unchanged denied requests.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+      "runs/hal-commons-permission-20261105ab/observations.jsonl",
+      "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+      "runs/source-evidence-20261105/observations.jsonl",
+      "examples/wikimedia-commons.scouting.jsonl"
+    ],
+    "fresh_provider_test": false
+  },
+  "recovery_reviewed_at": "2026-11-05T20:44:42.717663+00:00"
+}

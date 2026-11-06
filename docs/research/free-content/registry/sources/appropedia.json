@@ -1,0 +1,1361 @@
+{
+  "schema_version": 1,
+  "id": "appropedia",
+  "name": "Appropedia practical knowledge wiki",
+  "homepage": "https://www.appropedia.org/",
+  "group": "G02",
+  "areas": [
+    "C13",
+    "I01",
+    "I11",
+    "I16"
+  ],
+  "origin_family": "appropedia",
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "record_kind": "practical-knowledge-wiki-catalog",
+  "operator": {
+    "name": "Appropedia Foundation",
+    "jurisdiction": "USA; California nonprofit with global community contributions"
+  },
+  "capabilities": [
+    "Documented public Action API topic and native article/revision lookup; full guides and original project reports vary by article."
+  ],
+  "query": {
+    "adapter": "appropedia",
+    "endpoint": "https://www.appropedia.org/w/api.php",
+    "authentication": "Anonymous read-only Action API passed twelve cases; no key/account/payment used. Editing accounts are separate.",
+    "cases": [
+      {
+        "id": "topic-1",
+        "intent": "Topic retrieval for drip irrigation; retain practical versus general-topic relevance.",
+        "request": {
+          "method": "GET",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "list": "search",
+            "maxlag": 5,
+            "srlimit": 3,
+            "srnamespace": 0,
+            "srprop": "timestamp|wordcount|snippet",
+            "srsearch": "drip irrigation"
+          },
+          "url": "https://www.appropedia.org/w/api.php"
+        },
+        "expected_ids": [
+          "36975"
+        ]
+      },
+      {
+        "id": "topic-2",
+        "intent": "Topic retrieval for solar cooker; retain practical versus general-topic relevance.",
+        "request": {
+          "method": "GET",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "list": "search",
+            "maxlag": 5,
+            "srlimit": 3,
+            "srnamespace": 0,
+            "srprop": "timestamp|wordcount|snippet",
+            "srsearch": "solar cooker"
+          },
+          "url": "https://www.appropedia.org/w/api.php"
+        },
+        "expected_ids": [
+          "10178"
+        ]
+      },
+      {
+        "id": "topic-3",
+        "intent": "Topic retrieval for composting; retain practical versus general-topic relevance.",
+        "request": {
+          "method": "GET",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "list": "search",
+            "maxlag": 5,
+            "srlimit": 3,
+            "srnamespace": 0,
+            "srprop": "timestamp|wordcount|snippet",
+            "srsearch": "composting"
+          },
+          "url": "https://www.appropedia.org/w/api.php"
+        },
+        "expected_ids": [
+          "9516"
+        ]
+      },
+      {
+        "id": "topic-4",
+        "intent": "Topic retrieval for biogas; retain practical versus general-topic relevance.",
+        "request": {
+          "method": "GET",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "list": "search",
+            "maxlag": 5,
+            "srlimit": 3,
+            "srnamespace": 0,
+            "srprop": "timestamp|wordcount|snippet",
+            "srsearch": "biogas"
+          },
+          "url": "https://www.appropedia.org/w/api.php"
+        },
+        "expected_ids": [
+          "12492"
+        ]
+      },
+      {
+        "id": "topic-5",
+        "intent": "Topic retrieval for rainwater harvesting; retain practical versus general-topic relevance.",
+        "request": {
+          "method": "GET",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "list": "search",
+            "maxlag": 5,
+            "srlimit": 3,
+            "srnamespace": 0,
+            "srprop": "timestamp|wordcount|snippet",
+            "srsearch": "rainwater harvesting"
+          },
+          "url": "https://www.appropedia.org/w/api.php"
+        },
+        "expected_ids": [
+          "8296"
+        ]
+      },
+      {
+        "id": "native-4026",
+        "intent": "Native page and current revision metadata lookup, preserving ported-source attribution.",
+        "request": {
+          "method": "GET",
+          "url": "https://www.appropedia.org/w/api.php",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "maxlag": 5,
+            "prop": "info|revisions",
+            "pageids": 4026,
+            "rvprop": "ids|timestamp",
+            "rvlimit": 1,
+            "inprop": "url"
+          }
+        },
+        "expected_ids": [
+          "4026"
+        ]
+      },
+      {
+        "id": "native-8497",
+        "intent": "Native page and current revision metadata lookup, preserving ported-source attribution.",
+        "request": {
+          "method": "GET",
+          "url": "https://www.appropedia.org/w/api.php",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "maxlag": 5,
+            "prop": "info|revisions",
+            "pageids": 8497,
+            "rvprop": "ids|timestamp",
+            "rvlimit": 1,
+            "inprop": "url"
+          }
+        },
+        "expected_ids": [
+          "8497"
+        ]
+      },
+      {
+        "id": "native-3708",
+        "intent": "Native page and current revision metadata lookup, preserving ported-source attribution.",
+        "request": {
+          "method": "GET",
+          "url": "https://www.appropedia.org/w/api.php",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "maxlag": 5,
+            "prop": "info|revisions",
+            "pageids": 3708,
+            "rvprop": "ids|timestamp",
+            "rvlimit": 1,
+            "inprop": "url"
+          }
+        },
+        "expected_ids": [
+          "3708"
+        ]
+      },
+      {
+        "id": "native-17451",
+        "intent": "Native page and current revision metadata lookup, preserving ported-source attribution.",
+        "request": {
+          "method": "GET",
+          "url": "https://www.appropedia.org/w/api.php",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "maxlag": 5,
+            "prop": "info|revisions",
+            "pageids": 17451,
+            "rvprop": "ids|timestamp",
+            "rvlimit": 1,
+            "inprop": "url"
+          }
+        },
+        "expected_ids": [
+          "17451"
+        ]
+      },
+      {
+        "id": "native-10888",
+        "intent": "Native page and current revision metadata lookup, preserving ported-source attribution.",
+        "request": {
+          "method": "GET",
+          "url": "https://www.appropedia.org/w/api.php",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "maxlag": 5,
+            "prop": "info|revisions",
+            "pageids": 10888,
+            "rvprop": "ids|timestamp",
+            "rvlimit": 1,
+            "inprop": "url"
+          }
+        },
+        "expected_ids": [
+          "10888"
+        ]
+      },
+      {
+        "id": "topic-hindi",
+        "intent": "Native-script Hindi irrigation retrieval; language views remain one source origin.",
+        "request": {
+          "method": "GET",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "list": "search",
+            "maxlag": 5,
+            "srlimit": 3,
+            "srnamespace": 0,
+            "srprop": "timestamp|wordcount|snippet",
+            "srsearch": "सिंचाई"
+          },
+          "url": "https://www.appropedia.org/w/api.php"
+        },
+        "expected_ids": [
+          "137946"
+        ]
+      },
+      {
+        "id": "native-121210",
+        "intent": "Preserve the native Hindi vertical-garden page and revision identity; translation quality remains open.",
+        "request": {
+          "method": "GET",
+          "url": "https://www.appropedia.org/w/api.php",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "maxlag": 5,
+            "prop": "info|revisions",
+            "pageids": 121210,
+            "rvprop": "ids|timestamp",
+            "rvlimit": 1,
+            "inprop": "url"
+          }
+        },
+        "expected_ids": [
+          "121210"
+        ]
+      }
+    ],
+    "area_case_ids": {
+      "C13": [
+        "topic-1",
+        "topic-2",
+        "topic-3",
+        "topic-4",
+        "topic-5",
+        "native-4026",
+        "native-8497",
+        "native-3708",
+        "native-17451",
+        "native-10888",
+        "topic-hindi",
+        "native-121210"
+      ],
+      "I01": [
+        "topic-1",
+        "native-4026",
+        "topic-hindi",
+        "native-121210"
+      ],
+      "I11": [
+        "topic-2",
+        "topic-4",
+        "native-8497",
+        "native-17451"
+      ],
+      "I16": [
+        "topic-3",
+        "topic-5",
+        "native-3708",
+        "native-10888"
+      ]
+    },
+    "supported_modes": [
+      "Namespace0 topic search with snippets",
+      "Native page ID with one current revision ID/timestamp",
+      "sroffset continuation"
+    ],
+    "unsupported_modes": [
+      "Runtime integration",
+      "Full article bulk export",
+      "Audio/video or attached-file retrieval",
+      "User/profile/comment collection",
+      "Safety-certified instructions or automatic regulatory/local applicability",
+      "Custom semantic endpoint: observed301, no JSON captured"
+    ],
+    "request_limit": 3,
+    "pacing_seconds": 3,
+    "numeric_provider_quota": null
+  },
+  "licensing": "Default documentation CC BY-SA4.0, item exceptions and distinct hardware/software/external embedded-content licenses remain separate.",
+  "limitations": [
+    "Ported Practical Action pages and historic merged wikis do not add independent Appropedia origins.",
+    "Topic match and recent edit date do not establish safe or current practical advice."
+  ],
+  "documentation": [
+    "https://www.appropedia.org/Appropedia:API",
+    "https://www.appropedia.org/Appropedia:Copyrights",
+    "https://www.appropedia.org/Appropedia:About",
+    "https://www.appropedia.org/Appropedia:Use_of_AI",
+    "https://www.appropedia.org/Appropedia:General_disclaimer",
+    "https://www.appropedia.org/Appropedia:Content_deletion",
+    "https://www.appropedia.org/Practical_Action/Micro-irrigation",
+    "https://www.appropedia.org/Parabolic_basket_and_tin_can_solar_cooker",
+    "https://www.appropedia.org/Drip_irrigation/hi",
+    "https://www.appropedia.org/Appropedia:Ported_content_policy"
+  ],
+  "evidence": [
+    "examples/appropedia.contract.jsonl",
+    "examples/appropedia.policy.jsonl",
+    "examples/appropedia.scouting.jsonl",
+    "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+    "runs/practical-content-policy-20261105au/observations.jsonl",
+    "examples/appropedia.jsonl",
+    "examples/appropedia.benchmark.jsonl",
+    "examples/appropedia.semantic.jsonl",
+    "runs/practical-reader-rights-20261105av/observations.jsonl",
+    "docs/research/free-content/evidence/2026-11-05-practical/reader-observations.jsonl"
+  ],
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "One Appropedia Foundation community knowledge catalog; pages and translations have distinct native IDs and revision identity.",
+      "facts": {
+        "operator": {
+          "name": "Appropedia Foundation",
+          "jurisdiction": "USA; California nonprofit with global community contributions"
+        },
+        "wiki": "appropedia_wiki; MediaWiki1.45.5 in current siteinfo",
+        "native_ids": [
+          "10178",
+          "10888",
+          "121210",
+          "12492",
+          "137946",
+          "17451",
+          "36975",
+          "3708",
+          "4026",
+          "8296",
+          "8497",
+          "9516"
+        ],
+        "representative": [
+          {
+            "page_id": 4026,
+            "revision_id": 1223789,
+            "title": "Practical Action/Micro-irrigation"
+          },
+          {
+            "page_id": 8497,
+            "revision_id": 1273638,
+            "title": "Parabolic basket and tin can solar cooker"
+          },
+          {
+            "page_id": 137946,
+            "revision_id": 1233507,
+            "language": "hi",
+            "title": "Drip irrigation/hi"
+          }
+        ],
+        "deduplication": "Practical Action attribution is retained separately. Absorbed historical wikis, translations, revision IDs and downstream copies do not create independent Appropedia origins.",
+        "translation_caution": "Hindi reader is page137946/revision1233507, while its linked semantic URL refers to English parent Drip irrigation. Do not silently assign parent identity or license to the translated page."
+      },
+      "evidence": [
+        "examples/appropedia.contract.jsonl",
+        "examples/appropedia.policy.jsonl",
+        "examples/appropedia.scouting.jsonl",
+        "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+        "runs/practical-content-policy-20261105au/observations.jsonl",
+        "examples/appropedia.jsonl",
+        "examples/appropedia.benchmark.jsonl",
+        "examples/appropedia.semantic.jsonl",
+        "runs/practical-reader-rights-20261105av/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-practical/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "25d6d05a2aeca97b9fe6",
+          "observed_at": "2026-11-05T12:42:58.108662+00:00",
+          "url": "https://www.appropedia.org/Appropedia:API",
+          "body_sha256": "52005a1256e605cb49075bf648358f6ff5098e84497c9a5b850f2a7f3bbff8da",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "d9251a7bb4b973148f80",
+          "observed_at": "2026-11-05T12:43:02.042287+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Copyrights",
+          "body_sha256": "83c349abfee8120643903a992b25a07a03417a9dfb2ac93cda3a0771547a2dc4",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "48725c714b2ecea6fbe0",
+          "observed_at": "2026-11-05T12:43:05.142050+00:00",
+          "url": "https://www.appropedia.org/Appropedia:About",
+          "body_sha256": "fc85395dbeec84a8fc2a77dbd600b45cdc520a69803116e1eb46e6016f1f85ee",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "00a440ea787bc1f5c788",
+          "observed_at": "2026-11-05T12:45:42.231540+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Use_of_AI",
+          "body_sha256": "1033af528f4aaaa8b7c7b127f72203900a70ebb8d1be917087cff245eb09ec17",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "da933b651ecc8f468e04",
+          "observed_at": "2026-11-05T12:45:45.590646+00:00",
+          "url": "https://www.appropedia.org/Appropedia:General_disclaimer",
+          "body_sha256": "a1e3e9b821af02eca277fc27e000a4fc67fca0e12f8dd0240bdee9e310d9921a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "99907fa1e30fdf272987",
+          "observed_at": "2026-11-05T12:45:49.022837+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Content_deletion",
+          "body_sha256": "52a3a9a9df0a49e37bcd2109b626747feecd88e3f6216f4ce61c47c678a6cf4c",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "b07f2e4ef6ff760ce3ca",
+          "observed_at": "2026-11-05T12:54:49.118198+00:00",
+          "url": "https://www.appropedia.org/Practical_Action/Micro-irrigation",
+          "body_sha256": "baec6d1d00d20a874bf524eb5b9b3d44283967b554382f1973009737cd8e249d",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "49e98067b28087c89a40",
+          "observed_at": "2026-11-05T12:54:52.344644+00:00",
+          "url": "https://www.appropedia.org/Parabolic_basket_and_tin_can_solar_cooker",
+          "body_sha256": "e836042024964ef8556b215d3a510c61bb23da7565067c1e42b73f224456b553",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "1772a6dd01f3e3a962e0",
+          "observed_at": "2026-11-05T12:54:55.540594+00:00",
+          "url": "https://www.appropedia.org/Drip_irrigation/hi",
+          "body_sha256": "cf9b2c530d2d2f8f3d379aa1db52966a2f308d945bf01eba6291fc659e5df64a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "f424c4ab037b37c3410d",
+          "observed_at": "2026-11-05T12:54:58.760438+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Ported_content_policy",
+          "body_sha256": "0a7e3f7c339996b9966ab7d0ae09ce5766f457d4ee3bc2b9e3907f4dd7c09f46",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "complete",
+      "summary": "Twelve observed cases cover practical guides and community projects in English/Hindi, with explicit area-to-case mappings.",
+      "facts": {
+        "areas": [
+          "C13",
+          "I01",
+          "I11",
+          "I16"
+        ],
+        "area_case_ids": {
+          "C13": [
+            "topic-1",
+            "topic-2",
+            "topic-3",
+            "topic-4",
+            "topic-5",
+            "native-4026",
+            "native-8497",
+            "native-3708",
+            "native-17451",
+            "native-10888",
+            "topic-hindi",
+            "native-121210"
+          ],
+          "I01": [
+            "topic-1",
+            "native-4026",
+            "topic-hindi",
+            "native-121210"
+          ],
+          "I11": [
+            "topic-2",
+            "topic-4",
+            "native-8497",
+            "native-17451"
+          ],
+          "I16": [
+            "topic-3",
+            "topic-5",
+            "native-3708",
+            "native-10888"
+          ]
+        },
+        "topics": [
+          "drip irrigation",
+          "solar cookers",
+          "composting",
+          "biogas",
+          "rainwater harvesting"
+        ],
+        "jurisdiction": "California nonprofit operator with worldwide subject matter. One managed cloud vantage; physical country unverified. India topic search and Hindi rendering do not prove India network availability or India-origin authorship.",
+        "sample_boundary": "A practical knowledge wiki, not a complete agricultural/energy manual library; no independent industry/category closure."
+      },
+      "evidence": [
+        "examples/appropedia.contract.jsonl",
+        "examples/appropedia.policy.jsonl",
+        "examples/appropedia.scouting.jsonl",
+        "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+        "runs/practical-content-policy-20261105au/observations.jsonl",
+        "examples/appropedia.jsonl",
+        "examples/appropedia.benchmark.jsonl",
+        "examples/appropedia.semantic.jsonl",
+        "runs/practical-reader-rights-20261105av/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-practical/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "25d6d05a2aeca97b9fe6",
+          "observed_at": "2026-11-05T12:42:58.108662+00:00",
+          "url": "https://www.appropedia.org/Appropedia:API",
+          "body_sha256": "52005a1256e605cb49075bf648358f6ff5098e84497c9a5b850f2a7f3bbff8da",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "d9251a7bb4b973148f80",
+          "observed_at": "2026-11-05T12:43:02.042287+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Copyrights",
+          "body_sha256": "83c349abfee8120643903a992b25a07a03417a9dfb2ac93cda3a0771547a2dc4",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "48725c714b2ecea6fbe0",
+          "observed_at": "2026-11-05T12:43:05.142050+00:00",
+          "url": "https://www.appropedia.org/Appropedia:About",
+          "body_sha256": "fc85395dbeec84a8fc2a77dbd600b45cdc520a69803116e1eb46e6016f1f85ee",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "00a440ea787bc1f5c788",
+          "observed_at": "2026-11-05T12:45:42.231540+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Use_of_AI",
+          "body_sha256": "1033af528f4aaaa8b7c7b127f72203900a70ebb8d1be917087cff245eb09ec17",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "da933b651ecc8f468e04",
+          "observed_at": "2026-11-05T12:45:45.590646+00:00",
+          "url": "https://www.appropedia.org/Appropedia:General_disclaimer",
+          "body_sha256": "a1e3e9b821af02eca277fc27e000a4fc67fca0e12f8dd0240bdee9e310d9921a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "99907fa1e30fdf272987",
+          "observed_at": "2026-11-05T12:45:49.022837+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Content_deletion",
+          "body_sha256": "52a3a9a9df0a49e37bcd2109b626747feecd88e3f6216f4ce61c47c678a6cf4c",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "b07f2e4ef6ff760ce3ca",
+          "observed_at": "2026-11-05T12:54:49.118198+00:00",
+          "url": "https://www.appropedia.org/Practical_Action/Micro-irrigation",
+          "body_sha256": "baec6d1d00d20a874bf524eb5b9b3d44283967b554382f1973009737cd8e249d",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "49e98067b28087c89a40",
+          "observed_at": "2026-11-05T12:54:52.344644+00:00",
+          "url": "https://www.appropedia.org/Parabolic_basket_and_tin_can_solar_cooker",
+          "body_sha256": "e836042024964ef8556b215d3a510c61bb23da7565067c1e42b73f224456b553",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "1772a6dd01f3e3a962e0",
+          "observed_at": "2026-11-05T12:54:55.540594+00:00",
+          "url": "https://www.appropedia.org/Drip_irrigation/hi",
+          "body_sha256": "cf9b2c530d2d2f8f3d379aa1db52966a2f308d945bf01eba6291fc659e5df64a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "f424c4ab037b37c3410d",
+          "observed_at": "2026-11-05T12:54:58.760438+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Ported_content_policy",
+          "body_sha256": "0a7e3f7c339996b9966ab7d0ae09ce5766f457d4ee3bc2b9e3907f4dd7c09f46",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        }
+      ],
+      "open_questions": []
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Official Appropedia API page and live paraminfo support bounded namespace0 topic search and native page/revision metadata retrieval.",
+      "facts": {
+        "search_request": {
+          "method": "GET",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "list": "search",
+            "maxlag": 5,
+            "srlimit": 3,
+            "srnamespace": 0,
+            "srprop": "timestamp|wordcount|snippet",
+            "srsearch": "drip irrigation"
+          },
+          "url": "https://www.appropedia.org/w/api.php"
+        },
+        "native_request": {
+          "method": "GET",
+          "url": "https://www.appropedia.org/w/api.php",
+          "params": {
+            "action": "query",
+            "format": "json",
+            "formatversion": 2,
+            "maxlag": 5,
+            "prop": "info|revisions",
+            "pageids": 4026,
+            "rvprop": "ids|timestamp",
+            "rvlimit": 1,
+            "inprop": "url"
+          }
+        },
+        "paging": "sroffset3 returned three additional drip-irrigation rows; retain native IDs and continuation.",
+        "empty": "Nonsense query HTTP200/search[]/totalhits0.",
+        "missing_id": "HTTP200/pages missing:true for requested999999999; not a verified item.",
+        "invalid_id": "HTTP200/error.code badinteger for nonnumeric pageids; parser rejects.",
+        "custom_semantic": "Exact item-published semantic URL returned301 to differently cased W path, no JSON. Retained negative; no alternate endpoint guessed or retried."
+      },
+      "evidence": [
+        "examples/appropedia.contract.jsonl",
+        "examples/appropedia.policy.jsonl",
+        "examples/appropedia.scouting.jsonl",
+        "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+        "runs/practical-content-policy-20261105au/observations.jsonl",
+        "examples/appropedia.jsonl",
+        "examples/appropedia.benchmark.jsonl",
+        "examples/appropedia.semantic.jsonl",
+        "runs/practical-reader-rights-20261105av/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-practical/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "25d6d05a2aeca97b9fe6",
+          "observed_at": "2026-11-05T12:42:58.108662+00:00",
+          "url": "https://www.appropedia.org/Appropedia:API",
+          "body_sha256": "52005a1256e605cb49075bf648358f6ff5098e84497c9a5b850f2a7f3bbff8da",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "d9251a7bb4b973148f80",
+          "observed_at": "2026-11-05T12:43:02.042287+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Copyrights",
+          "body_sha256": "83c349abfee8120643903a992b25a07a03417a9dfb2ac93cda3a0771547a2dc4",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "48725c714b2ecea6fbe0",
+          "observed_at": "2026-11-05T12:43:05.142050+00:00",
+          "url": "https://www.appropedia.org/Appropedia:About",
+          "body_sha256": "fc85395dbeec84a8fc2a77dbd600b45cdc520a69803116e1eb46e6016f1f85ee",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "00a440ea787bc1f5c788",
+          "observed_at": "2026-11-05T12:45:42.231540+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Use_of_AI",
+          "body_sha256": "1033af528f4aaaa8b7c7b127f72203900a70ebb8d1be917087cff245eb09ec17",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "da933b651ecc8f468e04",
+          "observed_at": "2026-11-05T12:45:45.590646+00:00",
+          "url": "https://www.appropedia.org/Appropedia:General_disclaimer",
+          "body_sha256": "a1e3e9b821af02eca277fc27e000a4fc67fca0e12f8dd0240bdee9e310d9921a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "99907fa1e30fdf272987",
+          "observed_at": "2026-11-05T12:45:49.022837+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Content_deletion",
+          "body_sha256": "52a3a9a9df0a49e37bcd2109b626747feecd88e3f6216f4ce61c47c678a6cf4c",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "b07f2e4ef6ff760ce3ca",
+          "observed_at": "2026-11-05T12:54:49.118198+00:00",
+          "url": "https://www.appropedia.org/Practical_Action/Micro-irrigation",
+          "body_sha256": "baec6d1d00d20a874bf524eb5b9b3d44283967b554382f1973009737cd8e249d",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "49e98067b28087c89a40",
+          "observed_at": "2026-11-05T12:54:52.344644+00:00",
+          "url": "https://www.appropedia.org/Parabolic_basket_and_tin_can_solar_cooker",
+          "body_sha256": "e836042024964ef8556b215d3a510c61bb23da7565067c1e42b73f224456b553",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "1772a6dd01f3e3a962e0",
+          "observed_at": "2026-11-05T12:54:55.540594+00:00",
+          "url": "https://www.appropedia.org/Drip_irrigation/hi",
+          "body_sha256": "cf9b2c530d2d2f8f3d379aa1db52966a2f308d945bf01eba6291fc659e5df64a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "f424c4ab037b37c3410d",
+          "observed_at": "2026-11-05T12:54:58.760438+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Ported_content_policy",
+          "body_sha256": "0a7e3f7c339996b9966ab7d0ae09ce5766f457d4ee3bc2b9e3907f4dd7c09f46",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Global default CC BY-SA4.0 is not a universal item license. Both inspected English guides label CC BY-SA3.0; ported/open-access exceptions require item-level attribution.",
+      "facts": {
+        "metadata": "API supplies page/revision/snippet metadata; no separate blanket metadata reuse license established. Keep attribution and article license alongside extracted text.",
+        "content_default": "Copyrights page: CC BY-SA4.0 unless otherwise noted. Siteinfo default is4.0.",
+        "item_exceptions": "Micro-irrigation and solar-cooker page data label CC BY-SA3.0. Practical Action is original source for micro-irrigation; original project authors listed on solar page. Global footer does not override explicit item license.",
+        "ported_content": "Ported-content policy requires compatible licensing/permission and original author/organization/source URL credit. Open-access-only material such as some CD3WD/WikiGreen content must not be presumed copyable/modifiable.",
+        "other_media": "Hardware may use CERN-OHL-S; software licenses and embedded external media differ. No hardware/software/audio/video downloads.",
+        "cost": "No account/key/payment needed for observed requests. No numeric quota or unlimited-use promise.",
+        "ai_policy": "Contribution policy includes AI-assisted publishing conditions; no contributions or publication to Appropedia performed."
+      },
+      "evidence": [
+        "examples/appropedia.contract.jsonl",
+        "examples/appropedia.policy.jsonl",
+        "examples/appropedia.scouting.jsonl",
+        "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+        "runs/practical-content-policy-20261105au/observations.jsonl",
+        "examples/appropedia.jsonl",
+        "examples/appropedia.benchmark.jsonl",
+        "examples/appropedia.semantic.jsonl",
+        "runs/practical-reader-rights-20261105av/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-practical/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "25d6d05a2aeca97b9fe6",
+          "observed_at": "2026-11-05T12:42:58.108662+00:00",
+          "url": "https://www.appropedia.org/Appropedia:API",
+          "body_sha256": "52005a1256e605cb49075bf648358f6ff5098e84497c9a5b850f2a7f3bbff8da",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "d9251a7bb4b973148f80",
+          "observed_at": "2026-11-05T12:43:02.042287+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Copyrights",
+          "body_sha256": "83c349abfee8120643903a992b25a07a03417a9dfb2ac93cda3a0771547a2dc4",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "48725c714b2ecea6fbe0",
+          "observed_at": "2026-11-05T12:43:05.142050+00:00",
+          "url": "https://www.appropedia.org/Appropedia:About",
+          "body_sha256": "fc85395dbeec84a8fc2a77dbd600b45cdc520a69803116e1eb46e6016f1f85ee",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "00a440ea787bc1f5c788",
+          "observed_at": "2026-11-05T12:45:42.231540+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Use_of_AI",
+          "body_sha256": "1033af528f4aaaa8b7c7b127f72203900a70ebb8d1be917087cff245eb09ec17",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "da933b651ecc8f468e04",
+          "observed_at": "2026-11-05T12:45:45.590646+00:00",
+          "url": "https://www.appropedia.org/Appropedia:General_disclaimer",
+          "body_sha256": "a1e3e9b821af02eca277fc27e000a4fc67fca0e12f8dd0240bdee9e310d9921a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "99907fa1e30fdf272987",
+          "observed_at": "2026-11-05T12:45:49.022837+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Content_deletion",
+          "body_sha256": "52a3a9a9df0a49e37bcd2109b626747feecd88e3f6216f4ce61c47c678a6cf4c",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "b07f2e4ef6ff760ce3ca",
+          "observed_at": "2026-11-05T12:54:49.118198+00:00",
+          "url": "https://www.appropedia.org/Practical_Action/Micro-irrigation",
+          "body_sha256": "baec6d1d00d20a874bf524eb5b9b3d44283967b554382f1973009737cd8e249d",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "49e98067b28087c89a40",
+          "observed_at": "2026-11-05T12:54:52.344644+00:00",
+          "url": "https://www.appropedia.org/Parabolic_basket_and_tin_can_solar_cooker",
+          "body_sha256": "e836042024964ef8556b215d3a510c61bb23da7565067c1e42b73f224456b553",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "1772a6dd01f3e3a962e0",
+          "observed_at": "2026-11-05T12:54:55.540594+00:00",
+          "url": "https://www.appropedia.org/Drip_irrigation/hi",
+          "body_sha256": "cf9b2c530d2d2f8f3d379aa1db52966a2f308d945bf01eba6291fc659e5df64a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "f424c4ab037b37c3410d",
+          "observed_at": "2026-11-05T12:54:58.760438+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Ported_content_policy",
+          "body_sha256": "0a7e3f7c339996b9966ab7d0ae09ce5766f457d4ee3bc2b9e3907f4dd7c09f46",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        }
+      ],
+      "open_questions": [
+        "Resolve metadata reuse and original-author/license history for each retained item, including Hindi translation; no universal license inference."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Three fresh anonymous WebKit readers display actual guide/project content and Hindi text; desktop native IDs/revisions match API results.",
+      "facts": {
+        "native_reader_ids": [
+          4026,
+          8497,
+          137946
+        ],
+        "http200_readers": 3,
+        "main_landmarks_each": 1,
+        "first_keyboard_focus": "Jump to content",
+        "horizontal_overflow": false,
+        "page_errors": 0,
+        "mobile": "390x844 Hindi paragraphs wrap; persistent cookie banner obscures lower viewport. No consent/form action taken.",
+        "access": "No login/paywall observed for these three pages. Images/body visible; no bulk books or media downloads.",
+        "version": "Solar project data dates2007 despite current revision2026; content age differs from wiki edit date.",
+        "translation": "Hindi native language hi/ID137946 verified in rendered MediaWiki config; English semantic-parent link remains separate."
+      },
+      "evidence": [
+        "examples/appropedia.contract.jsonl",
+        "examples/appropedia.policy.jsonl",
+        "examples/appropedia.scouting.jsonl",
+        "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+        "runs/practical-content-policy-20261105au/observations.jsonl",
+        "examples/appropedia.jsonl",
+        "examples/appropedia.benchmark.jsonl",
+        "examples/appropedia.semantic.jsonl",
+        "runs/practical-reader-rights-20261105av/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-practical/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "25d6d05a2aeca97b9fe6",
+          "observed_at": "2026-11-05T12:42:58.108662+00:00",
+          "url": "https://www.appropedia.org/Appropedia:API",
+          "body_sha256": "52005a1256e605cb49075bf648358f6ff5098e84497c9a5b850f2a7f3bbff8da",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "d9251a7bb4b973148f80",
+          "observed_at": "2026-11-05T12:43:02.042287+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Copyrights",
+          "body_sha256": "83c349abfee8120643903a992b25a07a03417a9dfb2ac93cda3a0771547a2dc4",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "48725c714b2ecea6fbe0",
+          "observed_at": "2026-11-05T12:43:05.142050+00:00",
+          "url": "https://www.appropedia.org/Appropedia:About",
+          "body_sha256": "fc85395dbeec84a8fc2a77dbd600b45cdc520a69803116e1eb46e6016f1f85ee",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "00a440ea787bc1f5c788",
+          "observed_at": "2026-11-05T12:45:42.231540+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Use_of_AI",
+          "body_sha256": "1033af528f4aaaa8b7c7b127f72203900a70ebb8d1be917087cff245eb09ec17",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "da933b651ecc8f468e04",
+          "observed_at": "2026-11-05T12:45:45.590646+00:00",
+          "url": "https://www.appropedia.org/Appropedia:General_disclaimer",
+          "body_sha256": "a1e3e9b821af02eca277fc27e000a4fc67fca0e12f8dd0240bdee9e310d9921a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "99907fa1e30fdf272987",
+          "observed_at": "2026-11-05T12:45:49.022837+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Content_deletion",
+          "body_sha256": "52a3a9a9df0a49e37bcd2109b626747feecd88e3f6216f4ce61c47c678a6cf4c",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "b07f2e4ef6ff760ce3ca",
+          "observed_at": "2026-11-05T12:54:49.118198+00:00",
+          "url": "https://www.appropedia.org/Practical_Action/Micro-irrigation",
+          "body_sha256": "baec6d1d00d20a874bf524eb5b9b3d44283967b554382f1973009737cd8e249d",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "49e98067b28087c89a40",
+          "observed_at": "2026-11-05T12:54:52.344644+00:00",
+          "url": "https://www.appropedia.org/Parabolic_basket_and_tin_can_solar_cooker",
+          "body_sha256": "e836042024964ef8556b215d3a510c61bb23da7565067c1e42b73f224456b553",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "1772a6dd01f3e3a962e0",
+          "observed_at": "2026-11-05T12:54:55.540594+00:00",
+          "url": "https://www.appropedia.org/Drip_irrigation/hi",
+          "body_sha256": "cf9b2c530d2d2f8f3d379aa1db52966a2f308d945bf01eba6291fc659e5df64a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "f424c4ab037b37c3410d",
+          "observed_at": "2026-11-05T12:54:58.760438+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Ported_content_policy",
+          "body_sha256": "0a7e3f7c339996b9966ab7d0ae09ce5766f457d4ee3bc2b9e3907f4dd7c09f46",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        }
+      ],
+      "open_questions": [
+        "Complete keyboard/screen-reader and cookie-banner interaction review; validate further native reader destinations and license visibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Topic and native-ID matches are reproducible, while broad topical pages, historical projects and practical safety need separate review.",
+      "facts": {
+        "topic_relevance": "Drip irrigation, solar cooker, composting, anaerobic digestion and rainwater harvesting are topical; general Gardening appears lower in irrigation results. Keyword relevance does not establish a complete step-by-step guide.",
+        "india_query": "India rainwater harvesting returns broad worldwide pages; this is not proof of India-local guidance.",
+        "hindi": "सिंचाई retrieves Drip irrigation/hi, Rural development/hi and Vertical garden/hi; language view is not independent origin. Translation accuracy remains unreviewed.",
+        "safety": "General disclaimer says information may be inaccurate/outdated and is not professional advice; student-project success/deployed labels do not establish current safety or regulatory compliance."
+      },
+      "evidence": [
+        "examples/appropedia.contract.jsonl",
+        "examples/appropedia.policy.jsonl",
+        "examples/appropedia.scouting.jsonl",
+        "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+        "runs/practical-content-policy-20261105au/observations.jsonl",
+        "examples/appropedia.jsonl",
+        "examples/appropedia.benchmark.jsonl",
+        "examples/appropedia.semantic.jsonl",
+        "runs/practical-reader-rights-20261105av/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-practical/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "25d6d05a2aeca97b9fe6",
+          "observed_at": "2026-11-05T12:42:58.108662+00:00",
+          "url": "https://www.appropedia.org/Appropedia:API",
+          "body_sha256": "52005a1256e605cb49075bf648358f6ff5098e84497c9a5b850f2a7f3bbff8da",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "d9251a7bb4b973148f80",
+          "observed_at": "2026-11-05T12:43:02.042287+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Copyrights",
+          "body_sha256": "83c349abfee8120643903a992b25a07a03417a9dfb2ac93cda3a0771547a2dc4",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "48725c714b2ecea6fbe0",
+          "observed_at": "2026-11-05T12:43:05.142050+00:00",
+          "url": "https://www.appropedia.org/Appropedia:About",
+          "body_sha256": "fc85395dbeec84a8fc2a77dbd600b45cdc520a69803116e1eb46e6016f1f85ee",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "00a440ea787bc1f5c788",
+          "observed_at": "2026-11-05T12:45:42.231540+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Use_of_AI",
+          "body_sha256": "1033af528f4aaaa8b7c7b127f72203900a70ebb8d1be917087cff245eb09ec17",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "da933b651ecc8f468e04",
+          "observed_at": "2026-11-05T12:45:45.590646+00:00",
+          "url": "https://www.appropedia.org/Appropedia:General_disclaimer",
+          "body_sha256": "a1e3e9b821af02eca277fc27e000a4fc67fca0e12f8dd0240bdee9e310d9921a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "99907fa1e30fdf272987",
+          "observed_at": "2026-11-05T12:45:49.022837+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Content_deletion",
+          "body_sha256": "52a3a9a9df0a49e37bcd2109b626747feecd88e3f6216f4ce61c47c678a6cf4c",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "b07f2e4ef6ff760ce3ca",
+          "observed_at": "2026-11-05T12:54:49.118198+00:00",
+          "url": "https://www.appropedia.org/Practical_Action/Micro-irrigation",
+          "body_sha256": "baec6d1d00d20a874bf524eb5b9b3d44283967b554382f1973009737cd8e249d",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "49e98067b28087c89a40",
+          "observed_at": "2026-11-05T12:54:52.344644+00:00",
+          "url": "https://www.appropedia.org/Parabolic_basket_and_tin_can_solar_cooker",
+          "body_sha256": "e836042024964ef8556b215d3a510c61bb23da7565067c1e42b73f224456b553",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "1772a6dd01f3e3a962e0",
+          "observed_at": "2026-11-05T12:54:55.540594+00:00",
+          "url": "https://www.appropedia.org/Drip_irrigation/hi",
+          "body_sha256": "cf9b2c530d2d2f8f3d379aa1db52966a2f308d945bf01eba6291fc659e5df64a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "f424c4ab037b37c3410d",
+          "observed_at": "2026-11-05T12:54:58.760438+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Ported_content_policy",
+          "body_sha256": "0a7e3f7c339996b9966ab7d0ae09ce5766f457d4ee3bc2b9e3907f4dd7c09f46",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        }
+      ],
+      "open_questions": [
+        "Review intended-use relevance and translation quality across examples; preserve age/geography/context warnings."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial three-second requests, small response caps and no retries preserve policy/error evidence. Robots has a published same-host redirect ending404.",
+      "facts": {
+        "robots": "robots.txt301 -> exact published Robots.txt404 means missing robots policy, not an access denial or license grant. Unexpected redirects/403 and HTML200 robots fail closed.",
+        "maximum_response_bytes": 262144,
+        "result_limit": 3,
+        "minimum_pause_seconds": 3,
+        "maxlag": 5,
+        "automatic_retries": 0,
+        "failure_preservation": "Initial robots-redirect skips retained, plus semantic301, missingpage, badinteger and empty query.",
+        "removal": "Content-deletion page describes human requests; no verified API tombstone or refresh SLA. No outreach."
+      },
+      "evidence": [
+        "examples/appropedia.contract.jsonl",
+        "examples/appropedia.policy.jsonl",
+        "examples/appropedia.scouting.jsonl",
+        "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+        "runs/practical-content-policy-20261105au/observations.jsonl",
+        "examples/appropedia.jsonl",
+        "examples/appropedia.benchmark.jsonl",
+        "examples/appropedia.semantic.jsonl",
+        "runs/practical-reader-rights-20261105av/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-practical/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "25d6d05a2aeca97b9fe6",
+          "observed_at": "2026-11-05T12:42:58.108662+00:00",
+          "url": "https://www.appropedia.org/Appropedia:API",
+          "body_sha256": "52005a1256e605cb49075bf648358f6ff5098e84497c9a5b850f2a7f3bbff8da",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "d9251a7bb4b973148f80",
+          "observed_at": "2026-11-05T12:43:02.042287+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Copyrights",
+          "body_sha256": "83c349abfee8120643903a992b25a07a03417a9dfb2ac93cda3a0771547a2dc4",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "48725c714b2ecea6fbe0",
+          "observed_at": "2026-11-05T12:43:05.142050+00:00",
+          "url": "https://www.appropedia.org/Appropedia:About",
+          "body_sha256": "fc85395dbeec84a8fc2a77dbd600b45cdc520a69803116e1eb46e6016f1f85ee",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "00a440ea787bc1f5c788",
+          "observed_at": "2026-11-05T12:45:42.231540+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Use_of_AI",
+          "body_sha256": "1033af528f4aaaa8b7c7b127f72203900a70ebb8d1be917087cff245eb09ec17",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "da933b651ecc8f468e04",
+          "observed_at": "2026-11-05T12:45:45.590646+00:00",
+          "url": "https://www.appropedia.org/Appropedia:General_disclaimer",
+          "body_sha256": "a1e3e9b821af02eca277fc27e000a4fc67fca0e12f8dd0240bdee9e310d9921a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "99907fa1e30fdf272987",
+          "observed_at": "2026-11-05T12:45:49.022837+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Content_deletion",
+          "body_sha256": "52a3a9a9df0a49e37bcd2109b626747feecd88e3f6216f4ce61c47c678a6cf4c",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "b07f2e4ef6ff760ce3ca",
+          "observed_at": "2026-11-05T12:54:49.118198+00:00",
+          "url": "https://www.appropedia.org/Practical_Action/Micro-irrigation",
+          "body_sha256": "baec6d1d00d20a874bf524eb5b9b3d44283967b554382f1973009737cd8e249d",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "49e98067b28087c89a40",
+          "observed_at": "2026-11-05T12:54:52.344644+00:00",
+          "url": "https://www.appropedia.org/Parabolic_basket_and_tin_can_solar_cooker",
+          "body_sha256": "e836042024964ef8556b215d3a510c61bb23da7565067c1e42b73f224456b553",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "1772a6dd01f3e3a962e0",
+          "observed_at": "2026-11-05T12:54:55.540594+00:00",
+          "url": "https://www.appropedia.org/Drip_irrigation/hi",
+          "body_sha256": "cf9b2c530d2d2f8f3d379aa1db52966a2f308d945bf01eba6291fc659e5df64a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "f424c4ab037b37c3410d",
+          "observed_at": "2026-11-05T12:54:58.760438+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Ported_content_policy",
+          "body_sha256": "0a7e3f7c339996b9966ab7d0ae09ce5766f457d4ee3bc2b9e3907f4dd7c09f46",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        }
+      ],
+      "open_questions": [
+        "Verify a bounded revision/removal/license-change refresh process and later-session stability; numeric provider quota remains undocumented."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain twelve current query examples and partial practical-guide dossier; C13 now has query evidence, not completed coverage.",
+      "facts": {
+        "decision": "ten-query-examples-verified",
+        "full_qualification_complete": false,
+        "activation_approved": false,
+        "owner_action_required": false,
+        "next_action": "Resolve item-level attribution/license exceptions and translation-parent metadata; validate further readers and practical relevance without safety claims; rehearse correction/deletion refresh and later-session reliability. No activation."
+      },
+      "evidence": [
+        "examples/appropedia.contract.jsonl",
+        "examples/appropedia.policy.jsonl",
+        "examples/appropedia.scouting.jsonl",
+        "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+        "runs/practical-content-policy-20261105au/observations.jsonl",
+        "examples/appropedia.jsonl",
+        "examples/appropedia.benchmark.jsonl",
+        "examples/appropedia.semantic.jsonl",
+        "runs/practical-reader-rights-20261105av/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-practical/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "25d6d05a2aeca97b9fe6",
+          "observed_at": "2026-11-05T12:42:58.108662+00:00",
+          "url": "https://www.appropedia.org/Appropedia:API",
+          "body_sha256": "52005a1256e605cb49075bf648358f6ff5098e84497c9a5b850f2a7f3bbff8da",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "d9251a7bb4b973148f80",
+          "observed_at": "2026-11-05T12:43:02.042287+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Copyrights",
+          "body_sha256": "83c349abfee8120643903a992b25a07a03417a9dfb2ac93cda3a0771547a2dc4",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/appropedia-policy-followup-20261105at/observations.jsonl",
+          "job_id": "48725c714b2ecea6fbe0",
+          "observed_at": "2026-11-05T12:43:05.142050+00:00",
+          "url": "https://www.appropedia.org/Appropedia:About",
+          "body_sha256": "fc85395dbeec84a8fc2a77dbd600b45cdc520a69803116e1eb46e6016f1f85ee",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "00a440ea787bc1f5c788",
+          "observed_at": "2026-11-05T12:45:42.231540+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Use_of_AI",
+          "body_sha256": "1033af528f4aaaa8b7c7b127f72203900a70ebb8d1be917087cff245eb09ec17",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "da933b651ecc8f468e04",
+          "observed_at": "2026-11-05T12:45:45.590646+00:00",
+          "url": "https://www.appropedia.org/Appropedia:General_disclaimer",
+          "body_sha256": "a1e3e9b821af02eca277fc27e000a4fc67fca0e12f8dd0240bdee9e310d9921a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-content-policy-20261105au/observations.jsonl",
+          "job_id": "99907fa1e30fdf272987",
+          "observed_at": "2026-11-05T12:45:49.022837+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Content_deletion",
+          "body_sha256": "52a3a9a9df0a49e37bcd2109b626747feecd88e3f6216f4ce61c47c678a6cf4c",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "b07f2e4ef6ff760ce3ca",
+          "observed_at": "2026-11-05T12:54:49.118198+00:00",
+          "url": "https://www.appropedia.org/Practical_Action/Micro-irrigation",
+          "body_sha256": "baec6d1d00d20a874bf524eb5b9b3d44283967b554382f1973009737cd8e249d",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "49e98067b28087c89a40",
+          "observed_at": "2026-11-05T12:54:52.344644+00:00",
+          "url": "https://www.appropedia.org/Parabolic_basket_and_tin_can_solar_cooker",
+          "body_sha256": "e836042024964ef8556b215d3a510c61bb23da7565067c1e42b73f224456b553",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "1772a6dd01f3e3a962e0",
+          "observed_at": "2026-11-05T12:54:55.540594+00:00",
+          "url": "https://www.appropedia.org/Drip_irrigation/hi",
+          "body_sha256": "cf9b2c530d2d2f8f3d379aa1db52966a2f308d945bf01eba6291fc659e5df64a",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        },
+        {
+          "path": "runs/practical-reader-rights-20261105av/observations.jsonl",
+          "job_id": "f424c4ab037b37c3410d",
+          "observed_at": "2026-11-05T12:54:58.760438+00:00",
+          "url": "https://www.appropedia.org/Appropedia:Ported_content_policy",
+          "body_sha256": "0a7e3f7c339996b9966ab7d0ae09ce5766f457d4ee3bc2b9e3907f4dd7c09f46",
+          "policy_sha256": "06eeadc84062479b8cefec5fb17b9cf3d013251dd5b5130090c604dd42420ddb"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "next_action": "Resolve item-level attribution/license exceptions and translation-parent metadata; validate further readers and practical relevance without safety claims; rehearse correction/deletion refresh and later-session reliability. No activation.",
+  "full_qualification_complete": false,
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "last_reviewed_at": "2026-11-05T13:04:10.846751+00:00",
+  "analysis_refs": []
+}

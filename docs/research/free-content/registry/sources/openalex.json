@@ -1,0 +1,2469 @@
+{
+  "schema_version": 1,
+  "id": "openalex",
+  "name": "OpenAlex",
+  "homepage": "https://help.openalex.org/api/authentication/",
+  "homepage_status": "historical-reference; canonical homepage/operator needs review",
+  "group": "G05",
+  "areas": [
+    "C03",
+    "C07",
+    "C06"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "scholarly-metadata-aggregator",
+  "capabilities": [
+    "Search scholarly work metadata, including provider-reported OA status and locations; resolve OpenAlex work IDs and preserve DOI, type, language and location version.",
+    "Ten independent current work lookups passed after title/topic scouting, using an existing key within its observed free daily allowance. No full texts downloaded."
+  ],
+  "query": {
+    "adapter": "openalex",
+    "endpoint": "https://api.openalex.org/works",
+    "method": "GET",
+    "authentication": "Verified examples used the existing configured free API key in an Authorization bearer header; credential is never stored. Anonymous searches returned 429 under elevated load.",
+    "cost": "Observed $1/day free allowance, $0 prepaid balance, sufficient free remaining budget before requests. Documented search $0.001/call and singleton free; no paid operation/account changes.",
+    "supported_modes": [
+      "search text",
+      "documented title-scoped search",
+      "is_oa:true filter",
+      "selected metadata fields",
+      "native work singleton",
+      "basic page parameter with configured key",
+      "Current controlled type:dissertation filter with explicit native type guard"
+    ],
+    "unsupported_modes": [
+      "independently verified full-text reading",
+      "all versions/locations exhaustiveness",
+      "semantic search qualification",
+      "anonymous reliability guarantee",
+      "geospatial feature/map querying",
+      "cursor paging verification"
+    ],
+    "cases": [
+      {
+        "id": "native-W2626778328",
+        "intent": "Resolve scouted work for Attention is all you need; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W2626778328"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2626778328",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2949650786",
+        "intent": "Resolve scouted work for Deep residual learning for image recognition; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W2949650786"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2949650786",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W1976149758",
+        "intent": "Resolve scouted work for The hallmarks of cancer; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W1976149758"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W1976149758",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2339144537",
+        "intent": "Resolve scouted work for CRISPR Cas9; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W2339144537"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2339144537",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W3016558255",
+        "intent": "Resolve scouted work for climate change adaptation; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W3016558255"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W3016558255",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2042959384",
+        "intent": "Resolve scouted work for malaria India; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W2042959384"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2042959384",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W3037315640",
+        "intent": "Resolve scouted work for quantum computing; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W3037315640"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W3037315640",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2108376748",
+        "intent": "Resolve scouted work for agroforestry India; reported OA is not verified reading",
+        "expected_ids": [
+          "https://openalex.org/W2108376748"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2108376748",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2041404167",
+        "intent": "Resolve the exact-title A Mathematical Theory of Communication record observed at rank two; retain bibliographic/version distinctions",
+        "expected_ids": [
+          "https://openalex.org/W2041404167"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2041404167",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "native-W2477693623",
+        "intent": "Resolve India-focused geological mapping research metadata; no geospatial dataset/API claim",
+        "expected_ids": [
+          "https://openalex.org/W2477693623"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2477693623",
+          "headers": {
+            "Accept": "application/json"
+          },
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "thesis-W1548682924",
+        "intent": "Replay attributed agriculture work with dissertation type and native ID; degree/whole-thesis access remain unverified.",
+        "expected_ids": [
+          "https://openalex.org/W1548682924"
+        ],
+        "expected_work_type": "dissertation",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W1548682924",
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "thesis-W2969603847",
+        "intent": "Replay attributed agriculture work with dissertation type and native ID; degree/whole-thesis access remain unverified.",
+        "expected_ids": [
+          "https://openalex.org/W2969603847"
+        ],
+        "expected_work_type": "dissertation",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2969603847",
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "thesis-W3145546820",
+        "intent": "Replay attributed irrigation work with dissertation type and native ID; degree/whole-thesis access remain unverified.",
+        "expected_ids": [
+          "https://openalex.org/W3145546820"
+        ],
+        "expected_work_type": "dissertation",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W3145546820",
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "thesis-W4403611307",
+        "intent": "Replay attributed irrigation work with dissertation type and native ID; degree/whole-thesis access remain unverified.",
+        "expected_ids": [
+          "https://openalex.org/W4403611307"
+        ],
+        "expected_work_type": "dissertation",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W4403611307",
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "thesis-W2471817878",
+        "intent": "Replay attributed renewable energy work with dissertation type and native ID; degree/whole-thesis access remain unverified.",
+        "expected_ids": [
+          "https://openalex.org/W2471817878"
+        ],
+        "expected_work_type": "dissertation",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W2471817878",
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "thesis-W1592294335",
+        "intent": "Replay attributed renewable energy work with dissertation type and native ID; degree/whole-thesis access remain unverified.",
+        "expected_ids": [
+          "https://openalex.org/W1592294335"
+        ],
+        "expected_work_type": "dissertation",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W1592294335",
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "thesis-W7116695918",
+        "intent": "Replay attributed India education work with dissertation type and native ID; degree/whole-thesis access remain unverified.",
+        "expected_ids": [
+          "https://openalex.org/W7116695918"
+        ],
+        "expected_work_type": "dissertation",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W7116695918",
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "thesis-W7126355732",
+        "intent": "Replay attributed India education work with dissertation type and native ID; degree/whole-thesis access remain unverified.",
+        "expected_ids": [
+          "https://openalex.org/W7126355732"
+        ],
+        "expected_work_type": "dissertation",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W7126355732",
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "thesis-W856802505",
+        "intent": "Replay attributed computer science work with dissertation type and native ID; degree/whole-thesis access remain unverified.",
+        "expected_ids": [
+          "https://openalex.org/W856802505"
+        ],
+        "expected_work_type": "dissertation",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W856802505",
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      },
+      {
+        "id": "thesis-W1663180664",
+        "intent": "Replay attributed computer science work with dissertation type and native ID; degree/whole-thesis access remain unverified.",
+        "expected_ids": [
+          "https://openalex.org/W1663180664"
+        ],
+        "expected_work_type": "dissertation",
+        "request": {
+          "method": "GET",
+          "url": "https://api.openalex.org/works/W1663180664",
+          "params": {
+            "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+          }
+        }
+      }
+    ],
+    "research_pause_seconds": 3,
+    "pagination": "Second basic page tested with configured key. Cursor continuation requires a key per docs and was not tested.",
+    "area_case_ids": {
+      "C03": [
+        "native-W2626778328",
+        "native-W2949650786",
+        "native-W1976149758",
+        "native-W2339144537",
+        "native-W3016558255",
+        "native-W2042959384",
+        "native-W3037315640",
+        "native-W2108376748",
+        "native-W2041404167",
+        "native-W2477693623"
+      ],
+      "C07": [
+        "native-W2626778328",
+        "native-W2949650786",
+        "native-W1976149758",
+        "native-W2339144537",
+        "native-W3016558255",
+        "native-W2042959384",
+        "native-W3037315640",
+        "native-W2108376748",
+        "native-W2041404167",
+        "native-W2477693623"
+      ],
+      "C06": [
+        "thesis-W1548682924",
+        "thesis-W2969603847",
+        "thesis-W3145546820",
+        "thesis-W4403611307",
+        "thesis-W2471817878",
+        "thesis-W1592294335",
+        "thesis-W7116695918",
+        "thesis-W7126355732",
+        "thesis-W856802505",
+        "thesis-W1663180664"
+      ]
+    }
+  },
+  "licensing": "Provider-reported work/location OA and license labels are retained; metadata-license primary confirmation and per-item content rights remain open. Do not equate public metadata, OA flag, reading availability and permission to reuse full text.",
+  "documentation": [
+    "https://help.openalex.org/api/authentication/",
+    "https://help.openalex.org/access/example-costs/",
+    "https://help.openalex.org/api/searching/",
+    "https://help.openalex.org/api/filtering/",
+    "https://help.openalex.org/data/works/",
+    "https://help.openalex.org/data/work-types/",
+    "https://help.openalex.org/access/",
+    "https://help.openalex.org/data/works/open-access/",
+    "https://help.openalex.org/",
+    "https://help.openalex.org/access/fixing-errors/works/"
+  ],
+  "limitations": [
+    "Metadata retrieval is verified; full source qualification and activation approval remain false.",
+    "Broad known-title search ranked ON THE MATHEMATICAL THEORY OF COMMUNICATION before the exact-title work; the current example uses the exact-title record observed at rank two.",
+    "Generic geological mapping returned Europa/Vesta papers; use explicit Earth/country intent. Even India-focused papers are not queryable map datasets.",
+    "Submitted/accepted/published versions and absent or restrictive license labels must remain visible. All sampled metadata language labels were English; other language and jurisdiction coverage is open.",
+    "Two anonymous 429 failures are retained. The provider explicitly suggested a free key; the existing configured key worked after free-budget verification."
+  ],
+  "evidence": [
+    "runs/source-evidence-20261105/observations.jsonl",
+    "examples/openalex.budget.jsonl",
+    "examples/openalex.scouting.jsonl",
+    "examples/openalex.jsonl",
+    "examples/openalex.benchmark.jsonl",
+    "examples/openalex.relevance.jsonl",
+    "examples/openalex.thesis-scouting.jsonl",
+    "examples/openalex.thesis-benchmark.jsonl",
+    "examples/openalex.host-policy.jsonl",
+    "examples/openalex.rit-reader.jsonl",
+    "runs/thesis-index-contract-20261105aw/observations.jsonl",
+    "runs/thesis-type-filter-20261105ax/observations.jsonl",
+    "runs/thesis-work-type-20261105ay/observations.jsonl",
+    "runs/thesis-vocabulary-20261105az/observations.jsonl",
+    "runs/thesis-index-readers-20261105ba/observations.jsonl",
+    "runs/thesis-native-followup-20261105bb/observations.jsonl",
+    "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+    "docs/research/free-content/evidence/2026-11-05-thesis-index/reader-observations.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T13:17:42.025102+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Prioritize remaining zero-query areas C20/P04/P05/P07; complete metadata rights/operator proof, per-item full reading and native degree/version/language checks, and controlled correction/deletion refresh. Resolve attributed repository leads without counting shared index connectors, languages or files as origins.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 37,
+    "text": "| **OpenAlex — multidisciplinary index** | `/works?search=...&filter=is_oa:true`, filters/cursors, exact DOI lookup; `locations`, `best_oa_location`. [Authentication](https://help.openalex.org/api/authentication/), [costs](https://help.openalex.org/access/example-costs/) | Choose a suitable OA host landing page; optionally PDF. Record page/DOI alone is not proof of free reading. Inspect location OA, version, license and freshness. | Keyless first page worked. Observed policy: $0.10/day shared per IP keyless; verified free key $1/day; ordinary search $0.001/call; 10/30 RPS keyless/free. Cursor paging past first page requires key. Verify current policy and configured key. **Low/medium / P0**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Native OpenAlex work identity and DOI captured; aggregator/operator and cross-index deduplication need further primary confirmation.",
+      "facts": {
+        "provider_brand": "OpenAlex",
+        "native_identity": "https://openalex.org/W<digits>",
+        "overlap": "DOI/versions may overlap HAL, Europe PMC, arXiv and publisher repositories; one OpenAlex catalog, not one origin per host location.",
+        "thesis_review_2026_11_05": {
+          "scope": "One existing OpenAlex index, not ten new origins. Native work IDs remain distinct from source location IDs, DOI, repository handles, version and filename.",
+          "type_identity": "Controlled dissertation type includes any academic degree/professional qualification. RIT native record is an undergraduate Philosophy BS thesis, not a PhD; no blanket doctoral claim.",
+          "native_host_examples": [
+            {
+              "work": "W1548682924",
+              "repository_native": "https://vuir.vu.edu.au/id/eprint/15601",
+              "degree": "Coursework Master thesis; Master of Arts in Town Planning",
+              "institution": "Victoria University of Technology",
+              "year": 1992
+            },
+            {
+              "work": "W1592294335",
+              "handle": "1874/782",
+              "current_item_uuid": "4a1f5618-c6b9-4864-9084-8771e10374f4",
+              "document_type": "Dissertation",
+              "publication_date": "2004-03-12"
+            },
+            {
+              "work": "W856802505",
+              "repository_native": "https://repository.rit.edu/theses/44/",
+              "degree": "Philosophy (BS), undergraduate",
+              "publication_date": "2012-05-21"
+            }
+          ],
+          "duplicates": "Provider docs say repository locations can be matched into existing works and preprint/article versions combined. Preserve locations/version IDs instead of assuming a work is one immutable edition."
+        }
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl",
+        "examples/openalex.thesis-scouting.jsonl",
+        "examples/openalex.thesis-benchmark.jsonl",
+        "examples/openalex.host-policy.jsonl",
+        "examples/openalex.rit-reader.jsonl",
+        "runs/thesis-index-contract-20261105aw/observations.jsonl",
+        "runs/thesis-type-filter-20261105ax/observations.jsonl",
+        "runs/thesis-work-type-20261105ay/observations.jsonl",
+        "runs/thesis-vocabulary-20261105az/observations.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl",
+        "runs/thesis-native-followup-20261105bb/observations.jsonl",
+        "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-thesis-index/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "06ab672fb0eeda3f1f3f",
+          "observed_at": "2026-11-05T13:06:32.002872+00:00",
+          "url": "openalex",
+          "body_sha256": null,
+          "policy_sha256": null
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T13:06:35.170009+00:00",
+          "url": "https://help.openalex.org/api/searching/",
+          "body_sha256": "eacf15e27dea2fa4fa9ebfcc2516a245d57908aabb5038472c1c1de5c94c84c3",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-type-filter-20261105ax/observations.jsonl",
+          "job_id": "19c488b9392a66de389d",
+          "observed_at": "2026-11-05T13:06:58.553411+00:00",
+          "url": "https://help.openalex.org/api/filtering/",
+          "body_sha256": "55597caf8b959de30eb8ad441a9dd8365606e5739d80b5f0e714a50293b19b4f",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-work-type-20261105ay/observations.jsonl",
+          "job_id": "c9895f34452f6463d06a",
+          "observed_at": "2026-11-05T13:07:16.909776+00:00",
+          "url": "https://help.openalex.org/data/works/",
+          "body_sha256": "6de528351925371967349631b16420abf3c6daebcf333e5c3453ca6307e107fb",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-vocabulary-20261105az/observations.jsonl",
+          "job_id": "7d75ef7d3ab35979ce31",
+          "observed_at": "2026-11-05T13:07:46.344044+00:00",
+          "url": "https://help.openalex.org/data/work-types/",
+          "body_sha256": "01fa915c5cd328adbe5d2316876d84090b91ba57a89e24c9dda34e2278fd7e05",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "76bda752c7b12a4ec980",
+          "observed_at": "2026-11-05T13:10:06.860092+00:00",
+          "url": "https://help.openalex.org/access/",
+          "body_sha256": "6f0ce5a850a119e54faea7eeef8fecad4398f6dc7231ae3792acb6321d464a6b",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "003029cfc380a2bedd23",
+          "observed_at": "2026-11-05T13:10:09.992733+00:00",
+          "url": "https://help.openalex.org/data/works/open-access/",
+          "body_sha256": "86f72656ec7bd57bb3a696503796826e4a239d04094a6cf53796078090052229",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f65261b2807021139b74",
+          "observed_at": "2026-11-05T13:10:17.919446+00:00",
+          "url": "https://vuir.vu.edu.au/15601/",
+          "body_sha256": "3ab2f80fa7881cf0f160479532956da5b57f84c4d09b0f59694108f54a1ec8fe",
+          "policy_sha256": "02b321e3cde580c105d7da21f4cb16342ee14edb7c8db55a83954e5d8a0dc2f8"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "c258e11b8d67fcf59413",
+          "observed_at": "2026-11-05T13:10:35.047477+00:00",
+          "url": "https://dspace.library.uu.nl/handle/1874/782",
+          "body_sha256": "a2a9012c31bdd87d60b52763c218cbffab3a0bb0338f81dad207ee4d62c555f4",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f433678e300f7924f725",
+          "observed_at": "2026-11-05T13:10:50.671916+00:00",
+          "url": "https://scholarworks.rit.edu/theses/44",
+          "body_sha256": null,
+          "policy_sha256": "9e17cb15dd75bbbd5dbb984eda674863c3b10ab72613cf8a39a00c3e11a8492a"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "e801990b436204831720",
+          "observed_at": "2026-11-05T13:11:52.172592+00:00",
+          "url": "https://dspace.library.uu.nl/items/4a1f5618-c6b9-4864-9084-8771e10374f4",
+          "body_sha256": "a1fb2510a3059e8de15e25ea51400102ea0665eef01d889a8b9d70ca7288c67d",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "8401603309cb35033e56",
+          "observed_at": "2026-11-05T13:12:10.944823+00:00",
+          "url": "https://www.vu.edu.au/copyright-notice",
+          "body_sha256": "ecf7c54dba8fd3735e945308bc9edad19688ed833bfb13fa2713601babbefc49",
+          "policy_sha256": "9e955bd4ae875ce0488d684b1f03a41aba2dc655b82ce022dea3e7cf0c29e989"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "7df0805b9bc84a25e926",
+          "observed_at": "2026-11-05T13:15:40.241940+00:00",
+          "url": "https://help.openalex.org/",
+          "body_sha256": "4da0d6bd341a2db9ce877ea6fcd78d15908150f09d83b02fa43c2e8845c37077",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "32392dc4e0b48e4e826e",
+          "observed_at": "2026-11-05T13:15:43.371000+00:00",
+          "url": "https://help.openalex.org/access/fixing-errors/works/",
+          "body_sha256": "fd84cb361bf14a8ae04c1d8c00c01d12840b0aff781431139e691e4542f512e5",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        }
+      ],
+      "open_questions": [
+        "Confirm legal operator and primary metadata rights; measure cross-index duplicate/version mapping."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Current samples cover research articles, reviews, conference papers and preprints; English observed, including India-focused research.",
+      "facts": {
+        "languages_observed": [
+          "en"
+        ],
+        "sample_intents": [
+          "machine learning",
+          "information theory",
+          "cancer",
+          "CRISPR",
+          "climate adaptation",
+          "malaria India",
+          "quantum computing",
+          "agroforestry India",
+          "India geological mapping"
+        ],
+        "territory_caution": "India in title/topic is not proof of India-wide network access or a local civic dataset.",
+        "thesis_review_2026_11_05": {
+          "new_area": "C06",
+          "new_native_examples": 10,
+          "topics": [
+            "agriculture",
+            "irrigation",
+            "renewable energy",
+            "India education",
+            "computer science"
+          ],
+          "area_case_ids": {
+            "C03": [
+              "native-W2626778328",
+              "native-W2949650786",
+              "native-W1976149758",
+              "native-W2339144537",
+              "native-W3016558255",
+              "native-W2042959384",
+              "native-W3037315640",
+              "native-W2108376748",
+              "native-W2041404167",
+              "native-W2477693623"
+            ],
+            "C07": [
+              "native-W2626778328",
+              "native-W2949650786",
+              "native-W1976149758",
+              "native-W2339144537",
+              "native-W3016558255",
+              "native-W2042959384",
+              "native-W3037315640",
+              "native-W2108376748",
+              "native-W2041404167",
+              "native-W2477693623"
+            ],
+            "C06": [
+              "thesis-W1548682924",
+              "thesis-W2969603847",
+              "thesis-W3145546820",
+              "thesis-W4403611307",
+              "thesis-W2471817878",
+              "thesis-W1592294335",
+              "thesis-W7116695918",
+              "thesis-W7126355732",
+              "thesis-W856802505",
+              "thesis-W1663180664"
+            ]
+          },
+          "language_observations": "Ten native cases: nine en labels and one fr label. English title Irrigate or migrate with fr label is not proof of full-text language. A second-page result labels uk; it is not an extra verified native case.",
+          "jurisdiction": "VU Australia, Utrecht Netherlands and RIT USA metadata identify actual institutions. India-related titles returned repositories outside India (Oxford/UCD/Sumy); no Indian repository or local-language thesis qualification claimed.",
+          "coverage_counts": "Five search total counts reflect index matches, not independent origins, complete dissertations or category supply counts."
+        }
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl",
+        "examples/openalex.thesis-scouting.jsonl",
+        "examples/openalex.thesis-benchmark.jsonl",
+        "examples/openalex.host-policy.jsonl",
+        "examples/openalex.rit-reader.jsonl",
+        "runs/thesis-index-contract-20261105aw/observations.jsonl",
+        "runs/thesis-type-filter-20261105ax/observations.jsonl",
+        "runs/thesis-work-type-20261105ay/observations.jsonl",
+        "runs/thesis-vocabulary-20261105az/observations.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl",
+        "runs/thesis-native-followup-20261105bb/observations.jsonl",
+        "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-thesis-index/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "06ab672fb0eeda3f1f3f",
+          "observed_at": "2026-11-05T13:06:32.002872+00:00",
+          "url": "openalex",
+          "body_sha256": null,
+          "policy_sha256": null
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T13:06:35.170009+00:00",
+          "url": "https://help.openalex.org/api/searching/",
+          "body_sha256": "eacf15e27dea2fa4fa9ebfcc2516a245d57908aabb5038472c1c1de5c94c84c3",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-type-filter-20261105ax/observations.jsonl",
+          "job_id": "19c488b9392a66de389d",
+          "observed_at": "2026-11-05T13:06:58.553411+00:00",
+          "url": "https://help.openalex.org/api/filtering/",
+          "body_sha256": "55597caf8b959de30eb8ad441a9dd8365606e5739d80b5f0e714a50293b19b4f",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-work-type-20261105ay/observations.jsonl",
+          "job_id": "c9895f34452f6463d06a",
+          "observed_at": "2026-11-05T13:07:16.909776+00:00",
+          "url": "https://help.openalex.org/data/works/",
+          "body_sha256": "6de528351925371967349631b16420abf3c6daebcf333e5c3453ca6307e107fb",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-vocabulary-20261105az/observations.jsonl",
+          "job_id": "7d75ef7d3ab35979ce31",
+          "observed_at": "2026-11-05T13:07:46.344044+00:00",
+          "url": "https://help.openalex.org/data/work-types/",
+          "body_sha256": "01fa915c5cd328adbe5d2316876d84090b91ba57a89e24c9dda34e2278fd7e05",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "76bda752c7b12a4ec980",
+          "observed_at": "2026-11-05T13:10:06.860092+00:00",
+          "url": "https://help.openalex.org/access/",
+          "body_sha256": "6f0ce5a850a119e54faea7eeef8fecad4398f6dc7231ae3792acb6321d464a6b",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "003029cfc380a2bedd23",
+          "observed_at": "2026-11-05T13:10:09.992733+00:00",
+          "url": "https://help.openalex.org/data/works/open-access/",
+          "body_sha256": "86f72656ec7bd57bb3a696503796826e4a239d04094a6cf53796078090052229",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f65261b2807021139b74",
+          "observed_at": "2026-11-05T13:10:17.919446+00:00",
+          "url": "https://vuir.vu.edu.au/15601/",
+          "body_sha256": "3ab2f80fa7881cf0f160479532956da5b57f84c4d09b0f59694108f54a1ec8fe",
+          "policy_sha256": "02b321e3cde580c105d7da21f4cb16342ee14edb7c8db55a83954e5d8a0dc2f8"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "c258e11b8d67fcf59413",
+          "observed_at": "2026-11-05T13:10:35.047477+00:00",
+          "url": "https://dspace.library.uu.nl/handle/1874/782",
+          "body_sha256": "a2a9012c31bdd87d60b52763c218cbffab3a0bb0338f81dad207ee4d62c555f4",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f433678e300f7924f725",
+          "observed_at": "2026-11-05T13:10:50.671916+00:00",
+          "url": "https://scholarworks.rit.edu/theses/44",
+          "body_sha256": null,
+          "policy_sha256": "9e17cb15dd75bbbd5dbb984eda674863c3b10ab72613cf8a39a00c3e11a8492a"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "e801990b436204831720",
+          "observed_at": "2026-11-05T13:11:52.172592+00:00",
+          "url": "https://dspace.library.uu.nl/items/4a1f5618-c6b9-4864-9084-8771e10374f4",
+          "body_sha256": "a1fb2510a3059e8de15e25ea51400102ea0665eef01d889a8b9d70ca7288c67d",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "8401603309cb35033e56",
+          "observed_at": "2026-11-05T13:12:10.944823+00:00",
+          "url": "https://www.vu.edu.au/copyright-notice",
+          "body_sha256": "ecf7c54dba8fd3735e945308bc9edad19688ed833bfb13fa2713601babbefc49",
+          "policy_sha256": "9e955bd4ae875ce0488d684b1f03a41aba2dc655b82ce022dea3e7cf0c29e989"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "7df0805b9bc84a25e926",
+          "observed_at": "2026-11-05T13:15:40.241940+00:00",
+          "url": "https://help.openalex.org/",
+          "body_sha256": "4da0d6bd341a2db9ce877ea6fcd78d15908150f09d83b02fa43c2e8845c37077",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "32392dc4e0b48e4e826e",
+          "observed_at": "2026-11-05T13:15:43.371000+00:00",
+          "url": "https://help.openalex.org/access/fixing-errors/works/",
+          "body_sha256": "fd84cb361bf14a8ae04c1d8c00c01d12840b0aff781431139e691e4542f512e5",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        }
+      ],
+      "open_questions": [
+        "Measure broader country/language coverage and geographic accessibility."
+      ]
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Exact public search/filter/select and native singleton requests are captured, including empty output and basic paging.",
+      "facts": {
+        "adapter": "openalex",
+        "endpoint": "https://api.openalex.org/works",
+        "method": "GET",
+        "authentication": "Verified examples used the existing configured free API key in an Authorization bearer header; credential is never stored. Anonymous searches returned 429 under elevated load.",
+        "cost": "Observed $1/day free allowance, $0 prepaid balance, sufficient free remaining budget before requests. Documented search $0.001/call and singleton free; no paid operation/account changes.",
+        "supported_modes": [
+          "search text",
+          "documented title-scoped search",
+          "is_oa:true filter",
+          "selected metadata fields",
+          "native work singleton",
+          "basic page parameter with configured key"
+        ],
+        "unsupported_modes": [
+          "independently verified full-text reading",
+          "all versions/locations exhaustiveness",
+          "semantic search qualification",
+          "anonymous reliability guarantee",
+          "geospatial feature/map querying",
+          "cursor paging verification"
+        ],
+        "cases": [
+          {
+            "id": "native-W2626778328",
+            "intent": "Resolve scouted work for Attention is all you need; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W2626778328"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2626778328",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2949650786",
+            "intent": "Resolve scouted work for Deep residual learning for image recognition; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W2949650786"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2949650786",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W1976149758",
+            "intent": "Resolve scouted work for The hallmarks of cancer; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W1976149758"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W1976149758",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2339144537",
+            "intent": "Resolve scouted work for CRISPR Cas9; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W2339144537"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2339144537",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W3016558255",
+            "intent": "Resolve scouted work for climate change adaptation; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W3016558255"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W3016558255",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2042959384",
+            "intent": "Resolve scouted work for malaria India; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W2042959384"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2042959384",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W3037315640",
+            "intent": "Resolve scouted work for quantum computing; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W3037315640"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W3037315640",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2108376748",
+            "intent": "Resolve scouted work for agroforestry India; reported OA is not verified reading",
+            "expected_ids": [
+              "https://openalex.org/W2108376748"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2108376748",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2041404167",
+            "intent": "Resolve the exact-title A Mathematical Theory of Communication record observed at rank two; retain bibliographic/version distinctions",
+            "expected_ids": [
+              "https://openalex.org/W2041404167"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2041404167",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          },
+          {
+            "id": "native-W2477693623",
+            "intent": "Resolve India-focused geological mapping research metadata; no geospatial dataset/API claim",
+            "expected_ids": [
+              "https://openalex.org/W2477693623"
+            ],
+            "request": {
+              "method": "GET",
+              "url": "https://api.openalex.org/works/W2477693623",
+              "headers": {
+                "Accept": "application/json"
+              },
+              "params": {
+                "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+              }
+            }
+          }
+        ],
+        "research_pause_seconds": 3,
+        "pagination": "Second basic page tested with configured key. Cursor continuation requires a key per docs and was not tested.",
+        "thesis_review_2026_11_05": {
+          "thesis_search": {
+            "method": "GET",
+            "params": {
+              "filter": "type:dissertation,is_oa:true",
+              "per_page": 2,
+              "search": "agriculture",
+              "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+            },
+            "url": "https://api.openalex.org/works"
+          },
+          "native_lookup": {
+            "method": "GET",
+            "url": "https://api.openalex.org/works/W1548682924",
+            "params": {
+              "select": "id,title,doi,publication_year,language,type,open_access,best_oa_location,is_retracted"
+            }
+          },
+          "filters": "type:dissertation,is_oa:true; selected fields only; per_page2; existing configured bearer header kept in memory.",
+          "classification_guard": "Each thesis case requires expected_work_type=dissertation on its matching native ID. Fresh evaluation and current-count calculation reject missing/changed types even if an old verified label remains.",
+          "paging": "Page2 agriculture returns two different IDs, no overlap with first page.",
+          "empty": "Nonsense query with same filters returns HTTP200 and results[].",
+          "type_contract": "Current primary vocabulary defines dissertation as academic-degree/professional-qualification document, maps upstream vocabularies and permits approved curations to change type."
+        }
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl",
+        "examples/openalex.thesis-scouting.jsonl",
+        "examples/openalex.thesis-benchmark.jsonl",
+        "examples/openalex.host-policy.jsonl",
+        "examples/openalex.rit-reader.jsonl",
+        "runs/thesis-index-contract-20261105aw/observations.jsonl",
+        "runs/thesis-type-filter-20261105ax/observations.jsonl",
+        "runs/thesis-work-type-20261105ay/observations.jsonl",
+        "runs/thesis-vocabulary-20261105az/observations.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl",
+        "runs/thesis-native-followup-20261105bb/observations.jsonl",
+        "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-thesis-index/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "06ab672fb0eeda3f1f3f",
+          "observed_at": "2026-11-05T13:06:32.002872+00:00",
+          "url": "openalex",
+          "body_sha256": null,
+          "policy_sha256": null
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T13:06:35.170009+00:00",
+          "url": "https://help.openalex.org/api/searching/",
+          "body_sha256": "eacf15e27dea2fa4fa9ebfcc2516a245d57908aabb5038472c1c1de5c94c84c3",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-type-filter-20261105ax/observations.jsonl",
+          "job_id": "19c488b9392a66de389d",
+          "observed_at": "2026-11-05T13:06:58.553411+00:00",
+          "url": "https://help.openalex.org/api/filtering/",
+          "body_sha256": "55597caf8b959de30eb8ad441a9dd8365606e5739d80b5f0e714a50293b19b4f",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-work-type-20261105ay/observations.jsonl",
+          "job_id": "c9895f34452f6463d06a",
+          "observed_at": "2026-11-05T13:07:16.909776+00:00",
+          "url": "https://help.openalex.org/data/works/",
+          "body_sha256": "6de528351925371967349631b16420abf3c6daebcf333e5c3453ca6307e107fb",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-vocabulary-20261105az/observations.jsonl",
+          "job_id": "7d75ef7d3ab35979ce31",
+          "observed_at": "2026-11-05T13:07:46.344044+00:00",
+          "url": "https://help.openalex.org/data/work-types/",
+          "body_sha256": "01fa915c5cd328adbe5d2316876d84090b91ba57a89e24c9dda34e2278fd7e05",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "76bda752c7b12a4ec980",
+          "observed_at": "2026-11-05T13:10:06.860092+00:00",
+          "url": "https://help.openalex.org/access/",
+          "body_sha256": "6f0ce5a850a119e54faea7eeef8fecad4398f6dc7231ae3792acb6321d464a6b",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "003029cfc380a2bedd23",
+          "observed_at": "2026-11-05T13:10:09.992733+00:00",
+          "url": "https://help.openalex.org/data/works/open-access/",
+          "body_sha256": "86f72656ec7bd57bb3a696503796826e4a239d04094a6cf53796078090052229",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f65261b2807021139b74",
+          "observed_at": "2026-11-05T13:10:17.919446+00:00",
+          "url": "https://vuir.vu.edu.au/15601/",
+          "body_sha256": "3ab2f80fa7881cf0f160479532956da5b57f84c4d09b0f59694108f54a1ec8fe",
+          "policy_sha256": "02b321e3cde580c105d7da21f4cb16342ee14edb7c8db55a83954e5d8a0dc2f8"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "c258e11b8d67fcf59413",
+          "observed_at": "2026-11-05T13:10:35.047477+00:00",
+          "url": "https://dspace.library.uu.nl/handle/1874/782",
+          "body_sha256": "a2a9012c31bdd87d60b52763c218cbffab3a0bb0338f81dad207ee4d62c555f4",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f433678e300f7924f725",
+          "observed_at": "2026-11-05T13:10:50.671916+00:00",
+          "url": "https://scholarworks.rit.edu/theses/44",
+          "body_sha256": null,
+          "policy_sha256": "9e17cb15dd75bbbd5dbb984eda674863c3b10ab72613cf8a39a00c3e11a8492a"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "e801990b436204831720",
+          "observed_at": "2026-11-05T13:11:52.172592+00:00",
+          "url": "https://dspace.library.uu.nl/items/4a1f5618-c6b9-4864-9084-8771e10374f4",
+          "body_sha256": "a1fb2510a3059e8de15e25ea51400102ea0665eef01d889a8b9d70ca7288c67d",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "8401603309cb35033e56",
+          "observed_at": "2026-11-05T13:12:10.944823+00:00",
+          "url": "https://www.vu.edu.au/copyright-notice",
+          "body_sha256": "ecf7c54dba8fd3735e945308bc9edad19688ed833bfb13fa2713601babbefc49",
+          "policy_sha256": "9e955bd4ae875ce0488d684b1f03a41aba2dc655b82ce022dea3e7cf0c29e989"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "7df0805b9bc84a25e926",
+          "observed_at": "2026-11-05T13:15:40.241940+00:00",
+          "url": "https://help.openalex.org/",
+          "body_sha256": "4da0d6bd341a2db9ce877ea6fcd78d15908150f09d83b02fa43c2e8845c37077",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "32392dc4e0b48e4e826e",
+          "observed_at": "2026-11-05T13:15:43.371000+00:00",
+          "url": "https://help.openalex.org/access/fixing-errors/works/",
+          "body_sha256": "fd84cb361bf14a8ae04c1d8c00c01d12840b0aff781431139e691e4542f512e5",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Provider-reported work/location OA and license labels are retained; metadata-license primary confirmation and per-item content rights remain open. Do not equate public metadata, OA flag, reading availability and permission to reuse full text.",
+      "facts": {
+        "budget_evidence": "examples/openalex.budget.jsonl",
+        "request_cost": "Search $0.001 and singleton free per current provider docs; bounded calls stayed within observed free allowance.",
+        "licenses_observed": [
+          "missing",
+          "cc-by",
+          "cc-by-nc",
+          "cc-by-nc-sa",
+          "other-oa"
+        ],
+        "reading": "OA/location claims only; no PDFs fetched",
+        "thesis_review_2026_11_05": {
+          "budget_before": "Current provider rate-limit response: daily free budget1USD, remaining0.982USD, prepaid balance0. Search0.001USD, singleton0. Seven bounded searches report total0.007USD in free allowance; ten native replays are documented zero-cost. No paid service, purchase or new key/account.",
+          "metadata_rights": "Current access/root/work docs do not resolve the previously open primary metadata-reuse/legal-operator evidence; do not promote historical CC0 claims as freshly verified.",
+          "item_rights": "Observed index licenses include null, public-domain, other-oa and cc-by-nc-nd. These are provider labels, not independent item-license verification.",
+          "native_vu_terms": "Current Victoria University copyright notice permits viewing/saving/printing parts for personal use, research or study; teaching depends on statutory coverage. No blanket redistribution grant inferred.",
+          "oa_definition": "OpenAlex broadly defines OA as full text without money/login. Some repository PDF URL fields are landing pages/handles; an OA flag or URL is not direct file verification."
+        }
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl",
+        "examples/openalex.thesis-scouting.jsonl",
+        "examples/openalex.thesis-benchmark.jsonl",
+        "examples/openalex.host-policy.jsonl",
+        "examples/openalex.rit-reader.jsonl",
+        "runs/thesis-index-contract-20261105aw/observations.jsonl",
+        "runs/thesis-type-filter-20261105ax/observations.jsonl",
+        "runs/thesis-work-type-20261105ay/observations.jsonl",
+        "runs/thesis-vocabulary-20261105az/observations.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl",
+        "runs/thesis-native-followup-20261105bb/observations.jsonl",
+        "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-thesis-index/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "06ab672fb0eeda3f1f3f",
+          "observed_at": "2026-11-05T13:06:32.002872+00:00",
+          "url": "openalex",
+          "body_sha256": null,
+          "policy_sha256": null
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T13:06:35.170009+00:00",
+          "url": "https://help.openalex.org/api/searching/",
+          "body_sha256": "eacf15e27dea2fa4fa9ebfcc2516a245d57908aabb5038472c1c1de5c94c84c3",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-type-filter-20261105ax/observations.jsonl",
+          "job_id": "19c488b9392a66de389d",
+          "observed_at": "2026-11-05T13:06:58.553411+00:00",
+          "url": "https://help.openalex.org/api/filtering/",
+          "body_sha256": "55597caf8b959de30eb8ad441a9dd8365606e5739d80b5f0e714a50293b19b4f",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-work-type-20261105ay/observations.jsonl",
+          "job_id": "c9895f34452f6463d06a",
+          "observed_at": "2026-11-05T13:07:16.909776+00:00",
+          "url": "https://help.openalex.org/data/works/",
+          "body_sha256": "6de528351925371967349631b16420abf3c6daebcf333e5c3453ca6307e107fb",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-vocabulary-20261105az/observations.jsonl",
+          "job_id": "7d75ef7d3ab35979ce31",
+          "observed_at": "2026-11-05T13:07:46.344044+00:00",
+          "url": "https://help.openalex.org/data/work-types/",
+          "body_sha256": "01fa915c5cd328adbe5d2316876d84090b91ba57a89e24c9dda34e2278fd7e05",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "76bda752c7b12a4ec980",
+          "observed_at": "2026-11-05T13:10:06.860092+00:00",
+          "url": "https://help.openalex.org/access/",
+          "body_sha256": "6f0ce5a850a119e54faea7eeef8fecad4398f6dc7231ae3792acb6321d464a6b",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "003029cfc380a2bedd23",
+          "observed_at": "2026-11-05T13:10:09.992733+00:00",
+          "url": "https://help.openalex.org/data/works/open-access/",
+          "body_sha256": "86f72656ec7bd57bb3a696503796826e4a239d04094a6cf53796078090052229",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f65261b2807021139b74",
+          "observed_at": "2026-11-05T13:10:17.919446+00:00",
+          "url": "https://vuir.vu.edu.au/15601/",
+          "body_sha256": "3ab2f80fa7881cf0f160479532956da5b57f84c4d09b0f59694108f54a1ec8fe",
+          "policy_sha256": "02b321e3cde580c105d7da21f4cb16342ee14edb7c8db55a83954e5d8a0dc2f8"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "c258e11b8d67fcf59413",
+          "observed_at": "2026-11-05T13:10:35.047477+00:00",
+          "url": "https://dspace.library.uu.nl/handle/1874/782",
+          "body_sha256": "a2a9012c31bdd87d60b52763c218cbffab3a0bb0338f81dad207ee4d62c555f4",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f433678e300f7924f725",
+          "observed_at": "2026-11-05T13:10:50.671916+00:00",
+          "url": "https://scholarworks.rit.edu/theses/44",
+          "body_sha256": null,
+          "policy_sha256": "9e17cb15dd75bbbd5dbb984eda674863c3b10ab72613cf8a39a00c3e11a8492a"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "e801990b436204831720",
+          "observed_at": "2026-11-05T13:11:52.172592+00:00",
+          "url": "https://dspace.library.uu.nl/items/4a1f5618-c6b9-4864-9084-8771e10374f4",
+          "body_sha256": "a1fb2510a3059e8de15e25ea51400102ea0665eef01d889a8b9d70ca7288c67d",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "8401603309cb35033e56",
+          "observed_at": "2026-11-05T13:12:10.944823+00:00",
+          "url": "https://www.vu.edu.au/copyright-notice",
+          "body_sha256": "ecf7c54dba8fd3735e945308bc9edad19688ed833bfb13fa2713601babbefc49",
+          "policy_sha256": "9e955bd4ae875ce0488d684b1f03a41aba2dc655b82ce022dea3e7cf0c29e989"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "7df0805b9bc84a25e926",
+          "observed_at": "2026-11-05T13:15:40.241940+00:00",
+          "url": "https://help.openalex.org/",
+          "body_sha256": "4da0d6bd341a2db9ce877ea6fcd78d15908150f09d83b02fa43c2e8845c37077",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "32392dc4e0b48e4e826e",
+          "observed_at": "2026-11-05T13:15:43.371000+00:00",
+          "url": "https://help.openalex.org/access/fixing-errors/works/",
+          "body_sha256": "fd84cb361bf14a8ae04c1d8c00c01d12840b0aff781431139e691e4542f512e5",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        }
+      ],
+      "open_questions": [
+        "Confirm primary metadata reuse terms and item-specific content rights/reading."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "OA flags and reported landing/PDF URLs captured; no independent full-copy access test.",
+      "facts": {
+        "reading_access_verified": false,
+        "versions_observed": [
+          "submittedVersion",
+          "acceptedVersion",
+          "publishedVersion"
+        ],
+        "free_login": "Unknown per host; no account created.",
+        "thesis_review_2026_11_05": {
+          "native_metadata_checks": 3,
+          "rendered_metadata_checks": 2,
+          "full_thesis_downloads": 0,
+          "full_thesis_access_verified": false,
+          "vuir": "Anonymous HTML and desktop screenshot show exact title,1992 coursework-master citation and5MB PDF listing. No main landmark; first focus Contact us; one TypeError: Load failed in restricted research browser context. Cause not established.",
+          "utrecht": "Published handle301 leads to exact item UUID with metadata200; mobile screenshot shows dissertation,date2004-03-12, full.pdf2.28MB plus c3/c4/c5/c6 chapter files. One main landmark, skip-to-main first focus, no overflow/pageerrors. Cookie banner covers bottom; file contents and license blank remain unverified.",
+          "rit": "Original robots301 to published repository.rit.edu/robots.txt resolved200 text/plain; allowed original native URL redirected to new host then trailing slash. Exact published destinations returned native thesis metadata200; no guessed alternate route or account.",
+          "not_full_reading": "Abstract, file listing and native metadata do not prove whole-thesis reading, complete chapters, OCR or login-free file download."
+        }
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl",
+        "examples/openalex.thesis-scouting.jsonl",
+        "examples/openalex.thesis-benchmark.jsonl",
+        "examples/openalex.host-policy.jsonl",
+        "examples/openalex.rit-reader.jsonl",
+        "runs/thesis-index-contract-20261105aw/observations.jsonl",
+        "runs/thesis-type-filter-20261105ax/observations.jsonl",
+        "runs/thesis-work-type-20261105ay/observations.jsonl",
+        "runs/thesis-vocabulary-20261105az/observations.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl",
+        "runs/thesis-native-followup-20261105bb/observations.jsonl",
+        "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-thesis-index/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "06ab672fb0eeda3f1f3f",
+          "observed_at": "2026-11-05T13:06:32.002872+00:00",
+          "url": "openalex",
+          "body_sha256": null,
+          "policy_sha256": null
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T13:06:35.170009+00:00",
+          "url": "https://help.openalex.org/api/searching/",
+          "body_sha256": "eacf15e27dea2fa4fa9ebfcc2516a245d57908aabb5038472c1c1de5c94c84c3",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-type-filter-20261105ax/observations.jsonl",
+          "job_id": "19c488b9392a66de389d",
+          "observed_at": "2026-11-05T13:06:58.553411+00:00",
+          "url": "https://help.openalex.org/api/filtering/",
+          "body_sha256": "55597caf8b959de30eb8ad441a9dd8365606e5739d80b5f0e714a50293b19b4f",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-work-type-20261105ay/observations.jsonl",
+          "job_id": "c9895f34452f6463d06a",
+          "observed_at": "2026-11-05T13:07:16.909776+00:00",
+          "url": "https://help.openalex.org/data/works/",
+          "body_sha256": "6de528351925371967349631b16420abf3c6daebcf333e5c3453ca6307e107fb",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-vocabulary-20261105az/observations.jsonl",
+          "job_id": "7d75ef7d3ab35979ce31",
+          "observed_at": "2026-11-05T13:07:46.344044+00:00",
+          "url": "https://help.openalex.org/data/work-types/",
+          "body_sha256": "01fa915c5cd328adbe5d2316876d84090b91ba57a89e24c9dda34e2278fd7e05",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "76bda752c7b12a4ec980",
+          "observed_at": "2026-11-05T13:10:06.860092+00:00",
+          "url": "https://help.openalex.org/access/",
+          "body_sha256": "6f0ce5a850a119e54faea7eeef8fecad4398f6dc7231ae3792acb6321d464a6b",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "003029cfc380a2bedd23",
+          "observed_at": "2026-11-05T13:10:09.992733+00:00",
+          "url": "https://help.openalex.org/data/works/open-access/",
+          "body_sha256": "86f72656ec7bd57bb3a696503796826e4a239d04094a6cf53796078090052229",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f65261b2807021139b74",
+          "observed_at": "2026-11-05T13:10:17.919446+00:00",
+          "url": "https://vuir.vu.edu.au/15601/",
+          "body_sha256": "3ab2f80fa7881cf0f160479532956da5b57f84c4d09b0f59694108f54a1ec8fe",
+          "policy_sha256": "02b321e3cde580c105d7da21f4cb16342ee14edb7c8db55a83954e5d8a0dc2f8"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "c258e11b8d67fcf59413",
+          "observed_at": "2026-11-05T13:10:35.047477+00:00",
+          "url": "https://dspace.library.uu.nl/handle/1874/782",
+          "body_sha256": "a2a9012c31bdd87d60b52763c218cbffab3a0bb0338f81dad207ee4d62c555f4",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f433678e300f7924f725",
+          "observed_at": "2026-11-05T13:10:50.671916+00:00",
+          "url": "https://scholarworks.rit.edu/theses/44",
+          "body_sha256": null,
+          "policy_sha256": "9e17cb15dd75bbbd5dbb984eda674863c3b10ab72613cf8a39a00c3e11a8492a"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "e801990b436204831720",
+          "observed_at": "2026-11-05T13:11:52.172592+00:00",
+          "url": "https://dspace.library.uu.nl/items/4a1f5618-c6b9-4864-9084-8771e10374f4",
+          "body_sha256": "a1fb2510a3059e8de15e25ea51400102ea0665eef01d889a8b9d70ca7288c67d",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "8401603309cb35033e56",
+          "observed_at": "2026-11-05T13:12:10.944823+00:00",
+          "url": "https://www.vu.edu.au/copyright-notice",
+          "body_sha256": "ecf7c54dba8fd3735e945308bc9edad19688ed833bfb13fa2713601babbefc49",
+          "policy_sha256": "9e955bd4ae875ce0488d684b1f03a41aba2dc655b82ce022dea3e7cf0c29e989"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "7df0805b9bc84a25e926",
+          "observed_at": "2026-11-05T13:15:40.241940+00:00",
+          "url": "https://help.openalex.org/",
+          "body_sha256": "4da0d6bd341a2db9ce877ea6fcd78d15908150f09d83b02fa43c2e8845c37077",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "32392dc4e0b48e4e826e",
+          "observed_at": "2026-11-05T13:15:43.371000+00:00",
+          "url": "https://help.openalex.org/access/fixing-errors/works/",
+          "body_sha256": "fd84cb361bf14a8ae04c1d8c00c01d12840b0aff781431139e691e4542f512e5",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        }
+      ],
+      "open_questions": [
+        "Check representative permitted OA landing pages and label actual login/territorial/availability conditions.",
+        "Establish actual full-thesis access/rights for representative files and multi-file records; current checks are metadata/file-listing only.",
+        "Resolve VUIR browser load error and missing main landmark; complete cookie/keyboard accessibility without accepting terms or logging in."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Scouted ten intents and independently resolved ten distinct current native IDs; two initial selections were corrected after title/context review.",
+      "facts": {
+        "current_examples": 10,
+        "historical_native_lookups_retained": 2,
+        "known_title_issue": "Broad Shannon-title result ranked a differently titled work first; exact-title rank-two record independently retrieved.",
+        "geology_issue": "Planetary mapping results satisfy broad words but not local Earth/civic intent; title/country narrowing tested and native record retained.",
+        "negative": "No-match sentinel returned HTTP 200 and no records; does not count as a positive example.",
+        "ranking": "Scouting shows related surveys and adjacent works; ten ID lookups do not establish broad relevance quality.",
+        "thesis_review_2026_11_05": {
+          "relevance": "Five topical searches find related titles across agriculture, irrigation, renewable energy, India education and computer science. Only ten scouted records are replayed by native ID; no comprehensive retrieval benchmark.",
+          "degree_caution": "RIT Demarcating Computer Science is an undergraduate Philosophy BS thesis. Aggregator dissertation label is broader than doctoral study; native degree must be retained.",
+          "version_caution": "Several pdf_url values are identical to landing handles; one has no PDF URL. submittedVersion/other-oa labels do not establish full item or license compatibility.",
+          "local_gap": "English India-topic results from foreign repositories do not fulfill native Hindi/Tamil thesis or Indian institution coverage.",
+          "provider_error_guidance": "Current error guide warns that OA classification, matching, upstream metadata and refresh can be wrong; check outside institutional/VPN entitlements. No outreach/ticket was sent."
+        }
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl",
+        "examples/openalex.thesis-scouting.jsonl",
+        "examples/openalex.thesis-benchmark.jsonl",
+        "examples/openalex.host-policy.jsonl",
+        "examples/openalex.rit-reader.jsonl",
+        "runs/thesis-index-contract-20261105aw/observations.jsonl",
+        "runs/thesis-type-filter-20261105ax/observations.jsonl",
+        "runs/thesis-work-type-20261105ay/observations.jsonl",
+        "runs/thesis-vocabulary-20261105az/observations.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl",
+        "runs/thesis-native-followup-20261105bb/observations.jsonl",
+        "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-thesis-index/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "06ab672fb0eeda3f1f3f",
+          "observed_at": "2026-11-05T13:06:32.002872+00:00",
+          "url": "openalex",
+          "body_sha256": null,
+          "policy_sha256": null
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T13:06:35.170009+00:00",
+          "url": "https://help.openalex.org/api/searching/",
+          "body_sha256": "eacf15e27dea2fa4fa9ebfcc2516a245d57908aabb5038472c1c1de5c94c84c3",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-type-filter-20261105ax/observations.jsonl",
+          "job_id": "19c488b9392a66de389d",
+          "observed_at": "2026-11-05T13:06:58.553411+00:00",
+          "url": "https://help.openalex.org/api/filtering/",
+          "body_sha256": "55597caf8b959de30eb8ad441a9dd8365606e5739d80b5f0e714a50293b19b4f",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-work-type-20261105ay/observations.jsonl",
+          "job_id": "c9895f34452f6463d06a",
+          "observed_at": "2026-11-05T13:07:16.909776+00:00",
+          "url": "https://help.openalex.org/data/works/",
+          "body_sha256": "6de528351925371967349631b16420abf3c6daebcf333e5c3453ca6307e107fb",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-vocabulary-20261105az/observations.jsonl",
+          "job_id": "7d75ef7d3ab35979ce31",
+          "observed_at": "2026-11-05T13:07:46.344044+00:00",
+          "url": "https://help.openalex.org/data/work-types/",
+          "body_sha256": "01fa915c5cd328adbe5d2316876d84090b91ba57a89e24c9dda34e2278fd7e05",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "76bda752c7b12a4ec980",
+          "observed_at": "2026-11-05T13:10:06.860092+00:00",
+          "url": "https://help.openalex.org/access/",
+          "body_sha256": "6f0ce5a850a119e54faea7eeef8fecad4398f6dc7231ae3792acb6321d464a6b",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "003029cfc380a2bedd23",
+          "observed_at": "2026-11-05T13:10:09.992733+00:00",
+          "url": "https://help.openalex.org/data/works/open-access/",
+          "body_sha256": "86f72656ec7bd57bb3a696503796826e4a239d04094a6cf53796078090052229",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f65261b2807021139b74",
+          "observed_at": "2026-11-05T13:10:17.919446+00:00",
+          "url": "https://vuir.vu.edu.au/15601/",
+          "body_sha256": "3ab2f80fa7881cf0f160479532956da5b57f84c4d09b0f59694108f54a1ec8fe",
+          "policy_sha256": "02b321e3cde580c105d7da21f4cb16342ee14edb7c8db55a83954e5d8a0dc2f8"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "c258e11b8d67fcf59413",
+          "observed_at": "2026-11-05T13:10:35.047477+00:00",
+          "url": "https://dspace.library.uu.nl/handle/1874/782",
+          "body_sha256": "a2a9012c31bdd87d60b52763c218cbffab3a0bb0338f81dad207ee4d62c555f4",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f433678e300f7924f725",
+          "observed_at": "2026-11-05T13:10:50.671916+00:00",
+          "url": "https://scholarworks.rit.edu/theses/44",
+          "body_sha256": null,
+          "policy_sha256": "9e17cb15dd75bbbd5dbb984eda674863c3b10ab72613cf8a39a00c3e11a8492a"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "e801990b436204831720",
+          "observed_at": "2026-11-05T13:11:52.172592+00:00",
+          "url": "https://dspace.library.uu.nl/items/4a1f5618-c6b9-4864-9084-8771e10374f4",
+          "body_sha256": "a1fb2510a3059e8de15e25ea51400102ea0665eef01d889a8b9d70ca7288c67d",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "8401603309cb35033e56",
+          "observed_at": "2026-11-05T13:12:10.944823+00:00",
+          "url": "https://www.vu.edu.au/copyright-notice",
+          "body_sha256": "ecf7c54dba8fd3735e945308bc9edad19688ed833bfb13fa2713601babbefc49",
+          "policy_sha256": "9e955bd4ae875ce0488d684b1f03a41aba2dc655b82ce022dea3e7cf0c29e989"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "7df0805b9bc84a25e926",
+          "observed_at": "2026-11-05T13:15:40.241940+00:00",
+          "url": "https://help.openalex.org/",
+          "body_sha256": "4da0d6bd341a2db9ce877ea6fcd78d15908150f09d83b02fa43c2e8845c37077",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "32392dc4e0b48e4e826e",
+          "observed_at": "2026-11-05T13:15:43.371000+00:00",
+          "url": "https://help.openalex.org/access/fixing-errors/works/",
+          "body_sha256": "fd84cb361bf14a8ae04c1d8c00c01d12840b0aff781431139e691e4542f512e5",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        }
+      ],
+      "open_questions": [
+        "Complete systematic relevance/edition/retraction and language/jurisdiction assessments."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Policy-checked serial requests; anonymous overload 429 retained and existing-key recovery was explicitly provider-recommended.",
+      "facts": {
+        "pause_seconds": 3,
+        "anonymous_failures": 2,
+        "first_retry_after_seconds": 39,
+        "second_retry_after_seconds": 30,
+        "configured_key_policy": "Existing key only, no registration; free daily budget checked before use; no paid balance.",
+        "size_cap_bytes": 524288,
+        "paging_note": "Benchmark purpose text incorrectly says no key; its authentication field and this correction establish configured-key use.",
+        "thesis_review_2026_11_05": {
+          "pacing": "Serial >=3second requests with exclusive lease, small selected metadata results; no automatic access/rate retries.",
+          "free_guard": "Existing configured key used only after fresh numeric free-allowance check and zero prepaid balance. No key values persisted.",
+          "negative_records": "Initial invalid source-label-as-URL collector invocation failed locally before network request; retained as harness failure in queue, not provider downtime. Initial RIT policy301 skip and Utrecht301 remain alongside successful exact published redirects.",
+          "refresh": "Provider current guide asks native workID/DOI, exact field, corrected value and public URL for corrections; route is ticket-based and was not exercised. No refresh/deletion guarantee inferred."
+        }
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl",
+        "examples/openalex.thesis-scouting.jsonl",
+        "examples/openalex.thesis-benchmark.jsonl",
+        "examples/openalex.host-policy.jsonl",
+        "examples/openalex.rit-reader.jsonl",
+        "runs/thesis-index-contract-20261105aw/observations.jsonl",
+        "runs/thesis-type-filter-20261105ax/observations.jsonl",
+        "runs/thesis-work-type-20261105ay/observations.jsonl",
+        "runs/thesis-vocabulary-20261105az/observations.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl",
+        "runs/thesis-native-followup-20261105bb/observations.jsonl",
+        "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-thesis-index/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "06ab672fb0eeda3f1f3f",
+          "observed_at": "2026-11-05T13:06:32.002872+00:00",
+          "url": "openalex",
+          "body_sha256": null,
+          "policy_sha256": null
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T13:06:35.170009+00:00",
+          "url": "https://help.openalex.org/api/searching/",
+          "body_sha256": "eacf15e27dea2fa4fa9ebfcc2516a245d57908aabb5038472c1c1de5c94c84c3",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-type-filter-20261105ax/observations.jsonl",
+          "job_id": "19c488b9392a66de389d",
+          "observed_at": "2026-11-05T13:06:58.553411+00:00",
+          "url": "https://help.openalex.org/api/filtering/",
+          "body_sha256": "55597caf8b959de30eb8ad441a9dd8365606e5739d80b5f0e714a50293b19b4f",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-work-type-20261105ay/observations.jsonl",
+          "job_id": "c9895f34452f6463d06a",
+          "observed_at": "2026-11-05T13:07:16.909776+00:00",
+          "url": "https://help.openalex.org/data/works/",
+          "body_sha256": "6de528351925371967349631b16420abf3c6daebcf333e5c3453ca6307e107fb",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-vocabulary-20261105az/observations.jsonl",
+          "job_id": "7d75ef7d3ab35979ce31",
+          "observed_at": "2026-11-05T13:07:46.344044+00:00",
+          "url": "https://help.openalex.org/data/work-types/",
+          "body_sha256": "01fa915c5cd328adbe5d2316876d84090b91ba57a89e24c9dda34e2278fd7e05",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "76bda752c7b12a4ec980",
+          "observed_at": "2026-11-05T13:10:06.860092+00:00",
+          "url": "https://help.openalex.org/access/",
+          "body_sha256": "6f0ce5a850a119e54faea7eeef8fecad4398f6dc7231ae3792acb6321d464a6b",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "003029cfc380a2bedd23",
+          "observed_at": "2026-11-05T13:10:09.992733+00:00",
+          "url": "https://help.openalex.org/data/works/open-access/",
+          "body_sha256": "86f72656ec7bd57bb3a696503796826e4a239d04094a6cf53796078090052229",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f65261b2807021139b74",
+          "observed_at": "2026-11-05T13:10:17.919446+00:00",
+          "url": "https://vuir.vu.edu.au/15601/",
+          "body_sha256": "3ab2f80fa7881cf0f160479532956da5b57f84c4d09b0f59694108f54a1ec8fe",
+          "policy_sha256": "02b321e3cde580c105d7da21f4cb16342ee14edb7c8db55a83954e5d8a0dc2f8"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "c258e11b8d67fcf59413",
+          "observed_at": "2026-11-05T13:10:35.047477+00:00",
+          "url": "https://dspace.library.uu.nl/handle/1874/782",
+          "body_sha256": "a2a9012c31bdd87d60b52763c218cbffab3a0bb0338f81dad207ee4d62c555f4",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f433678e300f7924f725",
+          "observed_at": "2026-11-05T13:10:50.671916+00:00",
+          "url": "https://scholarworks.rit.edu/theses/44",
+          "body_sha256": null,
+          "policy_sha256": "9e17cb15dd75bbbd5dbb984eda674863c3b10ab72613cf8a39a00c3e11a8492a"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "e801990b436204831720",
+          "observed_at": "2026-11-05T13:11:52.172592+00:00",
+          "url": "https://dspace.library.uu.nl/items/4a1f5618-c6b9-4864-9084-8771e10374f4",
+          "body_sha256": "a1fb2510a3059e8de15e25ea51400102ea0665eef01d889a8b9d70ca7288c67d",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "8401603309cb35033e56",
+          "observed_at": "2026-11-05T13:12:10.944823+00:00",
+          "url": "https://www.vu.edu.au/copyright-notice",
+          "body_sha256": "ecf7c54dba8fd3735e945308bc9edad19688ed833bfb13fa2713601babbefc49",
+          "policy_sha256": "9e955bd4ae875ce0488d684b1f03a41aba2dc655b82ce022dea3e7cf0c29e989"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "7df0805b9bc84a25e926",
+          "observed_at": "2026-11-05T13:15:40.241940+00:00",
+          "url": "https://help.openalex.org/",
+          "body_sha256": "4da0d6bd341a2db9ce877ea6fcd78d15908150f09d83b02fa43c2e8845c37077",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "32392dc4e0b48e4e826e",
+          "observed_at": "2026-11-05T13:15:43.371000+00:00",
+          "url": "https://help.openalex.org/access/fixing-errors/works/",
+          "body_sha256": "fd84cb361bf14a8ae04c1d8c00c01d12840b0aff781431139e691e4542f512e5",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        }
+      ],
+      "open_questions": [
+        "Verify ongoing refresh/deletion/version behavior and provider reliability; do not infer perpetual availability from one pass."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain a query-verified research candidate; full qualification, activation and deployment remain unapproved.",
+      "facts": {
+        "decision": "retain-query-verified-metadata-candidate",
+        "activation_approved": false,
+        "next_action": "Finish primary operator/metadata-license evidence, representative OA landing-page reading, retraction/version/overlap checks and regional/language coverage. Preserve current key/free-budget operating requirements; no deployment or catalog activation.",
+        "thesis_review_2026_11_05": {
+          "decision": "Retain20 current native examples in one OpenAlex source, with10 thesis-only examples assigned C06; full qualification and area closure remain open.",
+          "next_action": "Prioritize remaining zero-query areas C20/P04/P05/P07; complete metadata rights/operator proof, per-item full reading and native degree/version/language checks, and controlled correction/deletion refresh. Resolve attributed repository leads without counting shared index connectors, languages or files as origins.",
+          "activation_approved": false,
+          "owner_action_required": false,
+          "full_qualification_complete": false
+        }
+      },
+      "evidence": [
+        "runs/source-evidence-20261105/observations.jsonl",
+        "examples/openalex.budget.jsonl",
+        "examples/openalex.scouting.jsonl",
+        "examples/openalex.jsonl",
+        "examples/openalex.benchmark.jsonl",
+        "examples/openalex.relevance.jsonl",
+        "examples/openalex.thesis-scouting.jsonl",
+        "examples/openalex.thesis-benchmark.jsonl",
+        "examples/openalex.host-policy.jsonl",
+        "examples/openalex.rit-reader.jsonl",
+        "runs/thesis-index-contract-20261105aw/observations.jsonl",
+        "runs/thesis-type-filter-20261105ax/observations.jsonl",
+        "runs/thesis-work-type-20261105ay/observations.jsonl",
+        "runs/thesis-vocabulary-20261105az/observations.jsonl",
+        "runs/thesis-index-readers-20261105ba/observations.jsonl",
+        "runs/thesis-native-followup-20261105bb/observations.jsonl",
+        "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+        "docs/research/free-content/evidence/2026-11-05-thesis-index/reader-observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T02:40:13.800471+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "75e8d4153fa871f97757",
+          "observed_at": "2026-11-05T02:44:46.258626+00:00"
+        },
+        {
+          "path": "runs/source-evidence-20261105/observations.jsonl",
+          "job_id": "806d5bcdb6f600a26a12",
+          "observed_at": "2026-11-05T02:44:52.000953+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2041404167",
+          "observed_at": "2026-11-05T06:11:42.329320+00:00"
+        },
+        {
+          "path": "examples/openalex.jsonl",
+          "case_id": "native-W2477693623",
+          "observed_at": "2026-11-05T06:11:52.440703+00:00"
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "06ab672fb0eeda3f1f3f",
+          "observed_at": "2026-11-05T13:06:32.002872+00:00",
+          "url": "openalex",
+          "body_sha256": null,
+          "policy_sha256": null
+        },
+        {
+          "path": "runs/thesis-index-contract-20261105aw/observations.jsonl",
+          "job_id": "d2e40eb45d822536e583",
+          "observed_at": "2026-11-05T13:06:35.170009+00:00",
+          "url": "https://help.openalex.org/api/searching/",
+          "body_sha256": "eacf15e27dea2fa4fa9ebfcc2516a245d57908aabb5038472c1c1de5c94c84c3",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-type-filter-20261105ax/observations.jsonl",
+          "job_id": "19c488b9392a66de389d",
+          "observed_at": "2026-11-05T13:06:58.553411+00:00",
+          "url": "https://help.openalex.org/api/filtering/",
+          "body_sha256": "55597caf8b959de30eb8ad441a9dd8365606e5739d80b5f0e714a50293b19b4f",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-work-type-20261105ay/observations.jsonl",
+          "job_id": "c9895f34452f6463d06a",
+          "observed_at": "2026-11-05T13:07:16.909776+00:00",
+          "url": "https://help.openalex.org/data/works/",
+          "body_sha256": "6de528351925371967349631b16420abf3c6daebcf333e5c3453ca6307e107fb",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-vocabulary-20261105az/observations.jsonl",
+          "job_id": "7d75ef7d3ab35979ce31",
+          "observed_at": "2026-11-05T13:07:46.344044+00:00",
+          "url": "https://help.openalex.org/data/work-types/",
+          "body_sha256": "01fa915c5cd328adbe5d2316876d84090b91ba57a89e24c9dda34e2278fd7e05",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "76bda752c7b12a4ec980",
+          "observed_at": "2026-11-05T13:10:06.860092+00:00",
+          "url": "https://help.openalex.org/access/",
+          "body_sha256": "6f0ce5a850a119e54faea7eeef8fecad4398f6dc7231ae3792acb6321d464a6b",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "003029cfc380a2bedd23",
+          "observed_at": "2026-11-05T13:10:09.992733+00:00",
+          "url": "https://help.openalex.org/data/works/open-access/",
+          "body_sha256": "86f72656ec7bd57bb3a696503796826e4a239d04094a6cf53796078090052229",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f65261b2807021139b74",
+          "observed_at": "2026-11-05T13:10:17.919446+00:00",
+          "url": "https://vuir.vu.edu.au/15601/",
+          "body_sha256": "3ab2f80fa7881cf0f160479532956da5b57f84c4d09b0f59694108f54a1ec8fe",
+          "policy_sha256": "02b321e3cde580c105d7da21f4cb16342ee14edb7c8db55a83954e5d8a0dc2f8"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "c258e11b8d67fcf59413",
+          "observed_at": "2026-11-05T13:10:35.047477+00:00",
+          "url": "https://dspace.library.uu.nl/handle/1874/782",
+          "body_sha256": "a2a9012c31bdd87d60b52763c218cbffab3a0bb0338f81dad207ee4d62c555f4",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-index-readers-20261105ba/observations.jsonl",
+          "job_id": "f433678e300f7924f725",
+          "observed_at": "2026-11-05T13:10:50.671916+00:00",
+          "url": "https://scholarworks.rit.edu/theses/44",
+          "body_sha256": null,
+          "policy_sha256": "9e17cb15dd75bbbd5dbb984eda674863c3b10ab72613cf8a39a00c3e11a8492a"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "e801990b436204831720",
+          "observed_at": "2026-11-05T13:11:52.172592+00:00",
+          "url": "https://dspace.library.uu.nl/items/4a1f5618-c6b9-4864-9084-8771e10374f4",
+          "body_sha256": "a1fb2510a3059e8de15e25ea51400102ea0665eef01d889a8b9d70ca7288c67d",
+          "policy_sha256": "e2140ee4ebc6c91f152893fc78e5d7c50455897dd85f321ee0ccd38172e667aa"
+        },
+        {
+          "path": "runs/thesis-native-followup-20261105bb/observations.jsonl",
+          "job_id": "8401603309cb35033e56",
+          "observed_at": "2026-11-05T13:12:10.944823+00:00",
+          "url": "https://www.vu.edu.au/copyright-notice",
+          "body_sha256": "ecf7c54dba8fd3735e945308bc9edad19688ed833bfb13fa2713601babbefc49",
+          "policy_sha256": "9e955bd4ae875ce0488d684b1f03a41aba2dc655b82ce022dea3e7cf0c29e989"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "7df0805b9bc84a25e926",
+          "observed_at": "2026-11-05T13:15:40.241940+00:00",
+          "url": "https://help.openalex.org/",
+          "body_sha256": "4da0d6bd341a2db9ce877ea6fcd78d15908150f09d83b02fa43c2e8845c37077",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        },
+        {
+          "path": "runs/scholarly-identity-refresh-20261105bc/observations.jsonl",
+          "job_id": "32392dc4e0b48e4e826e",
+          "observed_at": "2026-11-05T13:15:43.371000+00:00",
+          "url": "https://help.openalex.org/access/fixing-errors/works/",
+          "body_sha256": "fd84cb361bf14a8ae04c1d8c00c01d12840b0aff781431139e691e4542f512e5",
+          "policy_sha256": "a8ee1a87b64868b3316e6412d79d8e09765a507209b55d8146fe338171b49af4"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "fd8535ec9c649383f404c1736bfa3722c5459a1092cbd2250f0fbbd5ba658ae3",
+      "path": "docs/design/2026-11-free-content/README.md",
+      "line": 85,
+      "heading": "2. Scope",
+      "text": "- Free to read: Project Gutenberg (local metadata import), Open Textbook\n  Library and the bounded Book Dash catalog (owner-approved source expansion). Other free versions (LibriVox, Wikisource) appear only on detail\n  pages as separate items, when a source links them.\n- Papers: OpenAlex (when its key and budget are verified), Europe PMC, DOAJ,\n  arXiv.\n- Children's stories: the reviewed pilot set only, labelled as such.\n- The library book page gains an \"Also free to read\" section.\n- Desktop and mobile layouts, all three reading lights.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 84,
+      "heading": "2. Twenty categories and how to find candidates for each",
+      "text": "| C03 Published research articles | OpenDOAR, DOAJ publisher/journal discovery, OpenAlex origins, SciELO country collections and disciplinary indexes | INFLIBNET/institution directories, Indian learned societies, university and research-institute OA journals | Attributed aggregator query first; native article search or permitted journal metadata harvest where justified |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "227b750d9102e98485e6cc6c70fe0bc58741f75633992e02f0891d38028f6771",
+      "path": "docs/research/free-content/IMPLEMENTATION.md",
+      "line": 90,
+      "heading": "Owner updates and additional-source delivery",
+      "text": "The owner postponed Redis and confirmed that Codex owns children’s sourcing. The\nexisting OpenAlex key was rechecked and accepted; no replacement key or owner\ncuration is pending. Free source login is explicitly allowed. The API distinguishes\n`free_account_required` from anonymous full text and unknown-price registration;\nordinary book search includes the reviewed set when its flag is enabled.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "943c4340f9c8a3dc13aa17a6c5d7b7af8ded6b60b61b79548a6061908f272447",
+      "path": "docs/research/free-content/LIVE_VALIDATION.md",
+      "line": 8,
+      "heading": "Implemented and checked locally",
+      "text": "- Redis coordinator, shared record/page caches, stored federation sessions,\n  application-wide source counters and their setup/CI prerequisites are removed.\n- One live source request per search/detail. Native cursors are signed, bounded,\n  context-bound and usable after process restart. Replay makes another request.\n- Deterministic tests cover source routing, no fan-out, token tampering/expiry,\n  old-session rejection, page cycles/depth, underfilled pages, access classes,\n  invalid provider responses, provider errors, cancellation and exact resolution.\n- OpenAlex verifies free allowance/known pricing/zero prepaid funds before each\n  request. Existing tests reject paid balances, changed prices and exhaustion.\n- 570 server tests pass with zero skips; 179 client tests and typecheck pass.\n  The disposable PostgreSQL used for existing account regression tests is local\n  test infrastructure, not a free-content runtime dependency or hosted resource.\n- 62 focused desktop/mobile browser checks pass, including live coverage,\n  paging, source switching/website links, reading, save/reload/reopen and three\n  reading lights. Full build, isolated client-only build, SEO/deployment checks,\n  12 Python importer tests and refresh-script tests pass.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "943c4340f9c8a3dc13aa17a6c5d7b7af8ded6b60b61b79548a6061908f272447",
+      "path": "docs/research/free-content/LIVE_VALIDATION.md",
+      "line": 27,
+      "heading": "Actual sources and browser",
+      "text": "[Direct source probes](evidence/2026-11-03/direct-live-probes.json) use official\nAPIs and the existing OpenAlex key, without store bindings. Mathematics selects\nOpenAlex; malaria selects Europe PMC. Both return current readable metadata,\nresolve exact native records live and continue to another page. A Europe PMC\ncontinuation overlapped one record, confirming why live paging is not a frozen,\nglobally duplicate-free snapshot. The browser removes repeated source keys.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "7d009e0c173238584b41259d85805653725f23e35657f2bf95bb15735a95da4f",
+      "path": "docs/research/free-content/OPERATIONS.md",
+      "line": 39,
+      "heading": "Historical shared-store profile (superseded)",
+      "text": "The existing OpenAlex key was rechecked on 2026-11-01: the API accepted it and\nits free budget/search-price/no-prepaid conditions passed. No replacement key is\nrequested. The owner postponed Redis setup; live paper dispatch stays off until\nhosted coordination is configured, independently of the local book catalogs.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "7d009e0c173238584b41259d85805653725f23e35657f2bf95bb15735a95da4f",
+      "path": "docs/research/free-content/OPERATIONS.md",
+      "line": 44,
+      "heading": "Historical shared-store profile (superseded)",
+      "text": "Other source daily budgets allow 1–100,000, minute budgets 1–300; these are\nconfiguration bounds, not recommended traffic allowances. Choose lower team\nlimits deliberately. OpenAlex also needs the server-only `OPENALEX_API_KEY`.\nIts rate-limit endpoint is checked before each uncached request; unknown pricing,\na paid allowance/prepaid balance, missing metadata or exhausted free funds block\ndispatch. Local limits are conservative; other uses of the same key still draw\non the provider's allowance. No paid usage is enabled by this code.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "8f370ecffd15217872a95e7988889f9c9bcc300280b1a4cf3e03a9e590ee0ede",
+      "path": "docs/research/free-content/RELEASE.md",
+      "line": 3,
+      "heading": "Free-content production release",
+      "text": "**Current revision (2026-11-03):** the owner authorized the\n[simple free live plan](SIMPLE_LIVE_PLAN.md), #156. Release/hosted verification is\ntracked in #159. Europe PMC/OpenAlex can run directly with no data store; the\nblanket Redis gate is superseded. This release must retain verified free-budget\nguards and existing account settings. The November 1 evidence below records the\ninitial book release, rather than the current paper prerequisites.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "001c847a97e62d9c227cbf184a236b97919c31c301d4ab18613cd17488c5e504",
+      "path": "docs/research/free-content/SIMPLE_LIVE_PLAN.md",
+      "line": 10,
+      "heading": "Product requirements",
+      "text": "- Search one selected paper source live. General searches use OpenAlex;\n  biomedical searches and PMCIDs use Europe PMC. The Sources sheet switches\n  sources. Explicit selection never silently searches a different source.\n- Show more carries the provider's paging token in a signed browser token.\n  Opening a result resolves its native record directly at that provider.\n- No new database, Redis account, paid integration, shared cache or stored search\n  session. Existing account features/resources are outside this change.\n- Direct arXiv/DOAJ automation stays off because its aggregate pacing rules need\n  coordination across deployments. Offer searches on their source websites;\n  these connectors do not block other paper sources.\n- Keep current source identities, verified free-reading rules, credits, versions,\n  separate translations, source errors and browser shelf behavior.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "001c847a97e62d9c227cbf184a236b97919c31c301d4ab18613cd17488c5e504",
+      "path": "docs/research/free-content/SIMPLE_LIVE_PLAN.md",
+      "line": 25,
+      "heading": "Engineering design",
+      "text": "One supported adapter is called per request, with bounded deadlines/response\nsizes and no automatic retry/fan-out. OpenAlex also checks its free allowance\nbefore its search or exact-record request. Client disconnects cancel work.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "001c847a97e62d9c227cbf184a236b97919c31c301d4ab18613cd17488c5e504",
+      "path": "docs/research/free-content/SIMPLE_LIVE_PLAN.md",
+      "line": 46,
+      "heading": "Cost and limits",
+      "text": "Europe PMC uses its public API. OpenAlex uses the existing server-only key;\nverify its free allowance, accepted endpoint pricing and zero prepaid balance\nbefore dispatch. Exhaustion, paid balances or unknown policy stop the request.\nNo paid fallback or paid infrastructure is introduced. Normal hosting usage\ncontinues under the existing Vercel plan; future hosting costs are not guaranteed\nto be zero.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "001c847a97e62d9c227cbf184a236b97919c31c301d4ab18613cd17488c5e504",
+      "path": "docs/research/free-content/SIMPLE_LIVE_PLAN.md",
+      "line": 60,
+      "heading": "Configuration and delivery",
+      "text": "Keep the existing discovery flag and strong cursor signer. Enable Europe PMC\nand optionally OpenAlex with its key. Remove Redis and per-source application\ndaily/minute budget variables from active setup. No client-exposed credentials\nor database migration.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c686b333a7fef814327a9e18ca574a86edf6fc032a6cc5659ff5cbb327df41c0",
+      "path": "docs/research/free-content/VALIDATION.md",
+      "line": 107,
+      "heading": "Multi-source papers follow-up",
+      "text": "DOAJ, arXiv and OpenAlex now have bounded adapters, source-native identities and\nper-location access/licence handling. Fresh [policy observations](evidence/2026-11-01/source-policies.json)\nverify DOAJ's 2 RPS and arXiv's 3-second/single-connection aggregate rules. The\nconfigured OpenAlex key reported $1/day free allowance, $0.001 ordinary search\nand zero prepaid funds; runtime rechecks those conditions before dispatch.\nOperational limits and caveats are in [OPERATIONS.md](OPERATIONS.md).",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c686b333a7fef814327a9e18ca574a86edf6fc032a6cc5659ff5cbb327df41c0",
+      "path": "docs/research/free-content/VALIDATION.md",
+      "line": 223,
+      "heading": "Free source accounts and additional source delivery",
+      "text": "Current real-source records: 1,000 Gutenberg, 1,909 textbook, 30 Book Dash and\nthree reviewed StoryWeaver records. This is 2,942 bounded metadata records,\nnot a worldwide catalog size or a search-match total. Eight sources have\nimplementations: these four book sources plus four existing live paper adapters.\nThe OpenAlex key was rechecked successfully. Redis remains deferred by the owner;\nno hosted store, source account or production enablement was created here.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 168,
+      "heading": "5. Search and item resolution",
+      "text": "1. Validate query length, filters, page size (initial max 40), country and cursor binding. Detect ISBN/DOI/arXiv/PMCID before broad search. Country is access context, not legal assurance.\n2. Choose providers by user scope/capabilities. Books start from local catalogs; papers use OpenAlex when configured plus at most two relevant specialists. Without the broad index, disclose narrower DOAJ/Europe PMC/arXiv coverage.\n3. Use shared cached results. Acquire global quota tokens for uncached requests; arXiv pacing includes all replicas/jobs. Skip with explicit status if the queue cannot run before the deadline.\n4. Bound fan-out: proposed 5-second total search deadline, shorter per-provider limits where feasible, at most 3 live providers and one source page each. These are design targets, not measured guarantees. Busy arXiv queues cannot delay every result indefinitely.\n5. Map, filter, reconcile and rank. Avoid detail requests for every hit; resolve uncertain access for bounded visible candidates or on item open. Unknown candidates cannot be advertised as free.\n6. Return items, source statuses and freshness. Empty, timeout, throttled, quota-exhausted, unsupported and disabled differ. If all sources fail with no local/cached result, return retriable unavailable, not zero matches.\n7. On item open, enrich locations as needed; surface editions/versions and host actions. Cache bibliography separately from access observations.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 247,
+      "heading": "Phase B — initial coverage",
+      "text": "Add Open Textbook Library, DOAJ and arXiv; OpenAlex after key/budget verification. Then DOAB/OAPEN imports and optional Unpaywall resolver with real contact email. Keep Google/Open Library enrichment bounded.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 259,
+      "heading": "Phase C — children, regional and specialist coverage",
+      "text": "- Provider contracts: valid/empty/malformed response, missing fields, absent license, preview/borrow/embargo, stale links, 429/503 and schema drift.\n- Identity: same DOI across indexes, preprint vs publication, arXiv versions, translations, chapter vs book, missing ISBN, unrelated same title, Zenodo concept vs version DOI.\n- Search: partial/all-source failure, exhausted budget, unsupported filters, cancellation, no skipped/duplicate pages, expired cursor, honest totals.\n- Imports: interrupted/repeated OAI page, tombstone, expired token, corrupt/empty bulk file and rollback.\n- End-to-end: title/author/DOI, free filters, details, external HTML/reader/PDF/EPUB where offered, browser back, unchanged ISBN/library/shelf flows; launch-country checks beyond server-region behavior.\n- Capacity: uncached searches/day and peak concurrency. At the observed OpenAlex price, ordinary search cost is uncached calls × $0.001; paging/enrichment add requests. arXiv 1/3 sec is at most 20/min before contention. Configure degradation before enabling traffic.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 270,
+      "heading": "9. Inputs still needed for implementation",
+      "text": "Verify the configured OpenAlex key with an actual authenticated request and select a real application contact email. Decide expected traffic and commercial/noncommercial use before setting quotas and eligibility. Choose initial children's languages/levels and launch countries before feeds and access validation. No missing input blocks this research or its publication; the proposal itself authorizes no new paid resources or accounts.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "294c264153c5370142469a75c1723cd9f3bf6482aa24f18c4a3b7253eae9c28b",
+      "path": "docs/research/free-content/discovery/SCHOLARLY_RESEARCH.md",
+      "line": 40,
+      "heading": "C03 — Published research articles",
+      "text": "**Retrieval strategy.** Test existing OpenAlex coverage first, using a known work\nand its actual host attribution. Current [OpenAlex search documentation](https://help.openalex.org/api/searching/)\ndescribes work text/keyword search and separate entity searches; an institution\nname match does not establish that its repository holds the paper. Use the\ndocumented filters and inspect individual locations. Preserve the existing free\nallowance guard. A new publisher API or permitted OAI/export import is justified\nwhen the index demonstrably misses useful holdings. An OJS website or a DOI\nregistration record alone does not prove reusable full-item discovery.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "294c264153c5370142469a75c1723cd9f3bf6482aa24f18c4a3b7253eae9c28b",
+      "path": "docs/research/free-content/discovery/SCHOLARLY_RESEARCH.md",
+      "line": 156,
+      "heading": "Handoff and research limits",
+      "text": "This review inspected official directory/protocol documentation, not production\nAPI behavior, source-login access or complete catalogs. The old OpenAlex docs URL\nfailed after redirect; the linked Help Center route worked. RePEc's root page\nreturned a gateway error while its archive/policy pages worked. These are tooling\nobservations, not evidence of source-wide downtime. Current prices, permission,\nfreshness and per-origin free access still require qualification before enablement.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 37,
+      "heading": "3. Journal articles and broad scholarly discovery",
+      "text": "| **OpenAlex — multidisciplinary index** | `/works?search=...&filter=is_oa:true`, filters/cursors, exact DOI lookup; `locations`, `best_oa_location`. [Authentication](https://help.openalex.org/api/authentication/), [costs](https://help.openalex.org/access/example-costs/) | Choose a suitable OA host landing page; optionally PDF. Record page/DOI alone is not proof of free reading. Inspect location OA, version, license and freshness. | Keyless first page worked. Observed policy: $0.10/day shared per IP keyless; verified free key $1/day; ordinary search $0.001/call; 10/30 RPS keyless/free. Cursor paging past first page requires key. Verify current policy and configured key. **Low/medium / P0**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 41,
+      "heading": "3. Journal articles and broad scholarly discovery",
+      "text": "| **Unpaywall — DOI-to-OA resolver** | `GET https://api.unpaywall.org/v2/{doi}?email={contact}`. [API](https://unpaywall.org/products/api), [fields](https://unpaywall.org/products/api/v2) | `best_oa_location`, `oa_locations`, host/version/license/HTML/PDF. No OA result means not found by this resolver, not proof no free copy exists. | Real email required; observed docs said 100,000 calls/day. No DOI call tested without contact. Official site JS said title search retired 2026-09-18 (410), recommending OpenAlex. **Low / P1 resolver**, not search. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 44,
+      "heading": "3. Journal articles and broad scholarly discovery",
+      "text": "Start with one broad index plus selected specialists. Calling OpenAlex, Crossref, CORE, Semantic Scholar and all repositories on every query would multiply duplicates, cost and latency.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 55,
+      "heading": "4. Preprints, theses, repositories and reports",
+      "text": "| **Shodhganga / university repositories — thesis hosts** | [Shodhganga](https://shodhganga.inflibnet.ac.in/), institution-specific DSpace/EPrints; discover advertised OAI endpoint/formats, import locally. CORE/OpenAlex can cover first. | Handles/PDFs when deposited/unrestricted; embargoes, language, rights and metadata-only records need per-record handling. | Homepage inspected; stable Shodhganga external API/OAI route and terms not verified. Do not assume every DSpace version shares one REST route. **High / P2 direct; P1 aggregated**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 89,
+      "heading": "Standard connection patterns",
+      "text": "| REST/JSON search | DOAJ, Europe PMC, OpenAlex, Google, CORE, HAL | HTTP budgets/retries/response limits/paging | Query grammar, mapping, access, terms |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 61,
+      "heading": "Recommendation",
+      "text": "| OpenAlex | Live search after key/budget verification | Broad multidisciplinary discovery and OA locations; usage is metered |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 72,
+      "heading": "Categories",
+      "text": "| Journal articles | Published research and reviews | DOAJ, Europe PMC/PMC, OpenAlex |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 85,
+      "heading": "What the original checks established",
+      "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 102,
+      "heading": "Credentials and implementation inputs",
+      "text": "1. Verify **`OPENALEX_API_KEY`** in the backend. The replacement environment reports the variable configured; no authenticated OpenAlex request was made during this repository transfer. At the research date the free account included $1/day of API usage, roughly 1,000 ordinary search requests before caching. Disable paid overages unless deliberately budgeted.\n2. Choose a real **application contact email** for request identification and, if enabled, Unpaywall's required `email` parameter. No email was invented, registered, or sent during this work.\n3. Optional later: Semantic Scholar, BHL and Europeana keys; CORE upgrade/eligibility confirmation. Standard Ebooks feed access and children's/OER catalog feeds need provider-specific arrangements.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 142,
+      "heading": "Current source work (2026-11-01)",
+      "text": "The owner clarified that free source login is acceptable and asked Codex to\nresearch additional sources. Three real StoryWeaver records in English, Hindi\nand Tamil are now reviewed and searchable with an explicit free-account label;\nno source account was created. Book Dash adds 30 real English-language editions\nwith public anonymous reading links. These are source-native metadata records,\nnot fictional board samples. The existing OpenAlex key was accepted by its API;\nRedis setup is postponed, so live paper enablement remains deferred.\nSee [children’s review](CHILDREN_REVIEW.md), [additional sources](ADDITIONAL_SOURCES.md)\nand [validation](VALIDATION.md). All source flags still default off pending the\nintended hosted release checks; local metadata searches need no hosted store.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 21,
+      "heading": "Behavior",
+      "text": "Ten new integrations are released behind `CONTENT_KNOWLEDGE_ENABLED=true`:\nGlobal Digital Library, LibriVox, Library of Congress digital books, Biodiversity\nHeritage Library's Internet Archive collection, African Minds, LSE Press,\nMattering Press, mediastudies.press, punctum books and Python 3.15 documentation.\nFive publisher catalogs share Thoth; this is not five separate API infrastructures.\nThe existing Gutenberg, Open Textbook Library, Book Dash and StoryWeaver snapshots\nand the existing OpenAlex/Europe PMC integrations are also selectable. With the\nexisting production flags, this gives 16 connected sources, not 16 fully audited\norigins or complete catalogs.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 40,
+      "heading": "Contracts and limits",
+      "text": "- One provider per server request; the browser coordinates the search. No Redis,\n  SQL, hosted cache, persisted session or new account/service.\n- Fixed-origin adapters bound response size, deadline and paging. Signed cursors\n  bind provider, query, types, language, page size and expiry; they work across\n  function restarts without storing query results. Changed indexes can change\n  pages; exact-key deduplication never merges similar titles or distinct editions.\n- The new transport serializes requests per host within an instance, spaces them\n  two seconds apart and honors 429 Retry-After. It has no automatic retries.\n  This courtesy is not a global request quota across Vercel instances.\n- Python's official compressed symbol inventory is bounded and cached for one\n  hour in process memory. Search is over symbol/section names, not arbitrary\n  full documentation text. Version and same-origin URL checks fail closed.\n- GDL uses its public content-search route and published WordPress REST book-ID\n  route for exact details. Word-level metadata checks reject substring noise\n  such as `Rain` matching only `Shakrain`. Its provider offset advances even when\n  inspected rows fail relevance, so filtering does not trap pagination.\n- Thoth searches active monographs/edited books in explicit publisher IDs. Exact\n  resolution verifies publisher membership and active status. Only canonical\n  digital links on reviewed publisher hosts become reading/download actions;\n  print, retail and unreviewed mirrors do not.\n- LoC requires `access_restricted=false`, digitization and an online resource for\n  free access. BHL searches only its biodiversity collection and excludes known\n  access-restricted items. Their content rights still vary by item.\n- LibriVox is title search and distinct recording identity. Its documented JSON\n  404 for no audiobooks is an empty result; other errors remain failures. US\n  public-domain statements do not claim worldwide rights.\n- Snapshot sources remain labelled incomplete/stale when appropriate. Unknown\n  access is hidden by default; an explicit checkbox reveals labelled results with a source record link; no old\n  observation is refreshed merely because a user searches it.\n- Existing OpenAlex free-allowance and zero-paid-balance checks remain unchanged.\n  No key is returned to the browser. No full books/audio are copied.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 105,
+      "heading": "Verification and release record",
+      "text": "Hosted preview acceptance, 2026-11-05: all ten new integrations plus OpenAlex\nand Europe PMC returned matches and resolved exact native identities (HTTP 200).\nWebKit completed real LibriVox search → detail → canonical listening link, then\nall-source mathematics (25 results, all 16 sources finished, zero page errors).\nChromium's cloud proxy trust failure was an environment issue; WebKit used the\nexisting system trust with HTTPS verification intact. No browser trust setting\nwas changed. Preview account banners reflect its existing configuration.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 131,
+      "heading": "Production verification — 2026-11-05",
+      "text": "All ten new live query/detail samples and OpenAlex passed in production. Refreshed Gutenberg, OTL and Book Dash query/detail checks passed. StoryWeaver remains stale/unclear and is excluded by the default access filter. Two Europe PMC malaria probes timed out; the UI preserves that source error while other sources return results. This is an unresolved provider/runtime reliability observation, not a zero-result claim. The mobile WebKit all-source query completed all 16 groups with 26 loaded results, no page errors and no horizontal overflow; the LibriVox detail linked to the correct recording. See [saved production evidence](evidence/knowledge-release-2026-11-05/production/deployment.json), including failed probes and screenshots. The temporary preview share link was revoked after testing; protection settings were not weakened.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
+      "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
+      "line": 36,
+      "heading": "Public API key, application or contact-email route — 8",
+      "text": "| [Unpaywall](https://unpaywall.org/api) | A real contact email is missing and the documentation policy check failed. | Provide an approved contact email for free DOI-to-open-access lookup. No account or staff permission is documented for that lookup. Indexed official docs say keyword search retired on 18 September 2026; use already-working OpenAlex for keyword search. Recheck the actual DOI route before claiming Working. Owner action: contact email only; not a new keyword-search connector. |",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

@@ -1,0 +1,722 @@
+{
+  "schema_version": 1,
+  "id": "hal",
+  "name": "HAL",
+  "homepage": "https://api.archives-ouvertes.fr/docs/search",
+  "homepage_status": "historical-reference; canonical homepage/operator needs review",
+  "group": "G05",
+  "areas": [
+    "C06",
+    "C07"
+  ],
+  "state": "deferred",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "capabilities": [
+    "Documented research repository metadata search with thesis and file-presence filters; current execution is policy-blocked.",
+    "Historical title query was not thesis/full-text verification and remains historical."
+  ],
+  "query": {
+    "adapter": "unproven",
+    "endpoint": "https://api.archives-ouvertes.fr/search/",
+    "cases": [],
+    "historical_contract": "Solr-style `https://api.archives-ouvertes.fr/search/`, q/fq/field selection/JSON. [Search](https://api.archives-ouvertes.fr/docs/search)",
+    "authentication": "No current query attempted; anonymous public documentation only.",
+    "documented_request": {
+      "method": "GET",
+      "params": [
+        [
+          "q",
+          "docType_s:THESE"
+        ],
+        [
+          "fq",
+          "submitType_s:file"
+        ],
+        [
+          "rows",
+          "10"
+        ],
+        [
+          "sort",
+          "docid asc"
+        ],
+        [
+          "wt",
+          "json"
+        ]
+      ]
+    },
+    "request_shape_verified": false,
+    "supported_modes": [
+      "Documented Solr q/fq metadata search, rows/start and cursor paging; execution blocked by current robots."
+    ],
+    "unsupported_modes": [
+      "Unfiltered record treated as full text",
+      "MCP or alternate host used to evade API robots",
+      "Citation-only record treated as a free thesis"
+    ],
+    "policy_status": "API robots disallows /search/, /*/search/, /ref/, /oai/ and /sword/. Proposed search was not sent."
+  },
+  "licensing": "Website CC BY 4.0 footer does not establish a blanket metadata or thesis-content license. Deposited third-party contents have separate rights; legal notice distinguishes platform publisher from content publishers.",
+  "documentation": [
+    "https://api.archives-ouvertes.fr/docs/search",
+    "https://api.archives-ouvertes.fr/docs/search/?schema=fields#fields",
+    "https://about.hal.science/legal-notice/",
+    "https://about.hal.science/interoperability-dissemination/",
+    "https://api.archives-ouvertes.fr/robots.txt"
+  ],
+  "limitations": [
+    "Current robots prevents the proposed API query; zero current passing examples.",
+    "The schema link returned a documentation page, not verified values for all requested response fields.",
+    "Thesis/file filters are documented, but current record IDs, file access, edition/version semantics, relevance and paging are untested.",
+    "No numeric free API quota or general metadata reuse grant established by captured text."
+  ],
+  "evidence": [
+    "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+    "runs/hal-commons-permission-20261105ab/observations.jsonl",
+    "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+    "analysis/documents.jsonl",
+    "examples/hal.scouting.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T10:06:20.332138+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Revisit only after an explicit published API-policy/permission change or permitted export contract. Then validate thesis/file filter semantics, native versions, rights, reader access and ten current examples. Do not bypass via HAL Discovery MCP or OAI.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 54,
+    "text": "| **HAL — repository host/index** | Solr-style `https://api.archives-ouvertes.fr/search/`, q/fq/field selection/JSON. [Search](https://api.archives-ouvertes.fr/docs/search) | `uri_s`, optional `fileMain_s`, DOI/version. Citation-only records exist; validate file-presence filter. | No-key query worked but sample lacked full-text field. **Low/medium / P1**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "CCSD operates HAL under CNRS, Inria and INRAE; platform publishing and third-party deposits are distinct. HAL portals and its linked MCP connector are not additional independent origins.",
+      "facts": {},
+      "open_questions": [
+        "Verify native deposit/version identity on a permitted current record."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "analysis/documents.jsonl",
+        "examples/hal.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "8481b2221babd25030bb",
+          "observed_at": "2026-11-05T09:42:59.469434+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search",
+          "outcome": "captured",
+          "body_sha256": "109d03f0643f0692e2597e98370854eb1f6baed1975df34d07a8310999371305",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "79c463c269b268cf45c3",
+          "observed_at": "2026-11-05T09:45:13.403236+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search/?schema=fields#fields",
+          "outcome": "captured",
+          "body_sha256": "91de63e3c954d4180084317de1ace0203baeedcada0756e037308c6269ee784d",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "7c730415364c9a52be2f",
+          "observed_at": "2026-11-05T09:45:25.351855+00:00",
+          "url": "https://about.hal.science/legal-notice/",
+          "outcome": "captured",
+          "body_sha256": "5b650758041ddb903261d7fddccad1a9cce3a3dd146ec99e33b9b1dc4959308d",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c29bd6070ce7de6faa4a",
+          "observed_at": "2026-11-05T09:47:36.467583+00:00",
+          "url": "https://about.hal.science/interoperability-dissemination/",
+          "outcome": "captured",
+          "body_sha256": "e283a3755e09e97e5816e679d2f0b80e9e3368779a7ae7710812dd25915980f3",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "a93975deb1ecf0ef886c",
+          "observed_at": "2026-11-05T09:47:44.620136+00:00",
+          "url": "https://api.archives-ouvertes.fr/robots.txt",
+          "outcome": "captured",
+          "body_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        }
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "French-operated international research archive includes research publications and theses; C06/C07 are candidate areas, not verified current full-text coverage.",
+      "facts": {},
+      "open_questions": [
+        "Measure permitted thesis sample languages and actual USA/India access."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "analysis/documents.jsonl",
+        "examples/hal.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "8481b2221babd25030bb",
+          "observed_at": "2026-11-05T09:42:59.469434+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search",
+          "outcome": "captured",
+          "body_sha256": "109d03f0643f0692e2597e98370854eb1f6baed1975df34d07a8310999371305",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "79c463c269b268cf45c3",
+          "observed_at": "2026-11-05T09:45:13.403236+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search/?schema=fields#fields",
+          "outcome": "captured",
+          "body_sha256": "91de63e3c954d4180084317de1ace0203baeedcada0756e037308c6269ee784d",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "7c730415364c9a52be2f",
+          "observed_at": "2026-11-05T09:45:25.351855+00:00",
+          "url": "https://about.hal.science/legal-notice/",
+          "outcome": "captured",
+          "body_sha256": "5b650758041ddb903261d7fddccad1a9cce3a3dd146ec99e33b9b1dc4959308d",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c29bd6070ce7de6faa4a",
+          "observed_at": "2026-11-05T09:47:36.467583+00:00",
+          "url": "https://about.hal.science/interoperability-dissemination/",
+          "outcome": "captured",
+          "body_sha256": "e283a3755e09e97e5816e679d2f0b80e9e3368779a7ae7710812dd25915980f3",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "a93975deb1ecf0ef886c",
+          "observed_at": "2026-11-05T09:47:44.620136+00:00",
+          "url": "https://api.archives-ouvertes.fr/robots.txt",
+          "outcome": "captured",
+          "body_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        }
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Official Solr search docs describe docType_s:THESE plus submitType_s:file; the exact proposed GET is saved. Current API robots disallows /search/, so no search was executed.",
+      "facts": {
+        "request_sent": false,
+        "robots_body_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+      },
+      "open_questions": [
+        "Resolve current API permission and schema field semantics before querying."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "analysis/documents.jsonl",
+        "examples/hal.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "8481b2221babd25030bb",
+          "observed_at": "2026-11-05T09:42:59.469434+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search",
+          "outcome": "captured",
+          "body_sha256": "109d03f0643f0692e2597e98370854eb1f6baed1975df34d07a8310999371305",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "79c463c269b268cf45c3",
+          "observed_at": "2026-11-05T09:45:13.403236+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search/?schema=fields#fields",
+          "outcome": "captured",
+          "body_sha256": "91de63e3c954d4180084317de1ace0203baeedcada0756e037308c6269ee784d",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "7c730415364c9a52be2f",
+          "observed_at": "2026-11-05T09:45:25.351855+00:00",
+          "url": "https://about.hal.science/legal-notice/",
+          "outcome": "captured",
+          "body_sha256": "5b650758041ddb903261d7fddccad1a9cce3a3dd146ec99e33b9b1dc4959308d",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c29bd6070ce7de6faa4a",
+          "observed_at": "2026-11-05T09:47:36.467583+00:00",
+          "url": "https://about.hal.science/interoperability-dissemination/",
+          "outcome": "captured",
+          "body_sha256": "e283a3755e09e97e5816e679d2f0b80e9e3368779a7ae7710812dd25915980f3",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "a93975deb1ecf0ef886c",
+          "observed_at": "2026-11-05T09:47:44.620136+00:00",
+          "url": "https://api.archives-ouvertes.fr/robots.txt",
+          "outcome": "captured",
+          "body_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        }
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Legal notice distinguishes CNRS platform content from deposited third-party works. Website CC BY 4.0 is not assumed to license all metadata or theses. No key, payment or account used.",
+      "facts": {},
+      "open_questions": [
+        "Establish catalog-metadata reuse terms, item-specific content license and public API limits."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "analysis/documents.jsonl",
+        "examples/hal.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "8481b2221babd25030bb",
+          "observed_at": "2026-11-05T09:42:59.469434+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search",
+          "outcome": "captured",
+          "body_sha256": "109d03f0643f0692e2597e98370854eb1f6baed1975df34d07a8310999371305",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "79c463c269b268cf45c3",
+          "observed_at": "2026-11-05T09:45:13.403236+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search/?schema=fields#fields",
+          "outcome": "captured",
+          "body_sha256": "91de63e3c954d4180084317de1ace0203baeedcada0756e037308c6269ee784d",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "7c730415364c9a52be2f",
+          "observed_at": "2026-11-05T09:45:25.351855+00:00",
+          "url": "https://about.hal.science/legal-notice/",
+          "outcome": "captured",
+          "body_sha256": "5b650758041ddb903261d7fddccad1a9cce3a3dd146ec99e33b9b1dc4959308d",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c29bd6070ce7de6faa4a",
+          "observed_at": "2026-11-05T09:47:36.467583+00:00",
+          "url": "https://about.hal.science/interoperability-dissemination/",
+          "outcome": "captured",
+          "body_sha256": "e283a3755e09e97e5816e679d2f0b80e9e3368779a7ae7710812dd25915980f3",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "a93975deb1ecf0ef886c",
+          "observed_at": "2026-11-05T09:47:44.620136+00:00",
+          "url": "https://api.archives-ouvertes.fr/robots.txt",
+          "outcome": "captured",
+          "body_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        }
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Historical HAL metadata had no fileMain_s and does not prove a free copy. File filtering is documented but neither current anonymous reading nor free-login requirements were tested.",
+      "facts": {},
+      "open_questions": [
+        "Verify representative full thesis, embargo and access restrictions through a permitted route."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "analysis/documents.jsonl",
+        "examples/hal.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "8481b2221babd25030bb",
+          "observed_at": "2026-11-05T09:42:59.469434+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search",
+          "outcome": "captured",
+          "body_sha256": "109d03f0643f0692e2597e98370854eb1f6baed1975df34d07a8310999371305",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "79c463c269b268cf45c3",
+          "observed_at": "2026-11-05T09:45:13.403236+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search/?schema=fields#fields",
+          "outcome": "captured",
+          "body_sha256": "91de63e3c954d4180084317de1ace0203baeedcada0756e037308c6269ee784d",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "7c730415364c9a52be2f",
+          "observed_at": "2026-11-05T09:45:25.351855+00:00",
+          "url": "https://about.hal.science/legal-notice/",
+          "outcome": "captured",
+          "body_sha256": "5b650758041ddb903261d7fddccad1a9cce3a3dd146ec99e33b9b1dc4959308d",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c29bd6070ce7de6faa4a",
+          "observed_at": "2026-11-05T09:47:36.467583+00:00",
+          "url": "https://about.hal.science/interoperability-dissemination/",
+          "outcome": "captured",
+          "body_sha256": "e283a3755e09e97e5816e679d2f0b80e9e3368779a7ae7710812dd25915980f3",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "a93975deb1ecf0ef886c",
+          "observed_at": "2026-11-05T09:47:44.620136+00:00",
+          "url": "https://api.archives-ouvertes.fr/robots.txt",
+          "outcome": "captured",
+          "body_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        }
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "No current thesis result was retrieved. Historical malaria-title results cannot establish thesis relevance, paging or full-item availability.",
+      "facts": {},
+      "open_questions": [
+        "Ten distinct current thesis examples plus topic, paging, empty, error and duplicate/version checks."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "analysis/documents.jsonl",
+        "examples/hal.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "8481b2221babd25030bb",
+          "observed_at": "2026-11-05T09:42:59.469434+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search",
+          "outcome": "captured",
+          "body_sha256": "109d03f0643f0692e2597e98370854eb1f6baed1975df34d07a8310999371305",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "79c463c269b268cf45c3",
+          "observed_at": "2026-11-05T09:45:13.403236+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search/?schema=fields#fields",
+          "outcome": "captured",
+          "body_sha256": "91de63e3c954d4180084317de1ace0203baeedcada0756e037308c6269ee784d",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "7c730415364c9a52be2f",
+          "observed_at": "2026-11-05T09:45:25.351855+00:00",
+          "url": "https://about.hal.science/legal-notice/",
+          "outcome": "captured",
+          "body_sha256": "5b650758041ddb903261d7fddccad1a9cce3a3dd146ec99e33b9b1dc4959308d",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c29bd6070ce7de6faa4a",
+          "observed_at": "2026-11-05T09:47:36.467583+00:00",
+          "url": "https://about.hal.science/interoperability-dissemination/",
+          "outcome": "captured",
+          "body_sha256": "e283a3755e09e97e5816e679d2f0b80e9e3368779a7ae7710812dd25915980f3",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "a93975deb1ecf0ef886c",
+          "observed_at": "2026-11-05T09:47:44.620136+00:00",
+          "url": "https://api.archives-ouvertes.fr/robots.txt",
+          "outcome": "captured",
+          "body_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        }
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "The serial collector stopped at robots before sending the planned query. Current /search/, /ref/, /oai/ and /sword/ restrictions are explicit.",
+      "facts": {},
+      "open_questions": [
+        "A permitted service contract, refresh/retraction behavior and later-day reliability remain open."
+      ],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "analysis/documents.jsonl",
+        "examples/hal.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "8481b2221babd25030bb",
+          "observed_at": "2026-11-05T09:42:59.469434+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search",
+          "outcome": "captured",
+          "body_sha256": "109d03f0643f0692e2597e98370854eb1f6baed1975df34d07a8310999371305",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "79c463c269b268cf45c3",
+          "observed_at": "2026-11-05T09:45:13.403236+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search/?schema=fields#fields",
+          "outcome": "captured",
+          "body_sha256": "91de63e3c954d4180084317de1ace0203baeedcada0756e037308c6269ee784d",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "7c730415364c9a52be2f",
+          "observed_at": "2026-11-05T09:45:25.351855+00:00",
+          "url": "https://about.hal.science/legal-notice/",
+          "outcome": "captured",
+          "body_sha256": "5b650758041ddb903261d7fddccad1a9cce3a3dd146ec99e33b9b1dc4959308d",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c29bd6070ce7de6faa4a",
+          "observed_at": "2026-11-05T09:47:36.467583+00:00",
+          "url": "https://about.hal.science/interoperability-dissemination/",
+          "outcome": "captured",
+          "body_sha256": "e283a3755e09e97e5816e679d2f0b80e9e3368779a7ae7710812dd25915980f3",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "a93975deb1ecf0ef886c",
+          "observed_at": "2026-11-05T09:47:44.620136+00:00",
+          "url": "https://api.archives-ouvertes.fr/robots.txt",
+          "outcome": "captured",
+          "body_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        }
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Defer current automated queries because of a specific robots-policy conflict with the documented API. Continue other independent sources; revisit only on a useful published permission/export change.",
+      "facts": {
+        "decision": "deferred-policy-disallow",
+        "activation_approved": false,
+        "owner_action_required": false
+      },
+      "open_questions": [],
+      "evidence": [
+        "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "analysis/documents.jsonl",
+        "examples/hal.scouting.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+          "job_id": "8481b2221babd25030bb",
+          "observed_at": "2026-11-05T09:42:59.469434+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search",
+          "outcome": "captured",
+          "body_sha256": "109d03f0643f0692e2597e98370854eb1f6baed1975df34d07a8310999371305",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "79c463c269b268cf45c3",
+          "observed_at": "2026-11-05T09:45:13.403236+00:00",
+          "url": "https://api.archives-ouvertes.fr/docs/search/?schema=fields#fields",
+          "outcome": "captured",
+          "body_sha256": "91de63e3c954d4180084317de1ace0203baeedcada0756e037308c6269ee784d",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        },
+        {
+          "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+          "job_id": "7c730415364c9a52be2f",
+          "observed_at": "2026-11-05T09:45:25.351855+00:00",
+          "url": "https://about.hal.science/legal-notice/",
+          "outcome": "captured",
+          "body_sha256": "5b650758041ddb903261d7fddccad1a9cce3a3dd146ec99e33b9b1dc4959308d",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "c29bd6070ce7de6faa4a",
+          "observed_at": "2026-11-05T09:47:36.467583+00:00",
+          "url": "https://about.hal.science/interoperability-dissemination/",
+          "outcome": "captured",
+          "body_sha256": "e283a3755e09e97e5816e679d2f0b80e9e3368779a7ae7710812dd25915980f3",
+          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+        },
+        {
+          "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+          "job_id": "a93975deb1ecf0ef886c",
+          "observed_at": "2026-11-05T09:47:44.620136+00:00",
+          "url": "https://api.archives-ouvertes.fr/robots.txt",
+          "outcome": "captured",
+          "body_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314",
+          "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+        }
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "fd8535ec9c649383f404c1736bfa3722c5459a1092cbd2250f0fbbd5ba658ae3",
+      "path": "docs/design/2026-11-free-content/README.md",
+      "line": 94,
+      "heading": "2. Scope",
+      "text": "Not in the first release: previews/loans, Standard Ebooks, DIKSHA/NCERT, CORE,\nHAL, Zenodo, bioRxiv/medRxiv as live sources (show \"Not connected yet\" if\nlisted), embedded readers, downloads proxied through our server, accounts.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 253,
+      "heading": "Phase C — children, regional and specialist coverage",
+      "text": "Reviewed children's pilot with approved metadata, attribution, language and level. Obtain feeds for comprehensive StoryWeaver/African Storybook/Book Dash search. Add CORE/HAL/Zenodo and India-specific providers in response to measured gaps; audio optional.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 54,
+      "heading": "4. Preprints, theses, repositories and reports",
+      "text": "| **HAL — repository host/index** | Solr-style `https://api.archives-ouvertes.fr/search/`, q/fq/field selection/JSON. [Search](https://api.archives-ouvertes.fr/docs/search) | `uri_s`, optional `fileMain_s`, DOI/version. Citation-only records exist; validate file-presence filter. | No-key query worked but sample lacked full-text field. **Low/medium / P1**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 89,
+      "heading": "Standard connection patterns",
+      "text": "| REST/JSON search | DOAJ, Europe PMC, OpenAlex, Google, CORE, HAL | HTTP budgets/retries/response limits/paging | Query grammar, mapping, access, terms |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 73,
+      "heading": "Categories",
+      "text": "| Preprints and working papers | Research before or outside formal journal publication | arXiv, bioRxiv/medRxiv, HAL, Zenodo |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 74,
+      "heading": "Categories",
+      "text": "| Theses, dissertations, institutional outputs | Graduate research, technical reports, repository manuscripts | CORE, HAL, Shodhganga, university repositories |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 85,
+      "heading": "What the original checks established",
+      "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 89,
+      "heading": "What the original checks established",
+      "text": "- An Open Library work returned `ebook_access: public` alongside many Internet Archive identifiers. That does not identify which edition is freely readable.\n- A HAL hit had a record URL and DOI but no `fileMain_s`: a repository hit is not necessarily full text.\n- Zenodo returned a dataset; item-type filtering is essential.\n- DOAJ supplied an older HTTP publisher URL; metadata alone does not prove the destination still works.\n- Semantic Scholar returned **429**, and Gutendex timed out. Those checks do not establish general service availability.\n- Some documentation URLs moved; corrected DOAB/OAPEN URLs appear in the catalog. Some sites returned only a JavaScript shell. NCERT/ERIC/OER Commons could not be fully inspected.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
+      "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
+      "line": 59,
+      "heading": "Tested automated route disallowed — 11",
+      "text": "| [HAL](https://api.archives-ouvertes.fr/docs/search) | Current robots prevents the proposed API query; zero current passing examples. / The schema link returned a documentation page, not verified values for all requested response fields. | Do not automate the blocked route. Review an explicitly permitted documented alternative or seek operator clarification/permission. API documentation and website availability do not override this route restriction. Owner action: no signup fix established; permission or permitted alternative. |",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "operator": {
+    "name": "Centre pour la communication scientifique directe (CCSD), under CNRS / Inria / INRAE",
+    "jurisdiction": "France",
+    "publisher": "CNRS publishes the platform, excluding third-party deposited contents",
+    "evidence": [
+      {
+        "path": "runs/thesis-cultural-contract-20261105aa/observations.jsonl",
+        "job_id": "8481b2221babd25030bb",
+        "observed_at": "2026-11-05T09:42:59.469434+00:00",
+        "url": "https://api.archives-ouvertes.fr/docs/search",
+        "outcome": "captured",
+        "body_sha256": "109d03f0643f0692e2597e98370854eb1f6baed1975df34d07a8310999371305",
+        "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+      },
+      {
+        "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "job_id": "79c463c269b268cf45c3",
+        "observed_at": "2026-11-05T09:45:13.403236+00:00",
+        "url": "https://api.archives-ouvertes.fr/docs/search/?schema=fields#fields",
+        "outcome": "captured",
+        "body_sha256": "91de63e3c954d4180084317de1ace0203baeedcada0756e037308c6269ee784d",
+        "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+      },
+      {
+        "path": "runs/hal-commons-permission-20261105ab/observations.jsonl",
+        "job_id": "7c730415364c9a52be2f",
+        "observed_at": "2026-11-05T09:45:25.351855+00:00",
+        "url": "https://about.hal.science/legal-notice/",
+        "outcome": "captured",
+        "body_sha256": "5b650758041ddb903261d7fddccad1a9cce3a3dd146ec99e33b9b1dc4959308d",
+        "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+      },
+      {
+        "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "job_id": "c29bd6070ce7de6faa4a",
+        "observed_at": "2026-11-05T09:47:36.467583+00:00",
+        "url": "https://about.hal.science/interoperability-dissemination/",
+        "outcome": "captured",
+        "body_sha256": "e283a3755e09e97e5816e679d2f0b80e9e3368779a7ae7710812dd25915980f3",
+        "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+      },
+      {
+        "path": "runs/hal-rights-media-policy-20261105ac/observations.jsonl",
+        "job_id": "a93975deb1ecf0ef886c",
+        "observed_at": "2026-11-05T09:47:44.620136+00:00",
+        "url": "https://api.archives-ouvertes.fr/robots.txt",
+        "outcome": "captured",
+        "body_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314",
+        "policy_sha256": "b073a5dfd7cc007d73b0f243643587bf80cd8a4a3482a1f5632b94b6f8985314"
+      }
+    ]
+  }
+}

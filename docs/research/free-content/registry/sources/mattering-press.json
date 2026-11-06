@@ -1,0 +1,1278 @@
+{
+  "schema_version": 1,
+  "id": "mattering-press",
+  "name": "Mattering Press",
+  "homepage": "https://www.matteringpress.org/",
+  "group": "G01",
+  "areas": [
+    "C04",
+    "C02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "Publisher-scoped Thoth GraphQL keyword/title search with active book-type filters; digital publication locations and per-work license."
+  ],
+  "query": {
+    "adapter": "thoth",
+    "endpoint": "https://api.thoth.pub/graphql",
+    "authentication": "none for sampled public queries",
+    "cost": "No fee or API key used; respect current provider policies and rate limits.",
+    "research_pause_seconds": 3,
+    "cases": [
+      {
+        "id": "known-title-01",
+        "intent": "Find the known catalog record for An Anthropology of Common Ground",
+        "expected_ids": [
+          "cc201ee7-8f10-4ee8-b182-1797b644b037"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"An Anthropology of Common Ground\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-02",
+        "intent": "Find the known catalog record for Boxes",
+        "expected_ids": [
+          "6852ffab-b996-4d80-a8c6-67be81eb9d20"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Boxes\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-03",
+        "intent": "Find the known catalog record for Concealing for Freedom",
+        "expected_ids": [
+          "8a20a285-bb77-4964-a8e5-a625267738ad"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Concealing for Freedom\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-04",
+        "intent": "Find the known catalog record for Democratic Situations",
+        "expected_ids": [
+          "4d3289a8-61e7-47b4-b94c-9f30059d5a4e"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Democratic Situations\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-05",
+        "intent": "Find the known catalog record for Energy Babble",
+        "expected_ids": [
+          "2c647e88-873b-42c3-bdbd-52162bd9aaf8"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Energy Babble\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-06",
+        "intent": "Find the known catalog record for Energy Worlds in Experiment",
+        "expected_ids": [
+          "95e15115-4009-4cb0-8824-011038e3c116"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Energy Worlds in Experiment\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-07",
+        "intent": "Find the known catalog record for Engineering the Climate",
+        "expected_ids": [
+          "accee66a-002d-4879-a77c-0d8cfb917d4e"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Engineering the Climate\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-08",
+        "intent": "Find the known catalog record for Environmental Alterities",
+        "expected_ids": [
+          "91917b2d-ac8c-4a33-bb29-305f97241c4d"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Environmental Alterities\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-09",
+        "intent": "Find the known catalog record for Ghost-Managed Medicine",
+        "expected_ids": [
+          "89aef935-5c74-48b5-9874-6182202d8d46"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Ghost-Managed Medicine\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      },
+      {
+        "id": "known-title-10",
+        "intent": "Find the known catalog record for Homo Textor",
+        "expected_ids": [
+          "70e11bb9-ba40-4265-9d09-871badb9fd59"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "params": null,
+          "json": {
+            "query": "{works(limit:5,filter:\"Homo Textor\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+          }
+        }
+      }
+    ],
+    "paging": "offset, limit",
+    "publisher_id": "17d701c1-307e-4228-83ca-d8e90d7b87a6",
+    "official_content_hosts": [
+      "books.matteringpress.org",
+      "www.matteringpress.org"
+    ],
+    "supported_modes": [
+      "publisher-scoped literal metadata filter",
+      "exact native work UUID resolution",
+      "active monograph/edited-book type restriction",
+      "limit/offset paging"
+    ],
+    "unsupported_modes": [
+      "semantic relevance ranking",
+      "full book-text search",
+      "untested author-specific search",
+      "unverified language/territory eligibility filters",
+      "unreviewed format/mirror access"
+    ],
+    "detail_request": {
+      "method": "POST",
+      "url": "https://api.thoth.pub/graphql",
+      "json": {
+        "query": "{work(workId:\"cc201ee7-8f10-4ee8-b182-1797b644b037\"){workId workType workStatus titles{fullTitle} doi edition publicationDate updatedAtWithRelations withdrawnDate license copyrightHolder languages{languageCode languageRelation} imprint{imprintId publisherId imprintName} publications{publicationType locations{canonical fullTextUrl landingPage}}}}"
+      }
+    },
+    "identity": "publisherId + workId, with edition, DOI, publication date and publication-format IDs kept distinct; title equality never implies identity"
+  },
+  "licensing": "Thoth metadata CC0; each book has separate content license, including possible NC/SA terms.",
+  "documentation": [
+    "https://thoth.pub/docs",
+    "https://api.thoth.pub/graphiql",
+    "https://thoth.pub/docs/policies/terms-thoth-metadata",
+    "https://www.matteringpress.org"
+  ],
+  "limitations": [
+    "Keyword filter can match descriptions and does not guarantee relevance order.",
+    "Exclude retail/print and unreviewed mirror locations. Preserve edition and volume IDs.",
+    "Ten known-item searches are not the full topic-relevance/reliability/rights qualification benchmark."
+  ],
+  "evidence": [
+    "../batches/G01_QUERY_EVIDENCE.json",
+    "../batches/G01_ACCESS_EVIDENCE.json",
+    "../batches/G01_FIRST_TEN.md",
+    "examples/thoth.contract-review.jsonl",
+    "runs/thoth-contract-20261105n/observations.jsonl",
+    "runs/publisher-identity-20261105o/observations.jsonl",
+    "examples/mattering-press.jsonl",
+    "examples/thoth.relevance-review.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T08:13:56.754031+00:00",
+  "next_action": "Continue full topic/reader/rights qualification for this publisher: five topic queries, representative full-item browser/reading and territory checks, contributor metadata, license exceptions, update/deletion and error/maintainer review. Retain all evidence and separate publisher identity from the shared Thoth platform. Publisher-home policy check is blocked; defer that host until recovery, without treating the independently public Thoth API as proof of reader access.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Current Thoth publisher UUID/name/homepage and matching work imprint establish the catalog attribution. Thoth is a shared metadata service, not a sixth publisher.",
+      "facts": {
+        "publisher": {
+          "createdAt": "2021-03-25T10:48:25.461610Z",
+          "publisherId": "17d701c1-307e-4228-83ca-d8e90d7b87a6",
+          "publisherName": "Mattering Press",
+          "publisherShortname": null,
+          "publisherUrl": "https://www.matteringpress.org",
+          "updatedAt": "2026-08-25T15:12:42.537172Z"
+        },
+        "representative_imprint": {
+          "imprintId": "cb483a78-851f-4936-82d2-8dcd555dcda9",
+          "imprintName": "Mattering Press",
+          "publisherId": "17d701c1-307e-4228-83ca-d8e90d7b87a6"
+        },
+        "deduplication": "Distinct publisher catalog scope; same publisher across Thoth, native website and OAPEN/DOAB mirrors is not counted again. Cross-provider work merging requires DOI/native edition evidence.",
+        "homepage_observation": {
+          "outcome": "skipped",
+          "http_status": null,
+          "robots_status": null
+        }
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/mattering-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:13.993537+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:18.132360+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:topic-science",
+          "observed_at": "2026-11-05T08:08:21.523658+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1b6e6c84c8c0d4a0a9c",
+          "observed_at": "2026-11-05T08:09:53.891909+00:00"
+        }
+      ],
+      "open_questions": [
+        "Publisher legal/operator/parent details remain unconfirmed beyond current Thoth attribution; revisit its site only after policy/access recovery."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing category memberships retained. A current native work establishes sampled language and format, not catalog-wide language/country coverage.",
+      "facts": {
+        "categories": [
+          "C04",
+          "C02"
+        ],
+        "sample_languages": [
+          {
+            "languageCode": "ENG",
+            "languageRelation": "ORIGINAL"
+          }
+        ],
+        "sample_work_type": "MONOGRAPH",
+        "publisher_country": "Not newly verified in this review; do not infer publisher country from Thoth UK domicile.",
+        "access_country": "Managed cloud vantage unknown; USA/India end-user access not tested.",
+        "non_English_lead": null
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/mattering-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:13.993537+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:18.132360+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:topic-science",
+          "observed_at": "2026-11-05T08:08:21.523658+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1b6e6c84c8c0d4a0a9c",
+          "observed_at": "2026-11-05T08:09:53.891909+00:00"
+        }
+      ],
+      "open_questions": [
+        "Measure catalog language/subject and country gaps; avoid equating sampled ENG metadata with English-only catalog coverage."
+      ]
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Fifty previously captured known-title cases across five publishers remain separate evidence; this publisher has ten current passing cases, one newly replayed title and a native-work detail round trip. Public schema confirms publisher/type/status/limit/offset arguments.",
+      "facts": {
+        "contract": {
+          "adapter": "thoth",
+          "endpoint": "https://api.thoth.pub/graphql",
+          "authentication": "none for sampled public queries",
+          "cost": "No fee or API key used; respect current provider policies and rate limits.",
+          "research_pause_seconds": 3,
+          "cases": [
+            {
+              "id": "known-title-01",
+              "intent": "Find the known catalog record for An Anthropology of Common Ground",
+              "expected_ids": [
+                "cc201ee7-8f10-4ee8-b182-1797b644b037"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"An Anthropology of Common Ground\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-02",
+              "intent": "Find the known catalog record for Boxes",
+              "expected_ids": [
+                "6852ffab-b996-4d80-a8c6-67be81eb9d20"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Boxes\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-03",
+              "intent": "Find the known catalog record for Concealing for Freedom",
+              "expected_ids": [
+                "8a20a285-bb77-4964-a8e5-a625267738ad"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Concealing for Freedom\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-04",
+              "intent": "Find the known catalog record for Democratic Situations",
+              "expected_ids": [
+                "4d3289a8-61e7-47b4-b94c-9f30059d5a4e"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Democratic Situations\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-05",
+              "intent": "Find the known catalog record for Energy Babble",
+              "expected_ids": [
+                "2c647e88-873b-42c3-bdbd-52162bd9aaf8"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Energy Babble\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-06",
+              "intent": "Find the known catalog record for Energy Worlds in Experiment",
+              "expected_ids": [
+                "95e15115-4009-4cb0-8824-011038e3c116"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Energy Worlds in Experiment\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-07",
+              "intent": "Find the known catalog record for Engineering the Climate",
+              "expected_ids": [
+                "accee66a-002d-4879-a77c-0d8cfb917d4e"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Engineering the Climate\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-08",
+              "intent": "Find the known catalog record for Environmental Alterities",
+              "expected_ids": [
+                "91917b2d-ac8c-4a33-bb29-305f97241c4d"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Environmental Alterities\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-09",
+              "intent": "Find the known catalog record for Ghost-Managed Medicine",
+              "expected_ids": [
+                "89aef935-5c74-48b5-9874-6182202d8d46"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Ghost-Managed Medicine\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            },
+            {
+              "id": "known-title-10",
+              "intent": "Find the known catalog record for Homo Textor",
+              "expected_ids": [
+                "70e11bb9-ba40-4265-9d09-871badb9fd59"
+              ],
+              "request": {
+                "method": "POST",
+                "url": "https://api.thoth.pub/graphql",
+                "params": null,
+                "json": {
+                  "query": "{works(limit:5,filter:\"Homo Textor\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{title fullTitle} doi landingPage license publications{publicationType locations{fullTextUrl landingPage canonical}}}}"
+                }
+              }
+            }
+          ],
+          "paging": "offset, limit",
+          "publisher_id": "17d701c1-307e-4228-83ca-d8e90d7b87a6",
+          "official_content_hosts": [
+            "books.matteringpress.org",
+            "www.matteringpress.org"
+          ],
+          "supported_modes": [
+            "publisher-scoped literal metadata filter",
+            "exact native work UUID resolution",
+            "active monograph/edited-book type restriction",
+            "limit/offset paging"
+          ],
+          "unsupported_modes": [
+            "semantic relevance ranking",
+            "full book-text search",
+            "untested author-specific search",
+            "unverified language/territory eligibility filters",
+            "unreviewed format/mirror access"
+          ],
+          "detail_request": {
+            "method": "POST",
+            "url": "https://api.thoth.pub/graphql",
+            "json": {
+              "query": "{work(workId:\"cc201ee7-8f10-4ee8-b182-1797b644b037\"){workId workType workStatus titles{fullTitle} doi edition publicationDate updatedAtWithRelations withdrawnDate license copyrightHolder languages{languageCode languageRelation} imprint{imprintId publisherId imprintName} publications{publicationType locations{canonical fullTextUrl landingPage}}}}"
+            }
+          },
+          "identity": "publisherId + workId, with edition, DOI, publication date and publication-format IDs kept distinct; title equality never implies identity"
+        },
+        "current_passing_examples": 10,
+        "sample_detail": {
+          "workId": "cc201ee7-8f10-4ee8-b182-1797b644b037",
+          "doi": "https://doi.org/10.28938/9780995527799",
+          "edition": 1,
+          "workType": "MONOGRAPH",
+          "workStatus": "ACTIVE",
+          "publicationDate": "2018-07-23",
+          "updatedAtWithRelations": "2026-08-25T15:12:42.537172Z",
+          "withdrawnDate": null,
+          "languages": [
+            {
+              "languageCode": "ENG",
+              "languageRelation": "ORIGINAL"
+            }
+          ],
+          "imprint": {
+            "imprintId": "cb483a78-851f-4936-82d2-8dcd555dcda9",
+            "imprintName": "Mattering Press",
+            "publisherId": "17d701c1-307e-4228-83ca-d8e90d7b87a6"
+          }
+        },
+        "schema_correction": "Abstract.content is the public field. The failed Abstract.abstract request returned400; no empty-result inference. Initial wrong root type Query returned data:null; current QueryRoot schema was read separately.",
+        "authentication": "No account/key or paid metadata service used."
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/mattering-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:13.993537+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:18.132360+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:topic-science",
+          "observed_at": "2026-11-05T08:08:21.523658+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1b6e6c84c8c0d4a0a9c",
+          "observed_at": "2026-11-05T08:09:53.891909+00:00"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Fresh Thoth clauses3–5 state metadata is CC0 and freely accessible via public APIs/catalogs. This does not relicense the books; per-work content licenses stay separate and may be NC/SA.",
+      "facts": {
+        "metadata_license": "CC0 1.0 Universal",
+        "website_license": "Thoth website content CC BY4.0; not the same as metadata or book content.",
+        "content_license_observed": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "licenses_in_saved_example_sample": [
+          "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+          "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+        ],
+        "attribution": "Preserve publisher/native work/DOI, creator where supplied and each book license; CC0 metadata is reusable without adopting a blanket content-reuse grant.",
+        "cost": "Anonymous query route without fee/key; publisher-management/dissemination services are separate and were not purchased.",
+        "numeric_query_quota": "Not specified in reviewed terms; not an unlimited-SLA claim.",
+        "representative_copyright_holder": "Nathalia Brichet"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/mattering-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:13.993537+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:18.132360+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:topic-science",
+          "observed_at": "2026-11-05T08:08:21.523658+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1b6e6c84c8c0d4a0a9c",
+          "observed_at": "2026-11-05T08:09:53.891909+00:00"
+        }
+      ],
+      "open_questions": [
+        "Reconcile representative full-item license/attribution and third-party exceptions against the actual book/reader; metadata declarations alone do not certify every work."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Earlier 4KiB PDF-header/range evidence is backfilled with its original observation date; it is not a fresh full-book read. Current metadata provides digital and print destinations, which must remain distinct.",
+      "facts": {
+        "historical_range_observations": [
+          {
+            "name": "pdf-mattering-press",
+            "requested_url": "https://books.matteringpress.org/10.28938/9781912729340.pdf",
+            "resolved_url": "https://books.matteringpress.org/10.28938/9781912729340.pdf",
+            "observed_at": "2026-11-05T00:49:18.041604+00:00",
+            "status": 206,
+            "content_type": "application/pdf",
+            "content_range": "bytes 0-4095/9214360",
+            "content_length": "4096",
+            "sample_bytes": 4096,
+            "sample_sha256": "f7a961e3b34168940b79dd891990d3601f66582875e4472e2cc49174ddc68c33",
+            "starts_pdf": true,
+            "seconds": 1.2
+          }
+        ],
+        "current_digital_locations": [
+          {
+            "format": "PDF",
+            "locations": [
+              {
+                "canonical": false,
+                "fullTextUrl": "https://muse.jhu.edu/pub/336/oa_monograph/book/81375/pdf",
+                "landingPage": "https://muse.jhu.edu/book/81375"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://library.oapen.org/bitstream/handle/20.500.12657/109749/9781912729005.pdf?sequence=1&isAllowed=y",
+                "landingPage": "https://library.oapen.org/handle/20.500.12657/109749"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": null,
+                "landingPage": "https://directory.doabooks.org/handle/20.500.12854/170991"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://www.matteringpress.org/wp-content/uploads/2018/08/Brichet-2018-An-Anthropology-of-Common-Ground.pdf",
+                "landingPage": "https://www.matteringpress.org/books/an-anthropology-of-common-ground"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://archive.org/download/cc201ee7-8f10-4ee8-b182-1797b644b037/cc201ee7-8f10-4ee8-b182-1797b644b037.pdf",
+                "landingPage": "https://archive.org/details/cc201ee7-8f10-4ee8-b182-1797b644b037"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://zenodo.org/records/19847370/files/cc201ee7-8f10-4ee8-b182-1797b644b037_book.pdf",
+                "landingPage": "https://zenodo.org/records/19847370"
+              },
+              {
+                "canonical": true,
+                "fullTextUrl": "https://books.matteringpress.org/10.28938/9780995527799.pdf",
+                "landingPage": "https://www.matteringpress.org/books/an-anthropology-of-common-ground"
+              }
+            ]
+          },
+          {
+            "format": "EPUB",
+            "locations": [
+              {
+                "canonical": true,
+                "fullTextUrl": "https://www.matteringpress.org/wp-content/uploads/2020/09/an-anthropology-of-common-ground-epub.epub",
+                "landingPage": "https://www.matteringpress.org/books/an-anthropology-of-common-ground"
+              },
+              {
+                "canonical": false,
+                "fullTextUrl": "https://zenodo.org/records/19847370/files/cc201ee7-8f10-4ee8-b182-1797b644b037_book.epub",
+                "landingPage": "https://zenodo.org/records/19847370"
+              }
+            ]
+          }
+        ],
+        "access_class": "Anonymous metadata confirmed; per-item free reading and regional eligibility require destination checks.",
+        "print_rule": "PAPERBACK/HARDBACK fullTextUrl can be a shop/landing page; never classify those as free digital full text.",
+        "homepage_policy": {
+          "outcome": "skipped",
+          "http_status": null,
+          "robots_status": null
+        },
+        "bulk_content_downloaded": false
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/mattering-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:13.993537+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:18.132360+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:topic-science",
+          "observed_at": "2026-11-05T08:08:21.523658+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1b6e6c84c8c0d4a0a9c",
+          "observed_at": "2026-11-05T08:09:53.891909+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify representative complete readable item destinations on desktop/mobile; identify free-login, preview, territory and accessibility conditions without buying accounts or bulk files."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "One fresh topic query per publisher exposes subject/edition limitations. Ten known-title cases cannot substitute for the full five-topic acceptance pack.",
+      "facts": {
+        "topic_review": {
+          "source_id": "mattering-press",
+          "reviewed_at": "2026-11-05T08:13:56.754031+00:00",
+          "query_observed_at": "2026-11-05T08:08:21.523658+00:00",
+          "query_request": {
+            "json": {
+              "query": "{works(limit:5,offset:0,filter:\"science\",publishers:[\"17d701c1-307e-4228-83ca-d8e90d7b87a6\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} abstracts{content} license landingPage}}"
+            },
+            "method": "POST",
+            "url": "https://api.thoth.pub/graphql"
+          },
+          "result_ids": [
+            "6852ffab-b996-4d80-a8c6-67be81eb9d20",
+            "8a20a285-bb77-4964-a8e5-a625267738ad",
+            "4d3289a8-61e7-47b4-b94c-9f30059d5a4e",
+            "accee66a-002d-4879-a77c-0d8cfb917d4e",
+            "91917b2d-ac8c-4a33-bb29-305f97241c4d"
+          ],
+          "sample_titles": [
+            "Boxes: A Field Guide",
+            "Concealing for Freedom: The Making of Encryption, Secure Messaging and Digital Liberties",
+            "Democratic Situations",
+            "Engineering the Climate: Science, Politics and Visions of Control",
+            "Environmental Alterities"
+          ],
+          "assessment": "Science returns science-and-technology studies/social research on boxes, encryption governance, democratic situations, climate engineering and environmental alterities. These are adjacent to general natural-science learning; do not describe them as general science textbooks.",
+          "method": "Manual title/abstract reading; not a blinded relevance benchmark or full-item accessibility check.",
+          "query_verified": false
+        },
+        "known_title_replay": "First declared case replayed at 2026-11-05T08:08:13.993537+00:00",
+        "book_vs_chapter": "MONOGRAPH/EDITED_BOOK and ACTIVE filters; chapter identities not merged into books.",
+        "negative_empty": "Current shared impossible filter returns HTTP200 with works:[]; distinct from GraphQL400/data:null failures.",
+        "paging": "Current LSE politics offset0/5 pages checked separately; do not generalize to every publisher."
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/mattering-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:13.993537+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:18.132360+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:topic-science",
+          "observed_at": "2026-11-05T08:08:21.523658+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1b6e6c84c8c0d4a0a9c",
+          "observed_at": "2026-11-05T08:09:53.891909+00:00"
+        }
+      ],
+      "open_questions": [
+        "Complete five predeclared topic queries per source with per-result access checks, language/Unicode edge cases, coverage/ordering and recall limits."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Live serial requests have hashes, policy evidence and bounded metadata responses. Revision/withdrawal fields are observed but no actual deletion transition or runtime refresh owner is established.",
+      "facts": {
+        "request_pacing_seconds": 3,
+        "response_bound_bytes": 524288,
+        "metadata_update_fields": [
+          "updatedAtWithRelations",
+          "workStatus",
+          "withdrawnDate"
+        ],
+        "current_record_timestamps": {
+          "publicationDate": "2018-07-23",
+          "updatedAtWithRelations": "2026-08-25T15:12:42.537172Z",
+          "withdrawnDate": null
+        },
+        "observed_failures": "Wrong root type returned data:null; wrong Abstract field returned400, then correction followed published schema. The original400 body was not retained, only status/hash/request.",
+        "refresh_design": "Future qualified integration must review ACTIVE/withdrawn transitions, preserve publisher/work/edition IDs, and retain prior evidence after errors.",
+        "reader_host_blockers": {
+          "outcome": "skipped",
+          "http_status": null,
+          "robots_status": null
+        }
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/mattering-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:13.993537+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:18.132360+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:topic-science",
+          "observed_at": "2026-11-05T08:08:21.523658+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1b6e6c84c8c0d4a0a9c",
+          "observed_at": "2026-11-05T08:09:53.891909+00:00"
+        }
+      ],
+      "open_questions": [
+        "Establish provider numeric quotas if published, bounded outage/throttle behavior, refresh/deletion reconciliation and accountable maintenance before full qualification."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain the attributed publisher catalog and its real query evidence; full qualification and research activation approval remain false.",
+      "facts": {
+        "decision": "retain-publisher-scoped-query-candidate",
+        "full_qualification_complete": false,
+        "activation_approved": false,
+        "existing_production_state": "Not changed by research approval fields.",
+        "remaining_gates": [
+          "identity_and_duplicates",
+          "coverage_and_languages",
+          "rights_and_cost",
+          "reader_access",
+          "quality_and_relevance",
+          "operating_limits"
+        ],
+        "next_action": "Continue full topic/reader/rights qualification for this publisher: five topic queries, representative full-item browser/reading and territory checks, contributor metadata, license exceptions, update/deletion and error/maintainer review. Retain all evidence and separate publisher identity from the shared Thoth platform. Publisher-home policy check is blocked; defer that host until recovery, without treating the independently public Thoth API as proof of reader access."
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md",
+        "examples/thoth.contract-review.jsonl",
+        "runs/thoth-contract-20261105n/observations.jsonl",
+        "runs/publisher-identity-20261105o/observations.jsonl",
+        "examples/mattering-press.jsonl",
+        "examples/thoth.relevance-review.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "query-root-schema",
+          "observed_at": "2026-11-05T08:04:26.744717+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "five-publisher-identities",
+          "observed_at": "2026-11-05T08:05:33.267324+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:known-title-replay",
+          "observed_at": "2026-11-05T08:08:13.993537+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:native-work-detail",
+          "observed_at": "2026-11-05T08:08:18.132360+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "mattering-press:topic-science",
+          "observed_at": "2026-11-05T08:08:21.523658+00:00"
+        },
+        {
+          "path": "examples/thoth.contract-review.jsonl",
+          "label": "shared-empty-filter",
+          "observed_at": "2026-11-05T08:08:51.383617+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "ffb7a4a4bbcc5f24b181",
+          "observed_at": "2026-11-05T08:02:28.063101+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "5527e47600f6b61b4868",
+          "observed_at": "2026-11-05T08:02:35.709895+00:00"
+        },
+        {
+          "path": "runs/thoth-contract-20261105n/observations.jsonl",
+          "job_id": "9d71268ae9f708f5f587",
+          "observed_at": "2026-11-05T08:02:39.879524+00:00"
+        },
+        {
+          "path": "runs/publisher-identity-20261105o/observations.jsonl",
+          "job_id": "e1b6e6c84c8c0d4a0a9c",
+          "observed_at": "2026-11-05T08:09:53.891909+00:00"
+        }
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 37,
+      "heading": "The ten candidates",
+      "text": "| 8 | [Mattering Press](https://www.matteringpress.org/) | Anthropology, science and technology studies | Exact-title query → **The Ethnographic Case**; `ethnographic` also returned other matching works | Thoth GraphQL search scoped to this publisher |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 64,
+      "heading": "Reading evidence and source-specific limits",
+      "text": "| Mattering Press | **The Ethnographic Case**, second edition, had CC BY-NC-SA 4.0 and a canonical PDF returning HTTP 206/PDF bytes. | First/second editions are distinct records. Preserve noncommercial/share-alike terms for content reuse; this proposal is metadata discovery and outbound reading. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 21,
+      "heading": "Behavior",
+      "text": "Ten new integrations are released behind `CONTENT_KNOWLEDGE_ENABLED=true`:\nGlobal Digital Library, LibriVox, Library of Congress digital books, Biodiversity\nHeritage Library's Internet Archive collection, African Minds, LSE Press,\nMattering Press, mediastudies.press, punctum books and Python 3.15 documentation.\nFive publisher catalogs share Thoth; this is not five separate API infrastructures.\nThe existing Gutenberg, Open Textbook Library, Book Dash and StoryWeaver snapshots\nand the existing OpenAlex/Europe PMC integrations are also selectable. With the\nexisting production flags, this gives 16 connected sources, not 16 fully audited\norigins or complete catalogs.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "operator": {
+    "name": "Mattering Press",
+    "role": "Publisher catalog attribution returned by Thoth; legal parent/domicile only claimed where the publisher site states it.",
+    "metadata_service": "Thoth Open Metadata Community Interest Company (UK company14549556)",
+    "publisher_id": "17d701c1-307e-4228-83ca-d8e90d7b87a6",
+    "evidence": [
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "query-root-schema",
+        "observed_at": "2026-11-05T08:04:26.744717+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "five-publisher-identities",
+        "observed_at": "2026-11-05T08:05:33.267324+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "mattering-press:known-title-replay",
+        "observed_at": "2026-11-05T08:08:13.993537+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "mattering-press:native-work-detail",
+        "observed_at": "2026-11-05T08:08:18.132360+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "mattering-press:topic-science",
+        "observed_at": "2026-11-05T08:08:21.523658+00:00"
+      },
+      {
+        "path": "examples/thoth.contract-review.jsonl",
+        "label": "shared-empty-filter",
+        "observed_at": "2026-11-05T08:08:51.383617+00:00"
+      },
+      {
+        "path": "runs/thoth-contract-20261105n/observations.jsonl",
+        "job_id": "ffb7a4a4bbcc5f24b181",
+        "observed_at": "2026-11-05T08:02:28.063101+00:00"
+      },
+      {
+        "path": "runs/thoth-contract-20261105n/observations.jsonl",
+        "job_id": "5527e47600f6b61b4868",
+        "observed_at": "2026-11-05T08:02:35.709895+00:00"
+      },
+      {
+        "path": "runs/thoth-contract-20261105n/observations.jsonl",
+        "job_id": "9d71268ae9f708f5f587",
+        "observed_at": "2026-11-05T08:02:39.879524+00:00"
+      },
+      {
+        "path": "runs/publisher-identity-20261105o/observations.jsonl",
+        "job_id": "e1b6e6c84c8c0d4a0a9c",
+        "observed_at": "2026-11-05T08:09:53.891909+00:00"
+      }
+    ]
+  },
+  "record_kind": "publisher-catalog-via-shared-metadata-service"
+}

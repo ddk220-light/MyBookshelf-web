@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "id": "ncbi-bookshelf",
+  "name": "NCBI Bookshelf",
+  "homepage": "https://www.ncbi.nlm.nih.gov/books/",
+  "group": "G01",
+  "areas": [
+    "C04",
+    "I17"
+  ],
+  "state": "deferred",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "ESearch/ESummary with db=books returned native book/chapter IDs."
+  ],
+  "query": {
+    "adapter": "ncbi-eutils",
+    "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+    "cases": [],
+    "authentication": "not established for a complete supported route",
+    "cost": "No paid service used in initial review.",
+    "metadata_query_template": "GET esearch.fcgi?db=books&term=QUERY&retmode=json&retmax=3 then esummary.fcgi?db=books&id=IDS&retmode=json"
+  },
+  "licensing": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
+  "documentation": [
+    "https://www.ncbi.nlm.nih.gov/books/"
+  ],
+  "limitations": [
+    "E-utilities robots policy disallows the proposed automated query route. Reader challenge is separate.",
+    "Sample reading destination returned browser verification; full-text crawl is not authorized by API search support."
+  ],
+  "evidence": [
+    "../batches/G01_FIRST_TEN.md",
+    "analysis/external/metadata-link-owner-scope-20261106.json",
+    "runs/metadata-link-fixes-20261106a/observations.jsonl",
+    "runs/metadata-link-fixes-20261106b/observations.jsonl",
+    "runs/metadata-link-fixes-20261106c/observations.jsonl",
+    "runs/metadata-link-query-seeds-20261106/observations.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-06T02:18:23.609570+00:00",
+  "next_action": "Wait for permitted API access/policy clarification; do not bypass robots or reader challenge.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "ncbi-bookshelf",
+        "name": "NCBI Bookshelf",
+        "homepage_reference": "https://www.ncbi.nlm.nih.gov/books/",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C04",
+          "I17"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "adapter": "ncbi-eutils",
+        "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "capabilities": [
+          "ESearch/ESummary with db=books returned native book/chapter IDs."
+        ],
+        "supported_and_unsupported_modes": "needs explicit review"
+      },
+      "evidence": [
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "license_notes": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
+        "authentication_notes": "not established for a complete supported route",
+        "cost_notes": "No paid service used in initial review.",
+        "terms_review": "pending current reconciliation"
+      },
+      "evidence": [
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "../batches/G01_FIRST_TEN.md"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "limitations": [
+          "Sample reading destination returned browser verification; full-text crawl is not authorized by API search support."
+        ],
+        "ranking_relevance_completeness": "not fully qualified"
+      },
+      "evidence": [
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "paging": null,
+        "research_pause_seconds": null,
+        "provider_quota_refresh_deletion_contract": "needs explicit review"
+      },
+      "evidence": [
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "state": "deferred",
+        "next_action": "Verify ordinary reader access and parent book versus chapter mapping; respect NCBI full-text policies.",
+        "production_qualification_complete": false
+      },
+      "evidence": [
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 102,
+      "heading": "Alternatives investigated but withheld from the ten",
+      "text": "| NCBI Bookshelf | ESearch/ESummary produced real chapter and parent-book IDs | Sample reading page returned browser verification. Keep as a queryable lead; verify ordinary reader access and book-versus-chapter scope before promotion. Do not crawl the full-text website. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
+      "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
+      "line": 21,
+      "heading": "Blocked connector access report",
+      "text": "NCBI Bookshelf, Open Book Publishers and Helsinki University Press need current metadata revalidation: old reader-access failures should not be used as the sole reason to fail search coverage.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
+      "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
+      "line": 86,
+      "heading": "Technical failure or unfinished research — 44",
+      "text": "| [NCBI Bookshelf](https://www.ncbi.nlm.nih.gov/books/) | Historical ESearch/ESummary queries returned IDs; reader verification was the old blocker. | Revalidate metadata queries and book/chapter identity. Full-reader verification must not gate the revised search-only count. Owner action: engineering/research first; no owner signup required yet. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "f5f1a162f77fefba5cab69120b1c892ee17113efdd77bd07b7e389b4a95b268a",
+      "path": "docs/research/free-content/METADATA_LINK_FIXES.md",
+      "line": 18,
+      "heading": "Metadata search fixes — 6 November 2026",
+      "text": "| NCBI Bookshelf | Blocked/failed | Reviewed the documented E-utilities metadata route independently of the reader | Robots disallowed the proposed search URL; no ESearch request sent. Reader challenge not bypassed |",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "recovery": {
+    "status": "blocked_or_failed",
+    "reason": "E-utilities robots policy disallows the proposed automated query route. Reader challenge is separate.",
+    "attempt": "Fresh E-utilities robots200 denied the search URL; no ESearch request sent. Official book documentation also displayed a browser challenge.",
+    "result": "No fresh passing query examples; preserved negative/policy evidence.",
+    "decision": "wait_for_policy_or_documented_alternative",
+    "reviewed_at": "2026-11-06T02:18:23.609570+00:00",
+    "owner_action_required": false,
+    "evidence": [
+      "analysis/external/metadata-link-owner-scope-20261106.json",
+      "runs/metadata-link-fixes-20261106a/observations.jsonl",
+      "runs/metadata-link-fixes-20261106b/observations.jsonl",
+      "runs/metadata-link-fixes-20261106c/observations.jsonl",
+      "runs/metadata-link-query-seeds-20261106/observations.jsonl"
+    ]
+  },
+  "research_selection": {
+    "included": true,
+    "reason": "Owner approved metadata discovery and outbound linking; current query proof still required",
+    "reviewed_at": "2026-11-06T02:02:06.275832+00:00",
+    "evidence": "analysis/external/metadata-link-owner-scope-20261106.json"
+  },
+  "discovery_scope": {
+    "mode": "metadata-and-outbound-links",
+    "reader_access_is_queryability_gate": false,
+    "reading_eligibility_label": null,
+    "no_full_content_downloads": true,
+    "no_personal_owner_data": true
+  }
+}

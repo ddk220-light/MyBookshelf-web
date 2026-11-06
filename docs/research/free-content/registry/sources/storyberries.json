@@ -1,0 +1,399 @@
+{
+  "schema_version": 1,
+  "id": "storyberries",
+  "name": "Storyberries",
+  "homepage": "https://www.storyberries.com/",
+  "group": "G01",
+  "areas": [
+    "C01",
+    "C05"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "aliases": [],
+  "capabilities": [
+    "Live published Storyberries keyword form, first9 native story/article posts. Ten meaningful title-word matches; results like catch/caterpillar do not count as cat relevance."
+  ],
+  "query": {
+    "adapter": "storyberries-public",
+    "endpoint": "https://www.storyberries.com/",
+    "cases": [
+      {
+        "id": "keyword-01",
+        "intent": "Published story keyword search with meaningful title-word match: cat",
+        "expected_ids": [
+          "50939"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.storyberries.com/?s=cat"
+        }
+      },
+      {
+        "id": "keyword-02",
+        "intent": "Published story keyword search with meaningful title-word match: dragon",
+        "expected_ids": [
+          "43138"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.storyberries.com/?s=dragon"
+        }
+      },
+      {
+        "id": "keyword-03",
+        "intent": "Published story keyword search with meaningful title-word match: mice",
+        "expected_ids": [
+          "17959"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.storyberries.com/?s=mice"
+        }
+      },
+      {
+        "id": "keyword-04",
+        "intent": "Published story keyword search with meaningful title-word match: dog",
+        "expected_ids": [
+          "41768"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.storyberries.com/?s=dog"
+        }
+      },
+      {
+        "id": "keyword-05",
+        "intent": "Published story keyword search with meaningful title-word match: rabbit",
+        "expected_ids": [
+          "23067"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.storyberries.com/?s=rabbit"
+        }
+      },
+      {
+        "id": "keyword-06",
+        "intent": "Published story keyword search with meaningful title-word match: moon",
+        "expected_ids": [
+          "49876"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.storyberries.com/?s=moon"
+        }
+      },
+      {
+        "id": "keyword-07",
+        "intent": "Published story keyword search with meaningful title-word match: lion",
+        "expected_ids": [
+          "44194"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.storyberries.com/?s=lion"
+        }
+      },
+      {
+        "id": "keyword-08",
+        "intent": "Published story keyword search with meaningful title-word match: tree",
+        "expected_ids": [
+          "42196"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.storyberries.com/?s=tree"
+        }
+      },
+      {
+        "id": "keyword-09",
+        "intent": "Published story keyword search with meaningful title-word match: friend",
+        "expected_ids": [
+          "49714"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.storyberries.com/?s=friend"
+        }
+      },
+      {
+        "id": "keyword-10",
+        "intent": "Published story keyword search with meaningful title-word match: school",
+        "expected_ids": [
+          "51811"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.storyberries.com/?s=school"
+        }
+      }
+    ],
+    "authentication": "Anonymous published GET search form; no account/key/payment.",
+    "request_shape_verified": true,
+    "published_form": {
+      "method": "GET",
+      "action": "https://www.storyberries.com/",
+      "field": "s",
+      "form_id": null
+    }
+  },
+  "licensing": "Site footer reserves rights and explicitly says permissions differ by story. Free public search/read availability is distinct from reuse permission; per-creator licenses must be checked before any content use.",
+  "documentation": [
+    "https://www.storyberries.com/"
+  ],
+  "limitations": [
+    "Search may match snippets/substrings, so selected proofs require meaningful title words. Relevance/ranking outside these samples is unqualified.",
+    "Native post IDs and landing URLs retained; some stories republish Book Dash/other creators, so overlapping works are not independent knowledge origins.",
+    "Explicit nonsense-query empty state confirmed after recognizing its Nothing Found heading plus matching search-input value. Original parser mismatch retained.",
+    "Public search metadata only; no full story text, pictures, ebook/audio files or reader accounts."
+  ],
+  "evidence": [
+    "runs/canonical-partners-onet-20261105/observations.jsonl",
+    "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+    "runs/story-keyword-validation-20261105ew/observations.jsonl",
+    "runs/story-query-followups-20261105ex/observations.jsonl",
+    "runs/final-children-docs-20261105et/observations.jsonl",
+    "runs/children-search-pages-20261105eu/observations.jsonl",
+    "analysis/external/storyberries-search-records-20261105.json",
+    "examples/storyberries.jsonl",
+    "examples/storyberries.boundaries.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T22:14:01.457087+00:00",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Canonical public catalog observed after independent policy review.",
+      "facts": {
+        "next_action": "Review official operator/terms and supported search/export documentation; do not assume WordPress endpoints are permitted.",
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "9e067b4e4f9ef25fa2f6",
+          "observed_at": "2026-11-05T04:33:44.434317+00:00"
+        }
+      ],
+      "open_questions": [
+        "Confirm legal operator and origin/mirror overlap."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Visible children’s catalog with age, reading-time, format and interest/topic categories. Supported machine-query/export and legal operator remain unverified.",
+      "facts": {
+        "ages": [
+          "0–3",
+          "4–6",
+          "7–12"
+        ],
+        "formats": [
+          "Picture Books",
+          "Fairy Tales",
+          "Early Readers",
+          "Poems",
+          "Nursery Rhymes",
+          "Chapter Books",
+          "Comic Books"
+        ],
+        "scope": "Read/listen/watch/buy coexist; no uniform free-access or reuse claim",
+        "operator": "Storyberries branding; legal operator not established"
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "9e067b4e4f9ef25fa2f6",
+          "observed_at": "2026-11-05T04:33:44.434317+00:00"
+        }
+      ],
+      "open_questions": [
+        "Verify item languages and geographic applicability."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Live published Storyberries keyword form, first9 native story/article posts. Ten meaningful title-word matches; results like catch/caterpillar do not count as cat relevance.",
+      "facts": {
+        "adapter": "storyberries-public",
+        "endpoint": "https://www.storyberries.com/",
+        "cases": [
+          "keyword-01",
+          "keyword-02",
+          "keyword-03",
+          "keyword-04",
+          "keyword-05",
+          "keyword-06",
+          "keyword-07",
+          "keyword-08",
+          "keyword-09",
+          "keyword-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live published Storyberries keyword form, first9 native story/article posts. Ten meaningful title-word matches; results like catch/caterpillar do not count as cat relevance.",
+        "authentication": "Anonymous published GET search form; no account/key/payment.",
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "runs/story-keyword-validation-20261105ew/observations.jsonl",
+        "runs/story-query-followups-20261105ex/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-search-pages-20261105eu/observations.jsonl",
+        "analysis/external/storyberries-search-records-20261105.json",
+        "examples/storyberries.jsonl",
+        "examples/storyberries.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Additional search modes and full-item reader access remain separate from working-query status."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Site footer reserves rights and explicitly says permissions differ by story. Free public search/read availability is distinct from reuse permission; per-creator licenses must be checked before any content use.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous published GET search form; no account/key/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
+      "evidence": [
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "runs/story-keyword-validation-20261105ew/observations.jsonl",
+        "runs/story-query-followups-20261105ex/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-search-pages-20261105eu/observations.jsonl",
+        "analysis/external/storyberries-search-records-20261105.json",
+        "examples/storyberries.jsonl",
+        "examples/storyberries.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Public catalog page HTTP 200; complete reading and free-login/territory conditions untested.",
+      "facts": {
+        "ages": [
+          "0–3",
+          "4–6",
+          "7–12"
+        ],
+        "formats": [
+          "Picture Books",
+          "Fairy Tales",
+          "Early Readers",
+          "Poems",
+          "Nursery Rhymes",
+          "Chapter Books",
+          "Comic Books"
+        ],
+        "scope": "Read/listen/watch/buy coexist; no uniform free-access or reuse claim",
+        "operator": "Storyberries branding; legal operator not established"
+      },
+      "evidence": [
+        "runs/canonical-partners-onet-20261105/observations.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/canonical-partners-onet-20261105/observations.jsonl",
+          "job_id": "9e067b4e4f9ef25fa2f6",
+          "observed_at": "2026-11-05T04:33:44.434317+00:00"
+        }
+      ],
+      "open_questions": [
+        "Check representative free reading without creating accounts or purchases."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live published Storyberries keyword form, first9 native story/article posts. Ten meaningful title-word matches; results like catch/caterpillar do not count as cat relevance.",
+        "empty_and_boundary_evidence": "examples/storyberries.boundaries.jsonl"
+      },
+      "evidence": [
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "runs/story-keyword-validation-20261105ew/observations.jsonl",
+        "runs/story-query-followups-20261105ex/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-search-pages-20261105eu/observations.jsonl",
+        "analysis/external/storyberries-search-records-20261105.json",
+        "examples/storyberries.jsonl",
+        "examples/storyberries.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "Search may match snippets/substrings, so selected proofs require meaningful title words. Relevance/ranking outside these samples is unqualified.",
+          "Native post IDs and landing URLs retained; some stories republish Book Dash/other creators, so overlapping works are not independent knowledge origins.",
+          "Explicit nonsense-query empty state confirmed after recognizing its Nothing Found heading plus matching search-input value. Original parser mismatch retained.",
+          "Public search metadata only; no full story text, pictures, ebook/audio files or reader accounts."
+        ],
+        "no_bulk_content": true
+      },
+      "evidence": [
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "runs/story-keyword-validation-20261105ew/observations.jsonl",
+        "runs/story-query-followups-20261105ex/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-search-pages-20261105eu/observations.jsonl",
+        "analysis/external/storyberries-search-records-20261105.json",
+        "examples/storyberries.jsonl",
+        "examples/storyberries.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production load/freshness is outside this research checkpoint."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Live published Storyberries keyword form, first9 native story/article posts. Ten meaningful title-word matches; results like catch/caterpillar do not count as cat relevance.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
+      "evidence": [
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "runs/story-keyword-validation-20261105ew/observations.jsonl",
+        "runs/story-query-followups-20261105ex/observations.jsonl",
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-search-pages-20261105eu/observations.jsonl",
+        "analysis/external/storyberries-search-records-20261105.json",
+        "examples/storyberries.jsonl",
+        "examples/storyberries.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
+    }
+  },
+  "operator": {
+    "name": "Storyberries branding; legal operator not established",
+    "verification": "display branding only"
+  },
+  "analysis_refs": []
+}

@@ -123,3 +123,11 @@ current free-reading verification. No source account was created.
 Results with matches now precede empty or unsuccessful groups. Book editions and
 documentation versions are visible on result/detail cards. No datastore, paid
 service or account configuration was added.
+
+## Production verification — 2026-11-05
+
+PR #179 merged as `ede8360be0f801a973ed5fa7b30af4cefda4b7cc`; Vercel `dpl_4fpEvVXRi2djzqN2NBuqzNPCarGM` is READY on [mybookshelf.cloud](https://mybookshelf.cloud). Full release CI 41967194045 passed, including existing account regression checks. The directory exposes 16 sources: ten new live integrations, two existing live paper catalogs, four existing limited snapshots.
+
+All ten new live query/detail samples and OpenAlex passed in production. Refreshed Gutenberg, OTL and Book Dash query/detail checks passed. StoryWeaver remains stale/unclear and is excluded by the default access filter. Two Europe PMC malaria probes timed out; the UI preserves that source error while other sources return results. This is an unresolved provider/runtime reliability observation, not a zero-result claim. The mobile WebKit all-source query completed all 16 groups with 26 loaded results, no page errors and no horizontal overflow; the LibriVox detail linked to the correct recording. See [saved production evidence](evidence/knowledge-release-2026-11-05/production/deployment.json), including failed probes and screenshots. The temporary preview share link was revoked after testing; protection settings were not weakened.
+
+Research completion continues separately. Deployed integration status must not be read as complete research qualification, 100-origin coverage, or blanket access/rights clearance.

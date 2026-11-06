@@ -1,0 +1,378 @@
+{
+  "schema_version": 1,
+  "id": "gdl",
+  "name": "Global Digital Library",
+  "homepage": "https://digitallibrary.io/",
+  "group": "G01",
+  "areas": [
+    "C01",
+    "C02"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "capabilities": [
+    "Title/keyword search with a language filter; fixed 20-record pages and offset.",
+    "English and Hindi reading samples were verified; language availability is catalog-dependent."
+  ],
+  "query": {
+    "adapter": "gdl",
+    "endpoint": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+    "authentication": "none for sampled public queries",
+    "cost": "No fee or API key used; respect current provider policies and rate limits.",
+    "research_pause_seconds": 2,
+    "cases": [
+      {
+        "id": "known-title-01",
+        "intent": "Find Rain in en",
+        "expected_ids": [
+          "38970"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "Rain",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-02",
+        "intent": "Find the previously observed Caterpillar story by a distinctive title word; full apostrophe title query failed.",
+        "expected_ids": [
+          "36127"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "Caterpillar",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-03",
+        "intent": "Find Rabbit and Dog in en",
+        "expected_ids": [
+          "39979"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "Rabbit and Dog",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-04",
+        "intent": "Find The Day the Vegetables Came to School in en",
+        "expected_ids": [
+          "35873"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "The Day the Vegetables Came to School",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-05",
+        "intent": "Find My home in en",
+        "expected_ids": [
+          "39989"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "My home",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-06",
+        "intent": "Find My best friend in en",
+        "expected_ids": [
+          "38962"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "My best friend",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-07",
+        "intent": "Find Lata Loves Trees in en",
+        "expected_ids": [
+          "36097"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "Lata Loves Trees",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-08",
+        "intent": "Find Let’s Have a Water Fight! in en",
+        "expected_ids": [
+          "36120"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "Let’s Have a Water Fight!",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-09",
+        "intent": "Find The Brave Little Bird in en",
+        "expected_ids": [
+          "35935"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "The Brave Little Bird",
+            "language": "en"
+          },
+          "json": null
+        }
+      },
+      {
+        "id": "known-title-10",
+        "intent": "Find पूरी क्यों फूलती है? in hi",
+        "expected_ids": [
+          "6127"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+          "params": {
+            "query": "पूरी क्यों फूलती है?",
+            "language": "hi"
+          },
+          "json": null
+        }
+      }
+    ],
+    "paging": "_skip, fixed 20 records"
+  },
+  "licensing": "Mixed per-book Creative Commons licenses; inspect credits and rights for each work.",
+  "documentation": [
+    "https://content.digitallibrary.io/api/"
+  ],
+  "limitations": [
+    "Substring matches need relevance evaluation; publisher/attribution fields can be empty.",
+    "Republished StoryWeaver/Book Dash content must not inflate origin counts. Per-book CC terms vary.",
+    "The blank-query catalog returned mixed languages/content types despite language=en; validate returned language and book/type metadata, and do not treat blank-query listings as filtered search evidence."
+  ],
+  "evidence": [
+    "../batches/G01_QUERY_EVIDENCE.json",
+    "../batches/G01_ACCESS_EVIDENCE.json",
+    "../batches/G01_FIRST_TEN.md"
+  ],
+  "last_reviewed_at": "2026-11-05",
+  "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes.",
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "gdl",
+        "name": "Global Digital Library",
+        "homepage_reference": "https://digitallibrary.io/",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C01",
+          "C02"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "adapter": "gdl",
+        "endpoint": "https://content.digitallibrary.io/wp-json/content-api/v1/contentsearch",
+        "capabilities": [
+          "Title/keyword search with a language filter; fixed 20-record pages and offset.",
+          "English and Hindi reading samples were verified; language availability is catalog-dependent."
+        ],
+        "supported_and_unsupported_modes": "needs explicit review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "license_notes": "Mixed per-book Creative Commons licenses; inspect credits and rights for each work.",
+        "authentication_notes": "none for sampled public queries",
+        "cost_notes": "No fee or API key used; respect current provider policies and rate limits.",
+        "terms_review": "pending current reconciliation"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Reconcile current metadata/content terms, free limits and permitted commercial use."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "../batches/G01_QUERY_EVIDENCE.json",
+          "../batches/G01_ACCESS_EVIDENCE.json",
+          "../batches/G01_FIRST_TEN.md"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "limitations": [
+          "Substring matches need relevance evaluation; publisher/attribution fields can be empty.",
+          "Republished StoryWeaver/Book Dash content must not inflate origin counts. Per-book CC terms vary.",
+          "The blank-query catalog returned mixed languages/content types despite language=en; validate returned language and book/type metadata, and do not treat blank-query listings as filtered search evidence."
+        ],
+        "ranking_relevance_completeness": "not fully qualified"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "paging": "_skip, fixed 20 records",
+        "research_pause_seconds": 2,
+        "provider_quota_refresh_deletion_contract": "needs explicit review"
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "state": "ten-query-examples-verified",
+        "next_action": "Run the separate full qualification benchmark before any integration; retain this evidence and recheck when promoted or provider behavior changes.",
+        "production_qualification_complete": false
+      },
+      "evidence": [
+        "../batches/G01_QUERY_EVIDENCE.json",
+        "../batches/G01_ACCESS_EVIDENCE.json",
+        "../batches/G01_FIRST_TEN.md"
+      ],
+      "open_questions": [
+        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "05d7e9bf24f4c5a9beacd7cbf1e994e6c9aeb8edb7b2e3348b59c75aee708862",
+      "path": "docs/research/free-content/batches/G01_FIRST_TEN.md",
+      "line": 30,
+      "heading": "The ten candidates",
+      "text": "| 1 | [Global Digital Library](https://content.digitallibrary.io/api/) | Children's picture books and early literacy; English and Hindi sampled | `rain` → **Rain**; Hindi `पानी` → **पूरी क्यों फूलती है?** | Documented anonymous content-search JSON API, with language and offset |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 21,
+      "heading": "Behavior",
+      "text": "Ten new integrations are released behind `CONTENT_KNOWLEDGE_ENABLED=true`:\nGlobal Digital Library, LibriVox, Library of Congress digital books, Biodiversity\nHeritage Library's Internet Archive collection, African Minds, LSE Press,\nMattering Press, mediastudies.press, punctum books and Python 3.15 documentation.\nFive publisher catalogs share Thoth; this is not five separate API infrastructures.\nThe existing Gutenberg, Open Textbook Library, Book Dash and StoryWeaver snapshots\nand the existing OpenAlex/Europe PMC integrations are also selectable. With the\nexisting production flags, this gives 16 connected sources, not 16 fully audited\norigins or complete catalogs.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

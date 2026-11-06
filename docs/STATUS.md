@@ -1,5 +1,151 @@
 # MyBookshelf web handoff
 
+**Owner resumed work, 6 November 2026:** The five newly completed connectors are being integrated in isolated `feat/metadata-connector-release` from current main. The fixed 44-item technical-recovery goal is active (2 already Working, 42 remaining); hourly completion is enabled again, legacy documentation reporter remains disabled. See [recovery goal](research/free-content/registry/technical-recovery-goal.json). Research collectors must check locks/remote freshness; production release uses its separate worktree.
+
+**Owner-requested metadata fixes, 2026-11-06T02:21:12.414051+00:00:** 68 Working / 65 Blocked or failed / 0 Still checking of 133 active connectors ; 134 records retained, SWAYAM excluded. Five newly working metadata searches and 50 examples; 267 research tests pass. Both hourly tasks remain paused, no collector active, production unchanged. [Fixes and blockers](research/free-content/METADATA_LINK_FIXES.md). Earlier entries below are historical checkpoints.
+
+**Hourly connector research paused by owner, 2026-11-05T22:42:52.422848+00:00.** Both automations are disabled; no query collector is active. Counts remain 63 Working / 71 Blocked or failed / 0 Still checking. [All 71 access actions](research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md) distinguish public signup, permission requests, route restrictions and unfinished engineering. No sources activated.
+
+
+**Free-knowledge connector research, 2026-11-05T22:29:55.166355+00:00:** 63 Working, 71 Blocked/failed, 0 Still checking of 134; 667 passing examples. 261 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
+**Free-knowledge connector research, 2026-11-05T22:03:57.009963+00:00:** 58 Working, 71 Blocked/failed, 5 Still checking of 134; 617 passing examples. 247 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
+**Free-knowledge connector research, 2026-11-05T21:51:00.516961+00:00:** 54 Working, 67 Blocked/failed, 13 Still checking of 134; 575 passing examples. 242 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
+**Free-knowledge connector research, 2026-11-05T21:32:59.298196+00:00:** 53 Working, 66 Blocked/failed, 15 Still checking of 134; 565 passing examples. 233 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
+**Free-knowledge connector research, 2026-11-05T21:31:22.894577+00:00:** 52 Working, 66 Blocked/failed, 16 Still checking of 134; 555 passing examples. 231 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
+**Free-knowledge connector research, 2026-11-05T20:47:02.368317+00:00:** 51 Working, 62 Blocked/failed, 21 Still checking of 134; 545 passing examples. 224 research tests pass. See [connector status](research/free-content/registry/connector-status.csv), [progress](research/free-content/registry/PROGRESS.md) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
+**Free-knowledge connector research, 2026-11-05T20:20:37.648859+00:00:**49 Working,62 Blocked/failed,23 Still checking of134;525passing examples. Seven connectors gain working scoped searches this run; four blockers assessed.221research tests pass. Read [per-connector status](research/free-content/registry/connector-status.csv) and [goal](research/free-content/registry/goal.json). Hourly completion enabled; research only.
+
+**Free-knowledge connector research, 2026-11-05T19:56:22.607735+00:00:**45 Working,59 Blocked/failed,30 Still checking of134;485passing examples. NPTEL, Book Sprints and LibreTexts searches now verified; DIKSHA Library requires login.210research tests pass. See [connector status](research/free-content/registry/connector-status.csv) and [goal](research/free-content/registry/goal.json). Hourly task enabled; research only.
+
+**Free-knowledge connector research, 2026-11-05T19:22:07.398727+00:00:** 42 Working, 58 Blocked/failed, 34 Still checking of 134; 455 passing examples. Crossref, National Gallery of Art, bioRxiv/medRxiv, PMC OAI and FAO now have ten current query examples each. arXiv and Abhilekh Patal are deferred on recorded policy/access problems. Hourly task enabled. See [connector status](research/free-content/registry/connector-status.csv) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
+**Free-knowledge connector research,2026-11-05T18:24:17.201077+00:00:**37 Working,56 Blocked/failed,41 Still checking of134;405 passing examples. OSHA,FAA,FDA andEPA now have10 passing queries each; FDA/EPA are browser-only routes. ROSA P search403 is deferred.193 research tests pass. Hourly task enabled. See [per-connector status](research/free-content/registry/connector-status.csv) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
+**Free-knowledge connector research, 2026-11-05T18:01:02.377757+00:00:**35 Working,57 Blocked/failed,42 Still checking of134. OSHA live publication queries and FAA reference-handbook title queries now work; ROSA P search403 is deferred. EPA native search form is next.189 research tests pass. See [connector status](research/free-content/registry/connector-status.csv) and [goal](research/free-content/registry/goal.json). Research only; production unchanged.
+
+**Connector task updated, 2026-11-05T17:22:03.158466+00:00:** The existing hourly task is enabled as **Complete connector search coverage**. It actively checks identified connectors, analyzes blockers/retries, and reports the plain group table every run, including unchanged runs. Read [task settings](research/free-content/registry/scheduled-task.json) and [current goal](research/free-content/registry/goal.json). Earlier full-dossier/topic/country targets are preserved as separate research history.
+
+**Free-knowledge source status, 2026-11-05T17:13:18.478423+00:00:** 134 recorded: **33 queryable,56blocked/failed,45still to assess**;365passingexamples. The owner requested plain group/connector coverage. Use [per-source status](research/free-content/registry/connector-status.csv), [group totals](research/free-content/registry/connector-status.json) and [resume goal](research/free-content/registry/goal.json). Eurostatadds10queries;fourchildren’s leadsbackfilled;181testspass. Researchonly;productionunchanged.
+
+**Free-knowledge research, 2026-11-05T16:50:33.474540+00:00:** 129 records, 355 current examples, 32 catalogs and two complete scoped dossiers. School title-search misses, safe refresh handling and rendered mathematical notation now have additional evidence; World Bank attribution remains constrained. 170 research tests pass. All full-area/civic closures remain open. See [goal](research/free-content/registry/goal.json) and [progress](research/free-content/registry/PROGRESS.md). Research only; production unchanged.
+
+**Free-knowledge research, 2026-11-05T16:24:54.801109+00:00:**129records/355currentexamples/32catalogs;two complete scoped dossiers.49/49areas havequeryevidence;0/49fullclosures and0/18civiccells. Thisrunadds20queries,5records andFederalRegisterqualification;Clevelandmuseumbackfill andnegative/schemaevidence saved.166tests pass;hourlycompletionenabled. See[goal](research/free-content/registry/goal.json),[audit](research/free-content/registry/completion-audit.json),[progress](research/free-content/registry/PROGRESS.md). Researchonly;productionunchanged.
+
+**Free-knowledge research, 2026-11-05T16:09:29.632065+00:00:** 126 records/345 current examples/31 catalogs; two complete scoped dossiers. All49 areas have query evidence, but zero full-area or civic-cell closures. WashingtonDNR supplies first actual government-owned property examples; FederalRegister scopedreader review complete with recorded limitations.159 tests pass. Read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research only; production unchanged.
+
+**Free-knowledge research checkpoint, 2026-11-05T15:25:57.942155+00:00:** 124 records, 335 current examples across 30 catalogs, and one complete scoped dossier. Boston zoning adds P05 query evidence; 48/49 areas now have query evidence, while all full-area and civic-cell closures remain open. BLM survey grids do not establish ownership/P04 coverage. Federal Register is 7/8 sections complete, with reader limitations open. All 95 documentation queues / 468 jobs are collection-complete. Evidence checks and 151 tests pass. Hourly completion remains enabled. Continue from the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists; production is unchanged.
+
+**Free-knowledge research, 2026-11-05T15:06:46.133669+00:00:** 122 records/315 current examples/28 catalogs;one complete scoped dossier. Federal Register now7/8 sections;reader table/keyboard gaps remain. Seattle/Chicago deferred with403/503 evidence;Boston zoning next.47/49 areas havequery evidence,zero fullarea/civic closures.137 tests pass. Readthe[goal](research/free-content/registry/goal.json),[audit](research/free-content/registry/completion-audit.json)and[progress](research/free-content/registry/PROGRESS.md). Researchonly;production unchanged.
+
+**Free-knowledge research checkpoint,2026-11-05:** PR #161 has **120 records,315 current examples across28 catalogs,one complete scoped dossier**.47/49 areas have query evidence;P04/P05 remain absent. All49 full-area closures and18 civic cells remain open. This run adds24 queries,8 prior-evidence backfills and1 new metadata catalog.83 completed documentation queues/439jobs;zero evidence-integrity errors;131 tests pass. Hourly completion remains enabled. Read the [goal](research/free-content/registry/goal.json),[audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+**Free-knowledge research checkpoint, 2026-11-05:** PR #161 has **116 records,305 current examples across27 catalogs,one complete scoped dossier**.47/49 areas have query evidence;P04/P05 remain absent. All49 full-area closures and18 civic cells remain open. Latest work:11 MIT course-item queries,3 LOC map lookups and5 historical deferred dossiers.77 completed documentation queues/426jobs;zero integrity errors;125 tests pass. Hourly completion remains enabled. Read the [goal](research/free-content/registry/goal.json),[audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+**Free-knowledge research checkpoint, 2026-11-05:** PR #161 now has **111 records,291 current examples across26 catalogs,one complete scoped dossier**. All49 areas have candidates and45 have query evidence; all49 full-area closures and18 civic cells remain open. This run adds22 examples, five historical catalog dossiers and six corrected institutional-gateway roles. All67 documentation queues/404jobs are collection-complete. Zero capture-integrity errors;113 tests pass. Hourly completion remains enabled. Read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+**Free-knowledge research checkpoint, 2026-11-05:** PR #161 has **106 records,281 current examples across26 catalogs,one complete scoped dossier**. All49 areas have candidates and44 have query evidence; all49 full-area closures and18 civic cells remain open. Appropedia adds12 examples and3 rendered readers; Zenodo is deferred on current robots policy. All60 documentation queues/390jobs are collection-complete. Registry/evidence checks and109 tests pass. Read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+**Free-knowledge research checkpoint, 2026-11-05:** draft PR #161 now has **105 records, 269 current examples across25 catalogs, one complete scoped dossier**. All49 areas have candidates and43 have query evidence; all49 full-area closures and18 civic cells remain open. Tatoeba adds ten five-language examples and two rendered readers; six older catalog leads have explicit deferred dossiers. All55 documentation queues/374jobs are collection-complete. Registry/evidence checks and101 tests pass. Hourly completion remains enabled. Read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+**Free-knowledge research checkpoint, 2026-11-05:** isolated expansion worktree / draft PR #161 now has **98 records, 259 current examples across 24 catalogs, and one complete scoped dossier**. All 49 areas have candidates; 42 have query evidence. All 49 full-area closures and 18 civic cells remain open. Federal Register and USAspending add 20 examples for regulation and agency budgets, with identity/date/null/rights and reader limits retained. NASA media is policy-deferred. All 52 documentation queues / 365 jobs are collection-complete. Registry/evidence checks and 94 tests pass. Hourly completion remains enabled. Read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+**Free-knowledge research checkpoint, 2026-11-05:** isolated expansion worktree / draft PR #161 now has **95 records, 239 current examples across22 catalogs, and1 complete scoped dossier**. All49 areas have candidates;39 have query evidence. All49 full-area closures and18 civic cells remain open. World Bank statistics and Siyavula school TOC queries add20 passing examples, with null/error/identity/license limits preserved. Four representative desktop/mobile reader pages render, with World Bank widget/accessibility limits saved. Their reader/relevance/operating sections remain partial. All49 documentation queues/353 jobs are collection-complete. Registry/evidence checks and85 tests pass, including strict Unicode-safe JSONL reading. Hourly completion remains enabled. Read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+**Free-knowledge research checkpoint, 2026-11-05:** isolated expansion worktree / draft PR #161 now has **94 records, 219 current examples across 20 catalogs, and 1 complete scoped dossier**. All 49 areas have candidates; 37 have query evidence, while all 49 full-area closures and 18 civic cells remain open. The Met adds 15 passing native-object examples with failures and rights limits retained; HAL/Commons APIs are policy-blocked and CaltechTHESIS has an unresolved public retrieval/reuse contract. Python gains offline refresh safeguards. All 44 documentation queues / 335 jobs are complete collection passes. Evidence/registry checks and 70 tests pass. The hourly completion task remains enabled. Read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+
+**Free-knowledge research checkpoint, 2026-11-05:** isolated expansion worktree / draft PR #161 now has **92 records, 204 current examples across 19 catalogs, and 1 complete research dossier (O*NET 31.0)**. All 49 areas have candidates, 36 have query evidence; all 49 full-area closures and 18 USA/India civic cells remain open. LOC adds 4 newspaper replays with failed queries preserved. OpenCity India and NYC planning are deferred policy/access candidates. All 38 documentation queues / 312 jobs are complete collection passes. Registry/evidence checks and 60 tests pass. The 100% completion task remains enabled; read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md). Research-only scope persists.
+
+
+**100% free-knowledge coverage goal, 2026-11-05:** the owner explicitly requested
+full completion and continued execution. The existing recurring task is updated
+and enabled as **Reach full source research coverage**. The [saved goal](research/free-content/registry/goal.json)
+and audit now enforce all 49 area closures, 18 USA/India civic cells, complete
+evidence-backed dossiers and 100 qualified origins per category/industry where
+supply supports it. Shortfalls require explicit owner acceptance; none has been
+granted. Work continues on C17 newspapers and P05 zoning/planning under the
+research-only scope. The native chat Goal UI is unavailable and was not activated.
+
+**Free-knowledge research continuation, 2026-11-05 (latest):** the isolated expansion worktree / draft PR #161 now has **90 records, 200 current examples across 19 catalogs, zero full dossiers**. Five Thoth publisher dossiers have current policy, query and native-edition analysis; equal mediastudies.press titles are separate editions 1 and 2. O*NET has seven complete sections and 20 industry examples. National Map is mapped but API-policy blocked. Coverage: 47/49 areas have candidates and 35/49 have some query evidence; all 49 areas and 18 USA/India civic cells remain open. There are 216 triaged URL roles, 28 unresolved older catalog identities / 29 references, and 115 unresolved named labels. All 28 documentation queues / 277 jobs are complete collection passes. Registry/evidence checks and 55 tests pass. Completion task remains enabled; latest owner scope is research-only. Read the [goal](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md).
+
+**Free-knowledge research continuation, 2026-11-05 (latest):** PR #161 / isolated expansion worktree now has **89 records, 200 current examples across 19 catalogs, zero fully complete dossiers**. O*NET has twenty title queries spanning all twenty industry tags and seven complete dossier sections; operating limits remain partial. Three anonymous desktop/mobile readers pass. Strict release checks reject the archived30.3 JSON that labels itself30.4; a separately published30.3 spreadsheet matches the1016 current records. Whole-word matching removes the actual nurse/nursery false positive. All24 documentation queues/266jobs are complete collection passes;214 URL roles triaged,29 old catalog identities/30references and115 named labels remain unresolved. Registry/evidence checks and55 tests pass. Latest owner steering is research-only: no runtime activation/import/deployment. Read the [goal cursor](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md); never restart completed queues.
+
+**Free-knowledge research continuation, 2026-11-05 (latest):** isolated expansion worktree / open draft PR #161 now has **89 records, 190 current verified examples across 19 catalogs, zero fully complete dossiers**. Python has six complete analysis sections; USGS Earthquake adds ten USA/India spatial queries and boundary/mobile-reader evidence. MSHA Digital Library and MARAD Data Statistics are candidate catalogs, not enabled/query-qualified sources. There are 204 triaged URL roles, 29 older unresolved catalog identities/30 references, six explicit agency-gateway URL follow-ups and 115 unresolved named labels. All 21 documentation queues / 255 jobs are complete collection passes. Registry/evidence checks and 51 research tests pass. Read the [goal cursor](research/free-content/registry/goal.json), [audit](research/free-content/registry/completion-audit.json) and [progress](research/free-content/registry/PROGRESS.md); never restart completed queues. Completion task remains enabled. This run changes research and its tools only.
+
+**Free-knowledge registry continuation, 2026-11-05 (earlier checkpoint):** the isolated expansion worktree/PR #161 now has **86 source records, 180 current verified examples across 18 catalogs, zero complete expanded dossiers**. Twelve catalog identities were added/reconciled; OpenAlex adds ten current native-work examples using the existing configured key within its verified free allowance. Anonymous 429s, title/relevance corrections, IndCat's timeout/503/parser failure, and NIST's policy redirect remain saved. Siyavula's branded/unbranded and IT/CAT license exceptions and WHO's publication/article policy distinctions are explicit. Book Sprints contributes 139 book/client associations and 92 raw client labels: these are leads, not independent origins. The expanded named-entity inventory has 124 labels, 115 unresolved; 33 older catalog identities (34 references) also remain open. Read the [audit](research/free-content/registry/completion-audit.json), [progress](research/free-content/registry/PROGRESS.md) and [goal cursor](research/free-content/registry/goal.json). Registry/evidence checks and 44 research tests pass. This run changes research and research tools only; original completed documentation queues must not be restarted.
+
+**Free-knowledge research continuation, 2026-11-05:** PR #161 remains open/draft on the isolated expansion worktree, reconciled with current main. Current audit: **74 source records, 170 verified examples across 17 catalogs, zero complete expanded dossiers**. O*NET 31.0 occupation metadata and OSTI add 20 real query examples; XML-format failures, topic/relevance limits and negative tests are retained. Census currently requires a key; BARD API docs returned 403; no accounts or bypasses. All ten documentation queues are complete as collection passes, with 43 catalog identities (46 references), 28 named organizations and comprehensive dossier/entity/area coverage still open. All 160 known URL roles are triaged. Read the [completion audit](research/free-content/registry/completion-audit.json), [coverage audit](research/free-content/registry/coverage-audit.json) and [goal cursor](research/free-content/registry/goal.json). Registry/evidence checks and 33 research tests pass. Completion automation remains enabled; original completed-pass reporting is paused. The separately owner-authorized production PR #179 is released and its evidence captured; research qualification and source activation approval remain distinct.
+
+**Live source-evidence run, 2026-11-05:** after the owner requested immediate
+execution, a resumable worker started in this worktree against 153 pending primary
+documentation URLs. Read [live progress](research/free-content/registry/runs/source-evidence-20261105/progress.json)
+and verify the PID/heartbeat before restarting. It respects robots/pacing, captures
+real evidence and pushes checkpoints every ten jobs. It does not finish semantic
+source qualification automatically. The native chat Goal control is unavailable
+in the exposed tools; the saved goal/schedule must not be described as that feature.
+Seventeen research-tool tests passed before launch.
+
+**Complete-analysis goal, 2026-11-05:** the owner clarified that this is active
+completion work, not a small daily quota. The existing task now resumes hourly;
+the immediate-run endpoint returned HTTP 404, so the first pass ran in this chat.
+The [registry](research/free-content/registry/README.md) now contains 52 source
+records, 130 verified examples across 13 sources, all 36 historical catalog rows,
+complete text snapshots of the research/design evidence and indexed screenshots.
+An eight-part source dossier and [completion audit](research/free-content/registry/completion-audit.json)
+make missing analysis explicit. Historical imports are not new verification.
+Python 3.15 documentation adds a verified official-inventory/local-symbol-search
+route. Continue the saved goal through all known leads and categories; no new
+runtime integration, datastore or deployment is authorized.
+
+**Free-content JSON registry, 2026-11-05:** the owner authorized continued source
+research and requested simple files instead of SQL. The [registry](research/free-content/registry/README.md)
+contains 21 source records, 120 verified query examples across 12 sources, nine
+deferred candidates, 138 discovery links and all 49 research areas. The original
+ten-example milestone is complete; G02 now includes Wikipedia and Wikibooks.
+[Progress](research/free-content/registry/PROGRESS.md) preserves failures and limits;
+[goal.json](research/free-content/registry/goal.json) holds the continuation cursor
+and schedule configuration. The previous stop-after-ten review checkpoint is
+superseded for research. All records remain unqualified/disabled for new app
+integration. Work stays in the expansion worktree/PR #161; no SQL/database
+service, runtime source, infrastructure or deployment was added.
+
+**Free-content discovery batch, 2026-11-05:** the owner requested the full area
+backlog and ten high-quality queryable candidates from the first group, explicitly
+without adding them to the app. [Backlog #164](https://github.com/ddk220-light/MyBookshelf-web/issues/164)
+and group issues #165–170 cover six groups, 20 content categories, 20 industries
+and nine USA/India public-information tracks. See the
+[backlog](research/free-content/DISCOVERY_BACKLOG.md) and
+[G01 first-ten evidence](research/free-content/batches/G01_FIRST_TEN.md).
+Ten candidates returned actual machine-search results and representative reading
+content/file samples. They remain probed/recommended for owner review; full
+production qualification is pending. G01 stays open, remaining groups queued.
+Work is documentation/research only in the expansion worktree/PR #161; no runtime
+source, catalog, flag, deployment or infrastructure was changed.
+
+**Free-content expansion proposal, 2026-11-05:** the owner requested a plan to
+find 100 searchable sources per category, including global and India/local
+coverage. The owner accepted those categories and requested industry/job knowledge
+and detailed USA/India civic, property and geological-map research tracks.
+[The revised plan](research/free-content/EXPANSION_PLAN.md) defines 20 content
+categories, 20 cross-cutting industry tags, six delegated category-specific
+discovery playbooks, qualification gates and a reusable review template.
+Draft [PR #161](https://github.com/ddk220-light/MyBookshelf-web/pull/161) carries
+the review packet. It is documentation only on `research/free-content-discovery-expansion`
+in `/workspace/MyBookshelf-web-free-content-expansion`; no candidate integrations
+are enabled by this proposal. The no-new-datastore runtime policy continues.
+The [execution workflow](research/free-content/EXECUTION_PLAN.md) turns the plan
+into rolling research batches and small verified releases; the 300-membership
+survey and 60-review pilot are cumulative limits, not an upfront delivery gate.
+The earlier live simplification was released through PR #160, main `82c6559`;
+[#159](https://github.com/ddk220-light/MyBookshelf-web/issues/159) records that
+release. Older Redis-dependent descriptions below are historical.
+
 **Cross-source knowledge search, 2026-11-05:** the owner authorized implementation and production release in the separate `feat/free-knowledge-search` worktree. [Release design and verification](research/free-content/KNOWLEDGE_RELEASE.md) records the new All knowledge view, ten additional supported integrations, independent source paging/errors, policy exclusions and hosted release state. The research registry completion goal continues separately; no candidate count is treated as proof of production readiness.
 
 **Current free-content direction, 2026-11-03:** the owner requested a simpler

@@ -1,0 +1,876 @@
+{
+  "schema_version": 1,
+  "id": "boston-planning-zoning",
+  "name": "Boston Planning Department zoning catalog",
+  "homepage": "https://www.bostonplans.org/planning-zoning/zoning-code/zoning-viewer",
+  "aliases": [
+    "BPDA zoning districts",
+    "Boston Zoning Districts"
+  ],
+  "group": "G04",
+  "areas": [
+    "C19",
+    "P05",
+    "P07"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "municipal-zoning-catalog",
+  "origin_family": "city-of-boston-planning",
+  "operator": {
+    "name": "City of Boston Planning Department",
+    "jurisdiction": "USA / Massachusetts / Boston"
+  },
+  "capabilities": [
+    "Published read-only ArcGIS district-name/native OBJECTID queries with explicit six-field projection; no geometry, parcels or personal owner/applicant data."
+  ],
+  "licensing": "Public official viewer and supported query interface are observed. General copyright/disclaimer page gives no broad reuse grant; item-level metadata/content rights need clarification from published evidence. No outreach or activation.",
+  "documentation": [
+    "https://www.bostonplans.org/planning-zoning/zoning-code/zoning-viewer",
+    "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0",
+    "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+    "https://www.bostonplans.org/about-us/copyright"
+  ],
+  "evidence": [
+    "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+    "runs/boston-query-rights-20261105cb/observations.jsonl",
+    "examples/boston-planning-zoning.scouting.jsonl",
+    "examples/boston-planning-zoning.jsonl",
+    "examples/boston-planning-zoning.benchmark.jsonl"
+  ],
+  "analysis_refs": [],
+  "last_reviewed_at": "2026-11-05T15:13:42.973832+00:00",
+  "next_action": "Complete primary reuse rights, native map/record reader access, ordinance/effective-date reconciliation and later-session refresh evidence. Ten current metadata queries cover C19/P05 only; full qualification andP07 remain open.",
+  "limitations": [
+    "Signed Code Maps prevail over website; provider says monthly updates may lag legislation.",
+    "Adopted STAGE is a provider label, not independently verified effective legal zoning.",
+    "OBJECTID is scoped to one mutable unversioned layer and snapshot; no permanent cross-version identity asserted.",
+    "English record labels; site Google Translate does not establish translated legal source content.",
+    "District metadata queries do not prove map geometry or P07 qualification."
+  ],
+  "query": {
+    "adapter": "boston-zoning",
+    "endpoint": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+    "authentication": "Anonymous official layer/query forms and bounded scout GETs observed; no login, token or new account.",
+    "cost": "No payment used; numeric rate quota/SLA not published in reviewed pages. Research serial3seconds,128KiB cap,5records.",
+    "supported_modes": [
+      "Exact district label",
+      "Single native OBJECTID",
+      "Explicit stable order and bounded offset paging",
+      "Empty predicate"
+    ],
+    "unsupported_modes": [
+      "Owner/applicant/parcel lookup",
+      "Editing,uploads or mutation despite advertised server capabilities",
+      "Current legal determination",
+      "Historical moment queries; service reports unsupported",
+      "Spatial feature queries in this research contract"
+    ],
+    "cases": [
+      {
+        "id": "district-1",
+        "intent": "Exact district-name query",
+        "request": {
+          "method": "GET",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "params": {
+            "f": "json",
+            "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+            "returnGeometry": "false",
+            "orderByFields": "OBJECTID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "where": "DISTRICT = 'Charlestown Neighborhood'"
+          }
+        },
+        "expected_ids": [
+          "275"
+        ]
+      },
+      {
+        "id": "district-2",
+        "intent": "Exact district-name query",
+        "request": {
+          "method": "GET",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "params": {
+            "f": "json",
+            "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+            "returnGeometry": "false",
+            "orderByFields": "OBJECTID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "where": "DISTRICT = 'Leather District'"
+          }
+        },
+        "expected_ids": [
+          "276"
+        ]
+      },
+      {
+        "id": "district-3",
+        "intent": "Exact district-name query",
+        "request": {
+          "method": "GET",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "params": {
+            "f": "json",
+            "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+            "returnGeometry": "false",
+            "orderByFields": "OBJECTID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "where": "DISTRICT = 'Harborpark: North End Waterfront'"
+          }
+        },
+        "expected_ids": [
+          "277"
+        ]
+      },
+      {
+        "id": "district-4",
+        "intent": "Exact district-name query",
+        "request": {
+          "method": "GET",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "params": {
+            "f": "json",
+            "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+            "returnGeometry": "false",
+            "orderByFields": "OBJECTID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "where": "DISTRICT = 'Cambridge Street North'"
+          }
+        },
+        "expected_ids": [
+          "278"
+        ]
+      },
+      {
+        "id": "district-5",
+        "intent": "Exact district-name query",
+        "request": {
+          "method": "GET",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "params": {
+            "f": "json",
+            "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+            "returnGeometry": "false",
+            "orderByFields": "OBJECTID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "where": "DISTRICT = 'Harborpark: Charlestown Waterfront'"
+          }
+        },
+        "expected_ids": [
+          "279"
+        ]
+      },
+      {
+        "id": "district-6",
+        "intent": "Distinct native district feature lookup",
+        "request": {
+          "method": "GET",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "params": {
+            "f": "json",
+            "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+            "returnGeometry": "false",
+            "orderByFields": "OBJECTID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "objectIds": 280
+          }
+        },
+        "expected_ids": [
+          "280"
+        ]
+      },
+      {
+        "id": "district-7",
+        "intent": "Distinct native district feature lookup",
+        "request": {
+          "method": "GET",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "params": {
+            "f": "json",
+            "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+            "returnGeometry": "false",
+            "orderByFields": "OBJECTID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "objectIds": 281
+          }
+        },
+        "expected_ids": [
+          "281"
+        ]
+      },
+      {
+        "id": "district-8",
+        "intent": "Distinct native district feature lookup",
+        "request": {
+          "method": "GET",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "params": {
+            "f": "json",
+            "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+            "returnGeometry": "false",
+            "orderByFields": "OBJECTID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "objectIds": 282
+          }
+        },
+        "expected_ids": [
+          "282"
+        ]
+      },
+      {
+        "id": "district-9",
+        "intent": "Distinct native district feature lookup",
+        "request": {
+          "method": "GET",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "params": {
+            "f": "json",
+            "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+            "returnGeometry": "false",
+            "orderByFields": "OBJECTID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "objectIds": 283
+          }
+        },
+        "expected_ids": [
+          "283"
+        ]
+      },
+      {
+        "id": "district-10",
+        "intent": "Distinct native district feature lookup",
+        "request": {
+          "method": "GET",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "params": {
+            "f": "json",
+            "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+            "returnGeometry": "false",
+            "orderByFields": "OBJECTID ASC",
+            "resultOffset": 0,
+            "resultRecordCount": 5,
+            "objectIds": 284
+          }
+        },
+        "expected_ids": [
+          "284"
+        ]
+      }
+    ],
+    "area_case_ids": {
+      "C19": [
+        "district-1",
+        "district-2",
+        "district-3",
+        "district-4",
+        "district-5",
+        "district-6",
+        "district-7",
+        "district-8",
+        "district-9",
+        "district-10"
+      ],
+      "P05": [
+        "district-1",
+        "district-2",
+        "district-3",
+        "district-4",
+        "district-5",
+        "district-6",
+        "district-7",
+        "district-8",
+        "district-9",
+        "district-10"
+      ],
+      "P07": []
+    }
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "One Boston Planning municipal catalog; layer, map sheets, records and ArcGIS connector are not independent origins.",
+      "facts": {
+        "operator": {
+          "name": "City of Boston Planning Department",
+          "jurisdiction": "USA / Massachusetts / Boston"
+        },
+        "service_item_id": "867b4f5d452d41baa6ce09583da054ae",
+        "native_layer": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0",
+        "native_ids": [
+          "275",
+          "276",
+          "277",
+          "278",
+          "279",
+          "280",
+          "281",
+          "282",
+          "283",
+          "284"
+        ],
+        "deduplication": "OBJECTID plus layer plus response hash; MAPNO may be shared by multiple districts. No record/title-only merging."
+      },
+      "evidence": [
+        "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+        "runs/boston-query-rights-20261105cb/observations.jsonl",
+        "examples/boston-planning-zoning.scouting.jsonl",
+        "examples/boston-planning-zoning.jsonl",
+        "examples/boston-planning-zoning.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "37f486b3628e975a0ae9",
+          "observed_at": "2026-11-05T15:03:32.407131+00:00",
+          "url": "https://www.bostonplans.org/planning-zoning/zoning-code/zoning-viewer",
+          "body_sha256": "16a0df32fbe26be642761bfbd7afbcb49e18cb173f424cbea332705d0fbed34d",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        },
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "3b1a192bd0ec47e7f8dc",
+          "observed_at": "2026-11-05T15:03:40.330137+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0",
+          "body_sha256": "6cf6d31cae2a5e2239eb049b843b14ba831370baabb98de7785f1ff3edddb8f8",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "29b4f5e21db39ca84ff7",
+          "observed_at": "2026-11-05T15:07:28.980124+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "body_sha256": "b9b238df5ae9adc080f41f4a78e1defa2bf45f83674cf0d824f9381dee34c8d4",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "0522af1469caaa62f1ca",
+          "observed_at": "2026-11-05T15:07:36.482945+00:00",
+          "url": "https://www.bostonplans.org/about-us/copyright",
+          "body_sha256": "acdeb630b7e664e187c47b28d5dfcccead415e990cecd01cb2269fd03a39c587",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        }
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "complete",
+      "summary": "Current bounded sample is USA/Boston English district metadata; no India coverage or independent country-vantage claim.",
+      "facts": {
+        "areas": [
+          "C19",
+          "P05",
+          "P07"
+        ],
+        "query_areas": [
+          "C19",
+          "P05"
+        ],
+        "map_geometry_tested": false,
+        "native_crs": "102686(latest2249) per published layer; no coordinates queried or reprojected.",
+        "language": "English; Google Translate is externally supplied and provider warns of errors.",
+        "jurisdiction": "USA / Massachusetts / Boston"
+      },
+      "evidence": [
+        "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+        "runs/boston-query-rights-20261105cb/observations.jsonl",
+        "examples/boston-planning-zoning.scouting.jsonl",
+        "examples/boston-planning-zoning.jsonl",
+        "examples/boston-planning-zoning.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "37f486b3628e975a0ae9",
+          "observed_at": "2026-11-05T15:03:32.407131+00:00",
+          "url": "https://www.bostonplans.org/planning-zoning/zoning-code/zoning-viewer",
+          "body_sha256": "16a0df32fbe26be642761bfbd7afbcb49e18cb173f424cbea332705d0fbed34d",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        },
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "3b1a192bd0ec47e7f8dc",
+          "observed_at": "2026-11-05T15:03:40.330137+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0",
+          "body_sha256": "6cf6d31cae2a5e2239eb049b843b14ba831370baabb98de7785f1ff3edddb8f8",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "29b4f5e21db39ca84ff7",
+          "observed_at": "2026-11-05T15:07:28.980124+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "body_sha256": "b9b238df5ae9adc080f41f4a78e1defa2bf45f83674cf0d824f9381dee34c8d4",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "0522af1469caaa62f1ca",
+          "observed_at": "2026-11-05T15:07:36.482945+00:00",
+          "url": "https://www.bostonplans.org/about-us/copyright",
+          "body_sha256": "acdeb630b7e664e187c47b28d5dfcccead415e990cecd01cb2269fd03a39c587",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        }
+      ],
+      "open_questions": []
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Official layer publishes fields, pagination and read-only query form. Ten distinct cases derive from two current pages.",
+      "facts": {
+        "fields": [
+          "OBJECTID",
+          "DISTRICT",
+          "STAGE",
+          "MAPNO",
+          "ARTICLE",
+          "VOLUME"
+        ],
+        "request_shapes": [
+          {
+            "method": "GET",
+            "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+            "params": {
+              "f": "json",
+              "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+              "returnGeometry": "false",
+              "orderByFields": "OBJECTID ASC",
+              "resultOffset": 0,
+              "resultRecordCount": 5,
+              "where": "DISTRICT = 'Charlestown Neighborhood'"
+            }
+          },
+          {
+            "method": "GET",
+            "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+            "params": {
+              "f": "json",
+              "outFields": "OBJECTID,DISTRICT,STAGE,MAPNO,ARTICLE,VOLUME",
+              "returnGeometry": "false",
+              "orderByFields": "OBJECTID ASC",
+              "resultOffset": 0,
+              "resultRecordCount": 5,
+              "objectIds": 284
+            }
+          }
+        ],
+        "max_record_count_published": 2000,
+        "research_max_rows": 5,
+        "actual_scout_pages": 2,
+        "scout_distinct_ids": 10,
+        "read_only": "Only exact allowlisted GET paths and parameters; server advertises edit capabilities but none are exercised.",
+        "current_examples": 10,
+        "distinct_native_ids": 10,
+        "paging": "Two sorted5-record pages produced10 disjoint native OBJECTIDs.",
+        "negative_tests": "Empty predicate, absent district name and absent native OBJECTID all returnedHTTP200 with empty features; no false successful example.",
+        "query_validation": "Exact district filter/native ID must match. Reject unexpected fields, geometry, oversized pages, duplicates andArcGIS error objects even atHTTP200."
+      },
+      "evidence": [
+        "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+        "runs/boston-query-rights-20261105cb/observations.jsonl",
+        "examples/boston-planning-zoning.scouting.jsonl",
+        "examples/boston-planning-zoning.jsonl",
+        "examples/boston-planning-zoning.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "37f486b3628e975a0ae9",
+          "observed_at": "2026-11-05T15:03:32.407131+00:00",
+          "url": "https://www.bostonplans.org/planning-zoning/zoning-code/zoning-viewer",
+          "body_sha256": "16a0df32fbe26be642761bfbd7afbcb49e18cb173f424cbea332705d0fbed34d",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        },
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "3b1a192bd0ec47e7f8dc",
+          "observed_at": "2026-11-05T15:03:40.330137+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0",
+          "body_sha256": "6cf6d31cae2a5e2239eb049b843b14ba831370baabb98de7785f1ff3edddb8f8",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "29b4f5e21db39ca84ff7",
+          "observed_at": "2026-11-05T15:07:28.980124+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "body_sha256": "b9b238df5ae9adc080f41f4a78e1defa2bf45f83674cf0d824f9381dee34c8d4",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "0522af1469caaa62f1ca",
+          "observed_at": "2026-11-05T15:07:36.482945+00:00",
+          "url": "https://www.bostonplans.org/about-us/copyright",
+          "body_sha256": "acdeb630b7e664e187c47b28d5dfcccead415e990cecd01cb2269fd03a39c587",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        }
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Public availability and source disclaimer are known; explicit reuse/license scope remains open.",
+      "facts": {
+        "metadata": "Official supported public six-field query; no broad reuse grant inferred.",
+        "content": "Signed official maps and external linked code are separate content rights.",
+        "free_access": "Scouts anonymous HTTP200; no account/token orpaid service.",
+        "provider_disclaimer": "As-is, changing content and no accuracy/completeness warranty."
+      },
+      "evidence": [
+        "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+        "runs/boston-query-rights-20261105cb/observations.jsonl",
+        "examples/boston-planning-zoning.scouting.jsonl",
+        "examples/boston-planning-zoning.jsonl",
+        "examples/boston-planning-zoning.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "37f486b3628e975a0ae9",
+          "observed_at": "2026-11-05T15:03:32.407131+00:00",
+          "url": "https://www.bostonplans.org/planning-zoning/zoning-code/zoning-viewer",
+          "body_sha256": "16a0df32fbe26be642761bfbd7afbcb49e18cb173f424cbea332705d0fbed34d",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        },
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "3b1a192bd0ec47e7f8dc",
+          "observed_at": "2026-11-05T15:03:40.330137+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0",
+          "body_sha256": "6cf6d31cae2a5e2239eb049b843b14ba831370baabb98de7785f1ff3edddb8f8",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "29b4f5e21db39ca84ff7",
+          "observed_at": "2026-11-05T15:07:28.980124+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "body_sha256": "b9b238df5ae9adc080f41f4a78e1defa2bf45f83674cf0d824f9381dee34c8d4",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "0522af1469caaa62f1ca",
+          "observed_at": "2026-11-05T15:07:36.482945+00:00",
+          "url": "https://www.bostonplans.org/about-us/copyright",
+          "body_sha256": "acdeb630b7e664e187c47b28d5dfcccead415e990cecd01cb2269fd03a39c587",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        }
+      ],
+      "open_questions": [
+        "Find primary item-level metadata/content license or published reuse terms; do not equate public endpoint with unrestricted republication."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Official viewer documentation is accessible; actual map/native record reader desktop/mobile not yet verified.",
+      "facts": {
+        "official_viewer": "https://maps.bostonplans.org/zoningviewer/",
+        "published_full_item_scope": "Zoning district metadata fields; map sheets/geometry andsigned maps separate.",
+        "access_class": "Anonymous metadata API, no record-reader claim."
+      },
+      "evidence": [
+        "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+        "runs/boston-query-rights-20261105cb/observations.jsonl",
+        "examples/boston-planning-zoning.scouting.jsonl",
+        "examples/boston-planning-zoning.jsonl",
+        "examples/boston-planning-zoning.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "37f486b3628e975a0ae9",
+          "observed_at": "2026-11-05T15:03:32.407131+00:00",
+          "url": "https://www.bostonplans.org/planning-zoning/zoning-code/zoning-viewer",
+          "body_sha256": "16a0df32fbe26be642761bfbd7afbcb49e18cb173f424cbea332705d0fbed34d",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        },
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "3b1a192bd0ec47e7f8dc",
+          "observed_at": "2026-11-05T15:03:40.330137+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0",
+          "body_sha256": "6cf6d31cae2a5e2239eb049b843b14ba831370baabb98de7785f1ff3edddb8f8",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "29b4f5e21db39ca84ff7",
+          "observed_at": "2026-11-05T15:07:28.980124+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "body_sha256": "b9b238df5ae9adc080f41f4a78e1defa2bf45f83674cf0d824f9381dee34c8d4",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "0522af1469caaa62f1ca",
+          "observed_at": "2026-11-05T15:07:36.482945+00:00",
+          "url": "https://www.bostonplans.org/about-us/copyright",
+          "body_sha256": "acdeb630b7e664e187c47b28d5dfcccead415e990cecd01cb2269fd03a39c587",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        }
+      ],
+      "open_questions": [
+        "Policy-gated native map/reader access, desktop/mobile andaccessibility; no personal parcel lookups."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Exact district names and native IDs must match; metadata is not a legal zoning determination.",
+      "facts": {
+        "observed_records": [
+          {
+            "ARTICLE": "62",
+            "DISTRICT": "Charlestown Neighborhood",
+            "MAPNO": "2E",
+            "OBJECTID": 275,
+            "STAGE": "Adopted",
+            "VOLUME": "Volume III"
+          },
+          {
+            "ARTICLE": "44",
+            "DISTRICT": "Leather District",
+            "MAPNO": "1C/1G/1N",
+            "OBJECTID": 276,
+            "STAGE": "Adopted",
+            "VOLUME": "Volume II"
+          },
+          {
+            "ARTICLE": "42A",
+            "DISTRICT": "Harborpark: North End Waterfront",
+            "MAPNO": "1E-1F",
+            "OBJECTID": 277,
+            "STAGE": "Adopted",
+            "VOLUME": "Volume II"
+          },
+          {
+            "ARTICLE": "47A",
+            "DISTRICT": "Cambridge Street North",
+            "MAPNO": "1B/1J/1K/1L",
+            "OBJECTID": 278,
+            "STAGE": "Adopted",
+            "VOLUME": "Volume II"
+          },
+          {
+            "ARTICLE": "42F",
+            "DISTRICT": "Harborpark: Charlestown Waterfront",
+            "MAPNO": "2B/2C",
+            "OBJECTID": 279,
+            "STAGE": "Adopted",
+            "VOLUME": "Volume II"
+          },
+          {
+            "ARTICLE": "43",
+            "DISTRICT": "Chinatown",
+            "MAPNO": "1C/1G/1N",
+            "OBJECTID": 280,
+            "STAGE": "Adopted",
+            "VOLUME": "Volume II"
+          },
+          {
+            "ARTICLE": "49",
+            "DISTRICT": "Central Artery Special",
+            "MAPNO": "1Xa-1Xb",
+            "OBJECTID": 281,
+            "STAGE": "Adopted",
+            "VOLUME": "Volume II"
+          },
+          {
+            "ARTICLE": "61",
+            "DISTRICT": "Audubon Circle Neighborhood",
+            "MAPNO": "1M",
+            "OBJECTID": 282,
+            "STAGE": "Adopted",
+            "VOLUME": "Volume III"
+          },
+          {
+            "ARTICLE": "63",
+            "DISTRICT": "Bay Village Neighborhood",
+            "MAPNO": "1C/1G/1N",
+            "OBJECTID": 283,
+            "STAGE": "Adopted",
+            "VOLUME": "Volume III"
+          },
+          {
+            "ARTICLE": "31",
+            "DISTRICT": "Boston Zoning Code",
+            "MAPNO": "1A",
+            "OBJECTID": 284,
+            "STAGE": "Adopted",
+            "VOLUME": "Volume II"
+          }
+        ],
+        "all_observed_stage": "Adopted",
+        "date_limit": "No per-feature effective date, editingInfo or timeInfo returned; service not versioned.",
+        "shared_map_sheet": "Leather District, Chinatown and Bay Village share1C/1G/1N; these are distinct districts, not duplicate titles.",
+        "broad_label": "OBJECTID284 says Boston Zoning Code withMap1A/Article31; preserve native label, do not infer its geographic scope.",
+        "relevance_review": "Five exact-name cases match their district label andnative IDs;five distinct native lookups preserve stage,map/article/volume fields. Generic Boston Zoning Code label remains unexplained. No current legal authority inferred."
+      },
+      "evidence": [
+        "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+        "runs/boston-query-rights-20261105cb/observations.jsonl",
+        "examples/boston-planning-zoning.scouting.jsonl",
+        "examples/boston-planning-zoning.jsonl",
+        "examples/boston-planning-zoning.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "37f486b3628e975a0ae9",
+          "observed_at": "2026-11-05T15:03:32.407131+00:00",
+          "url": "https://www.bostonplans.org/planning-zoning/zoning-code/zoning-viewer",
+          "body_sha256": "16a0df32fbe26be642761bfbd7afbcb49e18cb173f424cbea332705d0fbed34d",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        },
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "3b1a192bd0ec47e7f8dc",
+          "observed_at": "2026-11-05T15:03:40.330137+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0",
+          "body_sha256": "6cf6d31cae2a5e2239eb049b843b14ba831370baabb98de7785f1ff3edddb8f8",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "29b4f5e21db39ca84ff7",
+          "observed_at": "2026-11-05T15:07:28.980124+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "body_sha256": "b9b238df5ae9adc080f41f4a78e1defa2bf45f83674cf0d824f9381dee34c8d4",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "0522af1469caaa62f1ca",
+          "observed_at": "2026-11-05T15:07:36.482945+00:00",
+          "url": "https://www.bostonplans.org/about-us/copyright",
+          "body_sha256": "acdeb630b7e664e187c47b28d5dfcccead415e990cecd01cb2269fd03a39c587",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        }
+      ],
+      "open_questions": [
+        "Reconcile sample district/map/ordinance andeffective-date semantics; no geometry/current legal determination claimed."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial bounded read-only requests have an exclusive lease, robots checks and strict field/identity guards.",
+      "facts": {
+        "minimum_pause_seconds": 3,
+        "max_bytes": 131072,
+        "max_records": 5,
+        "automatic_retries": 0,
+        "refresh": "Provider says monthly; actual immutable release/version andper-feature effective dates absent.",
+        "research_owner": "Program164/civic168; runtime ownership not assigned."
+      },
+      "evidence": [
+        "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+        "runs/boston-query-rights-20261105cb/observations.jsonl",
+        "examples/boston-planning-zoning.scouting.jsonl",
+        "examples/boston-planning-zoning.jsonl",
+        "examples/boston-planning-zoning.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "37f486b3628e975a0ae9",
+          "observed_at": "2026-11-05T15:03:32.407131+00:00",
+          "url": "https://www.bostonplans.org/planning-zoning/zoning-code/zoning-viewer",
+          "body_sha256": "16a0df32fbe26be642761bfbd7afbcb49e18cb173f424cbea332705d0fbed34d",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        },
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "3b1a192bd0ec47e7f8dc",
+          "observed_at": "2026-11-05T15:03:40.330137+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0",
+          "body_sha256": "6cf6d31cae2a5e2239eb049b843b14ba831370baabb98de7785f1ff3edddb8f8",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "29b4f5e21db39ca84ff7",
+          "observed_at": "2026-11-05T15:07:28.980124+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "body_sha256": "b9b238df5ae9adc080f41f4a78e1defa2bf45f83674cf0d824f9381dee34c8d4",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "0522af1469caaa62f1ca",
+          "observed_at": "2026-11-05T15:07:36.482945+00:00",
+          "url": "https://www.bostonplans.org/about-us/copyright",
+          "body_sha256": "acdeb630b7e664e187c47b28d5dfcccead415e990cecd01cb2269fd03a39c587",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        }
+      ],
+      "open_questions": [
+        "Later-session reliability, metadata update/removal/outage rehearsal and rights/reader review cadence."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain candidate for privacy-safe zoning metadata research; no activation or fullqualification credit.",
+      "facts": {
+        "decision": "ten-query-examples-verified",
+        "activation_approved": false,
+        "owner_action_required": false,
+        "next_action": "Complete primary reuse rights, native map/record reader access, ordinance/effective-date reconciliation and later-session refresh evidence. Ten current metadata queries cover C19/P05 only; full qualification andP07 remain open."
+      },
+      "evidence": [
+        "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+        "runs/boston-query-rights-20261105cb/observations.jsonl",
+        "examples/boston-planning-zoning.scouting.jsonl",
+        "examples/boston-planning-zoning.jsonl",
+        "examples/boston-planning-zoning.benchmark.jsonl"
+      ],
+      "observation_refs": [
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "37f486b3628e975a0ae9",
+          "observed_at": "2026-11-05T15:03:32.407131+00:00",
+          "url": "https://www.bostonplans.org/planning-zoning/zoning-code/zoning-viewer",
+          "body_sha256": "16a0df32fbe26be642761bfbd7afbcb49e18cb173f424cbea332705d0fbed34d",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        },
+        {
+          "path": "runs/boston-zoning-contract-20261105ca/observations.jsonl",
+          "job_id": "3b1a192bd0ec47e7f8dc",
+          "observed_at": "2026-11-05T15:03:40.330137+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0",
+          "body_sha256": "6cf6d31cae2a5e2239eb049b843b14ba831370baabb98de7785f1ff3edddb8f8",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "29b4f5e21db39ca84ff7",
+          "observed_at": "2026-11-05T15:07:28.980124+00:00",
+          "url": "https://gis.bostonplans.org/hosting/rest/services/Zoning_Districts/FeatureServer/0/query",
+          "body_sha256": "b9b238df5ae9adc080f41f4a78e1defa2bf45f83674cf0d824f9381dee34c8d4",
+          "policy_sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f"
+        },
+        {
+          "path": "runs/boston-query-rights-20261105cb/observations.jsonl",
+          "job_id": "0522af1469caaa62f1ca",
+          "observed_at": "2026-11-05T15:07:36.482945+00:00",
+          "url": "https://www.bostonplans.org/about-us/copyright",
+          "body_sha256": "acdeb630b7e664e187c47b28d5dfcccead415e990cecd01cb2269fd03a39c587",
+          "policy_sha256": "9c49461138a7a3edeea282a54f8504ee60a05d91d93dc22cfac1953edcf368f5"
+        }
+      ],
+      "open_questions": []
+    }
+  }
+}

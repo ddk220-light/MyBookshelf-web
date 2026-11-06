@@ -1,0 +1,632 @@
+{
+  "schema_version": 1,
+  "id": "europe-pmc",
+  "name": "Europe PMC",
+  "homepage": "https://europepmc.org/",
+  "homepage_status": "Official REST documentation captured in current pass",
+  "group": "G05",
+  "areas": [
+    "C03"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "scholarly-metadata-and-fulltext-aggregator",
+  "capabilities": [
+    "Public documented REST search returns native provider+ID identities, DOI/PMCID, language, year and availability-labelled full-text links.",
+    "Ten distinct exact-DOI OA queries passed; a topic query, empty result and second cursor page were also observed. These do not prove topic precision across arbitrary queries."
+  ],
+  "query": {
+    "adapter": "europe-pmc",
+    "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+    "cases": [
+      {
+        "id": "doi-01",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42769525"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1155/ijog/9865175 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-02",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42198669"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.3390/pathogens15050543 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-03",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42340043"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1590/0037-8682-0470-2025 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-04",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42770717"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1128/msystems.00953-26 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-05",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42326416"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.3389/fmicb.2026.1884772 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-06",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42934756"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1186/s12936-026-06041-5 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-07",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42635105"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1080/16549716.2026.2718934 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-08",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42298720"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1186/s13071-026-07507-w AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-09",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42497109"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1371/journal.pone.0341285 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      },
+      {
+        "id": "doi-10",
+        "intent": "Resolve open-access article by exact DOI; direct identity retrieval, not a topic-relevance benchmark",
+        "expected_ids": [
+          "MED:42587337"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+          "params": {
+            "query": "DOI:10.1186/s42522-026-00236-1 AND OPEN_ACCESS:Y",
+            "format": "json",
+            "pageSize": 3,
+            "resultType": "core"
+          }
+        }
+      }
+    ],
+    "authentication": "None for tested public REST search",
+    "cost": "No account/key/payment used; numeric API allowance not established by this review",
+    "research_pause_seconds": 10,
+    "paging": "cursorMark=* then nextCursorMark or nextPageUrl, preserving original query/filter/resultType/pageSize",
+    "supported_modes": [
+      "keyword/field query",
+      "exact DOI query",
+      "OPEN_ACCESS:Y filter",
+      "JSON core metadata",
+      "cursor pagination"
+    ],
+    "unsupported_or_unverified_modes": [
+      "Guaranteed full-text access for every metadata hit",
+      "Licensing/reuse clearance for every OA article",
+      "Item-level version/correction resolution across all provider sources"
+    ]
+  },
+  "licensing": "OA flags and fullTextUrl availability are discovery metadata, not blanket reuse licenses. Metadata terms and each representative article license/correction status still require review; subscription-labelled DOI links are excluded from free-link samples.",
+  "documentation": [
+    "https://europepmc.org/RestfulWebService"
+  ],
+  "limitations": [
+    "Europe PMC overlaps PubMed/PMC and publisher copies; source+id/DOI/PMCID identities must remain linked without multiplying origins.",
+    "One verified example is explicitly a correction and another an editorial by title; do not present every hit as an original study. Current publication types and a correction-to-original relation are retained; broader version/retraction tests remain open.",
+    "The tested examples are English. Country-specific access and language breadth are not established.",
+    "Ten identity searches are complete; full dossier, reader access, rights and topical relevance remain open. Existing deployed source state was not changed."
+  ],
+  "evidence": [
+    "examples/europe-pmc.jsonl",
+    "examples/europe-pmc.benchmark.jsonl",
+    "runs/source-evidence-20261105/observations.jsonl",
+    "runs/dossier-evidence-20261105/observations.jsonl",
+    "analysis/dossier-reviews.jsonl",
+    "analysis/primary-document-reviews.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T03:31:24.495339+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Verify metadata terms and permitted article reader/license routes; fix browser CA trust without disabling TLS, then test retraction/version and broad-topic behavior. Keep correction identity distinct.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 38,
+    "text": "| **Europe PMC — index/full-text platform** | REST `/webservices/rest/search?query=...&format=json`, `OPEN_ACCESS:Y`, `IN_PMC:Y`, `resultType=core`, cursorMark. [REST docs](https://europepmc.org/RestfulWebService) | Returned full-text locations/PMCID pages. OA filter is stricter than free reading; PMC inclusion does not imply an open reuse license. PubMed records alone need not be free. | No key for public REST. Parse individual access/license fields and observe service limits. OA query worked. **Low / P0**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "complete",
+      "summary": "Official Europe PMC REST documentation identifies EMBL-EBI/NLM collaboration; aggregate source identities must be retained.",
+      "facts": {
+        "operator": {
+          "name": "EMBL-EBI, supported by Europe PMC Funders Group in collaboration with NLM",
+          "jurisdiction": "UK/international",
+          "evidence": "runs/source-evidence-20261105/observations.jsonl"
+        },
+        "native_key": "source:id; preserve DOI and PMCID as related identifiers",
+        "deduplication": "Overlap with PubMed/PMC, publisher copies and indexed repositories; none are additional origins just because returned here."
+      },
+      "evidence": [
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "open_questions": []
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Observed life-sciences/public-health article metadata, not a coverage census.",
+      "facts": {
+        "categories": [
+          "C03"
+        ],
+        "example_language": "eng",
+        "jurisdiction": "International scholarly coverage; USA/India access not tested",
+        "industry_overlap": "I17 healthcare candidate; no industry qualification inferred"
+      },
+      "evidence": [
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "open_questions": [
+        "Test additional languages and India-relevant works; measure incremental coverage over existing sources."
+      ]
+    },
+    "query_contract": {
+      "status": "complete",
+      "summary": "Documented GET search supports JSON core records, field/DOI queries and cursor pagination; exact executed requests are preserved in each example.",
+      "facts": {
+        "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+        "request_parameters": {
+          "query": "DOI:<doi> AND OPEN_ACCESS:Y",
+          "format": "json",
+          "pageSize": 3,
+          "resultType": "core"
+        },
+        "native_id": "source:id",
+        "paging": "cursorMark=* then nextCursorMark or nextPageUrl, preserving original query/filter/resultType/pageSize",
+        "zero_result": "Observed 200 JSON hitCount=0 for sentinel term",
+        "unsupported": [
+          "Guaranteed full-text access for every metadata hit",
+          "Licensing/reuse clearance for every OA article",
+          "Item-level version/correction resolution across all provider sources"
+        ]
+      },
+      "evidence": [
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "open_questions": []
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Current core responses expose item license labels, including cc by and cc by-nc-nd. OA availability is not blanket permission; article license URLs and catalog metadata terms still need verification.",
+      "facts": {
+        "authentication": "none used",
+        "free_access_evidence": "OA flag and availabilityCode metadata only",
+        "license_review": "pending",
+        "observed_license_labels": [
+          "cc by",
+          "cc by-nc-nd"
+        ],
+        "inference_limit": "Use source-provided labels; do not normalize away noncommercial/no-derivatives terms or infer reuse from OA flag."
+      },
+      "evidence": [
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
+      ],
+      "open_questions": [
+        "Verify current metadata reuse terms and representative content license URLs; do not infer quota or universal copyright permission."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Plain HTTP article URL returned the JavaScript shell. Two rendered reader attempts failed on this environment’s Chromium CA trust before content could load; this is not evidence of a provider denial or a broken reader.",
+      "facts": {
+        "HTTP_search": 200,
+        "login": "No API login used; per-reader login/access conditions unknown",
+        "access_location": "Managed cloud execution only",
+        "browser_checks": {
+          "native_ids": [
+            "PMC13209386",
+            "PMC13590939"
+          ],
+          "outcome": "unverified",
+          "error": "net::ERR_CERT_AUTHORITY_INVALID",
+          "cause_scope": "Cloud browser trust configuration; urllib API/HTTP requests succeeded",
+          "access_control_observed": false,
+          "tls_verification_bypassed": false
+        }
+      },
+      "evidence": [
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl",
+        "examples/europe-pmc.reader.jsonl"
+      ],
+      "open_questions": [
+        "Verify permitted rendered readers with correctly configured CA trust, or a documented bounded OA full-text route; retain current failures as environment-specific."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "All ten DOI queries re-passed with publication types, license labels and correction relations preserved. MED:42769525 is an erratum for MED:40894524, not a second copy of the original study.",
+      "facts": {
+        "positive_examples": 10,
+        "example_selection": "Scouted metadata first; independently executed exact DOI queries then matched expected native IDs",
+        "topic_benchmark": "One malaria query only; no general precision claim",
+        "version_risk": "Correction to a study is a distinct item, not automatically the original study",
+        "correction_example": {
+          "id": "MED:42769525",
+          "doi": "10.1155/ijog/9865175",
+          "pmcid": "PMC13590939",
+          "publication_types": [
+            "Published Erratum",
+            "correction"
+          ],
+          "relation_type": "Erratum for",
+          "original_native_id": "MED:40894524",
+          "original_doi_in_reference": "10.1155/ijog/6664418",
+          "first_publication_date": "2026-09-20"
+        },
+        "retraction_handling": "Absent isRetracted stays null/unknown; never infer no retraction from missing field.",
+        "publication_type_labels": [
+          "Comment",
+          "Editorial",
+          "Journal Article",
+          "Letter",
+          "Published Erratum",
+          "Review",
+          "article-commentary",
+          "correction",
+          "research-article",
+          "review-article"
+        ]
+      },
+      "evidence": [
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/dossier-evidence-20261105/observations.jsonl",
+        "analysis/primary-document-reviews.jsonl"
+      ],
+      "open_questions": [
+        "Test retracted and versioned records explicitly; measure broader topic relevance beyond DOI retrieval."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial requests obeyed the observed 10-second robots pacing; no account, paid service or bulk article download was used.",
+      "facts": {
+        "request_spacing_seconds": 10,
+        "provider_numeric_API_quota": null,
+        "response_bound_bytes": 4194304,
+        "backoff": "Stop source on HTTP 403/429/503; retain all outcomes"
+      },
+      "evidence": [
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "open_questions": [
+        "Review published API limits and update/deletion/version reconciliation guidance."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "complete",
+      "summary": "Retain as current query-verified scholarly catalog evidence. Research qualification and new activation approval remain false.",
+      "facts": {
+        "decision": "retain-for-rights-reader-version-review",
+        "next_action": "Verify metadata terms and permitted article reader/license routes; fix browser CA trust without disabling TLS, then test retraction/version and broad-topic behavior. Keep correction identity distinct.",
+        "existing_production_status": "Unchanged by research; enabled=false here is not a statement about deployed integration."
+      },
+      "evidence": [
+        "examples/europe-pmc.jsonl",
+        "examples/europe-pmc.benchmark.jsonl",
+        "runs/source-evidence-20261105/observations.jsonl"
+      ],
+      "open_questions": []
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "fd8535ec9c649383f404c1736bfa3722c5459a1092cbd2250f0fbbd5ba658ae3",
+      "path": "docs/design/2026-11-free-content/README.md",
+      "line": 85,
+      "heading": "2. Scope",
+      "text": "- Free to read: Project Gutenberg (local metadata import), Open Textbook\n  Library and the bounded Book Dash catalog (owner-approved source expansion). Other free versions (LibriVox, Wikisource) appear only on detail\n  pages as separate items, when a source links them.\n- Papers: OpenAlex (when its key and budget are verified), Europe PMC, DOAJ,\n  arXiv.\n- Children's stories: the reviewed pilot set only, labelled as such.\n- The library book page gains an \"Also free to read\" section.\n- Desktop and mobile layouts, all three reading lights.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "227b750d9102e98485e6cc6c70fe0bc58741f75633992e02f0891d38028f6771",
+      "path": "docs/research/free-content/IMPLEMENTATION.md",
+      "line": 20,
+      "heading": "FCD01: contract decisions",
+      "text": "- Content keys use `fcd:v1:<source>:<record>`; Gutenberg records are positive\n  integer IDs; Europe PMC records include their source (`MED`, `PMC`, `PPR`).\n  A DOI is an identifier, never an app key. Versions, translations, chapters and\n  recordings retain distinct source-native keys. No fuzzy-title merge.\n- Reviewed StoryWeaver translations use distinct native story IDs. The pilot\n  requires English/Hindi/Tamil records with original credits, publisher levels\n  and per-record review evidence before enablement.\n- An omitted `kinds` searches books/learning resources. Paper searches supply\n  paper kinds explicitly. Mixed book/paper requests are reported unsupported;\n  the API never silently omits one requested scope.\n- Search and resolve both accept `country` (ISO alpha-2 or absent/unknown) and\n  language context. An observation for one explicit country does not establish\n  availability in another. Gutenberg's US rights statement is retained with a\n  generic country-rules prompt, not turned into a global legal claim.\n- A reading action requires an explicit per-location `free_full_text` claim,\n  positive evidence field/source/time, a safe supplied HTTP(S) URL, and an\n  observation no older than 24 hours. Stale, missing, contradictory or\n  country-mismatched observations become unknown; fetch failure is not absence.\n  Reuse licence and free reading remain distinct. Missing licence never becomes\n  an invented Creative Commons licence.\n- `not_selected` means the planner did not query this source; `disabled` means\n  it is not connected. `ok` with zero results is distinct from timeout,\n  unavailable, throttled and quota-exhausted. Counts describe loaded items,\n  never a federated global total.\n- Default results contain anonymous free full text and a separately labelled verified free-account group (owner clarification 2026-11-01). An explicit unclear group may\n  contain unknown/metadata-only items with labelled source links; previews,\n  borrowing, unknown-price registration and restricted access stay excluded in v1.\n- Source cursors remain server-owned. Browser tokens bind query, context,\n  policy/index revisions and expiry. Shared live quota reservation and page\n  advancement must pass a two-instance test before a live source is enabled.\n  A memory implementation is a development/test adapter only; store failure\n  disables uncapped live dispatch while keeping local metadata searchable.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "227b750d9102e98485e6cc6c70fe0bc58741f75633992e02f0891d38028f6771",
+      "path": "docs/research/free-content/IMPLEMENTATION.md",
+      "line": 78,
+      "heading": "Delivery state",
+      "text": "| FCD03 Europe PMC | [#85](https://github.com/ddk220-light/MyBookshelf-web/issues/85), [#86](https://github.com/ddk220-light/MyBookshelf-web/issues/86) | Adapter and shared coordination implemented/tested; hosted Redis binding and budgets pending |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "943c4340f9c8a3dc13aa17a6c5d7b7af8ded6b60b61b79548a6061908f272447",
+      "path": "docs/research/free-content/LIVE_VALIDATION.md",
+      "line": 27,
+      "heading": "Actual sources and browser",
+      "text": "[Direct source probes](evidence/2026-11-03/direct-live-probes.json) use official\nAPIs and the existing OpenAlex key, without store bindings. Mathematics selects\nOpenAlex; malaria selects Europe PMC. Both return current readable metadata,\nresolve exact native records live and continue to another page. A Europe PMC\ncontinuation overlapped one record, confirming why live paging is not a frozen,\nglobally duplicate-free snapshot. The browser removes repeated source keys.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "7d009e0c173238584b41259d85805653725f23e35657f2bf95bb15735a95da4f",
+      "path": "docs/research/free-content/OPERATIONS.md",
+      "line": 34,
+      "heading": "Historical shared-store profile (superseded)",
+      "text": "| Europe PMC | `CONTENT_EUROPEPMC_ENABLED` | `CONTENT_EUROPEPMC_DAILY_LIMIT`, `CONTENT_EUROPEPMC_PER_MINUTE` | Shared daily/minute caps, at most two active requests |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "7d009e0c173238584b41259d85805653725f23e35657f2bf95bb15735a95da4f",
+      "path": "docs/research/free-content/OPERATIONS.md",
+      "line": 59,
+      "heading": "Historical shared-store profile (superseded)",
+      "text": "The planner selects at most three live providers. Biomedical terms prefer\nEurope PMC; general queries prefer the broad source and arXiv; DOAJ supplies\nOA journal coverage. Recognized arXiv identifiers select arXiv. Sources not\nchosen are explicit and can be searched independently from the source sheet.\nDOIs select DOI-capable indexes; PMCIDs select Europe PMC using its PMCID field,\npreserving the article's native MED identity. Bare versioned legacy arXiv IDs\nalso route directly to arXiv.\nLanguage context is only supported by the broad adapter today; other paper\nsources report unsupported rather than silently ignoring it.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "8f370ecffd15217872a95e7988889f9c9bcc300280b1a4cf3e03a9e590ee0ede",
+      "path": "docs/research/free-content/RELEASE.md",
+      "line": 3,
+      "heading": "Free-content production release",
+      "text": "**Current revision (2026-11-03):** the owner authorized the\n[simple free live plan](SIMPLE_LIVE_PLAN.md), #156. Release/hosted verification is\ntracked in #159. Europe PMC/OpenAlex can run directly with no data store; the\nblanket Redis gate is superseded. This release must retain verified free-budget\nguards and existing account settings. The November 1 evidence below records the\ninitial book release, rather than the current paper prerequisites.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "001c847a97e62d9c227cbf184a236b97919c31c301d4ab18613cd17488c5e504",
+      "path": "docs/research/free-content/SIMPLE_LIVE_PLAN.md",
+      "line": 10,
+      "heading": "Product requirements",
+      "text": "- Search one selected paper source live. General searches use OpenAlex;\n  biomedical searches and PMCIDs use Europe PMC. The Sources sheet switches\n  sources. Explicit selection never silently searches a different source.\n- Show more carries the provider's paging token in a signed browser token.\n  Opening a result resolves its native record directly at that provider.\n- No new database, Redis account, paid integration, shared cache or stored search\n  session. Existing account features/resources are outside this change.\n- Direct arXiv/DOAJ automation stays off because its aggregate pacing rules need\n  coordination across deployments. Offer searches on their source websites;\n  these connectors do not block other paper sources.\n- Keep current source identities, verified free-reading rules, credits, versions,\n  separate translations, source errors and browser shelf behavior.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "001c847a97e62d9c227cbf184a236b97919c31c301d4ab18613cd17488c5e504",
+      "path": "docs/research/free-content/SIMPLE_LIVE_PLAN.md",
+      "line": 46,
+      "heading": "Cost and limits",
+      "text": "Europe PMC uses its public API. OpenAlex uses the existing server-only key;\nverify its free allowance, accepted endpoint pricing and zero prepaid balance\nbefore dispatch. Exhaustion, paid balances or unknown policy stop the request.\nNo paid fallback or paid infrastructure is introduced. Normal hosting usage\ncontinues under the existing Vercel plan; future hosting costs are not guaranteed\nto be zero.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "001c847a97e62d9c227cbf184a236b97919c31c301d4ab18613cd17488c5e504",
+      "path": "docs/research/free-content/SIMPLE_LIVE_PLAN.md",
+      "line": 60,
+      "heading": "Configuration and delivery",
+      "text": "Keep the existing discovery flag and strong cursor signer. Enable Europe PMC\nand optionally OpenAlex with its key. Remove Redis and per-source application\ndaily/minute budget variables from active setup. No client-exposed credentials\nor database migration.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "8145db8c0a55ebcd09bf55a453ac8a34176d790adf2634200b6b94fc0580316d",
+      "path": "docs/research/free-content/UI_REVIEW.md",
+      "line": 45,
+      "heading": "Evidence and limits",
+      "text": "- The comparison fixtures are explicitly synthetic for papers/stories; they do\n  not establish source access or represent the actual reviewed children's set.\n  Their metadata is isolated in `client/e2e/free-content-ui-fixture.js`.\n- The [actual-source app flows](evidence/2026-11-01/ui-review/actual-source-flow/expanded-sources-app-flow.json)\n  separately exercise the real Tamil StoryWeaver record and Book Dash edition:\n  search → detail → supplied source URL → save → reload → reopen, on desktop and\n  phone, including 320px/200% text. Their credits and free-account condition are\n  preserved. No source account was created and post-login reading is untested.\n- Sources, counts, levels and available relations differ from the board samples.\n  Only source-supplied versions/downloads/relations render; no v1/v2 list, recording,\n  translation, cover art or licence is inferred to imitate sample data.\n- The shared four-tab shell, desktop navigation rail and browser safe-area\n  handling remain the existing app. The source sheet keeps its shared Close\n  control. Catalog-subset disclosure and the owner-approved free-account group\n  add necessary content beyond the original sample boards.\n- Recent query history is bounded and lost on reload. It is not written to\n  local storage, an account, analytics or a server history store.\n- A fresh Europe PMC request on the current local API exceeded the five-second\n  source deadline. The actual UI rendered an unavailable alert and no empty-copy\n  claim. Earlier successful live-paper flows remain dated evidence, not a claim\n  that the external service answered this later probe.\n- The streamed-loading fixture uses the same local origin and `nosniff`/no-store\n  headers as the app API. This avoids engine-dependent buffering/routing in the\n  temporary review endpoint; it keeps the real progress assertions.\n- Automated contrast/layout checks do not replace a screen-reader usability\n  session. Firefox was not run locally. Remote CI covers WebKit as well.\n- Hosted feature enablement, Redis-backed hosted paper journeys and the first\n  scheduled refresh remain the previously recorded release gates. No flags,\n  hosted credentials, storage or production deployment settings were changed.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "c686b333a7fef814327a9e18ca574a86edf6fc032a6cc5659ff5cbb327df41c0",
+      "path": "docs/research/free-content/VALIDATION.md",
+      "line": 156,
+      "heading": "Final source and refresh checks",
+      "text": "[HEAD/header-only sampling](evidence/2026-11-01/host-head-checks.json) returned\n200 from the textbook, DOAJ publisher, arXiv and Europe PMC hosts. It found a\nGutenberg legacy HTML 404; GET response headers confirmed it. The supplied direct\nHTML and EPUB routes returned 200. Importer v2 removes virtual HTML links and\nuses supplied direct HTML/landing URLs; a fresh 1,000-record import and runtime\naudit passed. The primary location's licence and downloads now stay together;\nother hosts/versions retain their own licence, and retraction flags appear on\ndirect detail visits. No full-text content was stored.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 168,
+      "heading": "5. Search and item resolution",
+      "text": "1. Validate query length, filters, page size (initial max 40), country and cursor binding. Detect ISBN/DOI/arXiv/PMCID before broad search. Country is access context, not legal assurance.\n2. Choose providers by user scope/capabilities. Books start from local catalogs; papers use OpenAlex when configured plus at most two relevant specialists. Without the broad index, disclose narrower DOAJ/Europe PMC/arXiv coverage.\n3. Use shared cached results. Acquire global quota tokens for uncached requests; arXiv pacing includes all replicas/jobs. Skip with explicit status if the queue cannot run before the deadline.\n4. Bound fan-out: proposed 5-second total search deadline, shorter per-provider limits where feasible, at most 3 live providers and one source page each. These are design targets, not measured guarantees. Busy arXiv queues cannot delay every result indefinitely.\n5. Map, filter, reconcile and rank. Avoid detail requests for every hit; resolve uncertain access for bounded visible candidates or on item open. Unknown candidates cannot be advertised as free.\n6. Return items, source statuses and freshness. Empty, timeout, throttled, quota-exhausted, unsupported and disabled differ. If all sources fail with no local/cached result, return retriable unavailable, not zero matches.\n7. On item open, enrich locations as needed; surface editions/versions and host actions. Cache bibliography separately from access observations.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 241,
+      "heading": "Phase A — contract and two vertical slices",
+      "text": "Define manifests/model/access eligibility/shared budgeting/routes. Implement Gutenberg import/local search and Europe PMC live search to prove both paths. Add cards/details/host actions behind a flag and sanitized fixtures under source terms.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 38,
+      "heading": "3. Journal articles and broad scholarly discovery",
+      "text": "| **Europe PMC — index/full-text platform** | REST `/webservices/rest/search?query=...&format=json`, `OPEN_ACCESS:Y`, `IN_PMC:Y`, `resultType=core`, cursorMark. [REST docs](https://europepmc.org/RestfulWebService) | Returned full-text locations/PMCID pages. OA filter is stricter than free reading; PMC inclusion does not imply an open reuse license. PubMed records alone need not be free. | No key for public REST. Parse individual access/license fields and observe service limits. OA query worked. **Low / P0**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 39,
+      "heading": "3. Journal articles and broad scholarly discovery",
+      "text": "| **PubMed / PMC — index / host** | NCBI E-utilities for bibliography; PMC OAI and OA services for archival metadata/eligible files. [PMC developers](https://pmc.ncbi.nlm.nih.gov/tools/developers/), [OAI](https://pmc.ncbi.nlm.nih.gov/tools/oai/) | Actual PMC articles at `https://pmc.ncbi.nlm.nih.gov/articles/{PMCID}/`; PubMed primarily bibliographic. Free reading and OA-subset reuse permissions differ. | Common E-utilities allowances are 3 requests/sec without key and 10 with key; verify current endpoint policy before coding. PMC endpoints have distinct rules. Prefer Europe PMC first to avoid duplication. **Medium / P1**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 89,
+      "heading": "Standard connection patterns",
+      "text": "| REST/JSON search | DOAJ, Europe PMC, OpenAlex, Google, CORE, HAL | HTTP budgets/retries/response limits/paging | Query grammar, mapping, access, terms |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 59,
+      "heading": "Recommendation",
+      "text": "| Europe PMC | Live search and record details | Biomedical literature with explicit full-text/OA fields |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 72,
+      "heading": "Categories",
+      "text": "| Journal articles | Published research and reviews | DOAJ, Europe PMC/PMC, OpenAlex |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 85,
+      "heading": "What the original checks established",
+      "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 21,
+      "heading": "Behavior",
+      "text": "Ten new integrations are released behind `CONTENT_KNOWLEDGE_ENABLED=true`:\nGlobal Digital Library, LibriVox, Library of Congress digital books, Biodiversity\nHeritage Library's Internet Archive collection, African Minds, LSE Press,\nMattering Press, mediastudies.press, punctum books and Python 3.15 documentation.\nFive publisher catalogs share Thoth; this is not five separate API infrastructures.\nThe existing Gutenberg, Open Textbook Library, Book Dash and StoryWeaver snapshots\nand the existing OpenAlex/Europe PMC integrations are also selectable. With the\nexisting production flags, this gives 16 connected sources, not 16 fully audited\norigins or complete catalogs.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 105,
+      "heading": "Verification and release record",
+      "text": "Hosted preview acceptance, 2026-11-05: all ten new integrations plus OpenAlex\nand Europe PMC returned matches and resolved exact native identities (HTTP 200).\nWebKit completed real LibriVox search → detail → canonical listening link, then\nall-source mathematics (25 results, all 16 sources finished, zero page errors).\nChromium's cloud proxy trust failure was an environment issue; WebKit used the\nexisting system trust with HTTPS verification intact. No browser trust setting\nwas changed. Preview account banners reflect its existing configuration.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "582db86f01b6e4f5e98a8801852d85c930878ca54123d7312a85f2e1100d5c43",
+      "path": "docs/research/free-content/KNOWLEDGE_RELEASE.md",
+      "line": 131,
+      "heading": "Production verification — 2026-11-05",
+      "text": "All ten new live query/detail samples and OpenAlex passed in production. Refreshed Gutenberg, OTL and Book Dash query/detail checks passed. StoryWeaver remains stale/unclear and is excluded by the default access filter. Two Europe PMC malaria probes timed out; the UI preserves that source error while other sources return results. This is an unresolved provider/runtime reliability observation, not a zero-result claim. The mobile WebKit all-source query completed all 16 groups with 26 loaded results, no page errors and no horizontal overflow; the LibriVox detail linked to the correct recording. See [saved production evidence](evidence/knowledge-release-2026-11-05/production/deployment.json), including failed probes and screenshots. The temporary preview share link was revoked after testing; protection settings were not weakened.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "operator": {
+    "name": "EMBL-EBI, supported by Europe PMC Funders Group in collaboration with NLM",
+    "jurisdiction": "UK/international",
+    "evidence": "runs/source-evidence-20261105/observations.jsonl"
+  }
+}

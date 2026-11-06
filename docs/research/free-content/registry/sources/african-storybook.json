@@ -1,0 +1,451 @@
+{
+  "schema_version": 1,
+  "id": "african-storybook",
+  "name": "African Storybook",
+  "homepage": "https://www.africanstorybook.org/",
+  "homepage_status": "historical-reference; canonical homepage/operator needs review",
+  "group": "G01",
+  "areas": [
+    "C01"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "capabilities": [
+    "Live approved-storybook browser search with All languages selected; first40 visible metadata cards. Ten distinct English-title/native-book matches and ten distinct changed result sets. Native loadBook action/IDs preserved without opening a reader."
+  ],
+  "query": {
+    "adapter": "african-storybook-ui",
+    "endpoint": "https://www.africanstorybook.org/",
+    "cases": [
+      {
+        "id": "approved-keyword-01",
+        "intent": "Public approved catalog all-language query; selected English title: lion",
+        "expected_ids": [
+          "50307"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.africanstorybook.org/",
+          "ui_query": {
+            "text": "lion",
+            "language_id": "0",
+            "collection": "approved"
+          }
+        }
+      },
+      {
+        "id": "approved-keyword-02",
+        "intent": "Public approved catalog all-language query; selected English title: rabbit",
+        "expected_ids": [
+          "31355"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.africanstorybook.org/",
+          "ui_query": {
+            "text": "rabbit",
+            "language_id": "0",
+            "collection": "approved"
+          }
+        }
+      },
+      {
+        "id": "approved-keyword-03",
+        "intent": "Public approved catalog all-language query; selected English title: elephant",
+        "expected_ids": [
+          "346301"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.africanstorybook.org/",
+          "ui_query": {
+            "text": "elephant",
+            "language_id": "0",
+            "collection": "approved"
+          }
+        }
+      },
+      {
+        "id": "approved-keyword-04",
+        "intent": "Public approved catalog all-language query; selected English title: tortoise",
+        "expected_ids": [
+          "50445"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.africanstorybook.org/",
+          "ui_query": {
+            "text": "tortoise",
+            "language_id": "0",
+            "collection": "approved"
+          }
+        }
+      },
+      {
+        "id": "approved-keyword-05",
+        "intent": "Public approved catalog all-language query; selected English title: cats",
+        "expected_ids": [
+          "13562"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.africanstorybook.org/",
+          "ui_query": {
+            "text": "cats",
+            "language_id": "0",
+            "collection": "approved"
+          }
+        }
+      },
+      {
+        "id": "approved-keyword-06",
+        "intent": "Public approved catalog all-language query; selected English title: dog",
+        "expected_ids": [
+          "172901"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.africanstorybook.org/",
+          "ui_query": {
+            "text": "dog",
+            "language_id": "0",
+            "collection": "approved"
+          }
+        }
+      },
+      {
+        "id": "approved-keyword-07",
+        "intent": "Public approved catalog all-language query; selected English title: friend",
+        "expected_ids": [
+          "50417"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.africanstorybook.org/",
+          "ui_query": {
+            "text": "friend",
+            "language_id": "0",
+            "collection": "approved"
+          }
+        }
+      },
+      {
+        "id": "approved-keyword-08",
+        "intent": "Public approved catalog all-language query; selected English title: river",
+        "expected_ids": [
+          "51975"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.africanstorybook.org/",
+          "ui_query": {
+            "text": "river",
+            "language_id": "0",
+            "collection": "approved"
+          }
+        }
+      },
+      {
+        "id": "approved-keyword-09",
+        "intent": "Public approved catalog all-language query; selected English title: tree",
+        "expected_ids": [
+          "34656"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.africanstorybook.org/",
+          "ui_query": {
+            "text": "tree",
+            "language_id": "0",
+            "collection": "approved"
+          }
+        }
+      },
+      {
+        "id": "approved-keyword-10",
+        "intent": "Public approved catalog all-language query; selected English title: school",
+        "expected_ids": [
+          "50045"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.africanstorybook.org/",
+          "ui_query": {
+            "text": "school",
+            "language_id": "0",
+            "collection": "approved"
+          }
+        }
+      }
+    ],
+    "historical_contract": "[Site](https://www.africanstorybook.org/); curated language/level collections or agreed export.",
+    "authentication": "Anonymous public approved catalog; no new account/key/payment.",
+    "request_shape_verified": true,
+    "published_navigation": [
+      "Read",
+      "Storybooks ASb approved"
+    ],
+    "language_filter": "0 / All languages",
+    "visible_card_limit": 40
+  },
+  "licensing": "Current African Storybook homepage advertises open picture books and CC BY4.0/Saide attribution. Item/contributor permissions and exact translated editions remain separate from this metadata search verification.",
+  "documentation": [
+    "https://www.africanstorybook.org/"
+  ],
+  "limitations": [
+    "The language selector is a custom popup; native selectOption timed out because the underlying select is hidden. This working batch uses the visible All languages default. English-filter behavior remains unverified. Broad cat search matched summaries/substrings and had no literal English-title match in first40; retain that negative and use the more specific cats query.",
+    "Fixed a menu-readiness race before querying; both browser initialization failures retained. No CAPTCHA, login, hidden control or private API bypass.",
+    "Some catalog cards are multilingual and use true in the native action plus multiple language IDs. Parser corrected to retain these instead of rejecting the whole response; selected positives are monolingual English. Repeated native IDs with mono/bilingual reader configurations are grouped with variants, not counted as separate books.",
+    "Some non-Latin catalog text renders with mojibake in the upstream UI; multilingual display quality remains unresolved. This is not silently corrected or counted as a verified translation.",
+    "Native numeric book IDs, reader-action arguments and raw date attributes are kept. Date meaning/version identity and actual full-reader access remain unverified; no books/audio downloaded."
+  ],
+  "evidence": [
+    "analysis/documents.jsonl",
+    "runs/final-children-docs-20261105et/observations.jsonl",
+    "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+    "examples/african-storybook.access.jsonl",
+    "examples/african-storybook.ui-inspection.jsonl",
+    "examples/african-storybook.browser.jsonl",
+    "examples/african-storybook.jsonl",
+    "examples/african-storybook.boundaries.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T22:29:09.368338+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 71,
+    "text": "| **African Storybook — children's host** | [Site](https://www.africanstorybook.org/); curated language/level collections or agreed export. | Site identifies CC BY 4.0; verify book-level attribution/translations/reader URLs. Multilingual early literacy. | Public search API not verified. **Medium/high / P1 pilot, P2 full connector**. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "african-storybook",
+        "name": "African Storybook",
+        "homepage_reference": "https://www.africanstorybook.org/",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C01"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Live approved-storybook browser search with All languages selected; first40 visible metadata cards. Ten distinct English-title/native-book matches and ten distinct changed result sets. Native loadBook action/IDs preserved without opening a reader.",
+      "facts": {
+        "adapter": "african-storybook-ui",
+        "endpoint": "https://www.africanstorybook.org/",
+        "cases": [
+          "approved-keyword-01",
+          "approved-keyword-02",
+          "approved-keyword-03",
+          "approved-keyword-04",
+          "approved-keyword-05",
+          "approved-keyword-06",
+          "approved-keyword-07",
+          "approved-keyword-08",
+          "approved-keyword-09",
+          "approved-keyword-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live approved-storybook browser search with All languages selected; first40 visible metadata cards. Ten distinct English-title/native-book matches and ten distinct changed result sets. Native loadBook action/IDs preserved without opening a reader.",
+        "authentication": "Anonymous public approved catalog; no new account/key/payment.",
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "examples/african-storybook.access.jsonl",
+        "examples/african-storybook.ui-inspection.jsonl",
+        "examples/african-storybook.browser.jsonl",
+        "examples/african-storybook.jsonl",
+        "examples/african-storybook.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Additional search modes and full-item reader access remain separate from working-query status."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Current African Storybook homepage advertises open picture books and CC BY4.0/Saide attribution. Item/contributor permissions and exact translated editions remain separate from this metadata search verification.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous public approved catalog; no new account/key/payment.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
+      "evidence": [
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "examples/african-storybook.access.jsonl",
+        "examples/african-storybook.ui-inspection.jsonl",
+        "examples/african-storybook.browser.jsonl",
+        "examples/african-storybook.jsonl",
+        "examples/african-storybook.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "analysis/documents.jsonl"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live approved-storybook browser search with All languages selected; first40 visible metadata cards. Ten distinct English-title/native-book matches and ten distinct changed result sets. Native loadBook action/IDs preserved without opening a reader.",
+        "empty_and_boundary_evidence": "examples/african-storybook.boundaries.jsonl"
+      },
+      "evidence": [
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "examples/african-storybook.access.jsonl",
+        "examples/african-storybook.ui-inspection.jsonl",
+        "examples/african-storybook.browser.jsonl",
+        "examples/african-storybook.jsonl",
+        "examples/african-storybook.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "The language selector is a custom popup; native selectOption timed out because the underlying select is hidden. This working batch uses the visible All languages default. English-filter behavior remains unverified. Broad cat search matched summaries/substrings and had no literal English-title match in first40; retain that negative and use the more specific cats query.",
+          "Fixed a menu-readiness race before querying; both browser initialization failures retained. No CAPTCHA, login, hidden control or private API bypass.",
+          "Some catalog cards are multilingual and use true in the native action plus multiple language IDs. Parser corrected to retain these instead of rejecting the whole response; selected positives are monolingual English. Repeated native IDs with mono/bilingual reader configurations are grouped with variants, not counted as separate books.",
+          "Some non-Latin catalog text renders with mojibake in the upstream UI; multilingual display quality remains unresolved. This is not silently corrected or counted as a verified translation.",
+          "Native numeric book IDs, reader-action arguments and raw date attributes are kept. Date meaning/version identity and actual full-reader access remain unverified; no books/audio downloaded."
+        ],
+        "no_bulk_content": true
+      },
+      "evidence": [
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "examples/african-storybook.access.jsonl",
+        "examples/african-storybook.ui-inspection.jsonl",
+        "examples/african-storybook.browser.jsonl",
+        "examples/african-storybook.jsonl",
+        "examples/african-storybook.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production load/freshness is outside this research checkpoint."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Live approved-storybook browser search with All languages selected; first40 visible metadata cards. Ten distinct English-title/native-book matches and ten distinct changed result sets. Native loadBook action/IDs preserved without opening a reader.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
+      "evidence": [
+        "runs/final-children-docs-20261105et/observations.jsonl",
+        "runs/children-keyword-scouts-20261105ev/observations.jsonl",
+        "examples/african-storybook.access.jsonl",
+        "examples/african-storybook.ui-inspection.jsonl",
+        "examples/african-storybook.browser.jsonl",
+        "examples/african-storybook.jsonl",
+        "examples/african-storybook.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "b486fb04a1b5c0cf06a90a83187194a2a24676f5f97e809d97ae9b30c9d88912",
+      "path": "docs/research/free-content/ADDITIONAL_SOURCES.md",
+      "line": 57,
+      "heading": "Other sources checked",
+      "text": "| [African Storybook](https://www.africanstorybook.org/) | Public site loaded. | Review individual story/language/level/credit/licence/reader evidence and a supported export or discovery protocol. Homepage access is not connector readiness. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 82,
+      "heading": "2. Twenty categories and how to find candidates for each",
+      "text": "| C01 Children's books and early literacy | Literacy-network publisher/member lists; children's collections in OER directories; trace publishers from StoryWeaver, African Storybook and Book Dash leads | Indian literacy NGOs, Pratham-related catalogs, state literacy programs, regional-language publishers; native-script searches | Licensed catalogs/feeds or attributed aggregator records; preserve translation, credits, language and publisher reading level |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 253,
+      "heading": "Phase C — children, regional and specialist coverage",
+      "text": "Reviewed children's pilot with approved metadata, attribution, language and level. Obtain feeds for comprehensive StoryWeaver/African Storybook/Book Dash search. Add CORE/HAL/Zenodo and India-specific providers in response to measured gaps; audio optional.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 71,
+      "heading": "5. Textbooks, education and children's reading",
+      "text": "| **African Storybook — children's host** | [Site](https://www.africanstorybook.org/); curated language/level collections or agreed export. | Site identifies CC BY 4.0; verify book-level attribution/translations/reader URLs. Multilingual early literacy. | Public search API not verified. **Medium/high / P1 pilot, P2 full connector**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 76,
+      "heading": "Categories",
+      "text": "| Children's books and early literacy | Picture books, graded stories, translations, wordless books | StoryWeaver, African Storybook, Book Dash |",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}

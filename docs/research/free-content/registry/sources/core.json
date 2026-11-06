@@ -1,0 +1,482 @@
+{
+  "schema_version": 1,
+  "id": "core",
+  "name": "CORE",
+  "homepage": "https://core.ac.uk/services/api",
+  "homepage_status": "historical-reference; canonical homepage/operator needs review",
+  "group": "G05",
+  "areas": [
+    "C06",
+    "C07"
+  ],
+  "state": "ten-query-examples-verified",
+  "enabled": false,
+  "full_qualification_complete": false,
+  "record_kind": "catalog-candidate",
+  "capabilities": [
+    "Live documented anonymous work title search withlimit1, native work IDs, output IDs and provider attribution. Ten distinct works verified; offset1 and explicit empty results tested."
+  ],
+  "query": {
+    "adapter": "core-public",
+    "endpoint": "https://api.core.ac.uk/v3/search/works/",
+    "cases": [
+      {
+        "id": "work-title-01",
+        "intent": "Public CORE work title search: title:\"agriculture\"",
+        "expected_ids": [
+          "58859476"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22agriculture%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-02",
+        "intent": "Public CORE work title search: title:\"construction safety\"",
+        "expected_ids": [
+          "255522362"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22construction+safety%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-03",
+        "intent": "Public CORE work title search: title:\"manufacturing\"",
+        "expected_ids": [
+          "254754854"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22manufacturing%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-04",
+        "intent": "Public CORE work title search: title:\"logistics\"",
+        "expected_ids": [
+          "312376300"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22logistics%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-05",
+        "intent": "Public CORE work title search: title:\"nursing\"",
+        "expected_ids": [
+          "216648785"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22nursing%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-06",
+        "intent": "Public CORE work title search: title:\"linguistics\"",
+        "expected_ids": [
+          "115782493"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22linguistics%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-07",
+        "intent": "Public CORE work title search: title:\"astronomy\"",
+        "expected_ids": [
+          "265365590"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22astronomy%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-08",
+        "intent": "Public CORE work title search: title:\"ecology\"",
+        "expected_ids": [
+          "262666396"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22ecology%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-09",
+        "intent": "Public CORE work title search: title:\"education\"",
+        "expected_ids": [
+          "264529647"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22education%22&limit=1&offset=0"
+        }
+      },
+      {
+        "id": "work-title-10",
+        "intent": "Public CORE work title search: title:\"mathematics\"",
+        "expected_ids": [
+          "112117851"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://api.core.ac.uk/v3/search/works/?q=title%3A%22mathematics%22&limit=1&offset=0"
+        }
+      }
+    ],
+    "historical_contract": "v3 `/search/works?q=...`; works/outputs/source/download URLs. [Service](https://core.ac.uk/services/api), [docs](https://api.core.ac.uk/docs/v3)",
+    "authentication": "Anonymous API; currentdocs100tokens/day,max10/minute.",
+    "request_shape_verified": true,
+    "request_verification_kind": "documented anonymous GET work search",
+    "page_size": 1,
+    "anonymous_tokens_per_day": 100,
+    "anonymous_tokens_per_minute": 10
+  },
+  "licensing": "Public anonymous API access is documented and tested for bounded research metadata. Original publication and metadata reuse rights remain separate; no full-text redistribution or commercial-service permission inferred.",
+  "documentation": [
+    "https://core.ac.uk/services/api",
+    "https://api.core.ac.uk/docs/v3"
+  ],
+  "limitations": [
+    "Current published anonymous allowance100tokens/day and maximum10/minute; this run uses7.5second serial pacing for simple queries. No account/trial/payment.",
+    "Only first result sampled per query; broad words such as ecology can mean organizational ecology, not necessarily biological ecology.",
+    "FullText field contains provider placeholder Not available for public API users.; no body/article download used. Unexpected real fullText stops collector.",
+    "Work IDs and underlying repository output IDs remain distinct; one provider/index is one connector, not an origin per repository/language/record.",
+    "Current Swagger declares global API-key security, but the rendered documentation explicitly permits anonymous access and current requests returned200. Do not extend this finding to all endpoints."
+  ],
+  "evidence": [
+    "analysis/documents.jsonl",
+    "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+    "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+    "analysis/external/core-query-contract-20261105.json",
+    "examples/core.scouting.jsonl",
+    "examples/core.raw-queries.jsonl",
+    "examples/core.jsonl",
+    "examples/core.boundaries.jsonl"
+  ],
+  "last_reviewed_at": "2026-11-05T20:19:18.465438+00:00",
+  "imported_at": "2026-11-05",
+  "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task.",
+  "aliases": [],
+  "historical_catalog_row": {
+    "path": "docs/research/free-content/source-catalog.md",
+    "line": 52,
+    "text": "| **CORE — repository aggregator** | v3 `/search/works?q=...`; works/outputs/source/download URLs. [Service](https://core.ac.uk/services/api), [docs](https://api.core.ac.uk/docs/v3) | Reconcile copies and distinguish work from output; verify location access. Metadata/full-text rights are not one license. | Anonymous sample worked. Reviewed page described free unregistered access subject to terms; five single requests or one batch/10 sec; faster registered/enterprise access may cost and eligibility matters. **Medium / P1**, useful for theses. |",
+    "status": "imported-not-reverified"
+  },
+  "dossier": {
+    "identity_and_duplicates": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "id": "core",
+        "name": "CORE",
+        "homepage_reference": "https://core.ac.uk/services/api",
+        "operator": null,
+        "origin_deduplication": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Confirm operator, parent and catalog-versus-origin deduplication."
+      ]
+    },
+    "coverage_and_languages": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "category_industry_candidates": [
+          "C06",
+          "C07"
+        ],
+        "languages": null,
+        "jurisdictions": null,
+        "coverage_evidence": "pending"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Verify country/language/subject coverage with item evidence."
+      ]
+    },
+    "query_contract": {
+      "status": "partial",
+      "summary": "Live documented anonymous work title search withlimit1, native work IDs, output IDs and provider attribution. Ten distinct works verified; offset1 and explicit empty results tested.",
+      "facts": {
+        "adapter": "core-public",
+        "endpoint": "https://api.core.ac.uk/v3/search/works/",
+        "cases": [
+          "work-title-01",
+          "work-title-02",
+          "work-title-03",
+          "work-title-04",
+          "work-title-05",
+          "work-title-06",
+          "work-title-07",
+          "work-title-08",
+          "work-title-09",
+          "work-title-10"
+        ],
+        "current_passing_examples": 10,
+        "request_shape_verified": true,
+        "query_coverage": "working",
+        "tested_scope": "Live documented anonymous work title search withlimit1, native work IDs, output IDs and provider attribution. Ten distinct works verified; offset1 and explicit empty results tested.",
+        "authentication": "Anonymous API; currentdocs100tokens/day,max10/minute.",
+        "activation_approved": false
+      },
+      "evidence": [
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "analysis/external/core-query-contract-20261105.json",
+        "examples/core.scouting.jsonl",
+        "examples/core.raw-queries.jsonl",
+        "examples/core.jsonl",
+        "examples/core.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Additional search modes and full-item reader access remain separate from working-query status."
+      ]
+    },
+    "rights_and_cost": {
+      "status": "partial",
+      "summary": "Public anonymous API access is documented and tested for bounded research metadata. Original publication and metadata reuse rights remain separate; no full-text redistribution or commercial-service permission inferred.",
+      "facts": {
+        "metadata_and_content_rights_separate": true,
+        "authentication": "Anonymous API; currentdocs100tokens/day,max10/minute.",
+        "paid_services_used": false,
+        "full_content_downloaded": false
+      },
+      "evidence": [
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "analysis/external/core-query-contract-20261105.json",
+        "examples/core.scouting.jsonl",
+        "examples/core.raw-queries.jsonl",
+        "examples/core.jsonl",
+        "examples/core.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Item-level reading/reuse permissions beyond the tested metadata contract remain open."
+      ]
+    },
+    "reader_access": {
+      "status": "partial",
+      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "facts": {
+        "evidence_references": [
+          "analysis/documents.jsonl"
+        ],
+        "free_login_eligible": true,
+        "access_classification": "needs explicit item-level review"
+      },
+      "evidence": [
+        "analysis/documents.jsonl"
+      ],
+      "open_questions": [
+        "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+      ]
+    },
+    "quality_and_relevance": {
+      "status": "partial",
+      "summary": "Ten distinct native-item examples reviewed from current provider responses; preserve negatives and ambiguous matches.",
+      "facts": {
+        "evidence_reused_from_current_capture": true,
+        "current_passing_examples": 10,
+        "relevance_scope": "Live documented anonymous work title search withlimit1, native work IDs, output IDs and provider attribution. Ten distinct works verified; offset1 and explicit empty results tested.",
+        "empty_and_boundary_evidence": "examples/core.boundaries.jsonl"
+      },
+      "evidence": [
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "analysis/external/core-query-contract-20261105.json",
+        "examples/core.scouting.jsonl",
+        "examples/core.raw-queries.jsonl",
+        "examples/core.jsonl",
+        "examples/core.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Broader ranking, translated query behavior and full catalog recall beyond stated scope remain open."
+      ]
+    },
+    "operating_limits": {
+      "status": "partial",
+      "summary": "Serial policy-checked metadata requests; saved responses reused for review.",
+      "facts": {
+        "limits": [
+          "Current published anonymous allowance100tokens/day and maximum10/minute; this run uses7.5second serial pacing for simple queries. No account/trial/payment.",
+          "Only first result sampled per query; broad words such as ecology can mean organizational ecology, not necessarily biological ecology.",
+          "FullText field contains provider placeholder Not available for public API users.; no body/article download used. Unexpected real fullText stops collector.",
+          "Work IDs and underlying repository output IDs remain distinct; one provider/index is one connector, not an origin per repository/language/record.",
+          "Current Swagger declares global API-key security, but the rendered documentation explicitly permits anonymous access and current requests returned200. Do not extend this finding to all endpoints."
+        ],
+        "no_bulk_content": true
+      },
+      "evidence": [
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "analysis/external/core-query-contract-20261105.json",
+        "examples/core.scouting.jsonl",
+        "examples/core.raw-queries.jsonl",
+        "examples/core.jsonl",
+        "examples/core.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production load/freshness is outside this research checkpoint."
+      ]
+    },
+    "decision_and_followup": {
+      "status": "partial",
+      "summary": "Working research search connector in the stated scope.",
+      "facts": {
+        "decision": "working-query-scope-verified",
+        "reason": "Live documented anonymous work title search withlimit1, native work IDs, output IDs and provider attribution. Ten distinct works verified; offset1 and explicit empty results tested.",
+        "activation_approved": false,
+        "full_qualification_complete": false,
+        "next_action": "Keep research query evidence current; expand supported search boundaries and item access review. No production activation in this task."
+      },
+      "evidence": [
+        "runs/scholarly-api-routes-20261105ea/observations.jsonl",
+        "runs/scholarly-auth-specs-20261105ec/observations.jsonl",
+        "analysis/external/core-query-contract-20261105.json",
+        "examples/core.scouting.jsonl",
+        "examples/core.raw-queries.jsonl",
+        "examples/core.jsonl",
+        "examples/core.boundaries.jsonl"
+      ],
+      "open_questions": [
+        "Production activation has not been requested by this task."
+      ]
+    }
+  },
+  "analysis_refs": [
+    {
+      "document_id": "fd8535ec9c649383f404c1736bfa3722c5459a1092cbd2250f0fbbd5ba658ae3",
+      "path": "docs/design/2026-11-free-content/README.md",
+      "line": 94,
+      "heading": "2. Scope",
+      "text": "Not in the first release: previews/loans, Standard Ebooks, DIKSHA/NCERT, CORE,\nHAL, Zenodo, bioRxiv/medRxiv as live sources (show \"Not connected yet\" if\nlisted), embedded readers, downloads proxied through our server, accounts.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "b486fb04a1b5c0cf06a90a83187194a2a24676f5f97e809d97ae9b30c9d88912",
+      "path": "docs/research/free-content/ADDITIONAL_SOURCES.md",
+      "line": 56,
+      "heading": "Other sources checked",
+      "text": "| [OAPEN](https://library.oapen.org/) | OAI Identify/formats and a 100-record Dublin Core sample worked; sample rights fields include explicit open-access semantics. | Verify current metadata terms, map versions/chapters and individual licences, sample actual supplied full-book links and implement incremental refresh. No download location was inferred from an index-wide label. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 32,
+      "heading": "1. Goal and counting rules",
+      "text": "Use 20 research categories: five core areas and 15 additions. Target 100 qualified\nsources per category over successive research cycles. These are overlapping\ncategory memberships, potentially 2,000 memberships, not necessarily 2,000 unique\nsources or 2,000 custom integrations. Report the global unique count separately.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 199,
+      "heading": "3. Discovery engines to use before broad web searching",
+      "text": "Also investigate DOAJ, CORE/OpenAIRE/BASE, national libraries, professional\nassociations and ministry directories as leads. Choose an aggregator only after\nchecking current external-use terms, quotas, origin attribution and completeness.\nExisting direct arXiv/DOAJ deferral remains in force until its stated constraint\nhas a supported solution; this plan does not quietly re-enable those connectors.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "42ce254d9a0a0d043cc81596f57e10cea0cca07f68ce7eeb39d2bf32628a79e9",
+      "path": "docs/research/free-content/EXPANSION_PLAN.md",
+      "line": 205,
+      "heading": "3. Discovery engines to use before broad web searching",
+      "text": "Documentation review limitations on 2026-11-05: the older DOAB metadata URL\nreturned 404; the linked `doab-metadata` page worked. AISHE and data.gov.in opens\ntimed out; DOAJ/CORE documentation opens returned 403 in this research tool.\nThose remain leads, not verified integrations or evidence that the services are\ndown. No source-search API qualification probes were run for this plan.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "fab51d95767f07836e9e95ced4eb613d036a1d0ba1889ad274b62936a928af9e",
+      "path": "docs/research/free-content/architecture.md",
+      "line": 253,
+      "heading": "Phase C — children, regional and specialist coverage",
+      "text": "Reviewed children's pilot with approved metadata, attribution, language and level. Obtain feeds for comprehensive StoryWeaver/African Storybook/Book Dash search. Add CORE/HAL/Zenodo and India-specific providers in response to measured gaps; audio optional.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 27,
+      "heading": "2. Scholarly books and chapters",
+      "text": "| **DOAB — curated index** | Official JSON/CSV/KBART/MARCXML/ONIX; OAI-PMH `https://directory.doabooks.org/oai/request`. Import locally, update via datestamps and resumption tokens. [Metadata docs](https://doabooks.org/en/librarians/doab-metadata) | Metadata CC0; individual book licenses separate. Preserve full-text/publisher URLs, DOI/ISBN and fallback directory handles. `xoai` richer than simple Dublin Core; optional PRISM supplies peer-review metadata by DOI/ISBN. | No key for documented feeds. Harvesting is not interactive search. Identify, formats, ListRecords and one `xoai` record worked. **Medium / P1, first scholarly-book import**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 38,
+      "heading": "3. Journal articles and broad scholarly discovery",
+      "text": "| **Europe PMC — index/full-text platform** | REST `/webservices/rest/search?query=...&format=json`, `OPEN_ACCESS:Y`, `IN_PMC:Y`, `resultType=core`, cursorMark. [REST docs](https://europepmc.org/RestfulWebService) | Returned full-text locations/PMCID pages. OA filter is stricter than free reading; PMC inclusion does not imply an open reuse license. PubMed records alone need not be free. | No key for public REST. Parse individual access/license fields and observe service limits. OA query worked. **Low / P0**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 44,
+      "heading": "3. Journal articles and broad scholarly discovery",
+      "text": "Start with one broad index plus selected specialists. Calling OpenAlex, Crossref, CORE, Semantic Scholar and all repositories on every query would multiply duplicates, cost and latency.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 52,
+      "heading": "4. Preprints, theses, repositories and reports",
+      "text": "| **CORE — repository aggregator** | v3 `/search/works?q=...`; works/outputs/source/download URLs. [Service](https://core.ac.uk/services/api), [docs](https://api.core.ac.uk/docs/v3) | Reconcile copies and distinguish work from output; verify location access. Metadata/full-text rights are not one license. | Anonymous sample worked. Reviewed page described free unregistered access subject to terms; five single requests or one batch/10 sec; faster registered/enterprise access may cost and eligibility matters. **Medium / P1**, useful for theses. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 55,
+      "heading": "4. Preprints, theses, repositories and reports",
+      "text": "| **Shodhganga / university repositories — thesis hosts** | [Shodhganga](https://shodhganga.inflibnet.ac.in/), institution-specific DSpace/EPrints; discover advertised OAI endpoint/formats, import locally. CORE/OpenAlex can cover first. | Handles/PDFs when deposited/unrestricted; embargoes, language, rights and metadata-only records need per-record handling. | Homepage inspected; stable Shodhganga external API/OAI route and terms not verified. Do not assume every DSpace version shares one REST route. **High / P2 direct; P1 aggregated**. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a028db34ce8fda7f0769075b4a6a29d4f47188c12b819ad708dab1162a5a2be2",
+      "path": "docs/research/free-content/source-catalog.md",
+      "line": 89,
+      "heading": "Standard connection patterns",
+      "text": "| REST/JSON search | DOAJ, Europe PMC, OpenAlex, Google, CORE, HAL | HTTP budgets/retries/response limits/paging | Query grammar, mapping, access, terms |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 74,
+      "heading": "Categories",
+      "text": "| Theses, dissertations, institutional outputs | Graduate research, technical reports, repository manuscripts | CORE, HAL, Shodhganga, university repositories |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 85,
+      "heading": "What the original checks established",
+      "text": "Structured responses were obtained from Google Books (using the configured key), Open Library, Internet Archive, DOAJ, OpenAlex, Crossref, arXiv, Europe PMC, CORE, Zenodo, HAL, Wikisource, Library of Congress, and LibriVox. Gutenberg RDF and DOAB record/harvesting responses also worked. OAPEN's OAI service identification worked; a record import was not exercised.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "a75437e3d72377932ea11a25802bb26f5d95f9cf44cee727809cf332c72ab952",
+      "path": "docs/research/free-content/README.md",
+      "line": 102,
+      "heading": "Credentials and implementation inputs",
+      "text": "1. Verify **`OPENALEX_API_KEY`** in the backend. The replacement environment reports the variable configured; no authenticated OpenAlex request was made during this repository transfer. At the research date the free account included $1/day of API usage, roughly 1,000 ordinary search requests before caching. Disable paid overages unless deliberately budgeted.\n2. Choose a real **application contact email** for request identification and, if enabled, Unpaywall's required `email` parameter. No email was invented, registered, or sent during this work.\n3. Optional later: Semantic Scholar, BHL and Europeana keys; CORE upgrade/eligibility confirmation. Standard Ebooks feed access and children's/OER catalog feeds need provider-specific arrangements.",
+      "status": "historical-context-needs-reconciliation"
+    }
+  ]
+}
