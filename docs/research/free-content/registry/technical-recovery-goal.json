@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 11,
+  "remaining": 8,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -62,7 +62,7 @@
       "status": "working",
       "original_reason": "Robots returned HTML, so policy preflight stopped.",
       "current_reason": "",
-      "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
+      "next_action": "Use verified indexed book search now. Retry direct documented metadata export only after a useful policy/service recovery signal.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -112,6 +112,19 @@
             "examples/doab.budget.jsonl",
             "runs/technical-recovery-20261106k/repository-books-analysis.json"
           ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:45:09.403494+00:00",
+          "reason": "Search already Working through OpenAlex; direct exports remain technically unavailable here.",
+          "attempt": "Owner-authorized metadata-download review: ScholarSphere robots503; official MEMO export robots302 redirects to login.",
+          "result": "Policy checks prevented file requests; not evidence that actual export files require login or that downloading metadata is prohibited.",
+          "decision": "retain_working_index_defer_direct_export",
+          "next_action": "Use verified indexed book search now. Retry direct documented metadata export only after a useful policy/service recovery signal.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/manual-recovery-20261106l/observations.jsonl",
+            "runs/manual-recovery-20261106l/alternative-research.json"
+          ]
         }
       ]
     },
@@ -143,7 +156,7 @@
     },
     {
       "id": "gallica",
-      "name": "Gallica / Bibliothèque nationale de France",
+      "name": "Gallica / Biblioth\u00e8que nationale de France",
       "group": "G01",
       "status": "working",
       "original_reason": "The live SRU request returned 403.",
@@ -244,12 +257,12 @@
     },
     {
       "id": "lets-read",
-      "name": "Let’s Read",
+      "name": "Let\u2019s Read",
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Robots/app-shell responses did not expose a supported search contract.",
-      "current_reason": "The policy URL resolves to a Next.js /[loginPage] app shell; no usable policy or anonymous query contract is established.",
-      "next_action": "Wait for a documented anonymous catalog/export or usable policy; free reader login remains allowed in principle, but no account is created.",
+      "current_reason": "robots.txt returns HTML, not a usable robots policy.",
+      "next_action": "A valid public policy and documented catalog/export are the next useful trigger. No login bypass or account creation.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -272,6 +285,19 @@
           "next_action": "Wait for a documented anonymous catalog/export or usable policy; free reader login remains allowed in principle, but no account is created.",
           "evidence": [
             "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:45:09.402383+00:00",
+          "reason": "robots.txt returns HTML, not a usable robots policy.",
+          "attempt": "Recheck official www site after public research found current reader links; review alternative metadata/publication leads.",
+          "result": "No supported public catalog/export established. Search-indexed reader URLs are leads, not verified item-query output.",
+          "decision": "blocked_with_revisit_trigger",
+          "next_action": "A valid public policy and documented catalog/export are the next useful trigger. No login bypass or account creation.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/manual-recovery-20261106l/observations.jsonl",
+            "runs/manual-recovery-20261106l/alternative-research.json"
           ]
         }
       ]
@@ -336,7 +362,7 @@
       "status": "working",
       "original_reason": "Export-host policy redirects to login; repository policy timed out twice.",
       "current_reason": "",
-      "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
+      "next_action": "Keep current indexed book search; revisit published metadata export after policy/service recovery.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -379,6 +405,19 @@
             "examples/oapen.jsonl",
             "examples/oapen.budget.jsonl",
             "runs/technical-recovery-20261106k/repository-books-analysis.json"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:45:09.404696+00:00",
+          "reason": "Search already Working through OpenAlex; direct exports remain technically unavailable here.",
+          "attempt": "Owner-authorized metadata-download review: ScholarSphere robots503; official MEMO export robots302 redirects to login.",
+          "result": "Policy checks prevented file requests; no blanket prohibition on metadata downloads and no new book body download.",
+          "decision": "retain_working_index_defer_direct_export",
+          "next_action": "Keep current indexed book search; revisit published metadata export after policy/service recovery.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/manual-recovery-20261106l/observations.jsonl",
+            "runs/manual-recovery-20261106l/alternative-research.json"
           ]
         }
       ]
@@ -575,7 +614,7 @@
         {
           "reviewed_at": "2026-11-06T09:41:14.738876+00:00",
           "reason": "Old NCERT main-site policy503 prevented access. Current official ePathshala site exposes its actual textbook selector in an advertised iframe.",
-          "attempt": "Follow CIET official description → ePathshala Students → eTextbooks → embedded selector; parse literal metadata arrays without executing arbitrary code or downloading books.",
+          "attempt": "Follow CIET official description \u2192 ePathshala Students \u2192 eTextbooks \u2192 embedded selector; parse literal metadata arrays without executing arbitrary code or downloading books.",
           "result": "421 unambiguous selectors; ten distinct title/class queries, native-code and empty controls pass.427 active selector rows include repeated contexts; one unknown subject reference and one conflicting title/native-code mapping are preserved but excluded. Six commented metadata blocks retained as historical/inactive.",
           "decision": "working_with_recorded_scope",
           "evidence": [
@@ -594,8 +633,8 @@
       "group": "G02",
       "status": "blocked_or_failed",
       "original_reason": "Historical page returned 403; integration terms remain unresolved.",
-      "current_reason": "Operator documents anonymous homepage search, but primary-site policy still returns403.",
-      "next_action": "Retry only on useful policy/access recovery, then use advertised homepage keyword form. No hidden/staging API workaround.",
+      "current_reason": "Main site access remains unresolved; operator documents integration/harvesting but no current anonymous endpoint supplied on reviewed page.",
+      "next_action": "If desired, ask ISKME for a current public read-only metadata feed/API and its free-use terms. No outreach or signup performed.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -617,6 +656,19 @@
           "evidence": [
             "runs/technical-recovery-20261106g/followups.jsonl",
             "runs/technical-recovery-20261106g/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:45:09.402873+00:00",
+          "reason": "Main site access remains unresolved; operator documents integration/harvesting but no current anonymous endpoint supplied on reviewed page.",
+          "attempt": "Read current ISKME OER Services page; compare advertised metadata feed services with old staging API lead.",
+          "result": "DC/LOM/RSS harvesting targets are advertised; API integration appears under subscription services. No price/free eligibility or current endpoint established.",
+          "decision": "blocked_with_revisit_trigger",
+          "next_action": "If desired, ask ISKME for a current public read-only metadata feed/API and its free-use terms. No outreach or signup performed.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/manual-recovery-20261106l/observations.jsonl",
+            "runs/manual-recovery-20261106l/alternative-research.json"
           ]
         }
       ]
@@ -688,10 +740,10 @@
       "id": "fdic-money-smart",
       "name": "FDIC Money Smart",
       "group": "G03",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Robots returned 403 before catalog retrieval.",
-      "current_reason": "Main-site403 and catalog503 remain historical; independently published Money Smart games catalog returned200 after policy404.",
-      "next_action": "If resumed, inspect saved14-game metadata list for supported native identities and title queries. No accounts, gameplay, content harvesting or early catalog503 retry.",
+      "current_reason": "",
+      "next_action": "Keep public game-metadata scope explicit; refresh using the same anonymous UI request with policy checks. Full curriculum access remains separate; hourly task stays paused.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -740,6 +792,22 @@
             "runs/technical-recovery-20261106k/fdic-public-games.html"
           ],
           "owner_action_required": false
+        },
+        {
+          "reviewed_at": "2026-11-06T13:41:54.597783+00:00",
+          "reason": "Main catalog policy failures; independently published public games catalog is accessible.",
+          "attempt": "Inspect anonymous public client, observe GET /api/game-categories, fetch41KB metadata and execute ten distinct English-title queries.",
+          "result": "14 native game records, ten passing title queries, zero-result control passes.",
+          "decision": "working_with_public_games_metadata",
+          "next_action": "Keep public game-metadata scope explicit; refresh using the same anonymous UI request with policy checks. Full curriculum access remains separate; hourly task stays paused.",
+          "evidence": [
+            "runs/manual-recovery-20261106l/observations.jsonl",
+            "runs/manual-recovery-20261106l/fdic-game-categories.json",
+            "runs/manual-recovery-20261106l/fdic-request-provenance.json",
+            "runs/manual-recovery-20261106l/fdic-query-controls.json",
+            "examples/fdic-money-smart.jsonl"
+          ],
+          "owner_action_required": false
         }
       ]
     },
@@ -747,10 +815,10 @@
       "id": "imo-knowledge-centre",
       "name": "IMO Maritime Knowledge Centre",
       "group": "G03",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Robots redirected and the conservative collector stopped.",
-      "current_reason": "New public resolution index identified, but www.imo.org robots301 redirects to the exact same URL.",
-      "next_action": "Revisit on corrected policy/redirect or documented permitted metadata export; avoid looping the same URL.",
+      "current_reason": "",
+      "next_action": "Keep six-record historical resolution-index scope explicit; do not imply whole-library search or current law. Scheduled task stays paused.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -774,6 +842,22 @@
             "runs/technical-recovery-20261106i/observations.jsonl"
           ],
           "next_action": "Revisit on corrected policy/redirect or documented permitted metadata export; avoid looping the same URL."
+        },
+        {
+          "reviewed_at": "2026-11-06T13:43:29.635440+00:00",
+          "reason": "Main library routes unavailable; separately published official MKC guide is accessible.",
+          "attempt": "Fetch public MKC guide once, parse six named resolution links and execute a title query for every listed resolution.",
+          "result": "6 native resolution records, six passing title queries, zero-result control passes.",
+          "decision": "working_with_small_resolution_index",
+          "next_action": "Keep six-record historical resolution-index scope explicit; do not imply whole-library search or current law. Scheduled task stays paused.",
+          "evidence": [
+            "runs/manual-recovery-20261106l/observations.jsonl",
+            "runs/manual-recovery-20261106l/imo-guide.json",
+            "runs/manual-recovery-20261106l/imo-guide.json",
+            "runs/manual-recovery-20261106l/imo-query-controls.json",
+            "examples/imo-knowledge-centre.jsonl"
+          ],
+          "owner_action_required": false
         }
       ]
     },
@@ -1030,10 +1114,10 @@
       "id": "cmda-planning",
       "name": "CMDA Chennai planning publications",
       "group": "G04",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Robots returned 503.",
-      "current_reason": "Official alternate portal policy redirects to a session/sign-out route; main-site503 backoff preserved. Public OpenCity page is accessible, but its API is robots-disallowed.",
-      "next_action": "If owner resumes, finish bounded publication-title query verification against the saved public metadata capture. Keep OpenCity attribution/IDs explicit; do not call disallowed API or download PDFs.",
+      "current_reason": "",
+      "next_action": "Keep public-index scope explicit; verify native edition and reading access separately if needed. Scheduled continuation remains paused.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1072,6 +1156,23 @@
             "runs/technical-recovery-20261106k/cmda-opencity-resource.html"
           ],
           "owner_action_required": false
+        },
+        {
+          "reviewed_at": "2026-11-06T13:40:58.457438+00:00",
+          "reason": "Official route remains unavailable; saved permitted independent metadata page offers publication-level identities and titles.",
+          "attempt": "Reuse current same-day captured public metadata and execute ten distinct title queries.",
+          "result": "29 parsed index records; ten title searches verified; missing-title query returns0. No API or PDF requests.",
+          "decision": "working_with_secondary_publication_index",
+          "next_action": "Keep public-index scope explicit; verify native edition and reading access separately if needed. Scheduled continuation remains paused.",
+          "evidence": [
+            "runs/technical-recovery-20261106k/cmda-opencity-catalog.html",
+            "runs/technical-recovery-20261106k/observations.jsonl",
+            "runs/technical-recovery-20261106k/opencity-policy-review.json",
+            "runs/manual-recovery-20261106l/observations.jsonl",
+            "runs/manual-recovery-20261106l/cmda-query-controls.json",
+            "examples/cmda-planning.jsonl"
+          ],
+          "owner_action_required": false
         }
       ]
     },
@@ -1105,8 +1206,8 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Robots request timed out before any catalog query.",
-      "current_reason": "The official old homepage now announces migration to indiacode.gov.in, but the newly published host policy returns HTTP500; no catalog query sent.",
-      "next_action": "Wait for indiacode.gov.in policy/service recovery; next timed retry no earlier than2026-11-06T18:00:00Z absent a new recovery signal. No denial bypass.",
+      "current_reason": "Official destination robots returns HTTP500 again.",
+      "next_action": "Wait for policy/server recovery; no account need established.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1141,6 +1242,19 @@
           "evidence": [
             "runs/technical-recovery-20261106i/alternative-discovery.json",
             "runs/technical-recovery-20261106i/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:45:09.400685+00:00",
+          "reason": "Official destination robots returns HTTP500 again.",
+          "attempt": "Owner-requested bounded retry against migrated official domain.",
+          "result": "No target request sent.",
+          "decision": "blocked_with_revisit_trigger",
+          "next_action": "Wait for policy/server recovery; no account need established.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/manual-recovery-20261106l/observations.jsonl",
+            "runs/manual-recovery-20261106l/alternative-research.json"
           ]
         }
       ]
@@ -1201,8 +1315,8 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 503; no data was queried.",
-      "current_reason": "Separate map-only Survey and Settlement service identified, but tnlandsurvey.tn.gov.in policy returns503. Integrated land-record routes still risk owner data.",
-      "next_action": "Retry separate map-service policy after recovery, no timed retry before16:00UTC. If available, inspect district/village map-product metadata only, never personal-owner fields.",
+      "current_reason": "Survey/map portal robots returns HTTP503 again.",
+      "next_action": "Wait for portal recovery or published nonpersonal map export.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1225,6 +1339,19 @@
           "evidence": [
             "runs/technical-recovery-20261106h/discovery-searches.jsonl",
             "runs/technical-recovery-20261106h/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:45:09.401848+00:00",
+          "reason": "Survey/map portal robots returns HTTP503 again.",
+          "attempt": "Owner-requested bounded retry of public survey portal only.",
+          "result": "No map or personal-owner data requested.",
+          "decision": "blocked_with_revisit_trigger",
+          "next_action": "Wait for portal recovery or published nonpersonal map export.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/manual-recovery-20261106l/observations.jsonl",
+            "runs/manual-recovery-20261106l/alternative-research.json"
           ]
         }
       ]
@@ -1473,8 +1600,8 @@
       "group": "G06",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 403, leaving no catalog contract.",
-      "current_reason": "LINCS course/API routes remain blocked; independent ERIC public UI robots returned503.",
-      "next_action": "ERIC public UI policy503: wait until2026-11-06T18:00:00Z for a single preflight if useful, or inspect a newly documented LINCS-specific metadata export. API/course403 routes stay paused. Only count records explicitly linked to native LINCS resources.",
+      "current_reason": "LINCS robots returns HTTP403 again.",
+      "next_action": "Wait for permitted policy access or documented provider export; no permission/email requirement established.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1522,6 +1649,19 @@
             "runs/technical-recovery-20261106j/observations.jsonl",
             "runs/technical-recovery-20261106j/alternative-leads.json"
           ]
+        },
+        {
+          "reviewed_at": "2026-11-06T13:45:09.401285+00:00",
+          "reason": "LINCS robots returns HTTP403 again.",
+          "attempt": "Owner-requested resource-collection policy retry.",
+          "result": "No catalog query sent.",
+          "decision": "blocked_with_revisit_trigger",
+          "next_action": "Wait for permitted policy access or documented provider export; no permission/email requirement established.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/manual-recovery-20261106l/observations.jsonl",
+            "runs/manual-recovery-20261106l/alternative-research.json"
+          ]
         }
       ]
     },
@@ -1546,8 +1686,8 @@
     }
   ],
   "progress": {
-    "working": 33,
-    "blocked_or_failed": 11,
+    "working": 36,
+    "blocked_or_failed": 8,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1555,37 +1695,34 @@
     "revisited_since_goal_started": 42
   },
   "current_run": {
-    "run_id": "technical-recovery-20261106k",
-    "state": "paused-by-owner-checkpointed",
-    "started_at": "2026-11-06T13:18:19.801303+00:00",
-    "heartbeat_at": "2026-11-06T13:33:40.116404+00:00",
+    "run_id": "manual-recovery-20261106l",
+    "state": "manual-checkpointed-schedule-paused",
+    "started_at": "2026-11-06T13:37:23.733091+00:00",
+    "baseline_commit": "559698dea98366346669521c934ddf202f73e131",
+    "scope": "Owner-requested manual retries; hourly automation remains paused",
+    "baseline_working": 99,
+    "baseline_original44": 33,
+    "heartbeat_at": "2026-11-06T13:46:34.527520+00:00",
+    "checkpointed_at": "2026-11-06T13:46:34.527520+00:00",
     "collector_active": false,
-    "active_detached_worker": false,
-    "scope": "Research-only documented alternatives; retries16:00/18:00UTC not due, respect saved backoff",
-    "checkpointed_at": "2026-11-06T13:33:40.116404+00:00"
+    "active_detached_worker": false
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 33,
-  "updated_at": "2026-11-06T13:33:40.116404+00:00",
+  "working": 36,
+  "updated_at": "2026-11-06T13:46:34.527520+00:00",
   "latest_run": {
     "run_ids": [
-      "technical-recovery-20261106k"
+      "manual-recovery-20261106l"
     ],
     "new_working": [
-      "doab",
-      "oapen"
+      "cmda-planning",
+      "fdic-money-smart",
+      "imo-knowledge-centre"
     ],
     "remaining_goal_open": true,
-    "new_verified_examples": 20,
-    "validation": {
-      "research_tests": 395,
-      "capture_index_audit": "pass",
-      "registry_validation": "pass",
-      "capture_hash_errors": []
-    },
-    "owner_paused": true,
-    "backlog_archive": "runs/technical-recovery-20261106k/backlog-checkpoint.json"
+    "manual_owner_requested": true,
+    "scheduled_continuation_enabled": false
   },
   "owner_pause": {
     "requested": true,

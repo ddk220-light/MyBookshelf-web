@@ -271,11 +271,13 @@
     "runs/technical-recovery-20261106k/query-controls.jsonl",
     "examples/doab.jsonl",
     "examples/doab.budget.jsonl",
-    "runs/technical-recovery-20261106k/repository-books-analysis.json"
+    "runs/technical-recovery-20261106k/repository-books-analysis.json",
+    "runs/manual-recovery-20261106l/observations.jsonl",
+    "runs/manual-recovery-20261106l/alternative-research.json"
   ],
-  "last_reviewed_at": "2026-11-06T13:25:53.106860+00:00",
+  "last_reviewed_at": "2026-11-06T13:45:09.403496+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
+  "next_action": "Use verified indexed book search now. Retry direct documented metadata export only after a useful policy/service recovery signal.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -729,23 +731,27 @@
       "heading": "Technical recovery K — owner paused, 6 November 2026",
       "text": "At the owner’s request, hourly recovery is paused. The completed documentation queue and its reporter remain stopped. DOAB/OAPEN bring original44 to33 Working and11 unresolved; overall99 Working,34 Blocked/failed,0 Still checking across133 active connectors, with1024 passing examples. Production is unchanged.",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "b32bce277e9d4b7f50fb4327eec620dea77b9e3d4c0409c1a7fb6cc7576b4e67",
+      "path": "docs/research/free-content/MANUAL_RECOVERY_20261106L.md",
+      "line": 15,
+      "heading": "Manual recovery L — 6 November 2026",
+      "text": "| DOAB/OAPEN | Previously verified OpenAlex-native book search stays Working. Metadata downloads are allowed within scope. ScholarSphere policy503 and native MEMO policy302-to-login prevented actual file requests this run; this does not prove the files themselves require login. |",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T13:25:53.106860+00:00",
-    "reason": "Direct repository/export access remains unavailable; current OpenAlex documentation supports independent repository-native location searches.",
-    "attempt": "Verify mapped repository source ID, available free allowance and native OAI records; add type:book,is_oa:true filters after scouting exposed nonbook/OA=false metadata; execute ten distinct title queries plus zero-result control.",
-    "result": "Ten passing live queries with literal title relevance and native IDs; both empty controls return0. OAPEN second page for a two-record title returns0 while retaining count2. No repository/reader/PDF requests.",
-    "decision": "working_with_openalex_repository_book_subset",
-    "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
+    "reviewed_at": "2026-11-06T13:45:09.403494+00:00",
+    "reason": "Search already Working through OpenAlex; direct exports remain technically unavailable here.",
+    "attempt": "Owner-authorized metadata-download review: ScholarSphere robots503; official MEMO export robots302 redirects to login.",
+    "result": "Policy checks prevented file requests; not evidence that actual export files require login or that downloading metadata is prohibited.",
+    "decision": "retain_working_index_defer_direct_export",
+    "next_action": "Use verified indexed book search now. Retry direct documented metadata export only after a useful policy/service recovery signal.",
     "owner_action_required": false,
     "evidence": [
-      "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
-      "runs/technical-recovery-20261106k/observations.jsonl",
-      "runs/technical-recovery-20261106k/query-controls.jsonl",
-      "examples/doab.jsonl",
-      "examples/doab.budget.jsonl",
-      "runs/technical-recovery-20261106k/repository-books-analysis.json"
+      "runs/manual-recovery-20261106l/observations.jsonl",
+      "runs/manual-recovery-20261106l/alternative-research.json"
     ]
   },
   "historical_recovery": [
@@ -801,6 +807,27 @@
       },
       "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
       "source_snapshot": "runs/technical-recovery-20261106k/doab-before.json"
+    },
+    {
+      "superseded_at": "2026-11-06T13:45:09.403491+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T13:25:53.106860+00:00",
+        "reason": "Direct repository/export access remains unavailable; current OpenAlex documentation supports independent repository-native location searches.",
+        "attempt": "Verify mapped repository source ID, available free allowance and native OAI records; add type:book,is_oa:true filters after scouting exposed nonbook/OA=false metadata; execute ten distinct title queries plus zero-result control.",
+        "result": "Ten passing live queries with literal title relevance and native IDs; both empty controls return0. OAPEN second page for a two-record title returns0 while retaining count2. No repository/reader/PDF requests.",
+        "decision": "working_with_openalex_repository_book_subset",
+        "next_action": "Keep OpenAlex-indexed book metadata scope explicit. Use native repository IDs, reported version/license and saved source filter; do not imply full holdings or working reader links. Direct export challenges remain deferred until a useful permitted recovery trigger.",
+        "owner_action_required": false,
+        "evidence": [
+          "runs/technical-recovery-20261106k/openalex-scouting.jsonl",
+          "runs/technical-recovery-20261106k/observations.jsonl",
+          "runs/technical-recovery-20261106k/query-controls.jsonl",
+          "examples/doab.jsonl",
+          "examples/doab.budget.jsonl",
+          "runs/technical-recovery-20261106k/repository-books-analysis.json"
+        ]
+      },
+      "source_snapshot": "runs/manual-recovery-20261106l/doab-before.json"
     }
   ],
   "fresh_query_verification": true,

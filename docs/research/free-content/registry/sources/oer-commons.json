@@ -36,11 +36,13 @@
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/technical-recovery-20261106f/oer-api-review.json",
     "runs/technical-recovery-20261106g/followups.jsonl",
-    "runs/technical-recovery-20261106g/observations.jsonl"
+    "runs/technical-recovery-20261106g/observations.jsonl",
+    "runs/manual-recovery-20261106l/observations.jsonl",
+    "runs/manual-recovery-20261106l/alternative-research.json"
   ],
-  "last_reviewed_at": "2026-11-06T09:33:59.743123+00:00",
+  "last_reviewed_at": "2026-11-06T13:45:09.402875+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Retry only on useful policy/access recovery, then use advertised homepage keyword form. No hidden/staging API workaround.",
+  "next_action": "If desired, ask ISKME for a current public read-only metadata feed/API and its free-use terms. No outreach or signup performed.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -281,6 +283,14 @@
       "heading": "Technical recovery continuation G — 6 November 2026",
       "text": "- **NQR:** a single retry of the previously failed Mine Electrician query succeeded after roughly 90 minutes of backoff. It used the same advertised public browser form and identity. All ten current keyword cases now pass; the earlier 403 and advanced-form 500 remain saved. Availability is intermittent and no qualification files were fetched.\n- **NCERT:** CIET's current ePathshala site links its actual textbook selector through a public iframe. Its published metadata contains 427 active selector rows and 421 unambiguous searchable records after repeated contexts, one unresolved subject selector and one conflicting title/native-code mapping are handled explicitly. Ten title/class searches, exact native-code and empty controls pass. Six commented metadata blocks remain inactive historical findings; no book bodies were downloaded. The footer license URL returned404, so metadata queryability does not establish reuse rights or full reading access.\n- **Gallica:** BnF documents a separate public SPARQL service whose bibliographic editions link to native Gallica digital ARKs. Ten exact literal-title queries pass through that service. The parser was corrected to accept its legacy typed-literal XSD-string representation; failed attempts remain saved. Direct Gallica SRU and general-catalog restrictions are unchanged. This is a linked-data subset, not whole-Gallica keyword or full-text search.\n- **SciELO:** the operator developer index and REST client document a separate anonymous ArticleMeta service. Ten native article-PID lookups now return matching Brazil-collection metadata with `body=false`. Original article title markup, language variants, journal identity, processing/publication dates and content URLs are kept separate. No article bodies were requested, and no linked content was fetched. This does not prove upstream keyword or whole-network search. The old documentation link returned404; network-search403 and regional OAI503 remain preserved.\n- **Chicago zoning:** the published schema endpoint still returned503 after a multi-hour backoff. Current SODA2.1 documentation alone does not establish working dataset access. No underlying zoning query was sent after the failure.\n- **OER Commons:** current operator help documents anonymous homepage search, but the primary site's policy still returns403. No homepage/search request or staging/private API workaround was sent.\n- **Gutendex:** native8746 recovered after nearly two hours of backoff, but the next saved native10836 query returned503. Two of ten current native cases pass; the connector remains blocked. No broad-search retry followed that503. Unknown CLI case IDs now fail before any network dispatch, preventing silent no-op attempts.\n- **DOAB and India Code:** one policy-only retry each after more than four and three hours of backoff, respectively, still timed out. No target catalog request was sent. Further timed retries are deferred until16:00UTC unless a useful recovery signal arrives.\n- **DIKSHA:** the current homepage exposes14 native featured quiz links. Ten links for five topics have consistent published banner/topic/language labels and pass local metadata queries plus an empty control. Four links in two conflicting or unreviewed banner groups are quarantined. These are language variants, not extra origins. The main Library remains login-gated, and the teacher-page Search Course text is an instructional heading, not a guest search form. No course/quiz content or account flow was requested.\n- **NSDC:** current public sitemap navigation revealed its sector-skills report search. Ten title-word queries and an empty-result control pass. Duplicate responsive inputs and a Search button that changes into an icon required browser-selector corrections; all failed attempts remain saved. The same operator's report-file URLs identify results without downloading PDFs. The original occupational-standards/model-curriculum catalog remains unverified and is explicitly outside this recovered subset. No staging API, direct backend replay or account flow was used.",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "b32bce277e9d4b7f50fb4327eec620dea77b9e3d4c0409c1a7fb6cc7576b4e67",
+      "path": "docs/research/free-content/MANUAL_RECOVERY_20261106L.md",
+      "line": 17,
+      "heading": "Manual recovery L — 6 November 2026",
+      "text": "| OER Commons | Current ISKME page advertises metadata harvesting and API services. No current anonymous endpoint/free-use contract supplied; API integration appears under subscription services. Asking ISKME for a free read-only feed is a possible next step, not performed here. |",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery_history": [
@@ -298,17 +308,34 @@
       "evidence": [
         "runs/technical-recovery-20261106f/oer-api-review.json"
       ]
+    },
+    {
+      "superseded_at": "2026-11-06T13:45:09.402870+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T09:33:59.743127+00:00",
+        "reason": "Operator documents anonymous homepage search, but primary-site policy still returns403.",
+        "attempt": "Read current help center Search for content guide; check policy for the documented homepage.",
+        "result": "Current public browser search method confirmed; primary site request withheld after policy403. Old2010 staging API remains excluded.",
+        "decision": "wait_for_policy_recovery",
+        "evidence": [
+          "runs/technical-recovery-20261106g/followups.jsonl",
+          "runs/technical-recovery-20261106g/observations.jsonl"
+        ]
+      },
+      "source_snapshot": "runs/manual-recovery-20261106l/oer-commons-before.json"
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T09:33:59.743127+00:00",
-    "reason": "Operator documents anonymous homepage search, but primary-site policy still returns403.",
-    "attempt": "Read current help center Search for content guide; check policy for the documented homepage.",
-    "result": "Current public browser search method confirmed; primary site request withheld after policy403. Old2010 staging API remains excluded.",
-    "decision": "wait_for_policy_recovery",
+    "reviewed_at": "2026-11-06T13:45:09.402873+00:00",
+    "reason": "Main site access remains unresolved; operator documents integration/harvesting but no current anonymous endpoint supplied on reviewed page.",
+    "attempt": "Read current ISKME OER Services page; compare advertised metadata feed services with old staging API lead.",
+    "result": "DC/LOM/RSS harvesting targets are advertised; API integration appears under subscription services. No price/free eligibility or current endpoint established.",
+    "decision": "blocked_with_revisit_trigger",
+    "next_action": "If desired, ask ISKME for a current public read-only metadata feed/API and its free-use terms. No outreach or signup performed.",
+    "owner_action_required": false,
     "evidence": [
-      "runs/technical-recovery-20261106g/followups.jsonl",
-      "runs/technical-recovery-20261106g/observations.jsonl"
+      "runs/manual-recovery-20261106l/observations.jsonl",
+      "runs/manual-recovery-20261106l/alternative-research.json"
     ]
   }
 }

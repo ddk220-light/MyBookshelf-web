@@ -47,18 +47,20 @@
     "runs/technical-recovery-20261106c/observations.jsonl",
     "runs/technical-recovery-20261106c/book-attempts.jsonl",
     "runs/technical-recovery-20261106i/alternative-discovery.json",
-    "runs/technical-recovery-20261106i/observations.jsonl"
+    "runs/technical-recovery-20261106i/observations.jsonl",
+    "runs/manual-recovery-20261106l/observations.jsonl",
+    "runs/manual-recovery-20261106l/alternative-research.json"
   ],
   "limitations": [
     "Saved robots request timed out after20.262seconds; target was never requested. This is environment observation, not evidence of a national outage.",
     "One India Code catalog candidate; central/state views, Acts, rules, sections and language renditions do not count as independent origins."
   ],
-  "last_reviewed_at": "2026-11-06T11:59:34.807165+00:00",
+  "last_reviewed_at": "2026-11-06T13:45:09.400688+00:00",
   "evidence_observation_dates": [
     "2026-11-05T02:21:54.302527+00:00"
   ],
   "fresh_query_verification": false,
-  "next_action": "Wait for indiacode.gov.in policy/service recovery; next timed retry no earlier than2026-11-06T18:00:00Z absent a new recovery signal. No denial bypass.",
+  "next_action": "Wait for policy/server recovery; no account need established.",
   "analysis_refs": [
     {
       "document_id": "e0f9e032470e81d885e20251a8653198ea6ed2892d86f761f802fa7c61095796",
@@ -106,6 +108,14 @@
       "line": 11,
       "heading": "Technical recovery J — 6 November 2026",
       "text": "USGS investigation follows the primary National Map page’s documented US Topo Availability service. Provider failures, source scope and query outcomes are recorded separately. Timed retries for Gutendex, Chicago and India Code remain due no earlier than18:00UTC; FDIC, CMDA and Tamil Nadu map policy retries no earlier than16:00UTC. No repeated denied requests or account creation.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "b32bce277e9d4b7f50fb4327eec620dea77b9e3d4c0409c1a7fb6cc7576b4e67",
+      "path": "docs/research/free-content/MANUAL_RECOVERY_20261106L.md",
+      "line": 12,
+      "heading": "Manual recovery L — 6 November 2026",
+      "text": "| India Code | Retry: official destination policy HTTP500; no catalog query sent. Wait for recovery. |",
       "status": "historical-context-needs-reconciliation"
     }
   ],
@@ -447,18 +457,35 @@
         "runs/technical-recovery-20261106c/observations.jsonl",
         "runs/technical-recovery-20261106c/book-attempts.jsonl"
       ]
+    },
+    {
+      "superseded_at": "2026-11-06T13:45:09.400676+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T11:59:34.807165+00:00",
+        "reason": "The official old homepage now announces migration to indiacode.gov.in, but the newly published host policy returns HTTP500; no catalog query sent.",
+        "attempt": "Follow a newly discovered official migration notice as a useful alternative-route trigger, instead of repeating the old nic.in timeout.",
+        "result": "Policy endpoint HTTP500 with148-byte HTML; new catalog remains unqueried. Separate commercial IndiaCode-branded services are not substitutes.",
+        "decision": "wait_for_new_official_host_policy_recovery",
+        "next_action": "Wait for indiacode.gov.in policy/service recovery; next timed retry no earlier than2026-11-06T18:00:00Z absent a new recovery signal. No denial bypass.",
+        "evidence": [
+          "runs/technical-recovery-20261106i/alternative-discovery.json",
+          "runs/technical-recovery-20261106i/observations.jsonl"
+        ]
+      },
+      "source_snapshot": "runs/manual-recovery-20261106l/india-code-before.json"
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T11:59:34.807165+00:00",
-    "reason": "The official old homepage now announces migration to indiacode.gov.in, but the newly published host policy returns HTTP500; no catalog query sent.",
-    "attempt": "Follow a newly discovered official migration notice as a useful alternative-route trigger, instead of repeating the old nic.in timeout.",
-    "result": "Policy endpoint HTTP500 with148-byte HTML; new catalog remains unqueried. Separate commercial IndiaCode-branded services are not substitutes.",
-    "decision": "wait_for_new_official_host_policy_recovery",
-    "next_action": "Wait for indiacode.gov.in policy/service recovery; next timed retry no earlier than2026-11-06T18:00:00Z absent a new recovery signal. No denial bypass.",
+    "reviewed_at": "2026-11-06T13:45:09.400685+00:00",
+    "reason": "Official destination robots returns HTTP500 again.",
+    "attempt": "Owner-requested bounded retry against migrated official domain.",
+    "result": "No target request sent.",
+    "decision": "blocked_with_revisit_trigger",
+    "next_action": "Wait for policy/server recovery; no account need established.",
+    "owner_action_required": false,
     "evidence": [
-      "runs/technical-recovery-20261106i/alternative-discovery.json",
-      "runs/technical-recovery-20261106i/observations.jsonl"
+      "runs/manual-recovery-20261106l/observations.jsonl",
+      "runs/manual-recovery-20261106l/alternative-research.json"
     ]
   },
   "historical_recovery": [

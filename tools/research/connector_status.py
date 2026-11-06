@@ -16,6 +16,8 @@ GROUPS = {
 }
 MODES = {
     'cmda-opencity-catalog': 'Local title/OpenCity resource-UUID search over29 CMDA-attributed Chennai Master Plan2026 publication records; third-party index IDs, no native CMDA edition-ID, direct catalog, PDF, parcel/owner or legal-currency verification',
+    'imo-guidelines-catalog': 'Local title/native-symbol search of all six historical ship-recycling resolutions in the official MKC guide; whole library, legal currency and full-text access unverified',
+    'fdic-games-catalog': 'Local English-title/native game-ID search over the public FDIC UI catalog; gameplay, full curriculum, Spanish queries and external API stability unverified',
     'openalex-repository-books': 'Live OpenAlex location title search restricted to the mapped repository, reported-OA books and verified native OAI IDs; first5 rows filtered to literal title tokens. Direct repository access, complete holdings and reading remain unverified',
     'usgs-topo-metadata': 'Local title/state/native product-auth-ID search over65240 current US Topo map metadata records; version UUIDs preserved, no map downloads, historical maps or other National Map layers',
     'nhm-nuhm-catalog': 'Local title-token/native file-URL search over11 published NHSRC NUHM guideline links; central NHM catalog, site-wide search, document content and clinical currency not verified',
@@ -100,8 +102,8 @@ MODES = {
 def classify(source, audit_row, registry=REGISTRY):
     if audit_row.get('passing_examples', 0) >= 10:
         return 'working'
-    from small_catalog_coverage import verified_single_work
-    if verified_single_work(source, audit_row, registry):
+    from small_catalog_coverage import verified_single_work, verified_resolution_subset
+    if verified_single_work(source, audit_row, registry) or verified_resolution_subset(source, audit_row, registry):
         return 'working'
     return 'blocked_or_failed' if source['state'] == 'deferred' else 'still_checking'
 

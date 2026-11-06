@@ -44,7 +44,9 @@
     "runs/canonical-partners-onet-20261105/observations.jsonl",
     "runs/technical-recovery-20261106f/followups.jsonl",
     "analysis/discovery-searches.jsonl",
-    "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
+    "runs/technical-recovery-20261106h/policy-diagnostics.jsonl",
+    "runs/manual-recovery-20261106l/observations.jsonl",
+    "runs/manual-recovery-20261106l/alternative-research.json"
   ],
   "analysis_refs": [
     {
@@ -72,8 +74,8 @@
       "status": "historical-context-needs-reconciliation"
     }
   ],
-  "last_reviewed_at": "2026-11-06T10:50:45.872381+00:00",
-  "next_action": "Wait for a documented anonymous catalog/export or usable policy; free reader login remains allowed in principle, but no account is created.",
+  "last_reviewed_at": "2026-11-06T13:45:09.402385+00:00",
+  "next_action": "A valid public policy and documented catalog/export are the next useful trigger. No login bypass or account creation.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -477,17 +479,34 @@
           "analysis/discovery-searches.jsonl"
         ]
       }
+    },
+    {
+      "superseded_at": "2026-11-06T13:45:09.402379+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T10:50:45.872381+00:00",
+        "reason": "The policy URL resolves to a Next.js /[loginPage] app shell; no usable policy or anonymous query contract is established.",
+        "attempt": "Inspect the full small HTML policy response instead of relying only on its Content-Type.",
+        "result": "Canonical/page metadata explicitly identifies a login-page route. No public search request, hidden API or login was attempted.",
+        "decision": "wait_for_documented_recovery",
+        "next_action": "Wait for a documented anonymous catalog/export or usable policy; free reader login remains allowed in principle, but no account is created.",
+        "evidence": [
+          "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
+        ]
+      },
+      "source_snapshot": "runs/manual-recovery-20261106l/lets-read-before.json"
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T10:50:45.872381+00:00",
-    "reason": "The policy URL resolves to a Next.js /[loginPage] app shell; no usable policy or anonymous query contract is established.",
-    "attempt": "Inspect the full small HTML policy response instead of relying only on its Content-Type.",
-    "result": "Canonical/page metadata explicitly identifies a login-page route. No public search request, hidden API or login was attempted.",
-    "decision": "wait_for_documented_recovery",
-    "next_action": "Wait for a documented anonymous catalog/export or usable policy; free reader login remains allowed in principle, but no account is created.",
+    "reviewed_at": "2026-11-06T13:45:09.402383+00:00",
+    "reason": "robots.txt returns HTML, not a usable robots policy.",
+    "attempt": "Recheck official www site after public research found current reader links; review alternative metadata/publication leads.",
+    "result": "No supported public catalog/export established. Search-indexed reader URLs are leads, not verified item-query output.",
+    "decision": "blocked_with_revisit_trigger",
+    "next_action": "A valid public policy and documented catalog/export are the next useful trigger. No login bypass or account creation.",
+    "owner_action_required": false,
     "evidence": [
-      "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
+      "runs/manual-recovery-20261106l/observations.jsonl",
+      "runs/manual-recovery-20261106l/alternative-research.json"
     ]
   }
 }

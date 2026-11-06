@@ -44,18 +44,20 @@
     "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
     "runs/technical-recovery-20261106f/tamil-nadu-scope-review.json",
     "runs/technical-recovery-20261106h/discovery-searches.jsonl",
-    "runs/technical-recovery-20261106h/observations.jsonl"
+    "runs/technical-recovery-20261106h/observations.jsonl",
+    "runs/manual-recovery-20261106l/observations.jsonl",
+    "runs/manual-recovery-20261106l/alternative-research.json"
   ],
   "limitations": [
     "Saved robots request returned503; target page was skipped. No data query or new request in this review.",
     "One state-service candidate, not one origin per district, parcel, record or language. A service portal does not establish a reusable non-personal catalog."
   ],
-  "last_reviewed_at": "2026-11-06T10:48:39.194597+00:00",
+  "last_reviewed_at": "2026-11-06T13:45:09.401851+00:00",
   "evidence_observation_dates": [
     "2026-11-05T02:22:53.211695+00:00"
   ],
   "fresh_query_verification": false,
-  "next_action": "Retry separate map-service policy after recovery, no timed retry before16:00UTC. If available, inspect district/village map-product metadata only, never personal-owner fields.",
+  "next_action": "Wait for portal recovery or published nonpersonal map export.",
   "analysis_refs": [
     {
       "document_id": "e0f9e032470e81d885e20251a8653198ea6ed2892d86f761f802fa7c61095796",
@@ -409,18 +411,35 @@
           "runs/technical-recovery-20261106f/tamil-nadu-scope-review.json"
         ]
       }
+    },
+    {
+      "superseded_at": "2026-11-06T13:45:09.401844+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T10:48:39.194597+00:00",
+        "reason": "Separate map-only Survey and Settlement service identified, but tnlandsurvey.tn.gov.in policy returns503. Integrated land-record routes still risk owner data.",
+        "attempt": "Search official map-product services and inspect the separate Survey and Settlement homepage policy; no parcel or owner query.",
+        "result": "Policy503; map interface withheld. New map-only lead remains unverified, no personal-owner data collected.",
+        "decision": "wait_for_permitted_service_recovery",
+        "next_action": "Retry separate map-service policy after recovery, no timed retry before16:00UTC. If available, inspect district/village map-product metadata only, never personal-owner fields.",
+        "evidence": [
+          "runs/technical-recovery-20261106h/discovery-searches.jsonl",
+          "runs/technical-recovery-20261106h/observations.jsonl"
+        ]
+      },
+      "source_snapshot": "runs/manual-recovery-20261106l/tamil-nadu-land-records-before.json"
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T10:48:39.194597+00:00",
-    "reason": "Separate map-only Survey and Settlement service identified, but tnlandsurvey.tn.gov.in policy returns503. Integrated land-record routes still risk owner data.",
-    "attempt": "Search official map-product services and inspect the separate Survey and Settlement homepage policy; no parcel or owner query.",
-    "result": "Policy503; map interface withheld. New map-only lead remains unverified, no personal-owner data collected.",
-    "decision": "wait_for_permitted_service_recovery",
-    "next_action": "Retry separate map-service policy after recovery, no timed retry before16:00UTC. If available, inspect district/village map-product metadata only, never personal-owner fields.",
+    "reviewed_at": "2026-11-06T13:45:09.401848+00:00",
+    "reason": "Survey/map portal robots returns HTTP503 again.",
+    "attempt": "Owner-requested bounded retry of public survey portal only.",
+    "result": "No map or personal-owner data requested.",
+    "decision": "blocked_with_revisit_trigger",
+    "next_action": "Wait for portal recovery or published nonpersonal map export.",
+    "owner_action_required": false,
     "evidence": [
-      "runs/technical-recovery-20261106h/discovery-searches.jsonl",
-      "runs/technical-recovery-20261106h/observations.jsonl"
+      "runs/manual-recovery-20261106l/observations.jsonl",
+      "runs/manual-recovery-20261106l/alternative-research.json"
     ]
   }
 }

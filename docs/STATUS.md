@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Manual recovery L,6 November2026:** 102 Working /31 Blocked/failed /0 Still checking of133 active connectors;1,050 current passing examples. Original44:36 Working /8 remaining. CMDA, FDIC and a six-resolution IMO subset now queryable.403 tests and evidence checks pass. Hourly automation remains paused. [Scope and remaining blockers](research/free-content/MANUAL_RECOVERY_20261106L.md). Earlier entries are historical.
+
 **Recovery K checkpoint, 6 November 2026:** 99 Working / 34 Blocked/failed / 0 Still checking of 133 active connectors; 1024 current passing examples. Original44: 33 Working / 11 remaining. Newly recovered: doab, oapen. 395 research tests and evidence checks pass. Research only; paused by owner. [Evidence and scope](research/free-content/TECHNICAL_RECOVERY_20261106K.md). Earlier entries are historical.
 
 **Recovery J checkpoint, 6 November 2026:** 97 Working / 36 Blocked/failed / 0 Still checking of 133 active connectors; 1004 current passing examples. Original44: 31 Working / 13 remaining. Newly recovered: nhm-guidelines, usgs-national-map. 382 research tests and evidence checks pass. Research only; continuation enabled. [Evidence and scope](research/free-content/TECHNICAL_RECOVERY_20261106J.md). Earlier entries are historical.

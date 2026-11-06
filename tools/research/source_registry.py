@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('cmda-opencity-catalog', 'openalex-repository-books', 'usgs-topo-metadata', 'nhm-nuhm-catalog', 'chicago-zoning', 'shodhganga-indcat', 'worldreader-public-browser', 'snapplify-shop', 'bookshelf-epmc', 'certin-booklets', 'nai-reference-table', 'diksha-featured', 'nsdc-reports-ui', 'scielo-articlemeta', 'epathshala-selector', 'bnf-gallica-metadata', 'gutendex-native', 'seattle-catalog', 'dgma-circular-catalog', 'nqr-public-browser', 'gsa-frpp-catalog', 'rosap-oai', 'bhuvan-product-catalog', 'nyc-zoning-index', 'free-kids-wp-metadata', 'artic-export', 'nist-crossref', 'bharat-electrician-catalog', 'caltech-public-browser', 'nasa-images-public', 'lever-fulcrum', 'madurai-catalog', 'sugamya-public', 'thoth-metadata', 'openstax-catalog', 'sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
+    if adapter in ('imo-guidelines-catalog', 'fdic-games-catalog', 'cmda-opencity-catalog', 'openalex-repository-books', 'usgs-topo-metadata', 'nhm-nuhm-catalog', 'chicago-zoning', 'shodhganga-indcat', 'worldreader-public-browser', 'snapplify-shop', 'bookshelf-epmc', 'certin-booklets', 'nai-reference-table', 'diksha-featured', 'nsdc-reports-ui', 'scielo-articlemeta', 'epathshala-selector', 'bnf-gallica-metadata', 'gutendex-native', 'seattle-catalog', 'dgma-circular-catalog', 'nqr-public-browser', 'gsa-frpp-catalog', 'rosap-oai', 'bhuvan-product-catalog', 'nyc-zoning-index', 'free-kids-wp-metadata', 'artic-export', 'nist-crossref', 'bharat-electrician-catalog', 'caltech-public-browser', 'nasa-images-public', 'lever-fulcrum', 'madurai-catalog', 'sugamya-public', 'thoth-metadata', 'openstax-catalog', 'sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -308,8 +308,8 @@ def validate(registry=REGISTRY):
                 assert set(row['matched_ids']) & {str(r['id']) for r in row['sample_results']}, sid
         count = current_verified(source, rows)
         if source.get('queryability_review'):
-            from small_catalog_coverage import verified_single_work
-            assert verified_single_work(source, {'passing_examples': count}, registry), f'Invalid limited-catalog queryability evidence: {sid}'
+            from small_catalog_coverage import verified_single_work, verified_resolution_subset
+            assert (verified_single_work(source, {'passing_examples': count}, registry) or verified_resolution_subset(source, {'passing_examples': count}, registry)), f'Invalid limited-catalog queryability evidence: {sid}'
         total += count
         verified_sources += count >= 10
         if source['state'] == 'ten-query-examples-verified':
@@ -350,6 +350,12 @@ def probe(source_id, case_ids=None):
     if source['query']['adapter'] == 'bookshelf-epmc':
         from bookshelf_epmc import probe as bookshelf_probe
         return bookshelf_probe(source, case_ids)
+    if source['query']['adapter'] == 'imo-guidelines-catalog':
+        from imo_guidelines_catalog import probe as guidelines_probe
+        return guidelines_probe(source, case_ids)
+    if source['query']['adapter'] == 'fdic-games-catalog':
+        from fdic_games_catalog import probe as custom_probe
+        return custom_probe(source, case_ids)
     if source['query']['adapter'] == 'cmda-opencity-catalog':
         from cmda_opencity_catalog import probe as cmda_probe
         return cmda_probe(source, case_ids)

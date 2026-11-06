@@ -54,3 +54,25 @@ def verified_single_work(source, audit_row, registry):
     if negative['query_text'] != 'zzqxnomatch671932' or records(negative):
         return False
     return True
+
+
+def verified_resolution_subset(source, audit_row, registry):
+    """Count an exhaustively tested six-record guide without inventing extra items."""
+    review=source.get('queryability_review',{})
+    if review.get('basis')!='exhaustive-mkc-resolution-subset':return False
+    if source['id']!='imo-knowledge-centre' or source['query']['adapter']!='imo-guidelines-catalog':return False
+    from imo_guidelines_catalog import parse,search,assess,ENDPOINT
+    path=(registry/review['evidence_path']).resolve()
+    if not path.is_relative_to(registry.resolve()) or not path.is_file():raise ValueError('Missing resolution subset evidence')
+    raw=path.read_bytes()
+    if hashlib.sha256(raw).hexdigest()!=review['evidence_sha256']:raise ValueError('Mismatched resolution subset evidence')
+    proof=json.loads(raw);body_path=(registry/proof['capture_path']).resolve()
+    if not body_path.is_relative_to(registry.resolve()) or not body_path.is_file():raise ValueError('Missing resolution capture')
+    body=body_path.read_bytes();cap=proof['capture'];h=cap['http']
+    if h['status']!=200 or h['truncated'] or h['sampled_bytes_sha256']!=hashlib.sha256(body).hexdigest():raise ValueError('Invalid resolution capture hash/status')
+    if h['url']!=ENDPOINT or proof['source_id']!=source['id']:return False
+    rows=parse(body);cases=source['query']['cases']
+    if len(rows)!=6 or len(cases)!=6 or audit_row.get('passing_examples')!=6:return False
+    if {r['id'] for r in rows}!={str(c['expected_ids'][0]) for c in cases if len(c['expected_ids'])==1}:return False
+    if any(assess(source,c,cap,body)['verdict']!='verified' for c in cases):return False
+    return proof.get('empty_query')=='qzxnevermatch2026' and not search(rows,{'field':'title','value':proof['empty_query']})
