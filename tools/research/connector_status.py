@@ -15,6 +15,8 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'nsdc-reports-ui': 'Live public title-word form over sector-wise industry-skills reports, first10 rows and native report-file URLs; original occupational standards/model curricula remain unverified, no PDF downloads',
+    'scielo-articlemeta': 'Live exact SciELO article-PID lookup within Brazil collection scl through documented ArticleMeta REST, body=false; no upstream keyword or whole-network search guarantee',
     'bnf-gallica-metadata': 'Live exact literal-title queries over data.bnf.fr editions linked to native Gallica ARKs, first3 results; no direct SRU, whole-Gallica, broad keyword or full-text guarantee',
     'epathshala-selector': 'Local title/native-code and class-filter queries over421 unambiguous published textbook-selector records; commented entries and unresolved mappings excluded, no reader/book downloads',
     'seattle-catalog': 'Live Seattle catalog q keyword search with local title-substring filtering of first3 upstream items; native catalog IDs only, no underlying asset/owner records, paging or empty control yet',

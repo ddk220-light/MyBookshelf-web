@@ -9,7 +9,7 @@
     "C04",
     "C07"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -26,33 +26,231 @@
   },
   "aliases": [],
   "capabilities": [
-    "Regional open-science publication network lists national collections and related Books, Data and Preprints services."
+    "Anonymous native article-PID metadata lookup within SciELO Brazil collection scl;10 passing current examples",
+    "Bounded identifier-list request limit10 verified as seed; no exhaustive harvest"
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown; no query executed",
-    "request_shape_verified": false
+    "adapter": "scielo-articlemeta",
+    "endpoint": "https://articlemeta.scielo.org/api/v1/article/",
+    "authentication": "Anonymous public REST; no key/account",
+    "search_scope": "Live exact native article PID lookup within the Brazil collection (scl), metadata only with body=false. No upstream keyword/full-text search or other collection guarantee.",
+    "supported_modes": [
+      "Exact native article PID plus collection metadata lookup"
+    ],
+    "unsupported_modes": [
+      "Whole-network keyword/full-text search",
+      "Article-body retrieval",
+      "Other regional collection coverage"
+    ],
+    "cases": [
+      {
+        "id": "native-1",
+        "query_text": "S0100-879X1998000800002",
+        "intent": "Retrieve offered article metadata by its native SciELO identifier",
+        "request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000800002",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "expected_ids": [
+          "scl:S0100-879X1998000800002"
+        ]
+      },
+      {
+        "id": "native-2",
+        "query_text": "S0100-879X1998000900002",
+        "intent": "Retrieve offered article metadata by its native SciELO identifier",
+        "request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000900002",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "expected_ids": [
+          "scl:S0100-879X1998000900002"
+        ]
+      },
+      {
+        "id": "native-3",
+        "query_text": "S0100-879X1998000900003",
+        "intent": "Retrieve offered article metadata by its native SciELO identifier",
+        "request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000900003",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "expected_ids": [
+          "scl:S0100-879X1998000900003"
+        ]
+      },
+      {
+        "id": "native-4",
+        "query_text": "S0100-879X1998000900015",
+        "intent": "Retrieve offered article metadata by its native SciELO identifier",
+        "request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000900015",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "expected_ids": [
+          "scl:S0100-879X1998000900015"
+        ]
+      },
+      {
+        "id": "native-5",
+        "query_text": "S0100-879X1998000900012",
+        "intent": "Retrieve offered article metadata by its native SciELO identifier",
+        "request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000900012",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "expected_ids": [
+          "scl:S0100-879X1998000900012"
+        ]
+      },
+      {
+        "id": "native-6",
+        "query_text": "S0100-879X1998000800001",
+        "intent": "Retrieve offered article metadata by its native SciELO identifier",
+        "request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000800001",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "expected_ids": [
+          "scl:S0100-879X1998000800001"
+        ]
+      },
+      {
+        "id": "native-7",
+        "query_text": "S0100-879X1998000800006",
+        "intent": "Retrieve offered article metadata by its native SciELO identifier",
+        "request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000800006",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "expected_ids": [
+          "scl:S0100-879X1998000800006"
+        ]
+      },
+      {
+        "id": "native-8",
+        "query_text": "S0100-879X1998000800007",
+        "intent": "Retrieve offered article metadata by its native SciELO identifier",
+        "request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000800007",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "expected_ids": [
+          "scl:S0100-879X1998000800007"
+        ]
+      },
+      {
+        "id": "native-9",
+        "query_text": "S0100-879X1998000800005",
+        "intent": "Retrieve offered article metadata by its native SciELO identifier",
+        "request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000800005",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "expected_ids": [
+          "scl:S0100-879X1998000800005"
+        ]
+      },
+      {
+        "id": "native-10",
+        "query_text": "S0100-879X1998000900007",
+        "intent": "Retrieve offered article metadata by its native SciELO identifier",
+        "request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000900007",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "expected_ids": [
+          "scl:S0100-879X1998000900007"
+        ]
+      }
+    ]
   },
   "documentation": [
-    "https://www.scielo.org/en/"
+    "https://www.scielo.org/en/",
+    "https://scielo.readthedocs.io/en/latest/",
+    "https://github.com/scieloorg/articlemetaapi/blob/master/articlemeta/client.py",
+    "https://articlemeta.scielo.org/"
   ],
   "licensing": "Open Access Statement is linked; item license and metadata reuse contract remain unverified.",
   "limitations": [
-    "The published article search returned HTTP403 from this environment after a successful robots check.",
-    "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
-    "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
+    "Exact native article-PID plus Brazil collection lookup only; no live upstream keyword, whole-network, current-publication-date coverage or reader guarantee.",
+    "Processing date is not publication date; API version label html is not an edition number. Original title markup retained, since stripping legacy Symbol-font formatting cannot establish Greek-letter equivalence.",
+    "body=false explicitly requested; response includes bibliographic citations/abstracts and content URLs only. No article/reader/media downloaded.",
+    "Separate metadata reuse and article rights not established by public API access. Existing search403 and regional OAI503 remain historical failures."
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
     "runs/scholarly-public-forms-20261105eh/observations.jsonl",
     "runs/scholarly-title-queries-20261105ei/observations.jsonl",
-    "runs/technical-recovery-20261106f/observations.jsonl"
+    "runs/technical-recovery-20261106f/observations.jsonl",
+    "runs/technical-recovery-20261106g/followups.jsonl",
+    "runs/technical-recovery-20261106g/scielo-operator-docs.json",
+    "runs/technical-recovery-20261106g/scielo-seed.json",
+    "examples/scielo.jsonl"
   ],
-  "last_reviewed_at": "2026-11-06T07:47:34.099536+00:00",
-  "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
+  "last_reviewed_at": "2026-11-06T09:57:02.577928+00:00",
+  "next_action": "Maintain exact-PID ArticleMeta scope; test paging/empty responses and documented date/collection filtering separately. Explore a documented title-search method without retrying denied network search routes; no activation.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -125,26 +323,32 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documented catalog capabilities retained; exact executed machine contract remains open.",
+      "summary": "Live exact native article PID lookup within the Brazil collection (scl), metadata only with body=false. No upstream keyword/full-text search or other collection guarantee.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "cases": [],
-        "authentication": "Unknown; no query executed",
-        "request_shape_verified": false
+        "adapter": "scielo-articlemeta",
+        "verified_examples": 10,
+        "exact_request": {
+          "method": "GET",
+          "url": "https://articlemeta.scielo.org/api/v1/article/",
+          "params": {
+            "code": "S0100-879X1998000800002",
+            "collection": "scl",
+            "format": "xylose",
+            "body": "false"
+          }
+        },
+        "minimum_serial_delay_seconds": 3
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/technical-recovery-20261106g/followups.jsonl",
+        "runs/technical-recovery-20261106g/scielo-operator-docs.json",
+        "runs/technical-recovery-20261106g/scielo-seed.json",
+        "examples/scielo.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "edf0454bb520b17422c6",
-          "observed_at": "2026-11-05T02:39:31.109712+00:00"
-        }
-      ],
+      "reviewed_at": "2026-11-06T09:57:02.577937+00:00",
+      "fresh_query_verification": true,
       "open_questions": [
-        "Obtain supported public request shapes and verify ten distinct native-ID examples plus paging/empty/error behavior."
+        "Rights, full reading, paging/empty and whole-network search remain open."
       ]
     },
     "rights_and_cost": {
@@ -235,20 +439,22 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "The published article search returned HTTP403 from this environment after a successful robots check.",
+      "summary": "Working exact-PID metadata lookup, broader search remains unsupported",
       "facts": {
-        "decision": "blocked_or_failed",
-        "blocker": "The published article search returned HTTP403 from this environment after a successful robots check.",
-        "next_action": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
-        "activation_approved": false
+        "decision": "working_with_recorded_scope",
+        "next_action": "Maintain exact-PID ArticleMeta scope; test paging/empty responses and documented date/collection filtering separately. Explore a documented title-search method without retrying denied network search routes; no activation.",
+        "blocker": null
       },
       "evidence": [
-        "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
-        "runs/scholarly-public-forms-20261105eh/observations.jsonl",
-        "runs/scholarly-title-queries-20261105ei/observations.jsonl"
+        "runs/technical-recovery-20261106g/followups.jsonl",
+        "runs/technical-recovery-20261106g/scielo-operator-docs.json",
+        "runs/technical-recovery-20261106g/scielo-seed.json",
+        "examples/scielo.jsonl"
       ],
+      "reviewed_at": "2026-11-06T09:57:02.577940+00:00",
+      "fresh_query_verification": true,
       "open_questions": [
-        "Current supported queryability remains unresolved; failure is not a permanent unavailability claim."
+        "Rights, full reading, paging/empty and whole-network search remain open."
       ]
     }
   },
@@ -263,13 +469,16 @@
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:47:34.099536+00:00",
-    "reason": "The documented SciELO Spain OAI alternative is currently inaccessible because its policy endpoint returns503.",
-    "attempt": "Located official SciELO regional OAI harvesting documentation as an alternative to denied network keyword search.",
-    "result": "Policy503 prevents querying this independent regional endpoint; previous search403 preserved.",
-    "decision": "wait-for-policy-recovery",
+    "reviewed_at": "2026-11-06T09:57:02.577918+00:00",
+    "reason": "Network keyword search403 and regional OAI policy503 remain saved; separately documented ArticleMeta REST API is anonymously available.",
+    "attempt": "Follow operator developer-documentation index and public REST client; check API policy404, follow observed canonical same-host302, list10 bounded IDs, then query10 distinct native article PIDs with body=false at3-second-or-slower pacing.",
+    "result": "Ten live metadata lookups return the requested Brazil collection/PID and relevant article titles. Article titles are extracted from v12, separately from journal title; language variants and native content links retained without fetching content.",
+    "decision": "working_with_recorded_scope",
     "evidence": [
-      "runs/technical-recovery-20261106f/observations.jsonl"
+      "runs/technical-recovery-20261106g/followups.jsonl",
+      "runs/technical-recovery-20261106g/scielo-operator-docs.json",
+      "runs/technical-recovery-20261106g/scielo-seed.json",
+      "examples/scielo.jsonl"
     ]
   },
   "recovery_history": [
@@ -290,6 +499,254 @@
         ]
       },
       "next_action": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues."
+    },
+    {
+      "reviewed_at": "2026-11-06T07:47:34.099536+00:00",
+      "reason": "The documented SciELO Spain OAI alternative is currently inaccessible because its policy endpoint returns503.",
+      "attempt": "Located official SciELO regional OAI harvesting documentation as an alternative to denied network keyword search.",
+      "result": "Policy503 prevents querying this independent regional endpoint; previous search403 preserved.",
+      "decision": "wait-for-policy-recovery",
+      "evidence": [
+        "runs/technical-recovery-20261106f/observations.jsonl"
+      ]
+    }
+  ],
+  "historical_query_contracts": [
+    {
+      "superseded_at": "2026-11-06T09:55:22.001144+00:00",
+      "query": {
+        "adapter": "unproven",
+        "endpoint": null,
+        "cases": [],
+        "authentication": "Unknown; no query executed",
+        "request_shape_verified": false
+      },
+      "reason": "Documented ArticleMeta public metadata route discovered; prior search/OAI failures remain historical evidence"
+    }
+  ],
+  "fresh_query_verification": true,
+  "historical_limitations": [
+    {
+      "superseded_at": "2026-11-06T09:57:02.577933+00:00",
+      "limitations": [
+        "The published article search returned HTTP403 from this environment after a successful robots check.",
+        "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
+        "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
+      ],
+      "reason": "Separate supported metadata route verified"
+    }
+  ],
+  "historical_dossier_snapshots": [
+    {
+      "superseded_at": "2026-11-06T09:57:02.577935+00:00",
+      "dossier": {
+        "identity_and_duplicates": {
+          "status": "partial",
+          "summary": "Regional open-science publication network lists national collections and related Books, Data and Preprints services.",
+          "facts": {
+            "operator": "Scientific Electronic Library Online network (legal entity and national operator mapping pending)",
+            "identity_and_overlap": "Canonical item/version and overlap mapping pending"
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "edf0454bb520b17422c6",
+              "observed_at": "2026-11-05T02:39:31.109712+00:00"
+            }
+          ],
+          "open_questions": [
+            "Complete item/version/translation mapping and establish legal operator details where unresolved."
+          ]
+        },
+        "coverage_and_languages": {
+          "status": "partial",
+          "summary": "Candidate area associations from captured catalog text; not qualified supply.",
+          "facts": {
+            "areas": [
+              "C03",
+              "C04",
+              "C07"
+            ],
+            "jurisdiction": "International",
+            "observed_facts": {
+              "collections_observed": [
+                "Argentina",
+                "Bolivia",
+                "Brazil",
+                "Chile",
+                "Colombia",
+                "Costa Rica",
+                "Cuba",
+                "Ecuador",
+                "Mexico",
+                "Paraguay",
+                "Peru",
+                "Portugal",
+                "Public Health",
+                "South Africa",
+                "Spain",
+                "Uruguay"
+              ],
+              "counting": "Collections and related services are leads within one network record, not 16 verified independent origins.",
+              "rights": "Open Access Statement is linked; item license and metadata reuse contract remain unverified.",
+              "languages": "English portal observed; collection countries do not prove language coverage."
+            }
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "edf0454bb520b17422c6",
+              "observed_at": "2026-11-05T02:39:31.109712+00:00"
+            }
+          ],
+          "open_questions": [
+            "Verify actual item languages and USA/India access/applicability; one cloud vantage does not prove global access."
+          ]
+        },
+        "query_contract": {
+          "status": "partial",
+          "summary": "Live exact native article PID lookup within the Brazil collection (scl), metadata only with body=false. No upstream keyword/full-text search or other collection guarantee.",
+          "facts": {
+            "adapter": "scielo-articlemeta",
+            "verified_examples": 10,
+            "exact_request": {
+              "method": "GET",
+              "url": "https://articlemeta.scielo.org/api/v1/article/",
+              "params": {
+                "code": "S0100-879X1998000800002",
+                "collection": "scl",
+                "format": "xylose",
+                "body": "false"
+              }
+            },
+            "minimum_serial_delay_seconds": 3
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "runs/technical-recovery-20261106g/scielo-operator-docs.json",
+            "runs/technical-recovery-20261106g/scielo-seed.json",
+            "examples/scielo.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T09:57:02.577937+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Rights, full reading, paging/empty and whole-network search remain open."
+          ]
+        },
+        "rights_and_cost": {
+          "status": "partial",
+          "summary": "Open Access Statement is linked; item license and metadata reuse contract remain unverified.",
+          "facts": {
+            "rights": "Open Access Statement is linked; item license and metadata reuse contract remain unverified.",
+            "cost": "Unknown per item/service"
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "edf0454bb520b17422c6",
+              "observed_at": "2026-11-05T02:39:31.109712+00:00"
+            }
+          ],
+          "open_questions": [
+            "Resolve metadata reuse, item license, free access, login and any paid-service boundaries separately."
+          ]
+        },
+        "reader_access": {
+          "status": "partial",
+          "summary": "Public documentation was readable; full-item reading has not been verified.",
+          "facts": {
+            "reading_verified": false,
+            "scope_caution": "No blanket reading-access claim"
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "edf0454bb520b17422c6",
+              "observed_at": "2026-11-05T02:39:31.109712+00:00"
+            }
+          ],
+          "open_questions": [
+            "Verify permitted representative item access, or retain a reasoned deferred decision."
+          ]
+        },
+        "quality_and_relevance": {
+          "status": "partial",
+          "summary": "No current query assertions; observed listing identities are not passing examples.",
+          "facts": {
+            "positive_examples": 0,
+            "native_identity_samples": [],
+            "version_caution": "Version and overlap unresolved"
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "edf0454bb520b17422c6",
+              "observed_at": "2026-11-05T02:39:31.109712+00:00"
+            }
+          ],
+          "open_questions": [
+            "Test known-item and topical relevance, negative queries and native identities without counting documentation samples as examples."
+          ]
+        },
+        "operating_limits": {
+          "status": "partial",
+          "summary": "Original policy-checked documentation captures retained; current restrictions can supersede earlier reachability.",
+          "facts": {
+            "numeric_quota": null,
+            "bulk_content_downloaded": false,
+            "current_restriction": "Supported query allowance/limits still unresolved"
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "edf0454bb520b17422c6",
+              "observed_at": "2026-11-05T02:39:31.109712+00:00"
+            }
+          ],
+          "open_questions": [
+            "Verify allowed machine route, refresh/delete/version semantics and provider backoff requirements."
+          ]
+        },
+        "decision_and_followup": {
+          "status": "partial",
+          "summary": "Working exact-PID metadata lookup, broader search remains unsupported",
+          "facts": {
+            "decision": "working_with_recorded_scope",
+            "next_action": "Maintain exact-PID ArticleMeta scope; test paging/empty responses and documented date/collection filtering separately. Explore a documented title-search method without retrying denied network search routes; no activation.",
+            "blocker": null
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "runs/technical-recovery-20261106g/scielo-operator-docs.json",
+            "runs/technical-recovery-20261106g/scielo-seed.json",
+            "examples/scielo.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T09:57:02.577940+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Rights, full reading, paging/empty and whole-network search remain open."
+          ]
+        }
+      },
+      "reason": "New metadata route replaces historical unavailable-route query analysis"
     }
   ]
 }

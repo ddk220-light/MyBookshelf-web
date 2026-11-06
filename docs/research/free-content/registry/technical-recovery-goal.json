@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 25,
+  "remaining": 23,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -127,8 +127,8 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Two queries passed; other queries exceeded 20/45-second timeouts.",
-      "current_reason": "Exact native book84 lookup responds immediately, but next native lookup8746 also times out after30seconds; broad search already timed out after45seconds.",
-      "next_action": "After useful recovery evidence or substantial backoff, test one additional known native book ID to distinguish cached-record availability from general backend recovery; do not launch a blind full batch.",
+      "current_reason": "Two current native-ID lookups pass, but the next distinct saved record10836 returns503. Provider remains intermittently unavailable.",
+      "next_action": "Wait for a useful service-recovery signal and sensible backoff; resume native10836, then remaining saved cases. Keep broad title search marked unreliable; do not sample only previously cached successes.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -151,6 +151,17 @@
           "evidence": [
             "runs/technical-recovery-20261106f/followups.jsonl",
             "examples/gutendex.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:01:16.065259+00:00",
+          "reason": "Two current native-ID lookups pass, but the next distinct saved record10836 returns503. Provider remains intermittently unavailable.",
+          "attempt": "Retry prior8746 timeout after nearly2hours; on success continue the next saved case at serial pacing. Stop immediately at its503.",
+          "result": "8746 recovered,10836 failed503.2/10 current cases pass; no broad-search retry sent after503.",
+          "decision": "wait_for_stable_service_recovery",
+          "evidence": [
+            "examples/gutendex.jsonl",
+            "runs/technical-recovery-20261106g/worker-events.jsonl"
           ]
         }
       ]
@@ -630,10 +641,10 @@
       "id": "nsdc-curricula",
       "name": "NSDC occupational standards and model curricula",
       "group": "G03",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Captured navigation pages exposed no curriculum records or supported schema.",
-      "current_reason": "Indexed CONTENTAVAILABILITY route now renders navigation only.",
-      "next_action": "Find the new public curriculum search through current navigation; do not call private app APIs.",
+      "current_reason": "",
+      "next_action": "Maintain scoped industry-report search. Continue looking for the current original curriculum/standards route; test report paging and dates separately. No activation.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -642,6 +653,20 @@
           "attempt": "Tried current indexed curriculum path on canonical www host; no curriculum records.",
           "result": "Indexed CONTENTAVAILABILITY route now renders navigation only.",
           "decision": "Find the new public curriculum search through current navigation; do not call private app APIs."
+        },
+        {
+          "reviewed_at": "2026-11-06T10:05:33.333359+00:00",
+          "reason": "Old curriculum routes render the redesigned site shell. Current public sitemap exposes a separate sector-skills report catalog under the same operator.",
+          "attempt": "Follow current public sitemap to sector-wise reports; allow only policy-checked normal site/backend hosts. Fix duplicate responsive controls and search button changing from text to icon when filled; use visible public controls only.",
+          "result": "Ten title-word searches and an empty-result control pass, returning native dated report-file URLs. No PDFs downloaded. Original curriculum catalog remains unverified; this is a report-search subset, not full NSDC recovery of every content type.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106g/nsdc-browser.jsonl",
+            "runs/technical-recovery-20261106g/nsdc-query-attempts.jsonl",
+            "runs/technical-recovery-20261106g/nsdc-query-proof.json",
+            "runs/technical-recovery-20261106g/worker-events.jsonl",
+            "examples/nsdc-curricula.jsonl"
+          ]
         }
       ]
     },
@@ -933,10 +958,10 @@
       "id": "scielo",
       "name": "SciELO network",
       "group": "G05",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Published article-search request returned 403.",
-      "current_reason": "The documented SciELO Spain OAI alternative is currently inaccessible because its policy endpoint returns503.",
-      "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
+      "current_reason": "",
+      "next_action": "Maintain exact-PID ArticleMeta scope; test paging/empty responses and documented date/collection filtering separately. Explore a documented title-search method without retrying denied network search routes; no activation.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -947,6 +972,19 @@
           "decision": "wait-for-policy-recovery",
           "evidence": [
             "runs/technical-recovery-20261106f/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T09:57:02.577918+00:00",
+          "reason": "Network keyword search403 and regional OAI policy503 remain saved; separately documented ArticleMeta REST API is anonymously available.",
+          "attempt": "Follow operator developer-documentation index and public REST client; check API policy404, follow observed canonical same-host302, list10 bounded IDs, then query10 distinct native article PIDs with body=false at3-second-or-slower pacing.",
+          "result": "Ten live metadata lookups return the requested Brazil collection/PID and relevant article titles. Article titles are extracted from v12, separately from journal title; language variants and native content links retained without fetching content.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "runs/technical-recovery-20261106g/scielo-operator-docs.json",
+            "runs/technical-recovery-20261106g/scielo-seed.json",
+            "examples/scielo.jsonl"
           ]
         }
       ]
@@ -1064,8 +1102,8 @@
     }
   ],
   "progress": {
-    "working": 19,
-    "blocked_or_failed": 25,
+    "working": 21,
+    "blocked_or_failed": 23,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1078,13 +1116,13 @@
     "run_id": "technical-recovery-20261106g",
     "phase": "supported alternatives and paced recovery checks",
     "collector_active": false,
-    "heartbeat_at": "2026-11-06T09:44:50.360726+00:00",
-    "checkpointed_at": "2026-11-06T09:44:50.360726+00:00"
+    "heartbeat_at": "2026-11-06T10:07:03.990962+00:00",
+    "checkpointed_at": "2026-11-06T10:07:03.990962+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 19,
-  "updated_at": "2026-11-06T09:44:50.360726+00:00",
+  "working": 21,
+  "updated_at": "2026-11-06T10:07:03.990962+00:00",
   "latest_run": {
     "run_ids": [
       "technical-recovery-20261106g"
@@ -1092,7 +1130,9 @@
     "new_working": [
       "gallica",
       "ncert",
-      "india-nqr"
+      "india-nqr",
+      "nsdc-curricula",
+      "scielo"
     ],
     "remaining_goal_open": true
   }

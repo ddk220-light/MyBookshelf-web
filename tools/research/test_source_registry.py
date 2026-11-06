@@ -1,4 +1,7 @@
 import unittest
+import json
+from unittest.mock import patch
+import source_registry
 
 from source_registry import current_verified, area_verified, evaluate, fingerprint, request_url, normalize
 
@@ -14,6 +17,13 @@ class EvidenceTests(unittest.TestCase):
 
     def result(self, data=None, obs=None):
         return evaluate(self.source, self.case, obs or self.obs, self.good if data is None else data)
+
+    def test_unknown_case_stops_before_adapter_dispatch(self):
+        fixture={**self.source,'query':{**self.source['query'],'adapter':'gutendex-native'}}
+        with patch.object(source_registry.Path,'read_text',return_value=json.dumps(fixture)), patch('gutendex_native.probe') as adapter:
+            with self.assertRaisesRegex(ValueError,'Unknown case IDs'):
+                source_registry.probe('fixture',['misspelled-case'])
+            adapter.assert_not_called()
 
     def test_http_success_does_not_prove_expected_record(self):
         for data in ({'query': {'search': []}}, {'query': {'search': [{'pageid': 43, 'title': 'Unrelated'}]}},

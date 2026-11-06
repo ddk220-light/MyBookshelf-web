@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('epathshala-selector', 'bnf-gallica-metadata', 'gutendex-native', 'seattle-catalog', 'dgma-circular-catalog', 'nqr-public-browser', 'gsa-frpp-catalog', 'rosap-oai', 'bhuvan-product-catalog', 'nyc-zoning-index', 'free-kids-wp-metadata', 'artic-export', 'nist-crossref', 'bharat-electrician-catalog', 'caltech-public-browser', 'nasa-images-public', 'lever-fulcrum', 'madurai-catalog', 'sugamya-public', 'thoth-metadata', 'openstax-catalog', 'sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
+    if adapter in ('nsdc-reports-ui', 'scielo-articlemeta', 'epathshala-selector', 'bnf-gallica-metadata', 'gutendex-native', 'seattle-catalog', 'dgma-circular-catalog', 'nqr-public-browser', 'gsa-frpp-catalog', 'rosap-oai', 'bhuvan-product-catalog', 'nyc-zoning-index', 'free-kids-wp-metadata', 'artic-export', 'nist-crossref', 'bharat-electrician-catalog', 'caltech-public-browser', 'nasa-images-public', 'lever-fulcrum', 'madurai-catalog', 'sugamya-public', 'thoth-metadata', 'openstax-catalog', 'sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -323,6 +323,10 @@ def validate(registry=REGISTRY):
 
 def probe(source_id, case_ids=None):
     source = json.loads((REGISTRY / 'sources' / f'{source_id}.json').read_text())
+    if case_ids:
+        unknown = set(case_ids) - {case['id'] for case in source['query']['cases']}
+        if unknown:
+            raise ValueError('Unknown case IDs; no query attempted: ' + ', '.join(sorted(unknown)))
     if source.get('research_selection', {}).get('included') is False:
         raise ValueError('Source excluded by owner; no query permitted: ' + source_id)
     if source['query']['adapter'] == 'free-kids-wp-metadata':
@@ -331,6 +335,12 @@ def probe(source_id, case_ids=None):
     if source['query']['adapter'] == 'epathshala-selector':
         from epathshala_catalog import probe as epath_probe
         return epath_probe(source, case_ids)
+    if source['query']['adapter'] == 'nsdc-reports-ui':
+        from nsdc_reports import probe as nsdc_probe
+        return nsdc_probe(source, case_ids)
+    if source['query']['adapter'] == 'scielo-articlemeta':
+        from scielo_articlemeta import probe as scielo_probe
+        return scielo_probe(source, case_ids)
     if source['query']['adapter'] == 'bnf-gallica-metadata':
         from bnf_gallica_metadata import probe as bnf_probe
         return bnf_probe(source, case_ids)

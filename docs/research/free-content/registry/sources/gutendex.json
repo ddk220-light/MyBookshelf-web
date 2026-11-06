@@ -182,9 +182,9 @@
     "runs/technical-recovery-20261106c/book-attempts.jsonl",
     "runs/technical-recovery-20261106f/followups.jsonl"
   ],
-  "last_reviewed_at": "2026-11-06T08:06:29.587926+00:00",
+  "last_reviewed_at": "2026-11-06T10:01:16.065267+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "After useful recovery evidence or substantial backoff, test one additional known native book ID to distinguish cached-record availability from general backend recovery; do not launch a blind full batch.",
+  "next_action": "Wait for a useful service-recovery signal and sensible backoff; resume native10836, then remaining saved cases. Keep broad title search marked unreliable; do not sample only previously cached successes.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -387,17 +387,25 @@
       "heading": "Incomplete or blocked follow-ups",
       "text": "- **NQR:** the actual public keyword form works, unlike the advanced GET route that returned 500. Nine new keyword queries returned relevant qualification IDs. A later initial-page request returned 403 and collection stopped. An earlier exploratory Electrician query returned 16 items, but its capture did not record the final search HTTP status, so it is not promoted into a verified tenth example. Qualification files, current approval status and paging remain unverified. Retry only after a useful availability/policy recovery signal; do not evade the denial.\n- **Gutendex:** the documented native-book lookup is a real alternative to the timed-out broad search. A same-host 301 revealed the canonical trailing slash. Book 84 returned immediately; book 8746 then timed out after 30 seconds, so the route remains intermittent. The old broad-search failures and two historical successes are preserved under the superseded contract. One successful lookup is not full recovery.\n- **Seattle GeoData:** its published OpenAPI specification and dataset collection were captured. The documented `title` filter returned unrelated results. The separately documented `q` keyword parameter passed ten current queries at the host's 60-second pacing. It can match descriptions as well as titles; the adapter retains title-relevant matches from the first three items and preserves the observed upstream title list. An overly strict parser initially rejected a correct result because neighboring results had different titles; that failed observation is retained. This is catalog metadata only; underlying feature-service access is separate.",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "d8e3f8fa176f4b724301538ac82ee95a4cdbae436462fa6f8e06388ba92b9645",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106G.md",
+      "line": 5,
+      "heading": "Technical recovery continuation G — 6 November 2026",
+      "text": "- **NQR:** a single retry of the previously failed Mine Electrician query succeeded after roughly 90 minutes of backoff. It used the same advertised public browser form and identity. All ten current keyword cases now pass; the earlier 403 and advanced-form 500 remain saved. Availability is intermittent and no qualification files were fetched.\n- **NCERT:** CIET's current ePathshala site links its actual textbook selector through a public iframe. Its published metadata contains 427 active selector rows and 421 unambiguous searchable records after repeated contexts, one unresolved subject selector and one conflicting title/native-code mapping are handled explicitly. Ten title/class searches, exact native-code and empty controls pass. Six commented metadata blocks remain inactive historical findings; no book bodies were downloaded. The footer license URL returned404, so metadata queryability does not establish reuse rights or full reading access.\n- **Gallica:** BnF documents a separate public SPARQL service whose bibliographic editions link to native Gallica digital ARKs. Ten exact literal-title queries pass through that service. The parser was corrected to accept its legacy typed-literal XSD-string representation; failed attempts remain saved. Direct Gallica SRU and general-catalog restrictions are unchanged. This is a linked-data subset, not whole-Gallica keyword or full-text search.\n- **SciELO:** the operator developer index and REST client document a separate anonymous ArticleMeta service. Ten native article-PID lookups now return matching Brazil-collection metadata with `body=false`. Original article title markup, language variants, journal identity, processing/publication dates and content URLs are kept separate. No article bodies were requested, and no linked content was fetched. This does not prove upstream keyword or whole-network search. The old documentation link returned404; network-search403 and regional OAI503 remain preserved.\n- **Chicago zoning:** the published schema endpoint still returned503 after a multi-hour backoff. Current SODA2.1 documentation alone does not establish working dataset access. No underlying zoning query was sent after the failure.\n- **OER Commons:** current operator help documents anonymous homepage search, but the primary site's policy still returns403. No homepage/search request or staging/private API workaround was sent.\n- **Gutendex:** native8746 recovered after nearly two hours of backoff, but the next saved native10836 query returned503. Two of ten current native cases pass; the connector remains blocked. No broad-search retry followed that503. Unknown CLI case IDs now fail before any network dispatch, preventing silent no-op attempts.\n- **NSDC:** current public sitemap navigation revealed its sector-skills report search. Ten title-word queries and an empty-result control pass. Duplicate responsive inputs and a Search button that changes into an icon required browser-selector corrections; all failed attempts remain saved. The same operator's report-file URLs identify results without downloading PDFs. The original occupational-standards/model-curriculum catalog remains unverified and is explicitly outside this recovered subset. No staging API, direct backend replay or account flow was used.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T08:06:29.587933+00:00",
-    "reason": "Exact native book84 lookup responds immediately, but next native lookup8746 also times out after30seconds; broad search already timed out after45seconds.",
-    "attempt": "Try documented native-book endpoint after broad-search failures; follow observed same-host301 to canonical trailing slash, then run distinct native-ID cases at policy pacing. Stop on timeout.",
-    "result": "One current ID query passed; second failed. Native-ID route is partially functioning but does not resolve intermittent provider availability. Earlier title-search examples retained in superseded contract/history.",
-    "decision": "wait_for_service_recovery",
+    "reviewed_at": "2026-11-06T10:01:16.065259+00:00",
+    "reason": "Two current native-ID lookups pass, but the next distinct saved record10836 returns503. Provider remains intermittently unavailable.",
+    "attempt": "Retry prior8746 timeout after nearly2hours; on success continue the next saved case at serial pacing. Stop immediately at its503.",
+    "result": "8746 recovered,10836 failed503.2/10 current cases pass; no broad-search retry sent after503.",
+    "decision": "wait_for_stable_service_recovery",
     "evidence": [
-      "runs/technical-recovery-20261106f/followups.jsonl",
-      "examples/gutendex.jsonl"
+      "examples/gutendex.jsonl",
+      "runs/technical-recovery-20261106g/worker-events.jsonl"
     ]
   },
   "recovery_history": [
@@ -433,6 +441,28 @@
       "evidence": [
         "runs/technical-recovery-20261106c/observations.jsonl",
         "runs/technical-recovery-20261106c/book-attempts.jsonl"
+      ]
+    },
+    {
+      "reviewed_at": "2026-11-06T08:06:29.587933+00:00",
+      "reason": "Exact native book84 lookup responds immediately, but next native lookup8746 also times out after30seconds; broad search already timed out after45seconds.",
+      "attempt": "Try documented native-book endpoint after broad-search failures; follow observed same-host301 to canonical trailing slash, then run distinct native-ID cases at policy pacing. Stop on timeout.",
+      "result": "One current ID query passed; second failed. Native-ID route is partially functioning but does not resolve intermittent provider availability. Earlier title-search examples retained in superseded contract/history.",
+      "decision": "wait_for_service_recovery",
+      "evidence": [
+        "runs/technical-recovery-20261106f/followups.jsonl",
+        "examples/gutendex.jsonl"
+      ]
+    },
+    {
+      "reviewed_at": "2026-11-06T09:59:33.999828+00:00",
+      "reason": "Previously failed native8746 lookup now responds after nearly2hours of backoff.",
+      "attempt": "Retry same documented native-ID request once after backoff, same identity and policy gates.",
+      "result": "Native8746 returns relevant metadata HTTP200;2/10 current cases now pass. Remaining distinct native cases must still be tested before recovery.",
+      "decision": "continue_saved_cases_after_service_recovery",
+      "evidence": [
+        "examples/gutendex.jsonl",
+        "runs/technical-recovery-20261106g/worker-events.jsonl"
       ]
     }
   ],

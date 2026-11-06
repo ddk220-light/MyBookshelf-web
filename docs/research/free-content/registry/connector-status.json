@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T09:44:54.044289+00:00",
+  "generated_at": "2026-11-06T10:07:07.660693+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by current passing examples. Normally ten examples; an explicitly reviewed one-work publisher subset can use two real searches plus a complete listing and empty control, without padding. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
@@ -16,13 +16,13 @@
   ],
   "totals": {
     "total": 133,
-    "working": 85,
-    "blocked_or_failed": 48,
+    "working": 87,
+    "blocked_or_failed": 46,
     "still_checking": 0,
-    "not_working_verified": 48,
+    "not_working_verified": 46,
     "assessed_or_deferred": 133,
     "remaining_to_assess": 0,
-    "passing_query_examples": 878
+    "passing_query_examples": 899
   },
   "groups": [
     {
@@ -45,8 +45,8 @@
       "id": "G03",
       "name": "Industry and job knowledge",
       "total": 20,
-      "working": 14,
-      "blocked_or_failed": 6,
+      "working": 15,
+      "blocked_or_failed": 5,
       "still_checking": 0
     },
     {
@@ -61,8 +61,8 @@
       "id": "G05",
       "name": "Research papers and scholarly sources",
       "total": 22,
-      "working": 11,
-      "blocked_or_failed": 11,
+      "working": 12,
+      "blocked_or_failed": 10,
       "still_checking": 0
     },
     {
@@ -115,14 +115,14 @@
       "connector_id": "gutendex",
       "connector": "Gutendex",
       "status": "blocked_or_failed",
-      "passing_examples": 1,
+      "passing_examples": 2,
       "tested_search_scope": "Exact native Gutenberg ebook-ID metadata lookup; one current success but subsequent native-ID timeout leaves recovery open; title search remains unreliable",
       "known_limitations": "Search is intermittent: two terms returned relevant books, but other queries repeatedly exceeded20- and45-second limits. | No public-demo key. Docs recommend self-hosting for long-term use. Public query timed out. Consider its implementation instead of writing an importer; do not depend on its demo in production. **Low prototype, medium self-hosted / P1 alternative**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open. | Native-ID84 succeeds while8746 times out; do not infer a missing book from this failure. Broad search remains unreliable; possible cached-record versus backend behavior is unproven.",
-      "next_step_or_blocker": "After useful recovery evidence or substantial backoff, test one additional known native book ID to distinguish cached-record availability from general backend recovery; do not launch a blind full batch.",
-      "block_reason": "Exact native book84 lookup responds immediately, but next native lookup8746 also times out after30seconds; broad search already timed out after45seconds.",
-      "last_attempt_and_result": "Try documented native-book endpoint after broad-search failures; follow observed same-host301 to canonical trailing slash, then run distinct native-ID cases at policy pacing. Stop on timeout. / One current ID query passed; second failed. Native-ID route is partially functioning but does not resolve intermittent provider availability. Earlier title-search examples retained in superseded contract/history.",
-      "recovery_decision": "wait_for_service_recovery",
-      "last_reviewed_at": "2026-11-06T08:06:29.587926+00:00",
+      "next_step_or_blocker": "Wait for a useful service-recovery signal and sensible backoff; resume native10836, then remaining saved cases. Keep broad title search marked unreliable; do not sample only previously cached successes.",
+      "block_reason": "Two current native-ID lookups pass, but the next distinct saved record10836 returns503. Provider remains intermittently unavailable.",
+      "last_attempt_and_result": "Retry prior8746 timeout after nearly2hours; on success continue the next saved case at serial pacing. Stop immediately at its503. / 8746 recovered,10836 failed503.2/10 current cases pass; no broad-search retry sent after503.",
+      "recovery_decision": "wait_for_stable_service_recovery",
+      "last_reviewed_at": "2026-11-06T10:01:16.065267+00:00",
       "record": "sources/gutendex.json",
       "production_activation_changed": false
     },
@@ -1047,23 +1047,6 @@
     {
       "group_id": "G03",
       "group": "Industry and job knowledge",
-      "connector_id": "nsdc-curricula",
-      "connector": "NSDC occupational standards and model curricula",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Two saved HTTP200 navigation shells expose no curriculum records or supported query/export schema; a separate saved robots301 skip remains historical. No new requests. | One NSDC gateway candidate. Qualification packs, standards, trades and councils are not independent origins unless a separately maintained provider catalog is demonstrated.",
-      "next_step_or_blocker": "Find the new public curriculum search through current navigation; do not call private app APIs.",
-      "block_reason": "Indexed CONTENTAVAILABILITY route now renders navigation only.",
-      "last_attempt_and_result": "Tried current indexed curriculum path on canonical www host; no curriculum records. / Indexed CONTENTAVAILABILITY route now renders navigation only.",
-      "recovery_decision": "Find the new public curriculum search through current navigation; do not call private app APIs.",
-      "last_reviewed_at": "2026-11-06T05:55:50.991765+00:00",
-      "record": "sources/nsdc-curricula.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G03",
-      "group": "Industry and job knowledge",
       "connector_id": "usfs-research",
       "connector": "US Forest Service research publications",
       "status": "blocked_or_failed",
@@ -1246,6 +1229,23 @@
       "recovery_decision": "working_with_recorded_scope",
       "last_reviewed_at": "2026-11-06T06:28:40.511519+00:00",
       "record": "sources/nist-publications.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G03",
+      "group": "Industry and job knowledge",
+      "connector_id": "nsdc-curricula",
+      "connector": "NSDC public industry knowledge",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Live public title-word form over sector-wise industry-skills reports, first10 rows and native report-file URLs; original occupational standards/model curricula remain unverified, no PDF downloads",
+      "known_limitations": "Verified subset is sector-wise industry-skills reports, first10 results; original occupational standards/model curricula are still unverified. | Live title form matches title words; date filter, pagination and other report categories unverified. Empty-result control passed. | Native identity is exact published report-file URL. Displayed Updated on date is retained, without claiming publication year/edition. | No report/document bodies downloaded; public metadata access does not establish reuse rights or reading eligibility.",
+      "next_step_or_blocker": "Maintain scoped industry-report search. Continue looking for the current original curriculum/standards route; test report paging and dates separately. No activation.",
+      "block_reason": "",
+      "last_attempt_and_result": "Follow current public sitemap to sector-wise reports; allow only policy-checked normal site/backend hosts. Fix duplicate responsive controls and search button changing from text to icon when filled; use visible public controls only. / Ten title-word searches and an empty-result control pass, returning native dated report-file URLs. No PDFs downloaded. Original curriculum catalog remains unverified; this is a report-search subset, not full NSDC recovery of every content type.",
+      "recovery_decision": "working_with_recorded_scope",
+      "last_reviewed_at": "2026-11-06T10:05:33.333361+00:00",
+      "record": "sources/nsdc-curricula.json",
       "production_activation_changed": false
     },
     {
@@ -1829,23 +1829,6 @@
     {
       "group_id": "G05",
       "group": "Research papers and scholarly sources",
-      "connector_id": "scielo",
-      "connector": "SciELO network",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "The published article search returned HTTP403 from this environment after a successful robots check. | No current verified item-query examples. Catalog identity and documentation do not establish qualification. | Reading availability, jurisdiction, language, native version identity and machine-use limits remain open.",
-      "next_step_or_blocker": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
-      "block_reason": "The documented SciELO Spain OAI alternative is currently inaccessible because its policy endpoint returns503.",
-      "last_attempt_and_result": "Located official SciELO regional OAI harvesting documentation as an alternative to denied network keyword search. / Policy503 prevents querying this independent regional endpoint; previous search403 preserved.",
-      "recovery_decision": "wait-for-policy-recovery",
-      "last_reviewed_at": "2026-11-06T07:47:34.099536+00:00",
-      "record": "sources/scielo.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G05",
-      "group": "Research papers and scholarly sources",
       "connector_id": "semantic-scholar",
       "connector": "Semantic Scholar",
       "status": "blocked_or_failed",
@@ -2130,6 +2113,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T21:02:50.103438+00:00",
       "record": "sources/rit-scholarworks.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G05",
+      "group": "Research papers and scholarly sources",
+      "connector_id": "scielo",
+      "connector": "SciELO network",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Live exact SciELO article-PID lookup within Brazil collection scl through documented ArticleMeta REST, body=false; no upstream keyword or whole-network search guarantee",
+      "known_limitations": "Exact native article-PID plus Brazil collection lookup only; no live upstream keyword, whole-network, current-publication-date coverage or reader guarantee. | Processing date is not publication date; API version label html is not an edition number. Original title markup retained, since stripping legacy Symbol-font formatting cannot establish Greek-letter equivalence. | body=false explicitly requested; response includes bibliographic citations/abstracts and content URLs only. No article/reader/media downloaded. | Separate metadata reuse and article rights not established by public API access. Existing search403 and regional OAI503 remain historical failures.",
+      "next_step_or_blocker": "Maintain exact-PID ArticleMeta scope; test paging/empty responses and documented date/collection filtering separately. Explore a documented title-search method without retrying denied network search routes; no activation.",
+      "block_reason": "",
+      "last_attempt_and_result": "Follow operator developer-documentation index and public REST client; check API policy404, follow observed canonical same-host302, list10 bounded IDs, then query10 distinct native article PIDs with body=false at3-second-or-slower pacing. / Ten live metadata lookups return the requested Brazil collection/PID and relevant article titles. Article titles are extracted from v12, separately from journal title; language variants and native content links retained without fetching content.",
+      "recovery_decision": "working_with_recorded_scope",
+      "last_reviewed_at": "2026-11-06T09:57:02.577928+00:00",
+      "record": "sources/scielo.json",
       "production_activation_changed": false
     },
     {
