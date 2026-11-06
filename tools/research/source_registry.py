@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('gutendex-native', 'seattle-catalog', 'dgma-circular-catalog', 'nqr-public-browser', 'gsa-frpp-catalog', 'rosap-oai', 'bhuvan-product-catalog', 'nyc-zoning-index', 'free-kids-wp-metadata', 'artic-export', 'nist-crossref', 'bharat-electrician-catalog', 'caltech-public-browser', 'nasa-images-public', 'lever-fulcrum', 'madurai-catalog', 'sugamya-public', 'thoth-metadata', 'openstax-catalog', 'sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
+    if adapter in ('epathshala-selector', 'bnf-gallica-metadata', 'gutendex-native', 'seattle-catalog', 'dgma-circular-catalog', 'nqr-public-browser', 'gsa-frpp-catalog', 'rosap-oai', 'bhuvan-product-catalog', 'nyc-zoning-index', 'free-kids-wp-metadata', 'artic-export', 'nist-crossref', 'bharat-electrician-catalog', 'caltech-public-browser', 'nasa-images-public', 'lever-fulcrum', 'madurai-catalog', 'sugamya-public', 'thoth-metadata', 'openstax-catalog', 'sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -328,6 +328,12 @@ def probe(source_id, case_ids=None):
     if source['query']['adapter'] == 'free-kids-wp-metadata':
         from free_kids_metadata import probe as free_kids_probe
         return free_kids_probe(source, case_ids)
+    if source['query']['adapter'] == 'epathshala-selector':
+        from epathshala_catalog import probe as epath_probe
+        return epath_probe(source, case_ids)
+    if source['query']['adapter'] == 'bnf-gallica-metadata':
+        from bnf_gallica_metadata import probe as bnf_probe
+        return bnf_probe(source, case_ids)
     if source['query']['adapter'] == 'gutendex-native':
         from gutendex_native import probe as gutendex_native_probe
         return gutendex_native_probe(source, case_ids)

@@ -50,7 +50,9 @@
     "runs/chicago-zoning-contract-20261105by/observations.jsonl",
     "runs/chicago-query-docs-20261105bz/observations.jsonl",
     "runs/technical-recovery-20261106c/observations.jsonl",
-    "runs/technical-recovery-20261106c/book-attempts.jsonl"
+    "runs/technical-recovery-20261106c/book-attempts.jsonl",
+    "runs/technical-recovery-20261106g/followups.jsonl",
+    "runs/technical-recovery-20261106g/observations.jsonl"
   ],
   "analysis_refs": [
     {
@@ -67,8 +69,8 @@
     "Foundry documentation page returned only general navigation text; no target API behavior established.",
     "Directory current label and modified date do not independently establish legal zoning effective dates."
   ],
-  "last_reviewed_at": "2026-11-06T06:46:26.574281+00:00",
-  "next_action": "Wait for service recovery before any documented metadata query; no host-switch bypass.",
+  "last_reviewed_at": "2026-11-06T09:33:59.742456+00:00",
+  "next_action": "Wait for provider service recovery before a bounded SODA2.1 query; documentation confirms the version exists but does not prove this dataset route works.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -580,21 +582,32 @@
       "superseded_at": "2026-11-06T06:46:26.574277+00:00",
       "recovery": null,
       "next_action": "After useful service recovery, confirm current primary terms and supported bounded anonymous or already-authorized query contract. Exclude personal fields and retain zoning native/version identities."
+    },
+    {
+      "status": "blocked_or_failed",
+      "reason": "Robots readable, but canonical public dataset landing still returns503.",
+      "attempt": "One retry of the published dataset route after overnight backoff; stopped the host after503.",
+      "result": "Still blocked; no current passing query.",
+      "decision": "wait_for_documented_recovery_or_alternative",
+      "next_action": "Wait for service recovery before any documented metadata query; no host-switch bypass.",
+      "owner_action_required": false,
+      "evidence_reviewed_at": "2026-11-06T06:46:26.574280+00:00",
+      "fresh_query_verification": false,
+      "evidence": [
+        "runs/technical-recovery-20261106c/observations.jsonl",
+        "runs/technical-recovery-20261106c/book-attempts.jsonl"
+      ]
     }
   ],
   "recovery": {
-    "status": "blocked_or_failed",
-    "reason": "Robots readable, but canonical public dataset landing still returns503.",
-    "attempt": "One retry of the published dataset route after overnight backoff; stopped the host after503.",
-    "result": "Still blocked; no current passing query.",
-    "decision": "wait_for_documented_recovery_or_alternative",
-    "next_action": "Wait for service recovery before any documented metadata query; no host-switch bypass.",
-    "owner_action_required": false,
-    "evidence_reviewed_at": "2026-11-06T06:46:26.574280+00:00",
-    "fresh_query_verification": false,
+    "reviewed_at": "2026-11-06T09:33:59.742465+00:00",
+    "reason": "Current public schema API still returns503, in addition to previous landing-page503.",
+    "attempt": "Review current official SODA version documentation; try bounded previously published columns metadata after3-hour backoff.",
+    "result": "Policy200 allows request; columns endpoint503. No zoning data query or host-switch fallback sent.",
+    "decision": "wait_for_service_recovery",
     "evidence": [
-      "runs/technical-recovery-20261106c/observations.jsonl",
-      "runs/technical-recovery-20261106c/book-attempts.jsonl"
+      "runs/technical-recovery-20261106g/followups.jsonl",
+      "runs/technical-recovery-20261106g/observations.jsonl"
     ]
   }
 }

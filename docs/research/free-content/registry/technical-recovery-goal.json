@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 28,
+  "remaining": 25,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -91,10 +91,10 @@
       "id": "gallica",
       "name": "Gallica / Bibliothèque nationale de France",
       "group": "G01",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "The live SRU request returned 403.",
-      "current_reason": "Gallica SRU previously403. The documented general-catalog SRU alternative has an explicit robots prohibition for OAI-SearchBot.",
-      "next_action": "Keep deferred for this collector. A different public metadata feed or explicit provider-permitted access is needed; do not use custom user-agent identity to evade the OpenAI crawler restriction.",
+      "current_reason": "",
+      "next_action": "Maintain permitted BnF linked-data exact-title search; test negative/paging modes separately and verify any reader/content rights independently. Never retry restricted SRU routes without changed permission.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -105,6 +105,18 @@
           "decision": "wait-for-permitted-access",
           "evidence": [
             "runs/technical-recovery-20261106f/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T09:43:13.706511+00:00",
+          "reason": "Direct Gallica SRU and general-catalog routes remain restricted, but BnF documents a separate public linked-data endpoint with explicit Gallica reproduction relations.",
+          "attempt": "Review primary SPARQL documentation and allowed endpoint policy; bounded metadata seed followed by ten exact literal-title queries. Correct parser to accept the provider legacy typed-literal xsd:string output.",
+          "result": "Ten exact-title queries return native Gallica ARKs with BnF edition URIs. Initial legacy typed-string parsing failures retained. No request to restricted SRU/reader/content routes.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106g/observations.jsonl",
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "examples/gallica.jsonl"
           ]
         }
       ]
@@ -362,10 +374,10 @@
       "id": "ncert",
       "name": "NCERT",
       "group": "G02",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Catalog returned 503 in this environment.",
-      "current_reason": "Official textbook catalog robots still returns503.",
-      "next_action": "Wait for host/policy recovery; separately review officially linked ePathshala metadata route.",
+      "current_reason": "",
+      "next_action": "Maintain scoped public selector metadata search; separately resolve the unknown subject reference and conflicting title/code before admitting those records. Verify rights/reader/version semantics independently; no activation.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -374,6 +386,20 @@
           "attempt": "Retried canonical textbook.php after overnight backoff; stopped before target.",
           "result": "Official textbook catalog robots still returns503.",
           "decision": "Wait for host/policy recovery; separately review officially linked ePathshala metadata route."
+        },
+        {
+          "reviewed_at": "2026-11-06T09:41:14.738876+00:00",
+          "reason": "Old NCERT main-site policy503 prevented access. Current official ePathshala site exposes its actual textbook selector in an advertised iframe.",
+          "attempt": "Follow CIET official description → ePathshala Students → eTextbooks → embedded selector; parse literal metadata arrays without executing arbitrary code or downloading books.",
+          "result": "421 unambiguous selectors; ten distinct title/class queries, native-code and empty controls pass.427 active selector rows include repeated contexts; one unknown subject reference and one conflicting title/native-code mapping are preserved but excluded. Six commented metadata blocks retained as historical/inactive.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106g/observations.jsonl",
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "runs/technical-recovery-20261106g/epathshala-selector.html",
+            "runs/technical-recovery-20261106g/epathshala-proof.json",
+            "examples/ncert.jsonl"
+          ]
         }
       ]
     },
@@ -383,8 +409,8 @@
       "group": "G02",
       "status": "blocked_or_failed",
       "original_reason": "Historical page returned 403; integration terms remain unresolved.",
-      "current_reason": "No current supported production API contract verified; published operator code is a2010 staging API sample.",
-      "next_action": "Find current operator-published production search/export documentation. Do not promote the2010staging sample to fresh verification; no outreach/account creation under this task.",
+      "current_reason": "Operator documents anonymous homepage search, but primary-site policy still returns403.",
+      "next_action": "Retry only on useful policy/access recovery, then use advertised homepage keyword form. No hidden/staging API workaround.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -395,6 +421,17 @@
           "decision": "wait-for-current-production-contract",
           "evidence": [
             "runs/technical-recovery-20261106f/oer-api-review.json"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T09:33:59.743127+00:00",
+          "reason": "Operator documents anonymous homepage search, but primary-site policy still returns403.",
+          "attempt": "Read current help center Search for content guide; check policy for the documented homepage.",
+          "result": "Current public browser search method confirmed; primary site request withheld after policy403. Old2010 staging API remains excluded.",
+          "decision": "wait_for_policy_recovery",
+          "evidence": [
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "runs/technical-recovery-20261106g/observations.jsonl"
           ]
         }
       ]
@@ -518,10 +555,10 @@
       "id": "india-nqr",
       "name": "National Qualification Register",
       "group": "G03",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Original policy returned 403; officially announced successor returned HTML for robots.",
-      "current_reason": "Public keyword form returns relevant items, but sustained serial verification was interrupted by HTTP403 on the initial page; advanced GET also returns500.",
-      "next_action": "Wait for a useful availability/policy recovery signal before one paced recheck of the failed Mine Electrician query; do not blindly repeat403 or switch agents/routes to evade controls.",
+      "current_reason": "",
+      "next_action": "Maintain public keyword-form metadata search with slower bounded batches; back off and stop on access denials. Pagination, qualification approval/version and file access remain unverified.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -548,6 +585,18 @@
             "runs/technical-recovery-20261106f/nqr-browser-policy.jsonl",
             "examples/india-nqr.browser.jsonl",
             "examples/india-nqr.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T09:27:21.406330+00:00",
+          "reason": "Previous public-form denial occurred after nine successful queries; bounded retry after90-minute backoff now succeeds through the same public form.",
+          "attempt": "Recheck usable policy and repeat only failed Mine Electrician keyword case, same browser identity and advertised form; no alternate access route.",
+          "result": "HTTP200 and native qualification13982 returned; all ten current keyword cases now pass. Prior403 and advanced-form500 retained.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "examples/india-nqr.jsonl",
+            "examples/india-nqr.browser.jsonl",
+            "runs/technical-recovery-20261106g/run.json"
           ]
         }
       ]
@@ -645,8 +694,8 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Published redirect ended at a 503 page.",
-      "current_reason": "Robots readable, but canonical public dataset landing still returns503.",
-      "next_action": "Wait for service recovery before any documented metadata query; no host-switch bypass.",
+      "current_reason": "Current public schema API still returns503, in addition to previous landing-page503.",
+      "next_action": "Wait for provider service recovery before a bounded SODA2.1 query; documentation confirms the version exists but does not prove this dataset route works.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -658,6 +707,17 @@
           "evidence": [
             "runs/technical-recovery-20261106c/observations.jsonl",
             "runs/technical-recovery-20261106c/book-attempts.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T09:33:59.742465+00:00",
+          "reason": "Current public schema API still returns503, in addition to previous landing-page503.",
+          "attempt": "Review current official SODA version documentation; try bounded previously published columns metadata after3-hour backoff.",
+          "result": "Policy200 allows request; columns endpoint503. No zoning data query or host-switch fallback sent.",
+          "decision": "wait_for_service_recovery",
+          "evidence": [
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "runs/technical-recovery-20261106g/observations.jsonl"
           ]
         }
       ]
@@ -1004,8 +1064,8 @@
     }
   ],
   "progress": {
-    "working": 16,
-    "blocked_or_failed": 28,
+    "working": 19,
+    "blocked_or_failed": 25,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1013,29 +1073,26 @@
     "revisited_since_goal_started": 42
   },
   "current_run": {
-    "state": "checkpointed",
-    "started_at": "2026-11-06T07:19:13.914780+00:00",
-    "phase": "published-metadata-alternatives",
+    "state": "checkpointed-continuing",
+    "started_at": "2026-11-06T09:26:13.506199+00:00",
+    "run_id": "technical-recovery-20261106g",
+    "phase": "supported alternatives and paced recovery checks",
     "collector_active": false,
-    "checkpointed_at": "2026-11-06T08:19:04.339083+00:00"
+    "heartbeat_at": "2026-11-06T09:44:50.360726+00:00",
+    "checkpointed_at": "2026-11-06T09:44:50.360726+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 16,
-  "updated_at": "2026-11-06T08:19:04.339083+00:00",
+  "working": 19,
+  "updated_at": "2026-11-06T09:44:50.360726+00:00",
   "latest_run": {
     "run_ids": [
-      "technical-recovery-20261106d",
-      "technical-recovery-20261106e",
-      "technical-recovery-20261106f"
+      "technical-recovery-20261106g"
     ],
     "new_working": [
-      "dg-shipping",
-      "rosa-p",
-      "bhuvan",
-      "gsa-frpp",
-      "nyc-planning-data",
-      "seattle-geodata"
+      "gallica",
+      "ncert",
+      "india-nqr"
     ],
     "remaining_goal_open": true
   }

@@ -12,7 +12,7 @@
     "I11",
     "I18"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -29,7 +29,7 @@
   },
   "aliases": [],
   "capabilities": [
-    "Public qualification catalog displays sector, qualification title, hours and NSQF level. Listing evidence includes automotive, construction, manufacturing, energy and IT qualifications."
+    "Anonymous public keyword form; ten native qualification metadata queries verified after paced recovery"
   ],
   "query": {
     "adapter": "nqr-public-browser",
@@ -225,9 +225,8 @@
   ],
   "licensing": "No blanket metadata/content reuse license established; inspect source and item terms separately.",
   "limitations": [
-    "No current item query examples; listing/documentation capture is not a qualified searchable origin.",
-    "Per-item rights, reading/access, versions and machine-query limits require separate checks.",
-    "Nine current public keyword searches have native qualification IDs, but subsequent initial-page403 interrupts availability; no bypass. Sector/title/level labels are not proof of current qualification approval or revision."
+    "Public keyword-form search has ten passing native qualification examples; a previous batch hit403 and advanced GET returned500, so availability is intermittent.",
+    "Only first20 rendered qualification metadata links; no file downloads, pagination, approval-state, revision identity or enrollment verification."
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
@@ -239,10 +238,11 @@
     "runs/technical-recovery-20261106f/nqr-browser.jsonl",
     "runs/technical-recovery-20261106f/nqr-browser-policy.jsonl",
     "examples/india-nqr.browser.jsonl",
-    "examples/india-nqr.jsonl"
+    "examples/india-nqr.jsonl",
+    "runs/technical-recovery-20261106g/run.json"
   ],
-  "last_reviewed_at": "2026-11-06T07:57:12.661194+00:00",
-  "next_action": "Wait for a useful availability/policy recovery signal before one paced recheck of the failed Mine Electrician query; do not blindly repeat403 or switch agents/routes to evade controls.",
+  "last_reviewed_at": "2026-11-06T09:27:21.406322+00:00",
+  "next_action": "Maintain public keyword-form metadata search with slower bounded batches; back off and stop on access denials. Pagination, qualification approval/version and file access remain unverified.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -323,8 +323,8 @@
       "summary": "First20 rendered qualification metadata links from advertised public keyword form, native qualification IDs and sector/title/hour/level labels. No qualification files, revision semantics or course enrollment tested.",
       "facts": {
         "adapter": "nqr-public-browser",
-        "current_passing_examples": 9,
-        "failed_current_examples": 1,
+        "current_passing_examples": 10,
+        "failed_current_examples": 0,
         "exact_request": {
           "method": "POST",
           "url": "https://www.nqr.gov.in/search",
@@ -343,10 +343,10 @@
         "examples/india-nqr.browser.jsonl",
         "examples/india-nqr.jsonl"
       ],
-      "reviewed_at": "2026-11-06T07:57:12.661209+00:00",
+      "reviewed_at": "2026-11-06T09:27:21.406337+00:00",
       "fresh_query_verification": true,
       "open_questions": [
-        "Resolve current403 availability; negative/paging/version tests unverified."
+        "Paging, negative queries and qualification version/current-approval semantics remain unverified; past403 may recur."
       ]
     },
     "rights_and_cost": {
@@ -446,18 +446,22 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "The robots policy URL returns access denied (HTTP403).",
+      "summary": "Working public keyword-form metadata; prior availability failure retained",
       "facts": {
-        "decision": "deferred",
-        "blocker": "The robots policy URL returns access denied (HTTP403).",
-        "next_action": "Provider restores permitted access or publishes a separately documented public export; do not change hosts to evade the denial.",
-        "activation_approved": false
+        "decision": "working_with_recorded_scope",
+        "next_action": "Maintain public keyword-form metadata search with slower bounded batches; back off and stop on access denials. Pagination, qualification approval/version and file access remain unverified.",
+        "blocker": null,
+        "intermittent_availability_history": true
       },
       "evidence": [
-        "runs/industry-native-catalogs-20261105dv/observations.jsonl"
+        "examples/india-nqr.jsonl",
+        "examples/india-nqr.browser.jsonl",
+        "runs/technical-recovery-20261106g/run.json"
       ],
+      "reviewed_at": "2026-11-06T09:43:49.413227+00:00",
+      "fresh_query_verification": true,
       "open_questions": [
-        "Search contract remains unverified; policy/access recovery needed before queries."
+        "Qualification approval/version, full reading and long-run availability not established."
       ]
     }
   },
@@ -472,18 +476,15 @@
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:57:12.661202+00:00",
-    "reason": "Public keyword form returns relevant items, but sustained serial verification was interrupted by HTTP403 on the initial page; advanced GET also returns500.",
-    "attempt": "Inspect actual public form and submit ten keyword searches through an anonymous browser at policy pacing, retaining native qualification links; stop immediately on403.",
-    "result": "Nine of ten new keyword queries passed, plus an earlier exploratory Electrician search returned16 items. Final initial-page request returned403; no access-control workaround or immediate retry.",
-    "decision": "wait-for-service-or-policy-recovery",
+    "reviewed_at": "2026-11-06T09:27:21.406330+00:00",
+    "reason": "Previous public-form denial occurred after nine successful queries; bounded retry after90-minute backoff now succeeds through the same public form.",
+    "attempt": "Recheck usable policy and repeat only failed Mine Electrician keyword case, same browser identity and advertised form; no alternate access route.",
+    "result": "HTTP200 and native qualification13982 returned; all ten current keyword cases now pass. Prior403 and advanced-form500 retained.",
+    "decision": "working_with_recorded_scope",
     "evidence": [
-      "runs/technical-recovery-20261106e/followups.jsonl",
-      "runs/technical-recovery-20261106f/followups.jsonl",
-      "runs/technical-recovery-20261106f/nqr-browser.jsonl",
-      "runs/technical-recovery-20261106f/nqr-browser-policy.jsonl",
+      "examples/india-nqr.jsonl",
       "examples/india-nqr.browser.jsonl",
-      "examples/india-nqr.jsonl"
+      "runs/technical-recovery-20261106g/run.json"
     ]
   },
   "historical_query_contracts": [
@@ -509,6 +510,21 @@
       "evidence": [
         "runs/technical-recovery-20261106e/observations.jsonl",
         "runs/technical-recovery-20261106e/followups.jsonl"
+      ]
+    },
+    {
+      "reviewed_at": "2026-11-06T07:57:12.661202+00:00",
+      "reason": "Public keyword form returns relevant items, but sustained serial verification was interrupted by HTTP403 on the initial page; advanced GET also returns500.",
+      "attempt": "Inspect actual public form and submit ten keyword searches through an anonymous browser at policy pacing, retaining native qualification links; stop immediately on403.",
+      "result": "Nine of ten new keyword queries passed, plus an earlier exploratory Electrician search returned16 items. Final initial-page request returned403; no access-control workaround or immediate retry.",
+      "decision": "wait-for-service-or-policy-recovery",
+      "evidence": [
+        "runs/technical-recovery-20261106e/followups.jsonl",
+        "runs/technical-recovery-20261106f/followups.jsonl",
+        "runs/technical-recovery-20261106f/nqr-browser.jsonl",
+        "runs/technical-recovery-20261106f/nqr-browser-policy.jsonl",
+        "examples/india-nqr.browser.jsonl",
+        "examples/india-nqr.jsonl"
       ]
     }
   ],
@@ -735,6 +751,247 @@
           ]
         }
       }
+    },
+    {
+      "superseded_at": "2026-11-06T09:43:49.413217+00:00",
+      "reason": "Final keyword recovery after backoff",
+      "dossier": {
+        "identity_and_duplicates": {
+          "status": "partial",
+          "summary": "Primary document identifies this catalog/operator; related formats, languages and services are not extra origins.",
+          "facts": {
+            "operator": {
+              "name": "NCVET (site branding; legal operator confirmation pending)",
+              "jurisdiction": "India",
+              "evidence": [
+                {
+                  "path": "runs/source-evidence-20261105/observations.jsonl",
+                  "job_id": "0276a4324afe977e17c0",
+                  "observed_at": "2026-11-05T02:26:38.082603+00:00"
+                }
+              ]
+            },
+            "catalog": "National Qualification Register",
+            "deduplication": "One catalog record; publisher/format overlap not yet measured"
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "0276a4324afe977e17c0",
+              "observed_at": "2026-11-05T02:26:38.082603+00:00"
+            }
+          ],
+          "open_questions": [
+            "Complete canonical item/format/version and cross-catalog overlap mapping."
+          ]
+        },
+        "coverage_and_languages": {
+          "status": "partial",
+          "summary": "Public qualification catalog displays sector, qualification title, hours and NSQF level. Listing evidence includes automotive, construction, manufacturing, energy and IT qualifications.",
+          "facts": {
+            "area_candidates": [
+              "C13",
+              "I04",
+              "I06",
+              "I07",
+              "I11",
+              "I18"
+            ],
+            "operator_country": "India",
+            "observed_catalog_facts": {
+              "visible_samples": [
+                "Web Technologies — 510 hours — Level 4.5",
+                "Water Technology — 510 hours — Level 4.5",
+                "Welding — 510 hours — Level 4.5",
+                "Cabinet Maker (WorldSkills) — 510 hours — Level 4.5"
+              ],
+              "metadata_languages_observed": [
+                "English",
+                "Hindi"
+              ],
+              "scope_limit": "Language of title is not proof of training material language or full-course availability"
+            },
+            "qualification": "Area associations remain candidate coverage, not qualified supply"
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "0276a4324afe977e17c0",
+              "observed_at": "2026-11-05T02:26:38.082603+00:00"
+            }
+          ],
+          "open_questions": [
+            "Verify representative item languages and actual USA/India access/applicability; no remote probe implies worldwide access."
+          ]
+        },
+        "query_contract": {
+          "status": "partial",
+          "summary": "First20 rendered qualification metadata links from advertised public keyword form, native qualification IDs and sector/title/hour/level labels. No qualification files, revision semantics or course enrollment tested.",
+          "facts": {
+            "adapter": "nqr-public-browser",
+            "current_passing_examples": 9,
+            "failed_current_examples": 1,
+            "exact_request": {
+              "method": "POST",
+              "url": "https://www.nqr.gov.in/search",
+              "execution": "public-browser",
+              "form": {
+                "querySearch": "Industrial Electrician",
+                "_token": "ephemeral form token, omitted"
+              }
+            }
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106e/followups.jsonl",
+            "runs/technical-recovery-20261106f/followups.jsonl",
+            "runs/technical-recovery-20261106f/nqr-browser.jsonl",
+            "runs/technical-recovery-20261106f/nqr-browser-policy.jsonl",
+            "examples/india-nqr.browser.jsonl",
+            "examples/india-nqr.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T07:57:12.661209+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Resolve current403 availability; negative/paging/version tests unverified."
+          ]
+        },
+        "rights_and_cost": {
+          "status": "partial",
+          "summary": "No blanket metadata/content reuse license established; inspect source and item terms separately.",
+          "facts": {
+            "rights": "Unverified per item",
+            "cost": "Unknown",
+            "authentication": "Unknown; no query executed",
+            "observed_policy_facts": {}
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "0276a4324afe977e17c0",
+              "observed_at": "2026-11-05T02:26:38.082603+00:00"
+            }
+          ],
+          "open_questions": [
+            "Separate metadata rights, reading access, reuse license and paid services."
+          ]
+        },
+        "reader_access": {
+          "status": "partial",
+          "summary": "Anonymous documentation/listing response observed; no complete item access verified.",
+          "facts": {
+            "http_status": 200,
+            "reading_condition": "Unknown per item",
+            "observed_samples": [
+              "Web Technologies — 510 hours — Level 4.5",
+              "Water Technology — 510 hours — Level 4.5",
+              "Welding — 510 hours — Level 4.5",
+              "Cabinet Maker (WorldSkills) — 510 hours — Level 4.5"
+            ]
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "0276a4324afe977e17c0",
+              "observed_at": "2026-11-05T02:26:38.082603+00:00"
+            }
+          ],
+          "open_questions": [
+            "Verify permitted representative item reading and precise account/eligibility/price conditions."
+          ]
+        },
+        "quality_and_relevance": {
+          "status": "partial",
+          "summary": "No fresh query assertions. Preserve version, language, date and jurisdiction before making relevance claims.",
+          "facts": {
+            "positive_examples": 0,
+            "native_identity_hint": null,
+            "historical_claims": "Retained separately in corpus; provider statements not independently enumerated"
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "0276a4324afe977e17c0",
+              "observed_at": "2026-11-05T02:26:38.082603+00:00"
+            }
+          ],
+          "open_questions": [
+            "Verify five known-item/five topical intents, ten passing distinct examples and negative results under the supported method."
+          ]
+        },
+        "operating_limits": {
+          "status": "partial",
+          "summary": "Current primary document evidence captured under checked robots policy; API allowance and refresh behavior unknown.",
+          "facts": {
+            "robots_status": 200,
+            "capture_http": 200,
+            "numeric_quota": null,
+            "bulk_items_copied": false
+          },
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "0276a4324afe977e17c0",
+              "observed_at": "2026-11-05T02:26:38.082603+00:00"
+            }
+          ],
+          "open_questions": [
+            "Review machine-access policy, paging limits, refresh/deletion and backoff rules."
+          ]
+        },
+        "decision_and_followup": {
+          "status": "partial",
+          "summary": "The robots policy URL returns access denied (HTTP403).",
+          "facts": {
+            "decision": "deferred",
+            "blocker": "The robots policy URL returns access denied (HTTP403).",
+            "next_action": "Provider restores permitted access or publishes a separately documented public export; do not change hosts to evade the denial.",
+            "activation_approved": false
+          },
+          "evidence": [
+            "runs/industry-native-catalogs-20261105dv/observations.jsonl"
+          ],
+          "open_questions": [
+            "Search contract remains unverified; policy/access recovery needed before queries."
+          ]
+        }
+      }
+    }
+  ],
+  "historical_limitations": [
+    {
+      "superseded_at": "2026-11-06T09:27:21.406335+00:00",
+      "limitations": [
+        "No current item query examples; listing/documentation capture is not a qualified searchable origin.",
+        "Per-item rights, reading/access, versions and machine-query limits require separate checks.",
+        "Nine current public keyword searches have native qualification IDs, but subsequent initial-page403 interrupts availability; no bypass. Sector/title/level labels are not proof of current qualification approval or revision."
+      ],
+      "reason": "Nine-query partial recovery followed by successful bounded tenth-case retry"
+    }
+  ],
+  "historical_capabilities": [
+    {
+      "superseded_at": "2026-11-06T09:43:13.708156+00:00",
+      "capabilities": [
+        "Public qualification catalog displays sector, qualification title, hours and NSQF level. Listing evidence includes automotive, construction, manufacturing, energy and IT qualifications."
+      ]
     }
   ]
 }

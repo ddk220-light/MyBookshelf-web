@@ -8,32 +8,230 @@
     "C02",
     "C15"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "capabilities": [
-    "Official SRU documentation identified."
+    "Anonymous exact-title SPARQL metadata search over BnF editions linked to native Gallica ARKs; ten verified examples"
   ],
   "query": {
-    "adapter": "sru",
-    "endpoint": "https://gallica.bnf.fr/SRU",
-    "cases": [],
-    "authentication": "not established for a complete supported route",
-    "cost": "No paid service used in initial review."
+    "adapter": "bnf-gallica-metadata",
+    "endpoint": "https://data.bnf.fr/sparql",
+    "authentication": "Anonymous public SPARQL; no key/account",
+    "search_scope": "Exact literal-title metadata search within data.bnf.fr bibliographic editions that explicitly link to Gallica ARKs, first3 distinct results. Not whole-Gallica keyword/full-text search or reading verification.",
+    "supported_modes": [
+      "Live exact-title queries for Gallica-linked bibliographic metadata"
+    ],
+    "unsupported_modes": [
+      "Direct Gallica SRU and general-catalog restricted routes",
+      "Full-text search or broad keyword ranking",
+      "Whole-Gallica holdings guarantee",
+      "Digitized content downloads/reading-rights verification"
+    ],
+    "cases": [
+      {
+        "id": "exact-title-1",
+        "query_text": "Les maladies du coeur et leur traitement",
+        "intent": "Find Gallica-offered digital editions through documented BnF metadata relation",
+        "request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"Les maladies du coeur et leur traitement\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "Les maladies du coeur et leur traitement"
+        },
+        "expected_ids": [
+          "ark:/12148/bpt6k54960395"
+        ]
+      },
+      {
+        "id": "exact-title-2",
+        "query_text": "L'aquarium d'eau douce et ses habitants, animaux et végétaux...",
+        "intent": "Find Gallica-offered digital editions through documented BnF metadata relation",
+        "request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"L'aquarium d'eau douce et ses habitants, animaux et végétaux...\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "L'aquarium d'eau douce et ses habitants, animaux et végétaux..."
+        },
+        "expected_ids": [
+          "ark:/12148/bpt6k165629z"
+        ]
+      },
+      {
+        "id": "exact-title-3",
+        "query_text": "Les plantes qui tuent...",
+        "intent": "Find Gallica-offered digital editions through documented BnF metadata relation",
+        "request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"Les plantes qui tuent...\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "Les plantes qui tuent..."
+        },
+        "expected_ids": [
+          "ark:/12148/bpt6k145336r"
+        ]
+      },
+      {
+        "id": "exact-title-4",
+        "query_text": "Les massacres du Liban",
+        "intent": "Find Gallica-offered digital editions through documented BnF metadata relation",
+        "request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"Les massacres du Liban\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "Les massacres du Liban"
+        },
+        "expected_ids": [
+          "ark:/12148/bpt6k6202342p"
+        ]
+      },
+      {
+        "id": "exact-title-5",
+        "query_text": "Les massacres du Liban : ode",
+        "intent": "Find Gallica-offered digital editions through documented BnF metadata relation",
+        "request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"Les massacres du Liban : ode\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "Les massacres du Liban : ode"
+        },
+        "expected_ids": [
+          "ark:/12148/bpt6k6208386q",
+          "ark:/12148/bpt6k5445195f"
+        ]
+      },
+      {
+        "id": "exact-title-6",
+        "query_text": "Rapport présenté à la Commission d'enquête parlementaire sur la situation des ouvriers de l'agriculture et de l'industrie en France (grève d'Anzin), par M. Clémenceau,... (11 mars 1883.)",
+        "intent": "Find Gallica-offered digital editions through documented BnF metadata relation",
+        "request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"Rapport présenté à la Commission d'enquête parlementaire sur la situation des ouvriers de l'agriculture et de l'industrie en France (grève d'Anzin), par M. Clémenceau,... (11 mars 1883.)\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "Rapport présenté à la Commission d'enquête parlementaire sur la situation des ouvriers de l'agriculture et de l'industrie en France (grève d'Anzin), par M. Clémenceau,... (11 mars 1883.)"
+        },
+        "expected_ids": [
+          "ark:/12148/bd6t5345866r"
+        ]
+      },
+      {
+        "id": "exact-title-7",
+        "query_text": "Arnauld de Brescia et les Romains du XIIe siècle : thèse présentée à la Faculté des lettres de Paris",
+        "intent": "Find Gallica-offered digital editions through documented BnF metadata relation",
+        "request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"Arnauld de Brescia et les Romains du XIIe siècle : thèse présentée à la Faculté des lettres de Paris\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "Arnauld de Brescia et les Romains du XIIe siècle : thèse présentée à la Faculté des lettres de Paris"
+        },
+        "expected_ids": [
+          "ark:/12148/bd6t5332094g"
+        ]
+      },
+      {
+        "id": "exact-title-8",
+        "query_text": "En Chine : les effets de la crise, intentions de réforme",
+        "intent": "Find Gallica-offered digital editions through documented BnF metadata relation",
+        "request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"En Chine : les effets de la crise, intentions de réforme\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "En Chine : les effets de la crise, intentions de réforme"
+        },
+        "expected_ids": [
+          "ark:/12148/bpt6k1501459p"
+        ]
+      },
+      {
+        "id": "exact-title-9",
+        "query_text": "Notes sur les études coréennes et japonaise",
+        "intent": "Find Gallica-offered digital editions through documented BnF metadata relation",
+        "request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"Notes sur les études coréennes et japonaise\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "Notes sur les études coréennes et japonaise"
+        },
+        "expected_ids": [
+          "ark:/12148/bpt6k57146201"
+        ]
+      },
+      {
+        "id": "exact-title-10",
+        "query_text": "De l'utilité des études chinoises",
+        "intent": "Find Gallica-offered digital editions through documented BnF metadata relation",
+        "request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"De l'utilité des études chinoises\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "De l'utilité des études chinoises"
+        },
+        "expected_ids": [
+          "ark:/12148/bpt6k5408105v"
+        ]
+      }
+    ]
   },
   "licensing": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
   "documentation": [
-    "https://gallica.bnf.fr/"
+    "https://gallica.bnf.fr/",
+    "https://api.bnf.fr/index.php/fr/sparql-endpoint-de-databnffr",
+    "https://data.bnf.fr/sparql"
   ],
   "limitations": [
-    "Live SRU request returned HTTP 403."
+    "Only exact-title matches over data.bnf.fr editions with explicit Gallica reproduction links, first3 results; not whole-Gallica coverage or broad keyword/full-text search.",
+    "Native digital ARKs and bibliographic edition URIs remain distinct. Reading access and content reuse rights are not established by metadata links.",
+    "Earlier SRU403 and general-catalog robots restriction remain; no bypass. Legacy typed-literal xsd:string parser failures are saved."
   ],
   "evidence": [
     "../batches/G01_FIRST_TEN.md",
-    "runs/technical-recovery-20261106f/observations.jsonl"
+    "runs/technical-recovery-20261106f/observations.jsonl",
+    "runs/technical-recovery-20261106g/observations.jsonl",
+    "runs/technical-recovery-20261106g/followups.jsonl",
+    "examples/gallica.jsonl"
   ],
-  "last_reviewed_at": "2026-11-06T07:48:40.027929+00:00",
-  "next_action": "Keep deferred for this collector. A different public metadata feed or explicit provider-permitted access is needed; do not use custom user-agent identity to evade the OpenAI crawler restriction.",
+  "last_reviewed_at": "2026-11-06T09:43:13.706502+00:00",
+  "next_action": "Maintain permitted BnF linked-data exact-title search; test negative/paging modes separately and verify any reader/content rights independently. Never retry restricted SRU routes without changed permission.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -73,20 +271,30 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Exact literal-title metadata search within data.bnf.fr bibliographic editions that explicitly link to Gallica ARKs, first3 distinct results. Not whole-Gallica keyword/full-text search or reading verification.",
       "facts": {
-        "adapter": "sru",
-        "endpoint": "https://gallica.bnf.fr/SRU",
-        "capabilities": [
-          "Official SRU documentation identified."
-        ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "adapter": "bnf-gallica-metadata",
+        "verified_examples": 10,
+        "exact_request": {
+          "method": "GET",
+          "url": "https://data.bnf.fr/sparql",
+          "params": {
+            "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"Les maladies du coeur et leur traitement\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+            "format": "application/json",
+            "timeout": 10000
+          },
+          "title": "Les maladies du coeur et leur traitement"
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106g/observations.jsonl",
+        "runs/technical-recovery-20261106g/followups.jsonl",
+        "examples/gallica.jsonl"
       ],
+      "reviewed_at": "2026-11-06T09:43:13.706520+00:00",
+      "fresh_query_verification": true,
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Reading rights/access, coverage completeness, negative/paging semantics remain unverified."
       ]
     },
     "rights_and_cost": {
@@ -155,17 +363,21 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working within permitted linked-data metadata scope",
       "facts": {
-        "state": "deferred",
-        "next_action": "Recheck documented supported access within provider rules.",
-        "production_qualification_complete": false
+        "decision": "working_with_recorded_scope",
+        "next_action": "Maintain permitted BnF linked-data exact-title search; test negative/paging modes separately and verify any reader/content rights independently. Never retry restricted SRU routes without changed permission.",
+        "blocker": null
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106g/observations.jsonl",
+        "runs/technical-recovery-20261106g/followups.jsonl",
+        "examples/gallica.jsonl"
       ],
+      "reviewed_at": "2026-11-06T09:43:13.706522+00:00",
+      "fresh_query_verification": true,
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Reading rights/access, coverage completeness, negative/paging semantics remain unverified."
       ]
     }
   },
@@ -184,16 +396,214 @@
       "superseded_at": "2026-11-06T07:48:40.027929+00:00",
       "recovery": {},
       "next_action": "Recheck documented supported access within provider rules."
+    },
+    {
+      "reviewed_at": "2026-11-06T07:48:40.027929+00:00",
+      "reason": "Gallica SRU previously403. The documented general-catalog SRU alternative has an explicit robots prohibition for OAI-SearchBot.",
+      "attempt": "Read current primary BnF SRU documentation; confirm UNIMARC856 can link digitized records to Gallica; review complete catalogue-host robots policy.",
+      "result": "Public API contract identified, but automated OpenAI search access is explicitly disallowed; no live catalog query verified and no script query sent.",
+      "decision": "wait-for-permitted-access",
+      "evidence": [
+        "runs/technical-recovery-20261106f/observations.jsonl"
+      ]
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:48:40.027929+00:00",
-    "reason": "Gallica SRU previously403. The documented general-catalog SRU alternative has an explicit robots prohibition for OAI-SearchBot.",
-    "attempt": "Read current primary BnF SRU documentation; confirm UNIMARC856 can link digitized records to Gallica; review complete catalogue-host robots policy.",
-    "result": "Public API contract identified, but automated OpenAI search access is explicitly disallowed; no live catalog query verified and no script query sent.",
-    "decision": "wait-for-permitted-access",
+    "reviewed_at": "2026-11-06T09:43:13.706511+00:00",
+    "reason": "Direct Gallica SRU and general-catalog routes remain restricted, but BnF documents a separate public linked-data endpoint with explicit Gallica reproduction relations.",
+    "attempt": "Review primary SPARQL documentation and allowed endpoint policy; bounded metadata seed followed by ten exact literal-title queries. Correct parser to accept the provider legacy typed-literal xsd:string output.",
+    "result": "Ten exact-title queries return native Gallica ARKs with BnF edition URIs. Initial legacy typed-string parsing failures retained. No request to restricted SRU/reader/content routes.",
+    "decision": "working_with_recorded_scope",
     "evidence": [
-      "runs/technical-recovery-20261106f/observations.jsonl"
+      "runs/technical-recovery-20261106g/observations.jsonl",
+      "runs/technical-recovery-20261106g/followups.jsonl",
+      "examples/gallica.jsonl"
     ]
-  }
+  },
+  "historical_query_contracts": [
+    {
+      "superseded_at": "2026-11-06T09:37:34.089084+00:00",
+      "query": {
+        "adapter": "sru",
+        "endpoint": "https://gallica.bnf.fr/SRU",
+        "cases": [],
+        "authentication": "not established for a complete supported route",
+        "cost": "No paid service used in initial review."
+      },
+      "reason": "Separate documented linked-data service supports Gallica-linked edition metadata; direct SRU restriction preserved"
+    }
+  ],
+  "fresh_query_verification": true,
+  "historical_limitations": [
+    {
+      "superseded_at": "2026-11-06T09:43:13.706516+00:00",
+      "limitations": [
+        "Live SRU request returned HTTP 403."
+      ],
+      "reason": "Separate metadata route verified; direct SRU restriction remains"
+    }
+  ],
+  "historical_dossier_snapshots": [
+    {
+      "superseded_at": "2026-11-06T09:43:13.706517+00:00",
+      "reason": "Supported linked-data title queries verified",
+      "dossier": {
+        "identity_and_duplicates": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "id": "gallica",
+            "name": "Gallica / Bibliothèque nationale de France",
+            "homepage_reference": "https://gallica.bnf.fr/",
+            "operator": null,
+            "origin_deduplication": "pending"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Confirm operator, parent and catalog-versus-origin deduplication."
+          ]
+        },
+        "coverage_and_languages": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "category_industry_candidates": [
+              "C02",
+              "C15"
+            ],
+            "languages": null,
+            "jurisdictions": null,
+            "coverage_evidence": "pending"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Verify country/language/subject coverage with item evidence."
+          ]
+        },
+        "query_contract": {
+          "status": "partial",
+          "summary": "Exact literal-title metadata search within data.bnf.fr bibliographic editions that explicitly link to Gallica ARKs, first3 distinct results. Not whole-Gallica keyword/full-text search or reading verification.",
+          "facts": {
+            "adapter": "bnf-gallica-metadata",
+            "verified_examples": 10,
+            "exact_request": {
+              "method": "GET",
+              "url": "https://data.bnf.fr/sparql",
+              "params": {
+                "query": "PREFIX rda: <http://rdvocab.info/RDARelationshipsWEMI/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nSELECT DISTINCT ?edition ?title ?gallica WHERE {\n VALUES ?title { \"Les maladies du coeur et leur traitement\" }\n ?edition rda:electronicReproduction ?gallica ; dcterms:title ?title .\n FILTER (STRSTARTS(STR(?gallica), \"https://gallica.bnf.fr/ark:/12148/\") || STRSTARTS(STR(?gallica), \"http://gallica.bnf.fr/ark:/12148/\"))\n} LIMIT 3",
+                "format": "application/json",
+                "timeout": 10000
+              },
+              "title": "Les maladies du coeur et leur traitement"
+            }
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106g/observations.jsonl",
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "examples/gallica.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T09:43:13.706520+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Reading rights/access, coverage completeness, negative/paging semantics remain unverified."
+          ]
+        },
+        "rights_and_cost": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "license_notes": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
+            "authentication_notes": "not established for a complete supported route",
+            "cost_notes": "No paid service used in initial review.",
+            "terms_review": "pending current reconciliation"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Reconcile current metadata/content terms, free limits and permitted commercial use."
+          ]
+        },
+        "reader_access": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "evidence_references": [
+              "../batches/G01_FIRST_TEN.md"
+            ],
+            "free_login_eligible": true,
+            "access_classification": "needs explicit item-level review"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+          ]
+        },
+        "quality_and_relevance": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "limitations": [
+              "Live SRU request returned HTTP 403."
+            ],
+            "ranking_relevance_completeness": "not fully qualified"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+          ]
+        },
+        "operating_limits": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "paging": null,
+            "research_pause_seconds": null,
+            "provider_quota_refresh_deletion_contract": "needs explicit review"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+          ]
+        },
+        "decision_and_followup": {
+          "status": "partial",
+          "summary": "Working within permitted linked-data metadata scope",
+          "facts": {
+            "decision": "working_with_recorded_scope",
+            "next_action": "Maintain permitted BnF linked-data exact-title search; test negative/paging modes separately and verify any reader/content rights independently. Never retry restricted SRU routes without changed permission.",
+            "blocker": null
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106g/observations.jsonl",
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "examples/gallica.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T09:43:13.706522+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Reading rights/access, coverage completeness, negative/paging semantics remain unverified."
+          ]
+        }
+      }
+    }
+  ],
+  "historical_capabilities": [
+    {
+      "superseded_at": "2026-11-06T09:43:13.707074+00:00",
+      "capabilities": [
+        "Official SRU documentation identified."
+      ]
+    }
+  ]
 }

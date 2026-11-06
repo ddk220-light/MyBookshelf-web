@@ -8,32 +8,225 @@
     "C09",
     "C04"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "capabilities": [
-    "Official textbook catalog identified; current query route not established."
+    "Local title/native-book-code and class-filter search over421 unambiguous active published ePathshala selector records"
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "not established for a complete supported route",
-    "cost": "No paid service used in initial review."
+    "adapter": "epathshala-selector",
+    "endpoint": "https://epathshala.ncert.gov.in/test.html",
+    "authentication": "Anonymous published selector; no key/account",
+    "search_scope": "Local title/native-code queries over421 unambiguous published ePathshala book selectors, with optional class filter. Class/subject and explicitly labelled language variants preserved; no book downloads or publication-edition inference.",
+    "supported_modes": [
+      "Local title substring search",
+      "Exact native selector code",
+      "Published class filter"
+    ],
+    "unsupported_modes": [
+      "Full book content",
+      "Edition/publication year or reader availability",
+      "Commented-out historical entries",
+      "One unresolved subject selector and one conflicting native-code title mapping"
+    ],
+    "cases": [
+      {
+        "id": "book-aemr101",
+        "query_text": "Mridang",
+        "intent": "Find offered textbook metadata by title and published class",
+        "request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Mridang",
+            "class_selector": 1
+          }
+        },
+        "expected_ids": [
+          "aemr101"
+        ]
+      },
+      {
+        "id": "book-aejm101",
+        "query_text": "Joyful-Mathematics (English)",
+        "intent": "Find offered textbook metadata by title and published class",
+        "request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Joyful-Mathematics (English)",
+            "class_selector": 1
+          }
+        },
+        "expected_ids": [
+          "aejm101"
+        ]
+      },
+      {
+        "id": "book-ahsr101",
+        "query_text": "Sarangi",
+        "intent": "Find offered textbook metadata by title and published class",
+        "request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Sarangi",
+            "class_selector": 1
+          }
+        },
+        "expected_ids": [
+          "ahsr101"
+        ]
+      },
+      {
+        "id": "book-aush101",
+        "query_text": "Shahnai",
+        "intent": "Find offered textbook metadata by title and published class",
+        "request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Shahnai",
+            "class_selector": 1
+          }
+        },
+        "expected_ids": [
+          "aush101"
+        ]
+      },
+      {
+        "id": "book-cemm101",
+        "query_text": "Maths Mela",
+        "intent": "Find offered textbook metadata by title and published class",
+        "request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Maths Mela",
+            "class_selector": 3
+          }
+        },
+        "expected_ids": [
+          "cemm101"
+        ]
+      },
+      {
+        "id": "book-fegp101",
+        "query_text": "Ganita Prakash",
+        "intent": "Find offered textbook metadata by title and published class",
+        "request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Ganita Prakash",
+            "class_selector": 6
+          }
+        },
+        "expected_ids": [
+          "fegp101"
+        ]
+      },
+      {
+        "id": "book-fecu101",
+        "query_text": "Curiosity",
+        "intent": "Find offered textbook metadata by title and published class",
+        "request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Curiosity",
+            "class_selector": 6
+          }
+        },
+        "expected_ids": [
+          "fecu101"
+        ]
+      },
+      {
+        "id": "book-kech101",
+        "query_text": "Chemistry Part - I",
+        "intent": "Find offered textbook metadata by title and published class",
+        "request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Chemistry Part - I",
+            "class_selector": 11
+          }
+        },
+        "expected_ids": [
+          "kech101"
+        ]
+      },
+      {
+        "id": "book-kecs101",
+        "query_text": "Computer Science",
+        "intent": "Find offered textbook metadata by title and published class",
+        "request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Computer Science",
+            "class_selector": 11
+          }
+        },
+        "expected_ids": [
+          "kecs101"
+        ]
+      },
+      {
+        "id": "book-leec101",
+        "query_text": "Introductory Macroeconomics",
+        "intent": "Find offered textbook metadata by title and published class",
+        "request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Introductory Macroeconomics",
+            "class_selector": 12
+          }
+        },
+        "expected_ids": [
+          "leec101"
+        ]
+      }
+    ]
   },
   "licensing": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
   "documentation": [
-    "https://ncert.nic.in/"
+    "https://ncert.nic.in/",
+    "https://ciet.ncert.gov.in/initiative/epathshala?lang=en",
+    "https://epathshala.ncert.gov.in/epathshala.php?id=Students&ln=en",
+    "https://epathshala.ncert.gov.in/process.php?id=students&type=eTextbooks&ln=en",
+    "https://epathshala.ncert.gov.in/test.html"
   ],
   "limitations": [
-    "Catalog returned HTTP 503 in this environment."
+    "421 unambiguous active selector records only; native codes preserve language and class/subject contexts without edition inference.",
+    "Historical commented-out catalog entries, unknown subjectC11S12e and conflicting native codeklss101 are not current searchable records.",
+    "No books/images/reader bodies downloaded; footer license link returned404, so reuse rights are not established by queryability."
   ],
   "evidence": [
     "../batches/G01_FIRST_TEN.md",
-    "runs/technical-recovery-india-20261106/observations.jsonl"
+    "runs/technical-recovery-india-20261106/observations.jsonl",
+    "runs/technical-recovery-20261106g/observations.jsonl",
+    "runs/technical-recovery-20261106g/followups.jsonl",
+    "runs/technical-recovery-20261106g/epathshala-selector.html",
+    "runs/technical-recovery-20261106g/epathshala-proof.json",
+    "examples/ncert.jsonl"
   ],
-  "last_reviewed_at": "2026-11-06T05:55:50.991417+00:00",
-  "next_action": "Wait for host/policy recovery; separately review officially linked ePathshala metadata route.",
+  "last_reviewed_at": "2026-11-06T09:41:14.738870+00:00",
+  "next_action": "Maintain scoped public selector metadata search; separately resolve the unknown subject reference and conflicting title/code before admitting those records. Verify rights/reader/version semantics independently; no activation.",
   "aliases": [
     "NCERT / ePathshala",
     "ePathshala"
@@ -83,20 +276,32 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Local title/native-code queries over421 unambiguous published ePathshala book selectors, with optional class filter. Class/subject and explicitly labelled language variants preserved; no book downloads or publication-edition inference.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "capabilities": [
-          "Official textbook catalog identified; current query route not established."
-        ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "adapter": "epathshala-selector",
+        "verified_examples": 10,
+        "exact_request": {
+          "method": "GET",
+          "url": "https://epathshala.ncert.gov.in/test.html",
+          "local_query": {
+            "field": "title",
+            "value": "Mridang",
+            "class_selector": 1
+          }
+        },
+        "record_count": 421
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106g/observations.jsonl",
+        "runs/technical-recovery-20261106g/followups.jsonl",
+        "runs/technical-recovery-20261106g/epathshala-selector.html",
+        "runs/technical-recovery-20261106g/epathshala-proof.json",
+        "examples/ncert.jsonl"
       ],
+      "reviewed_at": "2026-11-06T09:41:14.738888+00:00",
+      "fresh_query_verification": true,
       "open_questions": [
-        "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
+        "Rights, full reader access, version semantics and quarantined identity mappings remain unresolved."
       ]
     },
     "rights_and_cost": {
@@ -165,17 +370,23 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Working in published selector metadata scope",
       "facts": {
-        "state": "deferred",
-        "next_action": "Find documented metadata/feed/import route; do not infer source-wide outage.",
-        "production_qualification_complete": false
+        "decision": "working_with_recorded_scope",
+        "next_action": "Maintain scoped public selector metadata search; separately resolve the unknown subject reference and conflicting title/code before admitting those records. Verify rights/reader/version semantics independently; no activation.",
+        "blocker": null
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "runs/technical-recovery-20261106g/observations.jsonl",
+        "runs/technical-recovery-20261106g/followups.jsonl",
+        "runs/technical-recovery-20261106g/epathshala-selector.html",
+        "runs/technical-recovery-20261106g/epathshala-proof.json",
+        "examples/ncert.jsonl"
       ],
+      "reviewed_at": "2026-11-06T09:41:14.738891+00:00",
+      "fresh_query_verification": true,
       "open_questions": [
-        "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
+        "Rights, full reader access, version semantics and quarantined identity mappings remain unresolved."
       ]
     }
   },
@@ -283,16 +494,230 @@
       "heading": "Technical connector recovery — 6 November 2026",
       "text": "| NCERT | Retry the official online textbook catalog after overnight backoff | Robots still returns 503; target was not requested. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "178a0721ad5ae1b0b53c0deaa85fc1edb00784f8724bd5f8b20bfde70de6b12d",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106G.md",
+      "line": 5,
+      "heading": "Technical recovery continuation G — 6 November 2026",
+      "text": "- **NQR:** a single retry of the previously failed Mine Electrician query succeeded after roughly 90 minutes of backoff. It used the same advertised public browser form and identity. All ten current keyword cases now pass; the earlier 403 and advanced-form 500 remain saved. Availability is intermittent and no qualification files were fetched.\n- **NCERT:** CIET's current ePathshala site links its actual textbook selector through a public iframe. Its published metadata contains 427 active selector rows and 421 unambiguous searchable records after repeated contexts, one unresolved subject selector and one conflicting title/native-code mapping are handled explicitly. Ten title/class searches, exact native-code and empty controls pass. Six commented metadata blocks remain inactive historical findings; no book bodies were downloaded. The footer license URL returned404, so metadata queryability does not establish reuse rights or full reading access.\n- **Gallica:** BnF documents a separate public SPARQL service whose bibliographic editions link to native Gallica digital ARKs. Ten exact literal-title queries pass through that service. The parser was corrected to accept its legacy typed-literal XSD-string representation; failed attempts remain saved. Direct Gallica SRU and general-catalog restrictions are unchanged. This is a linked-data subset, not whole-Gallica keyword or full-text search.\n- **Chicago zoning:** the published schema endpoint still returned503 after a multi-hour backoff. Current SODA2.1 documentation alone does not establish working dataset access. No underlying zoning query was sent after the failure.\n- **OER Commons:** current operator help documents anonymous homepage search, but the primary site's policy still returns403. No homepage/search request or staging/private API workaround was sent.\n- **NSDC:** old URLs now return a JavaScript shell. An initial restricted browser render could not load its public API host, so its visible page-not-found message is not proof of provider404. The API host policy was then checked and permits normal public rendering; follow-up navigation is ongoing. No staging API or account flow is used.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "historical_recovery": [
     {}
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T05:55:50.991414+00:00",
-    "reason": "Official textbook catalog robots still returns503.",
-    "attempt": "Retried canonical textbook.php after overnight backoff; stopped before target.",
-    "result": "Official textbook catalog robots still returns503.",
-    "decision": "Wait for host/policy recovery; separately review officially linked ePathshala metadata route."
-  }
+    "reviewed_at": "2026-11-06T09:41:14.738876+00:00",
+    "reason": "Old NCERT main-site policy503 prevented access. Current official ePathshala site exposes its actual textbook selector in an advertised iframe.",
+    "attempt": "Follow CIET official description → ePathshala Students → eTextbooks → embedded selector; parse literal metadata arrays without executing arbitrary code or downloading books.",
+    "result": "421 unambiguous selectors; ten distinct title/class queries, native-code and empty controls pass.427 active selector rows include repeated contexts; one unknown subject reference and one conflicting title/native-code mapping are preserved but excluded. Six commented metadata blocks retained as historical/inactive.",
+    "decision": "working_with_recorded_scope",
+    "evidence": [
+      "runs/technical-recovery-20261106g/observations.jsonl",
+      "runs/technical-recovery-20261106g/followups.jsonl",
+      "runs/technical-recovery-20261106g/epathshala-selector.html",
+      "runs/technical-recovery-20261106g/epathshala-proof.json",
+      "examples/ncert.jsonl"
+    ]
+  },
+  "historical_query_contracts": [
+    {
+      "superseded_at": "2026-11-06T09:41:14.708517+00:00",
+      "query": {
+        "adapter": "unproven",
+        "endpoint": null,
+        "cases": [],
+        "authentication": "not established for a complete supported route",
+        "cost": "No paid service used in initial review."
+      },
+      "reason": "Current NCERT-hosted ePathshala selector provides public metadata independent of old failing main-site route"
+    }
+  ],
+  "recovery_history": [
+    {
+      "reviewed_at": "2026-11-06T05:55:50.991414+00:00",
+      "reason": "Official textbook catalog robots still returns503.",
+      "attempt": "Retried canonical textbook.php after overnight backoff; stopped before target.",
+      "result": "Official textbook catalog robots still returns503.",
+      "decision": "Wait for host/policy recovery; separately review officially linked ePathshala metadata route."
+    }
+  ],
+  "fresh_query_verification": true,
+  "historical_limitations": [
+    {
+      "superseded_at": "2026-11-06T09:41:14.738882+00:00",
+      "limitations": [
+        "Catalog returned HTTP 503 in this environment."
+      ],
+      "reason": "New public metadata route verified; prior failures remain saved"
+    }
+  ],
+  "historical_dossier_snapshots": [
+    {
+      "superseded_at": "2026-11-06T09:41:14.738884+00:00",
+      "reason": "Current public selector queries replace historical unavailable-route analysis",
+      "dossier": {
+        "identity_and_duplicates": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "id": "ncert",
+            "name": "NCERT",
+            "homepage_reference": "https://ncert.nic.in/",
+            "operator": null,
+            "origin_deduplication": "pending"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Confirm operator, parent and catalog-versus-origin deduplication."
+          ]
+        },
+        "coverage_and_languages": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "category_industry_candidates": [
+              "C09",
+              "C04"
+            ],
+            "languages": null,
+            "jurisdictions": null,
+            "coverage_evidence": "pending"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Verify country/language/subject coverage with item evidence."
+          ]
+        },
+        "query_contract": {
+          "status": "partial",
+          "summary": "Local title/native-code queries over421 unambiguous published ePathshala book selectors, with optional class filter. Class/subject and explicitly labelled language variants preserved; no book downloads or publication-edition inference.",
+          "facts": {
+            "adapter": "epathshala-selector",
+            "verified_examples": 10,
+            "exact_request": {
+              "method": "GET",
+              "url": "https://epathshala.ncert.gov.in/test.html",
+              "local_query": {
+                "field": "title",
+                "value": "Mridang",
+                "class_selector": 1
+              }
+            },
+            "record_count": 421
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106g/observations.jsonl",
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "runs/technical-recovery-20261106g/epathshala-selector.html",
+            "runs/technical-recovery-20261106g/epathshala-proof.json",
+            "examples/ncert.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T09:41:14.738888+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Rights, full reader access, version semantics and quarantined identity mappings remain unresolved."
+          ]
+        },
+        "rights_and_cost": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "license_notes": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
+            "authentication_notes": "not established for a complete supported route",
+            "cost_notes": "No paid service used in initial review.",
+            "terms_review": "pending current reconciliation"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Reconcile current metadata/content terms, free limits and permitted commercial use."
+          ]
+        },
+        "reader_access": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "evidence_references": [
+              "../batches/G01_FIRST_TEN.md"
+            ],
+            "free_login_eligible": true,
+            "access_classification": "needs explicit item-level review"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
+          ]
+        },
+        "quality_and_relevance": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "limitations": [
+              "Catalog returned HTTP 503 in this environment."
+            ],
+            "ranking_relevance_completeness": "not fully qualified"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Complete relevance, type, edition/version, negative-input and repeat-session checks."
+          ]
+        },
+        "operating_limits": {
+          "status": "partial",
+          "summary": "Existing facts captured; unresolved checks remain explicit.",
+          "facts": {
+            "paging": null,
+            "research_pause_seconds": null,
+            "provider_quota_refresh_deletion_contract": "needs explicit review"
+          },
+          "evidence": [
+            "../batches/G01_FIRST_TEN.md"
+          ],
+          "open_questions": [
+            "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
+          ]
+        },
+        "decision_and_followup": {
+          "status": "partial",
+          "summary": "Working in published selector metadata scope",
+          "facts": {
+            "decision": "working_with_recorded_scope",
+            "next_action": "Maintain scoped public selector metadata search; separately resolve the unknown subject reference and conflicting title/code before admitting those records. Verify rights/reader/version semantics independently; no activation.",
+            "blocker": null
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106g/observations.jsonl",
+            "runs/technical-recovery-20261106g/followups.jsonl",
+            "runs/technical-recovery-20261106g/epathshala-selector.html",
+            "runs/technical-recovery-20261106g/epathshala-proof.json",
+            "examples/ncert.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T09:41:14.738891+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Rights, full reader access, version semantics and quarantined identity mappings remain unresolved."
+          ]
+        }
+      }
+    }
+  ],
+  "historical_capabilities": [
+    {
+      "superseded_at": "2026-11-06T09:43:13.707623+00:00",
+      "capabilities": [
+        "Official textbook catalog identified; current query route not established."
+      ]
+    }
+  ]
 }
