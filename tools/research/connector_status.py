@@ -15,6 +15,10 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'madurai-catalog': 'Local title/native PM work-number search in the published Tamil works catalog; component titles grouped, listed format links not fetched',
+    'thoth-metadata': 'Live publisher-scoped monograph/edited-book title search via public Thoth API; native work UUID and publisher/DOI outbound links, no reading-access gate',
+    'sugamya-public': 'Live anonymous book-title search, first 5 displayed entries; native book IDs/item links are hidden, so local composite keys and outbound search links only; eligible-member login for downloads',
+    'openstax-catalog': 'Local title/native book-slug search over 16 rendered public Math textbooks; other subjects/languages and full reading unverified',
     'storyweaver-ui': 'Live published English story search, first30 native story IDs/title links; full reading and translation/version relations not tested',
     'african-storybook-ui': 'Live all-language approved-storybook browser search; first40 visible metadata cards, native loadBook IDs and selected English-title examples; language filter/reader not verified',
     'nalibali-public': 'Published live keyword form; current /stories/ posts retained from first10 site results, native post IDs and landing URLs; translations/full reading not tested',
@@ -72,6 +76,8 @@ def generate(registry=REGISTRY):
     sources = [json.loads(p.read_text()) for p in sorted((registry / 'sources').glob('*.json'))]
     if set(audit['source_gaps']) != {s['id'] for s in sources}:
         raise ValueError('Audit/source inventory differs; run capture/index/audit before reporting')
+    excluded = [s for s in sources if s.get('research_selection', {}).get('included') is False]
+    sources = [s for s in sources if s.get('research_selection', {}).get('included') is not False]
     groups = {key: {'id': key, 'name': name, 'total': 0, 'working': 0,
                     'blocked_or_failed': 0, 'still_checking': 0} for key, name in GROUPS.items()}
     rows = []
@@ -110,10 +116,14 @@ def generate(registry=REGISTRY):
               'meaning_of_working': 'Can query offered items within the stated tested scope, backed by at least ten current passing examples in this registry. Exact lookups are distinguished from title/topic search.',
               'meaning_of_blocked_or_failed': 'Deferred with a recorded reason; not necessarily permanently unavailable.',
               'coverage_definition': 'Queryability by group and connector, per owner clarification. Deeper research-quality checks remain separate.',
+              'inventory_total': len(sources) + len(excluded),
+              'excluded_connectors': [{'connector_id': s['id'], 'connector': s['name'], 'group_id': s['group'],
+                                       'reason': s['research_selection'].get('reason'),
+                                       'record': 'sources/' + s['id'] + '.json'} for s in excluded],
               'totals': totals, 'groups': list(groups.values()), 'connectors': rows}
     (registry / 'connector-status.json').write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n')
     with (registry / 'connector-status.csv').open('w', newline='') as output:
-        writer = csv.DictWriter(output, fieldnames=list(rows[0]), lineterminator="\n")
+        writer = csv.DictWriter(output, fieldnames=list(rows[0]) if rows else ['group_id', 'group', 'connector_id', 'connector', 'status', 'passing_examples', 'tested_search_scope', 'known_limitations', 'next_step_or_blocker', 'block_reason', 'last_attempt_and_result', 'recovery_decision', 'last_reviewed_at', 'record', 'production_activation_changed'], lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     print(json.dumps(totals))

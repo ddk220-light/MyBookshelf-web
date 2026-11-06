@@ -45,14 +45,20 @@
   ],
   "licensing": "Metadata and content rights require separate evidence; no blanket reuse license established.",
   "limitations": [
+    "Non-personal code catalog identified, but its export was not requested because robots.txt returned HTTP503.",
     "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
     "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
   ],
   "evidence": [
-    "runs/source-evidence-20261105/observations.jsonl"
+    "runs/source-evidence-20261105/observations.jsonl",
+    "analysis/external/metadata-link-owner-scope-20261106.json",
+    "runs/metadata-link-fixes-20261106a/observations.jsonl",
+    "runs/metadata-link-fixes-20261106b/observations.jsonl",
+    "runs/metadata-link-fixes-20261106c/observations.jsonl",
+    "runs/metadata-link-query-seeds-20261106/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T05:50:26.972137+00:00",
-  "next_action": "Keep documentation-only. Before any future data request, identify a non-personal aggregate/metadata-only scope that satisfies the project constraint; do not query owner, deed, address or parcel records.",
+  "last_reviewed_at": "2026-11-06T02:18:23.609570+00:00",
+  "next_action": "One backoff retry only after policy recovery; use7isb-wh4c code/description metadata, never property-owner rows.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -300,27 +306,49 @@
       "status": "historical-context-needs-reconciliation"
     },
     {
-      "document_id": "1c3d0752f7c6a4fd3fd60df7db6432123a281b127df0a2b4e3bbfbed3b9376a6",
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
       "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
-      "line": 70,
+      "line": 72,
       "heading": "Reading eligibility or project scope restriction — 3",
       "text": "| [NYC ACRIS](https://www.nyc.gov/site/finance/property/acris.page) | The investigated scope can expose personal owner/deed information excluded by this project. | Keep that scope excluded. An account or API key does not resolve our project boundary; consider a separately defined non-personal metadata scope only if requested. Owner action: none: project-scope exclusion. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "f5f1a162f77fefba5cab69120b1c892ee17113efdd77bd07b7e389b4a95b268a",
+      "path": "docs/research/free-content/METADATA_LINK_FIXES.md",
+      "line": 15,
+      "heading": "Metadata search fixes — 6 November 2026",
+      "text": "| NYC ACRIS | Blocked/failed | Official non-personal Document Control Codes catalog and CSV export identified (`7isb-wh4c`) | Robots policy returned 503, so export not fetched. Retry after recovery. No personal owner/deed-party records collected |",
       "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
     "status": "blocked_or_failed",
-    "reason": "The available land-record scope can expose personal owner/deed data excluded by this project.",
-    "attempt": "Reviewed documentation only; no owner, address, deed or parcel-party request.",
-    "result": "Blocked on existing evidence; no new provider request in this review.",
-    "decision": "find_nonpersonal_metadata_scope",
-    "next_action": "Keep documentation-only. Before any future data request, identify a non-personal aggregate/metadata-only scope that satisfies the project constraint; do not query owner, deed, address or parcel records.",
+    "reason": "Non-personal code catalog identified, but its export was not requested because robots.txt returned HTTP503.",
+    "attempt": "Official DOF directory → document-control-code dataset → published CSV export; policy check503 stopped collection. No owner/deed-party data fetched.",
+    "result": "No fresh passing query examples; preserved negative/policy evidence.",
+    "decision": "wait_for_service_recovery",
+    "reviewed_at": "2026-11-06T02:18:23.609570+00:00",
     "owner_action_required": false,
-    "evidence_reviewed_at": "2026-11-05T18:19:00.905577+00:00",
-    "new_provider_requests": 0,
-    "fresh_query_verification": false,
     "evidence": [
-      "runs/source-evidence-20261105/observations.jsonl"
+      "analysis/external/metadata-link-owner-scope-20261106.json",
+      "runs/metadata-link-fixes-20261106a/observations.jsonl",
+      "runs/metadata-link-fixes-20261106b/observations.jsonl",
+      "runs/metadata-link-fixes-20261106c/observations.jsonl",
+      "runs/metadata-link-query-seeds-20261106/observations.jsonl"
     ]
+  },
+  "research_selection": {
+    "included": true,
+    "reason": "Owner approved metadata discovery and outbound linking; current query proof still required",
+    "reviewed_at": "2026-11-06T02:02:06.275832+00:00",
+    "evidence": "analysis/external/metadata-link-owner-scope-20261106.json"
+  },
+  "discovery_scope": {
+    "mode": "metadata-and-outbound-links",
+    "reader_access_is_queryability_gate": false,
+    "reading_eligibility_label": null,
+    "no_full_content_downloads": true,
+    "no_personal_owner_data": true
   }
 }

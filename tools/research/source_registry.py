@@ -137,7 +137,7 @@ def normalize(source, data, endpoint=None):
                             'reading_access_verified': False,
                             'rights_caution': 'Provider OA/location/license claims; no independent content-access verification'})
         return results
-    if adapter in ('sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
+    if adapter in ('madurai-catalog', 'sugamya-public', 'thoth-metadata', 'openstax-catalog', 'sphinx-inventory', 'otl-csv', 'onet-json', 'indcat-sru', 'usgs-events', 'world-bank-indicators', 'siyavula-toc', 'federal-register', 'usaspending', 'tatoeba', 'appropedia', 'archive-education', 'landportal-metadata', 'boston-zoning', 'plss-townships', 'wa-owned-land', 'cleveland-art', 'eurostat', 'osha-publications', 'faa-handbooks', 'fda-guidance-ui', 'epa-nepis-ui', 'crossref-public', 'arxiv-atom', 'nga-csv', 'preprint-details', 'pmc-oai', 'fao-opensearch', 'nptel-catalog', 'booksprints-catalog', 'libretexts-ui', 'fostac-manuals', 'marad-reports', 'who-publications-ui', 'doaj-public', 'core-public', 'msha-public-ui', 'lareferencia-title', 'rit-thesis-catalog', 'govinfo-ui', 'gutendex-books', 'openlibrary-search', 'google-books-public', 'google-books-metadata', 'gutenberg-csv', 'standard-new-releases', 'bookdash-public', 'archive-texts', 'nalibali-public', 'storyberries-public', 'african-storybook-ui', 'storyweaver-ui'):
         return data['results']
     if adapter == 'europe-pmc':
         if any(row.get('isOpenAccess') != 'Y' for row in data['resultList']['result']):
@@ -320,6 +320,14 @@ def validate(registry=REGISTRY):
 
 def probe(source_id, case_ids=None):
     source = json.loads((REGISTRY / 'sources' / f'{source_id}.json').read_text())
+    if source.get('research_selection', {}).get('included') is False:
+        raise ValueError('Source excluded by owner; no query permitted: ' + source_id)
+    if source['query']['adapter'] == 'openstax-catalog':
+        from openstax_catalog import probe as openstax_probe
+        return openstax_probe(source, case_ids)
+    if source['query']['adapter'] in ('madurai-catalog', 'sugamya-public', 'thoth-metadata'):
+        from metadata_links import probe as metadata_probe
+        return metadata_probe(source, case_ids)
     if source['query']['adapter'] == 'loc':
         selected = [c for c in source['query']['cases'] if not case_ids or c['id'] in case_ids]
         maps = [c['id'] for c in selected if c['id'].startswith('map-native-')]

@@ -1,5 +1,7 @@
 # Blocked connector access report
 
+> Historical 71-blocker snapshot. The [6 November targeted fixes](METADATA_LINK_FIXES.md) supersede five blockers and exclude SWAYAM; current totals are 68 Working / 65 Blocked or failed across 133 active connectors.
+
 Reviewed 2026-11-05T22:42:03.888333+00:00. All 71 records at checkpoint `6838cdf` are included once. Hourly completion and status-reporting tasks are paused at the owner’s request.
 
 63 Working / 71 Blocked or failed / 0 Still checking remains unchanged. This report reviews documentation and saved evidence; it does not retest queries or enable sources.

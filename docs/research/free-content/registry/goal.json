@@ -30,8 +30,8 @@
     "Blocked/failed outcomes count as assessed, not working; Still checking is the remaining assessment queue."
   ],
   "execution": {
-    "batch_size": "Small checkpoints, not a completion quota. Continue productive independent work within each run budget; resume hourly without waiting for new user requests.",
-    "cursor": "Paused by owner. 63 Working, 71 Blocked/failed, 0 Still checking of134; 667 passing examples. Read ../BLOCKED_CONNECTOR_ACCESS_REPORT.md and blocked-connector-access-review.csv before selecting any targeted recovery. No hourly continuation.",
+    "batch_size": "Hourly task paused by owner. Directly requested fixes may run and checkpoint; do not resume hourly execution without owner instruction.",
+    "cursor": "Owner-requested metadata fixes saved: five connectors Working, SWAYAM excluded, five discussed provider blockers remain. Hourly completion/status tasks stay disabled; no active collector.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
@@ -49,21 +49,21 @@
         "scheduler_trigger": "failed: HTTP 404 Action not found",
         "fallback": "Execution started in this conversation; corpus capture, historical-source backfill and new Python inventory queries performed."
       },
-      "last_observed_enabled": true,
-      "verified_at": "2026-11-05T21:31:22.922999+00:00",
+      "last_observed_enabled": false,
+      "verified_at": "2026-11-06T02:21:12.414051+00:00",
       "next_run_time_reported": null,
-      "verification_note": "Actual final automation peek confirmed enabled with the current simplified hourly prompt. Original completed-queue reporter unchanged.",
+      "verification_note": "Read-only automation peek in this turn confirms completion and original reporter both disabled; no schedule mutation.",
       "last_run_time_reported": "2026-11-05T20:34:26.521581+00:00",
       "automation_prompt_updated_at": "2026-11-05T17:22:03.158466+00:00"
     },
     "completion_audit": "completion-audit.json",
     "last_checkpoint": {
-      "observed_at": "2026-11-05T22:45:46.102420+00:00",
+      "observed_at": "2026-11-06T02:21:12.414051+00:00",
       "source_records": 134,
-      "verified_examples": 667,
-      "query_verified_sources": 63,
+      "verified_examples": 717,
+      "query_verified_sources": 68,
       "source_dossiers_complete": 2,
-      "captured_text_documents": 127,
+      "captured_text_documents": 128,
       "indexed_binary_assets": 221,
       "existing_links_triaged": 615,
       "new_untriaged_links": 0,
@@ -82,37 +82,26 @@
       "documentation_jobs": 805,
       "current_batch": {
         "new_working_connectors": [
-          "african-storybook",
-          "book-dash",
-          "google-books",
-          "internet-archive",
-          "nalibali",
-          "project-gutenberg",
-          "standard-ebooks",
-          "storyberries",
-          "storyweaver",
-          "govinfo"
+          "open-book-publishers",
+          "helsinki-university-press",
+          "project-madurai",
+          "sugamya-pustakalaya",
+          "openstax"
         ],
-        "new_blocked_connectors": [
-          "doab",
-          "gutendex",
-          "oapen",
-          "open-library",
-          "world-bank-okr"
-        ],
-        "new_verified_examples": 102,
+        "new_verified_examples": 50,
         "new_source_records": 0,
-        "still_checking_change": -15,
-        "research_tests": 261,
-        "production_changed": false,
-        "older_blocker_actions_clarified": []
+        "excluded_connectors": [
+          "swayam"
+        ],
+        "research_tests": 267,
+        "production_changed": false
       },
-      "validation": "Registry capture/index/audit and validation pass; all71 report rows match current blocked connector IDs; query counts unchanged; code unchanged.",
+      "validation": "267 tests pass; capture/index/audit and registry validation pass. Missing evidence hashes remain errors.",
       "goal_complete": false,
-      "previous_saved_commit": "3d84f082246cb21b77aeba5bcd99d6c2e420b895",
+      "previous_saved_commit": "efa57c5378e38506b12ba9cceb746b1bbd364355",
       "backlog_archive": "analysis/external/github-backlog-current.json",
-      "backlog_update_state": "Issues164-170 and PR161 pause/report updates read back and archived",
-      "research_commit": "507dda3",
+      "backlog_update_state": "Pending publication update",
+      "research_commit": "pending-this-checkpoint",
       "backlog_issues_updated": [
         164,
         165,
@@ -126,31 +115,64 @@
       "pending_primary_document_entity_reviews": 453,
       "pending_corpus_entity_reviews": 126,
       "query_status": {
-        "total": 134,
-        "working": 63,
-        "blocked_or_failed": 71,
+        "total": 133,
+        "working": 68,
+        "blocked_or_failed": 65,
         "still_checking": 0,
-        "not_working_verified": 71,
-        "assessed_or_deferred": 134,
+        "not_working_verified": 65,
+        "assessed_or_deferred": 133,
         "remaining_to_assess": 0,
-        "passing_query_examples": 667
+        "passing_query_examples": 717
       },
       "owner_pause": true,
-      "blocker_access_report": "../BLOCKED_CONNECTOR_ACCESS_REPORT.md"
+      "blocker_access_report": "../BLOCKED_CONNECTOR_ACCESS_REPORT.md",
+      "metadata_fix_report": "../METADATA_LINK_FIXES.md"
     },
     "native_chat_goal": {
       "activated": false,
       "reason": "No native chat Goal control is exposed in the available tools; scheduler run-now returns HTTP 404. A saved goal and schedule are not the native feature."
     },
     "current_run": {
-      "state": "paused-by-owner",
-      "checkpoint_at": "2026-11-05T22:42:52.422848+00:00",
-      "writer": "this conversation",
+      "state": "checkpoint-complete",
+      "started_at": "2026-11-06T02:02:06.275832+00:00",
+      "scope": "Metadata and source links only; no copying full books/audio, personal owner/deed-party records, accounts, outreach or production activation. Provider access controls and interface terms still apply.",
       "active_detached_worker": false,
-      "scope": "Owner-requested blocker report only; no new query collection",
-      "base_commit": "3d84f082246cb21b77aeba5bcd99d6c2e420b895",
-      "research_commit": "537da04",
-      "writer_lease": "All collectors for checkpoint are finished; verify lock/queues/PID/remote before another writer."
+      "schedule_remains_paused": true,
+      "base_commit": "efa57c5",
+      "source_ids": [
+        "repec",
+        "opencity-india",
+        "openstax",
+        "project-madurai",
+        "nls-bard",
+        "sugamya-pustakalaya",
+        "nyc-acris",
+        "ncbi-bookshelf",
+        "open-book-publishers",
+        "helsinki-university-press"
+      ],
+      "completed_at": "2026-11-06T02:21:12.414051+00:00",
+      "new_working": [
+        "open-book-publishers",
+        "helsinki-university-press",
+        "project-madurai",
+        "sugamya-pustakalaya",
+        "openstax"
+      ],
+      "excluded": [
+        "swayam"
+      ],
+      "query_status": {
+        "total": 133,
+        "working": 68,
+        "blocked_or_failed": 65,
+        "still_checking": 0,
+        "not_working_verified": 65,
+        "assessed_or_deferred": 133,
+        "remaining_to_assess": 0,
+        "passing_query_examples": 717
+      },
+      "report": "../METADATA_LINK_FIXES.md"
     },
     "coverage_audit": "coverage-audit.json",
     "next_actions": [
@@ -3268,35 +3290,37 @@
         "priority_reason": "Fullqualification andindependentorigintargetremainopen despitequeryevidence; civiccellsneedUSAandIndiaclosure."
       }
     ],
-    "completion_automation_verified_at": "2026-11-05T22:42:52.422848+00:00",
+    "completion_automation_verified_at": "2026-11-06T02:21:12.414051+00:00",
     "completion_automation_enabled": false,
     "original_status_reporter_enabled": false,
     "scheduled_task_snapshot": "scheduled-task.json",
     "connector_progress": {
-      "observed_at": "2026-11-05T22:29:55.166355+00:00",
-      "total": 134,
-      "working": 63,
-      "blocked_or_failed": 71,
-      "still_checking": 0,
-      "not_working_verified": 71,
-      "assessed_or_deferred": 134,
-      "remaining_to_assess": 0,
-      "passing_query_examples": 667,
+      "observed_at": "2026-11-06T02:21:12.414051+00:00",
+      "totals": {
+        "total": 133,
+        "working": 68,
+        "blocked_or_failed": 65,
+        "still_checking": 0,
+        "not_working_verified": 65,
+        "assessed_or_deferred": 133,
+        "remaining_to_assess": 0,
+        "passing_query_examples": 717
+      },
       "groups": [
         {
           "id": "G01",
           "name": "Books, children’s books and audiobooks",
           "total": 39,
-          "working": 20,
-          "blocked_or_failed": 19,
+          "working": 25,
+          "blocked_or_failed": 14,
           "still_checking": 0
         },
         {
           "id": "G02",
           "name": "Learning and technical documentation",
-          "total": 15,
+          "total": 14,
           "working": 9,
-          "blocked_or_failed": 6,
+          "blocked_or_failed": 5,
           "still_checking": 0
         },
         {
@@ -3334,32 +3358,24 @@
       ],
       "previous_report": {
         "total": 134,
-        "working": 53,
-        "blocked_or_failed": 66,
-        "still_checking": 15,
-        "not_working_verified": 81,
-        "assessed_or_deferred": 119,
-        "remaining_to_assess": 15,
-        "passing_query_examples": 565
+        "working": 63,
+        "blocked_or_failed": 71,
+        "still_checking": 0,
+        "not_working_verified": 71,
+        "assessed_or_deferred": 134,
+        "remaining_to_assess": 0,
+        "passing_query_examples": 667
       },
       "new_working": [
-        "african-storybook",
-        "book-dash",
-        "google-books",
-        "internet-archive",
-        "nalibali",
-        "project-gutenberg",
-        "standard-ebooks",
-        "storyberries",
-        "storyweaver",
-        "govinfo"
+        "open-book-publishers",
+        "helsinki-university-press",
+        "project-madurai",
+        "sugamya-pustakalaya",
+        "openstax"
       ],
-      "new_blocked": [
-        "doab",
-        "gutendex",
-        "oapen",
-        "open-library",
-        "world-bank-okr"
+      "new_blocked": [],
+      "excluded": [
+        "swayam"
       ],
       "status_list": "connector-status.csv",
       "new_provider_errors_require_owner_action": false
@@ -3450,5 +3466,5 @@
     "pause_when_provider_blocked": false,
     "scheduled_reporting_paused_by_owner": true
   },
-  "updated_at": "2026-11-05T22:45:46.102420+00:00"
+  "updated_at": "2026-11-06T02:21:12.414051+00:00"
 }

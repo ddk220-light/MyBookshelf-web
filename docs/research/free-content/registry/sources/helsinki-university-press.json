@@ -7,33 +7,208 @@
   "areas": [
     "C04"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "capabilities": [
-    "Thoth topic search returned book records."
+    "Publisher-scoped literal metadata title filter",
+    "limit/offset paging",
+    "MONOGRAPH and EDITED_BOOK; ACTIVE status"
   ],
   "query": {
-    "adapter": "thoth",
+    "adapter": "thoth-metadata",
     "endpoint": "https://api.thoth.pub/graphql",
-    "cases": [],
-    "authentication": "not established for a complete supported route",
-    "cost": "No paid service used in initial review.",
     "publisher_id": "7c0b2d93-3264-4d83-beb5-7c18898d995a",
-    "metadata_query_template": "{works(limit:3,filter:\"QUERY\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} landingPage license}}"
+    "cases": [
+      {
+        "id": "metadata-title-01",
+        "intent": "Find publisher book title: An Anthropology of Crosslocations",
+        "query_text": "An Anthropology of Crosslocations",
+        "expected_ids": [
+          "fc93c392-222d-42c5-89ca-2aad69952f78"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"An Anthropology of Crosslocations\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-02",
+        "intent": "Find publisher book title: An Investigation of Hate Speech in Italian",
+        "query_text": "An Investigation of Hate Speech in Italian",
+        "expected_ids": [
+          "027782f4-5f41-4f85-825b-99dab0bc4bfc"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"An Investigation of Hate Speech in Italian\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-03",
+        "intent": "Find publisher book title: Arendt, Eichmann and the Politics of the Past",
+        "query_text": "Arendt, Eichmann and the Politics of the Past",
+        "expected_ids": [
+          "0cb423ad-8558-4ea3-b4f5-8d66553aa160"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Arendt, Eichmann and the Politics of the Past\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-04",
+        "intent": "Find publisher book title: Banal Security",
+        "query_text": "Banal Security",
+        "expected_ids": [
+          "76151870-43d7-4191-8722-0ac1dd34f073"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Banal Security\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-05",
+        "intent": "Find publisher book title: Being Pagan, Being Christian in Late Antiquity and Early Middle Ages",
+        "query_text": "Being Pagan, Being Christian in Late Antiquity and Early Middle Ages",
+        "expected_ids": [
+          "9ede75a6-7827-4ef4-8150-56e1b2627d85"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Being Pagan, Being Christian in Late Antiquity and Early Middle Ages\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-06",
+        "intent": "Find publisher book title: Bridging Cultural Concepts of Nature",
+        "query_text": "Bridging Cultural Concepts of Nature",
+        "expected_ids": [
+          "ab65bc89-72be-4c61-8196-3c6429e41687"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Bridging Cultural Concepts of Nature\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-07",
+        "intent": "Find publisher book title: Civilians and Military Supply in Early Modern Finland",
+        "query_text": "Civilians and Military Supply in Early Modern Finland",
+        "expected_ids": [
+          "2ee552a8-cf96-4cb2-b0c1-296be976cf3c"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Civilians and Military Supply in Early Modern Finland\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-08",
+        "intent": "Find publisher book title: Climate Change Adaptation in Coastal Cities",
+        "query_text": "Climate Change Adaptation in Coastal Cities",
+        "expected_ids": [
+          "c55db0c1-d35b-44bf-b713-f7e92c1150e3"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Climate Change Adaptation in Coastal Cities\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-09",
+        "intent": "Find publisher book title: Culture and History in the Pacific",
+        "query_text": "Culture and History in the Pacific",
+        "expected_ids": [
+          "7451138f-5e31-486d-b25d-f39968290f48"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Culture and History in the Pacific\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-10",
+        "intent": "Find publisher book title: Deciphering Markets and Money",
+        "query_text": "Deciphering Markets and Money",
+        "expected_ids": [
+          "6c59fb96-cf6e-47a9-8b36-18998f28a1a4"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Deciphering Markets and Money\",publishers:[\"7c0b2d93-3264-4d83-beb5-7c18898d995a\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      }
+    ],
+    "supported_modes": [
+      "Publisher-scoped literal metadata title filter",
+      "limit/offset paging",
+      "MONOGRAPH and EDITED_BOOK; ACTIVE status"
+    ],
+    "unsupported_modes": [
+      "full text",
+      "reader access verification",
+      "semantic ranking"
+    ],
+    "authentication": "No key for public metadata queries",
+    "research_pause_seconds": 3,
+    "metadata_rights": "Thoth metadata CC0; content licenses are separate provider claims",
+    "reading_access_is_queryability_gate": false
   },
   "licensing": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
   "documentation": [
-    "https://hup.fi/"
+    "https://hup.fi/",
+    "https://api.thoth.pub/graphiql",
+    "https://thoth.pub/docs/policies/terms-thoth-metadata"
   ],
   "limitations": [
-    "Sampled records lacked canonical digital locations."
+    "Publisher-scoped title/metadata search; supplied DOI links used when publisher landingPage is null. DOI destinations not fetched.",
+    "Some provider fullTitle values include a literal \": None\" suffix; preserved as supplied metadata.",
+    "Metadata CC0 is separate from individual book licenses; full reading not verified."
   ],
   "evidence": [
-    "../batches/G01_FIRST_TEN.md"
+    "../batches/G01_FIRST_TEN.md",
+    "analysis/external/metadata-link-owner-scope-20261106.json",
+    "runs/metadata-link-fixes-20261106a/observations.jsonl",
+    "runs/metadata-link-fixes-20261106b/observations.jsonl",
+    "runs/metadata-link-fixes-20261106c/observations.jsonl",
+    "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+    "examples/helsinki-university-press.jsonl",
+    "runs/metadata-link-query-seeds-20261106/helsinki-university-press-metadata.json"
   ],
-  "last_reviewed_at": "2026-11-05",
-  "next_action": "Revalidate supported metadata queries and native identities with current examples. Keep reader-access limitations separate from queryability.",
+  "last_reviewed_at": "2026-11-06T02:18:23.609570+00:00",
+  "next_action": "Retain Working metadata search within the recorded scope. Future scope expansion or reader/access checks remain separate; hourly runs stay paused.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -72,17 +247,36 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata-only queryability review supersedes historical reader/digital-link blocker; deeper dossier fields remain open.",
       "facts": {
         "adapter": "thoth",
         "endpoint": "https://api.thoth.pub/graphql",
         "capabilities": [
           "Thoth topic search returned book records."
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "supported_and_unsupported_modes": "needs explicit review",
+        "metadata_scope_review_20261106": {
+          "queryability": "Working; ten current relevant query examples",
+          "reading_access_is_queryability_gate": false,
+          "scope": [
+            "Publisher-scoped literal metadata title filter",
+            "limit/offset paging",
+            "MONOGRAPH and EDITED_BOOK; ACTIVE status"
+          ],
+          "limits": [
+            "Publisher-scoped title/metadata search; supplied DOI links used when publisher landingPage is null. DOI destinations not fetched.",
+            "Some provider fullTitle values include a literal \": None\" suffix; preserved as supplied metadata.",
+            "Metadata CC0 is separate from individual book licenses; full reading not verified."
+          ],
+          "full_qualification_complete": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+        "examples/helsinki-university-press.jsonl",
+        "runs/metadata-link-query-seeds-20261106/helsinki-university-press-metadata.json",
+        "analysis/external/metadata-link-owner-scope-20261106.json"
       ],
       "open_questions": [
         "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
@@ -106,16 +300,35 @@
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata-only queryability review supersedes historical reader/digital-link blocker; deeper dossier fields remain open.",
       "facts": {
         "evidence_references": [
           "../batches/G01_FIRST_TEN.md"
         ],
         "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "access_classification": "needs explicit item-level review",
+        "metadata_scope_review_20261106": {
+          "queryability": "Working; ten current relevant query examples",
+          "reading_access_is_queryability_gate": false,
+          "scope": [
+            "Publisher-scoped literal metadata title filter",
+            "limit/offset paging",
+            "MONOGRAPH and EDITED_BOOK; ACTIVE status"
+          ],
+          "limits": [
+            "Publisher-scoped title/metadata search; supplied DOI links used when publisher landingPage is null. DOI destinations not fetched.",
+            "Some provider fullTitle values include a literal \": None\" suffix; preserved as supplied metadata.",
+            "Metadata CC0 is separate from individual book licenses; full reading not verified."
+          ],
+          "full_qualification_complete": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+        "examples/helsinki-university-press.jsonl",
+        "runs/metadata-link-query-seeds-20261106/helsinki-university-press-metadata.json",
+        "analysis/external/metadata-link-owner-scope-20261106.json"
       ],
       "open_questions": [
         "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
@@ -123,15 +336,34 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata-only queryability review supersedes historical reader/digital-link blocker; deeper dossier fields remain open.",
       "facts": {
         "limitations": [
           "Sampled records lacked canonical digital locations."
         ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "ranking_relevance_completeness": "not fully qualified",
+        "metadata_scope_review_20261106": {
+          "queryability": "Working; ten current relevant query examples",
+          "reading_access_is_queryability_gate": false,
+          "scope": [
+            "Publisher-scoped literal metadata title filter",
+            "limit/offset paging",
+            "MONOGRAPH and EDITED_BOOK; ACTIVE status"
+          ],
+          "limits": [
+            "Publisher-scoped title/metadata search; supplied DOI links used when publisher landingPage is null. DOI destinations not fetched.",
+            "Some provider fullTitle values include a literal \": None\" suffix; preserved as supplied metadata.",
+            "Metadata CC0 is separate from individual book licenses; full reading not verified."
+          ],
+          "full_qualification_complete": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+        "examples/helsinki-university-press.jsonl",
+        "runs/metadata-link-query-seeds-20261106/helsinki-university-press-metadata.json",
+        "analysis/external/metadata-link-owner-scope-20261106.json"
       ],
       "open_questions": [
         "Complete relevance, type, edition/version, negative-input and repeat-session checks."
@@ -154,14 +386,33 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata-only queryability review supersedes historical reader/digital-link blocker; deeper dossier fields remain open.",
       "facts": {
         "state": "deferred",
         "next_action": "Verify official publisher/repository query and reading route.",
-        "production_qualification_complete": false
+        "production_qualification_complete": false,
+        "metadata_scope_review_20261106": {
+          "queryability": "Working; ten current relevant query examples",
+          "reading_access_is_queryability_gate": false,
+          "scope": [
+            "Publisher-scoped literal metadata title filter",
+            "limit/offset paging",
+            "MONOGRAPH and EDITED_BOOK; ACTIVE status"
+          ],
+          "limits": [
+            "Publisher-scoped title/metadata search; supplied DOI links used when publisher landingPage is null. DOI destinations not fetched.",
+            "Some provider fullTitle values include a literal \": None\" suffix; preserved as supplied metadata.",
+            "Metadata CC0 is separate from individual book licenses; full reading not verified."
+          ],
+          "full_qualification_complete": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+        "examples/helsinki-university-press.jsonl",
+        "runs/metadata-link-query-seeds-20261106/helsinki-university-press-metadata.json",
+        "analysis/external/metadata-link-owner-scope-20261106.json"
       ],
       "open_questions": [
         "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
@@ -178,27 +429,54 @@
       "status": "historical-context-needs-reconciliation"
     },
     {
-      "document_id": "1c3d0752f7c6a4fd3fd60df7db6432123a281b127df0a2b4e3bbfbed3b9376a6",
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
       "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
-      "line": 19,
+      "line": 21,
       "heading": "Blocked connector access report",
       "text": "NCBI Bookshelf, Open Book Publishers and Helsinki University Press need current metadata revalidation: old reader-access failures should not be used as the sole reason to fail search coverage.",
       "status": "historical-context-needs-reconciliation"
     },
     {
-      "document_id": "1c3d0752f7c6a4fd3fd60df7db6432123a281b127df0a2b4e3bbfbed3b9376a6",
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
       "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
-      "line": 81,
+      "line": 83,
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [Helsinki University Press](https://hup.fi/) | Historical Thoth search returned metadata; digital links were incomplete. | Revalidate metadata search and ten current examples. Missing reading links alone must not block the revised search-only count. Owner action: engineering/research first; no owner signup required yet. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "f5f1a162f77fefba5cab69120b1c892ee17113efdd77bd07b7e389b4a95b268a",
+      "path": "docs/research/free-content/METADATA_LINK_FIXES.md",
+      "line": 10,
+      "heading": "Metadata search fixes — 6 November 2026",
+      "text": "| Helsinki University Press | Working | Same publisher-scoped search; provider DOI links used when the landing-page field is empty | DOI destinations not fetched; provider titles with a literal `: None` suffix preserved |",
       "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reason": "Historical metadata searches returned records, but current supported query examples have not been revalidated. The old reader-access/digital-link prerequisite does not gate the owner’s revised queryability count.",
-    "attempt": "Reviewed saved first-ten research and the owner’s revised search-only coverage rule; no provider query sent.",
-    "result": "Remains Blocked/failed pending current query evidence; historical successes are not promoted to fresh verification.",
-    "decision": "revalidate_metadata_queries_separately_from_reader_access",
-    "reviewed_at": "2026-11-05T22:42:52.422848+00:00"
+    "status": "working",
+    "reason": "Owner-approved metadata/outbound discovery no longer depends on full reading access.",
+    "attempt": "Public publisher-scoped Thoth queries; use provider DOI when landingPage is absent.",
+    "result": "Ten distinct current relevant searches passed; failures and previous requests retained.",
+    "decision": "working_with_explicit_search_scope",
+    "reviewed_at": "2026-11-06T02:18:23.609570+00:00",
+    "evidence": [
+      "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+      "examples/helsinki-university-press.jsonl",
+      "runs/metadata-link-query-seeds-20261106/helsinki-university-press-metadata.json"
+    ]
+  },
+  "research_selection": {
+    "included": true,
+    "reason": "Owner approved metadata discovery and outbound linking; current query proof still required",
+    "reviewed_at": "2026-11-06T02:02:06.275832+00:00",
+    "evidence": "analysis/external/metadata-link-owner-scope-20261106.json"
+  },
+  "discovery_scope": {
+    "mode": "metadata-and-outbound-links",
+    "reader_access_is_queryability_gate": false,
+    "reading_eligibility_label": null,
+    "no_full_content_downloads": true,
+    "no_personal_owner_data": true
   }
 }

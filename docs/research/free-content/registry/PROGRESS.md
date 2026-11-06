@@ -1,3 +1,17 @@
+## 2026-11-06T02:21:12.414051+00:00: Owner-requested metadata fixes; schedules remain paused
+
+| Group | Working | Blocked/failed | Still checking | Total |
+|---|---:|---:|---:|---:|
+| Books, children’s books and audiobooks | 25 | 14 | 0 | 39 |
+| Learning and technical documentation | 9 | 5 | 0 | 14 |
+| Industry and job knowledge | 10 | 10 | 0 | 20 |
+| Government, maps and public data | 10 | 16 | 0 | 26 |
+| Research papers and scholarly sources | 10 | 12 | 0 | 22 |
+| Language, culture and media | 4 | 8 | 0 | 12 |
+| **Total** | **68** | **65** | **0** | **133** |
+
+Five newly Working connectors, 50 new passing examples; SWAYAM excluded from active counts but retained in the 134-record inventory. 717 current examples; 267 research tests pass. [Fixes and remaining blockers](../METADATA_LINK_FIXES.md). No activation/deployment or active collector.
+
 ## 2026-11-05T22:42:52.422848+00:00: Paused by owner; all 71 blocker access actions reviewed
 
 63 Working, 71 Blocked/failed, 0 Still checking; 667 passing examples, unchanged. Hourly completion and legacy status reporter are disabled. No live query collection, signup or outreach. [Full report](../BLOCKED_CONNECTOR_ACCESS_REPORT.md). Eight connectors have public API-key/application/contact routes; five need permission/interface clarification; eleven have route-specific exclusions; three have eligibility/project-scope issues; 44 have technical or unfinished research blockers. No provider-wide permanent blanket ban is established.

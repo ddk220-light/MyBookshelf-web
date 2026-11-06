@@ -136,6 +136,7 @@
     "https://data.opencity.in/robots.txt"
   ],
   "limitations": [
+    "Provider terms prohibit automated search/retrieval indexing and robots disallow /api/. Owner metadata approval does not resolve the provider restriction.",
     "robots.txt: Disallow /api/; Crawl-Delay10. TheAPI3documentation request was skipped and no API query sent.",
     "Terms prohibit robots/search-retrieval indexing; published API link and FAQ free access do not override this contradiction.",
     "Dataset-level and original government rights must be reconciled separately; no bulk files or personal data collected.",
@@ -145,10 +146,15 @@
     "runs/planning-catalog-docs-20261105s/observations.jsonl",
     "runs/planning-discovery-contract-20261105t/observations.jsonl",
     "runs/planning-api-identity-20261105u/observations.jsonl",
-    "runs/opencity-rights-policy-20261105v/observations.jsonl"
+    "runs/opencity-rights-policy-20261105v/observations.jsonl",
+    "analysis/external/metadata-link-owner-scope-20261106.json",
+    "runs/metadata-link-fixes-20261106a/observations.jsonl",
+    "runs/metadata-link-fixes-20261106b/observations.jsonl",
+    "runs/metadata-link-fixes-20261106c/observations.jsonl",
+    "runs/metadata-link-query-seeds-20261106/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T09:00:06.844492+00:00",
-  "next_action": "Defer automated catalog queries: robots disallows /api/ and terms restrict robot/indexing use despite a linked CKAN API. Revisit only on an explicit published permission/policy change or owner-authorized clarification; no outreach authorized now. Continue independent India government planning catalogs and USA sources.",
+  "last_reviewed_at": "2026-11-06T02:18:23.609570+00:00",
+  "next_action": "Provider clarification/permission for a documented machine-readable metadata route is needed. No outreach sent.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "complete",
@@ -911,20 +917,57 @@
   },
   "analysis_refs": [
     {
-      "document_id": "1c3d0752f7c6a4fd3fd60df7db6432123a281b127df0a2b4e3bbfbed3b9376a6",
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
       "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
-      "line": 45,
+      "line": 47,
       "heading": "Permission or supported-integration clarification — 5",
       "text": "| [OpenCity India urban data repository](https://opencity.in/terms-and-conditions/) | Saved site terms prohibit automated search/indexing; robots also disallows /api/. | Ask the operator through its official contact channel for written permission and a supported metadata API/export. The public CKAN link conflicts with the restrictions and is not sufficient permission. No evidence says an exception will be granted. Owner action: permission request advisable. |",
       "status": "historical-context-needs-reconciliation"
     },
     {
-      "document_id": "1c3d0752f7c6a4fd3fd60df7db6432123a281b127df0a2b4e3bbfbed3b9376a6",
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
       "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
-      "line": 121,
+      "line": 123,
       "heading": "Technical failure or unfinished research — 44",
       "text": "For the two explicit broad method restrictions: SWAYAM prohibits scraping/bulk downloads; OpenCity’s saved terms prohibit automated retrieval/indexing and its API route is disallowed. An ordinary user account does not override those terms. A written exception or explicitly permitted integration would be a separate basis.",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "f5f1a162f77fefba5cab69120b1c892ee17113efdd77bd07b7e389b4a95b268a",
+      "path": "docs/research/free-content/METADATA_LINK_FIXES.md",
+      "line": 17,
+      "heading": "Metadata search fixes — 6 November 2026",
+      "text": "| OpenCity India | Blocked/failed | Existing provider terms and robots findings retained | Terms prohibit automated retrieval/indexing and robots disallow `/api/`. Needs provider clarification/permission for machine metadata use; no outreach sent |",
+      "status": "historical-context-needs-reconciliation"
     }
-  ]
+  ],
+  "research_selection": {
+    "included": true,
+    "reason": "Owner approved metadata discovery and outbound linking; current query proof still required",
+    "reviewed_at": "2026-11-06T02:02:06.275832+00:00",
+    "evidence": "analysis/external/metadata-link-owner-scope-20261106.json"
+  },
+  "discovery_scope": {
+    "mode": "metadata-and-outbound-links",
+    "reader_access_is_queryability_gate": false,
+    "reading_eligibility_label": null,
+    "no_full_content_downloads": true,
+    "no_personal_owner_data": true
+  },
+  "recovery": {
+    "status": "blocked_or_failed",
+    "reason": "Provider terms prohibit automated search/retrieval indexing and robots disallow /api/. Owner metadata approval does not resolve the provider restriction.",
+    "attempt": "Backfilled saved terms/robots findings; no repeat request to a denied route.",
+    "result": "No fresh passing query examples; preserved negative/policy evidence.",
+    "decision": "provider_permission_needed",
+    "reviewed_at": "2026-11-06T02:18:23.609570+00:00",
+    "owner_action_required": true,
+    "evidence": [
+      "analysis/external/metadata-link-owner-scope-20261106.json",
+      "runs/metadata-link-fixes-20261106a/observations.jsonl",
+      "runs/metadata-link-fixes-20261106b/observations.jsonl",
+      "runs/metadata-link-fixes-20261106c/observations.jsonl",
+      "runs/metadata-link-query-seeds-20261106/observations.jsonl"
+    ]
+  }
 }

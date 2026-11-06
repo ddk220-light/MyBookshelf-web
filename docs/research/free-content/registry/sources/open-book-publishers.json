@@ -7,33 +7,207 @@
   "areas": [
     "C04"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "capabilities": [
-    "Thoth publisher-scoped metadata search returned books."
+    "Publisher-scoped literal metadata title filter",
+    "limit/offset paging",
+    "MONOGRAPH and EDITED_BOOK; ACTIVE status"
   ],
   "query": {
-    "adapter": "thoth",
+    "adapter": "thoth-metadata",
     "endpoint": "https://api.thoth.pub/graphql",
-    "cases": [],
-    "authentication": "not established for a complete supported route",
-    "cost": "No paid service used in initial review.",
     "publisher_id": "85fd969a-a16c-480b-b641-cb9adf979c3b",
-    "metadata_query_template": "{works(limit:3,filter:\"QUERY\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId titles{fullTitle} landingPage license}}"
+    "cases": [
+      {
+        "id": "metadata-title-01",
+        "intent": "Find publisher book title: A Common Good Approach to Development",
+        "query_text": "A Common Good Approach to Development",
+        "expected_ids": [
+          "a28326e3-e86b-4e6c-8538-4ed0306d4259"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"A Common Good Approach to Development\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-02",
+        "intent": "Find publisher book title: A Complete Guide to Maggot Therapy",
+        "query_text": "A Complete Guide to Maggot Therapy",
+        "expected_ids": [
+          "5fb9a23a-bf8e-4527-9c9c-3786b7219285"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"A Complete Guide to Maggot Therapy\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-03",
+        "intent": "Find publisher book title: A Country of Shepherds",
+        "query_text": "A Country of Shepherds",
+        "expected_ids": [
+          "96d7f2cc-d864-4363-8caa-abd2c74fe35d"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"A Country of Shepherds\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-04",
+        "intent": "Find publisher book title: Acoustemologies in Contact",
+        "query_text": "Acoustemologies in Contact",
+        "expected_ids": [
+          "fdeb2a1b-af39-4165-889d-cc7a5a31d5fa"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Acoustemologies in Contact\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-05",
+        "intent": "Find publisher book title: Active Speech",
+        "query_text": "Active Speech",
+        "expected_ids": [
+          "ee1ca965-4931-4e27-b070-222870280f45"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Active Speech\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-06",
+        "intent": "Find publisher book title: A European Public Investment Outlook",
+        "query_text": "A European Public Investment Outlook",
+        "expected_ids": [
+          "b59def35-5712-44ed-8490-9073ab1c6cdc"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"A European Public Investment Outlook\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-07",
+        "intent": "Find publisher book title: A Field Guide to Cross-Cultural Research on Childhood Learning",
+        "query_text": "A Field Guide to Cross-Cultural Research on Childhood Learning",
+        "expected_ids": [
+          "4fdbecb8-d6e5-414f-acf0-2b02266e01a1"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"A Field Guide to Cross-Cultural Research on Childhood Learning\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-08",
+        "intent": "Find publisher book title: A Fleet Street In Every Town",
+        "query_text": "A Fleet Street In Every Town",
+        "expected_ids": [
+          "528e4526-42e4-4e68-a0d5-f74a285c35a6"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"A Fleet Street In Every Town\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-09",
+        "intent": "Find publisher book title: Africa in Russian Imperial Culture",
+        "query_text": "Africa in Russian Imperial Culture",
+        "expected_ids": [
+          "570ffdb9-3689-4a11-8249-be669c5b2d61"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"Africa in Russian Imperial Culture\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      },
+      {
+        "id": "metadata-title-10",
+        "intent": "Find publisher book title: After the Before Times",
+        "query_text": "After the Before Times",
+        "expected_ids": [
+          "e215ea9e-02de-4f6a-92c3-195ef857d629"
+        ],
+        "request": {
+          "method": "POST",
+          "url": "https://api.thoth.pub/graphql",
+          "json": {
+            "query": "{works(limit:5,offset:0,filter:\"After the Before Times\",publishers:[\"85fd969a-a16c-480b-b641-cb9adf979c3b\"],workTypes:[MONOGRAPH,EDITED_BOOK],workStatus:ACTIVE){workId workType titles{fullTitle} landingPage doi license imprint{publisherId} }}"
+          }
+        }
+      }
+    ],
+    "supported_modes": [
+      "Publisher-scoped literal metadata title filter",
+      "limit/offset paging",
+      "MONOGRAPH and EDITED_BOOK; ACTIVE status"
+    ],
+    "unsupported_modes": [
+      "full text",
+      "reader access verification",
+      "semantic ranking"
+    ],
+    "authentication": "No key for public metadata queries",
+    "research_pause_seconds": 3,
+    "metadata_rights": "Thoth metadata CC0; content licenses are separate provider claims",
+    "reading_access_is_queryability_gate": false
   },
   "licensing": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
   "documentation": [
-    "https://www.openbookpublishers.com/"
+    "https://www.openbookpublishers.com/",
+    "https://api.thoth.pub/graphiql",
+    "https://thoth.pub/docs/policies/terms-thoth-metadata"
   ],
   "limitations": [
-    "Sample canonical PDF presented human verification; alternate OAPEN challenged and Cambridge route was denied by environment proxy."
+    "Publisher-scoped title/metadata search; does not establish reader availability, full-text search or semantic relevance.",
+    "Metadata CC0 is separate from individual book licenses."
   ],
   "evidence": [
-    "../batches/G01_FIRST_TEN.md"
+    "../batches/G01_FIRST_TEN.md",
+    "analysis/external/metadata-link-owner-scope-20261106.json",
+    "runs/metadata-link-fixes-20261106a/observations.jsonl",
+    "runs/metadata-link-fixes-20261106b/observations.jsonl",
+    "runs/metadata-link-fixes-20261106c/observations.jsonl",
+    "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+    "examples/open-book-publishers.jsonl",
+    "runs/metadata-link-query-seeds-20261106/open-book-publishers-metadata.json"
   ],
-  "last_reviewed_at": "2026-11-05",
-  "next_action": "Revalidate supported metadata queries and native identities with current examples. Keep reader-access limitations separate from queryability.",
+  "last_reviewed_at": "2026-11-06T02:18:23.609570+00:00",
+  "next_action": "Retain Working metadata search within the recorded scope. Future scope expansion or reader/access checks remain separate; hourly runs stay paused.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -72,17 +246,35 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata-only queryability review supersedes historical reader/digital-link blocker; deeper dossier fields remain open.",
       "facts": {
         "adapter": "thoth",
         "endpoint": "https://api.thoth.pub/graphql",
         "capabilities": [
           "Thoth publisher-scoped metadata search returned books."
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "supported_and_unsupported_modes": "needs explicit review",
+        "metadata_scope_review_20261106": {
+          "queryability": "Working; ten current relevant query examples",
+          "reading_access_is_queryability_gate": false,
+          "scope": [
+            "Publisher-scoped literal metadata title filter",
+            "limit/offset paging",
+            "MONOGRAPH and EDITED_BOOK; ACTIVE status"
+          ],
+          "limits": [
+            "Publisher-scoped title/metadata search; does not establish reader availability, full-text search or semantic relevance.",
+            "Metadata CC0 is separate from individual book licenses."
+          ],
+          "full_qualification_complete": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+        "examples/open-book-publishers.jsonl",
+        "runs/metadata-link-query-seeds-20261106/open-book-publishers-metadata.json",
+        "analysis/external/metadata-link-owner-scope-20261106.json"
       ],
       "open_questions": [
         "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
@@ -106,16 +298,34 @@
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata-only queryability review supersedes historical reader/digital-link blocker; deeper dossier fields remain open.",
       "facts": {
         "evidence_references": [
           "../batches/G01_FIRST_TEN.md"
         ],
         "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "access_classification": "needs explicit item-level review",
+        "metadata_scope_review_20261106": {
+          "queryability": "Working; ten current relevant query examples",
+          "reading_access_is_queryability_gate": false,
+          "scope": [
+            "Publisher-scoped literal metadata title filter",
+            "limit/offset paging",
+            "MONOGRAPH and EDITED_BOOK; ACTIVE status"
+          ],
+          "limits": [
+            "Publisher-scoped title/metadata search; does not establish reader availability, full-text search or semantic relevance.",
+            "Metadata CC0 is separate from individual book licenses."
+          ],
+          "full_qualification_complete": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+        "examples/open-book-publishers.jsonl",
+        "runs/metadata-link-query-seeds-20261106/open-book-publishers-metadata.json",
+        "analysis/external/metadata-link-owner-scope-20261106.json"
       ],
       "open_questions": [
         "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
@@ -123,15 +333,33 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata-only queryability review supersedes historical reader/digital-link blocker; deeper dossier fields remain open.",
       "facts": {
         "limitations": [
           "Sample canonical PDF presented human verification; alternate OAPEN challenged and Cambridge route was denied by environment proxy."
         ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "ranking_relevance_completeness": "not fully qualified",
+        "metadata_scope_review_20261106": {
+          "queryability": "Working; ten current relevant query examples",
+          "reading_access_is_queryability_gate": false,
+          "scope": [
+            "Publisher-scoped literal metadata title filter",
+            "limit/offset paging",
+            "MONOGRAPH and EDITED_BOOK; ACTIVE status"
+          ],
+          "limits": [
+            "Publisher-scoped title/metadata search; does not establish reader availability, full-text search or semantic relevance.",
+            "Metadata CC0 is separate from individual book licenses."
+          ],
+          "full_qualification_complete": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+        "examples/open-book-publishers.jsonl",
+        "runs/metadata-link-query-seeds-20261106/open-book-publishers-metadata.json",
+        "analysis/external/metadata-link-owner-scope-20261106.json"
       ],
       "open_questions": [
         "Complete relevance, type, edition/version, negative-input and repeat-session checks."
@@ -154,14 +382,32 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current metadata-only queryability review supersedes historical reader/digital-link blocker; deeper dossier fields remain open.",
       "facts": {
         "state": "deferred",
         "next_action": "Verify normal reader access through an allowed route; no bypass.",
-        "production_qualification_complete": false
+        "production_qualification_complete": false,
+        "metadata_scope_review_20261106": {
+          "queryability": "Working; ten current relevant query examples",
+          "reading_access_is_queryability_gate": false,
+          "scope": [
+            "Publisher-scoped literal metadata title filter",
+            "limit/offset paging",
+            "MONOGRAPH and EDITED_BOOK; ACTIVE status"
+          ],
+          "limits": [
+            "Publisher-scoped title/metadata search; does not establish reader availability, full-text search or semantic relevance.",
+            "Metadata CC0 is separate from individual book licenses."
+          ],
+          "full_qualification_complete": false
+        }
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+        "examples/open-book-publishers.jsonl",
+        "runs/metadata-link-query-seeds-20261106/open-book-publishers-metadata.json",
+        "analysis/external/metadata-link-owner-scope-20261106.json"
       ],
       "open_questions": [
         "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
@@ -178,27 +424,54 @@
       "status": "historical-context-needs-reconciliation"
     },
     {
-      "document_id": "1c3d0752f7c6a4fd3fd60df7db6432123a281b127df0a2b4e3bbfbed3b9376a6",
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
       "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
-      "line": 19,
+      "line": 21,
       "heading": "Blocked connector access report",
       "text": "NCBI Bookshelf, Open Book Publishers and Helsinki University Press need current metadata revalidation: old reader-access failures should not be used as the sole reason to fail search coverage.",
       "status": "historical-context-needs-reconciliation"
     },
     {
-      "document_id": "1c3d0752f7c6a4fd3fd60df7db6432123a281b127df0a2b4e3bbfbed3b9376a6",
+      "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
       "path": "docs/research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md",
-      "line": 86,
+      "line": 88,
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [Open Book Publishers](https://www.openbookpublishers.com/) | Historical Thoth metadata worked; sampled reading destinations challenged access. | Revalidate metadata queries and ten current examples separately from reader access. Do not bypass reader challenges. Owner action: engineering/research first; no owner signup required yet. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "f5f1a162f77fefba5cab69120b1c892ee17113efdd77bd07b7e389b4a95b268a",
+      "path": "docs/research/free-content/METADATA_LINK_FIXES.md",
+      "line": 9,
+      "heading": "Metadata search fixes — 6 November 2026",
+      "text": "| Open Book Publishers | Working | Public Thoth title search restricted to this publisher, active monographs/edited books; native work UUIDs and publisher links | Metadata CC0 does not license the books; reading not tested |",
       "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reason": "Historical metadata searches returned records, but current supported query examples have not been revalidated. The old reader-access/digital-link prerequisite does not gate the owner’s revised queryability count.",
-    "attempt": "Reviewed saved first-ten research and the owner’s revised search-only coverage rule; no provider query sent.",
-    "result": "Remains Blocked/failed pending current query evidence; historical successes are not promoted to fresh verification.",
-    "decision": "revalidate_metadata_queries_separately_from_reader_access",
-    "reviewed_at": "2026-11-05T22:42:52.422848+00:00"
+    "status": "working",
+    "reason": "Owner-approved metadata/outbound discovery no longer depends on full reading access.",
+    "attempt": "Public publisher-scoped Thoth queries; remove full-reader/digital-link prerequisite.",
+    "result": "Ten distinct current relevant searches passed; failures and previous requests retained.",
+    "decision": "working_with_explicit_search_scope",
+    "reviewed_at": "2026-11-06T02:18:23.609570+00:00",
+    "evidence": [
+      "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+      "examples/open-book-publishers.jsonl",
+      "runs/metadata-link-query-seeds-20261106/open-book-publishers-metadata.json"
+    ]
+  },
+  "research_selection": {
+    "included": true,
+    "reason": "Owner approved metadata discovery and outbound linking; current query proof still required",
+    "reviewed_at": "2026-11-06T02:02:06.275832+00:00",
+    "evidence": "analysis/external/metadata-link-owner-scope-20261106.json"
+  },
+  "discovery_scope": {
+    "mode": "metadata-and-outbound-links",
+    "reader_access_is_queryability_gate": false,
+    "reading_eligibility_label": null,
+    "no_full_content_downloads": true,
+    "no_personal_owner_data": true
   }
 }
