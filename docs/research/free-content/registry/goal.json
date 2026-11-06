@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "free-knowledge-source-registry",
-  "state": "paused",
+  "state": "active",
   "owner_request": "Work through every identified free-knowledge connector and get supported searches working. Report simple group/connector progress on every hourly run, including unchanged runs. Diagnose blockers and try useful permitted fixes, retries or alternatives; keep making progress independently.",
   "tracking_issue": "https://github.com/ddk220-light/MyBookshelf-web/issues/164",
   "branch": "research/free-content-discovery-expansion",
@@ -30,12 +30,12 @@
     "Blocked/failed outcomes count as assessed, not working; Still checking is the remaining assessment queue."
   ],
   "execution": {
-    "batch_size": "Hourly task paused by owner. Directly requested fixes may run and checkpoint; do not resume hourly execution without owner instruction.",
-    "cursor": "Owner-requested metadata fixes saved: five connectors Working, SWAYAM excluded, five discussed provider blockers remain. Hourly completion/status tasks stay disabled; no active collector.",
+    "batch_size": "Actively recover the fixed original 44 connectors each run; checkpoint small batches. No daily quota.",
+    "cursor": "Deploy tested PR #180 from the separate release worktree; technical-recovery-20261106 alternate-route pass completed. Lever Press/Fulcrum, NASA Images API and Caltech search are reachable; DOAB directory robots timed out. Next: real query examples and retained failure analysis for the fixed 44.",
     "resume_instructions": "README.md",
     "automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
     "continuation": {
-      "title": "Complete connector search coverage",
+      "title": "Recover 44 connector searches",
       "enabled_at_creation": true,
       "cadence": "hourly",
       "timing_mode": "flexible_schedule",
@@ -43,16 +43,16 @@
       "created_at": "2026-11-05T01:20:22.989728+00:00",
       "environment_selection": "inherited",
       "note": "Creation confirmed; future execution/access is not guaranteed. Resume instructions and scope are in README.md.",
-      "updated_on": "2026-11-05",
+      "updated_on": "2026-11-06",
       "immediate_run": {
         "requested": true,
         "scheduler_trigger": "failed: HTTP 404 Action not found",
         "fallback": "Execution started in this conversation; corpus capture, historical-source backfill and new Python inventory queries performed."
       },
-      "last_observed_enabled": false,
-      "verified_at": "2026-11-06T02:21:12.414051+00:00",
+      "last_observed_enabled": true,
+      "verified_at": "2026-11-06T05:20:54Z",
       "next_run_time_reported": null,
-      "verification_note": "Read-only automation peek in this turn confirms completion and original reporter both disabled; no schedule mutation.",
+      "verification_note": "Automation update succeeded and confirmed is_enabled:true; hourly continuation resumes the fixed44-item goal.",
       "last_run_time_reported": "2026-11-05T20:34:26.521581+00:00",
       "automation_prompt_updated_at": "2026-11-05T17:22:03.158466+00:00"
     },
@@ -133,46 +133,10 @@
       "reason": "No native chat Goal control is exposed in the available tools; scheduler run-now returns HTTP 404. A saved goal and schedule are not the native feature."
     },
     "current_run": {
-      "state": "checkpoint-complete",
-      "started_at": "2026-11-06T02:02:06.275832+00:00",
-      "scope": "Metadata and source links only; no copying full books/audio, personal owner/deed-party records, accounts, outreach or production activation. Provider access controls and interface terms still apply.",
-      "active_detached_worker": false,
-      "schedule_remains_paused": true,
-      "base_commit": "efa57c5",
-      "source_ids": [
-        "repec",
-        "opencity-india",
-        "openstax",
-        "project-madurai",
-        "nls-bard",
-        "sugamya-pustakalaya",
-        "nyc-acris",
-        "ncbi-bookshelf",
-        "open-book-publishers",
-        "helsinki-university-press"
-      ],
-      "completed_at": "2026-11-06T02:21:12.414051+00:00",
-      "new_working": [
-        "open-book-publishers",
-        "helsinki-university-press",
-        "project-madurai",
-        "sugamya-pustakalaya",
-        "openstax"
-      ],
-      "excluded": [
-        "swayam"
-      ],
-      "query_status": {
-        "total": 133,
-        "working": 68,
-        "blocked_or_failed": 65,
-        "still_checking": 0,
-        "not_working_verified": 65,
-        "assessed_or_deferred": 133,
-        "remaining_to_assess": 0,
-        "passing_query_examples": 717
-      },
-      "report": "../METADATA_LINK_FIXES.md"
+      "state": "active",
+      "started_at": "2026-11-06T05:20:53.568628+00:00",
+      "scope": "Five-connector production release plus44-connector technical research recovery",
+      "active_detached_worker": false
     },
     "coverage_audit": "coverage-audit.json",
     "next_actions": [
@@ -3291,7 +3255,7 @@
       }
     ],
     "completion_automation_verified_at": "2026-11-06T02:21:12.414051+00:00",
-    "completion_automation_enabled": false,
+    "completion_automation_enabled": true,
     "original_status_reporter_enabled": false,
     "scheduled_task_snapshot": "scheduled-task.json",
     "connector_progress": {
@@ -3392,10 +3356,12 @@
       "requested_by": "owner",
       "reason": "Pause hourly runs; report 71 blocked/failed and public signup/permission/restriction routes",
       "observed_at": "2026-11-05T22:42:52.422848+00:00",
-      "completion_automation_enabled": false,
+      "completion_automation_enabled": true,
       "legacy_status_reporter_enabled": false,
-      "resumption": "Only on owner instruction; blocked work is not complete."
-    }
+      "resumption": "Owner requested active completion of all44 technical cases on2026-11-06",
+      "resumed_at": "2026-11-06T05:20:53.568628+00:00"
+    },
+    "active_recovery_goal": "technical-recovery-goal.json"
   },
   "constraints": [
     "Research only; do not enable app sources, import runtime catalogs or deploy.",
@@ -3466,5 +3432,5 @@
     "pause_when_provider_blocked": false,
     "scheduled_reporting_paused_by_owner": true
   },
-  "updated_at": "2026-11-06T02:24:54.280811+00:00"
+  "updated_at": "2026-11-06T05:20:53.568628+00:00"
 }

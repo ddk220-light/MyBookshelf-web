@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Owner resumed work, 6 November 2026:** The five newly completed connectors are being integrated in isolated `feat/metadata-connector-release` from current main. The fixed 44-item technical-recovery goal is active (2 already Working, 42 remaining); hourly completion is enabled again, legacy documentation reporter remains disabled. See [recovery goal](research/free-content/registry/technical-recovery-goal.json). Research collectors must check locks/remote freshness; production release uses its separate worktree.
+
 **Owner-requested metadata fixes, 2026-11-06T02:21:12.414051+00:00:** 68 Working / 65 Blocked or failed / 0 Still checking of 133 active connectors ; 134 records retained, SWAYAM excluded. Five newly working metadata searches and 50 examples; 267 research tests pass. Both hourly tasks remain paused, no collector active, production unchanged. [Fixes and blockers](research/free-content/METADATA_LINK_FIXES.md). Earlier entries below are historical checkpoints.
 
 **Hourly connector research paused by owner, 2026-11-05T22:42:52.422848+00:00.** Both automations are disabled; no query collector is active. Counts remain 63 Working / 71 Blocked or failed / 0 Still checking. [All 71 access actions](research/free-content/BLOCKED_CONNECTOR_ACCESS_REPORT.md) distinguish public signup, permission requests, route restrictions and unfinished engineering. No sources activated.
