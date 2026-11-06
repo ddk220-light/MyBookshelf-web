@@ -15,6 +15,12 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'seattle-catalog': 'Live Seattle catalog q keyword search with local title-substring filtering of first3 upstream items; native catalog IDs only, no underlying asset/owner records, paging or empty control yet',
+    'gutendex-native': 'Exact native Gutenberg ebook-ID metadata lookup; one current success but subsequent native-ID timeout leaves recovery open; title search remains unreliable',
+    'nqr-public-browser': 'Public browser qualification-title keyword form, first20 native qualification links; nine passing queries but subsequent page403 leaves recovery open, no files or enrollment tested',
+    'dgma-circular-catalog': 'Local title or native versioned-URL search over18 dated circular links on current DGMA home page; no full archive, document bodies or legal-currency guarantee',
+    'gsa-frpp-catalog': 'Local title/year or exact resource-URL search over13 annual FRPP summary dataset labels; no asset/owner rows or spreadsheet content',
+    'rosap-oai': 'Live anonymous native ROSA P record-ID metadata lookup through documented OAI; date-filtered page verified separately, upstream keyword search/full text unverified',
     'bhuvan-product-catalog': 'Local title/version and native product-selector search over85 published Bhuvan Store products; no tiles, imagery, owner records or whole-portal coverage',
     'nyc-zoning-index': 'Live anonymous SODA2.1 exact zoning-map label search in dataset wwcv-s7e7; native row IDs and map-index labels only, no property-owner data or authoritative zoning determination',
     'free-kids-wp-metadata': 'Live known-book title queries via advertised public WordPress metadata, first3 records; blog posts coexist, no arbitrary-topic/whole-catalog book-only relevance guarantee',

@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 32,
+  "remaining": 28,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -93,10 +93,21 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "The live SRU request returned 403.",
-      "current_reason": "Live SRU request returned HTTP 403.",
-      "next_action": "Recheck documented supported access within provider rules.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Gallica SRU previously403. The documented general-catalog SRU alternative has an explicit robots prohibition for OAI-SearchBot.",
+      "next_action": "Keep deferred for this collector. A different public metadata feed or explicit provider-permitted access is needed; do not use custom user-agent identity to evade the OpenAI crawler restriction.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:48:40.027929+00:00",
+          "reason": "Gallica SRU previously403. The documented general-catalog SRU alternative has an explicit robots prohibition for OAI-SearchBot.",
+          "attempt": "Read current primary BnF SRU documentation; confirm UNIMARC856 can link digitized records to Gallica; review complete catalogue-host robots policy.",
+          "result": "Public API contract identified, but automated OpenAI search access is explicitly disallowed; no live catalog query verified and no script query sent.",
+          "decision": "wait-for-permitted-access",
+          "evidence": [
+            "runs/technical-recovery-20261106f/observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "gutendex",
@@ -104,8 +115,8 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Two queries passed; other queries exceeded 20/45-second timeouts.",
-      "current_reason": "A single Frankenstein health search still exceeds the45-second timeout.",
-      "next_action": "Wait for a useful service recovery signal. Keep historical two successes; intermittent results do not establish reliable search.",
+      "current_reason": "Exact native book84 lookup responds immediately, but next native lookup8746 also times out after30seconds; broad search already timed out after45seconds.",
+      "next_action": "After useful recovery evidence or substantial backoff, test one additional known native book ID to distinguish cached-record availability from general backend recovery; do not launch a blind full batch.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -117,6 +128,17 @@
           "evidence": [
             "runs/technical-recovery-20261106c/observations.jsonl",
             "runs/technical-recovery-20261106c/book-attempts.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T08:06:29.587933+00:00",
+          "reason": "Exact native book84 lookup responds immediately, but next native lookup8746 also times out after30seconds; broad search already timed out after45seconds.",
+          "attempt": "Try documented native-book endpoint after broad-search failures; follow observed same-host301 to canonical trailing slash, then run distinct native-ID cases at policy pacing. Stop on timeout.",
+          "result": "One current ID query passed; second failed. Native-ID route is partially functioning but does not resolve intermittent provider availability. Earlier title-search examples retained in superseded contract/history.",
+          "decision": "wait_for_service_recovery",
+          "evidence": [
+            "runs/technical-recovery-20261106f/followups.jsonl",
+            "examples/gutendex.jsonl"
           ]
         }
       ]
@@ -138,10 +160,22 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Robots/app-shell responses did not expose a supported search contract.",
-      "current_reason": "Bare-host robots302; canonical host returned an empty extracted app shell. Its robots200 response has HTML content type and does not establish a usable policy. No query contract verified.",
-      "next_action": "Keep deferred. Revisit after a published supported API/export, valid policy/canonical route or documented recovery; then establish identity, rights, reader conditions and ten current native-ID queries.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Current robots endpoint still returns HTML rather than a usable policy.",
+      "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:47:34.099536+00:00",
+          "reason": "Current robots endpoint still returns HTML rather than a usable policy.",
+          "attempt": "Located a published indexed language-search permalink; checked its canonical host policy before requesting books.",
+          "result": "Search route remains unrequested due policyHTML. No guessed hidden API or alternate mirror used.",
+          "decision": "wait-for-valid-policy",
+          "evidence": [
+            "runs/technical-recovery-20261106f/followups.jsonl",
+            "analysis/discovery-searches.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "lever-press",
@@ -225,10 +259,21 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Neither a stable free subset nor a supported metadata search was established.",
-      "current_reason": "A consistently free catalog subset and supported metadata search route have not been established.",
-      "next_action": "Defer general free-reading qualification. Find a documented free-item subset and supported metadata method; preserve price, territory and time-limited licenses. No purchases/accounts.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "A documented free-content filter exists in Engage Library, but anonymous catalog/API access is not established.",
+      "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:47:34.099536+00:00",
+          "reason": "A documented free-content filter exists in Engage Library, but anonymous catalog/API access is not established.",
+          "attempt": "Read current operator instructions for Free=Yes and keyword/grade/subject filters.",
+          "result": "Free titles are explicitly documented; earlier uncertainty about existence is resolved. Search instructions operate inside the Engage dashboard; no account/session created and no current native-item query verified.",
+          "decision": "find-documented-anonymous-catalog-or-owner-provided-access",
+          "evidence": [
+            "runs/technical-recovery-20261106f/observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "marg-foundation",
@@ -338,10 +383,21 @@
       "group": "G02",
       "status": "blocked_or_failed",
       "original_reason": "Historical page returned 403; integration terms remain unresolved.",
-      "current_reason": "Page got 403; integration availability and terms unresolved. **High / P2**, no scraping dependency. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
-      "next_action": "Revisit only on a useful published access-policy/recovery change or a supported permitted export. Continue independent school/language catalogs; do not bypass the403.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "No current supported production API contract verified; published operator code is a2010 staging API sample.",
+      "next_action": "Find current operator-published production search/export documentation. Do not promote the2010staging sample to fresh verification; no outreach/account creation under this task.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:40:01.151396+00:00",
+          "reason": "No current supported production API contract verified; published operator code is a2010 staging API sample.",
+          "attempt": "Inspect official ISKME/OER-Commons-API repository and SEARCH/HOWTO after searching current integration documentation.",
+          "result": "HOWTO describes unauthenticated staging.oercommons.org/api/search; repository last pushed2010-11-18. This historical staging example does not establish a current production endpoint or justify bypassing the existing403. No staging or guessed production API request sent.",
+          "decision": "wait-for-current-production-contract",
+          "evidence": [
+            "runs/technical-recovery-20261106f/oer-api-review.json"
+          ]
+        }
+      ]
     },
     {
       "id": "cert-in",
@@ -369,12 +425,26 @@
       "id": "dg-shipping",
       "name": "Directorate General of Shipping training circulars and guidelines",
       "group": "G03",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "The environment proxy rejected the tunnel with 403 before the provider request.",
-      "current_reason": "Saved robots fetch failed with proxy Tunnel connection failed:403 Forbidden; target was not requested. This is an environment access failure, not evidence that the provider returned403.",
-      "next_action": "Useful network/policy recovery and an officially documented public metadata query/export; establish circular ID, date, revisions/supersession and full-item rights without account creation.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Maintain current circular-title metadata lookup; next inspect the officially linked historical circular listing for a broader permitted scope. No activation.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:55:19.146366+00:00",
+          "reason": "Legacy DGS route failed; official successor DGMA portal publishes current circular metadata under usable policy.",
+          "attempt": "Capture documented current authority home page; parse dated circular links and query titles, retaining versioned filenames.",
+          "result": "18 dated circular entries; ten distinct title queries and empty control pass. No PDFs or private seafarer records requested.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106f/observations.jsonl",
+            "runs/technical-recovery-20261106f/followups.jsonl",
+            "runs/technical-recovery-20261106f/dgma-circular-proof.json",
+            "examples/dg-shipping.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "fdic-money-smart",
@@ -448,10 +518,10 @@
       "id": "india-nqr",
       "name": "National Qualification Register",
       "group": "G03",
-      "status": "still_checking",
+      "status": "blocked_or_failed",
       "original_reason": "Original policy returned 403; officially announced successor returned HTML for robots.",
-      "current_reason": "",
-      "next_action": "Submit published advanced-search form with its actual default fields; if still500 try the advertised session-based public keyword form, respecting policy and no accounts.",
+      "current_reason": "Public keyword form returns relevant items, but sustained serial verification was interrupted by HTTP403 on the initial page; advanced GET also returns500.",
+      "next_action": "Wait for a useful availability/policy recovery signal before one paced recheck of the failed Mine Electrician query; do not blindly repeat403 or switch agents/routes to evade controls.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -463,6 +533,21 @@
           "evidence": [
             "runs/technical-recovery-20261106e/observations.jsonl",
             "runs/technical-recovery-20261106e/followups.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T07:57:12.661202+00:00",
+          "reason": "Public keyword form returns relevant items, but sustained serial verification was interrupted by HTTP403 on the initial page; advanced GET also returns500.",
+          "attempt": "Inspect actual public form and submit ten keyword searches through an anonymous browser at policy pacing, retaining native qualification links; stop immediately on403.",
+          "result": "Nine of ten new keyword queries passed, plus an earlier exploratory Electrician search returned16 items. Final initial-page request returned403; no access-control workaround or immediate retry.",
+          "decision": "wait-for-service-or-policy-recovery",
+          "evidence": [
+            "runs/technical-recovery-20261106e/followups.jsonl",
+            "runs/technical-recovery-20261106f/followups.jsonl",
+            "runs/technical-recovery-20261106f/nqr-browser.jsonl",
+            "runs/technical-recovery-20261106f/nqr-browser-policy.jsonl",
+            "examples/india-nqr.browser.jsonl",
+            "examples/india-nqr.jsonl"
           ]
         }
       ]
@@ -515,12 +600,25 @@
       "id": "rosa-p",
       "name": "ROSA P",
       "group": "G03",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Homepage worked, but its published search returned 403.",
-      "current_reason": "The homepage is readable, but the published public search GET returned HTTP403.",
-      "next_action": "Wait for a useful provider access-policy/recovery change before retrying the published gsearch route. Homepage200 does not override search403. Help on the same host was skipped after denial; no alternate endpoint or identity was used.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Maintain documented native-record metadata lookup. Keyword search is still unverified; use supported paged/date metadata for any future local title index, without activation in this run.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:40:38.296881+00:00",
+          "reason": "Published website keyword search previously403; independent operator-documented OAI metadata API is permitted and responds.",
+          "attempt": "Read help; Identify supplies native dot.stacks identity; date-filtered metadata page supplies current IDs; ten separate GetRecord oai_dc requests paced at10seconds.",
+          "result": "Ten current native record lookups passed with relevant titles, dates and outbound record links. No PDF, media or full text requested.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106e/followups.jsonl",
+            "runs/technical-recovery-20261106e/rosap-seed.json",
+            "examples/rosa-p.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "bhuvan",
@@ -591,12 +689,25 @@
       "id": "gsa-frpp",
       "name": "GSA Federal Real Property Profile public asset inventory",
       "group": "G04",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "The published spreadsheet redirected to storage whose robots returned 403.",
-      "current_reason": "The published spreadsheet redirects to a storage host whose robots request returned403.",
-      "next_action": "Revisit only after primary export-host policy recovery/published permitted successor route; inspect exact XLSX columns then government-ownedG nonpersonal projection, native RPUID/year identities,10 distinct queries,negative/paging/version/reader checks. Independently continue other property catalogs.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Maintain annual summary-title lookup; separately verify any future non-personal asset API. Research only, no activation.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:46:48.672639+00:00",
+          "reason": "Full asset spreadsheet reaches an inaccessible storage policy; official summary-metadata catalog offers a separate searchable scope.",
+          "attempt": "Capture GSA FRPP Summary Report Library; search dataset labels while preserving exact file versions; no XLSX/DOC/PDF fetched.",
+          "result": "13 annual summary labels; ten distinct fiscal-year queries and empty control pass.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106f/followups.jsonl",
+            "runs/technical-recovery-20261106f/gsa-summary-proof.json",
+            "examples/gsa-frpp.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "india-code",
@@ -648,12 +759,28 @@
       "id": "seattle-geodata",
       "name": "Seattle GeoData municipal catalog",
       "group": "G04",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "ArcGIS-host robots returned 403; other saved pages lacked usable layer details.",
-      "current_reason": "services.arcgis.com robots returned403; no target layer or query request sent. | Seattle Socrata homepage capture truncated before useful visible content; GeoData Hub pages rendered only titles in the text collector.",
-      "next_action": "Wait for useful published policy/recovery evidence for the blocked native service; then confirm primary schema/license and bounded nonpersonal zoning queries. Continue independent catalogs meanwhile.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Maintain scoped public catalog q search. Test bounded empty/paging controls on a subsequent paced run; underlying feature services remain a separately blocked mode.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T08:19:00.767558+00:00",
+          "reason": "Underlying feature-service policy was inaccessible; the separately documented Seattle Hub catalog API exposes public metadata searches. Its title parameter failed relevance, but keyword q is a distinct documented request.",
+          "attempt": "Capture official OpenAPI and collection list, then bounded catalog seed; test ten q queries at60-second policy pacing. Never query underlying assets/owners.",
+          "result": "10 current q cases verified; original title-parameter200 relevance failure retained.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106f/observations.jsonl",
+            "runs/technical-recovery-20261106f/followups.jsonl",
+            "runs/technical-recovery-20261106f/seattle-openapi.json",
+            "runs/technical-recovery-20261106f/seattle-collections.json",
+            "runs/technical-recovery-20261106f/seattle-dataset-seed.json",
+            "examples/seattle-geodata.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "tamil-nadu-land-records",
@@ -661,10 +788,21 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 503; no data was queried.",
-      "current_reason": "Saved robots request returned503; target page was skipped. No data query or new request in this review.",
-      "next_action": "Published recovery/permitted metadata documentation plus a proven route excluding personal owners and parcel parties. Never query individual ownership records; move on if only personal-record lookup exists.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "The newly documented integrated land-record service includes ownership data; no separately queryable map-only catalog is verified.",
+      "next_action": "Find an expressly documented map-sheet/catalog-only interface that excludes owner information; do not query private survey/transfer records.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:43:37.110720+00:00",
+          "reason": "The newly documented integrated land-record service includes ownership data; no separately queryable map-only catalog is verified.",
+          "attempt": "Review current official NIC service announcement before touching property records.",
+          "result": "Identified scope incompatibility with the task prohibition on collecting personal-owner data. No parcel/owner query sent; historical policy503 is preserved separately.",
+          "decision": "wait-for-map-only-metadata-route",
+          "evidence": [
+            "runs/technical-recovery-20261106f/tamil-nadu-scope-review.json"
+          ]
+        }
+      ]
     },
     {
       "id": "usgs-national-map",
@@ -737,10 +875,21 @@
       "group": "G05",
       "status": "blocked_or_failed",
       "original_reason": "Published article-search request returned 403.",
-      "current_reason": "The published article search returned HTTP403 from this environment after a successful robots check.",
-      "next_action": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "The documented SciELO Spain OAI alternative is currently inaccessible because its policy endpoint returns503.",
+      "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:47:34.099536+00:00",
+          "reason": "The documented SciELO Spain OAI alternative is currently inaccessible because its policy endpoint returns503.",
+          "attempt": "Located official SciELO regional OAI harvesting documentation as an alternative to denied network keyword search.",
+          "result": "Policy503 prevents querying this independent regional endpoint; previous search403 preserved.",
+          "decision": "wait-for-policy-recovery",
+          "evidence": [
+            "runs/technical-recovery-20261106f/observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "shodhganga",
@@ -855,41 +1004,38 @@
     }
   ],
   "progress": {
-    "working": 12,
-    "blocked_or_failed": 31,
-    "still_checking": 1,
-    "checked_this_pass": 34,
-    "remaining_to_recheck_this_pass": 10,
-    "baseline_working": 2
+    "working": 16,
+    "blocked_or_failed": 28,
+    "still_checking": 0,
+    "checked_this_pass": 44,
+    "remaining_to_recheck_this_pass": 0,
+    "baseline_working": 2,
+    "revisited_since_goal_started": 42
   },
   "current_run": {
-    "state": "running",
+    "state": "checkpointed",
     "started_at": "2026-11-06T07:19:13.914780+00:00",
-    "phase": "seattle-catalog-and-supported-alternatives",
-    "collector_active": true,
-    "checkpointed_at": "2026-11-06T07:36:21.352862+00:00",
-    "heartbeat_at": "2026-11-06T08:14:12.931089+00:00",
-    "worker_identity": "Parent-controlled probes under exclusive /tmp/mybookshelf-source-review.lock; verify actual process before resuming",
-    "worker": {
-      "pid": 13221,
-      "command": "python -u tools/research/source_registry.py probe seattle-geodata --case title-4 --case title-5 --case title-6 --case title-7 --case title-8 --case title-9 --case title-10",
-      "state": "S"
-    },
-    "worker_host": "a8478a4134d8",
-    "progress_file": "runs/technical-recovery-20261106f/query-progress.json"
+    "phase": "published-metadata-alternatives",
+    "collector_active": false,
+    "checkpointed_at": "2026-11-06T08:19:04.339083+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 12,
-  "updated_at": "2026-11-06T07:36:21.352862+00:00",
+  "working": 16,
+  "updated_at": "2026-11-06T08:19:04.339083+00:00",
   "latest_run": {
     "run_ids": [
       "technical-recovery-20261106d",
-      "technical-recovery-20261106e"
+      "technical-recovery-20261106e",
+      "technical-recovery-20261106f"
     ],
     "new_working": [
+      "dg-shipping",
+      "rosa-p",
       "bhuvan",
-      "nyc-planning-data"
+      "gsa-frpp",
+      "nyc-planning-data",
+      "seattle-geodata"
     ],
     "remaining_goal_open": true
   }

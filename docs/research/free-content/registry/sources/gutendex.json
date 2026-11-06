@@ -16,39 +16,151 @@
     "Imported historical retrieval analysis: JSON `/books/?search=...&languages=en&topic=...`; MIME filters, `next` pagination, `/books/{id}`. [Docs and source](https://gutendex.com/)"
   ],
   "query": {
-    "adapter": "gutendex-books",
+    "adapter": "gutendex-native",
     "endpoint": "https://gutendex.com/books/",
+    "authentication": "Anonymous public API; no key/account",
+    "search_scope": "Live exact Project Gutenberg ebook-ID metadata lookup through Gutendex; broad title/author searches still time out. No book downloads or independent-origin claim.",
+    "supported_modes": [
+      "Exact native ebook-ID lookup"
+    ],
+    "unsupported_modes": [
+      "Broad title/author search remains unreliable",
+      "Pagination not relevant to single-record lookup",
+      "Book content and reader access",
+      "Rights outside reported metadata"
+    ],
     "cases": [
       {
-        "id": "mathematics",
-        "intent": "Intermittently successful title/author search: mathematics",
-        "expected_ids": [
-          "16713"
-        ],
+        "id": "native-84",
+        "query_text": "84",
+        "intent": "Look up offered book metadata by native Project Gutenberg ID",
         "request": {
           "method": "GET",
-          "page": 1,
-          "query_text": "mathematics",
-          "url": "https://gutendex.com/books/?search=mathematics&copyright=false&page=1"
-        }
+          "url": "https://gutendex.com/books/84/",
+          "native_id": "84"
+        },
+        "expected_ids": [
+          "84"
+        ]
       },
       {
-        "id": "algebra",
-        "intent": "Intermittently successful title/author search: algebra",
-        "expected_ids": [
-          "21154"
-        ],
+        "id": "native-8746",
+        "query_text": "8746",
+        "intent": "Look up offered book metadata by native Project Gutenberg ID",
         "request": {
           "method": "GET",
-          "page": 1,
-          "query_text": "algebra",
-          "url": "https://gutendex.com/books/?search=algebra&copyright=false&page=1"
-        }
+          "url": "https://gutendex.com/books/8746/",
+          "native_id": "8746"
+        },
+        "expected_ids": [
+          "8746"
+        ]
+      },
+      {
+        "id": "native-10836",
+        "query_text": "10836",
+        "intent": "Look up offered book metadata by native Project Gutenberg ID",
+        "request": {
+          "method": "GET",
+          "url": "https://gutendex.com/books/10836/",
+          "native_id": "10836"
+        },
+        "expected_ids": [
+          "10836"
+        ]
+      },
+      {
+        "id": "native-13702",
+        "query_text": "13702",
+        "intent": "Look up offered book metadata by native Project Gutenberg ID",
+        "request": {
+          "method": "GET",
+          "url": "https://gutendex.com/books/13702/",
+          "native_id": "13702"
+        },
+        "expected_ids": [
+          "13702"
+        ]
+      },
+      {
+        "id": "native-39017",
+        "query_text": "39017",
+        "intent": "Look up offered book metadata by native Project Gutenberg ID",
+        "request": {
+          "method": "GET",
+          "url": "https://gutendex.com/books/39017/",
+          "native_id": "39017"
+        },
+        "expected_ids": [
+          "39017"
+        ]
+      },
+      {
+        "id": "native-20848",
+        "query_text": "20848",
+        "intent": "Look up offered book metadata by native Project Gutenberg ID",
+        "request": {
+          "method": "GET",
+          "url": "https://gutendex.com/books/20848/",
+          "native_id": "20848"
+        },
+        "expected_ids": [
+          "20848"
+        ]
+      },
+      {
+        "id": "native-4065",
+        "query_text": "4065",
+        "intent": "Look up offered book metadata by native Project Gutenberg ID",
+        "request": {
+          "method": "GET",
+          "url": "https://gutendex.com/books/4065/",
+          "native_id": "4065"
+        },
+        "expected_ids": [
+          "4065"
+        ]
+      },
+      {
+        "id": "native-20390",
+        "query_text": "20390",
+        "intent": "Look up offered book metadata by native Project Gutenberg ID",
+        "request": {
+          "method": "GET",
+          "url": "https://gutendex.com/books/20390/",
+          "native_id": "20390"
+        },
+        "expected_ids": [
+          "20390"
+        ]
+      },
+      {
+        "id": "native-1546",
+        "query_text": "1546",
+        "intent": "Look up offered book metadata by native Project Gutenberg ID",
+        "request": {
+          "method": "GET",
+          "url": "https://gutendex.com/books/1546/",
+          "native_id": "1546"
+        },
+        "expected_ids": [
+          "1546"
+        ]
+      },
+      {
+        "id": "native-260",
+        "query_text": "260",
+        "intent": "Look up offered book metadata by native Project Gutenberg ID",
+        "request": {
+          "method": "GET",
+          "url": "https://gutendex.com/books/260/",
+          "native_id": "260"
+        },
+        "expected_ids": [
+          "260"
+        ]
       }
-    ],
-    "historical_contract": "JSON `/books/?search=...&languages=en&topic=...`; MIME filters, `next` pagination, `/books/{id}`. [Docs and source](https://gutendex.com/)",
-    "authentication": "Anonymous demo API; no account/key",
-    "request_shape_verified": true
+    ]
   },
   "licensing": "`formats` map links to Gutenberg content; retain Gutenberg IDs and attribution.",
   "documentation": [
@@ -57,7 +169,8 @@
   "limitations": [
     "Search is intermittent: two terms returned relevant books, but other queries repeatedly exceeded20- and45-second limits.",
     "No public-demo key. Docs recommend self-hosting for long-term use. Public query timed out. Consider its implementation instead of writing an importer; do not depend on its demo in production. **Low prototype, medium self-hosted / P1 alternative**.",
-    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open."
+    "Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
+    "Native-ID84 succeeds while8746 times out; do not infer a missing book from this failure. Broad search remains unreliable; possible cached-record versus backend behavior is unproven."
   ],
   "evidence": [
     "analysis/documents.jsonl",
@@ -66,11 +179,12 @@
     "examples/gutendex.jsonl",
     "examples/gutendex.boundaries.jsonl",
     "runs/technical-recovery-20261106c/observations.jsonl",
-    "runs/technical-recovery-20261106c/book-attempts.jsonl"
+    "runs/technical-recovery-20261106c/book-attempts.jsonl",
+    "runs/technical-recovery-20261106f/followups.jsonl"
   ],
-  "last_reviewed_at": "2026-11-06T06:46:26.574627+00:00",
+  "last_reviewed_at": "2026-11-06T08:06:29.587926+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Wait for a useful service recovery signal. Keep historical two successes; intermittent results do not establish reliable search.",
+  "next_action": "After useful recovery evidence or substantial backoff, test one additional known native book ID to distinguish cached-record availability from general backend recovery; do not launch a blind full batch.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -265,21 +379,25 @@
       "heading": "Further recovery and backoff checks",
       "text": "Seven unresolved checks this run: IMO explicitly denies automated search/record routes; LINCS policy403; India Code policy timeout; NHM policy redirects to a legacy HTTP404 page; CMDA policy503; Chicago dataset503; Gutendex still times out after45seconds. All failures and useful revisit triggers are saved. The fixed original44 now have10Working and34remaining. Four recoveries and32new positive examples this run;23 original items have not yet been revisited in this recovery pass. No production changes.",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "d16e9f1cb72431ac83c0ff247dafbe9f00af5ff0a77424d191c9cd069dcf2bdb",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106D.md",
+      "line": 20,
+      "heading": "Incomplete or blocked follow-ups",
+      "text": "- **NQR:** the actual public keyword form works, unlike the advanced GET route that returned 500. Nine new keyword queries returned relevant qualification IDs. A later initial-page request returned 403 and collection stopped. An earlier exploratory Electrician query returned 16 items, but its capture did not record the final search HTTP status, so it is not promoted into a verified tenth example. Qualification files, current approval status and paging remain unverified. Retry only after a useful availability/policy recovery signal; do not evade the denial.\n- **Gutendex:** the documented native-book lookup is a real alternative to the timed-out broad search. A same-host 301 revealed the canonical trailing slash. Book 84 returned immediately; book 8746 then timed out after 30 seconds, so the route remains intermittent. The old broad-search failures and two historical successes are preserved under the superseded contract. One successful lookup is not full recovery.\n- **Seattle GeoData:** its published OpenAPI specification and dataset collection were captured. The documented `title` filter returned unrelated results. The separately documented `q` keyword parameter passed ten current queries at the host's 60-second pacing. It can match descriptions as well as titles; the adapter retains title-relevant matches from the first three items and preserves the observed upstream title list. An overly strict parser initially rejected a correct result because neighboring results had different titles; that failed observation is retained. This is catalog metadata only; underlying feature-service access is separate.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "status": "blocked_or_failed",
-    "reason": "A single Frankenstein health search still exceeds the45-second timeout.",
-    "attempt": "One bounded health request after overnight backoff; no full batch repeated.",
-    "result": "Still blocked; no current passing query.",
-    "decision": "wait_for_documented_recovery_or_alternative",
-    "next_action": "Wait for a useful service recovery signal. Keep historical two successes; intermittent results do not establish reliable search.",
-    "owner_action_required": false,
-    "evidence_reviewed_at": "2026-11-06T06:46:26.574626+00:00",
-    "fresh_query_verification": false,
+    "reviewed_at": "2026-11-06T08:06:29.587933+00:00",
+    "reason": "Exact native book84 lookup responds immediately, but next native lookup8746 also times out after30seconds; broad search already timed out after45seconds.",
+    "attempt": "Try documented native-book endpoint after broad-search failures; follow observed same-host301 to canonical trailing slash, then run distinct native-ID cases at policy pacing. Stop on timeout.",
+    "result": "One current ID query passed; second failed. Native-ID route is partially functioning but does not resolve intermittent provider availability. Earlier title-search examples retained in superseded contract/history.",
+    "decision": "wait_for_service_recovery",
     "evidence": [
-      "runs/technical-recovery-20261106c/observations.jsonl",
-      "runs/technical-recovery-20261106c/book-attempts.jsonl"
+      "runs/technical-recovery-20261106f/followups.jsonl",
+      "examples/gutendex.jsonl"
     ]
   },
   "recovery_history": [
@@ -301,6 +419,62 @@
         ]
       },
       "next_action": "Keep two current passing examples and failed attempts. Retry a small health query only after observed service recovery; do not repeatedly run the entire batch. Gutendex recommends self-hosting for long-term use, outside this no-hosted-datastore task."
+    },
+    {
+      "status": "blocked_or_failed",
+      "reason": "A single Frankenstein health search still exceeds the45-second timeout.",
+      "attempt": "One bounded health request after overnight backoff; no full batch repeated.",
+      "result": "Still blocked; no current passing query.",
+      "decision": "wait_for_documented_recovery_or_alternative",
+      "next_action": "Wait for a useful service recovery signal. Keep historical two successes; intermittent results do not establish reliable search.",
+      "owner_action_required": false,
+      "evidence_reviewed_at": "2026-11-06T06:46:26.574626+00:00",
+      "fresh_query_verification": false,
+      "evidence": [
+        "runs/technical-recovery-20261106c/observations.jsonl",
+        "runs/technical-recovery-20261106c/book-attempts.jsonl"
+      ]
+    }
+  ],
+  "historical_query_contracts": [
+    {
+      "superseded_at": "2026-11-06T08:04:29.709827+00:00",
+      "query": {
+        "adapter": "gutendex-books",
+        "endpoint": "https://gutendex.com/books/",
+        "cases": [
+          {
+            "id": "mathematics",
+            "intent": "Intermittently successful title/author search: mathematics",
+            "expected_ids": [
+              "16713"
+            ],
+            "request": {
+              "method": "GET",
+              "page": 1,
+              "query_text": "mathematics",
+              "url": "https://gutendex.com/books/?search=mathematics&copyright=false&page=1"
+            }
+          },
+          {
+            "id": "algebra",
+            "intent": "Intermittently successful title/author search: algebra",
+            "expected_ids": [
+              "21154"
+            ],
+            "request": {
+              "method": "GET",
+              "page": 1,
+              "query_text": "algebra",
+              "url": "https://gutendex.com/books/?search=algebra&copyright=false&page=1"
+            }
+          }
+        ],
+        "historical_contract": "JSON `/books/?search=...&languages=en&topic=...`; MIME filters, `next` pagination, `/books/{id}`. [Docs and source](https://gutendex.com/)",
+        "authentication": "Anonymous demo API; no account/key",
+        "request_shape_verified": true
+      },
+      "reason": "Broad title search timeouts remain unresolved; current documented native-ID lookup returned immediately"
     }
   ]
 }

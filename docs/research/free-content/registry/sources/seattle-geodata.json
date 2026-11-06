@@ -13,7 +13,7 @@
     "P05",
     "P07"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "municipal-geospatial-catalog",
@@ -31,12 +31,20 @@
     "https://catalog.data.gov/dataset/current-land-use-zoning-detail",
     "https://data-seattlecitygis.opendata.arcgis.com/",
     "https://data-seattlecitygis.opendata.arcgis.com/datasets/SeattleCityGIS::current-land-use-zoning-detail",
-    "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0"
+    "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
+    "https://data-seattlecitygis.opendata.arcgis.com/api/search/definition/",
+    "https://data-seattlecitygis.opendata.arcgis.com/api/search/definition/?f=json"
   ],
   "evidence": [
     "runs/planning-independent-contract-20261105bt/observations.jsonl",
     "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
-    "runs/seattle-native-service-20261105bw/observations.jsonl"
+    "runs/seattle-native-service-20261105bw/observations.jsonl",
+    "runs/technical-recovery-20261106f/observations.jsonl",
+    "runs/technical-recovery-20261106f/followups.jsonl",
+    "runs/technical-recovery-20261106f/seattle-openapi.json",
+    "runs/technical-recovery-20261106f/seattle-collections.json",
+    "runs/technical-recovery-20261106f/seattle-dataset-seed.json",
+    "examples/seattle-geodata.jsonl"
   ],
   "analysis_refs": [
     {
@@ -48,25 +56,160 @@
       "status": "historical-context-needs-reconciliation"
     }
   ],
-  "last_reviewed_at": "2026-11-05T15:02:35.498740+00:00",
+  "last_reviewed_at": "2026-11-06T08:19:00.767548+00:00",
   "limitations": [
     "services.arcgis.com robots returned403; no target layer or query request sent.",
     "Seattle Socrata homepage capture truncated before useful visible content; GeoData Hub pages rendered only titles in the text collector.",
-    "Data.gov explicitly says this is not an official zoning map. No legal zoning determination or personal owner/parcel records."
+    "Data.gov explicitly says this is not an official zoning map. No legal zoning determination or personal owner/parcel records.",
+    "Catalog q keyword searches only, first3 metadata records; no individual asset/parcel/owner records. The title query parameter failed relevance. Native item IDs are not edition IDs and metadata modification times are not dataset vintage. Empty/paging controls remain unverified. Seed is a metadata projection with a separate stored hash, not raw HTTP bytes."
   ],
-  "next_action": "Wait for useful published policy/recovery evidence for the blocked native service; then confirm primary schema/license and bounded nonpersonal zoning queries. Continue independent catalogs meanwhile.",
+  "next_action": "Maintain scoped public catalog q search. Test bounded empty/paging controls on a subsequent paced run; underlying feature services remain a separately blocked mode.",
   "query": {
-    "adapter": "unproven",
-    "endpoint": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
-    "authentication": "Unverified; no account/token used.",
-    "cost": "Unverified free query limits; metadata listing public.",
-    "cases": [],
-    "supported_modes": "Data.gov lists ArcGIS GeoService and CSV/GeoJSON/KML downloads; native permitted request shapes not yet verified.",
+    "adapter": "seattle-catalog",
+    "endpoint": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items",
+    "authentication": "Anonymous public catalog; token optional in specification and not supplied",
+    "search_scope": "Live Seattle GeoData catalog q keyword search, first3 upstream items followed by local title-substring relevance filtering. Native item metadata only; no underlying asset/parcel/owner records.",
+    "supported_modes": [
+      "Live public catalog keyword search plus local title-relevance filter"
+    ],
     "unsupported_modes": [
-      "Owner/applicant/parcel-party queries",
-      "Queries while native service robots unavailable",
-      "Official zoning determination",
-      "Counting file formats, layers or mirrors as extra origins"
+      "Underlying feature/parcel/owner queries",
+      "Paging not yet tested",
+      "Dataset full content or version guarantees",
+      "Documented title parameter failed relevance; use separately verified q only",
+      "Broad description-only matches excluded by local title filter"
+    ],
+    "cases": [
+      {
+        "id": "title-1",
+        "query_text": "SDOT Street Signs",
+        "intent": "Find a publicly listed dataset by title, without querying its data",
+        "request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=SDOT+Street+Signs&limit=3",
+          "title": "SDOT Street Signs"
+        },
+        "expected_ids": [
+          "f4ba1c9fd5ac43edadf6565835269b51"
+        ]
+      },
+      {
+        "id": "title-2",
+        "query_text": "Traffic Detectors",
+        "intent": "Find a publicly listed dataset by title, without querying its data",
+        "request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Traffic+Detectors&limit=3",
+          "title": "Traffic Detectors"
+        },
+        "expected_ids": [
+          "fd04faa43e704379aaff2869d8a48c42"
+        ]
+      },
+      {
+        "id": "title-3",
+        "query_text": "Streetcar Stations",
+        "intent": "Find a publicly listed dataset by title, without querying its data",
+        "request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Streetcar+Stations&limit=3",
+          "title": "Streetcar Stations"
+        },
+        "expected_ids": [
+          "b2b4e354334d4dbe8f7925a6fb7e8ec0"
+        ]
+      },
+      {
+        "id": "title-4",
+        "query_text": "Streetcar Lines",
+        "intent": "Find a publicly listed dataset by title, without querying its data",
+        "request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Streetcar+Lines&limit=3",
+          "title": "Streetcar Lines"
+        },
+        "expected_ids": [
+          "3f53447de4e049d18ecf82cfc175dc87"
+        ]
+      },
+      {
+        "id": "title-5",
+        "query_text": "Street Furnishings",
+        "intent": "Find a publicly listed dataset by title, without querying its data",
+        "request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Street+Furnishings&limit=3",
+          "title": "Street Furnishings"
+        },
+        "expected_ids": [
+          "3499ddebec09456382e142358d8808c1"
+        ]
+      },
+      {
+        "id": "title-6",
+        "query_text": "Stairways",
+        "intent": "Find a publicly listed dataset by title, without querying its data",
+        "request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Stairways&limit=3",
+          "title": "Stairways"
+        },
+        "expected_ids": [
+          "5dcd34dcd042430f9b134b8e2854d149"
+        ]
+      },
+      {
+        "id": "title-7",
+        "query_text": "Speed Humps",
+        "intent": "Find a publicly listed dataset by title, without querying its data",
+        "request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Speed+Humps&limit=3",
+          "title": "Speed Humps"
+        },
+        "expected_ids": [
+          "655cec32130f4bc0859857b0f5107fda"
+        ]
+      },
+      {
+        "id": "title-8",
+        "query_text": "Speed Cushions",
+        "intent": "Find a publicly listed dataset by title, without querying its data",
+        "request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Speed+Cushions&limit=3",
+          "title": "Speed Cushions"
+        },
+        "expected_ids": [
+          "1aa798c392ef415c9473a831bd722b8a"
+        ]
+      },
+      {
+        "id": "title-9",
+        "query_text": "Signal Interconnects",
+        "intent": "Find a publicly listed dataset by title, without querying its data",
+        "request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Signal+Interconnects&limit=3",
+          "title": "Signal Interconnects"
+        },
+        "expected_ids": [
+          "e5100faa8ade4f05b5c16e584900bff2"
+        ]
+      },
+      {
+        "id": "title-10",
+        "query_text": "Shoreline Street Ends",
+        "intent": "Find a publicly listed dataset by title, without querying its data",
+        "request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Shoreline+Street+Ends&limit=3",
+          "title": "Shoreline Street Ends"
+        },
+        "expected_ids": [
+          "41887d99ce4b47908aaacefb4d8d2732"
+        ]
+      }
     ]
   },
   "dossier": {
@@ -199,62 +342,29 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Published service URL captured; policy gate prevented native schema or feature queries.",
+      "summary": "Live Seattle GeoData catalog q keyword search, first3 upstream items followed by local title-substring relevance filtering. Native item metadata only; no underlying asset/parcel/owner records.",
       "facts": {
-        "endpoint": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
-        "exact_attempt": "GET native layer landing page; target request NOT SENT after robots403.",
-        "request_shapes": "Unverified; do not guess attribute names from directory prose.",
-        "documentation_exports": "Data.gov lists CSV,Excel,FeatureCollection,FileGDB,GeoPackage,GeoJSON,KML,Shapefile andSQLite; none downloaded."
+        "adapter": "seattle-catalog",
+        "verified_examples": 10,
+        "exact_request": {
+          "method": "GET",
+          "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=SDOT+Street+Signs&limit=3",
+          "title": "SDOT Street Signs"
+        },
+        "pacing_seconds": 60
       },
       "evidence": [
-        "runs/planning-independent-contract-20261105bt/observations.jsonl",
-        "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
-        "runs/seattle-native-service-20261105bw/observations.jsonl"
+        "runs/technical-recovery-20261106f/observations.jsonl",
+        "runs/technical-recovery-20261106f/followups.jsonl",
+        "runs/technical-recovery-20261106f/seattle-openapi.json",
+        "runs/technical-recovery-20261106f/seattle-collections.json",
+        "runs/technical-recovery-20261106f/seattle-dataset-seed.json",
+        "examples/seattle-geodata.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/planning-independent-contract-20261105bt/observations.jsonl",
-          "job_id": "0128685f6933c80694a1",
-          "observed_at": "2026-11-05T14:42:45.822440+00:00",
-          "url": "https://data.seattle.gov/",
-          "body_sha256": "560ab3d084a44f007cb5147f15b0e897fc30446c4bd73349fa74b4334410c45f",
-          "policy_sha256": "5da90161f831c882114321586b3fdb1c84f9b43ad22a8c0785553df3888c23b0"
-        },
-        {
-          "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
-          "job_id": "2596558b5dc9947fea3c",
-          "observed_at": "2026-11-05T14:48:35.795258+00:00",
-          "url": "https://catalog.data.gov/dataset/current-land-use-zoning-detail",
-          "body_sha256": "6cd259c34e052a4adaa6355ffb8e6206e313e3a86bacc71a9b4495fc60ad33de",
-          "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
-        },
-        {
-          "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
-          "job_id": "aa84ce6e0dc84b4e874e",
-          "observed_at": "2026-11-05T14:49:48.441194+00:00",
-          "url": "https://data-seattlecitygis.opendata.arcgis.com/",
-          "body_sha256": "9b0891d65ffa445a37520118bfde3128b1c1c4ba27ae27939c7731ce43b11504",
-          "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
-        },
-        {
-          "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
-          "job_id": "df72714cc669149c0feb",
-          "observed_at": "2026-11-05T14:50:49.255323+00:00",
-          "url": "https://data-seattlecitygis.opendata.arcgis.com/datasets/SeattleCityGIS::current-land-use-zoning-detail",
-          "body_sha256": "c4cd382c8e82f1d8de688838e437950e9d490a1fdf6b356e0329ab85333499ca",
-          "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
-        },
-        {
-          "path": "runs/seattle-native-service-20261105bw/observations.jsonl",
-          "job_id": "da1c3a222a07891820fc",
-          "observed_at": "2026-11-05T14:54:16.810176+00:00",
-          "url": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
-          "body_sha256": null,
-          "policy_sha256": "82e45382e7d625da9fd553fe7ffad1cc3723573f619e00b822f856bfa7919749"
-        }
-      ],
+      "reviewed_at": "2026-11-06T08:19:00.767568+00:00",
+      "fresh_query_verification": true,
       "open_questions": [
-        "Native schema, permitted bounded query, IDs, paging, empty/error and ten examples."
+        "Underlying dataset access/rights, paging, negative control and version semantics remain unverified."
       ]
     },
     "rights_and_cost": {
@@ -496,62 +606,635 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Keep as deferred candidate; no examples, qualification or activation credit.",
+      "status": "partial",
+      "summary": "Working catalog metadata only",
       "facts": {
-        "decision": "deferred",
-        "activation_approved": false,
-        "owner_action_required": false,
-        "next_action": "Wait for useful published policy/recovery evidence for the blocked native service; then confirm primary schema/license and bounded nonpersonal zoning queries. Continue independent catalogs meanwhile."
+        "decision": "working_with_recorded_scope",
+        "next_action": "Maintain scoped public catalog q search. Test bounded empty/paging controls on a subsequent paced run; underlying feature services remain a separately blocked mode.",
+        "blocker": null
       },
       "evidence": [
-        "runs/planning-independent-contract-20261105bt/observations.jsonl",
-        "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
-        "runs/seattle-native-service-20261105bw/observations.jsonl"
+        "runs/technical-recovery-20261106f/observations.jsonl",
+        "runs/technical-recovery-20261106f/followups.jsonl",
+        "runs/technical-recovery-20261106f/seattle-openapi.json",
+        "runs/technical-recovery-20261106f/seattle-collections.json",
+        "runs/technical-recovery-20261106f/seattle-dataset-seed.json",
+        "examples/seattle-geodata.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/planning-independent-contract-20261105bt/observations.jsonl",
-          "job_id": "0128685f6933c80694a1",
-          "observed_at": "2026-11-05T14:42:45.822440+00:00",
-          "url": "https://data.seattle.gov/",
-          "body_sha256": "560ab3d084a44f007cb5147f15b0e897fc30446c4bd73349fa74b4334410c45f",
-          "policy_sha256": "5da90161f831c882114321586b3fdb1c84f9b43ad22a8c0785553df3888c23b0"
-        },
-        {
-          "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
-          "job_id": "2596558b5dc9947fea3c",
-          "observed_at": "2026-11-05T14:48:35.795258+00:00",
-          "url": "https://catalog.data.gov/dataset/current-land-use-zoning-detail",
-          "body_sha256": "6cd259c34e052a4adaa6355ffb8e6206e313e3a86bacc71a9b4495fc60ad33de",
-          "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
-        },
-        {
-          "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
-          "job_id": "aa84ce6e0dc84b4e874e",
-          "observed_at": "2026-11-05T14:49:48.441194+00:00",
-          "url": "https://data-seattlecitygis.opendata.arcgis.com/",
-          "body_sha256": "9b0891d65ffa445a37520118bfde3128b1c1c4ba27ae27939c7731ce43b11504",
-          "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
-        },
-        {
-          "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
-          "job_id": "df72714cc669149c0feb",
-          "observed_at": "2026-11-05T14:50:49.255323+00:00",
-          "url": "https://data-seattlecitygis.opendata.arcgis.com/datasets/SeattleCityGIS::current-land-use-zoning-detail",
-          "body_sha256": "c4cd382c8e82f1d8de688838e437950e9d490a1fdf6b356e0329ab85333499ca",
-          "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
-        },
-        {
-          "path": "runs/seattle-native-service-20261105bw/observations.jsonl",
-          "job_id": "da1c3a222a07891820fc",
-          "observed_at": "2026-11-05T14:54:16.810176+00:00",
-          "url": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
-          "body_sha256": null,
-          "policy_sha256": "82e45382e7d625da9fd553fe7ffad1cc3723573f619e00b822f856bfa7919749"
-        }
-      ],
-      "open_questions": []
+      "reviewed_at": "2026-11-06T08:19:00.767570+00:00",
+      "fresh_query_verification": true,
+      "open_questions": [
+        "Underlying dataset access/rights, paging, negative control and version semantics remain unverified."
+      ]
     }
-  }
+  },
+  "historical_query_contracts": [
+    {
+      "superseded_at": "2026-11-06T08:02:23.114297+00:00",
+      "query": {
+        "adapter": "unproven",
+        "endpoint": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
+        "authentication": "Unverified; no account/token used.",
+        "cost": "Unverified free query limits; metadata listing public.",
+        "cases": [],
+        "supported_modes": "Data.gov lists ArcGIS GeoService and CSV/GeoJSON/KML downloads; native permitted request shapes not yet verified.",
+        "unsupported_modes": [
+          "Owner/applicant/parcel-party queries",
+          "Queries while native service robots unavailable",
+          "Official zoning determination",
+          "Counting file formats, layers or mirrors as extra origins"
+        ]
+      },
+      "reason": "Published Seattle Hub Search API supports catalog metadata independently of blocked underlying feature service"
+    },
+    {
+      "superseded_at": "2026-11-06T08:05:05.850921+00:00",
+      "query": {
+        "adapter": "seattle-catalog",
+        "endpoint": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items",
+        "authentication": "Anonymous public catalog; token optional in specification and not supplied",
+        "search_scope": "Live Seattle GeoData catalog keyword search for selected dataset titles, first3 native item metadata records. Underlying feature-service records, owners, geometry queries and full dataset access excluded.",
+        "supported_modes": [
+          "Live public catalog keyword search"
+        ],
+        "unsupported_modes": [
+          "Underlying feature/parcel/owner queries",
+          "Paging not yet tested",
+          "Dataset full content or version guarantees",
+          "Documented title parameter failed relevance; use separately verified q only"
+        ],
+        "cases": [
+          {
+            "id": "title-1",
+            "query_text": "SDOT Street Signs",
+            "intent": "Find a publicly listed dataset by title, without querying its data",
+            "request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=SDOT+Street+Signs&limit=3",
+              "title": "SDOT Street Signs"
+            },
+            "expected_ids": [
+              "f4ba1c9fd5ac43edadf6565835269b51"
+            ]
+          },
+          {
+            "id": "title-2",
+            "query_text": "Traffic Detectors",
+            "intent": "Find a publicly listed dataset by title, without querying its data",
+            "request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Traffic+Detectors&limit=3",
+              "title": "Traffic Detectors"
+            },
+            "expected_ids": [
+              "fd04faa43e704379aaff2869d8a48c42"
+            ]
+          },
+          {
+            "id": "title-3",
+            "query_text": "Streetcar Stations",
+            "intent": "Find a publicly listed dataset by title, without querying its data",
+            "request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Streetcar+Stations&limit=3",
+              "title": "Streetcar Stations"
+            },
+            "expected_ids": [
+              "b2b4e354334d4dbe8f7925a6fb7e8ec0"
+            ]
+          },
+          {
+            "id": "title-4",
+            "query_text": "Streetcar Lines",
+            "intent": "Find a publicly listed dataset by title, without querying its data",
+            "request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Streetcar+Lines&limit=3",
+              "title": "Streetcar Lines"
+            },
+            "expected_ids": [
+              "3f53447de4e049d18ecf82cfc175dc87"
+            ]
+          },
+          {
+            "id": "title-5",
+            "query_text": "Street Furnishings",
+            "intent": "Find a publicly listed dataset by title, without querying its data",
+            "request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Street+Furnishings&limit=3",
+              "title": "Street Furnishings"
+            },
+            "expected_ids": [
+              "3499ddebec09456382e142358d8808c1"
+            ]
+          },
+          {
+            "id": "title-6",
+            "query_text": "Stairways",
+            "intent": "Find a publicly listed dataset by title, without querying its data",
+            "request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Stairways&limit=3",
+              "title": "Stairways"
+            },
+            "expected_ids": [
+              "5dcd34dcd042430f9b134b8e2854d149"
+            ]
+          },
+          {
+            "id": "title-7",
+            "query_text": "Speed Humps",
+            "intent": "Find a publicly listed dataset by title, without querying its data",
+            "request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Speed+Humps&limit=3",
+              "title": "Speed Humps"
+            },
+            "expected_ids": [
+              "655cec32130f4bc0859857b0f5107fda"
+            ]
+          },
+          {
+            "id": "title-8",
+            "query_text": "Speed Cushions",
+            "intent": "Find a publicly listed dataset by title, without querying its data",
+            "request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Speed+Cushions&limit=3",
+              "title": "Speed Cushions"
+            },
+            "expected_ids": [
+              "1aa798c392ef415c9473a831bd722b8a"
+            ]
+          },
+          {
+            "id": "title-9",
+            "query_text": "Signal Interconnects",
+            "intent": "Find a publicly listed dataset by title, without querying its data",
+            "request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Signal+Interconnects&limit=3",
+              "title": "Signal Interconnects"
+            },
+            "expected_ids": [
+              "e5100faa8ade4f05b5c16e584900bff2"
+            ]
+          },
+          {
+            "id": "title-10",
+            "query_text": "Shoreline Street Ends",
+            "intent": "Find a publicly listed dataset by title, without querying its data",
+            "request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=Shoreline+Street+Ends&limit=3",
+              "title": "Shoreline Street Ends"
+            },
+            "expected_ids": [
+              "41887d99ce4b47908aaacefb4d8d2732"
+            ]
+          }
+        ]
+      },
+      "reason": "Documented title parameter returned unrelated catalog items; general q parameter separately documented and will be tested"
+    }
+  ],
+  "fresh_query_verification": true,
+  "recovery": {
+    "reviewed_at": "2026-11-06T08:19:00.767558+00:00",
+    "reason": "Underlying feature-service policy was inaccessible; the separately documented Seattle Hub catalog API exposes public metadata searches. Its title parameter failed relevance, but keyword q is a distinct documented request.",
+    "attempt": "Capture official OpenAPI and collection list, then bounded catalog seed; test ten q queries at60-second policy pacing. Never query underlying assets/owners.",
+    "result": "10 current q cases verified; original title-parameter200 relevance failure retained.",
+    "decision": "working_with_recorded_scope",
+    "evidence": [
+      "runs/technical-recovery-20261106f/observations.jsonl",
+      "runs/technical-recovery-20261106f/followups.jsonl",
+      "runs/technical-recovery-20261106f/seattle-openapi.json",
+      "runs/technical-recovery-20261106f/seattle-collections.json",
+      "runs/technical-recovery-20261106f/seattle-dataset-seed.json",
+      "examples/seattle-geodata.jsonl"
+    ]
+  },
+  "historical_dossier_snapshots": [
+    {
+      "superseded_at": "2026-11-06T08:19:00.767565+00:00",
+      "reason": "Separate catalog-metadata API reviewed; underlying service unchanged",
+      "dossier": {
+        "identity_and_duplicates": {
+          "status": "partial",
+          "summary": "One City-operated catalog; Socrata, Hub, Data.gov mirror and the zoning layer are not four origins.",
+          "facts": {
+            "operator": {
+              "name": "City of Seattle",
+              "jurisdiction": "USA / Washington / Seattle"
+            },
+            "native_item": "dd29065b5d01420e9686570c2b77502b",
+            "layer": 0,
+            "operator_basis": "Current Data.gov City of Seattle publisher attribution; actual native layer not fetched."
+          },
+          "evidence": [
+            "runs/planning-independent-contract-20261105bt/observations.jsonl",
+            "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+            "runs/seattle-native-service-20261105bw/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/planning-independent-contract-20261105bt/observations.jsonl",
+              "job_id": "0128685f6933c80694a1",
+              "observed_at": "2026-11-05T14:42:45.822440+00:00",
+              "url": "https://data.seattle.gov/",
+              "body_sha256": "560ab3d084a44f007cb5147f15b0e897fc30446c4bd73349fa74b4334410c45f",
+              "policy_sha256": "5da90161f831c882114321586b3fdb1c84f9b43ad22a8c0785553df3888c23b0"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "2596558b5dc9947fea3c",
+              "observed_at": "2026-11-05T14:48:35.795258+00:00",
+              "url": "https://catalog.data.gov/dataset/current-land-use-zoning-detail",
+              "body_sha256": "6cd259c34e052a4adaa6355ffb8e6206e313e3a86bacc71a9b4495fc60ad33de",
+              "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "aa84ce6e0dc84b4e874e",
+              "observed_at": "2026-11-05T14:49:48.441194+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/",
+              "body_sha256": "9b0891d65ffa445a37520118bfde3128b1c1c4ba27ae27939c7731ce43b11504",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "df72714cc669149c0feb",
+              "observed_at": "2026-11-05T14:50:49.255323+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/datasets/SeattleCityGIS::current-land-use-zoning-detail",
+              "body_sha256": "c4cd382c8e82f1d8de688838e437950e9d490a1fdf6b356e0329ab85333499ca",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-native-service-20261105bw/observations.jsonl",
+              "job_id": "da1c3a222a07891820fc",
+              "observed_at": "2026-11-05T14:54:16.810176+00:00",
+              "url": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
+              "body_sha256": null,
+              "policy_sha256": "82e45382e7d625da9fd553fe7ffad1cc3723573f619e00b822f856bfa7919749"
+            }
+          ],
+          "open_questions": [
+            "Confirm primary native-layer attribution and stable feature identifiers."
+          ]
+        },
+        "coverage_and_languages": {
+          "status": "partial",
+          "summary": "Candidate USA/Seattle zoning/geospatial scope; no verified query coverage.",
+          "facts": {
+            "areas": [
+              "C19",
+              "P05",
+              "P07"
+            ],
+            "jurisdiction": "USA / Washington / Seattle",
+            "observed_metadata_language": "en",
+            "India_coverage": false
+          },
+          "evidence": [
+            "runs/planning-independent-contract-20261105bt/observations.jsonl",
+            "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+            "runs/seattle-native-service-20261105bw/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/planning-independent-contract-20261105bt/observations.jsonl",
+              "job_id": "0128685f6933c80694a1",
+              "observed_at": "2026-11-05T14:42:45.822440+00:00",
+              "url": "https://data.seattle.gov/",
+              "body_sha256": "560ab3d084a44f007cb5147f15b0e897fc30446c4bd73349fa74b4334410c45f",
+              "policy_sha256": "5da90161f831c882114321586b3fdb1c84f9b43ad22a8c0785553df3888c23b0"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "2596558b5dc9947fea3c",
+              "observed_at": "2026-11-05T14:48:35.795258+00:00",
+              "url": "https://catalog.data.gov/dataset/current-land-use-zoning-detail",
+              "body_sha256": "6cd259c34e052a4adaa6355ffb8e6206e313e3a86bacc71a9b4495fc60ad33de",
+              "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "aa84ce6e0dc84b4e874e",
+              "observed_at": "2026-11-05T14:49:48.441194+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/",
+              "body_sha256": "9b0891d65ffa445a37520118bfde3128b1c1c4ba27ae27939c7731ce43b11504",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "df72714cc669149c0feb",
+              "observed_at": "2026-11-05T14:50:49.255323+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/datasets/SeattleCityGIS::current-land-use-zoning-detail",
+              "body_sha256": "c4cd382c8e82f1d8de688838e437950e9d490a1fdf6b356e0329ab85333499ca",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-native-service-20261105bw/observations.jsonl",
+              "job_id": "da1c3a222a07891820fc",
+              "observed_at": "2026-11-05T14:54:16.810176+00:00",
+              "url": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
+              "body_sha256": null,
+              "policy_sha256": "82e45382e7d625da9fd553fe7ffad1cc3723573f619e00b822f856bfa7919749"
+            }
+          ],
+          "open_questions": [
+            "Verify actual bounded zoning records and temporal/version coverage."
+          ]
+        },
+        "query_contract": {
+          "status": "partial",
+          "summary": "Live Seattle GeoData catalog q keyword search, first3 upstream items followed by local title-substring relevance filtering. Native item metadata only; no underlying asset/parcel/owner records.",
+          "facts": {
+            "adapter": "seattle-catalog",
+            "verified_examples": 10,
+            "exact_request": {
+              "method": "GET",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=SDOT+Street+Signs&limit=3",
+              "title": "SDOT Street Signs"
+            },
+            "pacing_seconds": 60
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106f/observations.jsonl",
+            "runs/technical-recovery-20261106f/followups.jsonl",
+            "runs/technical-recovery-20261106f/seattle-openapi.json",
+            "runs/technical-recovery-20261106f/seattle-collections.json",
+            "runs/technical-recovery-20261106f/seattle-dataset-seed.json",
+            "examples/seattle-geodata.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T08:19:00.767568+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Underlying dataset access/rights, paging, negative control and version semantics remain unverified."
+          ]
+        },
+        "rights_and_cost": {
+          "status": "partial",
+          "summary": "Directory attribution reports PDDL but source-wide reuse rights are not established.",
+          "facts": {
+            "directory_license": "https://opendatacommons.org/licenses/pddl/summary",
+            "access_level": "public per Data.gov",
+            "accounts_or_paid_services_used": false
+          },
+          "evidence": [
+            "runs/planning-independent-contract-20261105bt/observations.jsonl",
+            "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+            "runs/seattle-native-service-20261105bw/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/planning-independent-contract-20261105bt/observations.jsonl",
+              "job_id": "0128685f6933c80694a1",
+              "observed_at": "2026-11-05T14:42:45.822440+00:00",
+              "url": "https://data.seattle.gov/",
+              "body_sha256": "560ab3d084a44f007cb5147f15b0e897fc30446c4bd73349fa74b4334410c45f",
+              "policy_sha256": "5da90161f831c882114321586b3fdb1c84f9b43ad22a8c0785553df3888c23b0"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "2596558b5dc9947fea3c",
+              "observed_at": "2026-11-05T14:48:35.795258+00:00",
+              "url": "https://catalog.data.gov/dataset/current-land-use-zoning-detail",
+              "body_sha256": "6cd259c34e052a4adaa6355ffb8e6206e313e3a86bacc71a9b4495fc60ad33de",
+              "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "aa84ce6e0dc84b4e874e",
+              "observed_at": "2026-11-05T14:49:48.441194+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/",
+              "body_sha256": "9b0891d65ffa445a37520118bfde3128b1c1c4ba27ae27939c7731ce43b11504",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "df72714cc669149c0feb",
+              "observed_at": "2026-11-05T14:50:49.255323+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/datasets/SeattleCityGIS::current-land-use-zoning-detail",
+              "body_sha256": "c4cd382c8e82f1d8de688838e437950e9d490a1fdf6b356e0329ab85333499ca",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-native-service-20261105bw/observations.jsonl",
+              "job_id": "da1c3a222a07891820fc",
+              "observed_at": "2026-11-05T14:54:16.810176+00:00",
+              "url": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
+              "body_sha256": null,
+              "policy_sha256": "82e45382e7d625da9fd553fe7ffad1cc3723573f619e00b822f856bfa7919749"
+            }
+          ],
+          "open_questions": [
+            "Primary item/metadata rights, free limits and source conditions."
+          ]
+        },
+        "reader_access": {
+          "status": "partial",
+          "summary": "Hub title captured; no functional map/feature reader verified.",
+          "facts": {
+            "native_hub": "https://data-seattlecitygis.opendata.arcgis.com/datasets/SeattleCityGIS::current-land-use-zoning-detail",
+            "observed_title": "Current Land Use Zoning Detail",
+            "full_item_access_verified": false
+          },
+          "evidence": [
+            "runs/planning-independent-contract-20261105bt/observations.jsonl",
+            "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+            "runs/seattle-native-service-20261105bw/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/planning-independent-contract-20261105bt/observations.jsonl",
+              "job_id": "0128685f6933c80694a1",
+              "observed_at": "2026-11-05T14:42:45.822440+00:00",
+              "url": "https://data.seattle.gov/",
+              "body_sha256": "560ab3d084a44f007cb5147f15b0e897fc30446c4bd73349fa74b4334410c45f",
+              "policy_sha256": "5da90161f831c882114321586b3fdb1c84f9b43ad22a8c0785553df3888c23b0"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "2596558b5dc9947fea3c",
+              "observed_at": "2026-11-05T14:48:35.795258+00:00",
+              "url": "https://catalog.data.gov/dataset/current-land-use-zoning-detail",
+              "body_sha256": "6cd259c34e052a4adaa6355ffb8e6206e313e3a86bacc71a9b4495fc60ad33de",
+              "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "aa84ce6e0dc84b4e874e",
+              "observed_at": "2026-11-05T14:49:48.441194+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/",
+              "body_sha256": "9b0891d65ffa445a37520118bfde3128b1c1c4ba27ae27939c7731ce43b11504",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "df72714cc669149c0feb",
+              "observed_at": "2026-11-05T14:50:49.255323+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/datasets/SeattleCityGIS::current-land-use-zoning-detail",
+              "body_sha256": "c4cd382c8e82f1d8de688838e437950e9d490a1fdf6b356e0329ab85333499ca",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-native-service-20261105bw/observations.jsonl",
+              "job_id": "da1c3a222a07891820fc",
+              "observed_at": "2026-11-05T14:54:16.810176+00:00",
+              "url": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
+              "body_sha256": null,
+              "policy_sha256": "82e45382e7d625da9fd553fe7ffad1cc3723573f619e00b822f856bfa7919749"
+            }
+          ],
+          "open_questions": [
+            "Desktop/mobile native feature/map access and accessibility."
+          ]
+        },
+        "quality_and_relevance": {
+          "status": "partial",
+          "summary": "Directory describes zoning areas but warns that it is not an official zoning map.",
+          "facts": {
+            "modified_per_directory": "2026-07-03",
+            "issued_per_directory": "2020-01-05",
+            "warning": "For precise zoning information consult City; no outreach performed.",
+            "scope": "Zone classes, overlays, ordinance/effective dates; excludes property-owner data."
+          },
+          "evidence": [
+            "runs/planning-independent-contract-20261105bt/observations.jsonl",
+            "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+            "runs/seattle-native-service-20261105bw/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/planning-independent-contract-20261105bt/observations.jsonl",
+              "job_id": "0128685f6933c80694a1",
+              "observed_at": "2026-11-05T14:42:45.822440+00:00",
+              "url": "https://data.seattle.gov/",
+              "body_sha256": "560ab3d084a44f007cb5147f15b0e897fc30446c4bd73349fa74b4334410c45f",
+              "policy_sha256": "5da90161f831c882114321586b3fdb1c84f9b43ad22a8c0785553df3888c23b0"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "2596558b5dc9947fea3c",
+              "observed_at": "2026-11-05T14:48:35.795258+00:00",
+              "url": "https://catalog.data.gov/dataset/current-land-use-zoning-detail",
+              "body_sha256": "6cd259c34e052a4adaa6355ffb8e6206e313e3a86bacc71a9b4495fc60ad33de",
+              "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "aa84ce6e0dc84b4e874e",
+              "observed_at": "2026-11-05T14:49:48.441194+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/",
+              "body_sha256": "9b0891d65ffa445a37520118bfde3128b1c1c4ba27ae27939c7731ce43b11504",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "df72714cc669149c0feb",
+              "observed_at": "2026-11-05T14:50:49.255323+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/datasets/SeattleCityGIS::current-land-use-zoning-detail",
+              "body_sha256": "c4cd382c8e82f1d8de688838e437950e9d490a1fdf6b356e0329ab85333499ca",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-native-service-20261105bw/observations.jsonl",
+              "job_id": "da1c3a222a07891820fc",
+              "observed_at": "2026-11-05T14:54:16.810176+00:00",
+              "url": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
+              "body_sha256": null,
+              "policy_sha256": "82e45382e7d625da9fd553fe7ffad1cc3723573f619e00b822f856bfa7919749"
+            }
+          ],
+          "open_questions": [
+            "Verify result relevance, native feature identity, date semantics and actual map/version."
+          ]
+        },
+        "operating_limits": {
+          "status": "partial",
+          "summary": "Access-controlled policy is deferred, with no alternate route or repeated attempt.",
+          "facts": {
+            "robots_status": 403,
+            "target_requests_sent": 0,
+            "revisit_trigger": "Useful policy/recovery evidence for services.arcgis.com; not elapsed time alone.",
+            "pacing": "Hub robots Crawl-delay60 respected; independent host policy evidence retained."
+          },
+          "evidence": [
+            "runs/planning-independent-contract-20261105bt/observations.jsonl",
+            "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+            "runs/seattle-native-service-20261105bw/observations.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/planning-independent-contract-20261105bt/observations.jsonl",
+              "job_id": "0128685f6933c80694a1",
+              "observed_at": "2026-11-05T14:42:45.822440+00:00",
+              "url": "https://data.seattle.gov/",
+              "body_sha256": "560ab3d084a44f007cb5147f15b0e897fc30446c4bd73349fa74b4334410c45f",
+              "policy_sha256": "5da90161f831c882114321586b3fdb1c84f9b43ad22a8c0785553df3888c23b0"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "2596558b5dc9947fea3c",
+              "observed_at": "2026-11-05T14:48:35.795258+00:00",
+              "url": "https://catalog.data.gov/dataset/current-land-use-zoning-detail",
+              "body_sha256": "6cd259c34e052a4adaa6355ffb8e6206e313e3a86bacc71a9b4495fc60ad33de",
+              "policy_sha256": "8c5ed3bd234a802efe10349b17749c514dd58315d5b7c1a8197cd589af93517d"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "aa84ce6e0dc84b4e874e",
+              "observed_at": "2026-11-05T14:49:48.441194+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/",
+              "body_sha256": "9b0891d65ffa445a37520118bfde3128b1c1c4ba27ae27939c7731ce43b11504",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-zoning-discovery-20261105bv/observations.jsonl",
+              "job_id": "df72714cc669149c0feb",
+              "observed_at": "2026-11-05T14:50:49.255323+00:00",
+              "url": "https://data-seattlecitygis.opendata.arcgis.com/datasets/SeattleCityGIS::current-land-use-zoning-detail",
+              "body_sha256": "c4cd382c8e82f1d8de688838e437950e9d490a1fdf6b356e0329ab85333499ca",
+              "policy_sha256": "22e0d55c0673c57db90616daae7a9733c874ab376598386903d8abe0d0d85d84"
+            },
+            {
+              "path": "runs/seattle-native-service-20261105bw/observations.jsonl",
+              "job_id": "da1c3a222a07891820fc",
+              "observed_at": "2026-11-05T14:54:16.810176+00:00",
+              "url": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Current_Land_Use_Zoning_Detail_2/FeatureServer/0",
+              "body_sha256": null,
+              "policy_sha256": "82e45382e7d625da9fd553fe7ffad1cc3723573f619e00b822f856bfa7919749"
+            }
+          ],
+          "open_questions": [
+            "Permitted request quotas/maintenance/refresh and failure handling after native contract is allowed."
+          ]
+        },
+        "decision_and_followup": {
+          "status": "partial",
+          "summary": "Working catalog metadata only",
+          "facts": {
+            "decision": "working_with_recorded_scope",
+            "next_action": "Maintain scoped public catalog q search. Test bounded empty/paging controls on a subsequent paced run; underlying feature services remain a separately blocked mode.",
+            "blocker": null
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106f/observations.jsonl",
+            "runs/technical-recovery-20261106f/followups.jsonl",
+            "runs/technical-recovery-20261106f/seattle-openapi.json",
+            "runs/technical-recovery-20261106f/seattle-collections.json",
+            "runs/technical-recovery-20261106f/seattle-dataset-seed.json",
+            "examples/seattle-geodata.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T08:19:00.767570+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Underlying dataset access/rights, paging, negative control and version semantics remain unverified."
+          ]
+        }
+      }
+    }
+  ]
 }

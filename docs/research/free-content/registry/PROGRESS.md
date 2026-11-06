@@ -1,3 +1,19 @@
+## Recovery D–F final checkpoint — 6 November 2026
+
+82 Working / 51 Blocked/failed / 0 Still checking of 133 active research connectors; 857 current passing examples. Original 44: 16 Working, 28 remaining; 0 not yet revisited.
+
+| Group | Working | Blocked/failed | Still checking | Total |
+|---|---:|---:|---:|---:|
+| Books, children and audio | 28 | 11 | 0 | 39 |
+| Learning and technical | 10 | 4 | 0 | 14 |
+| Industry and jobs | 13 | 7 | 0 | 20 |
+| Government, maps and data | 14 | 12 | 0 | 26 |
+| Scholarly sources | 11 | 11 | 0 | 22 |
+| Language, culture and media | 6 | 6 | 0 | 12 |
+| **Total** | **82** | **51** | **0** | **133** |
+
+Newly recovered: Directorate General of Shipping training circulars and guidelines, ROSA P, Bhuvan Indian Geoportal, GSA Federal Real Property Profile public asset inventory, NYC City Planning open datasets, Seattle GeoData municipal catalog. Each new recovery has ten distinct passing current queries in its recorded scope. NQR has nine passing queries but a current403, and Gutendex has one current native-ID success but a subsequent timeout; both remain open. Previous failures and superseded scopes are retained. 299 research tests, registry validation and evidence capture/index/audit pass. No source activation or deployment. The completion task stays enabled; the old documentation queue/reporter stays stopped.
+
 ## Recovery D/E checkpoint —6November2026
 
 78Working/54Blocked/1Still checking;809passing examples. Original44:12Working/32remaining,10not yet revisited. Bhuvan and NYC recovered in explicitly limited metadata scopes; NQR and ROSA P checks continue.286tests and evidence checks pass; hourly task remains enabled. No activation/deployment.

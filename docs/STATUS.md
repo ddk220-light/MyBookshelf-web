@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Recovery D–F checkpoint, 6 November 2026:** 82 Working / 51 Blocked/failed / 0 Still checking of 133 active research connectors; 857 current passing examples. Original 44: 16 Working, 28 remaining; 0 not yet revisited. Newly recovered: Directorate General of Shipping training circulars and guidelines, ROSA P, Bhuvan Indian Geoportal, GSA Federal Real Property Profile public asset inventory, NYC City Planning open datasets, Seattle GeoData municipal catalog. 299 research tests pass. Research only; hourly recovery remains enabled. [Evidence and limits](research/free-content/TECHNICAL_RECOVERY_20261106D.md). Earlier entries are historical.
+
 **Recovery D/E checkpoint, 6 November 2026:** 78 Working / 54 Blocked / 1 Still checking of133 research connectors;809passing examples. Original44:12Working/32remaining,10not yet revisited. Bhuvan product metadata and NYC map-index searches recovered; NQR form correction and ROSA P native metadata queries continue.286tests pass. Research only. [Evidence and limits](research/free-content/TECHNICAL_RECOVERY_20261106D.md). Earlier entries are historical.
 
 **Recovery continuation B/C,6November2026:**76Working/57Blocked of133active research connectors;789passing examples. Original44goal10Working/34remaining,23still to revisit. Art Institute,NIST,Free Kids Books and the one-work Marg metadata subset recovered.281tests pass; hourly completion enabled. Research only. [Evidence and limits](research/free-content/TECHNICAL_RECOVERY_20261106B.md). Earlier entries below are historical.

@@ -48,10 +48,11 @@
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
     "runs/scholarly-public-forms-20261105eh/observations.jsonl",
-    "runs/scholarly-title-queries-20261105ei/observations.jsonl"
+    "runs/scholarly-title-queries-20261105ei/observations.jsonl",
+    "runs/technical-recovery-20261106f/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T20:53:39.757262+00:00",
-  "next_action": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
+  "last_reviewed_at": "2026-11-06T07:47:34.099536+00:00",
+  "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -262,17 +263,33 @@
     }
   ],
   "recovery": {
-    "reason": "The published article search returned HTTP403 from this environment after a successful robots check.",
-    "attempt": "Followed the SciELO homepage search form with its published parameters and mathematics query.",
-    "result": "Homepage200; search403. Stopped on access denial; no challenge bypass or alternate search hostname.",
-    "decision": "wait_for_search_access_recovery",
-    "next_action": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
-    "retry_trigger": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
-    "owner_action_required": false,
+    "reviewed_at": "2026-11-06T07:47:34.099536+00:00",
+    "reason": "The documented SciELO Spain OAI alternative is currently inaccessible because its policy endpoint returns503.",
+    "attempt": "Located official SciELO regional OAI harvesting documentation as an alternative to denied network keyword search.",
+    "result": "Policy503 prevents querying this independent regional endpoint; previous search403 preserved.",
+    "decision": "wait-for-policy-recovery",
     "evidence": [
-      "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
-      "runs/scholarly-public-forms-20261105eh/observations.jsonl",
-      "runs/scholarly-title-queries-20261105ei/observations.jsonl"
+      "runs/technical-recovery-20261106f/observations.jsonl"
     ]
-  }
+  },
+  "recovery_history": [
+    {
+      "superseded_at": "2026-11-06T07:47:34.099536+00:00",
+      "recovery": {
+        "reason": "The published article search returned HTTP403 from this environment after a successful robots check.",
+        "attempt": "Followed the SciELO homepage search form with its published parameters and mathematics query.",
+        "result": "Homepage200; search403. Stopped on access denial; no challenge bypass or alternate search hostname.",
+        "decision": "wait_for_search_access_recovery",
+        "next_action": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
+        "retry_trigger": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues.",
+        "owner_action_required": false,
+        "evidence": [
+          "runs/scholarly-final-candidates-20261105eg/observations.jsonl",
+          "runs/scholarly-public-forms-20261105eh/observations.jsonl",
+          "runs/scholarly-title-queries-20261105ei/observations.jsonl"
+        ]
+      },
+      "next_action": "Retry only after an operator/access recovery or documented permitted metadata export. No owner action needed while independent work continues."
+    }
+  ]
 }
