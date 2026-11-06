@@ -4,7 +4,7 @@ import type { ContentItem, SavedContent } from '../../contentTypes';
 import { formatNames, primaryReadingAction, sourceNames, safeSource } from './presentation';
 import { OpenBookIcon } from '../icons';
 
-export function kindLabel(kind: string) { return ({article:'Article',preprint:'Preprint',chapter:'Chapter',book:'Book',learning_resource:'Learning resource',thesis:'Thesis',report:'Report',audiobook:'Audiobook'} as Record<string,string>)[kind] || 'Item'; }
+export function kindLabel(kind: string) { return ({article:'Article',preprint:'Preprint',chapter:'Chapter',book:'Book',learning_resource:'Learning resource',thesis:'Thesis',report:'Report',other:'Maps, data and media',audiobook:'Audiobook'} as Record<string,string>)[kind] || 'Item'; }
 function bookLike(kind:string){return kind==='book'||kind==='learning_resource';}
 export function ContentCover({ title, kind, unclear = false }: { title: string; kind: string; unclear?: boolean }) {
   const colors=['#7b3e31','#315340','#3d4f7a','#65537a'];
@@ -25,7 +25,7 @@ export function ContentResult({ item, to, returnTo, selected = false }: { item: 
     <div>{!bookLike(item.kind)&&<div className="content-pills"><span className={'content-kind' + (item.kind === 'preprint' ? ' content-preprint' : '')}>{kindLabel(item.kind)}{item.version ? ` · ${item.version}` : ''}</span>
       {item.flags?.includes('source_reports_retracted') && <span className="content-kind content-retraction">Retraction listed by source</span>}
       {item.flags?.includes('source_reports_correction') && <span className="content-kind content-warning">Correction listed by source</span>}</div>}
-      <h2 lang={item.languages[0]!=='und'?item.languages[0]:undefined}>{external?<a href={external} target="_blank" rel="noopener noreferrer" aria-label={`${item.title} (opens source search results)`}>{item.title}</a>:<Link to={to} state={{returnTo}} aria-current={selected?'true':undefined}>{item.title}</Link>}</h2>
+      <h2 lang={item.languages[0]!=='und'?item.languages[0]:undefined}>{external?<a href={external} target="_blank" rel="noopener noreferrer" aria-label={`${item.title} (opens source ${item.sourceActions?.[0]?.scope==='search'?'search results':'record'})`}>{item.title}</a>:<Link to={to} state={{returnTo}} aria-current={selected?'true':undefined}>{item.title}</Link>}</h2>
       <p className="content-authors">{authors.slice(0,3).map(c=>c.name).join(', ')}{authors.length>3?` + ${authors.length-3}`:''}</p>
       {bookLike(item.kind)&&item.version&&<p className="content-record">{item.version}</p>}
       {item.searchMatch?.field==='subject'&&<p className="content-credit">Subject: {item.searchMatch.value}</p>}
