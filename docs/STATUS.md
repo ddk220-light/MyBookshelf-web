@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Recovery D/E checkpoint, 6 November 2026:** 78 Working / 54 Blocked / 1 Still checking of133 research connectors;809passing examples. Original44:12Working/32remaining,10not yet revisited. Bhuvan product metadata and NYC map-index searches recovered; NQR form correction and ROSA P native metadata queries continue.286tests pass. Research only. [Evidence and limits](research/free-content/TECHNICAL_RECOVERY_20261106D.md). Earlier entries are historical.
+
 **Recovery continuation B/C,6November2026:**76Working/57Blocked of133active research connectors;789passing examples. Original44goal10Working/34remaining,23still to revisit. Art Institute,NIST,Free Kids Books and the one-work Marg metadata subset recovered.281tests pass; hourly completion enabled. Research only. [Evidence and limits](research/free-content/TECHNICAL_RECOVERY_20261106B.md). Earlier entries below are historical.
 
 **Recovery continuation B,6November2026:** Art Institute of Chicago and NIST add20passing examples:74Working/59Blocked of133active connectors; original44goal8Working/36remaining. Research only; production unchanged. [Report](research/free-content/TECHNICAL_RECOVERY_20261106B.md). Earlier entries are historical.

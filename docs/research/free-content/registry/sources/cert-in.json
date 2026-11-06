@@ -45,10 +45,11 @@
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
-    "runs/industry-native-catalogs-20261105dv/observations.jsonl"
+    "runs/industry-native-catalogs-20261105dv/observations.jsonl",
+    "runs/technical-recovery-20261106e/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T19:58:16.783811+00:00",
-  "next_action": "Provider restores a usable robots response or documents a permitted alternate metadata export.",
+  "last_reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+  "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -258,15 +259,31 @@
     }
   ],
   "recovery": {
-    "reason": "The robots policy URL returns an HTML page rather than a usable robots policy.",
-    "attempt": "Read existing primary-document evidence and attempted fresh policy preflight before catalog query.",
-    "result": "Current robots HTTP200,938bytes,text/html; policy parser rejects non-policy HTML. No guideline/search request sent.",
-    "decision": "wait-for-policy-access-recovery",
-    "next_action": "Provider restores a usable robots response or documents a permitted alternate metadata export.",
-    "retry_trigger": "Provider restores a usable robots response or documents a permitted alternate metadata export.",
-    "owner_action_required": false,
+    "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+    "reason": "CERT-In policy endpoint still returns HTML, not a usable robots policy.",
+    "attempt": "Located operator AwarenessBooklets catalog; checked policy before fetching it.",
+    "result": "Policy200 contains HTML; no catalog/booklet request sent.",
+    "decision": "wait-for-valid-policy",
     "evidence": [
-      "runs/industry-native-catalogs-20261105dv/observations.jsonl"
+      "runs/technical-recovery-20261106e/observations.jsonl"
     ]
-  }
+  },
+  "recovery_history": [
+    {
+      "superseded_at": "2026-11-06T07:31:01.938205+00:00",
+      "recovery": {
+        "reason": "The robots policy URL returns an HTML page rather than a usable robots policy.",
+        "attempt": "Read existing primary-document evidence and attempted fresh policy preflight before catalog query.",
+        "result": "Current robots HTTP200,938bytes,text/html; policy parser rejects non-policy HTML. No guideline/search request sent.",
+        "decision": "wait-for-policy-access-recovery",
+        "next_action": "Provider restores a usable robots response or documents a permitted alternate metadata export.",
+        "retry_trigger": "Provider restores a usable robots response or documents a permitted alternate metadata export.",
+        "owner_action_required": false,
+        "evidence": [
+          "runs/industry-native-catalogs-20261105dv/observations.jsonl"
+        ]
+      },
+      "next_action": "Provider restores a usable robots response or documents a permitted alternate metadata export."
+    }
+  ]
 }

@@ -1,3 +1,7 @@
+## Recovery D/E checkpoint —6November2026
+
+78Working/54Blocked/1Still checking;809passing examples. Original44:12Working/32remaining,10not yet revisited. Bhuvan and NYC recovered in explicitly limited metadata scopes; NQR and ROSA P checks continue.286tests and evidence checks pass; hourly task remains enabled. No activation/deployment.
+
 ## Recovery continuation B/C —6November2026
 
 76Working/57Blocked,789passing examples. Original44goal10Working/34remaining;23still to revisit. Four recoveries,32examples;281tests and evidence checks pass.75catalogs have ten-example samples; Marg is an explicitly reviewed one-work subset with two searches and an empty control. Hourly task enabled; no deployment.

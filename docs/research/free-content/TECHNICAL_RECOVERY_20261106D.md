@@ -1,0 +1,12 @@
+# Technical recovery continuation D/E — 6 November 2026
+
+This checkpoint adds searchable Bhuvan product metadata and NYC zoning-map index records. Research only; no source activation, runtime catalog import or deployment.
+
+- **Bhuvan:** local title/version and exact native-selector queries over 85 published Bhuvan Store product entries. Ten distinct examples pass. Dates, resolution and product versions remain separate. No imagery, tiles, property owners or product downloads were fetched. The obsolete WMS documentation still returns404.
+- **NYC City Planning:** ten live anonymous SODA2.1 map-label searches pass with native row IDs. A negative query returns an empty array. Two503 failures recovered after multi-minute backoff; a separate paging test still returned503, so paging is not verified. Only map-index labels are searched, not parcels, owners or legal zoning determinations.
+- **National Qualification Register:** its earlier policy403 recovered. The public search form loads; a first incomplete title request returned500. The complete form was inspected after an initial1MB capture truncated. Correct public form submission is still being tested.
+- **ROSA P:** the operator help documents an independent OAI metadata service. Identify and a date-filtered page of100 bibliographic records returned200. Individual query verification is the next step; a metadata page alone is not a Working connector.
+
+Access findings remain open: Bloom's OPDS API requires an operator-issued partnership/subscription key; OAPEN's current documentation confirms free CC0 feeds but the repository policy times out and the export policy redirects to login; NCBI's documented FTP metadata host disallows requests and the web documentation shows a browser challenge; ScienceBase explicitly disallows ChatGPT/OAI agents; IndCat's policy endpoint returns XML instead of a usable policy; Shodhganga's policy disallows the attempted route; FDIC policy403, CERT-In policyHTML and Abhilekh Patal empty202 persist. DIKSHA's help says guest search exists, but this does not supersede the saved live login redirect or establish a deployed public API contract.
+
+All prior failures and superseded query/dossier claims are preserved. Live results, request shapes, hashes, negative tests and exact scopes are under `registry/runs/technical-recovery-20261106d/`, `registry/runs/technical-recovery-20261106e/` and the per-source `registry/examples/` JSONL files. See `registry/connector-status.csv` and `registry/technical-recovery-goal.json` for current totals and next actions.

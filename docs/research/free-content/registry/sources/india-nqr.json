@@ -12,7 +12,7 @@
     "I11",
     "I18"
   ],
-  "state": "deferred",
+  "state": "candidate",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -49,10 +49,12 @@
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/industry-native-catalogs-20261105dv/observations.jsonl",
-    "runs/nqr-successor-review-20261105dy/observations.jsonl"
+    "runs/nqr-successor-review-20261105dy/observations.jsonl",
+    "runs/technical-recovery-20261106e/observations.jsonl",
+    "runs/technical-recovery-20261106e/followups.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T20:02:11.010672+00:00",
-  "next_action": "Wait for usable robots/access on the original or officially documented successor; no anonymous qualification query established on either.",
+  "last_reviewed_at": "2026-11-06T07:35:24.431385+00:00",
+  "next_action": "Submit published advanced-search form with its actual default fields; if still500 try the advertised session-based public keyword form, respecting policy and no accounts.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -272,19 +274,25 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [National Qualification Register](https://www.nqr.gov.in/) | Original policy returned 403; officially announced successor returned HTML for robots. | Resolve policy/access on the announced successor before testing repository queries. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "968839ff5124d3da95c9f59a212cfa231fa89ae8f4a055be3d9244e7f70d74cf",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106D.md",
+      "line": 5,
+      "heading": "Technical recovery continuation D/E — 6 November 2026",
+      "text": "- **Bhuvan:** local title/version and exact native-selector queries over 85 published Bhuvan Store product entries. Ten distinct examples pass. Dates, resolution and product versions remain separate. No imagery, tiles, property owners or product downloads were fetched. The obsolete WMS documentation still returns404.\n- **NYC City Planning:** ten live anonymous SODA2.1 map-label searches pass with native row IDs. A negative query returns an empty array. Two503 failures recovered after multi-minute backoff; a separate paging test still returned503, so paging is not verified. Only map-index labels are searched, not parcels, owners or legal zoning determinations.\n- **National Qualification Register:** its earlier policy403 recovered. The public search form loads; a first incomplete title request returned500. The complete form was inspected after an initial1MB capture truncated. Correct public form submission is still being tested.\n- **ROSA P:** the operator help documents an independent OAI metadata service. Identify and a date-filtered page of100 bibliographic records returned200. Individual query verification is the next step; a metadata page alone is not a Working connector.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reason": "The robots policy URL returns access denied (HTTP403).",
-    "attempt": "Read existing primary-document evidence and attempted fresh policy preflight before catalog query. Followed the officially announced migration to kaushalverse.ncvet.gov.in/homepage/repository (captured NQR notice), not an inferred mirror.",
-    "result": "Current robots HTTP403,33bytes; catalog/search request skipped. Earlier homepage capture is historical reachability, not current search proof. The successor robots URL returnedHTTP200 HTML2439bytes, not a usable robots policy; repository request skipped.",
-    "decision": "wait-for-policy-access-recovery",
-    "next_action": "Wait for usable robots/access on the original or officially documented successor; no anonymous qualification query established on either.",
-    "retry_trigger": "Provider restores permitted access or publishes a separately documented public export; do not change hosts to evade the denial.",
-    "owner_action_required": false,
+    "reviewed_at": "2026-11-06T07:35:24.431385+00:00",
+    "reason": "Earlier robots403 has recovered. Published catalog now loads but initial title request returned500.",
+    "attempt": "Locate published GET advanced-search form; inspect complete bounded1.97MB HTML after earlier capture truncated at1MB.",
+    "result": "Correct current form fields identified. Real title request pending correction to include browser default fields; no qualification queries verified yet.",
+    "decision": "still-checking-published-form",
     "evidence": [
-      "runs/industry-native-catalogs-20261105dv/observations.jsonl",
-      "runs/nqr-successor-review-20261105dy/observations.jsonl"
+      "runs/technical-recovery-20261106e/observations.jsonl",
+      "runs/technical-recovery-20261106e/followups.jsonl"
     ]
   }
 }

@@ -48,10 +48,11 @@
     "runs/abhilekh-official-links-20261105di/observations.jsonl",
     "runs/abhilekh-entrypoint-20261105dj/observations.jsonl",
     "runs/archive-pmc-entrypoints-20261105dk/observations.jsonl",
-    "runs/pmc-query-contract-20261105dl/observations.jsonl"
+    "runs/pmc-query-contract-20261105dl/observations.jsonl",
+    "runs/technical-recovery-20261106e/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T19:04:12.509244+00:00",
-  "next_action": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order.",
+  "last_reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+  "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -282,14 +283,38 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [Abhilekh Patal](https://nationalarchives.nic.in/en/online-portal-abhilekh-patal) | Both policy checks returned empty HTTP 202 responses. | Wait for a useful recovery signal or documented public metadata alternative. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "968839ff5124d3da95c9f59a212cfa231fa89ae8f4a055be3d9244e7f70d74cf",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106D.md",
+      "line": 10,
+      "heading": "Technical recovery continuation D/E — 6 November 2026",
+      "text": "Access findings remain open: Bloom's OPDS API requires an operator-issued partnership/subscription key; OAPEN's current documentation confirms free CC0 feeds but the repository policy times out and the export policy redirects to login; NCBI's documented FTP metadata host disallows requests and the web documentation shows a browser challenge; ScienceBase explicitly disallows ChatGPT/OAI agents; IndCat's policy endpoint returns XML instead of a usable policy; Shodhganga's policy disallows the attempted route; FDIC policy403, CERT-In policyHTML and Abhilekh Patal empty202 persist. DIKSHA's help says guest search exists, but this does not supersede the saved live login redirect or establish a deployed public API contract.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reason": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
-    "attempt": "Followed the official National Archives homepage link; checked catalog robots, waited, then retried the same policy endpoint once.",
-    "result": "Both checks returned HTTP202 with0 bytes; no catalog search request was sent. Cause of the202 response is unknown.",
-    "decision": "wait_for_policy_endpoint_recovery_or_documented_alternative",
-    "next_action": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order.",
-    "owner_action_required": false
-  }
+    "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+    "reason": "Archives catalog policy still returns empty HTTP202.",
+    "attempt": "Official National Archives reference page confirms the public search URL; independently checked catalog policy.",
+    "result": "Reference page200 captured; catalog robots202 with zero bytes. No query, CAPTCHA bypass or demo-host workaround.",
+    "decision": "wait-for-policy-recovery",
+    "evidence": [
+      "runs/technical-recovery-20261106e/observations.jsonl"
+    ]
+  },
+  "recovery_history": [
+    {
+      "superseded_at": "2026-11-06T07:31:01.938205+00:00",
+      "recovery": {
+        "reason": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
+        "attempt": "Followed the official National Archives homepage link; checked catalog robots, waited, then retried the same policy endpoint once.",
+        "result": "Both checks returned HTTP202 with0 bytes; no catalog search request was sent. Cause of the202 response is unknown.",
+        "decision": "wait_for_policy_endpoint_recovery_or_documented_alternative",
+        "next_action": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order.",
+        "owner_action_required": false
+      },
+      "next_action": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order."
+    }
+  ]
 }

@@ -196,10 +196,12 @@
     "runs/retrieval-doc-links-20261105b/observations.jsonl",
     "runs/retrieval-contracts-20261105b/observations.jsonl",
     "examples/indcat.scouting.jsonl",
-    "examples/indcat.topic-scouting.jsonl"
+    "examples/indcat.topic-scouting.jsonl",
+    "runs/technical-recovery-20261106d/observations.jsonl",
+    "runs/technical-recovery-20261106d/scout-observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T06:05:52.068546+00:00",
-  "next_action": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified.",
+  "last_reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+  "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -695,22 +697,39 @@
     }
   ],
   "recovery": {
-    "status": "blocked_or_failed",
-    "reason": "The SRU service returned a timeout followed by HTTP503; one MARC identity shape also needs repair.",
-    "attempt": "Reviewed saved SRU attempts and the logistics503; no repeated request in this review.",
-    "result": "Blocked on existing evidence; no new provider request in this review.",
-    "decision": "retry_after_recovery_and_fix_parser",
-    "next_action": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified.",
-    "owner_action_required": false,
-    "evidence_reviewed_at": "2026-11-05T18:19:00.905577+00:00",
-    "new_provider_requests": 0,
-    "fresh_query_verification": false,
+    "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+    "reason": "SRU API robots endpoint returns XML instead of a usable robots policy.",
+    "attempt": "Re-read official SRU manual; checked public API policy after overnight backoff.",
+    "result": "Manual confirms public unauthenticated SRU, but current policy response is683-byte XML; no query sent.",
+    "decision": "wait-for-valid-api-policy",
     "evidence": [
-      "runs/source-evidence-20261105/observations.jsonl",
-      "runs/retrieval-doc-links-20261105b/observations.jsonl",
-      "runs/retrieval-contracts-20261105b/observations.jsonl",
-      "examples/indcat.scouting.jsonl",
-      "examples/indcat.topic-scouting.jsonl"
+      "runs/technical-recovery-20261106d/observations.jsonl",
+      "runs/technical-recovery-20261106d/scout-observations.jsonl"
     ]
-  }
+  },
+  "recovery_history": [
+    {
+      "superseded_at": "2026-11-06T07:28:04.358484+00:00",
+      "recovery": {
+        "status": "blocked_or_failed",
+        "reason": "The SRU service returned a timeout followed by HTTP503; one MARC identity shape also needs repair.",
+        "attempt": "Reviewed saved SRU attempts and the logistics503; no repeated request in this review.",
+        "result": "Blocked on existing evidence; no new provider request in this review.",
+        "decision": "retry_after_recovery_and_fix_parser",
+        "next_action": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified.",
+        "owner_action_required": false,
+        "evidence_reviewed_at": "2026-11-05T18:19:00.905577+00:00",
+        "new_provider_requests": 0,
+        "fresh_query_verification": false,
+        "evidence": [
+          "runs/source-evidence-20261105/observations.jsonl",
+          "runs/retrieval-doc-links-20261105b/observations.jsonl",
+          "runs/retrieval-contracts-20261105b/observations.jsonl",
+          "examples/indcat.scouting.jsonl",
+          "examples/indcat.topic-scouting.jsonl"
+        ]
+      },
+      "next_action": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified."
+    }
+  ]
 }

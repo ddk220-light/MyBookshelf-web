@@ -12,28 +12,196 @@
     "P07"
   ],
   "area_membership_status": "Historical discovery classification only; content/query qualification remains open.",
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "historical-catalog-candidate",
   "origin_family": "bhuvan",
   "operator": {
-    "name": "Captured title names ISRO. The role of NRSC and individual layer providers remains unverified.",
+    "name": "National Remote Sensing Centre / ISRO (Bhuvan Store)",
     "jurisdiction": "India",
-    "verification": "partial-or-unverified"
+    "verification": "Published NRSC hostname and Bhuvan product catalog; individual product contributors not fully reviewed"
   },
   "languages": [],
   "capabilities": [
-    "Historical civic playbook proposes topographic/land-cover map discovery. Saved page title says Bhuvan-Indian Geoportal of ISRO but body only says Loading. A historically reported WMS wiki404 does not supply a current service contract."
+    "Search product-level metadata by displayed title/version or native product selector"
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "unknown",
-    "supported_modes": [],
+    "adapter": "bhuvan-product-catalog",
+    "endpoint": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+    "authentication": "Anonymous metadata table; no account/key",
+    "search_scope": "85 published native product selectors in Bhuvan Store; title substring and exact-ID search. Individual tiles, all Bhuvan layers, imagery/download access and property records are outside scope.",
+    "supported_modes": [
+      "Local title substring search over public HTML metadata",
+      "Exact native product selector lookup"
+    ],
     "unsupported_modes": [
-      "No queries/imports implemented in this research adapter."
+      "Tile/imagery download",
+      "Property-owner lookup",
+      "Full map-layer catalog search",
+      "Geospatial query or current authoritative land status"
+    ],
+    "cases": [
+      {
+        "id": "product-1",
+        "query_text": "Cartosat-1:DEM - Version-1",
+        "intent": "Find a published named product/version in Bhuvan Store",
+        "request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "Cartosat-1:DEM - Version-1"
+          }
+        },
+        "expected_ids": [
+          "https://bhuvan-app3.nrsc.gov.in/data/download/index.php?c=s&p=cdv1&s=C1"
+        ]
+      },
+      {
+        "id": "product-2",
+        "query_text": "Cartosat-1:DEM - Version 1.1R1",
+        "intent": "Find a published named product/version in Bhuvan Store",
+        "request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "Cartosat-1:DEM - Version 1.1R1"
+          }
+        },
+        "expected_ids": [
+          "https://bhuvan-app3.nrsc.gov.in/data/download/index.php?c=s&p=cdv2&s=C1"
+        ]
+      },
+      {
+        "id": "product-3",
+        "query_text": "Cartosat-1:DEM - Version-2R1",
+        "intent": "Find a published named product/version in Bhuvan Store",
+        "request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "Cartosat-1:DEM - Version-2R1"
+          }
+        },
+        "expected_ids": [
+          "https://bhuvan-app3.nrsc.gov.in/data/download/index.php?c=s&p=cdv2r1&s=C1"
+        ]
+      },
+      {
+        "id": "product-4",
+        "query_text": "Cartosat-1:DEM - Version-3R1",
+        "intent": "Find a published named product/version in Bhuvan Store",
+        "request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "Cartosat-1:DEM - Version-3R1"
+          }
+        },
+        "expected_ids": [
+          "https://bhuvan-app3.nrsc.gov.in/data/download/index.php?c=s&p=cdv3r1&s=C1"
+        ]
+      },
+      {
+        "id": "product-5",
+        "query_text": "Annual Cropland Data set",
+        "intent": "Find a published named product/version in Bhuvan Store",
+        "request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "Annual Cropland Data set"
+          }
+        },
+        "expected_ids": [
+          "https://bhuvan-app3.nrsc.gov.in/data/download/index.php?c=p&g=TS&p=acd&s=NICES"
+        ]
+      },
+      {
+        "id": "product-6",
+        "query_text": "AWiFS: Snow Albedo",
+        "intent": "Find a published named product/version in Bhuvan Store",
+        "request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "AWiFS: Snow Albedo"
+          }
+        },
+        "expected_ids": [
+          "https://bhuvan-app3.nrsc.gov.in/data/download/index.php?c=p&g=TS&p=salbedo&s=NICES"
+        ]
+      },
+      {
+        "id": "product-7",
+        "query_text": "AWiFS: Water Bodies Fraction",
+        "intent": "Find a published named product/version in Bhuvan Store",
+        "request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "AWiFS: Water Bodies Fraction"
+          }
+        },
+        "expected_ids": [
+          "https://bhuvan-app3.nrsc.gov.in/data/download/index.php?c=p&g=TS&p=wbf&s=NICES"
+        ]
+      },
+      {
+        "id": "product-8",
+        "query_text": "Forest Fire Regime (3 Parameters)",
+        "intent": "Find a published named product/version in Bhuvan Store",
+        "request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "Forest Fire Regime (3 Parameters)"
+          }
+        },
+        "expected_ids": [
+          "https://bhuvan-app3.nrsc.gov.in/data/download/index.php?c=p&g=TS&p=ff&s=NICES"
+        ]
+      },
+      {
+        "id": "product-9",
+        "query_text": "Indian Soil Datasets (3 Parameters)",
+        "intent": "Find a published named product/version in Bhuvan Store",
+        "request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "Indian Soil Datasets (3 Parameters)"
+          }
+        },
+        "expected_ids": [
+          "https://bhuvan-app3.nrsc.gov.in/data/download/index.php?c=p&g=TS&p=isd&s=NICES"
+        ]
+      },
+      {
+        "id": "product-10",
+        "query_text": "Land Degradation (4 Parameters)",
+        "intent": "Find a published named product/version in Bhuvan Store",
+        "request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "Land Degradation (4 Parameters)"
+          }
+        },
+        "expected_ids": [
+          "https://bhuvan-app3.nrsc.gov.in/data/download/index.php?c=p&g=TS&p=ldd&s=NICES"
+        ]
+      }
     ]
   },
   "licensing": "Metadata/content rights, authentication and free limits unverified; no implied public-domain claim.",
@@ -42,18 +210,23 @@
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
-    "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md"
+    "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+    "runs/technical-recovery-20261106d/scout-observations.jsonl",
+    "runs/technical-recovery-20261106d/bhuvan-catalog-proof.json",
+    "examples/bhuvan.jsonl",
+    "runs/technical-recovery-20261106d/bhuvan-catalog.html"
   ],
   "limitations": [
     "Captured HTTP200 loading shell exposes no usable layer catalog, records, version, export policy or query contract. Robots404 was retained by the original collector; it is not an explicit access grant.",
-    "One Bhuvan gateway candidate. Layers, datasets, tiles, coordinate systems and mirrors do not establish independent origins; actual layer providers require attribution/deduplication."
+    "One Bhuvan gateway candidate. Layers, datasets, tiles, coordinate systems and mirrors do not establish independent origins; actual layer providers require attribution/deduplication.",
+    "Current Working count is limited to published product metadata. Product downloads, imagery rights, tile/coordinate queries and all other Bhuvan interfaces remain unverified."
   ],
-  "last_reviewed_at": "2026-11-05T12:08:50.155149+00:00",
+  "last_reviewed_at": "2026-11-06T07:25:25.928982+00:00",
   "evidence_observation_dates": [
     "2026-11-05T02:23:38.245264+00:00"
   ],
-  "fresh_query_verification": false,
-  "next_action": "Published current supported map-service/catalog documentation and data terms; verify layer/native sheet identity, extent/CRS/scale/date and actual map viewing without property-owner/parcel queries.",
+  "fresh_query_verification": true,
+  "next_action": "Maintain public product-metadata parser; review current product-specific rights and user download/login conditions before any later activation.",
   "analysis_refs": [
     {
       "document_id": "e0f9e032470e81d885e20251a8653198ea6ed2892d86f761f802fa7c61095796",
@@ -77,6 +250,22 @@
       "line": 105,
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [Bhuvan Indian Geoportal](https://bhuvan.nrsc.gov.in/) | Only a loading shell was captured; layer/catalog query contract is missing. | Identify a supported public layer catalog and permissions; no signup benefit established. Owner action: engineering/research first; no owner signup required yet. |",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "968839ff5124d3da95c9f59a212cfa231fa89ae8f4a055be3d9244e7f70d74cf",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106D.md",
+      "line": 3,
+      "heading": "Technical recovery continuation D/E — 6 November 2026",
+      "text": "This checkpoint adds searchable Bhuvan product metadata and NYC zoning-map index records. Research only; no source activation, runtime catalog import or deployment.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "968839ff5124d3da95c9f59a212cfa231fa89ae8f4a055be3d9244e7f70d74cf",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106D.md",
+      "line": 5,
+      "heading": "Technical recovery continuation D/E — 6 November 2026",
+      "text": "- **Bhuvan:** local title/version and exact native-selector queries over 85 published Bhuvan Store product entries. Ten distinct examples pass. Dates, resolution and product versions remain separate. No imagery, tiles, property owners or product downloads were fetched. The obsolete WMS documentation still returns404.\n- **NYC City Planning:** ten live anonymous SODA2.1 map-label searches pass with native row IDs. A negative query returns an empty array. Two503 failures recovered after multi-minute backoff; a separate paging test still returned503, so paging is not verified. Only map-index labels are searched, not parcels, owners or legal zoning determinations.\n- **National Qualification Register:** its earlier policy403 recovered. The public search form loads; a first incomplete title request returned500. The complete form was inspected after an initial1MB capture truncated. Correct public form submission is still being tested.\n- **ROSA P:** the operator help documents an independent OAI metadata service. Identify and a date-filtered page of100 bibliographic records returned200. Individual query verification is the next step; a metadata page alone is not a Working connector.",
       "status": "historical-context-needs-reconciliation"
     }
   ],
@@ -110,13 +299,30 @@
       "fresh_query_verification": false,
       "summary": "One Bhuvan gateway candidate. Layers, datasets, tiles, coordinate systems and mirrors do not establish independent origins; actual layer providers require attribution/deduplication.",
       "facts": {
-        "operator": "Captured title names ISRO. The role of NRSC and individual layer providers remains unverified.",
+        "operator": "National Remote Sensing Centre / ISRO (Bhuvan Store)",
         "canonical_lead_url": "https://bhuvan.nrsc.gov.in/",
         "qualified_independent_origin": false
       },
       "open_questions": [
         "Confirm current operator, canonical supported catalog and overlap using primary evidence."
-      ]
+      ],
+      "current_product_identity": {
+        "status": "partial",
+        "summary": "Ten product/version identities preserved.",
+        "facts": {
+          "native_identity": "Canonical published product URL + c/s/p/g selector; no tile/edition coalescing",
+          "representative_examples": "examples/bhuvan.jsonl"
+        },
+        "evidence": [
+          "runs/technical-recovery-20261106d/bhuvan-catalog-proof.json",
+          "examples/bhuvan.jsonl"
+        ],
+        "fresh_query_verification": true,
+        "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+        "open_questions": [
+          "Product-specific metadata/content rights and download conditions remain unverified; queryability count is independent."
+        ]
+      }
     },
     "coverage_and_languages": {
       "status": "partial",
@@ -161,51 +367,31 @@
     },
     "query_contract": {
       "status": "partial",
-      "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "71eb0659f7460f4aacc4",
-          "observed_at": "2026-11-05T02:23:38.245264+00:00",
-          "url": "https://bhuvan.nrsc.gov.in/",
-          "outcome": "captured",
-          "response_sha256": "acc0b73fe76dd60796e8c515b82fa71715e5cafc17447574083211d359fc6ce5",
-          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
-        }
-      ],
-      "historical_provenance": [
-        {
-          "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
-          "label": [
-            "Bhuvan"
-          ],
-          "claim_status": "historical discovery proposal, not fresh catalog/query verification"
-        }
-      ],
-      "fresh_query_verification": false,
-      "summary": "No supported executable machine-query contract or native query example established.",
+      "summary": "85 published native product selectors in Bhuvan Store; title substring and exact-ID search. Individual tiles, all Bhuvan layers, imagery/download access and property records are outside scope.",
       "facts": {
-        "adapter": "unproven",
-        "supported_modes_verified": [],
-        "unsupported_in_this_research_adapter": [
-          "Any catalog query/import until permitted contract is established"
+        "adapter": "bhuvan-product-catalog",
+        "supported_modes_verified": [
+          "Local title substring search over public HTML metadata",
+          "Exact native product selector lookup"
         ],
-        "provider_unsupported_modes": "Unknown; absence of proof does not mean provider lacks an API.",
-        "documentation_requests": [
-          {
-            "method": "GET",
-            "url": "https://bhuvan.nrsc.gov.in/",
-            "target_requested": true,
-            "outcome": "captured"
+        "exact_request": {
+          "method": "GET",
+          "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+          "local_query": {
+            "field": "title",
+            "value": "Cartosat-1:DEM - Version-1"
           }
-        ],
-        "verified_examples": 0
+        },
+        "verified_examples": 10
       },
+      "evidence": [
+        "runs/technical-recovery-20261106d/bhuvan-catalog-proof.json",
+        "examples/bhuvan.jsonl"
+      ],
+      "fresh_query_verification": true,
+      "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
       "open_questions": [
-        "Capture exact public query/export shape, metadata schema, native item/version ID, paging, empty and error behavior."
+        "Product-specific metadata/content rights and download conditions remain unverified; queryability count is independent."
       ]
     },
     "rights_and_cost": {
@@ -360,42 +546,346 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl",
-        "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md"
-      ],
-      "observation_refs": [
-        {
-          "path": "runs/source-evidence-20261105/observations.jsonl",
-          "job_id": "71eb0659f7460f4aacc4",
-          "observed_at": "2026-11-05T02:23:38.245264+00:00",
-          "url": "https://bhuvan.nrsc.gov.in/",
-          "outcome": "captured",
-          "response_sha256": "acc0b73fe76dd60796e8c515b82fa71715e5cafc17447574083211d359fc6ce5",
-          "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
-        }
-      ],
-      "historical_provenance": [
-        {
-          "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
-          "label": [
-            "Bhuvan"
-          ],
-          "claim_status": "historical discovery proposal, not fresh catalog/query verification"
-        }
-      ],
-      "fresh_query_verification": false,
-      "summary": "Map the older named/linked catalog lead to one explicitly deferred dossier; do not add query or qualification counts.",
+      "status": "partial",
+      "summary": "Queryability recovered; fuller rights/reading review remains open.",
       "facts": {
-        "decision": "deferred",
-        "activation_approved": false,
-        "owner_action_required": false,
-        "blocker": "Captured HTTP200 loading shell exposes no usable layer catalog, records, version, export policy or query contract. Robots404 was retained by the original collector; it is not an explicit access grant.",
-        "next_action": "Published current supported map-service/catalog documentation and data terms; verify layer/native sheet identity, extent/CRS/scale/date and actual map viewing without property-owner/parcel queries.",
-        "analysis_only": true
+        "decision": "Working for scoped metadata search",
+        "blocker": null,
+        "next_action": "Maintain public product-metadata parser; review current product-specific rights and user download/login conditions before any later activation."
       },
-      "open_questions": []
+      "evidence": [
+        "runs/technical-recovery-20261106d/bhuvan-catalog-proof.json",
+        "examples/bhuvan.jsonl"
+      ],
+      "fresh_query_verification": true,
+      "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+      "open_questions": [
+        "Product-specific metadata/content rights and download conditions remain unverified; queryability count is independent."
+      ]
     }
-  }
+  },
+  "historical_query_contracts": [
+    {
+      "superseded_at": "2026-11-06T07:25:25.919893+00:00",
+      "query": {
+        "adapter": "unproven",
+        "endpoint": null,
+        "cases": [],
+        "authentication": "unknown",
+        "supported_modes": [],
+        "unsupported_modes": [
+          "No queries/imports implemented in this research adapter."
+        ]
+      },
+      "reason": "Use publicly published product catalog instead of homepage loading shell"
+    }
+  ],
+  "recovery": {
+    "reviewed_at": "2026-11-06T07:25:26.009267+00:00",
+    "reason": "Homepage shell and obsolete wiki404 supplied no queryable catalog.",
+    "attempt": "Capture published Bhuvan Store product table once; search title/version and native selector locally.",
+    "result": "85 distinct product selectors; ten relevant distinct examples, exact-ID lookups and empty search passed.",
+    "decision": "working_with_recorded_scope"
+  },
+  "historical_dossier_snapshots": [
+    {
+      "superseded_at": "2026-11-06T07:28:04.358484+00:00",
+      "dossier": {
+        "identity_and_duplicates": {
+          "status": "partial",
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "71eb0659f7460f4aacc4",
+              "observed_at": "2026-11-05T02:23:38.245264+00:00",
+              "url": "https://bhuvan.nrsc.gov.in/",
+              "outcome": "captured",
+              "response_sha256": "acc0b73fe76dd60796e8c515b82fa71715e5cafc17447574083211d359fc6ce5",
+              "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+            }
+          ],
+          "historical_provenance": [
+            {
+              "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+              "label": [
+                "Bhuvan"
+              ],
+              "claim_status": "historical discovery proposal, not fresh catalog/query verification"
+            }
+          ],
+          "fresh_query_verification": false,
+          "summary": "One Bhuvan gateway candidate. Layers, datasets, tiles, coordinate systems and mirrors do not establish independent origins; actual layer providers require attribution/deduplication.",
+          "facts": {
+            "operator": "Captured title names ISRO. The role of NRSC and individual layer providers remains unverified.",
+            "canonical_lead_url": "https://bhuvan.nrsc.gov.in/",
+            "qualified_independent_origin": false
+          },
+          "open_questions": [
+            "Confirm current operator, canonical supported catalog and overlap using primary evidence."
+          ]
+        },
+        "coverage_and_languages": {
+          "status": "partial",
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "71eb0659f7460f4aacc4",
+              "observed_at": "2026-11-05T02:23:38.245264+00:00",
+              "url": "https://bhuvan.nrsc.gov.in/",
+              "outcome": "captured",
+              "response_sha256": "acc0b73fe76dd60796e8c515b82fa71715e5cafc17447574083211d359fc6ce5",
+              "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+            }
+          ],
+          "historical_provenance": [
+            {
+              "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+              "label": [
+                "Bhuvan"
+              ],
+              "claim_status": "historical discovery proposal, not fresh catalog/query verification"
+            }
+          ],
+          "fresh_query_verification": false,
+          "summary": "Historical civic playbook proposes topographic/land-cover map discovery. Saved page title says Bhuvan-Indian Geoportal of ISRO but body only says Loading. A historically reported WMS wiki404 does not supply a current service contract.",
+          "facts": {
+            "proposed_areas_from_discovery": [
+              "C19",
+              "P07"
+            ],
+            "proposed_jurisdiction": "India",
+            "verified_languages": [],
+            "country_availability_verified": false
+          },
+          "open_questions": [
+            "Establish actual content scope, jurisdiction and language labels; proposed tags are not qualification."
+          ]
+        },
+        "query_contract": {
+          "status": "partial",
+          "summary": "85 published native product selectors in Bhuvan Store; title substring and exact-ID search. Individual tiles, all Bhuvan layers, imagery/download access and property records are outside scope.",
+          "facts": {
+            "adapter": "bhuvan-product-catalog",
+            "supported_modes_verified": [
+              "Local title substring search over public HTML metadata",
+              "Exact native product selector lookup"
+            ],
+            "exact_request": {
+              "method": "GET",
+              "url": "https://bhuvan-app1.nrsc.gov.in/2dresources/bhuvanstore.php",
+              "local_query": {
+                "field": "title",
+                "value": "Cartosat-1:DEM - Version-1"
+              }
+            },
+            "verified_examples": 10
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106d/bhuvan-catalog-proof.json",
+            "examples/bhuvan.jsonl"
+          ],
+          "fresh_query_verification": true,
+          "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+          "open_questions": [
+            "Product-specific metadata/content rights and download conditions remain unverified; queryability count is independent."
+          ]
+        },
+        "rights_and_cost": {
+          "status": "partial",
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "71eb0659f7460f4aacc4",
+              "observed_at": "2026-11-05T02:23:38.245264+00:00",
+              "url": "https://bhuvan.nrsc.gov.in/",
+              "outcome": "captured",
+              "response_sha256": "acc0b73fe76dd60796e8c515b82fa71715e5cafc17447574083211d359fc6ce5",
+              "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+            }
+          ],
+          "historical_provenance": [
+            {
+              "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+              "label": [
+                "Bhuvan"
+              ],
+              "claim_status": "historical discovery proposal, not fresh catalog/query verification"
+            }
+          ],
+          "fresh_query_verification": false,
+          "summary": "Metadata access, content reuse and full reading rights are unknown; a public government/education URL is not a blanket reuse license.",
+          "facts": {
+            "metadata_rights": "unverified",
+            "content_rights": "unverified",
+            "authentication": "unverified",
+            "cost_and_free_limits": "unverified; no account/payment used",
+            "no_inferred_public_domain": true
+          },
+          "open_questions": [
+            "Separate metadata license from content/third-party rights and establish free access/limits."
+          ]
+        },
+        "reader_access": {
+          "status": "partial",
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "71eb0659f7460f4aacc4",
+              "observed_at": "2026-11-05T02:23:38.245264+00:00",
+              "url": "https://bhuvan.nrsc.gov.in/",
+              "outcome": "captured",
+              "response_sha256": "acc0b73fe76dd60796e8c515b82fa71715e5cafc17447574083211d359fc6ce5",
+              "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+            }
+          ],
+          "historical_provenance": [
+            {
+              "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+              "label": [
+                "Bhuvan"
+              ],
+              "claim_status": "historical discovery proposal, not fresh catalog/query verification"
+            }
+          ],
+          "fresh_query_verification": false,
+          "summary": "No full item has been read or verified for this candidate.",
+          "facts": {
+            "full_item_access_verified": false,
+            "free_login_policy": "Unknown; free login can be acceptable, but eligibility restrictions require separate assessment.",
+            "saved_retrieval_limit": "Captured HTTP200 loading shell exposes no usable layer catalog, records, version, export policy or query contract. Robots404 was retained by the original collector; it is not an explicit access grant."
+          },
+          "open_questions": [
+            "Verify representative full-item destination, exact native edition/version, access conditions and accessible rendering."
+          ]
+        },
+        "quality_and_relevance": {
+          "status": "partial",
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "71eb0659f7460f4aacc4",
+              "observed_at": "2026-11-05T02:23:38.245264+00:00",
+              "url": "https://bhuvan.nrsc.gov.in/",
+              "outcome": "captured",
+              "response_sha256": "acc0b73fe76dd60796e8c515b82fa71715e5cafc17447574083211d359fc6ce5",
+              "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+            }
+          ],
+          "historical_provenance": [
+            {
+              "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+              "label": [
+                "Bhuvan"
+              ],
+              "claim_status": "historical discovery proposal, not fresh catalog/query verification"
+            }
+          ],
+          "fresh_query_verification": false,
+          "summary": "No fresh relevance/empty/paging/error/access examples are counted from documentation outcomes.",
+          "facts": {
+            "current_query_examples": 0,
+            "retained_negative_or_limited_observation": "Captured HTTP200 loading shell exposes no usable layer catalog, records, version, export policy or query contract. Robots404 was retained by the original collector; it is not an explicit access grant.",
+            "historical_claims_preserved": true
+          },
+          "open_questions": [
+            "Verify ten distinct current cases with expected native outputs and relevance judgments after contract/policy checks."
+          ]
+        },
+        "operating_limits": {
+          "status": "partial",
+          "evidence": [
+            "runs/source-evidence-20261105/observations.jsonl",
+            "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/source-evidence-20261105/observations.jsonl",
+              "job_id": "71eb0659f7460f4aacc4",
+              "observed_at": "2026-11-05T02:23:38.245264+00:00",
+              "url": "https://bhuvan.nrsc.gov.in/",
+              "outcome": "captured",
+              "response_sha256": "acc0b73fe76dd60796e8c515b82fa71715e5cafc17447574083211d359fc6ce5",
+              "policy_sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e"
+            }
+          ],
+          "historical_provenance": [
+            {
+              "path": "docs/research/free-content/discovery/PUBLIC_RECORDS_AND_MAPS.md",
+              "label": [
+                "Bhuvan"
+              ],
+              "claim_status": "historical discovery proposal, not fresh catalog/query verification"
+            }
+          ],
+          "fresh_query_verification": false,
+          "summary": "Captured HTTP200 loading shell exposes no usable layer catalog, records, version, export policy or query contract. Robots404 was retained by the original collector; it is not an explicit access grant.",
+          "facts": {
+            "automatic_retries": 0,
+            "new_requests_in_this_review": 0,
+            "quota": "unknown",
+            "revisit_trigger": "Published current supported map-service/catalog documentation and data terms; verify layer/native sheet identity, extent/CRS/scale/date and actual map viewing without property-owner/parcel queries."
+          },
+          "open_questions": [
+            "Establish serial pacing/provider quota, bounded refresh and deletion/revision behavior after supported contract is available."
+          ]
+        },
+        "decision_and_followup": {
+          "status": "partial",
+          "summary": "Queryability recovered; fuller rights/reading review remains open.",
+          "facts": {
+            "decision": "Working for scoped metadata search",
+            "blocker": null,
+            "next_action": "Maintain public product-metadata parser; review current product-specific rights and user download/login conditions before any later activation."
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106d/bhuvan-catalog-proof.json",
+            "examples/bhuvan.jsonl"
+          ],
+          "fresh_query_verification": true,
+          "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+          "open_questions": [
+            "Product-specific metadata/content rights and download conditions remain unverified; queryability count is independent."
+          ]
+        },
+        "item_identity": {
+          "status": "partial",
+          "summary": "Ten product/version identities preserved.",
+          "facts": {
+            "native_identity": "Canonical published product URL + c/s/p/g selector; no tile/edition coalescing",
+            "representative_examples": "examples/bhuvan.jsonl"
+          },
+          "evidence": [
+            "runs/technical-recovery-20261106d/bhuvan-catalog-proof.json",
+            "examples/bhuvan.jsonl"
+          ],
+          "fresh_query_verification": true,
+          "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+          "open_questions": [
+            "Product-specific metadata/content rights and download conditions remain unverified; queryability count is independent."
+          ]
+        }
+      },
+      "reason": "Product-level metadata queries now verified; historical shell failure retained."
+    }
+  ]
 }

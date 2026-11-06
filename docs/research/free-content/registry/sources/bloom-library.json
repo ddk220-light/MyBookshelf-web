@@ -27,10 +27,22 @@
     "endpoint": "https://bloomlibrary.org/",
     "authentication": "Unknown; free-login allowance does not establish this provider’s access conditions.",
     "cost": "Unverified; no account or payment created.",
-    "cases": []
+    "cases": [],
+    "documented_alternative": {
+      "endpoint": "https://api.bloomlibrary.org/v1/opds",
+      "method": "GET",
+      "params": {
+        "key": "ACCOUNT_EMAIL:OPERATOR_ISSUED_KEY",
+        "lang": "BCP47_LANGUAGE_TAG",
+        "minimalnavlinks": "true"
+      },
+      "status": "documented-not-executed",
+      "limits": "Operator says to cache and refresh approximately daily, not query on each end-user page open; no automatic rate limiter."
+    }
   },
   "documentation": [
-    "https://bloomlibrary.org/"
+    "https://bloomlibrary.org/",
+    "https://docs.bloomlibrary.org/opds/"
   ],
   "licensing": "Unverified metadata/content rights. Book Dash license or partner status does not license the whole partner catalog.",
   "limitations": [
@@ -40,7 +52,8 @@
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
-    "runs/partner-leads-20261105/observations.jsonl"
+    "runs/partner-leads-20261105/observations.jsonl",
+    "runs/technical-recovery-20261106e/observations.jsonl"
   ],
   "analysis_refs": [
     {
@@ -52,8 +65,8 @@
       "status": "historical-context-needs-reconciliation"
     }
   ],
-  "last_reviewed_at": "2026-11-05T16:56:18.911857+00:00",
-  "next_action": "Keep deferred. Revisit after a published supported API/export, valid policy/canonical route or documented recovery; then establish identity, rights, reader conditions and ten current native-ID queries.",
+  "last_reviewed_at": "2026-11-06T07:29:33.246093+00:00",
+  "next_action": "Remain blocked pending approved partnership API key. Do not purchase enterprise service, create an account or send outreach under this research continuation.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -357,5 +370,24 @@
       ],
       "open_questions": []
     }
+  },
+  "recovery_history": [
+    {
+      "superseded_at": "2026-11-06T07:29:33.246093+00:00",
+      "recovery": {},
+      "next_action": "Keep deferred. Revisit after a published supported API/export, valid policy/canonical route or documented recovery; then establish identity, rights, reader conditions and ten current native-ID queries."
+    }
+  ],
+  "recovery": {
+    "reviewed_at": "2026-11-06T07:29:33.246093+00:00",
+    "reason": "Documented OPDS metadata API requires an operator-issued account/key through enterprise subscription or content-sharing partnership; it is not open self-service API signup.",
+    "attempt": "Read current official OPDS API documentation after original app-policy failure.",
+    "result": "API contract and access path identified; no authenticated request attempted, no account created or outreach sent. Documentation examples are not verified live queries.",
+    "decision": "owner-may-request-partnership-key; otherwise wait",
+    "retry_trigger": "Owner supplies an approved key/access agreement or provider publishes an anonymous export.",
+    "owner_action_required": false,
+    "evidence": [
+      "runs/technical-recovery-20261106e/observations.jsonl"
+    ]
   }
 }

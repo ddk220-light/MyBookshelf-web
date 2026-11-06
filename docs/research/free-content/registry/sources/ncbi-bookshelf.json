@@ -36,10 +36,12 @@
     "runs/metadata-link-fixes-20261106a/observations.jsonl",
     "runs/metadata-link-fixes-20261106b/observations.jsonl",
     "runs/metadata-link-fixes-20261106c/observations.jsonl",
-    "runs/metadata-link-query-seeds-20261106/observations.jsonl"
+    "runs/metadata-link-query-seeds-20261106/observations.jsonl",
+    "runs/technical-recovery-20261106d/observations.jsonl",
+    "runs/technical-recovery-20261106d/scout-observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-06T02:18:23.609570+00:00",
-  "next_action": "Wait for permitted API access/policy clarification; do not bypass robots or reader challenge.",
+  "last_reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+  "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -210,19 +212,14 @@
     }
   ],
   "recovery": {
-    "status": "blocked_or_failed",
-    "reason": "E-utilities robots policy disallows the proposed automated query route. Reader challenge is separate.",
-    "attempt": "Fresh E-utilities robots200 denied the search URL; no ESearch request sent. Official book documentation also displayed a browser challenge.",
-    "result": "No fresh passing query examples; preserved negative/policy evidence.",
-    "decision": "wait_for_policy_or_documented_alternative",
-    "reviewed_at": "2026-11-06T02:18:23.609570+00:00",
-    "owner_action_required": false,
+    "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+    "reason": "Eutilities route was disallowed; alternative FTP metadata file is also robots-disallowed.",
+    "attempt": "Located operator FTP documentation and official LitArch CSV listing; independently checked its policy.",
+    "result": "Documentation HTTP200 is browser-check/CAPTCHA, not readable documentation; FTP policy explicitly denies access. No metadata CSV/book/archive downloaded.",
+    "decision": "wait-for-permitted-metadata-method",
     "evidence": [
-      "analysis/external/metadata-link-owner-scope-20261106.json",
-      "runs/metadata-link-fixes-20261106a/observations.jsonl",
-      "runs/metadata-link-fixes-20261106b/observations.jsonl",
-      "runs/metadata-link-fixes-20261106c/observations.jsonl",
-      "runs/metadata-link-query-seeds-20261106/observations.jsonl"
+      "runs/technical-recovery-20261106d/observations.jsonl",
+      "runs/technical-recovery-20261106d/scout-observations.jsonl"
     ]
   },
   "research_selection": {
@@ -237,5 +234,27 @@
     "reading_eligibility_label": null,
     "no_full_content_downloads": true,
     "no_personal_owner_data": true
-  }
+  },
+  "recovery_history": [
+    {
+      "superseded_at": "2026-11-06T07:28:04.358484+00:00",
+      "recovery": {
+        "status": "blocked_or_failed",
+        "reason": "E-utilities robots policy disallows the proposed automated query route. Reader challenge is separate.",
+        "attempt": "Fresh E-utilities robots200 denied the search URL; no ESearch request sent. Official book documentation also displayed a browser challenge.",
+        "result": "No fresh passing query examples; preserved negative/policy evidence.",
+        "decision": "wait_for_policy_or_documented_alternative",
+        "reviewed_at": "2026-11-06T02:18:23.609570+00:00",
+        "owner_action_required": false,
+        "evidence": [
+          "analysis/external/metadata-link-owner-scope-20261106.json",
+          "runs/metadata-link-fixes-20261106a/observations.jsonl",
+          "runs/metadata-link-fixes-20261106b/observations.jsonl",
+          "runs/metadata-link-fixes-20261106c/observations.jsonl",
+          "runs/metadata-link-query-seeds-20261106/observations.jsonl"
+        ]
+      },
+      "next_action": "Wait for permitted API access/policy clarification; do not bypass robots or reader challenge."
+    }
+  ]
 }

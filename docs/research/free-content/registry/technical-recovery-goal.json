@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 34,
+  "remaining": 32,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -24,10 +24,23 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Robots redirects into the app instead of yielding a usable policy.",
-      "current_reason": "robots301 redirects to a fragment app route, not a verified policy; no catalog request sent.",
-      "next_action": "Keep deferred. Revisit after a published supported API/export, valid policy/canonical route or documented recovery; then establish identity, rights, reader conditions and ten current native-ID queries.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Documented OPDS metadata API requires an operator-issued account/key through enterprise subscription or content-sharing partnership; it is not open self-service API signup.",
+      "next_action": "Remain blocked pending approved partnership API key. Do not purchase enterprise service, create an account or send outreach under this research continuation.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:29:33.246093+00:00",
+          "reason": "Documented OPDS metadata API requires an operator-issued account/key through enterprise subscription or content-sharing partnership; it is not open self-service API signup.",
+          "attempt": "Read current official OPDS API documentation after original app-policy failure.",
+          "result": "API contract and access path identified; no authenticated request attempted, no account created or outreach sent. Documentation examples are not verified live queries.",
+          "decision": "owner-may-request-partnership-key; otherwise wait",
+          "retry_trigger": "Owner supplies an approved key/access agreement or provider publishes an anonymous export.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/technical-recovery-20261106e/observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "doab",
@@ -155,10 +168,22 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Historical ESearch/ESummary queries returned IDs; reader verification was the old blocker.",
-      "current_reason": "E-utilities robots policy disallows the proposed automated query route. Reader challenge is separate.",
-      "next_action": "Wait for permitted API access/policy clarification; do not bypass robots or reader challenge.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Eutilities route was disallowed; alternative FTP metadata file is also robots-disallowed.",
+      "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+          "reason": "Eutilities route was disallowed; alternative FTP metadata file is also robots-disallowed.",
+          "attempt": "Located operator FTP documentation and official LitArch CSV listing; independently checked its policy.",
+          "result": "Documentation HTTP200 is browser-check/CAPTCHA, not readable documentation; FTP policy explicitly denies access. No metadata CSV/book/archive downloaded.",
+          "decision": "wait-for-permitted-metadata-method",
+          "evidence": [
+            "runs/technical-recovery-20261106d/observations.jsonl",
+            "runs/technical-recovery-20261106d/scout-observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "oapen",
@@ -166,10 +191,22 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Export-host policy redirects to login; repository policy timed out twice.",
-      "current_reason": "Both documented metadata routes are blocked at policy preflight: export-host robots redirects to login; repository robots repeatedly times out.",
-      "next_action": "Wait for policy/host recovery, then retry a single documented KBART export or OAI metadata-format probe. No credentials/account creation or alternate hidden API.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Library policy times out; the published export host redirects its policy request to login. Old REST documentation URL now404.",
+      "next_action": "Use current https://oapen.org/librarians/metadata instead of retired REST article. Retry library/memo policies only after a recovery signal; official CSV and OAI are viable documented alternatives when accessible.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:32:08.705389+00:00",
+          "reason": "Library policy times out; the published export host redirects its policy request to login. Old REST documentation URL now404.",
+          "attempt": "Follow official canonical redirect; locate current librarian metadata documentation and its CSV/OAI/Atom alternatives; independently check each target policy.",
+          "result": "Current documentation200 confirms free CC0 metadata and official CSV/OAI feeds, but library/export access policies remain unavailable. No export, repository query or login attempted.",
+          "decision": "wait-for-policy-recovery",
+          "evidence": [
+            "runs/technical-recovery-20261106e/observations.jsonl",
+            "runs/technical-recovery-20261106e/followups.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "open-book-publishers",
@@ -260,10 +297,21 @@
       "group": "G02",
       "status": "blocked_or_failed",
       "original_reason": "The public Library link redirected to sign-in/registration.",
-      "current_reason": "The official public Library search link now redirects to DIKSHA login; anonymous browser shows only sign-in/registration, no guest search or item results.",
-      "next_action": "Wait for a documented permitted anonymous catalog/API/export or restored guest search. Free reader login is acceptable in the product, but this research-only task does not create accounts or handle account credentials. Do not replay hidden Sunbird API endpoints.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Current official help describes anonymous search, but the previously tested Library route requires login. No deployed public API contract verified.",
+      "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+          "reason": "Current official help describes anonymous search, but the previously tested Library route requires login. No deployed public API contract verified.",
+          "attempt": "Re-read current operator help/OSS documentation; compared it with saved live redirect and browser evidence.",
+          "result": "Documentation is a useful lead but not a live guest-search result; generic Sunbird API availability does not authorize hidden deployment endpoints.",
+          "decision": "find-documented-guest-route",
+          "evidence": [
+            "runs/technical-recovery-20261106e/observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "ncert",
@@ -301,10 +349,21 @@
       "group": "G03",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned a small HTML page.",
-      "current_reason": "The robots policy URL returns an HTML page rather than a usable robots policy.",
-      "next_action": "Provider restores a usable robots response or documents a permitted alternate metadata export.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "CERT-In policy endpoint still returns HTML, not a usable robots policy.",
+      "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+          "reason": "CERT-In policy endpoint still returns HTML, not a usable robots policy.",
+          "attempt": "Located operator AwarenessBooklets catalog; checked policy before fetching it.",
+          "result": "Policy200 contains HTML; no catalog/booklet request sent.",
+          "decision": "wait-for-valid-policy",
+          "evidence": [
+            "runs/technical-recovery-20261106e/observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "dg-shipping",
@@ -323,10 +382,21 @@
       "group": "G03",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 403 before catalog retrieval.",
-      "current_reason": "Saved robots HTTP403 prevented target retrieval. Neither catalog fields nor lessons were captured.",
-      "next_action": "Usable published policy and a documented supported metadata/API/export route; then evaluate learner versus professional intent and full lesson rights.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "FDIC policy endpoint still returns HTTP403.",
+      "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+          "reason": "FDIC policy endpoint still returns HTTP403.",
+          "attempt": "Located current public Money Smart adult curriculum page; policy check after overnight interval stopped the request.",
+          "result": "No curriculum metadata requested; no alternative documented public export established.",
+          "decision": "wait-for-policy-recovery",
+          "evidence": [
+            "runs/technical-recovery-20261106e/observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "imo-knowledge-centre",
@@ -378,12 +448,24 @@
       "id": "india-nqr",
       "name": "National Qualification Register",
       "group": "G03",
-      "status": "blocked_or_failed",
+      "status": "still_checking",
       "original_reason": "Original policy returned 403; officially announced successor returned HTML for robots.",
-      "current_reason": "The robots policy URL returns access denied (HTTP403).",
-      "next_action": "Wait for usable robots/access on the original or officially documented successor; no anonymous qualification query established on either.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Submit published advanced-search form with its actual default fields; if still500 try the advertised session-based public keyword form, respecting policy and no accounts.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:35:24.431385+00:00",
+          "reason": "Earlier robots403 has recovered. Published catalog now loads but initial title request returned500.",
+          "attempt": "Locate published GET advanced-search form; inspect complete bounded1.97MB HTML after earlier capture truncated at1MB.",
+          "result": "Correct current form fields identified. Real title request pending correction to include browser default fields; no qualification queries verified yet.",
+          "decision": "still-checking-published-form",
+          "evidence": [
+            "runs/technical-recovery-20261106e/observations.jsonl",
+            "runs/technical-recovery-20261106e/followups.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "nist-publications",
@@ -444,12 +526,20 @@
       "id": "bhuvan",
       "name": "Bhuvan Indian Geoportal",
       "group": "G04",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Only a loading shell was captured; layer/catalog query contract is missing.",
-      "current_reason": "Captured HTTP200 loading shell exposes no usable layer catalog, records, version, export policy or query contract. Robots404 was retained by the original collector; it is not an explicit access grant.",
-      "next_action": "Published current supported map-service/catalog documentation and data terms; verify layer/native sheet identity, extent/CRS/scale/date and actual map viewing without property-owner/parcel queries.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Maintain public product-metadata parser; review current product-specific rights and user download/login conditions before any later activation.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:25:26.009267+00:00",
+          "reason": "Homepage shell and obsolete wiki404 supplied no queryable catalog.",
+          "attempt": "Capture published Bhuvan Store product table once; search title/version and native selector locally.",
+          "result": "85 distinct product selectors; ten relevant distinct examples, exact-ID lookups and empty search passed.",
+          "decision": "working_with_recorded_scope"
+        }
+      ]
     },
     {
       "id": "chicago-open-data-zoning",
@@ -535,12 +625,24 @@
       "id": "nyc-planning-data",
       "name": "NYC City Planning open datasets",
       "group": "G04",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Dataset-host robots returned 503; DCP pages exposed only navigation.",
-      "current_reason": "Latest data.cityofnewyork.us robots check returned503; requests deferred without alternative host/proxy. | Official DCP resources rendered navigation only in staticHTML and anonymousWebKit.",
-      "next_action": "Defer API requests until NYC Open Data robots policy recovers from the latest503. Then verify the published SODA2.1 map-index schema,10 exact section/native-row examples, paging/empty/error tests and current map access/rights. Do not use SODA3 without its required token; no accounts or bypasses. Continue independent sources.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "",
+      "next_action": "Keep anonymous map-index search bounded and back off on503. Broader planning catalogs, map files and current zoning determinations remain unverified; no activation.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:34:06.064404+00:00",
+          "reason": "Earlier policy503 prevented queries. Current policy200 permits the documented SODA2.1 route.",
+          "attempt": "Exact published map-label filters selecting only non-personal map-index columns; stop on transient503 and resume failed/pending cases after multi-minute backoff.",
+          "result": "Ten distinct map-label requests now pass with native row IDs. Two transient503 attempts preserved; corrected native-ID parser to retain Socrata tilde IDs rather than rejecting legitimate IDs.",
+          "decision": "working_with_recorded_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106d/scout-observations.jsonl",
+            "examples/nyc-planning-data.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "seattle-geodata",
@@ -570,10 +672,22 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "API-host robots returned 403.",
-      "current_reason": "API-host robots request returned HTTP403; no API docs/query or alternate host request was made. | The recovered USGS FAQ establishes a catalog/API relationship, not working queryability or a full map-reading path.",
-      "next_action": "Defer TNMAccess requests until the host policy becomes readable or an explicitly authorized documented route is available; no bypass. Then inspect exact product filters/paging and map ID/version/CRS/scale/rights with ten bounded metadata examples. Continue independent sources now.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "TNMAccess policy remains unavailable; the documented ScienceBase alternative explicitly disallows ChatGPT-User/OAI-SearchBot.",
+      "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+          "reason": "TNMAccess policy remains unavailable; the documented ScienceBase alternative explicitly disallows ChatGPT-User/OAI-SearchBot.",
+          "attempt": "Located official ScienceBase search docs and inspected complete ScienceBase robots policy.",
+          "result": "Documentation host policy timed out. ScienceBase robots200 contains AI-agent prohibitions plus conflicting wildcard groups; no catalog query sent.",
+          "decision": "wait-for-permitted-method",
+          "evidence": [
+            "runs/technical-recovery-20261106d/observations.jsonl",
+            "runs/technical-recovery-20261106d/scout-observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "caltech-thesis",
@@ -600,10 +714,22 @@
       "group": "G05",
       "status": "blocked_or_failed",
       "original_reason": "SRU requests timed out/returned 503; a MARC identity shape also needs repair.",
-      "current_reason": "The SRU service returned a timeout followed by HTTP503; one MARC identity shape also needs repair.",
-      "next_action": "HTTP 503 on logistics after a timeout; resume only after a useful provider-recovery/policy trigger. Organic chemistry MARC identity shape also requires inspection. Free-copy access remains unverified.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "SRU API robots endpoint returns XML instead of a usable robots policy.",
+      "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+          "reason": "SRU API robots endpoint returns XML instead of a usable robots policy.",
+          "attempt": "Re-read official SRU manual; checked public API policy after overnight backoff.",
+          "result": "Manual confirms public unauthenticated SRU, but current policy response is683-byte XML; no query sent.",
+          "decision": "wait-for-valid-api-policy",
+          "evidence": [
+            "runs/technical-recovery-20261106d/observations.jsonl",
+            "runs/technical-recovery-20261106d/scout-observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "scielo",
@@ -622,10 +748,22 @@
       "group": "G05",
       "status": "blocked_or_failed",
       "original_reason": "Historical research did not establish the actual external OAI/API route and terms.",
-      "current_reason": "Homepage inspected; stable Shodhganga external API/OAI route and terms not verified. Do not assume every DSpace version shares one REST route. **High / P2 direct; P1 aggregated**. | Imported historical findings are not newly verified. Newer operation/live-plan documents can supersede this record; reconciliation remains open.",
-      "next_action": "Resolve the saved policy gate only on a useful published permission/documentation change. Find an advertised permitted metadata/OAI contract; never assume a generic DSpace API, bypass access controls or bulk-download theses.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Current repository robots policy disallows the attempted route; no supported permitted metadata query established.",
+      "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+          "reason": "Current repository robots policy disallows the attempted route; no supported permitted metadata query established.",
+          "attempt": "Rechecked current public repository robots policy after overnight interval.",
+          "result": "Policy response200 received; route disallowed. No repository query sent.",
+          "decision": "wait-for-permitted-metadata-method",
+          "evidence": [
+            "runs/technical-recovery-20261106d/observations.jsonl",
+            "runs/technical-recovery-20261106d/scout-observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "abhilekh-patal",
@@ -633,10 +771,21 @@
       "group": "G06",
       "status": "blocked_or_failed",
       "original_reason": "Both policy checks returned empty HTTP 202 responses.",
-      "current_reason": "The officially linked catalog returns an emptyHTTP202 for robots.txt on both initial and delayed checks; permitted automated search access cannot be established.",
-      "next_action": "Wait for the catalog policy endpoint to recover or a documented permitted metadata/export method. Revisit on that trigger; no hostname switch, account creation or demand-service order.",
-      "initial_pass_complete": false,
-      "attempts": []
+      "current_reason": "Archives catalog policy still returns empty HTTP202.",
+      "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+      "initial_pass_complete": true,
+      "attempts": [
+        {
+          "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+          "reason": "Archives catalog policy still returns empty HTTP202.",
+          "attempt": "Official National Archives reference page confirms the public search URL; independently checked catalog policy.",
+          "result": "Reference page200 captured; catalog robots202 with zero bytes. No query, CAPTCHA bypass or demo-host workaround.",
+          "decision": "wait-for-policy-recovery",
+          "evidence": [
+            "runs/technical-recovery-20261106e/observations.jsonl"
+          ]
+        }
+      ]
     },
     {
       "id": "art-institute-chicago",
@@ -706,43 +855,32 @@
     }
   ],
   "progress": {
-    "working": 10,
-    "blocked_or_failed": 34,
-    "still_checking": 0,
-    "checked_this_pass": 19,
-    "remaining_to_recheck_this_pass": 23,
+    "working": 12,
+    "blocked_or_failed": 31,
+    "still_checking": 1,
+    "checked_this_pass": 34,
+    "remaining_to_recheck_this_pass": 10,
     "baseline_working": 2
   },
   "current_run": {
-    "state": "checkpointed",
-    "started_at": "2026-11-06T06:22:34.442606+00:00",
-    "phase": "four-recoveries-and-seven-unresolved-rechecks",
+    "state": "checkpointed-continuing",
+    "started_at": "2026-11-06T07:19:13.914780+00:00",
+    "phase": "published-metadata-alternatives",
     "collector_active": false,
-    "finished_at": "2026-11-06T06:46:26.575530+00:00"
+    "checkpointed_at": "2026-11-06T07:36:21.352862+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 10,
-  "updated_at": "2026-11-06T06:46:26.575519+00:00",
+  "working": 12,
+  "updated_at": "2026-11-06T07:36:21.352862+00:00",
   "latest_run": {
     "run_ids": [
-      "technical-recovery-20261106b",
-      "technical-recovery-20261106c"
+      "technical-recovery-20261106d",
+      "technical-recovery-20261106e"
     ],
     "new_working": [
-      "art-institute-chicago",
-      "nist-publications",
-      "marg-foundation",
-      "free-kids-books"
-    ],
-    "technical_failures_rechecked": [
-      "imo-knowledge-centre",
-      "lincs",
-      "india-code",
-      "nhm-guidelines",
-      "cmda-planning",
-      "chicago-open-data-zoning",
-      "gutendex"
+      "bhuvan",
+      "nyc-planning-data"
     ],
     "remaining_goal_open": true
   }

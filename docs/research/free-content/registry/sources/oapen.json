@@ -36,11 +36,13 @@
     "runs/books-query-export-docs-20261105eq/observations.jsonl",
     "examples/oapen.access.jsonl",
     "runs/bookdash-title-queries-20261105es/observations.jsonl",
-    "runs/final-children-docs-20261105et/observations.jsonl"
+    "runs/final-children-docs-20261105et/observations.jsonl",
+    "runs/technical-recovery-20261106e/observations.jsonl",
+    "runs/technical-recovery-20261106e/followups.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T22:03:22.627602+00:00",
+  "last_reviewed_at": "2026-11-06T07:32:08.705389+00:00",
   "imported_at": "2026-11-05",
-  "next_action": "Wait for policy/host recovery, then retry a single documented KBART export or OAI metadata-format probe. No credentials/account creation or alternate hidden API.",
+  "next_action": "Use current https://oapen.org/librarians/metadata instead of retired REST article. Retry library/memo policies only after a recovery signal; official CSV and OAI are viable documented alternatives when accessible.",
   "aliases": [],
   "historical_catalog_row": {
     "path": "docs/research/free-content/source-catalog.md",
@@ -315,21 +317,46 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [OAPEN](https://oapen.org/librarians/metadata) | Export-host policy redirects to login; repository policy timed out twice. | Resolve policy/service access for documented CC0 KBART/OAI metadata. The robots login redirect does not prove a paid/account-only catalog. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "968839ff5124d3da95c9f59a212cfa231fa89ae8f4a055be3d9244e7f70d74cf",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106D.md",
+      "line": 10,
+      "heading": "Technical recovery continuation D/E — 6 November 2026",
+      "text": "Access findings remain open: Bloom's OPDS API requires an operator-issued partnership/subscription key; OAPEN's current documentation confirms free CC0 feeds but the repository policy times out and the export policy redirects to login; NCBI's documented FTP metadata host disallows requests and the web documentation shows a browser challenge; ScienceBase explicitly disallows ChatGPT/OAI agents; IndCat's policy endpoint returns XML instead of a usable policy; Shodhganga's policy disallows the attempted route; FDIC policy403, CERT-In policyHTML and Abhilekh Patal empty202 persist. DIKSHA's help says guest search exists, but this does not supersede the saved live login redirect or establish a deployed public API contract.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reason": "Both documented metadata routes are blocked at policy preflight: export-host robots redirects to login; repository robots repeatedly times out.",
-    "attempt": "Read current official metadata documentation; checked published KBART-books export and OAI ListMetadataFormats alternative; retried OAI policy after132seconds.",
-    "result": "Metadata documentation200 explicitly permits CC0/free feeds. memo.oapen.org/robots.txt302 goes to /login; library.oapen.org/robots.txt timed out twice at20seconds. Neither export nor OAI query was sent.",
-    "decision": "wait_for_policy_host_recovery",
-    "next_action": "Wait for policy/host recovery, then retry a single documented KBART export or OAI metadata-format probe. No credentials/account creation or alternate hidden API.",
-    "retry_trigger": "Usable policy endpoint or documented replacement public export.",
-    "owner_action_required": false,
+    "reviewed_at": "2026-11-06T07:32:08.705389+00:00",
+    "reason": "Library policy times out; the published export host redirects its policy request to login. Old REST documentation URL now404.",
+    "attempt": "Follow official canonical redirect; locate current librarian metadata documentation and its CSV/OAI/Atom alternatives; independently check each target policy.",
+    "result": "Current documentation200 confirms free CC0 metadata and official CSV/OAI feeds, but library/export access policies remain unavailable. No export, repository query or login attempted.",
+    "decision": "wait-for-policy-recovery",
     "evidence": [
-      "runs/books-query-export-docs-20261105eq/observations.jsonl",
-      "examples/oapen.access.jsonl",
-      "runs/bookdash-title-queries-20261105es/observations.jsonl",
-      "runs/final-children-docs-20261105et/observations.jsonl"
+      "runs/technical-recovery-20261106e/observations.jsonl",
+      "runs/technical-recovery-20261106e/followups.jsonl"
     ]
-  }
+  },
+  "recovery_history": [
+    {
+      "superseded_at": "2026-11-06T07:32:08.705389+00:00",
+      "recovery": {
+        "reason": "Both documented metadata routes are blocked at policy preflight: export-host robots redirects to login; repository robots repeatedly times out.",
+        "attempt": "Read current official metadata documentation; checked published KBART-books export and OAI ListMetadataFormats alternative; retried OAI policy after132seconds.",
+        "result": "Metadata documentation200 explicitly permits CC0/free feeds. memo.oapen.org/robots.txt302 goes to /login; library.oapen.org/robots.txt timed out twice at20seconds. Neither export nor OAI query was sent.",
+        "decision": "wait_for_policy_host_recovery",
+        "next_action": "Wait for policy/host recovery, then retry a single documented KBART export or OAI metadata-format probe. No credentials/account creation or alternate hidden API.",
+        "retry_trigger": "Usable policy endpoint or documented replacement public export.",
+        "owner_action_required": false,
+        "evidence": [
+          "runs/books-query-export-docs-20261105eq/observations.jsonl",
+          "examples/oapen.access.jsonl",
+          "runs/bookdash-title-queries-20261105es/observations.jsonl",
+          "runs/final-children-docs-20261105et/observations.jsonl"
+        ]
+      },
+      "next_action": "Wait for policy/host recovery, then retry a single documented KBART export or OAI metadata-format probe. No credentials/account creation or alternate hidden API."
+    }
+  ]
 }

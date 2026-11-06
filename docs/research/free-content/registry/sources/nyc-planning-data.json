@@ -10,7 +10,7 @@
     "P05",
     "P07"
   ],
-  "state": "deferred",
+  "state": "ten-query-examples-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "municipal-planning-map-catalog",
@@ -23,26 +23,214 @@
     "Candidate bounded query subset: Quartersection_ZoningMapIndex dataset wwcv-s7e7, whose public catalog page was captured; no dataset rows queried."
   ],
   "query": {
-    "adapter": "unproven",
+    "adapter": "nyc-zoning-index",
     "endpoint": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
-    "authentication": "SODA documentation allows lower-limit anonymous2.x requests;3.0 requires token/user authentication. Neither API version requested here.",
-    "cost": "No account, token or fee used; current anonymous quota not numerically specified.",
-    "documented_request_shape_not_executed": {
-      "method": "GET",
-      "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
-      "params": {
-        "$select": ":id,quartersec,zoning_map,section",
-        "$limit": 3
-      }
-    },
-    "supported_modes": "SODA2.1 select/where/system :id are documented; target schema/availability still needs current API confirmation.",
-    "unsupported_modes": [
-      "Property-owner/applicant lookup",
-      "API queries while robots policy unavailable",
-      "Treating a map index as an authoritative tax-lot zoning determination",
-      "Current zoning rights inferred from an old index/map"
+    "authentication": "Anonymous documented SODA2.1 route; no API key/account",
+    "cost": "No fees; bounded metadata requests, >=3s serial pacing; current anonymous quota not numerically specified",
+    "search_scope": "NYC zoning map-index dataset wwcv-s7e7, exact map-label filters; only native row ID, map label, quarter-section and section. No owner/applicant/address/parcel/geometry fields.",
+    "supported_modes": [
+      "Exact map-label filter"
     ],
-    "cases": []
+    "unsupported_modes": [
+      "Property-owner search",
+      "Authoritative zoning determination",
+      "Whole NYC planning catalog",
+      "SODA3 without required credentials",
+      "Paging is documented but current page2 test returned503; do not claim it verified"
+    ],
+    "cases": [
+      {
+        "id": "map-10a",
+        "query_text": "10A",
+        "intent": "Find NYC zoning map-index entries by published map label",
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$where": "zoning_map='10A'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
+          }
+        },
+        "expected_ids": [
+          "row-9bfa~5kui_bka5"
+        ]
+      },
+      {
+        "id": "map-10b",
+        "query_text": "10B",
+        "intent": "Find NYC zoning map-index entries by published map label",
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$where": "zoning_map='10B'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
+          }
+        },
+        "expected_ids": [
+          "row-ircf-fa6c_jpqr"
+        ]
+      },
+      {
+        "id": "map-10c",
+        "query_text": "10C",
+        "intent": "Find NYC zoning map-index entries by published map label",
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$where": "zoning_map='10C'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
+          }
+        },
+        "expected_ids": [
+          "row-vgr5.zpx2_avpx"
+        ]
+      },
+      {
+        "id": "map-10d",
+        "query_text": "10D",
+        "intent": "Find NYC zoning map-index entries by published map label",
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$where": "zoning_map='10D'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
+          }
+        },
+        "expected_ids": [
+          "row-xg8z.ckzc_wsxd"
+        ]
+      },
+      {
+        "id": "map-11a",
+        "query_text": "11A",
+        "intent": "Find NYC zoning map-index entries by published map label",
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$where": "zoning_map='11A'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
+          }
+        },
+        "expected_ids": [
+          "row-decw_nrz8_jr6u"
+        ]
+      },
+      {
+        "id": "map-11b",
+        "query_text": "11B",
+        "intent": "Find NYC zoning map-index entries by published map label",
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$where": "zoning_map='11B'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
+          }
+        },
+        "expected_ids": [
+          "row-i6k5-qxuw~raka"
+        ]
+      },
+      {
+        "id": "map-11c",
+        "query_text": "11C",
+        "intent": "Find NYC zoning map-index entries by published map label",
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$where": "zoning_map='11C'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
+          }
+        },
+        "expected_ids": [
+          "row-wkwa.hmwd_zinq",
+          "row-j8dc_x255_2nbh"
+        ]
+      },
+      {
+        "id": "map-11d",
+        "query_text": "11D",
+        "intent": "Find NYC zoning map-index entries by published map label",
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$where": "zoning_map='11D'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
+          }
+        },
+        "expected_ids": [
+          "row-cydn-vwze_c3xf"
+        ]
+      },
+      {
+        "id": "map-12a",
+        "query_text": "12A",
+        "intent": "Find NYC zoning map-index entries by published map label",
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$where": "zoning_map='12A'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
+          }
+        },
+        "expected_ids": [
+          "row-p7nc-gyki_bu4i"
+        ]
+      },
+      {
+        "id": "map-12b",
+        "query_text": "12B",
+        "intent": "Find NYC zoning map-index entries by published map label",
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$where": "zoning_map='12B'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
+          }
+        },
+        "expected_ids": [
+          "row-77vh.ewd6_tri9"
+        ]
+      }
+    ]
   },
   "licensing": "NYC.gov general terms reserve rights; third-party/data-specific rights need reconciliation. Search discovery reports dataset license unspecified; this is not current API/license verification. Municipal material is not automatically federal public-domain content.",
   "documentation": [
@@ -68,7 +256,8 @@
     "Latest data.cityofnewyork.us robots check returned503; requests deferred without alternative host/proxy.",
     "Official DCP resources rendered navigation only in staticHTML and anonymousWebKit.",
     "Search snippets supplied candidate dataset IDs and DCP attribution; direct page confirms title only. Row IDs, release/version and metadata rights remain unverified.",
-    "Map-index dataset, zoning feature dataset and downloadable maps are different records of the same catalog/operator, not independent origins."
+    "Map-index dataset, zoning feature dataset and downloadable maps are different records of the same catalog/operator, not independent origins.",
+    "Only zoning map-index label searches verified; temporary503s observed and recovered after backoff. This is not property-owner data or proof of zoning rights."
   ],
   "evidence": [
     "runs/coverage-gap-docs-20261105p/observations.jsonl",
@@ -80,10 +269,14 @@
     "runs/nyc-soda-contract-20261105x/observations.jsonl",
     "runs/nyc-current-terms-20261105y/observations.jsonl",
     "examples/nyc-planning.scouting.jsonl",
-    "analysis/discovery-searches.jsonl"
+    "analysis/discovery-searches.jsonl",
+    "runs/technical-recovery-20261106d/scout-observations.jsonl",
+    "runs/technical-recovery-20261106d/nyc-seed.json",
+    "examples/nyc-planning-data.jsonl",
+    "runs/technical-recovery-20261106d/nyc-controls.jsonl"
   ],
-  "last_reviewed_at": "2026-11-05T09:04:46.669129+00:00",
-  "next_action": "Defer API requests until NYC Open Data robots policy recovers from the latest503. Then verify the published SODA2.1 map-index schema,10 exact section/native-row examples, paging/empty/error tests and current map access/rights. Do not use SODA3 without its required token; no accounts or bypasses. Continue independent sources.",
+  "last_reviewed_at": "2026-11-06T07:34:06.064392+00:00",
+  "next_action": "Keep anonymous map-index search bounded and back off on503. Broader planning catalogs, map files and current zoning determinations remain unverified; no activation.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -399,162 +592,29 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Published versioned SODA contract provides a candidate read-only shape; latest host policy failure prevented querying.",
+      "summary": "NYC zoning map-index dataset wwcv-s7e7, exact map-label filters; only native row ID, map label, quarter-section and section. No owner/applicant/address/parcel/geometry fields.",
       "facts": {
-        "request_not_executed": {
+        "adapter": "nyc-zoning-index",
+        "exact_request": {
           "method": "GET",
           "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
           "params": {
             "$select": ":id,quartersec,zoning_map,section",
-            "$limit": 3
+            "$where": "zoning_map='10A'",
+            "$order": ":id",
+            "$limit": 3,
+            "$offset": 0
           }
         },
-        "system_identity": ":id with dataset ID; provider can change row identities on full replace",
-        "version_distinction": "SODA3requiresauthentication;2.1systemfields explicitly documented.",
-        "source_policy_status": 503
+        "verified_examples": 10
       },
       "evidence": [
-        "runs/coverage-gap-docs-20261105p/observations.jsonl",
-        "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
-        "runs/planning-catalog-docs-20261105s/observations.jsonl",
-        "runs/planning-discovery-contract-20261105t/observations.jsonl",
-        "runs/planning-api-identity-20261105u/observations.jsonl",
-        "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
-        "runs/nyc-soda-contract-20261105x/observations.jsonl",
-        "runs/nyc-current-terms-20261105y/observations.jsonl",
-        "examples/nyc-planning.scouting.jsonl",
-        "analysis/discovery-searches.jsonl"
+        "examples/nyc-planning-data.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
-          "job_id": "fa0f62dceb59e5a6d624",
-          "observed_at": "2026-11-05T08:33:00.875350+00:00",
-          "url": "https://www.nyc.gov/site/planning/data-maps/open-data/dwn-gis-zoning.page",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
-          "job_id": "c60edcc0d9756afcc281",
-          "observed_at": "2026-11-05T08:38:04.596674+00:00",
-          "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
-          "job_id": "63f2105abeca500d63a4",
-          "observed_at": "2026-11-05T08:47:29.839475+00:00",
-          "url": "https://dev.socrata.com/docs/other/discovery.html",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
-          "job_id": "9cd05047b0d9bee2b56a",
-          "observed_at": "2026-11-05T08:47:38.472120+00:00",
-          "url": "https://data.cityofnewyork.us/",
-          "outcome": "blocked-or-failed"
-        },
-        {
-          "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
-          "job_id": "94a3a99cbe366f9d339a",
-          "observed_at": "2026-11-05T08:54:17.888240+00:00",
-          "url": "https://dev.socrata.com/data/",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
-          "job_id": "035c50d2784e57f09362",
-          "observed_at": "2026-11-05T08:54:21.706509+00:00",
-          "url": "https://dev.socrata.com/docs/app-tokens.html",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
-          "job_id": "1620d2aedbee17910c8d",
-          "observed_at": "2026-11-05T08:55:00.809114+00:00",
-          "url": "https://www.nyc.gov/content/planning/pages/zoning",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/planning-api-identity-20261105u/observations.jsonl",
-          "job_id": "66474a1fb35249181689",
-          "observed_at": "2026-11-05T08:56:26.746883+00:00",
-          "url": "https://dev.socrata.com/docs/other/discovery",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
-          "job_id": "81decf192077b1d48704",
-          "observed_at": "2026-11-05T08:58:59.093901+00:00",
-          "url": "https://dev.socrata.com/docs/endpoints",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
-          "job_id": "7bc738ce88829d53efd2",
-          "observed_at": "2026-11-05T08:59:07.255911+00:00",
-          "url": "https://data.cityofnewyork.us/City-Government/Quartersection_ZoningMapIndex/wwcv-s7e7",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
-          "job_id": "cfba43e24675b6bd0438",
-          "observed_at": "2026-11-05T08:59:16.658674+00:00",
-          "url": "https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
-          "job_id": "4cb5b8cc4487cec11e5c",
-          "observed_at": "2026-11-05T09:01:04.585306+00:00",
-          "url": "https://dev.socrata.com/docs/system-fields.html",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
-          "job_id": "11cd661c411eb4c83116",
-          "observed_at": "2026-11-05T09:01:08.235061+00:00",
-          "url": "https://dev.socrata.com/docs/queries/where.html",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
-          "job_id": "a010ebe078de88e7bc03",
-          "observed_at": "2026-11-05T09:01:11.769056+00:00",
-          "url": "https://dev.socrata.com/foundry/data.cityofnewyork.us/wwcv-s7e7",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
-          "job_id": "245b5423c79de5a6d502",
-          "observed_at": "2026-11-05T09:01:19.417050+00:00",
-          "url": "https://www.nyc.gov/home/terms-of-use.page",
-          "outcome": "blocked-or-failed"
-        },
-        {
-          "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
-          "job_id": "d4742e61215e89820c93",
-          "observed_at": "2026-11-05T09:02:09.874249+00:00",
-          "url": "https://www.nyc.gov/main/terms-of-use",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
-          "job_id": "a33edb593e7452ca42d6",
-          "observed_at": "2026-11-05T09:02:23.555465+00:00",
-          "url": "https://data.cityofnewyork.us/robots.txt",
-          "outcome": "skipped"
-        },
-        {
-          "path": "examples/nyc-planning.scouting.jsonl",
-          "job_id": null,
-          "observed_at": "2026-11-05T08:40:35.146Z",
-          "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
-          "outcome": "public-page-rendered"
-        }
-      ],
+      "reviewed_at": "2026-11-06T07:34:06.064409+00:00",
+      "fresh_query_verification": true,
       "open_questions": [
-        "After policy recovery, verify exact supported version, native identity and10distinct passing examples."
+        "Broader dataset scope and content-access evidence remain open; do not hold up current queryability count."
       ]
     },
     "rights_and_cost": {
@@ -1168,155 +1228,21 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Retain deferred NYC planning/maps catalog with no query or activation claim.",
+      "status": "partial",
+      "summary": "Working for scoped map-index metadata; broader civic research remains open",
       "facts": {
-        "decision": "deferred-policy-unavailable",
-        "qualified_origin": false,
-        "activation_approved": false,
-        "next_action": "Defer API requests until NYC Open Data robots policy recovers from the latest503. Then verify the published SODA2.1 map-index schema,10 exact section/native-row examples, paging/empty/error tests and current map access/rights. Do not use SODA3 without its required token; no accounts or bypasses. Continue independent sources."
+        "decision": "working_with_recorded_scope",
+        "next_action": "Keep anonymous map-index search bounded and back off on503. Broader planning catalogs, map files and current zoning determinations remain unverified; no activation.",
+        "blocker": null
       },
       "evidence": [
-        "runs/coverage-gap-docs-20261105p/observations.jsonl",
-        "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
-        "runs/planning-catalog-docs-20261105s/observations.jsonl",
-        "runs/planning-discovery-contract-20261105t/observations.jsonl",
-        "runs/planning-api-identity-20261105u/observations.jsonl",
-        "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
-        "runs/nyc-soda-contract-20261105x/observations.jsonl",
-        "runs/nyc-current-terms-20261105y/observations.jsonl",
-        "examples/nyc-planning.scouting.jsonl",
-        "analysis/discovery-searches.jsonl"
+        "examples/nyc-planning-data.jsonl"
       ],
-      "observation_refs": [
-        {
-          "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
-          "job_id": "fa0f62dceb59e5a6d624",
-          "observed_at": "2026-11-05T08:33:00.875350+00:00",
-          "url": "https://www.nyc.gov/site/planning/data-maps/open-data/dwn-gis-zoning.page",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
-          "job_id": "c60edcc0d9756afcc281",
-          "observed_at": "2026-11-05T08:38:04.596674+00:00",
-          "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
-          "job_id": "63f2105abeca500d63a4",
-          "observed_at": "2026-11-05T08:47:29.839475+00:00",
-          "url": "https://dev.socrata.com/docs/other/discovery.html",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
-          "job_id": "9cd05047b0d9bee2b56a",
-          "observed_at": "2026-11-05T08:47:38.472120+00:00",
-          "url": "https://data.cityofnewyork.us/",
-          "outcome": "blocked-or-failed"
-        },
-        {
-          "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
-          "job_id": "94a3a99cbe366f9d339a",
-          "observed_at": "2026-11-05T08:54:17.888240+00:00",
-          "url": "https://dev.socrata.com/data/",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
-          "job_id": "035c50d2784e57f09362",
-          "observed_at": "2026-11-05T08:54:21.706509+00:00",
-          "url": "https://dev.socrata.com/docs/app-tokens.html",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
-          "job_id": "1620d2aedbee17910c8d",
-          "observed_at": "2026-11-05T08:55:00.809114+00:00",
-          "url": "https://www.nyc.gov/content/planning/pages/zoning",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/planning-api-identity-20261105u/observations.jsonl",
-          "job_id": "66474a1fb35249181689",
-          "observed_at": "2026-11-05T08:56:26.746883+00:00",
-          "url": "https://dev.socrata.com/docs/other/discovery",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
-          "job_id": "81decf192077b1d48704",
-          "observed_at": "2026-11-05T08:58:59.093901+00:00",
-          "url": "https://dev.socrata.com/docs/endpoints",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
-          "job_id": "7bc738ce88829d53efd2",
-          "observed_at": "2026-11-05T08:59:07.255911+00:00",
-          "url": "https://data.cityofnewyork.us/City-Government/Quartersection_ZoningMapIndex/wwcv-s7e7",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
-          "job_id": "cfba43e24675b6bd0438",
-          "observed_at": "2026-11-05T08:59:16.658674+00:00",
-          "url": "https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
-          "job_id": "4cb5b8cc4487cec11e5c",
-          "observed_at": "2026-11-05T09:01:04.585306+00:00",
-          "url": "https://dev.socrata.com/docs/system-fields.html",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
-          "job_id": "11cd661c411eb4c83116",
-          "observed_at": "2026-11-05T09:01:08.235061+00:00",
-          "url": "https://dev.socrata.com/docs/queries/where.html",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
-          "job_id": "a010ebe078de88e7bc03",
-          "observed_at": "2026-11-05T09:01:11.769056+00:00",
-          "url": "https://dev.socrata.com/foundry/data.cityofnewyork.us/wwcv-s7e7",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
-          "job_id": "245b5423c79de5a6d502",
-          "observed_at": "2026-11-05T09:01:19.417050+00:00",
-          "url": "https://www.nyc.gov/home/terms-of-use.page",
-          "outcome": "blocked-or-failed"
-        },
-        {
-          "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
-          "job_id": "d4742e61215e89820c93",
-          "observed_at": "2026-11-05T09:02:09.874249+00:00",
-          "url": "https://www.nyc.gov/main/terms-of-use",
-          "outcome": "captured"
-        },
-        {
-          "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
-          "job_id": "a33edb593e7452ca42d6",
-          "observed_at": "2026-11-05T09:02:23.555465+00:00",
-          "url": "https://data.cityofnewyork.us/robots.txt",
-          "outcome": "skipped"
-        },
-        {
-          "path": "examples/nyc-planning.scouting.jsonl",
-          "job_id": null,
-          "observed_at": "2026-11-05T08:40:35.146Z",
-          "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
-          "outcome": "public-page-rendered"
-        }
-      ],
-      "open_questions": []
+      "reviewed_at": "2026-11-06T07:34:06.064413+00:00",
+      "fresh_query_verification": true,
+      "open_questions": [
+        "Broader dataset scope and content-access evidence remain open; do not hold up current queryability count."
+      ]
     }
   },
   "analysis_refs": [
@@ -1327,6 +1253,1020 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [NYC City Planning open datasets](https://www.nyc.gov/site/planning/data-maps/open-data/dwn-gis-zoning.page) | Dataset-host robots returned 503; DCP pages exposed only navigation. | Check host recovery and supported non-personal planning dataset exports. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    }
+  ],
+  "historical_query_contracts": [
+    {
+      "superseded_at": "2026-11-06T07:26:21.202840+00:00",
+      "query": {
+        "adapter": "unproven",
+        "endpoint": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+        "authentication": "SODA documentation allows lower-limit anonymous2.x requests;3.0 requires token/user authentication. Neither API version requested here.",
+        "cost": "No account, token or fee used; current anonymous quota not numerically specified.",
+        "documented_request_shape_not_executed": {
+          "method": "GET",
+          "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+          "params": {
+            "$select": ":id,quartersec,zoning_map,section",
+            "$limit": 3
+          }
+        },
+        "supported_modes": "SODA2.1 select/where/system :id are documented; target schema/availability still needs current API confirmation.",
+        "unsupported_modes": [
+          "Property-owner/applicant lookup",
+          "API queries while robots policy unavailable",
+          "Treating a map index as an authoritative tax-lot zoning determination",
+          "Current zoning rights inferred from an old index/map"
+        ],
+        "cases": []
+      },
+      "reason": "Policy recovered; anonymously execute the previously documented SODA2.1 route"
+    }
+  ],
+  "fresh_query_verification": true,
+  "recovery": {
+    "reviewed_at": "2026-11-06T07:34:06.064404+00:00",
+    "reason": "Earlier policy503 prevented queries. Current policy200 permits the documented SODA2.1 route.",
+    "attempt": "Exact published map-label filters selecting only non-personal map-index columns; stop on transient503 and resume failed/pending cases after multi-minute backoff.",
+    "result": "Ten distinct map-label requests now pass with native row IDs. Two transient503 attempts preserved; corrected native-ID parser to retain Socrata tilde IDs rather than rejecting legitimate IDs.",
+    "decision": "working_with_recorded_scope",
+    "evidence": [
+      "runs/technical-recovery-20261106d/scout-observations.jsonl",
+      "examples/nyc-planning-data.jsonl"
+    ]
+  },
+  "historical_dossier_snapshots": [
+    {
+      "superseded_at": "2026-11-06T07:34:06.064407+00:00",
+      "reason": "Live map-index queries replace earlier untested API claims",
+      "dossier": {
+        "identity_and_duplicates": {
+          "status": "partial",
+          "summary": "Official City Planning resource and NYC Open Data map-index pages identify a municipal planning-data catalog; current row-level operator attribution still needs reconciliation.",
+          "facts": {
+            "operator_candidate": "New York City Department of City Planning; shared hosting via NYC Open Data/Socrata",
+            "jurisdiction": "USA, New York City",
+            "dataset_id": "wwcv-s7e7",
+            "native_rows": "Unknown; API not requested",
+            "deduplication": "Count one catalog candidate, not each map/dataset/quartersection as a new origin."
+          },
+          "evidence": [
+            "runs/coverage-gap-docs-20261105p/observations.jsonl",
+            "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+            "runs/planning-catalog-docs-20261105s/observations.jsonl",
+            "runs/planning-discovery-contract-20261105t/observations.jsonl",
+            "runs/planning-api-identity-20261105u/observations.jsonl",
+            "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+            "runs/nyc-soda-contract-20261105x/observations.jsonl",
+            "runs/nyc-current-terms-20261105y/observations.jsonl",
+            "examples/nyc-planning.scouting.jsonl",
+            "analysis/discovery-searches.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+              "job_id": "fa0f62dceb59e5a6d624",
+              "observed_at": "2026-11-05T08:33:00.875350+00:00",
+              "url": "https://www.nyc.gov/site/planning/data-maps/open-data/dwn-gis-zoning.page",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+              "job_id": "c60edcc0d9756afcc281",
+              "observed_at": "2026-11-05T08:38:04.596674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "63f2105abeca500d63a4",
+              "observed_at": "2026-11-05T08:47:29.839475+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "9cd05047b0d9bee2b56a",
+              "observed_at": "2026-11-05T08:47:38.472120+00:00",
+              "url": "https://data.cityofnewyork.us/",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "94a3a99cbe366f9d339a",
+              "observed_at": "2026-11-05T08:54:17.888240+00:00",
+              "url": "https://dev.socrata.com/data/",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "035c50d2784e57f09362",
+              "observed_at": "2026-11-05T08:54:21.706509+00:00",
+              "url": "https://dev.socrata.com/docs/app-tokens.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "1620d2aedbee17910c8d",
+              "observed_at": "2026-11-05T08:55:00.809114+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/zoning",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-api-identity-20261105u/observations.jsonl",
+              "job_id": "66474a1fb35249181689",
+              "observed_at": "2026-11-05T08:56:26.746883+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "81decf192077b1d48704",
+              "observed_at": "2026-11-05T08:58:59.093901+00:00",
+              "url": "https://dev.socrata.com/docs/endpoints",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "7bc738ce88829d53efd2",
+              "observed_at": "2026-11-05T08:59:07.255911+00:00",
+              "url": "https://data.cityofnewyork.us/City-Government/Quartersection_ZoningMapIndex/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "cfba43e24675b6bd0438",
+              "observed_at": "2026-11-05T08:59:16.658674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "4cb5b8cc4487cec11e5c",
+              "observed_at": "2026-11-05T09:01:04.585306+00:00",
+              "url": "https://dev.socrata.com/docs/system-fields.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "11cd661c411eb4c83116",
+              "observed_at": "2026-11-05T09:01:08.235061+00:00",
+              "url": "https://dev.socrata.com/docs/queries/where.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "a010ebe078de88e7bc03",
+              "observed_at": "2026-11-05T09:01:11.769056+00:00",
+              "url": "https://dev.socrata.com/foundry/data.cityofnewyork.us/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "245b5423c79de5a6d502",
+              "observed_at": "2026-11-05T09:01:19.417050+00:00",
+              "url": "https://www.nyc.gov/home/terms-of-use.page",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "d4742e61215e89820c93",
+              "observed_at": "2026-11-05T09:02:09.874249+00:00",
+              "url": "https://www.nyc.gov/main/terms-of-use",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "a33edb593e7452ca42d6",
+              "observed_at": "2026-11-05T09:02:23.555465+00:00",
+              "url": "https://data.cityofnewyork.us/robots.txt",
+              "outcome": "skipped"
+            },
+            {
+              "path": "examples/nyc-planning.scouting.jsonl",
+              "job_id": null,
+              "observed_at": "2026-11-05T08:40:35.146Z",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "public-page-rendered"
+            }
+          ],
+          "open_questions": [
+            "Reconcile current dataset publisher attribution and canonical dataset/resource version."
+          ]
+        },
+        "coverage_and_languages": {
+          "status": "partial",
+          "summary": "Planning/zoning/map candidate for NYC; no India local coverage or full catalog claims.",
+          "facts": {
+            "areas": [
+              "C18",
+              "C19",
+              "P05",
+              "P07"
+            ],
+            "language_observed": "English navigation and catalog title",
+            "country": "USA",
+            "scope": "Map index/municipal planning metadata, no personal ownership fields."
+          },
+          "evidence": [
+            "runs/coverage-gap-docs-20261105p/observations.jsonl",
+            "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+            "runs/planning-catalog-docs-20261105s/observations.jsonl",
+            "runs/planning-discovery-contract-20261105t/observations.jsonl",
+            "runs/planning-api-identity-20261105u/observations.jsonl",
+            "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+            "runs/nyc-soda-contract-20261105x/observations.jsonl",
+            "runs/nyc-current-terms-20261105y/observations.jsonl",
+            "examples/nyc-planning.scouting.jsonl",
+            "analysis/discovery-searches.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+              "job_id": "fa0f62dceb59e5a6d624",
+              "observed_at": "2026-11-05T08:33:00.875350+00:00",
+              "url": "https://www.nyc.gov/site/planning/data-maps/open-data/dwn-gis-zoning.page",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+              "job_id": "c60edcc0d9756afcc281",
+              "observed_at": "2026-11-05T08:38:04.596674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "63f2105abeca500d63a4",
+              "observed_at": "2026-11-05T08:47:29.839475+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "9cd05047b0d9bee2b56a",
+              "observed_at": "2026-11-05T08:47:38.472120+00:00",
+              "url": "https://data.cityofnewyork.us/",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "94a3a99cbe366f9d339a",
+              "observed_at": "2026-11-05T08:54:17.888240+00:00",
+              "url": "https://dev.socrata.com/data/",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "035c50d2784e57f09362",
+              "observed_at": "2026-11-05T08:54:21.706509+00:00",
+              "url": "https://dev.socrata.com/docs/app-tokens.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "1620d2aedbee17910c8d",
+              "observed_at": "2026-11-05T08:55:00.809114+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/zoning",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-api-identity-20261105u/observations.jsonl",
+              "job_id": "66474a1fb35249181689",
+              "observed_at": "2026-11-05T08:56:26.746883+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "81decf192077b1d48704",
+              "observed_at": "2026-11-05T08:58:59.093901+00:00",
+              "url": "https://dev.socrata.com/docs/endpoints",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "7bc738ce88829d53efd2",
+              "observed_at": "2026-11-05T08:59:07.255911+00:00",
+              "url": "https://data.cityofnewyork.us/City-Government/Quartersection_ZoningMapIndex/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "cfba43e24675b6bd0438",
+              "observed_at": "2026-11-05T08:59:16.658674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "4cb5b8cc4487cec11e5c",
+              "observed_at": "2026-11-05T09:01:04.585306+00:00",
+              "url": "https://dev.socrata.com/docs/system-fields.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "11cd661c411eb4c83116",
+              "observed_at": "2026-11-05T09:01:08.235061+00:00",
+              "url": "https://dev.socrata.com/docs/queries/where.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "a010ebe078de88e7bc03",
+              "observed_at": "2026-11-05T09:01:11.769056+00:00",
+              "url": "https://dev.socrata.com/foundry/data.cityofnewyork.us/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "245b5423c79de5a6d502",
+              "observed_at": "2026-11-05T09:01:19.417050+00:00",
+              "url": "https://www.nyc.gov/home/terms-of-use.page",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "d4742e61215e89820c93",
+              "observed_at": "2026-11-05T09:02:09.874249+00:00",
+              "url": "https://www.nyc.gov/main/terms-of-use",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "a33edb593e7452ca42d6",
+              "observed_at": "2026-11-05T09:02:23.555465+00:00",
+              "url": "https://data.cityofnewyork.us/robots.txt",
+              "outcome": "skipped"
+            },
+            {
+              "path": "examples/nyc-planning.scouting.jsonl",
+              "job_id": null,
+              "observed_at": "2026-11-05T08:40:35.146Z",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "public-page-rendered"
+            }
+          ],
+          "open_questions": [
+            "Verify dataset extent, scale, native schema and geographic lookup capability."
+          ]
+        },
+        "query_contract": {
+          "status": "partial",
+          "summary": "NYC zoning map-index dataset wwcv-s7e7, exact map-label filters; only native row ID, map label, quarter-section and section. No owner/applicant/address/parcel/geometry fields.",
+          "facts": {
+            "adapter": "nyc-zoning-index",
+            "exact_request": {
+              "method": "GET",
+              "url": "https://data.cityofnewyork.us/resource/wwcv-s7e7.json",
+              "params": {
+                "$select": ":id,quartersec,zoning_map,section",
+                "$where": "zoning_map='10A'",
+                "$order": ":id",
+                "$limit": 3,
+                "$offset": 0
+              }
+            },
+            "verified_examples": 10
+          },
+          "evidence": [
+            "examples/nyc-planning-data.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T07:34:06.064409+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Broader dataset scope and content-access evidence remain open; do not hold up current queryability count."
+          ]
+        },
+        "rights_and_cost": {
+          "status": "partial",
+          "summary": "NYC general website terms and Socrata API token policy are captured; dataset-specific reuse and map rights remain unresolved.",
+          "facts": {
+            "metadata_rights": "Unresolved; general terms all rights reserved.",
+            "content_rights": "Do not infer map/document public-domain status from.gov alone.",
+            "api_cost": "Anonymous2.x lower sharedIPquota documented;3.0authenticationrequired; no paid route/account used.",
+            "no_outreach": true
+          },
+          "evidence": [
+            "runs/coverage-gap-docs-20261105p/observations.jsonl",
+            "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+            "runs/planning-catalog-docs-20261105s/observations.jsonl",
+            "runs/planning-discovery-contract-20261105t/observations.jsonl",
+            "runs/planning-api-identity-20261105u/observations.jsonl",
+            "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+            "runs/nyc-soda-contract-20261105x/observations.jsonl",
+            "runs/nyc-current-terms-20261105y/observations.jsonl",
+            "examples/nyc-planning.scouting.jsonl",
+            "analysis/discovery-searches.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+              "job_id": "fa0f62dceb59e5a6d624",
+              "observed_at": "2026-11-05T08:33:00.875350+00:00",
+              "url": "https://www.nyc.gov/site/planning/data-maps/open-data/dwn-gis-zoning.page",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+              "job_id": "c60edcc0d9756afcc281",
+              "observed_at": "2026-11-05T08:38:04.596674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "63f2105abeca500d63a4",
+              "observed_at": "2026-11-05T08:47:29.839475+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "9cd05047b0d9bee2b56a",
+              "observed_at": "2026-11-05T08:47:38.472120+00:00",
+              "url": "https://data.cityofnewyork.us/",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "94a3a99cbe366f9d339a",
+              "observed_at": "2026-11-05T08:54:17.888240+00:00",
+              "url": "https://dev.socrata.com/data/",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "035c50d2784e57f09362",
+              "observed_at": "2026-11-05T08:54:21.706509+00:00",
+              "url": "https://dev.socrata.com/docs/app-tokens.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "1620d2aedbee17910c8d",
+              "observed_at": "2026-11-05T08:55:00.809114+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/zoning",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-api-identity-20261105u/observations.jsonl",
+              "job_id": "66474a1fb35249181689",
+              "observed_at": "2026-11-05T08:56:26.746883+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "81decf192077b1d48704",
+              "observed_at": "2026-11-05T08:58:59.093901+00:00",
+              "url": "https://dev.socrata.com/docs/endpoints",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "7bc738ce88829d53efd2",
+              "observed_at": "2026-11-05T08:59:07.255911+00:00",
+              "url": "https://data.cityofnewyork.us/City-Government/Quartersection_ZoningMapIndex/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "cfba43e24675b6bd0438",
+              "observed_at": "2026-11-05T08:59:16.658674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "4cb5b8cc4487cec11e5c",
+              "observed_at": "2026-11-05T09:01:04.585306+00:00",
+              "url": "https://dev.socrata.com/docs/system-fields.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "11cd661c411eb4c83116",
+              "observed_at": "2026-11-05T09:01:08.235061+00:00",
+              "url": "https://dev.socrata.com/docs/queries/where.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "a010ebe078de88e7bc03",
+              "observed_at": "2026-11-05T09:01:11.769056+00:00",
+              "url": "https://dev.socrata.com/foundry/data.cityofnewyork.us/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "245b5423c79de5a6d502",
+              "observed_at": "2026-11-05T09:01:19.417050+00:00",
+              "url": "https://www.nyc.gov/home/terms-of-use.page",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "d4742e61215e89820c93",
+              "observed_at": "2026-11-05T09:02:09.874249+00:00",
+              "url": "https://www.nyc.gov/main/terms-of-use",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "a33edb593e7452ca42d6",
+              "observed_at": "2026-11-05T09:02:23.555465+00:00",
+              "url": "https://data.cityofnewyork.us/robots.txt",
+              "outcome": "skipped"
+            },
+            {
+              "path": "examples/nyc-planning.scouting.jsonl",
+              "job_id": null,
+              "observed_at": "2026-11-05T08:40:35.146Z",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "public-page-rendered"
+            }
+          ],
+          "open_questions": [
+            "Read dataset-specific open-data terms/license and original map rights before qualification."
+          ]
+        },
+        "reader_access": {
+          "status": "partial",
+          "summary": "Public catalog HTML title was captured, but the DCP page showed navigation only; no full map viewed.",
+          "facts": {
+            "direct_title": "Quartersection_ZoningMapIndex | NYC Open Data",
+            "full_item_access_verified": false,
+            "browser_evidence": "examples/nyc-planning.scouting.jsonl",
+            "login": "No login used for observedHTML; not proof of full map access."
+          },
+          "evidence": [
+            "runs/coverage-gap-docs-20261105p/observations.jsonl",
+            "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+            "runs/planning-catalog-docs-20261105s/observations.jsonl",
+            "runs/planning-discovery-contract-20261105t/observations.jsonl",
+            "runs/planning-api-identity-20261105u/observations.jsonl",
+            "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+            "runs/nyc-soda-contract-20261105x/observations.jsonl",
+            "runs/nyc-current-terms-20261105y/observations.jsonl",
+            "examples/nyc-planning.scouting.jsonl",
+            "analysis/discovery-searches.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+              "job_id": "fa0f62dceb59e5a6d624",
+              "observed_at": "2026-11-05T08:33:00.875350+00:00",
+              "url": "https://www.nyc.gov/site/planning/data-maps/open-data/dwn-gis-zoning.page",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+              "job_id": "c60edcc0d9756afcc281",
+              "observed_at": "2026-11-05T08:38:04.596674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "63f2105abeca500d63a4",
+              "observed_at": "2026-11-05T08:47:29.839475+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "9cd05047b0d9bee2b56a",
+              "observed_at": "2026-11-05T08:47:38.472120+00:00",
+              "url": "https://data.cityofnewyork.us/",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "94a3a99cbe366f9d339a",
+              "observed_at": "2026-11-05T08:54:17.888240+00:00",
+              "url": "https://dev.socrata.com/data/",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "035c50d2784e57f09362",
+              "observed_at": "2026-11-05T08:54:21.706509+00:00",
+              "url": "https://dev.socrata.com/docs/app-tokens.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "1620d2aedbee17910c8d",
+              "observed_at": "2026-11-05T08:55:00.809114+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/zoning",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-api-identity-20261105u/observations.jsonl",
+              "job_id": "66474a1fb35249181689",
+              "observed_at": "2026-11-05T08:56:26.746883+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "81decf192077b1d48704",
+              "observed_at": "2026-11-05T08:58:59.093901+00:00",
+              "url": "https://dev.socrata.com/docs/endpoints",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "7bc738ce88829d53efd2",
+              "observed_at": "2026-11-05T08:59:07.255911+00:00",
+              "url": "https://data.cityofnewyork.us/City-Government/Quartersection_ZoningMapIndex/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "cfba43e24675b6bd0438",
+              "observed_at": "2026-11-05T08:59:16.658674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "4cb5b8cc4487cec11e5c",
+              "observed_at": "2026-11-05T09:01:04.585306+00:00",
+              "url": "https://dev.socrata.com/docs/system-fields.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "11cd661c411eb4c83116",
+              "observed_at": "2026-11-05T09:01:08.235061+00:00",
+              "url": "https://dev.socrata.com/docs/queries/where.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "a010ebe078de88e7bc03",
+              "observed_at": "2026-11-05T09:01:11.769056+00:00",
+              "url": "https://dev.socrata.com/foundry/data.cityofnewyork.us/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "245b5423c79de5a6d502",
+              "observed_at": "2026-11-05T09:01:19.417050+00:00",
+              "url": "https://www.nyc.gov/home/terms-of-use.page",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "d4742e61215e89820c93",
+              "observed_at": "2026-11-05T09:02:09.874249+00:00",
+              "url": "https://www.nyc.gov/main/terms-of-use",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "a33edb593e7452ca42d6",
+              "observed_at": "2026-11-05T09:02:23.555465+00:00",
+              "url": "https://data.cityofnewyork.us/robots.txt",
+              "outcome": "skipped"
+            },
+            {
+              "path": "examples/nyc-planning.scouting.jsonl",
+              "job_id": null,
+              "observed_at": "2026-11-05T08:40:35.146Z",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "public-page-rendered"
+            }
+          ],
+          "open_questions": [
+            "Verify a usable full map, effective date and anonymous/free-login classification after policy recovery."
+          ]
+        },
+        "quality_and_relevance": {
+          "status": "partial",
+          "summary": "No real API examples or relevance benchmark yet; redirects and latest503 policy failure retained.",
+          "facts": {
+            "query_examples": 0,
+            "discovery_scope": "Only dataset metadata; never queried ownership/permit applicant data."
+          },
+          "evidence": [
+            "runs/coverage-gap-docs-20261105p/observations.jsonl",
+            "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+            "runs/planning-catalog-docs-20261105s/observations.jsonl",
+            "runs/planning-discovery-contract-20261105t/observations.jsonl",
+            "runs/planning-api-identity-20261105u/observations.jsonl",
+            "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+            "runs/nyc-soda-contract-20261105x/observations.jsonl",
+            "runs/nyc-current-terms-20261105y/observations.jsonl",
+            "examples/nyc-planning.scouting.jsonl",
+            "analysis/discovery-searches.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+              "job_id": "fa0f62dceb59e5a6d624",
+              "observed_at": "2026-11-05T08:33:00.875350+00:00",
+              "url": "https://www.nyc.gov/site/planning/data-maps/open-data/dwn-gis-zoning.page",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+              "job_id": "c60edcc0d9756afcc281",
+              "observed_at": "2026-11-05T08:38:04.596674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "63f2105abeca500d63a4",
+              "observed_at": "2026-11-05T08:47:29.839475+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "9cd05047b0d9bee2b56a",
+              "observed_at": "2026-11-05T08:47:38.472120+00:00",
+              "url": "https://data.cityofnewyork.us/",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "94a3a99cbe366f9d339a",
+              "observed_at": "2026-11-05T08:54:17.888240+00:00",
+              "url": "https://dev.socrata.com/data/",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "035c50d2784e57f09362",
+              "observed_at": "2026-11-05T08:54:21.706509+00:00",
+              "url": "https://dev.socrata.com/docs/app-tokens.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "1620d2aedbee17910c8d",
+              "observed_at": "2026-11-05T08:55:00.809114+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/zoning",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-api-identity-20261105u/observations.jsonl",
+              "job_id": "66474a1fb35249181689",
+              "observed_at": "2026-11-05T08:56:26.746883+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "81decf192077b1d48704",
+              "observed_at": "2026-11-05T08:58:59.093901+00:00",
+              "url": "https://dev.socrata.com/docs/endpoints",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "7bc738ce88829d53efd2",
+              "observed_at": "2026-11-05T08:59:07.255911+00:00",
+              "url": "https://data.cityofnewyork.us/City-Government/Quartersection_ZoningMapIndex/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "cfba43e24675b6bd0438",
+              "observed_at": "2026-11-05T08:59:16.658674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "4cb5b8cc4487cec11e5c",
+              "observed_at": "2026-11-05T09:01:04.585306+00:00",
+              "url": "https://dev.socrata.com/docs/system-fields.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "11cd661c411eb4c83116",
+              "observed_at": "2026-11-05T09:01:08.235061+00:00",
+              "url": "https://dev.socrata.com/docs/queries/where.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "a010ebe078de88e7bc03",
+              "observed_at": "2026-11-05T09:01:11.769056+00:00",
+              "url": "https://dev.socrata.com/foundry/data.cityofnewyork.us/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "245b5423c79de5a6d502",
+              "observed_at": "2026-11-05T09:01:19.417050+00:00",
+              "url": "https://www.nyc.gov/home/terms-of-use.page",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "d4742e61215e89820c93",
+              "observed_at": "2026-11-05T09:02:09.874249+00:00",
+              "url": "https://www.nyc.gov/main/terms-of-use",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "a33edb593e7452ca42d6",
+              "observed_at": "2026-11-05T09:02:23.555465+00:00",
+              "url": "https://data.cityofnewyork.us/robots.txt",
+              "outcome": "skipped"
+            },
+            {
+              "path": "examples/nyc-planning.scouting.jsonl",
+              "job_id": null,
+              "observed_at": "2026-11-05T08:40:35.146Z",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "public-page-rendered"
+            }
+          ],
+          "open_questions": [
+            "Test exact map-section identifiers, spatial relevance, paging, empty/error behavior and current-versus-archived map status."
+          ]
+        },
+        "operating_limits": {
+          "status": "partial",
+          "summary": "Serial bounded documentation requests; defer targethost following robots503.",
+          "facts": {
+            "failure_at": "2026-11-05T09:02:15.022024+00:00",
+            "blocker": "robotsHTTP503, not proof of permanent API failure",
+            "revisit_trigger": "Meaningful later provider recovery/status or official policy change; no same-session repeated retries.",
+            "refresh_caution": "Socrata documents full dataset replace can update all rows; :updated_at alone is not a deletion signal."
+          },
+          "evidence": [
+            "runs/coverage-gap-docs-20261105p/observations.jsonl",
+            "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+            "runs/planning-catalog-docs-20261105s/observations.jsonl",
+            "runs/planning-discovery-contract-20261105t/observations.jsonl",
+            "runs/planning-api-identity-20261105u/observations.jsonl",
+            "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+            "runs/nyc-soda-contract-20261105x/observations.jsonl",
+            "runs/nyc-current-terms-20261105y/observations.jsonl",
+            "examples/nyc-planning.scouting.jsonl",
+            "analysis/discovery-searches.jsonl"
+          ],
+          "observation_refs": [
+            {
+              "path": "runs/coverage-gap-docs-20261105p/observations.jsonl",
+              "job_id": "fa0f62dceb59e5a6d624",
+              "observed_at": "2026-11-05T08:33:00.875350+00:00",
+              "url": "https://www.nyc.gov/site/planning/data-maps/open-data/dwn-gis-zoning.page",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/zoning-newspaper-rights-20261105r/observations.jsonl",
+              "job_id": "c60edcc0d9756afcc281",
+              "observed_at": "2026-11-05T08:38:04.596674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "63f2105abeca500d63a4",
+              "observed_at": "2026-11-05T08:47:29.839475+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-catalog-docs-20261105s/observations.jsonl",
+              "job_id": "9cd05047b0d9bee2b56a",
+              "observed_at": "2026-11-05T08:47:38.472120+00:00",
+              "url": "https://data.cityofnewyork.us/",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "94a3a99cbe366f9d339a",
+              "observed_at": "2026-11-05T08:54:17.888240+00:00",
+              "url": "https://dev.socrata.com/data/",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "035c50d2784e57f09362",
+              "observed_at": "2026-11-05T08:54:21.706509+00:00",
+              "url": "https://dev.socrata.com/docs/app-tokens.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-discovery-contract-20261105t/observations.jsonl",
+              "job_id": "1620d2aedbee17910c8d",
+              "observed_at": "2026-11-05T08:55:00.809114+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/zoning",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/planning-api-identity-20261105u/observations.jsonl",
+              "job_id": "66474a1fb35249181689",
+              "observed_at": "2026-11-05T08:56:26.746883+00:00",
+              "url": "https://dev.socrata.com/docs/other/discovery",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "81decf192077b1d48704",
+              "observed_at": "2026-11-05T08:58:59.093901+00:00",
+              "url": "https://dev.socrata.com/docs/endpoints",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "7bc738ce88829d53efd2",
+              "observed_at": "2026-11-05T08:59:07.255911+00:00",
+              "url": "https://data.cityofnewyork.us/City-Government/Quartersection_ZoningMapIndex/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-zoning-api-docs-20261105w/observations.jsonl",
+              "job_id": "cfba43e24675b6bd0438",
+              "observed_at": "2026-11-05T08:59:16.658674+00:00",
+              "url": "https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "4cb5b8cc4487cec11e5c",
+              "observed_at": "2026-11-05T09:01:04.585306+00:00",
+              "url": "https://dev.socrata.com/docs/system-fields.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "11cd661c411eb4c83116",
+              "observed_at": "2026-11-05T09:01:08.235061+00:00",
+              "url": "https://dev.socrata.com/docs/queries/where.html",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "a010ebe078de88e7bc03",
+              "observed_at": "2026-11-05T09:01:11.769056+00:00",
+              "url": "https://dev.socrata.com/foundry/data.cityofnewyork.us/wwcv-s7e7",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-soda-contract-20261105x/observations.jsonl",
+              "job_id": "245b5423c79de5a6d502",
+              "observed_at": "2026-11-05T09:01:19.417050+00:00",
+              "url": "https://www.nyc.gov/home/terms-of-use.page",
+              "outcome": "blocked-or-failed"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "d4742e61215e89820c93",
+              "observed_at": "2026-11-05T09:02:09.874249+00:00",
+              "url": "https://www.nyc.gov/main/terms-of-use",
+              "outcome": "captured"
+            },
+            {
+              "path": "runs/nyc-current-terms-20261105y/observations.jsonl",
+              "job_id": "a33edb593e7452ca42d6",
+              "observed_at": "2026-11-05T09:02:23.555465+00:00",
+              "url": "https://data.cityofnewyork.us/robots.txt",
+              "outcome": "skipped"
+            },
+            {
+              "path": "examples/nyc-planning.scouting.jsonl",
+              "job_id": null,
+              "observed_at": "2026-11-05T08:40:35.146Z",
+              "url": "https://www.nyc.gov/content/planning/pages/resources?search=gis",
+              "outcome": "public-page-rendered"
+            }
+          ],
+          "open_questions": [
+            "Establish permitted quota and version-aware refresh/deletion plan when queryable."
+          ]
+        },
+        "decision_and_followup": {
+          "status": "partial",
+          "summary": "Working for scoped map-index metadata; broader civic research remains open",
+          "facts": {
+            "decision": "working_with_recorded_scope",
+            "next_action": "Keep anonymous map-index search bounded and back off on503. Broader planning catalogs, map files and current zoning determinations remain unverified; no activation.",
+            "blocker": null
+          },
+          "evidence": [
+            "examples/nyc-planning-data.jsonl"
+          ],
+          "reviewed_at": "2026-11-06T07:34:06.064413+00:00",
+          "fresh_query_verification": true,
+          "open_questions": [
+            "Broader dataset scope and content-access evidence remain open; do not hold up current queryability count."
+          ]
+        }
+      }
     }
   ]
 }

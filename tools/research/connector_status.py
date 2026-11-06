@@ -15,6 +15,8 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'bhuvan-product-catalog': 'Local title/version and native product-selector search over85 published Bhuvan Store products; no tiles, imagery, owner records or whole-portal coverage',
+    'nyc-zoning-index': 'Live anonymous SODA2.1 exact zoning-map label search in dataset wwcv-s7e7; native row IDs and map-index labels only, no property-owner data or authoritative zoning determination',
     'free-kids-wp-metadata': 'Live known-book title queries via advertised public WordPress metadata, first3 records; blog posts coexist, no arbitrary-topic/whole-catalog book-only relevance guarantee',
     'artic-export': 'Local title/artist tokens and native ID search over the complete pinned published artwork metadata export; no images or other API record types',
     'nist-crossref': 'Live title-ranked search of Crossref metadata restricted to NIST DOI prefix10.6028; first3 records, no direct NIST website/full-text access or all-NIST-output guarantee',
