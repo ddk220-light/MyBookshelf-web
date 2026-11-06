@@ -15,6 +15,7 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'chicago-zoning': 'Live Chicago SODA zoning-class equality queries; first2 native GLOBALID/OBJECTID features, five metadata fields; no geometry/address/personal-owner data',
     'shodhganga-indcat': 'IndCat public keyword form with explicit Shodhganga checkbox; first20 records filtered to literal title tokens and native Shodhganga handles; no repository requests or full-catalog/reader guarantee',
     'worldreader-public-browser': 'Anonymous BookSmart browser title search, US/English default library, first20 results with native UUID/version; reading, other countries/languages, paging and standalone API not verified',
     'snapplify-shop': 'Anonymous public shop title searches, first page filtered to available zero-price items; Book Dash examples; checkout, reading, other territories and full catalog not verified',

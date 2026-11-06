@@ -200,7 +200,9 @@
     "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
     "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
     "examples/worldreader.browser.jsonl",
-    "examples/worldreader.jsonl"
+    "examples/worldreader.jsonl",
+    "runs/technical-recovery-20261106i/negative-controls.jsonl",
+    "runs/technical-recovery-20261106i/worldreader-empty-control.browser.jsonl"
   ],
   "analysis_refs": [
     {
@@ -220,7 +222,7 @@
       "status": "historical-context-needs-reconciliation"
     },
     {
-      "document_id": "c1ed26015470702ec1f0b157f5a9158ea76a93919241b82e879ae8b886f11f13",
+      "document_id": "ad17913ab707d5bb6d6d59b60bebc59b186f014ee8d1686f4b477e494ddb85c5",
       "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106I.md",
       "line": 20,
       "heading": "Worldreader / BookSmart recovered",
@@ -228,16 +230,24 @@
       "status": "historical-context-needs-reconciliation"
     },
     {
-      "document_id": "c1ed26015470702ec1f0b157f5a9158ea76a93919241b82e879ae8b886f11f13",
+      "document_id": "ad17913ab707d5bb6d6d59b60bebc59b186f014ee8d1686f4b477e494ddb85c5",
       "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106I.md",
       "line": 22,
       "heading": "Worldreader / BookSmart recovered",
       "text": "The current operator page links BookSmart’s dashboard. Its policy URL returns an exact generic Angular shell with no REP directives or access challenge; a narrowly hashed review permits only the published anonymous UI. API origins return404 for policy. The privacy notice explicitly makes sign-in optional, and operator documentation describes title/keyword search.",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "ad17913ab707d5bb6d6d59b60bebc59b186f014ee8d1686f4b477e494ddb85c5",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106I.md",
+      "line": 40,
+      "heading": "Timed service checks after12:00UTC",
+      "text": "Negative controls: BookSmart returns a confirmed empty metadata list. IndCat’s nonsense thesis query returned200 without the expected form echo and was rejected by the parser; empty semantics remain open. Neither control adds to the passing-example count.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
-  "last_reviewed_at": "2026-11-06T12:00:47.873571+00:00",
-  "next_action": "Maintain anonymous US/English visible title search. Empty/paging, additional territories/languages, reading and reuse rights need separate tests. Preserve old route failures; no production activation.",
+  "last_reviewed_at": "2026-11-06T12:10:46.623504+00:00",
+  "next_action": "Maintain anonymous US/English visible title search. Paging, additional territories/languages, reading and reuse rights need separate tests. Preserve old route failures; no production activation.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -361,7 +371,7 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Ten distinct expected UUID/title examples pass. Broad keyword cat includes non-title matches; literal title-token postfilter excludes them. Empty and paging remain unverified.",
+      "summary": "Ten distinct expected UUID/title queries pass. Broad cat results include non-title hits excluded by literal postfilter. A nonsense control returns provider totalCount0/count0 and an empty metadata list. Paging remains unverified.",
       "facts": {
         "current_query_verified": true,
         "passing_current_examples": 10,
@@ -376,7 +386,8 @@
         "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
         "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
         "examples/worldreader.browser.jsonl",
-        "examples/worldreader.jsonl"
+        "examples/worldreader.jsonl",
+        "runs/technical-recovery-20261106i/negative-controls.jsonl"
       ],
       "observation_refs": [],
       "open_questions": [
@@ -440,13 +451,29 @@
       "attempt": "Followed Worldreader product page to https://booksmart.world/free; target stopped at policy check.",
       "result": "Current official BookSmart link found, but booksmart.world robots returns400.",
       "decision": "Establish usable public catalog policy or documented query route; no login/account creation."
+    },
+    {
+      "reviewed_at": "2026-11-06T12:00:47.873571+00:00",
+      "reason": "Dead historical mobile route and400 old BookSmart link replaced by operator-published current dashboard; local browser timing/selector mistakes prevented early form tests.",
+      "attempt": "Review exact generic app-shell policy and optional-sign-in documentation; use verified TLS WebKit, dismiss visible intro/tour, wait for Ionic navigation, submit visible title form, parse only whitelisted metadata.",
+      "result": "Ten distinct title searches return relevant expected native UUIDs/versions; broad cat search demonstrates non-title hits filtered out. Early navigation/timing failures retained. No account, direct restricted-host request or book download.",
+      "decision": "working-with-anonymous-US-English-BookSmart-search-scope",
+      "evidence": [
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+        "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+        "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+        "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+        "examples/worldreader.browser.jsonl",
+        "examples/worldreader.jsonl"
+      ]
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T12:00:47.873571+00:00",
+    "reviewed_at": "2026-11-06T12:10:46.623504+00:00",
     "reason": "Dead historical mobile route and400 old BookSmart link replaced by operator-published current dashboard; local browser timing/selector mistakes prevented early form tests.",
     "attempt": "Review exact generic app-shell policy and optional-sign-in documentation; use verified TLS WebKit, dismiss visible intro/tour, wait for Ionic navigation, submit visible title form, parse only whitelisted metadata.",
-    "result": "Ten distinct title searches return relevant expected native UUIDs/versions; broad cat search demonstrates non-title hits filtered out. Early navigation/timing failures retained. No account, direct restricted-host request or book download.",
+    "result": "Ten distinct title searches return relevant expected native UUIDs/versions; broad cat search demonstrates non-title hits filtered out. Early navigation/timing failures retained. No account, direct restricted-host request or book download. Additional nonsense query returns a true provider empty result (count0,totalCount0); saved separately and not counted as a passing book example.",
     "decision": "working-with-anonymous-US-English-BookSmart-search-scope",
     "evidence": [
       "runs/technical-recovery-20261106i/observations.jsonl",

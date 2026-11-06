@@ -151,8 +151,8 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Two queries passed; other queries exceeded 20/45-second timeouts.",
-      "current_reason": "Two current native-ID lookups pass, but the next distinct saved record10836 returns503. Provider remains intermittently unavailable.",
-      "next_action": "Wait for a useful service-recovery signal and sensible backoff; resume native10836, then remaining saved cases. Keep broad title search marked unreliable; do not sample only previously cached successes.",
+      "current_reason": "After more than2hours backoff, native10836 now times out after30seconds; the previous503 is retained. Two other native lookups remain the only passing cases.",
+      "next_action": "Wait for a provider recovery signal; next timed health check no earlier than2026-11-06T18:00:00Z. Resume10836 before later IDs; avoid cherry-picking only cached successful IDs.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -186,6 +186,17 @@
           "evidence": [
             "examples/gutendex.jsonl",
             "runs/technical-recovery-20261106g/worker-events.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T12:05:56.464938+00:00",
+          "reason": "After more than2hours backoff, native10836 now times out after30seconds; the previous503 is retained. Two other native lookups remain the only passing cases.",
+          "attempt": "Resume the first unfinished native-ID case10836 after the saved12:00UTC retry window; stop immediately on timeout instead of retrying the whole batch.",
+          "result": "No recovery: request timed out; later saved cases withheld. No broad search or alternate mirror requested.",
+          "decision": "wait_for_service_recovery",
+          "next_action": "Wait for a provider recovery signal; next timed health check no earlier than2026-11-06T18:00:00Z. Resume10836 before later IDs; avoid cherry-picking only cached successful IDs.",
+          "evidence": [
+            "examples/gutendex.jsonl"
           ]
         }
       ]
@@ -399,7 +410,7 @@
       "status": "working",
       "original_reason": "The historical mobile-catalog route returned 404.",
       "current_reason": "",
-      "next_action": "Maintain anonymous US/English visible title search. Empty/paging, additional territories/languages, reading and reuse rights need separate tests. Preserve old route failures; no production activation.",
+      "next_action": "Maintain anonymous US/English visible title search. Paging, additional territories/languages, reading and reuse rights need separate tests. Preserve old route failures; no production activation.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -414,6 +425,22 @@
           "reason": "Dead historical mobile route and400 old BookSmart link replaced by operator-published current dashboard; local browser timing/selector mistakes prevented early form tests.",
           "attempt": "Review exact generic app-shell policy and optional-sign-in documentation; use verified TLS WebKit, dismiss visible intro/tour, wait for Ionic navigation, submit visible title form, parse only whitelisted metadata.",
           "result": "Ten distinct title searches return relevant expected native UUIDs/versions; broad cat search demonstrates non-title hits filtered out. Early navigation/timing failures retained. No account, direct restricted-host request or book download.",
+          "decision": "working-with-anonymous-US-English-BookSmart-search-scope",
+          "evidence": [
+            "runs/technical-recovery-20261106i/observations.jsonl",
+            "runs/technical-recovery-20261106i/worldreader-policy-review.json",
+            "runs/technical-recovery-20261106i/worldreader-anonymous-flow-review.json",
+            "runs/technical-recovery-20261106i/worldreader-search-documentation.json",
+            "runs/technical-recovery-20261106i/worldreader-cat-query-ui-scout.json",
+            "examples/worldreader.browser.jsonl",
+            "examples/worldreader.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T12:10:46.623504+00:00",
+          "reason": "Dead historical mobile route and400 old BookSmart link replaced by operator-published current dashboard; local browser timing/selector mistakes prevented early form tests.",
+          "attempt": "Review exact generic app-shell policy and optional-sign-in documentation; use verified TLS WebKit, dismiss visible intro/tour, wait for Ionic navigation, submit visible title form, parse only whitelisted metadata.",
+          "result": "Ten distinct title searches return relevant expected native UUIDs/versions; broad cat search demonstrates non-title hits filtered out. Early navigation/timing failures retained. No account, direct restricted-host request or book download. Additional nonsense query returns a true provider empty result (count0,totalCount0); saved separately and not counted as a passing book example.",
           "decision": "working-with-anonymous-US-English-BookSmart-search-scope",
           "evidence": [
             "runs/technical-recovery-20261106i/observations.jsonl",
@@ -868,8 +895,8 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Published redirect ended at a 503 page.",
-      "current_reason": "Current public schema API still returns503, in addition to previous landing-page503.",
-      "next_action": "Wait for provider service recovery before a bounded SODA2.1 query; documentation confirms the version exists but does not prove this dataset route works.",
+      "current_reason": "Schema and bounded metadata recovered, but only threeclass queries pass; the fourth B3-2 query returns503. Service remains intermittent.",
+      "next_action": "Wait for service recovery; no timed retry before2026-11-06T18:00:00Z absent useful recovery evidence. Resume zoning-class-04 B3-2, then remaining saved classes; do not redo successful queries needlessly.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -892,6 +919,20 @@
           "evidence": [
             "runs/technical-recovery-20261106g/followups.jsonl",
             "runs/technical-recovery-20261106g/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T12:09:41.508430+00:00",
+          "reason": "Schema and bounded metadata recovered, but only threeclass queries pass; the fourth B3-2 query returns503. Service remains intermittent.",
+          "attempt": "After2.5hours backoff, retry published column schema; on200, fetch15 whitelisted metadata records across two bounded pages, then query10 planned zoning classes. Fix local class-code validation before feature requests.",
+          "result": "C1-3,C2-1,RT-4A return expected native GLOBALIDs/OBJECTIDs. B3-2 returns503; remaining6 requests withheld. No geometry,address or personal-owner fields requested.",
+          "decision": "partial-query-recovery-remains-blocked",
+          "next_action": "Wait for service recovery; no timed retry before2026-11-06T18:00:00Z absent useful recovery evidence. Resume zoning-class-04 B3-2, then remaining saved classes; do not redo successful queries needlessly.",
+          "evidence": [
+            "runs/technical-recovery-20261106i/observations.jsonl",
+            "runs/technical-recovery-20261106i/chicago-seed-metadata.json",
+            "runs/technical-recovery-20261106i/chicago-request-validation-correction.json",
+            "examples/chicago-open-data-zoning.jsonl"
           ]
         }
       ]
@@ -1377,19 +1418,19 @@
     "revisited_since_goal_started": 42
   },
   "current_run": {
-    "state": "checkpointed-continuing",
+    "state": "checkpointed-awaiting-continuation",
     "run_id": "technical-recovery-20261106i",
     "started_at": "2026-11-06T11:18:45.699129+00:00",
-    "heartbeat_at": "2026-11-06T12:02:11.725162+00:00",
+    "heartbeat_at": "2026-11-06T12:14:31.552306+00:00",
     "collector_active": false,
     "active_detached_worker": false,
     "scope": "Research-only supported search recovery; investigate documented alternatives and obey saved backoff",
-    "checkpointed_at": "2026-11-06T12:02:11.725162+00:00"
+    "checkpointed_at": "2026-11-06T12:14:31.552306+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
   "working": 29,
-  "updated_at": "2026-11-06T12:02:11.725162+00:00",
+  "updated_at": "2026-11-06T12:14:31.552306+00:00",
   "latest_run": {
     "run_ids": [
       "technical-recovery-20261106i"
@@ -1399,6 +1440,13 @@
       "worldreader",
       "shodhganga"
     ],
-    "remaining_goal_open": true
+    "remaining_goal_open": true,
+    "partial_recovery": {
+      "chicago-open-data-zoning": {
+        "passing_examples": 3,
+        "next_case": "zoning-class-04",
+        "blocking_status": 503
+      }
+    }
   }
 }

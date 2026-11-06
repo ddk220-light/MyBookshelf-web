@@ -22,20 +22,135 @@
     "jurisdiction": "USA / Illinois / Chicago"
   },
   "capabilities": [
-    "Published current zoning dataset and primary column schema captured; feature queries not executed."
+    "Published anonymous SODA zoning-class equality queries;3of10 planned classes currently verified before503",
+    "Bounded metadata only: native GLOBALID and OBJECTID,zoning_id,zone_class,edit_date; no geometry/address/owner data"
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": "https://data.cityofchicago.org/api/v3/views/dj47-wfun/query.json",
-    "authentication": "SODA3 documentation requires application-token/user authentication. A supported anonymous2.x route for this dataset has not been verified. No account/token used.",
-    "cost": "Current source free limits and token policy require confirmation; no paid service used.",
-    "cases": [],
-    "supported_modes": "Data.gov publishes JSON/XML/CSV/KML/KMZ/GeoJSON export routes; schema columns fetched anonymously.",
-    "unsupported_modes": [
-      "Personal owner/applicant/parcel-party lookups",
-      "Queries after503 without useful recovery evidence",
-      "Assuming retired zoning datasets are current",
-      "Counting zones,rows,formats ormirrors as independent origins"
+    "adapter": "chicago-zoning",
+    "endpoint": "https://data.cityofchicago.org/resource/dj47-wfun.json",
+    "authentication": "Anonymous SODA2.1 GET; no API token",
+    "cost": "Public no-payment query; numerical anonymous quota unverified",
+    "cases": [
+      {
+        "id": "zoning-class-01",
+        "query_text": "C1-3",
+        "intent": "Find publicly offered Chicago zoning features by literal zoning-class code; metadata only",
+        "expected_ids": [
+          "dj47-wfun/2574772c-6e1c-4668-a8a0-055b2b80fce4"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofchicago.org/resource/dj47-wfun.json?%24select=objectid%2Cglobalid%2Czoning_id%2Czone_class%2Cedit_date&%24where=zone_class%3D%27C1-3%27&%24order=objectid&%24limit=2"
+        }
+      },
+      {
+        "id": "zoning-class-02",
+        "query_text": "C2-1",
+        "intent": "Find publicly offered Chicago zoning features by literal zoning-class code; metadata only",
+        "expected_ids": [
+          "dj47-wfun/61ea7985-f78f-4b60-8abe-d5046436846f"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofchicago.org/resource/dj47-wfun.json?%24select=objectid%2Cglobalid%2Czoning_id%2Czone_class%2Cedit_date&%24where=zone_class%3D%27C2-1%27&%24order=objectid&%24limit=2"
+        }
+      },
+      {
+        "id": "zoning-class-03",
+        "query_text": "RT-4A",
+        "intent": "Find publicly offered Chicago zoning features by literal zoning-class code; metadata only",
+        "expected_ids": [
+          "dj47-wfun/54c91c76-3a9b-4baf-b57e-f2f4db12dc80"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofchicago.org/resource/dj47-wfun.json?%24select=objectid%2Cglobalid%2Czoning_id%2Czone_class%2Cedit_date&%24where=zone_class%3D%27RT-4A%27&%24order=objectid&%24limit=2"
+        }
+      },
+      {
+        "id": "zoning-class-04",
+        "query_text": "B3-2",
+        "intent": "Find publicly offered Chicago zoning features by literal zoning-class code; metadata only",
+        "expected_ids": [
+          "dj47-wfun/9f385090-e595-452f-b752-b6bee7d89034"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofchicago.org/resource/dj47-wfun.json?%24select=objectid%2Cglobalid%2Czoning_id%2Czone_class%2Cedit_date&%24where=zone_class%3D%27B3-2%27&%24order=objectid&%24limit=2"
+        }
+      },
+      {
+        "id": "zoning-class-05",
+        "query_text": "B1-1",
+        "intent": "Find publicly offered Chicago zoning features by literal zoning-class code; metadata only",
+        "expected_ids": [
+          "dj47-wfun/e5f81b59-0816-42da-91d2-b5c77d6ea00b"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofchicago.org/resource/dj47-wfun.json?%24select=objectid%2Cglobalid%2Czoning_id%2Czone_class%2Cedit_date&%24where=zone_class%3D%27B1-1%27&%24order=objectid&%24limit=2"
+        }
+      },
+      {
+        "id": "zoning-class-06",
+        "query_text": "RT-4",
+        "intent": "Find publicly offered Chicago zoning features by literal zoning-class code; metadata only",
+        "expected_ids": [
+          "dj47-wfun/3ae9d745-c34e-4a5f-b056-575632e43f2a"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofchicago.org/resource/dj47-wfun.json?%24select=objectid%2Cglobalid%2Czoning_id%2Czone_class%2Cedit_date&%24where=zone_class%3D%27RT-4%27&%24order=objectid&%24limit=2"
+        }
+      },
+      {
+        "id": "zoning-class-07",
+        "query_text": "POS-2",
+        "intent": "Find publicly offered Chicago zoning features by literal zoning-class code; metadata only",
+        "expected_ids": [
+          "dj47-wfun/954b5ca4-9653-4405-ab6d-4378e3c79c26"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofchicago.org/resource/dj47-wfun.json?%24select=objectid%2Cglobalid%2Czoning_id%2Czone_class%2Cedit_date&%24where=zone_class%3D%27POS-2%27&%24order=objectid&%24limit=2"
+        }
+      },
+      {
+        "id": "zoning-class-08",
+        "query_text": "C1-1",
+        "intent": "Find publicly offered Chicago zoning features by literal zoning-class code; metadata only",
+        "expected_ids": [
+          "dj47-wfun/27a7e4ae-d7e5-4d45-8189-220c7ad31d82"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofchicago.org/resource/dj47-wfun.json?%24select=objectid%2Cglobalid%2Czoning_id%2Czone_class%2Cedit_date&%24where=zone_class%3D%27C1-1%27&%24order=objectid&%24limit=2"
+        }
+      },
+      {
+        "id": "zoning-class-09",
+        "query_text": "B1-2",
+        "intent": "Find publicly offered Chicago zoning features by literal zoning-class code; metadata only",
+        "expected_ids": [
+          "dj47-wfun/c091ae1c-4699-435e-bf9b-cba003acb047"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofchicago.org/resource/dj47-wfun.json?%24select=objectid%2Cglobalid%2Czoning_id%2Czone_class%2Cedit_date&%24where=zone_class%3D%27B1-2%27&%24order=objectid&%24limit=2"
+        }
+      },
+      {
+        "id": "zoning-class-10",
+        "query_text": "RM-5",
+        "intent": "Find publicly offered Chicago zoning features by literal zoning-class code; metadata only",
+        "expected_ids": [
+          "dj47-wfun/8716b307-7875-4a9f-8323-d11f90177a74"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://data.cityofchicago.org/resource/dj47-wfun.json?%24select=objectid%2Cglobalid%2Czoning_id%2Czone_class%2Cedit_date&%24where=zone_class%3D%27RM-5%27&%24order=objectid&%24limit=2"
+        }
+      }
     ]
   },
   "licensing": "No dataset license shown in captured Data.gov listing. City terms/data-specific reuse rights remain open; Socrata documentation license does not license City data.",
@@ -52,7 +167,11 @@
     "runs/technical-recovery-20261106c/observations.jsonl",
     "runs/technical-recovery-20261106c/book-attempts.jsonl",
     "runs/technical-recovery-20261106g/followups.jsonl",
-    "runs/technical-recovery-20261106g/observations.jsonl"
+    "runs/technical-recovery-20261106g/observations.jsonl",
+    "runs/technical-recovery-20261106i/observations.jsonl",
+    "runs/technical-recovery-20261106i/chicago-seed-metadata.json",
+    "runs/technical-recovery-20261106i/chicago-request-validation-correction.json",
+    "examples/chicago-open-data-zoning.jsonl"
   ],
   "analysis_refs": [
     {
@@ -67,10 +186,13 @@
   "limitations": [
     "Canonical native landing page returned503 after published redirect; stop this provider until useful recovery evidence.",
     "Foundry documentation page returned only general navigation text; no target API behavior established.",
-    "Directory current label and modified date do not independently establish legal zoning effective dates."
+    "Directory current label and modified date do not independently establish legal zoning effective dates.",
+    "Current3/10passing cases do not establish a stable Working connector; fourth query503 remains open.",
+    "Native GLOBALID identifies a feature; zoning_id and zone_class are categories shared by many features, not unique identities. Generated display labels are identified as such.",
+    "Provider edit_date is a reported record date, not the date of this live query. No current legal boundary or precise address determination inferred."
   ],
-  "last_reviewed_at": "2026-11-06T09:33:59.742456+00:00",
-  "next_action": "Wait for provider service recovery before a bounded SODA2.1 query; documentation confirms the version exists but does not prove this dataset route works.",
+  "last_reviewed_at": "2026-11-06T12:09:41.508430+00:00",
+  "next_action": "Wait for service recovery; no timed retry before2026-11-06T18:00:00Z absent useful recovery evidence. Resume zoning-class-04 B3-2, then remaining saved classes; do not redo successful queries needlessly.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -204,42 +326,21 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Published column endpoint returned200; landing503 prevents continuing this provider in this session.",
+      "summary": "C1-3,C2-1,RT-4A return expected native GLOBALIDs/OBJECTIDs. B3-2 returns503; remaining6 requests withheld. No geometry,address or personal-owner fields requested.",
       "facts": {
-        "schema_request": {
-          "method": "GET",
-          "url": "https://data.cityofchicago.org/api/views/dj47-wfun/columns.json"
-        },
-        "observed_fields": [
-          "the_geom",
-          "case_numbe",
-          "case_type",
-          "zoning_id",
-          "zone_type",
-          "zone_class",
-          "edit_statu",
-          "create_dat",
-          "edit_date",
-          "pd_prefix",
-          "pd_num",
-          "comments",
-          "ordinance",
-          "ordinance_1",
-          "zoning_rel",
-          "shape_area",
-          "shape_len",
-          "pedstreet_",
-          "objectid",
-          "globalid",
-          "pmd_sub_ar",
-          "override_c"
-        ],
-        "privacy_plan": "No comments,case free text,parcel owners orapplicants. Select only zone class/native IDs/explicit ordinance metadata after contract verification.",
-        "schema_capture": "HTTP26479bytes; visible collector excerpt capped24000 characters, so not a complete saved schema object."
+        "current_passing_examples": 3,
+        "working_connector": false,
+        "blocking_response": "Fourth zoning-class B3-2 query HTTP503",
+        "historical_record": "runs/technical-recovery-20261106i/chicago-previous-record.json",
+        "activation_approved": false
       },
       "evidence": [
         "runs/chicago-zoning-contract-20261105by/observations.jsonl",
-        "runs/chicago-query-docs-20261105bz/observations.jsonl"
+        "runs/chicago-query-docs-20261105bz/observations.jsonl",
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/chicago-seed-metadata.json",
+        "runs/technical-recovery-20261106i/chicago-request-validation-correction.json",
+        "examples/chicago-open-data-zoning.jsonl"
       ],
       "observation_refs": [
         {
@@ -405,15 +506,21 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Current layer is distinct from retired datasets surfaced by search.",
+      "summary": "C1-3,C2-1,RT-4A return expected native GLOBALIDs/OBJECTIDs. B3-2 returns503; remaining6 requests withheld. No geometry,address or personal-owner fields requested.",
       "facts": {
-        "scope": "District classifications; legal zoning determination needs ordinance/context.",
-        "relevance_boundary": "No building/property ownership search.",
-        "dates": "Dataset metadata modified date is not each ordinance effective date."
+        "current_passing_examples": 3,
+        "working_connector": false,
+        "blocking_response": "Fourth zoning-class B3-2 query HTTP503",
+        "historical_record": "runs/technical-recovery-20261106i/chicago-previous-record.json",
+        "activation_approved": false
       },
       "evidence": [
         "runs/chicago-zoning-contract-20261105by/observations.jsonl",
-        "runs/chicago-query-docs-20261105bz/observations.jsonl"
+        "runs/chicago-query-docs-20261105bz/observations.jsonl",
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/chicago-seed-metadata.json",
+        "runs/technical-recovery-20261106i/chicago-request-validation-correction.json",
+        "examples/chicago-open-data-zoning.jsonl"
       ],
       "observation_refs": [
         {
@@ -463,15 +570,21 @@
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Stop after503, preserve successful schema capture andnegative landing evidence.",
+      "summary": "C1-3,C2-1,RT-4A return expected native GLOBALIDs/OBJECTIDs. B3-2 returns503; remaining6 requests withheld. No geometry,address or personal-owner fields requested.",
       "facts": {
-        "automatic_retries": 0,
-        "revisit_trigger": "New documented recovery/status/policy evidence; no alternate route to evade503.",
-        "research_owner": "Program164 / civic168"
+        "current_passing_examples": 3,
+        "working_connector": false,
+        "blocking_response": "Fourth zoning-class B3-2 query HTTP503",
+        "historical_record": "runs/technical-recovery-20261106i/chicago-previous-record.json",
+        "activation_approved": false
       },
       "evidence": [
         "runs/chicago-zoning-contract-20261105by/observations.jsonl",
-        "runs/chicago-query-docs-20261105bz/observations.jsonl"
+        "runs/chicago-query-docs-20261105bz/observations.jsonl",
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/chicago-seed-metadata.json",
+        "runs/technical-recovery-20261106i/chicago-request-validation-correction.json",
+        "examples/chicago-open-data-zoning.jsonl"
       ],
       "observation_refs": [
         {
@@ -520,17 +633,22 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Defer query qualification; no passing examples,activation ororigin qualification credit.",
+      "status": "partial",
+      "summary": "C1-3,C2-1,RT-4A return expected native GLOBALIDs/OBJECTIDs. B3-2 returns503; remaining6 requests withheld. No geometry,address or personal-owner fields requested.",
       "facts": {
-        "decision": "deferred",
-        "owner_action_required": false,
-        "activation_approved": false,
-        "next_action": "After useful service recovery, confirm current primary terms and supported bounded anonymous or already-authorized query contract. Exclude personal fields and retain zoning native/version identities."
+        "current_passing_examples": 3,
+        "working_connector": false,
+        "blocking_response": "Fourth zoning-class B3-2 query HTTP503",
+        "historical_record": "runs/technical-recovery-20261106i/chicago-previous-record.json",
+        "activation_approved": false
       },
       "evidence": [
         "runs/chicago-zoning-contract-20261105by/observations.jsonl",
-        "runs/chicago-query-docs-20261105bz/observations.jsonl"
+        "runs/chicago-query-docs-20261105bz/observations.jsonl",
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/chicago-seed-metadata.json",
+        "runs/technical-recovery-20261106i/chicago-request-validation-correction.json",
+        "examples/chicago-open-data-zoning.jsonl"
       ],
       "observation_refs": [
         {
@@ -600,14 +718,30 @@
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T09:33:59.742465+00:00",
-    "reason": "Current public schema API still returns503, in addition to previous landing-page503.",
-    "attempt": "Review current official SODA version documentation; try bounded previously published columns metadata after3-hour backoff.",
-    "result": "Policy200 allows request; columns endpoint503. No zoning data query or host-switch fallback sent.",
-    "decision": "wait_for_service_recovery",
+    "reviewed_at": "2026-11-06T12:09:41.508430+00:00",
+    "reason": "Schema and bounded metadata recovered, but only threeclass queries pass; the fourth B3-2 query returns503. Service remains intermittent.",
+    "attempt": "After2.5hours backoff, retry published column schema; on200, fetch15 whitelisted metadata records across two bounded pages, then query10 planned zoning classes. Fix local class-code validation before feature requests.",
+    "result": "C1-3,C2-1,RT-4A return expected native GLOBALIDs/OBJECTIDs. B3-2 returns503; remaining6 requests withheld. No geometry,address or personal-owner fields requested.",
+    "decision": "partial-query-recovery-remains-blocked",
+    "next_action": "Wait for service recovery; no timed retry before2026-11-06T18:00:00Z absent useful recovery evidence. Resume zoning-class-04 B3-2, then remaining saved classes; do not redo successful queries needlessly.",
     "evidence": [
-      "runs/technical-recovery-20261106g/followups.jsonl",
-      "runs/technical-recovery-20261106g/observations.jsonl"
+      "runs/technical-recovery-20261106i/observations.jsonl",
+      "runs/technical-recovery-20261106i/chicago-seed-metadata.json",
+      "runs/technical-recovery-20261106i/chicago-request-validation-correction.json",
+      "examples/chicago-open-data-zoning.jsonl"
     ]
-  }
+  },
+  "historical_recovery": [
+    {
+      "reviewed_at": "2026-11-06T09:33:59.742465+00:00",
+      "reason": "Current public schema API still returns503, in addition to previous landing-page503.",
+      "attempt": "Review current official SODA version documentation; try bounded previously published columns metadata after3-hour backoff.",
+      "result": "Policy200 allows request; columns endpoint503. No zoning data query or host-switch fallback sent.",
+      "decision": "wait_for_service_recovery",
+      "evidence": [
+        "runs/technical-recovery-20261106g/followups.jsonl",
+        "runs/technical-recovery-20261106g/observations.jsonl"
+      ]
+    }
+  ]
 }
