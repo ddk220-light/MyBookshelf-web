@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 18,
+  "remaining": 17,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -340,10 +340,10 @@
       "id": "snapplify",
       "name": "Snapplify Store",
       "group": "G01",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Neither a stable free subset nor a supported metadata search was established.",
-      "current_reason": "A documented free-content filter exists in Engage Library, but anonymous catalog/API access is not established.",
-      "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
+      "current_reason": "",
+      "next_action": "Maintain public title/publisher queries and strict price, availability and relevance filters. Preserve native product IDs; reader/checkout/territorial/full-catalog questions stay separate.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -354,6 +354,17 @@
           "decision": "find-documented-anonymous-catalog-or-owner-provided-access",
           "evidence": [
             "runs/technical-recovery-20261106f/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T11:27:36.336773+00:00",
+          "reason": "Earlier investigation was confined to Engage; official current help documents separate public Shop search",
+          "attempt": "Followed documented public search form; anonymous GET term returns native product metadata and prices. Implemented exact-title token, zero-price and availability filters.",
+          "result": "Ten distinct relevant available zero-price products verified. Short-title No!/Circles initially failed; documented publisher facet fixes both. Original failures preserved.",
+          "decision": "working-scoped-public-shop-metadata",
+          "evidence": [
+            "runs/technical-recovery-20261106i/observations.jsonl",
+            "runs/technical-recovery-20261106i/snapplify-contract.json"
           ]
         }
       ]
@@ -622,8 +633,8 @@
       "group": "G03",
       "status": "blocked_or_failed",
       "original_reason": "Robots redirected and the conservative collector stopped.",
-      "current_reason": "The published IMO catalog loads, but robots explicitly disallows /search and /record=; an additional bot block is present.",
-      "next_action": "Wait for an explicitly permitted export/API or changed provider policy. No account or outreach requested.",
+      "current_reason": "New public resolution index identified, but www.imo.org robots301 redirects to the exact same URL.",
+      "next_action": "Revisit on corrected policy/redirect or documented permitted metadata export; avoid looping the same URL.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -636,6 +647,17 @@
             "runs/technical-recovery-20261106b/observations.jsonl",
             "runs/technical-recovery-20261106b/followups.jsonl"
           ]
+        },
+        {
+          "reviewed_at": "2026-11-06T11:29:05.734707+00:00",
+          "reason": "New public resolution index identified, but www.imo.org robots301 redirects to the exact same URL.",
+          "attempt": "Inspect the operator-published resolution-index alternative independently of restricted library search.",
+          "result": "Self-redirect prevents usable policy; no resolution metadata or document request. Existing library /search restrictions remain.",
+          "decision": "blocked-pending-specific-recovery-trigger",
+          "evidence": [
+            "runs/technical-recovery-20261106i/observations.jsonl"
+          ],
+          "next_action": "Revisit on corrected policy/redirect or documented permitted metadata export; avoid looping the same URL."
         }
       ]
     },
@@ -1040,8 +1062,8 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "API-host robots returned 403.",
-      "current_reason": "TNMAccess policy remains unavailable; the documented ScienceBase alternative explicitly disallows ChatGPT-User/OAI-SearchBot.",
-      "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+      "current_reason": "Documented basemap service policy403; separate published hydro service failed at environment proxy CONNECT403, so provider health for hydro is unknown.",
+      "next_action": "Wait for permitted reachable public metadata service; do not change proxy routing, agent identity or use denial-bypassing mirrors.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1054,6 +1076,17 @@
             "runs/technical-recovery-20261106d/observations.jsonl",
             "runs/technical-recovery-20261106d/scout-observations.jsonl"
           ]
+        },
+        {
+          "reviewed_at": "2026-11-06T11:29:05.734707+00:00",
+          "reason": "Documented basemap service policy403; separate published hydro service failed at environment proxy CONNECT403, so provider health for hydro is unknown.",
+          "attempt": "Read current official USGS map-service announcement; independently preflight named basemap and hydro metadata services.",
+          "result": "No map-service query sent. Prior ScienceBase agent restrictions remain untouched.",
+          "decision": "blocked-pending-specific-recovery-trigger",
+          "evidence": [
+            "runs/technical-recovery-20261106i/observations.jsonl"
+          ],
+          "next_action": "Wait for permitted reachable public metadata service; do not change proxy routing, agent identity or use denial-bypassing mirrors."
         }
       ]
     },
@@ -1235,8 +1268,8 @@
       "group": "G06",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 403, leaving no catalog contract.",
-      "current_reason": "Direct LINCS policy403 remains unresolved; no current documented resource export established.",
-      "next_action": "Review ERIC primary metadata contract and explicit LINCS source/link mappings; only test a scoped alternative if provenance can be established. Do not treat all adult-literacy publications as LINCS records.",
+      "current_reason": "Separate LINCS Courses policy403; documented ERIC API host policy403.",
+      "next_action": "Wait for permitted API/course access or published metadata export; no repeated403 probes without a useful trigger.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1259,6 +1292,17 @@
           "evidence": [
             "runs/technical-recovery-20261106h/lincs-eric-discovery.json"
           ]
+        },
+        {
+          "reviewed_at": "2026-11-06T11:29:05.734707+00:00",
+          "reason": "Separate LINCS Courses policy403; documented ERIC API host policy403.",
+          "attempt": "Inspect public course-catalog alternative and ERIC primary API documentation; try preflight for URL-filtered LINCS subset.",
+          "result": "Primary ERIC docs200, but no ERIC query or course metadata request was sent. Generic literacy records are not counted as LINCS.",
+          "decision": "blocked-pending-specific-recovery-trigger",
+          "evidence": [
+            "runs/technical-recovery-20261106i/observations.jsonl"
+          ],
+          "next_action": "Wait for permitted API/course access or published metadata export; no repeated403 probes without a useful trigger."
         }
       ]
     },
@@ -1283,8 +1327,8 @@
     }
   ],
   "progress": {
-    "working": 26,
-    "blocked_or_failed": 18,
+    "working": 27,
+    "blocked_or_failed": 17,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1292,33 +1336,26 @@
     "revisited_since_goal_started": 42
   },
   "current_run": {
-    "state": "checkpointed-awaiting-continuation",
-    "run_id": "technical-recovery-20261106h",
-    "started_at": "2026-11-06T10:27:27.745190+00:00",
-    "heartbeat_at": "2026-11-06T11:07:08.001317+00:00",
+    "state": "checkpointed-continuing",
+    "run_id": "technical-recovery-20261106i",
+    "started_at": "2026-11-06T11:18:45.699129+00:00",
+    "heartbeat_at": "2026-11-06T11:29:05.786047+00:00",
     "collector_active": false,
     "active_detached_worker": false,
-    "scope": "Research-only supported query recovery",
-    "checkpointed_at": "2026-11-06T11:07:08.001317+00:00"
+    "scope": "Research-only supported search recovery; investigate documented alternatives and obey saved backoff",
+    "checkpointed_at": "2026-11-06T11:29:05.786047+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 26,
-  "updated_at": "2026-11-06T11:07:08.001317+00:00",
+  "working": 27,
+  "updated_at": "2026-11-06T11:29:05.786047+00:00",
   "latest_run": {
     "run_ids": [
-      "technical-recovery-20261106h"
+      "technical-recovery-20261106i"
     ],
     "new_working": [
-      "ncbi-bookshelf",
-      "cert-in",
-      "indcat",
-      "abhilekh-patal"
+      "snapplify"
     ],
-    "remaining_goal_open": true,
-    "checkpoint_commit": "6d01a58",
-    "new_verified_examples": 42,
-    "tests_passed": 340,
-    "next_action": "Original44:26 Working/18 open. Investigate explicit LINCS-to-ERIC metadata mappings before any subset query, and documented anonymous Snapplify/Bloom routes. Gutendex case10836 and Chicago may receive one backed-off recovery probe after12:00UTC; stop on renewed failures. FDIC catalog, CMDA, Tamil Nadu map service, DOAB and India Code policy rechecks no earlier than16:00UTC unless a useful recovery signal arrives. OAPEN/DOAB export views require a permitted accessible metadata file, not challenge bypass. Preserve denied IMO/Shodhganga routes. Never resume the completed documentation queue."
+    "remaining_goal_open": true
   }
 }

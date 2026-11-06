@@ -1,5 +1,7 @@
 # MyBookshelf web handoff
 
+**Recovery I checkpoint, 6 November 2026:** 93 Working / 40 Blocked/failed / 0 Still checking of 133 active connectors; 961 current passing examples. Original44: 27 Working / 17 remaining. Newly recovered: snapplify. 349 research tests and evidence checks pass. Research only; continuation enabled. [Evidence and scope](research/free-content/TECHNICAL_RECOVERY_20261106I.md). Earlier entries are historical.
+
 **Recovery H checkpoint, 6 November 2026:** 92 Working / 41 Blocked/failed / 0 Still checking of 133 active connectors; 951 current passing examples. Original44: 26 Working / 18 remaining. Newly recovered: ncbi-bookshelf, cert-in, indcat, abhilekh-patal. 340 research tests and evidence checks pass. Research only; continuation enabled. [Evidence and scope](research/free-content/TECHNICAL_RECOVERY_20261106H.md). Earlier entries are historical.
 
 **Recovery G checkpoint, 6 November 2026:** 88 Working / 45 Blocked/failed / 0 Still checking of 133 active connectors; 909 current passing examples. Original44: 22 Working / 22 remaining. Newly recovered: gallica, diksha, ncert, india-nqr, nsdc-curricula, scielo. 314 research tests and evidence checks pass. Research only; continuation enabled. [Evidence and scope](research/free-content/TECHNICAL_RECOVERY_20261106G.md). Earlier entries are historical.

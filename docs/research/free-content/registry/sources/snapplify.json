@@ -8,45 +8,179 @@
     "C02",
     "C04"
   ],
-  "state": "deferred",
+  "state": "query-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
   "aliases": [],
   "capabilities": [
-    "Mixed digital-book storefront with visible ISBN/format/price, login and territorial exclusions; historical Book Dash distribution does not make the whole store free."
+    "Anonymous public Shop title search with native product IDs and documented publisher facet",
+    "Literal title-token, zero-price and availability filters; ten current Book Dash items"
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown",
-    "request_shape_verified": false
+    "adapter": "snapplify-shop",
+    "endpoint": "https://shop.snapplify.com/search",
+    "cases": [
+      {
+        "id": "shop-title-1",
+        "intent": "Find the exact free-priced Book Dash title in the public shop; exclude paid/unavailable results and retain native product identity",
+        "request": {
+          "method": "GET",
+          "url": "https://shop.snapplify.com/search?term=Amalungiselelo%20Amakhulu%20Embovane%20Encinane"
+        },
+        "expected_ids": [
+          "snapplify:7414086"
+        ]
+      },
+      {
+        "id": "shop-title-2",
+        "intent": "Find the exact free-priced Book Dash title in the public shop; exclude paid/unavailable results and retain native product identity",
+        "request": {
+          "method": "GET",
+          "url": "https://shop.snapplify.com/search?term=No%21&modifiers=%7B%22publisher%22%3A%22Book%20Dash%22%7D"
+        },
+        "expected_ids": [
+          "snapplify:7414097"
+        ]
+      },
+      {
+        "id": "shop-title-3",
+        "intent": "Find the exact free-priced Book Dash title in the public shop; exclude paid/unavailable results and retain native product identity",
+        "request": {
+          "method": "GET",
+          "url": "https://shop.snapplify.com/search?term=Foxy%20Joxy%20Plays%20A%20Trick"
+        },
+        "expected_ids": [
+          "snapplify:7414064"
+        ]
+      },
+      {
+        "id": "shop-title-4",
+        "intent": "Find the exact free-priced Book Dash title in the public shop; exclude paid/unavailable results and retain native product identity",
+        "request": {
+          "method": "GET",
+          "url": "https://shop.snapplify.com/search?term=My%20Special%20Hair"
+        },
+        "expected_ids": [
+          "snapplify:7414094"
+        ]
+      },
+      {
+        "id": "shop-title-5",
+        "intent": "Find the exact free-priced Book Dash title in the public shop; exclude paid/unavailable results and retain native product identity",
+        "request": {
+          "method": "GET",
+          "url": "https://shop.snapplify.com/search?term=USindiwe%20kanye%20nawokhanyikhanyi"
+        },
+        "expected_ids": [
+          "snapplify:7414102"
+        ]
+      },
+      {
+        "id": "shop-title-6",
+        "intent": "Find the exact free-priced Book Dash title in the public shop; exclude paid/unavailable results and retain native product identity",
+        "request": {
+          "method": "GET",
+          "url": "https://shop.snapplify.com/search?term=Circles&modifiers=%7B%22publisher%22%3A%22Book%20Dash%22%7D"
+        },
+        "expected_ids": [
+          "snapplify:7414056"
+        ]
+      },
+      {
+        "id": "shop-title-7",
+        "intent": "Find the exact free-priced Book Dash title in the public shop; exclude paid/unavailable results and retain native product identity",
+        "request": {
+          "method": "GET",
+          "url": "https://shop.snapplify.com/search?term=The%20Rainbow%20Cloud%3A%20The%20Story%20of%20Mkabayi%20and%20Mmama"
+        },
+        "expected_ids": [
+          "snapplify:7413958"
+        ]
+      },
+      {
+        "id": "shop-title-8",
+        "intent": "Find the exact free-priced Book Dash title in the public shop; exclude paid/unavailable results and retain native product identity",
+        "request": {
+          "method": "GET",
+          "url": "https://shop.snapplify.com/search?term=Sekolopata%20se%20famana%20lehae"
+        },
+        "expected_ids": [
+          "snapplify:7413919"
+        ]
+      },
+      {
+        "id": "shop-title-9",
+        "intent": "Find the exact free-priced Book Dash title in the public shop; exclude paid/unavailable results and retain native product identity",
+        "request": {
+          "method": "GET",
+          "url": "https://shop.snapplify.com/search?term=UKguru%20uthola%20indlu%20yakhe"
+        },
+        "expected_ids": [
+          "snapplify:7413928"
+        ]
+      },
+      {
+        "id": "shop-title-10",
+        "intent": "Find the exact free-priced Book Dash title in the public shop; exclude paid/unavailable results and retain native product identity",
+        "request": {
+          "method": "GET",
+          "url": "https://shop.snapplify.com/search?term=The%20Best%20Thing%20Ever"
+        },
+        "expected_ids": [
+          "snapplify:7413889"
+        ]
+      }
+    ],
+    "authentication": "Anonymous public search form; account/checkout not used",
+    "cost": "No request fee; returned items must have current price and gross both zero, and be available in this session",
+    "metadata_query_template": "GET /search?term=TITLE; optionally modifiers={\"publisher\":\"Book Dash\"} for short ambiguous titles; parse literal searchData and filter relevant available zero-price items",
+    "supported_modes": [
+      "Current public first-page title metadata search"
+    ],
+    "unsupported_modes": [
+      "Engage private/library catalog",
+      "Checkout or reading",
+      "Guaranteed cross-country availability",
+      "Complete catalog search beyond first page",
+      "Unrestricted metadata/content reuse"
+    ]
   },
   "licensing": "Metadata and per-item content rights require separate review.",
   "documentation": [
-    "https://shop.snapplify.com/"
+    "https://shop.snapplify.com/",
+    "https://help.snapplify.com/support/solutions/articles/80001139593-searching-for-digital-books-in-snapplify-shop"
   ],
   "limitations": [
-    "No full research qualification; source activation approval remains false.",
-    "Catalog entries and provider claims do not establish free, reusable or regionally available complete content."
+    "Public Shop first-page metadata only; Engage library, checkout and reading not verified.",
+    "Current price zero/availability do not prove worldwide entitlement, future availability or reuse rights.",
+    "Tested Book Dash content overlaps an existing connector; no new independent origin.",
+    "Provider references are not validated ISBNs; a garbled title and14digit reference remain recorded.",
+    "Broad short-title results require publisher facet and relevance filters; first-page absence is not catalog-wide absence."
   ],
   "evidence": [
     "runs/canonical-partners-onet-20261105/observations.jsonl",
-    "runs/technical-recovery-20261106f/observations.jsonl"
+    "runs/technical-recovery-20261106f/observations.jsonl",
+    "runs/technical-recovery-20261106i/observations.jsonl",
+    "runs/technical-recovery-20261106i/snapplify-contract.json"
   ],
-  "last_reviewed_at": "2026-11-06T07:47:34.099536+00:00",
-  "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
+  "last_reviewed_at": "2026-11-06T11:27:36.336773+00:00",
+  "next_action": "Maintain public title/publisher queries and strict price, availability and relevance filters. Preserve native product IDs; reader/checkout/territorial/full-catalog questions stay separate.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Canonical public catalog observed after independent policy review.",
+      "summary": "Current scoped public search verified; other dossier questions remain open.",
       "facts": {
         "next_action": "Defer general free-reading qualification. Find a documented free-item subset and supported metadata method; preserve price, territory and time-limited licenses. No purchases/accounts.",
-        "activation_approved": false
+        "activation_approved": false,
+        "operator": "Snapplify public shop; sampled publisher Book Dash",
+        "origin_deduplication": "Existing connector; same Book Dash content, not new independent origins",
+        "native_identity": "entity_id is native product ID; reference_code unvalidated"
       },
       "evidence": [
-        "runs/canonical-partners-onet-20261105/observations.jsonl"
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/snapplify-contract.json"
       ],
       "observation_refs": [
         {
@@ -87,13 +221,25 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Visible navigation/search links do not establish a supported machine-query contract.",
+      "summary": "Current scoped public search verified; other dossier questions remain open.",
       "facts": {
         "next_action": "Defer general free-reading qualification. Find a documented free-item subset and supported metadata method; preserve price, territory and time-limited licenses. No purchases/accounts.",
-        "activation_approved": false
+        "activation_approved": false,
+        "adapter": "snapplify-shop",
+        "endpoint": "https://shop.snapplify.com/search",
+        "request_template": "GET /search?term=TITLE; optionally modifiers={\"publisher\":\"Book Dash\"} for short ambiguous titles; parse literal searchData and filter relevant available zero-price items",
+        "unsupported_modes": [
+          "Engage private/library catalog",
+          "Checkout or reading",
+          "Guaranteed cross-country availability",
+          "Complete catalog search beyond first page",
+          "Unrestricted metadata/content reuse"
+        ]
       },
       "evidence": [
-        "runs/canonical-partners-onet-20261105/observations.jsonl"
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/snapplify-contract.json"
       ],
       "observation_refs": [
         {
@@ -134,7 +280,7 @@
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Public catalog page HTTP 200; complete reading and free-login/territory conditions untested.",
+      "summary": "Current scoped public search verified; other dossier questions remain open.",
       "facts": {
         "operator": "Snapplify branding; legal entity pending terms review",
         "sample_isbn": "9780796150356",
@@ -142,10 +288,14 @@
         "sample_format": "PDF",
         "reading_restriction_observed": "Unavailable in your Territory on multiple entries",
         "subscription_example": "Abantwana Benzani (1 year license), R 80.50",
-        "public_search_link_shape": "/search?modifiers={\"productgroups\":\"7730971\"} (observed browser link, not a supported API contract)"
+        "public_search_link_shape": "/search?modifiers={\"productgroups\":\"7730971\"} (observed browser link, not a supported API contract)",
+        "access_classification": "No checkout or reader request; current available zero-price metadata only",
+        "reader_access_is_queryability_gate": false
       },
       "evidence": [
-        "runs/canonical-partners-onet-20261105/observations.jsonl"
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/snapplify-contract.json"
       ],
       "observation_refs": [
         {
@@ -160,13 +310,18 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No current verified queries; categories are not result evidence.",
+      "summary": "Current scoped public search verified; other dossier questions remain open.",
       "facts": {
         "next_action": "Defer general free-reading qualification. Find a documented free-item subset and supported metadata method; preserve price, territory and time-limited licenses. No purchases/accounts.",
-        "activation_approved": false
+        "activation_approved": false,
+        "current_passing_queries": 10,
+        "failed_short_title_requests_preserved": 2,
+        "literal_title_price_availability_filters": true
       },
       "evidence": [
-        "runs/canonical-partners-onet-20261105/observations.jsonl"
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/snapplify-contract.json"
       ],
       "observation_refs": [
         {
@@ -181,13 +336,18 @@
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Robots policy checked for canonical host; API allowance and refresh unknown.",
+      "summary": "Current scoped public search verified; other dossier questions remain open.",
       "facts": {
         "next_action": "Defer general free-reading qualification. Find a documented free-item subset and supported metadata method; preserve price, territory and time-limited licenses. No purchases/accounts.",
-        "activation_approved": false
+        "activation_approved": false,
+        "page_size": 10,
+        "page_scope": "First page only",
+        "research_pause_seconds": 3
       },
       "evidence": [
-        "runs/canonical-partners-onet-20261105/observations.jsonl"
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/snapplify-contract.json"
       ],
       "observation_refs": [
         {
@@ -201,14 +361,18 @@
       ]
     },
     "decision_and_followup": {
-      "status": "complete",
-      "summary": "Defer general free-reading qualification. Find a documented free-item subset and supported metadata method; preserve price, territory and time-limited licenses. No purchases/accounts.",
+      "status": "partial",
+      "summary": "Current scoped public search verified; other dossier questions remain open.",
       "facts": {
-        "next_action": "Defer general free-reading qualification. Find a documented free-item subset and supported metadata method; preserve price, territory and time-limited licenses. No purchases/accounts.",
-        "activation_approved": false
+        "next_action": "Maintain public title/publisher queries and strict price, availability and relevance filters. Preserve native product IDs; reader/checkout/territorial/full-catalog questions stay separate.",
+        "activation_approved": false,
+        "state": "query-verified",
+        "production_qualification_complete": false
       },
       "evidence": [
-        "runs/canonical-partners-onet-20261105/observations.jsonl"
+        "runs/canonical-partners-onet-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106i/observations.jsonl",
+        "runs/technical-recovery-20261106i/snapplify-contract.json"
       ],
       "observation_refs": [
         {
@@ -235,13 +399,14 @@
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:47:34.099536+00:00",
-    "reason": "A documented free-content filter exists in Engage Library, but anonymous catalog/API access is not established.",
-    "attempt": "Read current operator instructions for Free=Yes and keyword/grade/subject filters.",
-    "result": "Free titles are explicitly documented; earlier uncertainty about existence is resolved. Search instructions operate inside the Engage dashboard; no account/session created and no current native-item query verified.",
-    "decision": "find-documented-anonymous-catalog-or-owner-provided-access",
+    "reviewed_at": "2026-11-06T11:27:36.336773+00:00",
+    "reason": "Earlier investigation was confined to Engage; official current help documents separate public Shop search",
+    "attempt": "Followed documented public search form; anonymous GET term returns native product metadata and prices. Implemented exact-title token, zero-price and availability filters.",
+    "result": "Ten distinct relevant available zero-price products verified. Short-title No!/Circles initially failed; documented publisher facet fixes both. Original failures preserved.",
+    "decision": "working-scoped-public-shop-metadata",
     "evidence": [
-      "runs/technical-recovery-20261106f/observations.jsonl"
+      "runs/technical-recovery-20261106i/observations.jsonl",
+      "runs/technical-recovery-20261106i/snapplify-contract.json"
     ]
   },
   "recovery_history": [
@@ -263,6 +428,35 @@
         ]
       },
       "next_action": "Defer general free-reading qualification. Find a documented free-item subset and supported metadata method; preserve price, territory and time-limited licenses. No purchases/accounts."
+    },
+    {
+      "superseded_at": "2026-11-06T11:24:32.076923+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T07:47:34.099536+00:00",
+        "reason": "A documented free-content filter exists in Engage Library, but anonymous catalog/API access is not established.",
+        "attempt": "Read current operator instructions for Free=Yes and keyword/grade/subject filters.",
+        "result": "Free titles are explicitly documented; earlier uncertainty about existence is resolved. Search instructions operate inside the Engage dashboard; no account/session created and no current native-item query verified.",
+        "decision": "find-documented-anonymous-catalog-or-owner-provided-access",
+        "evidence": [
+          "runs/technical-recovery-20261106f/observations.jsonl"
+        ]
+      },
+      "query_contract": {
+        "adapter": "unproven",
+        "endpoint": null,
+        "cases": [],
+        "authentication": "Unknown",
+        "request_shape_verified": false
+      },
+      "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach."
     }
-  ]
+  ],
+  "discovery_scope": {
+    "mode": "metadata-and-outbound-links",
+    "search_scope": "Public Shop first-page title/publisher metadata; zero-price available items; ten Book Dash examples",
+    "deduplication_overlap": "book-dash",
+    "reader_access_is_queryability_gate": false,
+    "no_full_content_downloads": true,
+    "no_personal_owner_data": true
+  }
 }

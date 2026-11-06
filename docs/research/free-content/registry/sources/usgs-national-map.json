@@ -71,10 +71,11 @@
     "runs/national-map-contract-20261105l/observations.jsonl",
     "runs/national-map-api-20261105m/observations.jsonl",
     "runs/technical-recovery-20261106d/observations.jsonl",
-    "runs/technical-recovery-20261106d/scout-observations.jsonl"
+    "runs/technical-recovery-20261106d/scout-observations.jsonl",
+    "runs/technical-recovery-20261106i/observations.jsonl"
   ],
-  "last_reviewed_at": "2026-11-06T07:28:04.358484+00:00",
-  "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+  "last_reviewed_at": "2026-11-06T11:29:05.734707+00:00",
+  "next_action": "Wait for permitted reachable public metadata service; do not change proxy routing, agent identity or use denial-bypassing mirrors.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "complete",
@@ -365,17 +366,32 @@
       "superseded_at": "2026-11-06T07:28:04.358484+00:00",
       "recovery": {},
       "next_action": "Defer TNMAccess requests until the host policy becomes readable or an explicitly authorized documented route is available; no bypass. Then inspect exact product filters/paging and map ID/version/CRS/scale/rights with ten bounded metadata examples. Continue independent sources now."
+    },
+    {
+      "superseded_at": "2026-11-06T11:29:05.734707+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+        "reason": "TNMAccess policy remains unavailable; the documented ScienceBase alternative explicitly disallows ChatGPT-User/OAI-SearchBot.",
+        "attempt": "Located official ScienceBase search docs and inspected complete ScienceBase robots policy.",
+        "result": "Documentation host policy timed out. ScienceBase robots200 contains AI-agent prohibitions plus conflicting wildcard groups; no catalog query sent.",
+        "decision": "wait-for-permitted-method",
+        "evidence": [
+          "runs/technical-recovery-20261106d/observations.jsonl",
+          "runs/technical-recovery-20261106d/scout-observations.jsonl"
+        ]
+      },
+      "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges."
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
-    "reason": "TNMAccess policy remains unavailable; the documented ScienceBase alternative explicitly disallows ChatGPT-User/OAI-SearchBot.",
-    "attempt": "Located official ScienceBase search docs and inspected complete ScienceBase robots policy.",
-    "result": "Documentation host policy timed out. ScienceBase robots200 contains AI-agent prohibitions plus conflicting wildcard groups; no catalog query sent.",
-    "decision": "wait-for-permitted-method",
+    "reviewed_at": "2026-11-06T11:29:05.734707+00:00",
+    "reason": "Documented basemap service policy403; separate published hydro service failed at environment proxy CONNECT403, so provider health for hydro is unknown.",
+    "attempt": "Read current official USGS map-service announcement; independently preflight named basemap and hydro metadata services.",
+    "result": "No map-service query sent. Prior ScienceBase agent restrictions remain untouched.",
+    "decision": "blocked-pending-specific-recovery-trigger",
     "evidence": [
-      "runs/technical-recovery-20261106d/observations.jsonl",
-      "runs/technical-recovery-20261106d/scout-observations.jsonl"
-    ]
+      "runs/technical-recovery-20261106i/observations.jsonl"
+    ],
+    "next_action": "Wait for permitted reachable public metadata service; do not change proxy routing, agent identity or use denial-bypassing mirrors."
   }
 }

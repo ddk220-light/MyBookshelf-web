@@ -1,0 +1,50 @@
+{
+  "observed_at": "2026-11-06T11:25:49.477302+00:00",
+  "failures": [
+    {
+      "case_id": "shop-title-2",
+      "observed_at": "2026-11-06T11:24:36.478342+00:00",
+      "query_summary": {
+        "absence_scope": "Filtered first page only; not proof of catalog-wide absence",
+        "excluded": {
+          "nonmatching_title": 6,
+          "not_available": 0,
+          "not_zero_price": 3
+        },
+        "filtered_count": 1,
+        "provider_page": 0,
+        "provider_page_size": 10,
+        "provider_returned": 10,
+        "provider_total": 7440
+      },
+      "request": {
+        "method": "GET",
+        "url": "https://shop.snapplify.com/search?term=No%21"
+      },
+      "cause": "Short title mixed with broad shop matches on first page; expected free native product absent. Apply the documented publisher facet rather than assume absence."
+    },
+    {
+      "case_id": "shop-title-6",
+      "observed_at": "2026-11-06T11:24:48.553191+00:00",
+      "query_summary": {
+        "absence_scope": "Filtered first page only; not proof of catalog-wide absence",
+        "excluded": {
+          "nonmatching_title": 0,
+          "not_available": 0,
+          "not_zero_price": 10
+        },
+        "filtered_count": 0,
+        "provider_page": 0,
+        "provider_page_size": 10,
+        "provider_returned": 10,
+        "provider_total": 145
+      },
+      "request": {
+        "method": "GET",
+        "url": "https://shop.snapplify.com/search?term=Circles"
+      },
+      "cause": "Short title mixed with broad shop matches on first page; expected free native product absent. Apply the documented publisher facet rather than assume absence."
+    }
+  ],
+  "documented_fix": "Official Shop help explicitly documents publisher filters; public searchData exposes publisher facet buckets. Existing failures remain in append-only examples."
+}
