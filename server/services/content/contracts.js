@@ -2,7 +2,7 @@ import { isIP } from 'node:net';
 import ISBN from 'isbn3';
 import {ALL_CONTENT_SOURCES,KNOWLEDGE_SOURCES} from './knowledgeSources.js';
 
-export const CONTENT_POLICY_REVISION = '2026-11-01.4';
+export const CONTENT_POLICY_REVISION = '2026-11-06.1';
 export const CONTENT_KINDS = ['book', 'chapter', 'article', 'preprint', 'thesis', 'report', 'learning_resource', 'audiobook', 'other'];
 export const SOURCE_STATUSES = ['ok', 'not_selected', 'disabled', 'unsupported', 'timeout', 'unavailable', 'throttled', 'quota_exhausted', 'queued'];
 const EPMC_SOURCES = new Set(['MED', 'PMC', 'PPR', 'AGR', 'CBA', 'HIR', 'CTX', 'ETH', 'PAT']);
@@ -26,6 +26,7 @@ export function parseContentKey(value) {
   const added = /^fcd:v1:([a-z-]+):([A-Za-z0-9_.-]{1,150})$/.exec(value);
   if(added&&KNOWLEDGE_SOURCES[added[1]]){
     const type=KNOWLEDGE_SOURCES[added[1]].adapter, id=added[2];
+    if((added[1]==='project-madurai'||type==='sugamya')&&/^[a-f0-9]{32}$/.test(id)||added[1]==='openstax'&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id))return {sourceId:added[1],recordId:id};
     if(type==='thoth'&&/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(id)||['gdl','librivox'].includes(type)&&/^[1-9]\d{0,11}$/.test(id)||['loc','bhl'].includes(type)&&/^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/.test(id)||type==='python'&&/^[a-f0-9]{32}$/.test(id))return {sourceId:added[1],recordId:id};
   }
   const pg = /^fcd:v1:gutenberg:([1-9]\d{0,8})$/.exec(value);

@@ -46,13 +46,13 @@ export function KnowledgeSearchPage(){
     <div className="content-search-header"><header className="page-heading"><h1>Search</h1></header>
       <form className="content-search-form" onSubmit={submit}><label className="visually-hidden" htmlFor="knowledge-query">Search all knowledge</label><input id="knowledge-query" type="search" maxLength={300} placeholder="Books, papers, audio and more" value={input} onChange={e=>setInput(e.target.value)}/><button type="submit" aria-label="Search"><SearchIcon/></button></form><SearchScopes scope="knowledge"/>
     </div>
-    <p className="knowledge-intro">One search across books, research, audiobooks and learning resources. Read or listen on the original source.</p>
+    <p className="knowledge-intro">Find books, research, audiobooks and learning resources, then open the original source. Reading conditions are shown with each result.</p>
     <div className="knowledge-filters">
       <label>Source<select value={sourceId} onChange={e=>change({source:e.target.value})}><option value="">All connected sources{sources?` (${connected.length})`:''}</option>{sources?.map(s=><option key={s.id} value={s.id} disabled={!s.enabled}>{s.name}{!s.enabled?' · not connected':''}</option>)}</select></label>
       <label>Type<select value={kind||''} onChange={e=>change({kind:e.target.value})}><option value="">All types</option>{kinds.map(k=><option key={k} value={k}>{kindLabel(k)}</option>)}</select></label>
       <label>Language<select value={language} onChange={e=>change({language:e.target.value})}><option value="">Source default</option><option value="en">English</option><option value="hi">हिन्दी</option><option value="ta">தமிழ்</option></select></label>
     </div>
-    <label className="knowledge-unclear"><input type="checkbox" checked={includeUnclear} onChange={e=>change({unclear:e.target.checked?'1':''})}/>Show items with unclear access, labelled</label>
+    <label className="knowledge-unclear"><input type="checkbox" checked={includeUnclear} onChange={e=>change({unclear:e.target.checked?'1':''})}/>Show other items with unclear access, labelled</label>
     {language&&<p className="content-coverage">Searching sources that support this language filter. Other sources may also hold material in this language.</p>}
     {catalogError?<div className="content-notice" role="alert"><p>The source list could not be loaded.</p><button onClick={()=>setCatalogRetry(v=>v+1)}>Try again</button></div>:!sources?<p role="status">Loading connected sources…</p>:!query?<>
       <div className="content-browse">{[['mathematics','Mathematics'],['agriculture','Agriculture'],['history','History'],['python','Programming']].map(([q,label])=><Link key={q} to={'/app/search?'+new URLSearchParams({scope:'knowledge',q})}><strong>{label}</strong><span>Explore across sources →</span></Link>)}</div>
@@ -63,7 +63,7 @@ export function KnowledgeSearchPage(){
       {displayedRows.map(row=><section className="knowledge-source" key={row.source.id} aria-labelledby={'knowledge-'+row.source.id}>
         <header className="knowledge-source-heading"><div><h2 id={'knowledge-'+row.source.id}>{row.source.name}</h2><p>{row.source.scope}</p></div><span>{row.busy?'Searching…':row.error?'Could not finish':`${row.page?.items.length||0} loaded`}</span></header>
         {row.source.mode==='snapshot'&&<p className="content-coverage">Limited catalog snapshot. Older reading links may need checking at the source.</p>}
-        {!includeUnclear&&Boolean(row.page?.hiddenUnclear)&&<p className="content-coverage">{row.page?.hiddenUnclear} additional items have unclear access. Turn on “Show items with unclear access” to see them.</p>}
+        {!includeUnclear&&Boolean(row.page?.hiddenUnclear)&&<p className="content-coverage">{row.page?.hiddenUnclear} additional items have unclear access. Turn on “Show other items with unclear access” to see them.</p>}
         {row.error&&<div className="content-notice"><p>{row.error.message}</p>{row.error.sources?.filter(s=>s.id===row.source.id).map(s=><p key={s.id}>{sourceStatus(s)}</p>)}<button className="text-button" onClick={()=>void more(row,true)}>{row.error.code==='CONTENT_CURSOR_EXPIRED'?'Start this source again':`Retry ${row.source.name}`}</button></div>}
         {row.page?.items.slice(0,row.visible).map(item=><ContentResult key={item.key} item={item} to={'/app/read/'+encodeURIComponent(item.key)} returnTo={returnTo}/>)}
         {!row.busy&&!row.error&&row.page&&!row.page.items.length&&<p className="content-coverage">{row.page.hiddenUnclear?'No verified free matches returned. Matches needing an access check are hidden.':'No matches returned for this query.'}</p>}
