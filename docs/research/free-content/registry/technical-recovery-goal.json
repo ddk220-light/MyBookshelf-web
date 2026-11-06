@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 20,
+  "remaining": 18,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -48,8 +48,8 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned HTML, so policy preflight stopped.",
-      "current_reason": "Public policy endpoint still times out; no catalog query sent.",
-      "next_action": "Wait for policy/service recovery; next timed retry no earlier than2026-11-06T16:00:00Z. Follow a new documented public metadata route if independently available.",
+      "current_reason": "Officially documented Penn State metadata-export alternative reaches a public dataset page but file access returns a traffic-control/Turnstile challenge. Listed export is May2024 with updates explicitly paused; current primary catalog remains unavailable.",
+      "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -68,6 +68,19 @@
           "retry_trigger": "Published service recovery or a later paced policy check; no repeat before2026-11-06T16:00:00Z without a new recovery signal.",
           "evidence": [
             "runs/technical-recovery-20261106g/followups.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:48:39.194597+00:00",
+          "reason": "Officially documented Penn State metadata-export alternative reaches a public dataset page but file access returns a traffic-control/Turnstile challenge. Listed export is May2024 with updates explicitly paused; current primary catalog remains unavailable.",
+          "attempt": "Follow published metadata DOI to Penn State, review dataset license/version/files and request the published small README view route.",
+          "result": "Landing page and native file identities captured; README response is bot-challenge HTML, not metadata. No MARC/book files downloaded. Historical direct-route failures retained.",
+          "decision": "wait_for_permitted_service_recovery",
+          "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
+          "evidence": [
+            "runs/technical-recovery-20261106h/observations.jsonl",
+            "runs/technical-recovery-20261106h/psu-file-inventory.json",
+            "runs/technical-recovery-20261106h/psu-export-access-review.json"
           ]
         }
       ]
@@ -194,8 +207,8 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Robots/app-shell responses did not expose a supported search contract.",
-      "current_reason": "Current robots endpoint still returns HTML rather than a usable policy.",
-      "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
+      "current_reason": "The policy URL resolves to a Next.js /[loginPage] app shell; no usable policy or anonymous query contract is established.",
+      "next_action": "Wait for a documented anonymous catalog/export or usable policy; free reader login remains allowed in principle, but no account is created.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -207,6 +220,17 @@
           "evidence": [
             "runs/technical-recovery-20261106f/followups.jsonl",
             "analysis/discovery-searches.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:50:45.872381+00:00",
+          "reason": "The policy URL resolves to a Next.js /[loginPage] app shell; no usable policy or anonymous query contract is established.",
+          "attempt": "Inspect the full small HTML policy response instead of relying only on its Content-Type.",
+          "result": "Canonical/page metadata explicitly identifies a login-page route. No public search request, hidden API or login was attempted.",
+          "decision": "wait_for_documented_recovery",
+          "next_action": "Wait for a documented anonymous catalog/export or usable policy; free reader login remains allowed in principle, but no account is created.",
+          "evidence": [
+            "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
           ]
         }
       ]
@@ -234,10 +258,10 @@
       "id": "ncbi-bookshelf",
       "name": "NCBI Bookshelf",
       "group": "G01",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Historical ESearch/ESummary queries returned IDs; reader verification was the old blocker.",
-      "current_reason": "Eutilities route was disallowed; alternative FTP metadata file is also robots-disallowed.",
-      "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+      "current_reason": "",
+      "next_action": "Maintain this explicitly scoped title-search route. Preserve direct NCBI restrictions and distinguish chapter/entry IDs from parent books. Full catalog, reading and rights completeness remain separate research questions.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -250,6 +274,17 @@
             "runs/technical-recovery-20261106d/observations.jsonl",
             "runs/technical-recovery-20261106d/scout-observations.jsonl"
           ]
+        },
+        {
+          "reviewed_at": "2026-11-06T11:02:16.816062+00:00",
+          "reason": "Direct E-utilities/FTP metadata routes restricted; independently published Europe PMC API indexes native Bookshelf IDs",
+          "attempt": "Confirmed current API fields HAS_BOOK, OPEN_ACCESS, BOOK_ID and TITLE; bounded seed returned real NBK and MED records with bookid. Testing ten title queries.",
+          "result": "Ten distinct native-NBK title queries pass with relevant records. No direct NCBI or full-text request. Books and chapters remain distinguishable.",
+          "decision": "working-scoped-europe-pmc-indexed-bookshelf-metadata",
+          "evidence": [
+            "runs/technical-recovery-20261106h/observations.jsonl",
+            "runs/technical-recovery-20261106h/bookshelf-epmc-contract.json"
+          ]
         }
       ]
     },
@@ -259,8 +294,8 @@
       "group": "G01",
       "status": "blocked_or_failed",
       "original_reason": "Export-host policy redirects to login; repository policy timed out twice.",
-      "current_reason": "Library policy times out; the published export host redirects its policy request to login. Old REST documentation URL now404.",
-      "next_action": "Use current https://oapen.org/librarians/metadata instead of retired REST article. Retry library/memo policies only after a recovery signal; official CSV and OAI are viable documented alternatives when accessible.",
+      "current_reason": "Officially documented Penn State metadata-export alternative reaches a public dataset page but file access returns a traffic-control/Turnstile challenge.",
+      "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -272,6 +307,20 @@
           "evidence": [
             "runs/technical-recovery-20261106e/observations.jsonl",
             "runs/technical-recovery-20261106e/followups.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:48:39.194597+00:00",
+          "reason": "Officially documented Penn State metadata-export alternative reaches a public dataset page but file access returns a traffic-control/Turnstile challenge.",
+          "attempt": "Follow published metadata DOI to Penn State, review dataset license/version/files and request the published small README view route.",
+          "result": "Landing page and native file identities captured; README response is bot-challenge HTML, not metadata. No MARC/book files downloaded. Historical direct-route failures retained.",
+          "decision": "wait_for_permitted_service_recovery",
+          "next_action": "Wait for a provider-permitted export method or owner-supplied metadata file obtained through approved access. Do not bypass the file challenge; any DOAB2024 snapshot must remain dated/historical.",
+          "evidence": [
+            "runs/technical-recovery-20261106h/observations.jsonl",
+            "runs/technical-recovery-20261106h/psu-file-inventory.json",
+            "runs/technical-recovery-20261106h/psu-export-access-review.json",
+            "runs/technical-recovery-20261106h/oapen-official-export-contract.json"
           ]
         }
       ]
@@ -475,10 +524,10 @@
       "id": "cert-in",
       "name": "CERT-In guidelines",
       "group": "G03",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Robots returned a small HTML page.",
-      "current_reason": "CERT-In policy endpoint still returns HTML, not a usable robots policy.",
-      "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+      "current_reason": "",
+      "next_action": "Maintain public booklet metadata search with bounded refresh and strict policy checks. Review guidelines/advisory catalogs separately; no production activation or full-document collection.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -489,6 +538,22 @@
           "decision": "wait-for-valid-policy",
           "evidence": [
             "runs/technical-recovery-20261106e/observations.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:54:24.859098+00:00",
+          "reason": "Generic policy check rejected a plain missing-URL page as an access block. Its only changing field is a decimal tracking value; no exclusion/challenge present.",
+          "attempt": "Review two policy bodies, narrowly recognize the identical missing-page template while preserving directives/challenge checks, inspect public booklets and published language labels, then run12 distinct title queries.",
+          "result": "All12 topic-group queries pass over44 native booklet links; empty control returns0. One strict-hash preflight safely stopped on the changing tracking value and remains saved. No PDF/booklet bodies fetched.",
+          "decision": "working_with_public_booklet_metadata_scope",
+          "evidence": [
+            "runs/technical-recovery-20261106h/certin-policy-review.json",
+            "runs/technical-recovery-20261106h/certin-soft404-policy.html",
+            "runs/technical-recovery-20261106h/certin-soft404-policy-second.html",
+            "runs/technical-recovery-20261106h/observations.jsonl",
+            "runs/technical-recovery-20261106h/certin-booklet-metadata.json",
+            "runs/technical-recovery-20261106h/certin-negative-control.json",
+            "examples/cert-in.jsonl"
           ]
         }
       ]
@@ -580,8 +645,8 @@
       "group": "G03",
       "status": "blocked_or_failed",
       "original_reason": "Robots request timed out.",
-      "current_reason": "Robots redirects302 to an HTTP legacy404 page; no usable policy returned.",
-      "next_action": "Find a current official policy/catalog export; do not treat a redirect to an error page as permission.",
+      "current_reason": "HTTPS policy still redirects to legacy HTTP404 route; exact redirect target now tested and timed out, so no policy or catalog access established.",
+      "next_action": "Look for a documented current central NHM metadata export or provider correction to the policy redirect; avoid retrying the same broken route each hour.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -594,6 +659,17 @@
             "runs/technical-recovery-20261106c/observations.jsonl",
             "runs/technical-recovery-20261106c/book-attempts.jsonl"
           ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:49:42.393860+00:00",
+          "reason": "HTTPS policy still redirects to legacy HTTP404 route; exact redirect target now tested and timed out, so no policy or catalog access established.",
+          "attempt": "Inspect redirect semantics rather than treating the302 alone as a denial; request exact published policy redirect with20second limit.",
+          "result": "302 then timeout. No catalog/document query sent.",
+          "decision": "wait_for_current_policy_or_published_metadata_export",
+          "evidence": [
+            "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
+          ],
+          "next_action": "Look for a documented current central NHM metadata export or provider correction to the policy redirect; avoid retrying the same broken route each hour."
         }
       ]
     },
@@ -788,8 +864,8 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 503.",
-      "current_reason": "Robots still returns503; target not requested.",
-      "next_action": "Wait for service/policy recovery or a documented permitted publication catalog.",
+      "current_reason": "Policy service still returns503 with upstream connection timeout after more than4hours backoff.",
+      "next_action": "Wait for provider recovery; next timed policy check no earlier than16:00UTC, then inspect public planning-map metadata only.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -801,6 +877,17 @@
           "evidence": [
             "runs/technical-recovery-20261106c/observations.jsonl",
             "runs/technical-recovery-20261106c/book-attempts.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:50:45.872381+00:00",
+          "reason": "Policy service still returns503 with upstream connection timeout after more than4hours backoff.",
+          "attempt": "One bounded policy check after the prior06:46 failure.",
+          "result": "503 body identifies upstream connection timeout; no planning catalog request sent.",
+          "decision": "wait_for_documented_recovery",
+          "next_action": "Wait for provider recovery; next timed policy check no earlier than16:00UTC, then inspect public planning-map metadata only.",
+          "evidence": [
+            "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
           ]
         }
       ]
@@ -919,8 +1006,8 @@
       "group": "G04",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 503; no data was queried.",
-      "current_reason": "The newly documented integrated land-record service includes ownership data; no separately queryable map-only catalog is verified.",
-      "next_action": "Find an expressly documented map-sheet/catalog-only interface that excludes owner information; do not query private survey/transfer records.",
+      "current_reason": "Separate map-only Survey and Settlement service identified, but tnlandsurvey.tn.gov.in policy returns503. Integrated land-record routes still risk owner data.",
+      "next_action": "Retry separate map-service policy after recovery, no timed retry before16:00UTC. If available, inspect district/village map-product metadata only, never personal-owner fields.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -931,6 +1018,18 @@
           "decision": "wait-for-map-only-metadata-route",
           "evidence": [
             "runs/technical-recovery-20261106f/tamil-nadu-scope-review.json"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T10:48:39.194597+00:00",
+          "reason": "Separate map-only Survey and Settlement service identified, but tnlandsurvey.tn.gov.in policy returns503. Integrated land-record routes still risk owner data.",
+          "attempt": "Search official map-product services and inspect the separate Survey and Settlement homepage policy; no parcel or owner query.",
+          "result": "Policy503; map interface withheld. New map-only lead remains unverified, no personal-owner data collected.",
+          "decision": "wait_for_permitted_service_recovery",
+          "next_action": "Retry separate map-service policy after recovery, no timed retry before16:00UTC. If available, inspect district/village map-product metadata only, never personal-owner fields.",
+          "evidence": [
+            "runs/technical-recovery-20261106h/discovery-searches.jsonl",
+            "runs/technical-recovery-20261106h/observations.jsonl"
           ]
         }
       ]
@@ -1136,8 +1235,8 @@
       "group": "G06",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 403, leaving no catalog contract.",
-      "current_reason": "Robots still returns403; no resource-collection request sent.",
-      "next_action": "Wait for a documented permitted export or meaningful policy/access recovery.",
+      "current_reason": "Direct LINCS policy403 remains unresolved; no current documented resource export established.",
+      "next_action": "Review ERIC primary metadata contract and explicit LINCS source/link mappings; only test a scoped alternative if provenance can be established. Do not treat all adult-literacy publications as LINCS records.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1149,6 +1248,16 @@
           "evidence": [
             "runs/technical-recovery-20261106b/observations.jsonl",
             "runs/technical-recovery-20261106b/followups.jsonl"
+          ]
+        },
+        {
+          "reviewed_at": "2026-11-06T11:01:33.561172+00:00",
+          "reason": "Direct LINCS policy403 remains unresolved; no current documented resource export established.",
+          "attempt": "Searched primary documentation for public API/RSS and alternative ERIC metadata indexing; ERIC documents source/institution/title fields and a historical NIFL record.",
+          "result": "No proven current LINCS-specific filter or native LINCS resource mapping. Search snippets are leads, not passing current queries. Did not query restricted LINCS or infer catalog coverage from related adult-literacy material.",
+          "decision": "research_documented_ERIC_subset_if_explicit_LINCS_mapping_exists",
+          "evidence": [
+            "runs/technical-recovery-20261106h/lincs-eric-discovery.json"
           ]
         }
       ]
@@ -1174,8 +1283,8 @@
     }
   ],
   "progress": {
-    "working": 24,
-    "blocked_or_failed": 20,
+    "working": 26,
+    "blocked_or_failed": 18,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1186,21 +1295,23 @@
     "state": "checkpointed-continuing",
     "run_id": "technical-recovery-20261106h",
     "started_at": "2026-11-06T10:27:27.745190+00:00",
-    "heartbeat_at": "2026-11-06T10:45:16.315178+00:00",
+    "heartbeat_at": "2026-11-06T11:03:12.894234+00:00",
     "collector_active": false,
     "active_detached_worker": false,
     "scope": "Research-only supported query recovery",
-    "checkpointed_at": "2026-11-06T10:45:16.315178+00:00"
+    "checkpointed_at": "2026-11-06T11:03:12.894234+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 24,
-  "updated_at": "2026-11-06T10:45:16.315178+00:00",
+  "working": 26,
+  "updated_at": "2026-11-06T11:03:12.894234+00:00",
   "latest_run": {
     "run_ids": [
       "technical-recovery-20261106h"
     ],
     "new_working": [
+      "ncbi-bookshelf",
+      "cert-in",
       "indcat",
       "abhilekh-patal"
     ],

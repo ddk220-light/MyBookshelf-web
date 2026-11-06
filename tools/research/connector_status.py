@@ -15,6 +15,8 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'bookshelf-epmc': 'Europe PMC-indexed Bookshelf book/chapter metadata with native NBK IDs, open-access flag and title queries; direct NCBI queries/readers remain unverified/restricted',
+    'certin-booklets': 'Local title-token/language-label search over44 public cyber-safety booklet links covering12 topic groups; no PDF/full-text/advisory searches or reader verification',
     'nai-reference-table': 'Local title-token/native RT-ID search over78 published NAI reference tools and finding aids;9 ambiguous rows excluded, full Abhilekh archival-file catalog and reader access still blocked',
     'indcat-sru': 'Live quoted CQL title search, first2 provider records filtered to all literal title tokens; native bibliographic IDs, no catalog-wide absence or free-reading guarantee',
     'diksha-featured': 'Local topic/link-language search over10 reviewed public quiz links for5 featured topics; main Library/course search remains login-gated,4 ambiguous links excluded, no content access tested',

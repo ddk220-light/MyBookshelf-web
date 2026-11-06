@@ -43,7 +43,8 @@
     "runs/partner-leads-20261105/observations.jsonl",
     "runs/canonical-partners-onet-20261105/observations.jsonl",
     "runs/technical-recovery-20261106f/followups.jsonl",
-    "analysis/discovery-searches.jsonl"
+    "analysis/discovery-searches.jsonl",
+    "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
   ],
   "analysis_refs": [
     {
@@ -61,10 +62,18 @@
       "heading": "Technical failure or unfinished research — 44",
       "text": "| [Let’s Read](https://www.letsreadasia.org/) | Robots/app-shell responses did not expose a supported search contract. | Inspect the documented public app/catalog interface and valid policy; no API signup proved. Owner action: engineering/research first; no owner signup required yet. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "6abe24c4461c46df74d693bcdbfbf95db3d25ef67aadfa403616d8da3861fe5a",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106H.md",
+      "line": 16,
+      "heading": "Blocker investigation",
+      "text": "- **FDIC Money Smart:** official documentation points to a separate catalog service. Its policy endpoint returned503, so no catalog/product query was sent. Wait for recovery; next timed check no earlier than16:00UTC without a new service signal.\n- **LINCS:** API/RSS documentation searches did not establish a supported new interface. Unrelated third-party feeds, staging sites and host switching are not adopted as alternatives. CERT-In was subsequently recovered through its public metadata list after manual policy diagnosis.\n- **Tamil Nadu land records:** the separate map-only Survey and Settlement service has policy503. No map/parcel/owner query was sent; wait until16:00UTC or a concrete recovery signal.\n- **DOAB/OAPEN:** the officially documented Penn State export dataset pages are accessible, but their file routes return a traffic-control/Turnstile challenge. HTTP200 is not a metadata success. No files or signed-token alternatives were fetched after recognizing the challenge. OAPEN lists an October2026 snapshot; DOAB still lists May2024 with updates paused. A provider-permitted or owner-supplied export could unblock local metadata search.\n- **NHM:** the exact published policy redirect timed out; no catalog request. **CMDA:** another policy503 after more than4hours backoff, with upstream connection timeout. **Let’s Read:** the response identifies a login-page app shell; no hidden API or login attempted.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
-  "last_reviewed_at": "2026-11-06T07:47:34.099536+00:00",
-  "next_action": "Revisit on the stated policy recovery or a documented permitted anonymous query/export route; no blind retries, account creation or outreach.",
+  "last_reviewed_at": "2026-11-06T10:50:45.872381+00:00",
+  "next_action": "Wait for a documented anonymous catalog/export or usable policy; free reader login remains allowed in principle, but no account is created.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -454,17 +463,31 @@
       "superseded_at": "2026-11-06T07:47:34.099536+00:00",
       "recovery": {},
       "next_action": "Keep deferred. Revisit after a published supported API/export, valid policy/canonical route or documented recovery; then establish identity, rights, reader conditions and ten current native-ID queries."
+    },
+    {
+      "superseded_at": "2026-11-06T10:50:45.872381+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T07:47:34.099536+00:00",
+        "reason": "Current robots endpoint still returns HTML rather than a usable policy.",
+        "attempt": "Located a published indexed language-search permalink; checked its canonical host policy before requesting books.",
+        "result": "Search route remains unrequested due policyHTML. No guessed hidden API or alternate mirror used.",
+        "decision": "wait-for-valid-policy",
+        "evidence": [
+          "runs/technical-recovery-20261106f/followups.jsonl",
+          "analysis/discovery-searches.jsonl"
+        ]
+      }
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:47:34.099536+00:00",
-    "reason": "Current robots endpoint still returns HTML rather than a usable policy.",
-    "attempt": "Located a published indexed language-search permalink; checked its canonical host policy before requesting books.",
-    "result": "Search route remains unrequested due policyHTML. No guessed hidden API or alternate mirror used.",
-    "decision": "wait-for-valid-policy",
+    "reviewed_at": "2026-11-06T10:50:45.872381+00:00",
+    "reason": "The policy URL resolves to a Next.js /[loginPage] app shell; no usable policy or anonymous query contract is established.",
+    "attempt": "Inspect the full small HTML policy response instead of relying only on its Content-Type.",
+    "result": "Canonical/page metadata explicitly identifies a login-page route. No public search request, hidden API or login was attempted.",
+    "decision": "wait_for_documented_recovery",
+    "next_action": "Wait for a documented anonymous catalog/export or usable policy; free reader login remains allowed in principle, but no account is created.",
     "evidence": [
-      "runs/technical-recovery-20261106f/followups.jsonl",
-      "analysis/discovery-searches.jsonl"
+      "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
     ]
   }
 }

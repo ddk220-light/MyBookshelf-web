@@ -45,18 +45,19 @@
   "evidence": [
     "runs/coverage-gap-docs-20261105p/observations.jsonl",
     "runs/technical-recovery-20261106c/observations.jsonl",
-    "runs/technical-recovery-20261106c/book-attempts.jsonl"
+    "runs/technical-recovery-20261106c/book-attempts.jsonl",
+    "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
   ],
   "limitations": [
     "Saved robots HTTP503 prevented target request. No publication or dataset content was retrieved.",
     "One municipal planning publication candidate; master-plan volumes, sheets, amendments, zones and ward layers are records/views, not independent origins."
   ],
-  "last_reviewed_at": "2026-11-06T06:46:26.573906+00:00",
+  "last_reviewed_at": "2026-11-06T10:50:45.872381+00:00",
   "evidence_observation_dates": [
     "2026-11-05T08:33:13.773411+00:00"
   ],
   "fresh_query_verification": false,
-  "next_action": "Wait for service/policy recovery or a documented permitted publication catalog.",
+  "next_action": "Wait for provider recovery; next timed policy check no earlier than16:00UTC, then inspect public planning-map metadata only.",
   "analysis_refs": [
     {
       "document_id": "a748045284521afb685c7f2ec4f7f0e47ad40f6fb98484d62c4c61c26dab3b75",
@@ -72,6 +73,14 @@
       "line": 21,
       "heading": "Further recovery and backoff checks",
       "text": "Seven unresolved checks this run: IMO explicitly denies automated search/record routes; LINCS policy403; India Code policy timeout; NHM policy redirects to a legacy HTTP404 page; CMDA policy503; Chicago dataset503; Gutendex still times out after45seconds. All failures and useful revisit triggers are saved. The fixed original44 now have10Working and34remaining. Four recoveries and32new positive examples this run;23 original items have not yet been revisited in this recovery pass. No production changes.",
+      "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "6abe24c4461c46df74d693bcdbfbf95db3d25ef67aadfa403616d8da3861fe5a",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106H.md",
+      "line": 16,
+      "heading": "Blocker investigation",
+      "text": "- **FDIC Money Smart:** official documentation points to a separate catalog service. Its policy endpoint returned503, so no catalog/product query was sent. Wait for recovery; next timed check no earlier than16:00UTC without a new service signal.\n- **LINCS:** API/RSS documentation searches did not establish a supported new interface. Unrelated third-party feeds, staging sites and host switching are not adopted as alternatives. CERT-In was subsequently recovered through its public metadata list after manual policy diagnosis.\n- **Tamil Nadu land records:** the separate map-only Survey and Settlement service has policy503. No map/parcel/owner query was sent; wait until16:00UTC or a concrete recovery signal.\n- **DOAB/OAPEN:** the officially documented Penn State export dataset pages are accessible, but their file routes return a traffic-control/Turnstile challenge. HTTP200 is not a metadata success. No files or signed-token alternatives were fetched after recognizing the challenge. OAPEN lists an October2026 snapshot; DOAB still lists May2024 with updates paused. A provider-permitted or owner-supplied export could unblock local metadata search.\n- **NHM:** the exact published policy redirect timed out; no catalog request. **CMDA:** another policy503 after more than4hours backoff, with upstream connection timeout. **Let’s Read:** the response identifies a login-page app shell; no hidden API or login attempted.",
       "status": "historical-context-needs-reconciliation"
     }
   ],
@@ -391,21 +400,35 @@
       "superseded_at": "2026-11-06T06:46:26.573902+00:00",
       "recovery": null,
       "next_action": "Published usable policy/service recovery and current official publication/data catalog contract. Test plan edition, amendments, status, geographic coverage and metadata-only lookup; no owner/applicant records."
+    },
+    {
+      "superseded_at": "2026-11-06T10:50:45.872381+00:00",
+      "recovery": {
+        "status": "blocked_or_failed",
+        "reason": "Robots still returns503; target not requested.",
+        "attempt": "One retry after overnight backoff.",
+        "result": "Still blocked; no current passing query.",
+        "decision": "wait_for_documented_recovery_or_alternative",
+        "next_action": "Wait for service/policy recovery or a documented permitted publication catalog.",
+        "owner_action_required": false,
+        "evidence_reviewed_at": "2026-11-06T06:46:26.573905+00:00",
+        "fresh_query_verification": false,
+        "evidence": [
+          "runs/technical-recovery-20261106c/observations.jsonl",
+          "runs/technical-recovery-20261106c/book-attempts.jsonl"
+        ]
+      }
     }
   ],
   "recovery": {
-    "status": "blocked_or_failed",
-    "reason": "Robots still returns503; target not requested.",
-    "attempt": "One retry after overnight backoff.",
-    "result": "Still blocked; no current passing query.",
-    "decision": "wait_for_documented_recovery_or_alternative",
-    "next_action": "Wait for service/policy recovery or a documented permitted publication catalog.",
-    "owner_action_required": false,
-    "evidence_reviewed_at": "2026-11-06T06:46:26.573905+00:00",
-    "fresh_query_verification": false,
+    "reviewed_at": "2026-11-06T10:50:45.872381+00:00",
+    "reason": "Policy service still returns503 with upstream connection timeout after more than4hours backoff.",
+    "attempt": "One bounded policy check after the prior06:46 failure.",
+    "result": "503 body identifies upstream connection timeout; no planning catalog request sent.",
+    "decision": "wait_for_documented_recovery",
+    "next_action": "Wait for provider recovery; next timed policy check no earlier than16:00UTC, then inspect public planning-map metadata only.",
     "evidence": [
-      "runs/technical-recovery-20261106c/observations.jsonl",
-      "runs/technical-recovery-20261106c/book-attempts.jsonl"
+      "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
     ]
   }
 }

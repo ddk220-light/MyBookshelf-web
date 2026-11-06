@@ -9,7 +9,7 @@
     "C13",
     "I18"
   ],
-  "state": "deferred",
+  "state": "query-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "record_kind": "catalog-candidate",
@@ -29,27 +29,228 @@
     "Official cybersecurity guidance listing provides native CISG identifiers and dates, including modern AI/security guidance alongside much older system-specific guidance."
   ],
   "query": {
-    "adapter": "unproven",
-    "endpoint": null,
-    "cases": [],
-    "authentication": "Unknown; no query executed",
-    "request_shape_verified": false
+    "adapter": "certin-booklets",
+    "endpoint": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+    "authentication": "None for public metadata listing; no booklet body downloaded",
+    "supported_modes": [
+      "Local whole-title-token AND search",
+      "Filter by explicit published language label"
+    ],
+    "unsupported_modes": [
+      "Live advisory/vulnerability catalog search",
+      "PDF full-text search",
+      "Translation/content-language/reading verification"
+    ],
+    "search_scope": "Local title-token search over44 published booklet links, optional explicit language label. No full PDF/advisory search.",
+    "cases": [
+      {
+        "id": "booklet-1",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/PDF/AI_booklet.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "AI booklet",
+            "language": "English"
+          }
+        }
+      },
+      {
+        "id": "booklet-2",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/PDF/Cyber_Smart_Classroom_Booklet.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "Cyber Smart Classroom Booklet",
+            "language": "English"
+          }
+        }
+      },
+      {
+        "id": "booklet-3",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/PDF/Dos_and_Donts.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "Do's and Dont's",
+            "language": null
+          }
+        }
+      },
+      {
+        "id": "booklet-4",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/Mahila_Raksha_Booklet26.jsp"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "\"Mahila Raksha\" booklet to promote cyber safety and awareness for women",
+            "language": null
+          }
+        }
+      },
+      {
+        "id": "booklet-5",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/SID_Booklet26.jsp"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "Safer Internet Day Awareness Booklet 2026",
+            "language": null
+          }
+        }
+      },
+      {
+        "id": "booklet-6",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/PDF/Cyber_Smart_Kids_Suraksha_Guide.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "Suraksha Guide for Cyber Smart Kids",
+            "language": null
+          }
+        }
+      },
+      {
+        "id": "booklet-7",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/PDF/Sr_Citizen_Cyber_Security_booklet.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "Awareness booklet for Senior Citizens",
+            "language": null
+          }
+        }
+      },
+      {
+        "id": "booklet-8",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/PDF/Mahila_Suraksha_Booklet25.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "Cyber Security Handbook for Mahila Suraksha",
+            "language": null
+          }
+        }
+      },
+      {
+        "id": "booklet-9",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/PDF/CSH_Booklet25.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "Digital Safety Compass Handbook",
+            "language": null
+          }
+        }
+      },
+      {
+        "id": "booklet-10",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/PDF/CSH_Booklet.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "Cyber Security Handbook",
+            "language": null
+          }
+        }
+      },
+      {
+        "id": "booklet-11",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/PDF/CSA_Booklet.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "Cyber Security Awareness Booklet",
+            "language": null
+          }
+        }
+      },
+      {
+        "id": "booklet-12",
+        "intent": "Find a public cyber-safety booklet by its visible title and explicit language label",
+        "expected_ids": [
+          "https://www.cert-in.org.in/PDF/ISA_Booklet.pdf"
+        ],
+        "request": {
+          "method": "GET",
+          "url": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+          "local_query": {
+            "title": "Internet Safety Awareness Booklet",
+            "language": null
+          }
+        }
+      }
+    ],
+    "request_shape_verified": true
   },
   "documentation": [
-    "https://www.cert-in.org.in/s2cMainServlet?pageid=GUIDLNVIEW01"
+    "https://www.cert-in.org.in/s2cMainServlet?pageid=GUIDLNVIEW01",
+    "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+    "https://www.cert-in.org.in/s2cMainServlet?pageid=WEBSITEPOLIC"
   ],
   "licensing": "Metadata and content rights require separate evidence; no blanket reuse license established.",
   "limitations": [
-    "No current verified item-query examples. Catalog identity and documentation do not establish qualification.",
-    "Reading availability, jurisdiction, language, native version identity and machine-use limits remain open."
+    "Working for title/language-label metadata search over44 public booklet links covering12 topic groups; this is not advisory/vulnerability search.",
+    "Native link identity and explicitly linked language label retained. Do not infer edition, actual document language, free reader success or reuse rights from a link.",
+    "Only the exact reviewed soft404 policy template permits this path; changed pages, directives, login/challenges and access denials still block. No PDFs downloaded."
   ],
   "evidence": [
     "runs/source-evidence-20261105/observations.jsonl",
     "runs/industry-native-catalogs-20261105dv/observations.jsonl",
-    "runs/technical-recovery-20261106e/observations.jsonl"
+    "runs/technical-recovery-20261106e/observations.jsonl",
+    "runs/technical-recovery-20261106h/certin-policy-review.json",
+    "runs/technical-recovery-20261106h/certin-soft404-policy.html",
+    "runs/technical-recovery-20261106h/certin-soft404-policy-second.html",
+    "runs/technical-recovery-20261106h/observations.jsonl",
+    "runs/technical-recovery-20261106h/certin-booklet-metadata.json",
+    "runs/technical-recovery-20261106h/certin-negative-control.json",
+    "examples/cert-in.jsonl"
   ],
-  "last_reviewed_at": "2026-11-06T07:31:01.938205+00:00",
-  "next_action": "Revisit on documented permitted search/export or observed service/policy recovery. Do not repeat denied requests, use demo hosts to bypass the live service, or create accounts.",
+  "last_reviewed_at": "2026-11-06T10:54:24.859098+00:00",
+  "next_action": "Maintain public booklet metadata search with bounded refresh and strict policy checks. Review guidelines/advisory catalogs separately; no production activation or full-document collection.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
@@ -110,16 +311,22 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Documented catalog capabilities retained; exact executed machine contract remains open.",
+      "summary": "Local title-token search over44 published booklet links, optional explicit language label. No full PDF/advisory search.",
       "facts": {
-        "adapter": "unproven",
-        "endpoint": null,
-        "cases": [],
-        "authentication": "Unknown; no query executed",
-        "request_shape_verified": false
+        "endpoint": "https://www.cert-in.org.in/AwarenessBooklets.jsp",
+        "method": "GET once then local title-token AND and explicit language-label filter",
+        "authentication": "None",
+        "native_identity": "Exact provider-published booklet/PDF link"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106h/certin-policy-review.json",
+        "runs/technical-recovery-20261106h/certin-soft404-policy.html",
+        "runs/technical-recovery-20261106h/certin-soft404-policy-second.html",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/certin-booklet-metadata.json",
+        "runs/technical-recovery-20261106h/certin-negative-control.json",
+        "examples/cert-in.jsonl"
       ],
       "observation_refs": [
         {
@@ -129,7 +336,7 @@
         }
       ],
       "open_questions": [
-        "Obtain supported public request shapes and verify ten distinct native-ID examples plus paging/empty/error behavior."
+        "Advisory/vulnerability and full-text search not verified."
       ]
     },
     "rights_and_cost": {
@@ -161,7 +368,14 @@
         "scope_caution": "No blanket reading-access claim"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106h/certin-policy-review.json",
+        "runs/technical-recovery-20261106h/certin-soft404-policy.html",
+        "runs/technical-recovery-20261106h/certin-soft404-policy-second.html",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/certin-booklet-metadata.json",
+        "runs/technical-recovery-20261106h/certin-negative-control.json",
+        "examples/cert-in.jsonl"
       ],
       "observation_refs": [
         {
@@ -176,19 +390,22 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "No current query assertions; observed listing identities are not passing examples.",
+      "summary": "All12 booklet topic groups have current relevant title-query examples; local unknown-term control returns0.",
       "facts": {
-        "positive_examples": 0,
-        "native_identity_samples": [
-          "CISG-2026-04 — 2026-11-04 — AI security auditing",
-          "CISG-2026-03 — 2026-06-10 — AI-accelerated vulnerability protection",
-          "CISG-2025-03 — 2025-09-01 — MSME controls",
-          "CISG-2024-02 — 2024-10-03 — SBOM/QBOM/CBOM/AIBOM/HBOM version 2.0"
-        ],
-        "version_caution": "Historical IIS/Red Hat/Windows guidance from 2003–2011 must not be ranked as current security recommendations. Preserve guideline code, revision, date and obsolete-product scope."
+        "passing_current_examples": 12,
+        "listed_native_links": 44,
+        "topic_groups": 12,
+        "language_variant_identity": "Distinct provider URL, not extra origin"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106h/certin-policy-review.json",
+        "runs/technical-recovery-20261106h/certin-soft404-policy.html",
+        "runs/technical-recovery-20261106h/certin-soft404-policy-second.html",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/certin-booklet-metadata.json",
+        "runs/technical-recovery-20261106h/certin-negative-control.json",
+        "examples/cert-in.jsonl"
       ],
       "observation_refs": [
         {
@@ -198,7 +415,7 @@
         }
       ],
       "open_questions": [
-        "Test known-item and topical relevance, negative queries and native identities without counting documentation samples as examples."
+        "Reader and actual content-language checks remain separate."
       ]
     },
     "operating_limits": {
@@ -210,7 +427,14 @@
         "current_restriction": "Supported query allowance/limits still unresolved"
       },
       "evidence": [
-        "runs/source-evidence-20261105/observations.jsonl"
+        "runs/source-evidence-20261105/observations.jsonl",
+        "runs/technical-recovery-20261106h/certin-policy-review.json",
+        "runs/technical-recovery-20261106h/certin-soft404-policy.html",
+        "runs/technical-recovery-20261106h/certin-soft404-policy-second.html",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/certin-booklet-metadata.json",
+        "runs/technical-recovery-20261106h/certin-negative-control.json",
+        "examples/cert-in.jsonl"
       ],
       "observation_refs": [
         {
@@ -225,18 +449,25 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "The robots policy URL returns an HTML page rather than a usable robots policy.",
+      "summary": "Working for the published booklet metadata list.",
       "facts": {
-        "decision": "deferred",
-        "blocker": "The robots policy URL returns an HTML page rather than a usable robots policy.",
-        "next_action": "Provider restores a usable robots response or documents a permitted alternate metadata export.",
-        "activation_approved": false
+        "decision": "working",
+        "activation_approved": false,
+        "next_action": "Maintain public booklet metadata search with bounded refresh and strict policy checks. Review guidelines/advisory catalogs separately; no production activation or full-document collection.",
+        "tested_scope": "Local title-token search over44 published booklet links, optional explicit language label. No full PDF/advisory search."
       },
       "evidence": [
-        "runs/industry-native-catalogs-20261105dv/observations.jsonl"
+        "runs/industry-native-catalogs-20261105dv/observations.jsonl",
+        "runs/technical-recovery-20261106h/certin-policy-review.json",
+        "runs/technical-recovery-20261106h/certin-soft404-policy.html",
+        "runs/technical-recovery-20261106h/certin-soft404-policy-second.html",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/certin-booklet-metadata.json",
+        "runs/technical-recovery-20261106h/certin-negative-control.json",
+        "examples/cert-in.jsonl"
       ],
       "open_questions": [
-        "Search contract remains unverified; policy/access recovery needed before queries."
+        "No production integration, advisory-search or full-reader claim."
       ]
     }
   },
@@ -259,13 +490,19 @@
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
-    "reason": "CERT-In policy endpoint still returns HTML, not a usable robots policy.",
-    "attempt": "Located operator AwarenessBooklets catalog; checked policy before fetching it.",
-    "result": "Policy200 contains HTML; no catalog/booklet request sent.",
-    "decision": "wait-for-valid-policy",
+    "reviewed_at": "2026-11-06T10:54:24.859098+00:00",
+    "reason": "Generic policy check rejected a plain missing-URL page as an access block. Its only changing field is a decimal tracking value; no exclusion/challenge present.",
+    "attempt": "Review two policy bodies, narrowly recognize the identical missing-page template while preserving directives/challenge checks, inspect public booklets and published language labels, then run12 distinct title queries.",
+    "result": "All12 topic-group queries pass over44 native booklet links; empty control returns0. One strict-hash preflight safely stopped on the changing tracking value and remains saved. No PDF/booklet bodies fetched.",
+    "decision": "working_with_public_booklet_metadata_scope",
     "evidence": [
-      "runs/technical-recovery-20261106e/observations.jsonl"
+      "runs/technical-recovery-20261106h/certin-policy-review.json",
+      "runs/technical-recovery-20261106h/certin-soft404-policy.html",
+      "runs/technical-recovery-20261106h/certin-soft404-policy-second.html",
+      "runs/technical-recovery-20261106h/observations.jsonl",
+      "runs/technical-recovery-20261106h/certin-booklet-metadata.json",
+      "runs/technical-recovery-20261106h/certin-negative-control.json",
+      "examples/cert-in.jsonl"
     ]
   },
   "recovery_history": [
@@ -284,6 +521,32 @@
         ]
       },
       "next_action": "Provider restores a usable robots response or documents a permitted alternate metadata export."
+    },
+    {
+      "superseded_at": "2026-11-06T10:54:24.859098+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T07:31:01.938205+00:00",
+        "reason": "CERT-In policy endpoint still returns HTML, not a usable robots policy.",
+        "attempt": "Located operator AwarenessBooklets catalog; checked policy before fetching it.",
+        "result": "Policy200 contains HTML; no catalog/booklet request sent.",
+        "decision": "wait-for-valid-policy",
+        "evidence": [
+          "runs/technical-recovery-20261106e/observations.jsonl"
+        ]
+      }
+    }
+  ],
+  "query_history": [
+    {
+      "superseded_at": "2026-11-06T10:53:00.579299+00:00",
+      "query": {
+        "adapter": "unproven",
+        "endpoint": null,
+        "cases": [],
+        "authentication": "Unknown; no query executed",
+        "request_shape_verified": false
+      },
+      "reason": "Official public booklet-list metadata adapter after reviewed missing-policy-page correction."
     }
   ]
 }

@@ -8,27 +8,149 @@
     "C04",
     "I17"
   ],
-  "state": "deferred",
+  "state": "query-verified",
   "enabled": false,
   "full_qualification_complete": false,
   "capabilities": [
-    "ESearch/ESummary with db=books returned native book/chapter IDs."
+    "Public Europe PMC API title search over indexed Bookshelf book/chapter metadata; native NBK item identity and distinct MED/NBK index identity retained",
+    "Filter hasBook/open-access flags; literal title-token postfilter; bounded provider pages."
   ],
   "query": {
-    "adapter": "ncbi-eutils",
-    "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
-    "cases": [],
-    "authentication": "not established for a complete supported route",
-    "cost": "No paid service used in initial review.",
-    "metadata_query_template": "GET esearch.fcgi?db=books&term=QUERY&retmode=json&retmax=3 then esummary.fcgi?db=books&id=IDS&retmode=json"
+    "adapter": "bookshelf-epmc",
+    "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+    "authentication": "Anonymous public Europe PMC REST API; no NCBI API or account used",
+    "cost": "No payment/account required for tested public metadata queries; throughput guarantees not established",
+    "cases": [
+      {
+        "id": "epmc-bookshelf-1",
+        "intent": "Find Bookshelf record by exact title through permitted Europe PMC metadata; retain chapter/book identity",
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=HAS_BOOK%3AY+AND+OPEN_ACCESS%3AY+AND+TITLE%3A%22Patient+Outcomes+Reporting+for+Timely+Assessments+of+Life+with+Depression%3A+PORTAL-Depression%22&format=json&pageSize=3&resultType=core"
+        },
+        "expected_ids": [
+          "NBK625841"
+        ]
+      },
+      {
+        "id": "epmc-bookshelf-2",
+        "intent": "Find Bookshelf record by exact title through permitted Europe PMC metadata; retain chapter/book identity",
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=HAS_BOOK%3AY+AND+OPEN_ACCESS%3AY+AND+TITLE%3A%22Tetrabenazine%22&format=json&pageSize=3&resultType=core"
+        },
+        "expected_ids": [
+          "NBK625587"
+        ]
+      },
+      {
+        "id": "epmc-bookshelf-3",
+        "intent": "Find Bookshelf record by exact title through permitted Europe PMC metadata; retain chapter/book identity",
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=HAS_BOOK%3AY+AND+OPEN_ACCESS%3AY+AND+TITLE%3A%22Rooibos%22&format=json&pageSize=3&resultType=core"
+        },
+        "expected_ids": [
+          "NBK625593"
+        ]
+      },
+      {
+        "id": "epmc-bookshelf-4",
+        "intent": "Find Bookshelf record by exact title through permitted Europe PMC metadata; retain chapter/book identity",
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=HAS_BOOK%3AY+AND+OPEN_ACCESS%3AY+AND+TITLE%3A%22Cinnamon%22&format=json&pageSize=3&resultType=core"
+        },
+        "expected_ids": [
+          "NBK618284"
+        ]
+      },
+      {
+        "id": "epmc-bookshelf-5",
+        "intent": "Find Bookshelf record by exact title through permitted Europe PMC metadata; retain chapter/book identity",
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=HAS_BOOK%3AY+AND+OPEN_ACCESS%3AY+AND+TITLE%3A%22Esketamine%22&format=json&pageSize=3&resultType=core"
+        },
+        "expected_ids": [
+          "NBK540690"
+        ]
+      },
+      {
+        "id": "epmc-bookshelf-6",
+        "intent": "Find Bookshelf record by exact title through permitted Europe PMC metadata; retain chapter/book identity",
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=HAS_BOOK%3AY+AND+OPEN_ACCESS%3AY+AND+TITLE%3A%22Glecaprevir%22&format=json&pageSize=3&resultType=core"
+        },
+        "expected_ids": [
+          "NBK525494"
+        ]
+      },
+      {
+        "id": "epmc-bookshelf-7",
+        "intent": "Find Bookshelf record by exact title through permitted Europe PMC metadata; retain chapter/book identity",
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=HAS_BOOK%3AY+AND+OPEN_ACCESS%3AY+AND+TITLE%3A%22Pibrentasvir%22&format=json&pageSize=3&resultType=core"
+        },
+        "expected_ids": [
+          "NBK525500"
+        ]
+      },
+      {
+        "id": "epmc-bookshelf-8",
+        "intent": "Find Bookshelf record by exact title through permitted Europe PMC metadata; retain chapter/book identity",
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=HAS_BOOK%3AY+AND+OPEN_ACCESS%3AY+AND+TITLE%3A%22Liothyronine%22&format=json&pageSize=3&resultType=core"
+        },
+        "expected_ids": [
+          "NBK501004"
+        ]
+      },
+      {
+        "id": "epmc-bookshelf-9",
+        "intent": "Find Bookshelf record by exact title through permitted Europe PMC metadata; retain chapter/book identity",
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=HAS_BOOK%3AY+AND+OPEN_ACCESS%3AY+AND+TITLE%3A%22Diazepam%22&format=json&pageSize=3&resultType=core"
+        },
+        "expected_ids": [
+          "NBK501214"
+        ]
+      },
+      {
+        "id": "epmc-bookshelf-10",
+        "intent": "Find Bookshelf record by exact title through permitted Europe PMC metadata; retain chapter/book identity",
+        "request": {
+          "method": "GET",
+          "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=HAS_BOOK%3AY+AND+OPEN_ACCESS%3AY+AND+TITLE%3A%22Lamotrigine%22&format=json&pageSize=3&resultType=core"
+        },
+        "expected_ids": [
+          "NBK501268"
+        ]
+      }
+    ],
+    "metadata_query_template": "GET /europepmc/webservices/rest/search?query=HAS_BOOK:Y AND OPEN_ACCESS:Y AND TITLE:\"TITLE\"&format=json&pageSize=3&resultType=core",
+    "unsupported_modes": [
+      "Full Bookshelf coverage",
+      "Direct NCBI querying or full-text requests",
+      "Unverified parent-ID or edition inference",
+      "Medical recommendations"
+    ]
   },
   "licensing": "Full policy and per-item rights review pending; no unrestricted content reuse inferred.",
   "documentation": [
-    "https://www.ncbi.nlm.nih.gov/books/"
+    "https://www.ncbi.nlm.nih.gov/books/",
+    "https://europepmc.org/RestfulWebService",
+    "https://www.ebi.ac.uk/europepmc/webservices/rest/fields?format=json"
   ],
   "limitations": [
-    "E-utilities robots policy disallows the proposed automated query route. Reader challenge is separate.",
-    "Sample reading destination returned browser verification; full-text crawl is not authorized by API search support."
+    "Subset of Bookshelf indexed by Europe PMC, not the complete Bookshelf catalog; overlaps existing Europe PMC connector and is not a new independent origin.",
+    "Native NBK IDs can identify chapters/entries; parent title is retained but no parent ID or edition is guessed.",
+    "Direct E-utilities and FTP routes remain policy-restricted. No NCBI reader/full-text request; reading access and per-item reuse are separate, unverified.",
+    "Provider publication/index dates may differ from book publication year; fields are kept distinct."
   ],
   "evidence": [
     "../batches/G01_FIRST_TEN.md",
@@ -38,23 +160,28 @@
     "runs/metadata-link-fixes-20261106c/observations.jsonl",
     "runs/metadata-link-query-seeds-20261106/observations.jsonl",
     "runs/technical-recovery-20261106d/observations.jsonl",
-    "runs/technical-recovery-20261106d/scout-observations.jsonl"
+    "runs/technical-recovery-20261106d/scout-observations.jsonl",
+    "runs/technical-recovery-20261106h/observations.jsonl",
+    "runs/technical-recovery-20261106h/bookshelf-epmc-contract.json"
   ],
-  "last_reviewed_at": "2026-11-06T07:28:04.358484+00:00",
-  "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+  "last_reviewed_at": "2026-11-06T11:02:16.816062+00:00",
+  "next_action": "Maintain this explicitly scoped title-search route. Preserve direct NCBI restrictions and distinguish chapter/entry IDs from parent books. Full catalog, reading and rights completeness remain separate research questions.",
   "dossier": {
     "identity_and_duplicates": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current scoped metadata queries verified; full dossier questions remain open.",
       "facts": {
         "id": "ncbi-bookshelf",
         "name": "NCBI Bookshelf",
         "homepage_reference": "https://www.ncbi.nlm.nih.gov/books/",
-        "operator": null,
-        "origin_deduplication": "pending"
+        "operator": "NCBI/NLM Bookshelf; metadata query service Europe PMC/EMBL-EBI",
+        "origin_deduplication": "Existing Bookshelf connector only; shares Europe PMC infrastructure/index, no new origin",
+        "native_identity": "NBK book/chapter/entry ID distinct from MED:PMID or NBK:NBK index identity; no inferred parent ID"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/bookshelf-epmc-contract.json"
       ],
       "open_questions": [
         "Confirm operator, parent and catalog-versus-origin deduplication."
@@ -81,17 +208,25 @@
     },
     "query_contract": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current scoped metadata queries verified; full dossier questions remain open.",
       "facts": {
-        "adapter": "ncbi-eutils",
-        "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "adapter": "bookshelf-epmc",
+        "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
         "capabilities": [
           "ESearch/ESummary with db=books returned native book/chapter IDs."
         ],
-        "supported_and_unsupported_modes": "needs explicit review"
+        "supported_and_unsupported_modes": [
+          "Subset of Bookshelf indexed by Europe PMC, not the complete Bookshelf catalog; overlaps existing Europe PMC connector and is not a new independent origin.",
+          "Native NBK IDs can identify chapters/entries; parent title is retained but no parent ID or edition is guessed.",
+          "Direct E-utilities and FTP routes remain policy-restricted. No NCBI reader/full-text request; reading access and per-item reuse are separate, unverified.",
+          "Provider publication/index dates may differ from book publication year; fields are kept distinct."
+        ],
+        "request_template": "GET /europepmc/webservices/rest/search?query=HAS_BOOK:Y AND OPEN_ACCESS:Y AND TITLE:\"TITLE\"&format=json&pageSize=3&resultType=core"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/bookshelf-epmc-contract.json"
       ],
       "open_questions": [
         "List supported/unsupported modes and document native IDs, filters, pagination and detail resolution."
@@ -115,16 +250,19 @@
     },
     "reader_access": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current scoped metadata queries verified; full dossier questions remain open.",
       "facts": {
         "evidence_references": [
           "../batches/G01_FIRST_TEN.md"
         ],
         "free_login_eligible": true,
-        "access_classification": "needs explicit item-level review"
+        "access_classification": "Provider OA flag only; no current NCBI reader request",
+        "reader_access_is_queryability_gate": false
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/bookshelf-epmc-contract.json"
       ],
       "open_questions": [
         "Classify sampled access, full-item status, free-login/territorial limits and accessibility."
@@ -132,15 +270,20 @@
     },
     "quality_and_relevance": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current scoped metadata queries verified; full dossier questions remain open.",
       "facts": {
         "limitations": [
           "Sample reading destination returned browser verification; full-text crawl is not authorized by API search support."
         ],
-        "ranking_relevance_completeness": "not fully qualified"
+        "ranking_relevance_completeness": "not fully qualified",
+        "verified_current_title_queries": 10,
+        "literal_title_token_filter": true,
+        "chapter_parent_identity": "Parent title retained; parent ID unknown"
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/bookshelf-epmc-contract.json"
       ],
       "open_questions": [
         "Complete relevance, type, edition/version, negative-input and repeat-session checks."
@@ -148,14 +291,17 @@
     },
     "operating_limits": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current scoped metadata queries verified; full dossier questions remain open.",
       "facts": {
         "paging": null,
-        "research_pause_seconds": null,
-        "provider_quota_refresh_deletion_contract": "needs explicit review"
+        "research_pause_seconds": 3,
+        "provider_quota_refresh_deletion_contract": "Not fully established",
+        "page_size": 3
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/bookshelf-epmc-contract.json"
       ],
       "open_questions": [
         "Verify documented quota/error/deletion/refresh behavior and maintenance cost."
@@ -163,14 +309,16 @@
     },
     "decision_and_followup": {
       "status": "partial",
-      "summary": "Existing facts captured; unresolved checks remain explicit.",
+      "summary": "Current scoped metadata queries verified; full dossier questions remain open.",
       "facts": {
-        "state": "deferred",
-        "next_action": "Verify ordinary reader access and parent book versus chapter mapping; respect NCBI full-text policies.",
+        "state": "query-verified",
+        "next_action": "Maintain this explicitly scoped title-search route. Preserve direct NCBI restrictions and distinguish chapter/entry IDs from parent books. Full catalog, reading and rights completeness remain separate research questions.",
         "production_qualification_complete": false
       },
       "evidence": [
-        "../batches/G01_FIRST_TEN.md"
+        "../batches/G01_FIRST_TEN.md",
+        "runs/technical-recovery-20261106h/observations.jsonl",
+        "runs/technical-recovery-20261106h/bookshelf-epmc-contract.json"
       ],
       "open_questions": [
         "Record gate decisions, overlap/value, precise blocker/recheck trigger and next review."
@@ -217,17 +365,25 @@
       "heading": "Access and documentation findings",
       "text": "| NCBI Bookshelf, Gallica, USGS National Map, Shodhganga | Tested routes or documented alternatives have explicit robots restrictions. NCBI web docs also show a browser challenge. Do not change agents or use mirrors to bypass restrictions. |",
       "status": "historical-context-needs-reconciliation"
+    },
+    {
+      "document_id": "6abe24c4461c46df74d693bcdbfbf95db3d25ef67aadfa403616d8da3861fe5a",
+      "path": "docs/research/free-content/TECHNICAL_RECOVERY_20261106H.md",
+      "line": 12,
+      "heading": "Recovered searches",
+      "text": "- **NCBI Bookshelf:** ten supported Europe PMC title searches return native NBK book/chapter IDs. Current API fields and core records establish the indexed subset; MED/PMID and NBK identities remain distinct. Chapters retain their parent title without inventing parent IDs. This shares the existing Europe PMC index and is not an additional independent origin. Direct NCBI restrictions remain in force, and reader pages/full text were not fetched.",
+      "status": "historical-context-needs-reconciliation"
     }
   ],
   "recovery": {
-    "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
-    "reason": "Eutilities route was disallowed; alternative FTP metadata file is also robots-disallowed.",
-    "attempt": "Located operator FTP documentation and official LitArch CSV listing; independently checked its policy.",
-    "result": "Documentation HTTP200 is browser-check/CAPTCHA, not readable documentation; FTP policy explicitly denies access. No metadata CSV/book/archive downloaded.",
-    "decision": "wait-for-permitted-metadata-method",
+    "reviewed_at": "2026-11-06T11:02:16.816062+00:00",
+    "reason": "Direct E-utilities/FTP metadata routes restricted; independently published Europe PMC API indexes native Bookshelf IDs",
+    "attempt": "Confirmed current API fields HAS_BOOK, OPEN_ACCESS, BOOK_ID and TITLE; bounded seed returned real NBK and MED records with bookid. Testing ten title queries.",
+    "result": "Ten distinct native-NBK title queries pass with relevant records. No direct NCBI or full-text request. Books and chapters remain distinguishable.",
+    "decision": "working-scoped-europe-pmc-indexed-bookshelf-metadata",
     "evidence": [
-      "runs/technical-recovery-20261106d/observations.jsonl",
-      "runs/technical-recovery-20261106d/scout-observations.jsonl"
+      "runs/technical-recovery-20261106h/observations.jsonl",
+      "runs/technical-recovery-20261106h/bookshelf-epmc-contract.json"
     ]
   },
   "research_selection": {
@@ -241,7 +397,10 @@
     "reader_access_is_queryability_gate": false,
     "reading_eligibility_label": null,
     "no_full_content_downloads": true,
-    "no_personal_owner_data": true
+    "no_personal_owner_data": true,
+    "search_scope": "Europe PMC-indexed Bookshelf book/chapter metadata with supported filters and exact native NBK identity",
+    "query_backend": "Europe PMC public REST API",
+    "deduplication_overlap": "europe-pmc"
   },
   "recovery_history": [
     {
@@ -263,6 +422,29 @@
         ]
       },
       "next_action": "Wait for permitted API access/policy clarification; do not bypass robots or reader challenge."
+    },
+    {
+      "superseded_at": "2026-11-06T10:59:53.682197+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T07:28:04.358484+00:00",
+        "reason": "Eutilities route was disallowed; alternative FTP metadata file is also robots-disallowed.",
+        "attempt": "Located operator FTP documentation and official LitArch CSV listing; independently checked its policy.",
+        "result": "Documentation HTTP200 is browser-check/CAPTCHA, not readable documentation; FTP policy explicitly denies access. No metadata CSV/book/archive downloaded.",
+        "decision": "wait-for-permitted-metadata-method",
+        "evidence": [
+          "runs/technical-recovery-20261106d/observations.jsonl",
+          "runs/technical-recovery-20261106d/scout-observations.jsonl"
+        ]
+      },
+      "next_action": "Wait for a published permitted metadata route or a demonstrable policy/service recovery. Preserve prior query failures; do not bypass robots or challenges.",
+      "query_contract": {
+        "adapter": "ncbi-eutils",
+        "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "cases": [],
+        "authentication": "not established for a complete supported route",
+        "cost": "No paid service used in initial review.",
+        "metadata_query_template": "GET esearch.fcgi?db=books&term=QUERY&retmode=json&retmax=3 then esummary.fcgi?db=books&id=IDS&retmode=json"
+      }
     }
   ]
 }

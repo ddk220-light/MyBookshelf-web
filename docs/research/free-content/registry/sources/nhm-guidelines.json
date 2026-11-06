@@ -45,18 +45,19 @@
     "runs/source-evidence-20261105/observations.jsonl",
     "docs/research/free-content/discovery/INDUSTRIES.md",
     "runs/technical-recovery-20261106c/observations.jsonl",
-    "runs/technical-recovery-20261106c/book-attempts.jsonl"
+    "runs/technical-recovery-20261106c/book-attempts.jsonl",
+    "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
   ],
   "limitations": [
     "Saved robots request timed out; target was skipped. No fresh reader/API evidence and no unchanged retry.",
     "One programme-guideline catalog candidate; states, disease programmes, chapters and guideline revisions are not separate origins."
   ],
-  "last_reviewed_at": "2026-11-06T06:46:26.573535+00:00",
+  "last_reviewed_at": "2026-11-06T10:49:42.393860+00:00",
   "evidence_observation_dates": [
     "2026-11-05T02:33:05.082857+00:00"
   ],
   "fresh_query_verification": false,
-  "next_action": "Find a current official policy/catalog export; do not treat a redirect to an error page as permission.",
+  "next_action": "Look for a documented current central NHM metadata export or provider correction to the policy redirect; avoid retrying the same broken route each hour.",
   "analysis_refs": [
     {
       "document_id": "f1277973934e66ee1006136955e0ff90f7f5ed63acdd9dc16f1fa61728f4c7fe",
@@ -399,21 +400,35 @@
       "superseded_at": "2026-11-06T06:46:26.573530+00:00",
       "recovery": null,
       "next_action": "Useful policy/network recovery and published allowed guideline metadata/search/export route; test native guideline editions, current applicability, language and non-personal data scope."
+    },
+    {
+      "superseded_at": "2026-11-06T10:49:42.393860+00:00",
+      "recovery": {
+        "status": "blocked_or_failed",
+        "reason": "Robots redirects302 to an HTTP legacy404 page; no usable policy returned.",
+        "attempt": "One overnight-backoff policy check; inspected exact redirect, without following into an error route.",
+        "result": "Still blocked; no current passing query.",
+        "decision": "wait_for_documented_recovery_or_alternative",
+        "next_action": "Find a current official policy/catalog export; do not treat a redirect to an error page as permission.",
+        "owner_action_required": false,
+        "evidence_reviewed_at": "2026-11-06T06:46:26.573533+00:00",
+        "fresh_query_verification": false,
+        "evidence": [
+          "runs/technical-recovery-20261106c/observations.jsonl",
+          "runs/technical-recovery-20261106c/book-attempts.jsonl"
+        ]
+      }
     }
   ],
   "recovery": {
-    "status": "blocked_or_failed",
-    "reason": "Robots redirects302 to an HTTP legacy404 page; no usable policy returned.",
-    "attempt": "One overnight-backoff policy check; inspected exact redirect, without following into an error route.",
-    "result": "Still blocked; no current passing query.",
-    "decision": "wait_for_documented_recovery_or_alternative",
-    "next_action": "Find a current official policy/catalog export; do not treat a redirect to an error page as permission.",
-    "owner_action_required": false,
-    "evidence_reviewed_at": "2026-11-06T06:46:26.573533+00:00",
-    "fresh_query_verification": false,
+    "reviewed_at": "2026-11-06T10:49:42.393860+00:00",
+    "reason": "HTTPS policy still redirects to legacy HTTP404 route; exact redirect target now tested and timed out, so no policy or catalog access established.",
+    "attempt": "Inspect redirect semantics rather than treating the302 alone as a denial; request exact published policy redirect with20second limit.",
+    "result": "302 then timeout. No catalog/document query sent.",
+    "decision": "wait_for_current_policy_or_published_metadata_export",
     "evidence": [
-      "runs/technical-recovery-20261106c/observations.jsonl",
-      "runs/technical-recovery-20261106c/book-attempts.jsonl"
-    ]
+      "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
+    ],
+    "next_action": "Look for a documented current central NHM metadata export or provider correction to the policy redirect; avoid retrying the same broken route each hour."
   }
 }

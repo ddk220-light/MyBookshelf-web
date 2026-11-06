@@ -1,0 +1,22 @@
+{
+  "reviewed_at": "2026-11-06T10:50:26.903695+00:00",
+  "source_id": "cert-in",
+  "policy_url": "https://www.cert-in.org.in/robots.txt",
+  "response_sha256": "24a98e841d4914cf71aa6ed3c096308a93516ba554cdc79ce666d9203535d6e2",
+  "finding": "Exact938-byte200text/html body says The requested URL is not found and links official homepage. No robots directives, login form, denial or CAPTCHA challenge. Generic HTML-as-policy failure was a soft404 misclassification.",
+  "interpretation": "RFC9309 sections2.2.1/2.3.1.5: no matching groups/rules means no exclusions; keep any parseable rules. Recognize only this reviewed exact missing-page response. This is not permission to ignore actual restrictions.",
+  "limits": [
+    "Only exact policy URL/status/content-type/body hash qualifies",
+    "Changed HTML, login, challenge, redirects and401/403/429 remain blocked",
+    "Public metadata lists only; no advisory/booklet body downloads or submission forms"
+  ],
+  "status": "Policy interpretation only; no successful item query yet",
+  "normalized_template_sha256": "a2ee72e13322eb78ece3583fb84473856ca90e3b5c56b655025b536c30a1ed8a",
+  "template_review": {
+    "reviewed_at": "2026-11-06T10:51:39.771607+00:00",
+    "second_capture": "certin-soft404-policy-second.html",
+    "observation": "Only changed bytes are the decimal _event_transid script value; all other bytes are identical. First strict-hash preflight stopped safely and is preserved.",
+    "allowed_normalization": "Exactly one decimal _event_transid value; no script execution. All other bytes, status, URL and content type must match reviewed missing-page template.",
+    "not_allowed": "No general HTML exception, login/challenge acceptance, directives removal or bypass of real denial."
+  }
+}
