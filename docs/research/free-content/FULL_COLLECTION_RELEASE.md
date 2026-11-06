@@ -86,27 +86,33 @@ checks. A test initially matched the navigation tab “Free to read”; it was c
 to inspect result cards. Hosted deployment identity and anonymous production
 verification will be appended after release.
 
-## Push blocker — owner decision required
+## Production release verified
 
-Application checkpoint `1a7a528` is committed locally on
-`feat/all-available-connectors`; GitHub rejected its push. Two public LA Referencia
-Spanish record IDs in live-checks.jsonl line 12 match GitHub's hCaptcha secret
-pattern. A fresh unauthenticated HTTP 200 request to
-`https://buscador.lareferencia.info/Search/Results?lookfor=mathematics&type=Title&page=1`
-confirmed both exact strings as native catalog record IDs.
+The owner explicitly approved the two GitHub false-positive exceptions. GitHub
+accepted both as `false_positive`; original native-ID evidence remains unchanged.
+The branch was pushed normally, without a force push.
 
-Automatic approval review rejected both changing the evidence encoding and
-registering GitHub's supported false-positive exceptions without explicit owner
-approval. Neither action ran. Preserve the evidence as-is. Ask the owner to approve
-the two narrowly scoped false-positive exceptions before pushing and deploying.
-GitHub placeholder IDs: `3LhltubQ5S4UKnzFMp8IH1oJ7fQ` and
-`3LjkQd1zMAOcqWqbsPMwRr4PDHH`. Use the documented
-`POST /repos/ddk220-light/MyBookshelf-web/secret-scanning/push-protection-bypasses`
-with reason `false_positive` only after approval, then normal push (no force).
+- Release PR: [#182](https://github.com/ddk220-light/MyBookshelf-web/pull/182), merged
+  at `3cc37e683243169f96b2e1c691b90c6e6706a29a`.
+- Production: <https://mybookshelf.cloud>, READY deployment
+  `dpl_Fcr6nFnKSB63LFjwHDNAjA3YouV2`, serving that exact main commit.
+- Both full CI runs passed: [push](https://github.com/ddk220-light/MyBookshelf-web/actions/runs/42235290618)
+  and [PR](https://github.com/ddk220-light/MyBookshelf-web/actions/runs/42235353351),
+  including the disposable-database account/browser regression tests.
+- All **18/18** new connectors returned relevant items through anonymous production
+  POST searches, with HTTP 200 and source-native identity keys. The production
+  directory reports **39 enabled sources** (21 existing plus 18 new).
+- Actual mobile WebKit journeys verified NASA, O*NET, NGA and LA Referencia results,
+  outbound source-link labels and HTTPS targets. Zero page errors or horizontal
+  overflow. Browser traffic used real production responses through Node's configured
+  CA trust, with TLS verification enabled, because the cloud browser itself does
+  not trust the environment's HTTPS proxy certificate.
+- The deployment-scoped Vercel error/fatal log scan returned no entries during
+  verification. This is a release-time observation, not a claim about future uptime.
 
-No release PR exists yet. Production is still deployment
-`dpl_GyZsBKjLa6cpAst6o2ta44v8M4cy`, main `962d185`. After push, create the scoped
-release PR, check CI and preview, merge, verify Vercel's production SHA, then test
-all 18 anonymous production searches and source links. Research automation remains
-paused. All local release checks passed, including the isolated client-service
-build. Hosted verification remains open.
+`production-searches.json` records every query, HTTP status, returned title/key,
+source state and response hash. `production-browser.json` and four screenshots
+record the hosted UI checks. Snapshot/export scope remains visible in the app;
+metadata query success is separate from reading eligibility or reuse rights.
+The existing research automation remains paused. No database, paid account,
+account configuration or new scheduled task was introduced.
