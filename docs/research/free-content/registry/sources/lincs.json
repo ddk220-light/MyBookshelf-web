@@ -45,18 +45,20 @@
     "runs/technical-recovery-20261106b/observations.jsonl",
     "runs/technical-recovery-20261106b/followups.jsonl",
     "runs/technical-recovery-20261106h/lincs-eric-discovery.json",
-    "runs/technical-recovery-20261106i/observations.jsonl"
+    "runs/technical-recovery-20261106i/observations.jsonl",
+    "runs/technical-recovery-20261106j/observations.jsonl",
+    "runs/technical-recovery-20261106j/alternative-leads.json"
   ],
   "limitations": [
     "Saved robots HTTP403 prevented target retrieval. No current catalog/API body is available.",
     "One LINCS collection candidate; contributing programs, language tabs and external producers must be separately identified and deduplicated before any independent-origin count."
   ],
-  "last_reviewed_at": "2026-11-06T11:29:05.734707+00:00",
+  "last_reviewed_at": "2026-11-06T12:30:54.482405+00:00",
   "evidence_observation_dates": [
     "2026-11-05T02:18:37.230937+00:00"
   ],
   "fresh_query_verification": false,
-  "next_action": "Wait for permitted API/course access or published metadata export; no repeated403 probes without a useful trigger.",
+  "next_action": "ERIC public UI policy503: wait until2026-11-06T18:00:00Z for a single preflight if useful, or inspect a newly documented LINCS-specific metadata export. API/course403 routes stay paused. Only count records explicitly linked to native LINCS resources.",
   "analysis_refs": [
     {
       "document_id": "a1152262daa2c2e9e30dc6b14a7917fa8e5d2b068757757dfc590f307a445834",
@@ -393,15 +395,18 @@
     }
   },
   "recovery": {
-    "reviewed_at": "2026-11-06T11:29:05.734707+00:00",
-    "reason": "Separate LINCS Courses policy403; documented ERIC API host policy403.",
-    "attempt": "Inspect public course-catalog alternative and ERIC primary API documentation; try preflight for URL-filtered LINCS subset.",
-    "result": "Primary ERIC docs200, but no ERIC query or course metadata request was sent. Generic literacy records are not counted as LINCS.",
-    "decision": "blocked-pending-specific-recovery-trigger",
+    "reviewed_at": "2026-11-06T12:30:54.482405+00:00",
+    "reason": "LINCS course/API routes remain blocked; independent ERIC public UI robots returned503.",
+    "attempt": "Reviewed primary ERIC API documentation saved in run I and checked the separately published public UI policy; search-index results only mentioned LINCS and did not establish native LINCS mapping.",
+    "result": "Policy503; no ERIC homepage/search request sent, no passing LINCS examples.",
+    "decision": "wait_for_policy_recovery_or_documented_export",
+    "next_action": "ERIC public UI policy503: wait until2026-11-06T18:00:00Z for a single preflight if useful, or inspect a newly documented LINCS-specific metadata export. API/course403 routes stay paused. Only count records explicitly linked to native LINCS resources.",
+    "retry_not_before": "2026-11-06T18:00:00Z",
+    "owner_action_required": false,
     "evidence": [
-      "runs/technical-recovery-20261106i/observations.jsonl"
-    ],
-    "next_action": "Wait for permitted API/course access or published metadata export; no repeated403 probes without a useful trigger."
+      "runs/technical-recovery-20261106j/observations.jsonl",
+      "runs/technical-recovery-20261106j/alternative-leads.json"
+    ]
   },
   "recovery_reviewed_at": "2026-11-05T20:44:42.716210+00:00",
   "recovery_history": [
@@ -455,6 +460,21 @@
         ]
       },
       "next_action": "Review ERIC primary metadata contract and explicit LINCS source/link mappings; only test a scoped alternative if provenance can be established. Do not treat all adult-literacy publications as LINCS records."
+    },
+    {
+      "superseded_at": "2026-11-06T12:30:54.482405+00:00",
+      "recovery": {
+        "reviewed_at": "2026-11-06T11:29:05.734707+00:00",
+        "reason": "Separate LINCS Courses policy403; documented ERIC API host policy403.",
+        "attempt": "Inspect public course-catalog alternative and ERIC primary API documentation; try preflight for URL-filtered LINCS subset.",
+        "result": "Primary ERIC docs200, but no ERIC query or course metadata request was sent. Generic literacy records are not counted as LINCS.",
+        "decision": "blocked-pending-specific-recovery-trigger",
+        "evidence": [
+          "runs/technical-recovery-20261106i/observations.jsonl"
+        ],
+        "next_action": "Wait for permitted API/course access or published metadata export; no repeated403 probes without a useful trigger."
+      },
+      "next_action": "Wait for permitted API/course access or published metadata export; no repeated403 probes without a useful trigger."
     }
   ]
 }

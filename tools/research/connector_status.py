@@ -15,6 +15,7 @@ GROUPS = {
     'G06': 'Language, culture and media',
 }
 MODES = {
+    'nhm-nuhm-catalog': 'Local title-token/native file-URL search over11 published NHSRC NUHM guideline links; central NHM catalog, site-wide search, document content and clinical currency not verified',
     'chicago-zoning': 'Live Chicago SODA zoning-class equality queries; first2 native GLOBALID/OBJECTID features, five metadata fields; no geometry/address/personal-owner data',
     'shodhganga-indcat': 'IndCat public keyword form with explicit Shodhganga checkbox; first20 records filtered to literal title tokens and native Shodhganga handles; no repository requests or full-catalog/reader guarantee',
     'worldreader-public-browser': 'Anonymous BookSmart browser title search, US/English default library, first20 results with native UUID/version; reading, other countries/languages, paging and standalone API not verified',

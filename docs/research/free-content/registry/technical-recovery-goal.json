@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 15,
+  "remaining": 14,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -708,10 +708,10 @@
       "id": "nhm-guidelines",
       "name": "National Health Mission guidelines",
       "group": "G03",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "Robots request timed out.",
-      "current_reason": "HTTPS policy still redirects to legacy HTTP404 route; exact redirect target now tested and timed out, so no policy or catalog access established.",
-      "next_action": "Look for a documented current central NHM metadata export or provider correction to the policy redirect; avoid retrying the same broken route each hour.",
+      "current_reason": "",
+      "next_action": "Keep the11-guideline scope explicit; review additional independently published NHM metadata only if documented/permitted. Do not call the disallowed site search or infer clinical currency. Reader/rights review is separate from working query count.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -735,6 +735,22 @@
             "runs/technical-recovery-20261106h/policy-diagnostics.jsonl"
           ],
           "next_action": "Look for a documented current central NHM metadata export or provider correction to the policy redirect; avoid retrying the same broken route each hour."
+        },
+        {
+          "reviewed_at": "2026-11-06T12:29:46.315842+00:00",
+          "reason": "Central NHM policy failed; NHSRC separately publishes an allowed NUHM guideline metadata table. Site-wide NHSRC search is disallowed and was not requested.",
+          "attempt": "Capture the public programme catalog and copyright policy; parse only NUHM Guidelines and query ten distinct titles over that same fresh metadata capture.",
+          "result": "Ten passing current queries,11 unambiguous native file URLs, zero-match control; no file downloads. Scope is the NUHM guideline subset.",
+          "decision": "working_with_nuhm_guideline_subset",
+          "next_action": "Keep the11-guideline scope explicit; review additional independently published NHM metadata only if documented/permitted. Do not call the disallowed site search or infer clinical currency. Reader/rights review is separate from working query count.",
+          "evidence": [
+            "runs/technical-recovery-20261106j/observations.jsonl",
+            "runs/technical-recovery-20261106j/nhm-nuhm-metadata.json",
+            "runs/technical-recovery-20261106j/nhm-primary-excerpts.json",
+            "runs/technical-recovery-20261106j/nhm-nuhm-catalog.html",
+            "examples/nhm-guidelines.jsonl"
+          ],
+          "owner_action_required": false
         }
       ]
     },
@@ -1350,8 +1366,8 @@
       "group": "G06",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 403, leaving no catalog contract.",
-      "current_reason": "Separate LINCS Courses policy403; documented ERIC API host policy403.",
-      "next_action": "Wait for permitted API/course access or published metadata export; no repeated403 probes without a useful trigger.",
+      "current_reason": "LINCS course/API routes remain blocked; independent ERIC public UI robots returned503.",
+      "next_action": "ERIC public UI policy503: wait until2026-11-06T18:00:00Z for a single preflight if useful, or inspect a newly documented LINCS-specific metadata export. API/course403 routes stay paused. Only count records explicitly linked to native LINCS resources.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1385,6 +1401,20 @@
             "runs/technical-recovery-20261106i/observations.jsonl"
           ],
           "next_action": "Wait for permitted API/course access or published metadata export; no repeated403 probes without a useful trigger."
+        },
+        {
+          "reviewed_at": "2026-11-06T12:30:54.482405+00:00",
+          "reason": "LINCS course/API routes remain blocked; independent ERIC public UI robots returned503.",
+          "attempt": "Reviewed primary ERIC API documentation saved in run I and checked the separately published public UI policy; search-index results only mentioned LINCS and did not establish native LINCS mapping.",
+          "result": "Policy503; no ERIC homepage/search request sent, no passing LINCS examples.",
+          "decision": "wait_for_policy_recovery_or_documented_export",
+          "next_action": "ERIC public UI policy503: wait until2026-11-06T18:00:00Z for a single preflight if useful, or inspect a newly documented LINCS-specific metadata export. API/course403 routes stay paused. Only count records explicitly linked to native LINCS resources.",
+          "retry_not_before": "2026-11-06T18:00:00Z",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/technical-recovery-20261106j/observations.jsonl",
+            "runs/technical-recovery-20261106j/alternative-leads.json"
+          ]
         }
       ]
     },
@@ -1409,8 +1439,8 @@
     }
   ],
   "progress": {
-    "working": 29,
-    "blocked_or_failed": 15,
+    "working": 30,
+    "blocked_or_failed": 14,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1418,35 +1448,26 @@
     "revisited_since_goal_started": 42
   },
   "current_run": {
-    "state": "checkpointed-awaiting-continuation",
-    "run_id": "technical-recovery-20261106i",
-    "started_at": "2026-11-06T11:18:45.699129+00:00",
-    "heartbeat_at": "2026-11-06T12:14:31.552306+00:00",
+    "state": "checkpointed-continuing",
+    "run_id": "technical-recovery-20261106j",
+    "started_at": "2026-11-06T12:20:26.011176+00:00",
+    "heartbeat_at": "2026-11-06T12:30:54.522420+00:00",
     "collector_active": false,
     "active_detached_worker": false,
-    "scope": "Research-only supported search recovery; investigate documented alternatives and obey saved backoff",
-    "checkpointed_at": "2026-11-06T12:14:31.552306+00:00"
+    "scope": "Research-only documented query recovery; no production activation; saved service backoff respected",
+    "checkpointed_at": "2026-11-06T12:30:54.522420+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 29,
-  "updated_at": "2026-11-06T12:14:31.552306+00:00",
+  "working": 30,
+  "updated_at": "2026-11-06T12:30:54.522420+00:00",
   "latest_run": {
     "run_ids": [
-      "technical-recovery-20261106i"
+      "technical-recovery-20261106j"
     ],
     "new_working": [
-      "snapplify",
-      "worldreader",
-      "shodhganga"
+      "nhm-guidelines"
     ],
-    "remaining_goal_open": true,
-    "partial_recovery": {
-      "chicago-open-data-zoning": {
-        "passing_examples": 3,
-        "next_case": "zoning-class-04",
-        "blocking_status": 503
-      }
-    }
+    "remaining_goal_open": true
   }
 }

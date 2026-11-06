@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T12:10:51.418890+00:00",
+  "generated_at": "2026-11-06T12:30:58.197969+00:00",
   "scope": "Currently recorded research connectors; discovery can add more. Not deployed-app inventory.",
   "meaning_of_working": "Can query offered items within the stated tested scope, backed by current passing examples. Normally ten examples; an explicitly reviewed one-work publisher subset can use two real searches plus a complete listing and empty control, without padding. Exact lookups are distinguished from title/topic search.",
   "meaning_of_blocked_or_failed": "Deferred with a recorded reason; not necessarily permanently unavailable.",
@@ -16,13 +16,13 @@
   ],
   "totals": {
     "total": 133,
-    "working": 95,
-    "blocked_or_failed": 38,
+    "working": 96,
+    "blocked_or_failed": 37,
     "still_checking": 0,
-    "not_working_verified": 38,
+    "not_working_verified": 37,
     "assessed_or_deferred": 133,
     "remaining_to_assess": 0,
-    "passing_query_examples": 984
+    "passing_query_examples": 994
   },
   "groups": [
     {
@@ -45,8 +45,8 @@
       "id": "G03",
       "name": "Industry and job knowledge",
       "total": 20,
-      "working": 16,
-      "blocked_or_failed": 4,
+      "working": 17,
+      "blocked_or_failed": 3,
       "still_checking": 0
     },
     {
@@ -1013,23 +1013,6 @@
     {
       "group_id": "G03",
       "group": "Industry and job knowledge",
-      "connector_id": "nhm-guidelines",
-      "connector": "National Health Mission guidelines",
-      "status": "blocked_or_failed",
-      "passing_examples": 0,
-      "tested_search_scope": "Supported current search method not yet verified",
-      "known_limitations": "Saved robots request timed out; target was skipped. No fresh reader/API evidence and no unchanged retry. | One programme-guideline catalog candidate; states, disease programmes, chapters and guideline revisions are not separate origins.",
-      "next_step_or_blocker": "Look for a documented current central NHM metadata export or provider correction to the policy redirect; avoid retrying the same broken route each hour.",
-      "block_reason": "HTTPS policy still redirects to legacy HTTP404 route; exact redirect target now tested and timed out, so no policy or catalog access established.",
-      "last_attempt_and_result": "Inspect redirect semantics rather than treating the302 alone as a denial; request exact published policy redirect with20second limit. / 302 then timeout. No catalog/document query sent.",
-      "recovery_decision": "wait_for_current_policy_or_published_metadata_export",
-      "last_reviewed_at": "2026-11-06T10:49:42.393860+00:00",
-      "record": "sources/nhm-guidelines.json",
-      "production_activation_changed": false
-    },
-    {
-      "group_id": "G03",
-      "group": "Industry and job knowledge",
       "connector_id": "usfs-research",
       "connector": "US Forest Service research publications",
       "status": "blocked_or_failed",
@@ -1195,6 +1178,23 @@
       "recovery_decision": "",
       "last_reviewed_at": "2026-11-05T20:45:57.135655+00:00",
       "record": "sources/msha-digital-library.json",
+      "production_activation_changed": false
+    },
+    {
+      "group_id": "G03",
+      "group": "Industry and job knowledge",
+      "connector_id": "nhm-guidelines",
+      "connector": "National Health Mission guidelines",
+      "status": "working",
+      "passing_examples": 10,
+      "tested_search_scope": "Local title-token/native file-URL search over11 published NHSRC NUHM guideline links; central NHM catalog, site-wide search, document content and clinical currency not verified",
+      "known_limitations": "Bounded NHSRC NUHM Guidelines table only; main NHM catalog still unavailable and NHSRC /search disallowed. | Full documents were not fetched; clinical currency, issue/edition dates, full-item access and third-party rights remain unverified. | One NHM origin; NHSRC, guideline files, revisions and programme subsections are not additional independent origins. | English metadata labels observed; document languages/translated holdings not established.",
+      "next_step_or_blocker": "Keep the11-guideline scope explicit; review additional independently published NHM metadata only if documented/permitted. Do not call the disallowed site search or infer clinical currency. Reader/rights review is separate from working query count.",
+      "block_reason": "",
+      "last_attempt_and_result": "Capture the public programme catalog and copyright policy; parse only NUHM Guidelines and query ten distinct titles over that same fresh metadata capture. / Ten passing current queries,11 unambiguous native file URLs, zero-match control; no file downloads. Scope is the NUHM guideline subset.",
+      "recovery_decision": "working_with_nuhm_guideline_subset",
+      "last_reviewed_at": "2026-11-06T12:29:46.315842+00:00",
+      "record": "sources/nhm-guidelines.json",
       "production_activation_changed": false
     },
     {
@@ -2175,11 +2175,11 @@
       "passing_examples": 0,
       "tested_search_scope": "Supported current search method not yet verified",
       "known_limitations": "Saved robots HTTP403 prevented target retrieval. No current catalog/API body is available. | One LINCS collection candidate; contributing programs, language tabs and external producers must be separately identified and deduplicated before any independent-origin count.",
-      "next_step_or_blocker": "Wait for permitted API/course access or published metadata export; no repeated403 probes without a useful trigger.",
-      "block_reason": "Separate LINCS Courses policy403; documented ERIC API host policy403.",
-      "last_attempt_and_result": "Inspect public course-catalog alternative and ERIC primary API documentation; try preflight for URL-filtered LINCS subset. / Primary ERIC docs200, but no ERIC query or course metadata request was sent. Generic literacy records are not counted as LINCS.",
-      "recovery_decision": "blocked-pending-specific-recovery-trigger",
-      "last_reviewed_at": "2026-11-06T11:29:05.734707+00:00",
+      "next_step_or_blocker": "ERIC public UI policy503: wait until2026-11-06T18:00:00Z for a single preflight if useful, or inspect a newly documented LINCS-specific metadata export. API/course403 routes stay paused. Only count records explicitly linked to native LINCS resources.",
+      "block_reason": "LINCS course/API routes remain blocked; independent ERIC public UI robots returned503.",
+      "last_attempt_and_result": "Reviewed primary ERIC API documentation saved in run I and checked the separately published public UI policy; search-index results only mentioned LINCS and did not establish native LINCS mapping. / Policy503; no ERIC homepage/search request sent, no passing LINCS examples.",
+      "recovery_decision": "wait_for_policy_recovery_or_documented_export",
+      "last_reviewed_at": "2026-11-06T12:30:54.482405+00:00",
       "record": "sources/lincs.json",
       "production_activation_changed": false
     },
