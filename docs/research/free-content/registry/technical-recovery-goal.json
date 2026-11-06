@@ -6,7 +6,7 @@
   "fixed_inventory_from": "blocked-connector-access-review.csv",
   "inventory_count": 44,
   "baseline_working": 2,
-  "remaining": 14,
+  "remaining": 13,
   "completion": "Every one of these 44 connectors has a relevant, supported search with saved current examples and stated scope. A failed attempt is not completion. Owner may explicitly accept provider unavailability; until then it stays open.",
   "activation_scope": "Current release explicitly authorizes the five newly completed connectors. This recovery goal researches the 44; do not deploy subsequent new integrations without a tested scoped release.",
   "constraints": [
@@ -643,8 +643,8 @@
       "group": "G03",
       "status": "blocked_or_failed",
       "original_reason": "Robots returned 403 before catalog retrieval.",
-      "current_reason": "The official separate Money Smart catalog policy endpoint returns503; primary FDIC policy403 remains historical.",
-      "next_action": "Wait for catalog.fdic.gov policy/service recovery; one timed policy recheck no earlier than16:00UTC unless new recovery evidence. Then inspect anonymous metadata search without ordering materials.",
+      "current_reason": "Main FDIC policy403 and catalog policy503 remain; no new provider request without a useful recovery trigger.",
+      "next_action": "After a useful FDIC policy recovery signal, inspect the official adult/young-adult module metadata table and its published Download Data option. Separate catalog.fdic.gov timed policy retry remains no earlier than16:00UTC. No proxy or content download.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -667,6 +667,19 @@
           "evidence": [
             "runs/technical-recovery-20261106h/observations.jsonl"
           ]
+        },
+        {
+          "reviewed_at": "2026-11-06T12:36:34.202660+00:00",
+          "reason": "Main FDIC policy403 and catalog policy503 remain; no new provider request without a useful recovery trigger.",
+          "attempt": "Search primary FDIC documentation for a smaller supported module-metadata list instead of the full Salesforce catalog.",
+          "result": "Official adult page describes14 modules and a Download Data table; unverified lead until permitted retrieval. Third-party proxy result rejected.",
+          "decision": "wait_for_policy_recovery_then_try_official_module_table",
+          "next_action": "After a useful FDIC policy recovery signal, inspect the official adult/young-adult module metadata table and its published Download Data option. Separate catalog.fdic.gov timed policy retry remains no earlier than16:00UTC. No proxy or content download.",
+          "retry_not_before": "2026-11-06T16:00:00Z",
+          "evidence": [
+            "runs/technical-recovery-20261106j/alternative-leads.json"
+          ],
+          "owner_action_required": false
         }
       ]
     },
@@ -1145,10 +1158,10 @@
       "id": "usgs-national-map",
       "name": "USGS The National Map downloadable products",
       "group": "G04",
-      "status": "blocked_or_failed",
+      "status": "working",
       "original_reason": "API-host robots returned 403.",
-      "current_reason": "Documented basemap service policy403; separate published hydro service failed at environment proxy CONNECT403, so provider health for hydro is unknown.",
-      "next_action": "Wait for permitted reachable public metadata service; do not change proxy routing, agent identity or use denial-bypassing mirrors.",
+      "current_reason": "",
+      "next_action": "Use the explicit current-US-Topo metadata scope. Preserve production/version IDs when refreshing the documented export; assess other National Map product exports separately before broadening coverage. Do not retry denied API/ScienceBase routes without a new useful policy trigger.",
       "initial_pass_complete": true,
       "attempts": [
         {
@@ -1172,6 +1185,25 @@
             "runs/technical-recovery-20261106i/observations.jsonl"
           ],
           "next_action": "Wait for permitted reachable public metadata service; do not change proxy routing, agent identity or use denial-bypassing mirrors."
+        },
+        {
+          "reviewed_at": "2026-11-06T12:35:14.767722+00:00",
+          "reason": "Published US Topo Availability API policy403; official National Map page also documents a separate public staged metadata export.",
+          "attempt": "Follow official metadata-list link, public listing script and declared archive; validate ZIP bounds/schema/count, then run ten title/state searches on the single fresh current-edition CSV.",
+          "result": "Ten passing queries across ten states;65240 retained current map records, no ambiguous identities, two zero-result controls. No map/content downloads or denied-host requests.",
+          "decision": "working_with_current_us_topo_metadata_export",
+          "next_action": "Use the explicit current-US-Topo metadata scope. Preserve production/version IDs when refreshing the documented export; assess other National Map product exports separately before broadening coverage. Do not retry denied API/ScienceBase routes without a new useful policy trigger.",
+          "owner_action_required": false,
+          "evidence": [
+            "runs/technical-recovery-20261106j/observations.jsonl",
+            "runs/technical-recovery-20261106j/usgs-topo-metadata-analysis.json",
+            "runs/technical-recovery-20261106j/ustopo_current_readme.txt",
+            "runs/technical-recovery-20261106j/ustopo_current.txt",
+            "runs/technical-recovery-20261106j/usgs-topo-metadata-index.html",
+            "runs/technical-recovery-20261106j/usgs-topo-list-script.js",
+            "runs/technical-recovery-20261106j/usgs-topo-metadata-list.xml",
+            "examples/usgs-national-map.jsonl"
+          ]
         }
       ]
     },
@@ -1439,8 +1471,8 @@
     }
   ],
   "progress": {
-    "working": 30,
-    "blocked_or_failed": 14,
+    "working": 31,
+    "blocked_or_failed": 13,
     "still_checking": 0,
     "checked_this_pass": 44,
     "remaining_to_recheck_this_pass": 0,
@@ -1448,26 +1480,38 @@
     "revisited_since_goal_started": 42
   },
   "current_run": {
-    "state": "checkpointed-continuing",
+    "state": "checkpointed-awaiting-continuation",
     "run_id": "technical-recovery-20261106j",
     "started_at": "2026-11-06T12:20:26.011176+00:00",
-    "heartbeat_at": "2026-11-06T12:30:54.522420+00:00",
+    "heartbeat_at": "2026-11-06T12:39:05.237846+00:00",
     "collector_active": false,
     "active_detached_worker": false,
     "scope": "Research-only documented query recovery; no production activation; saved service backoff respected",
-    "checkpointed_at": "2026-11-06T12:30:54.522420+00:00"
+    "checkpointed_at": "2026-11-06T12:39:05.237846+00:00"
   },
   "continuation_automation_id": "6aebd9d69b388191ab4c09ed73709d3f",
   "native_chat_goal_activated": false,
-  "working": 30,
-  "updated_at": "2026-11-06T12:30:54.522420+00:00",
+  "working": 31,
+  "updated_at": "2026-11-06T12:39:05.237846+00:00",
   "latest_run": {
     "run_ids": [
       "technical-recovery-20261106j"
     ],
     "new_working": [
-      "nhm-guidelines"
+      "nhm-guidelines",
+      "usgs-national-map"
     ],
-    "remaining_goal_open": true
+    "remaining_goal_open": true,
+    "new_verified_examples": 20,
+    "validation": {
+      "research_tests": 382,
+      "capture_index_audit": "pass",
+      "registry_validation": "pass",
+      "capture_hash_errors": []
+    },
+    "checkpoint_commit": "b2aa9b2c8a7f96788cb4a9cff5418b3d27411b54",
+    "checkpoint_commit_role": "Previous successfully pushed checkpoint; final checkpoint is branch HEAD containing this file",
+    "automation_verified_at": "2026-11-06T12:38:00.271Z",
+    "backlog_archive": "runs/technical-recovery-20261106j/backlog-checkpoint.json"
   }
 }

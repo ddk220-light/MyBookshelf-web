@@ -1,6 +1,6 @@
 ## Recovery J checkpoint — 6 November 2026
 
-96 Working / 37 Blocked/failed / 0 Still checking of 133 active connectors; 994 current passing examples. Original44: 30 Working / 14 remaining. New recoveries: nhm-guidelines. 375 tests and evidence checks pass. Other blockers remain open; research only.
+97 Working / 36 Blocked/failed / 0 Still checking of 133 active connectors; 1004 current passing examples. Original44: 31 Working / 13 remaining. New recoveries: nhm-guidelines, usgs-national-map. 382 tests and evidence checks pass. Other blockers remain open; research only.
 
 ## Recovery I checkpoint — 6 November 2026
 
