@@ -1,18 +1,17 @@
 # Paused India audit: repair and revalidation
-Generated 2026-11-07T17:30:50.771Z. Full collection remains paused.
-Frozen cohort: 554; evidence-backed reviewed outcomes: 485; still open: 69.
+Generated 2026-11-07T17:39:31.644Z. Full collection remains paused.
+Frozen cohort: 554; evidence-backed reviewed outcomes: 493; still open: 61.
 
 | Result | Libraries |
 |---|---:|
-| tooling_or_evidence_gap | 68 |
-| observed_connection_or_http_block | 191 |
+| tooling_or_evidence_gap | 61 |
+| observed_connection_or_http_block | 192 |
 | clean_zero_replayed | 4 |
 | confirmed_policy_block | 113 |
 | confirmed_policy_or_access_block | 4 |
 | verified_20_replayed | 90 |
-| verified_20_live | 75 |
-| interrupted | 1 |
-| verified_partial_live | 4 |
+| verified_20_live | 81 |
+| verified_partial_live | 5 |
 | confirmed_empty_live | 4 |
 
 Replayed evidence keeps its original observation date. Connection failures describe this audit environment, not worldwide library downtime. Partial findings do not meet the twenty-book target. Missing adapters and unproven website semantics remain open tooling gaps.
