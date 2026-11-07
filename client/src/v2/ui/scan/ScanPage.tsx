@@ -1,6 +1,7 @@
+import {localFreeSearchEnabled,isContentSourceRetired} from '../../../../../shared/content-source-availability.mjs';
 import { exampleBooks } from '../../exampleBooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
 import { publicApi } from '../../api';
 import { BrowserIsbnScanner, type IsbnScanner } from '../../camera';
 import { isbnSource, isValidIsbn13, messageFor, useLibrary } from '../../context';
@@ -19,7 +20,10 @@ import { ContentSearchPage, SearchScopes } from '../content/ContentSearchPage';
 
 export function ScanPage() {
   const location = useLocation();
-  const scope = new URLSearchParams(location.search).get('scope');
+  const params = new URLSearchParams(location.search);
+  const scope = params.get('scope');
+  if(import.meta.env.VITE_CONTENT_DISCOVERY_ENABLED==='true'&&scope==='free'&&!localFreeSearchEnabled){params.set('scope','knowledge');params.delete('collection');params.delete('level');params.delete('item');if(isContentSourceRetired(params.get('source')))params.delete('source');return <Navigate replace to={'/app/search?'+params}/>;}
+  if(import.meta.env.VITE_CONTENT_DISCOVERY_ENABLED==='true'&&scope==='knowledge'&&isContentSourceRetired(params.get('source'))){params.delete('source');return <Navigate replace to={'/app/search?'+params}/>;}
   if (import.meta.env.VITE_CONTENT_DISCOVERY_ENABLED === 'true' && scope === 'knowledge') return <KnowledgeSearchPage/>;
   if (import.meta.env.VITE_CONTENT_DISCOVERY_ENABLED === 'true' && (scope === 'free' || scope === 'papers')) return <ContentSearchPage key={scope} scope={scope} />;
   return <LibraryScanPage />;

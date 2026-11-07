@@ -1,3 +1,4 @@
+import {isContentSourceRetired} from '../../../shared/content-source-availability.mjs';
 import {contentApi} from './contentApi';
 import {PublicApiError} from './api';
 import type {ContentKind,ContentPage} from './contentTypes';
@@ -5,7 +6,7 @@ export type KnowledgeSource={id:string;name:string;scope:string;kinds:ContentKin
 export async function knowledgeSources(signal:AbortSignal):Promise<KnowledgeSource[]>{
   const response=await fetch('/api/v2/content/sources',{signal,credentials:import.meta.env.VITE_DEPLOYMENT_ENV==='preview'?'same-origin':'omit'});
   if(!response.ok)throw new PublicApiError({message:'The source list could not be loaded. Please try again.'});
-  const data=await response.json();if(!Array.isArray(data.sources))throw new PublicApiError();return data.sources;
+  const data=await response.json();if(!Array.isArray(data.sources))throw new PublicApiError();return data.sources.filter((source:KnowledgeSource)=>!isContentSourceRetired(source.id));
 }
 export type KnowledgeFilters={query:string;kind?:ContentKind;language?:string;includeUnclear?:boolean};
 export function searchKnowledgeSource(source:KnowledgeSource,filters:KnowledgeFilters,signal:AbortSignal,cursor?:string):Promise<ContentPage>{

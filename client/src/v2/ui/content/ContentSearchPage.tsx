@@ -1,3 +1,4 @@
+import {localFreeSearchEnabled} from '../../../../../shared/content-source-availability.mjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { contentApi } from '../../contentApi';
@@ -20,7 +21,7 @@ const recentSearches=new Map<string,{query:string;scope:'free'|'papers';href:str
 
 export function SearchScopes({scope}:{scope:'library'|'free'|'papers'|'knowledge'}){
   const location=useLocation();const q=new URLSearchParams(location.search).get('q');
-  return <nav className="content-scopes segment-control" aria-label="Search scope">{(['library','knowledge','free','papers'] as const).map(value=>
+  return <nav className="content-scopes segment-control" aria-label="Search scope">{(['library','knowledge','free','papers'] as const).filter(value=>value!=='free'||localFreeSearchEnabled).map(value=>
     <Link key={value} className={scope===value?'selected':''} aria-current={scope===value?'page':undefined}
       to={'/app/search'+(value!=='library'||q?'?'+new URLSearchParams({...value!=='library'?{scope:value}:{},...q?{q}:{}}):'')}>{value==='library'?'Library books':value==='knowledge'?'All knowledge':value==='free'?'Free to read':'Papers'}</Link>)}</nav>;
 }
@@ -103,10 +104,10 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
         {children&&<label><span className="visually-hidden">Publisher level</span><select aria-label="Publisher level" value={level} disabled={!page?.availableLevels?.length} onChange={e=>setLevel(e.target.value)}><option value="">All publisher levels</option>{page?.availableLevels?.map(label=><option key={label} value={label}>{label}</option>)}</select></label>}
       </div>}
       {children&&<p className="content-coverage">Levels are as the publisher labels them; they do not imply an age.</p>}
-      {textbooks&&<p className="content-coverage">Open textbooks · <Link to={'/app/search?scope=free&q='+encodeURIComponent(query)}>Search all free books</Link>. This catalog export does not supply languages; a language filter excludes those records.</p>}
+      {textbooks&&<p className="content-coverage">Open textbooks · <Link to={'/app/search?scope=knowledge&q='+encodeURIComponent(query)}>Search all free books</Link>. This catalog export does not supply languages; a language filter excludes those records.</p>}
       {busy&&<div className="content-loading" role="status"><p className="visually-hidden">Checking sources…</p><ul className="content-source-list">{progress.map(source=><li key={source.id}><span><span className={source.status==='ok'?'access-free':undefined} aria-hidden="true">{source.status==='ok'?'✓':source.status==='queued'?'–':'○'}</span>{' '}{sourceName(source)}</span><span>{source.status==='ok'?(source.returned?`${source.returned} found`:'Answered'):sourceStatus(source)}</span></li>)}</ul><p>{m.loading}</p><div className="content-skeletons" aria-hidden="true"><span/><span/><span/></div></div>}
       {error&&<div className={'content-notice content-outage'+(disabled||restartRequired?' content-disabled':'')} role="alert">{disabled||restartRequired?<OpenBookIcon/>:<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="m3 3 18 18M2 8c5-5 15-5 20 0M5 12c3-3 11-3 14 0M8 16c2-2 6-2 8 0M12 20h.01"/></svg>}<h2>{errorTitle}</h2><p>{disabled&&scope==='papers'?'Choose a connected source in Sources, open a source website, or search free books.':error.message}</p>
-        {!disabled&&!restartRequired&&<p>This does not mean there is no free copy.</p>}<div className="content-outage-actions">{disabled?scope==='papers'&&<Link className="button-link" to={'/app/search?'+new URLSearchParams({scope:'free',q:query})}>Search free books instead</Link>:<button onClick={again}>{restartRequired?'Search again':'Try again'}</button>}<Link className="button-link button-quiet" to={'/app/search?q='+encodeURIComponent(query)}>Search library books instead</Link></div>
+        {!disabled&&!restartRequired&&<p>This does not mean there is no free copy.</p>}<div className="content-outage-actions">{disabled?scope==='papers'&&<Link className="button-link" to={'/app/search?'+new URLSearchParams({scope:'knowledge',q:query})}>Search all knowledge instead</Link>:<button onClick={again}>{restartRequired?'Search again':'Try again'}</button>}<Link className="button-link button-quiet" to={'/app/search?q='+encodeURIComponent(query)}>Search library books instead</Link></div>
         {sources.length>0&&<button className="text-button" onClick={()=>setSourcesOpen(true)}>Sources</button>}</div>}
       {page&&<div className={'content-results-layout'+(desktop&&selected?' has-detail':'')}><div className="content-results">
         {page.searchMode==='live'&&<p className="content-coverage">Searching {answered.map(sourceName).join(', ')||'the selected source'} live. One source per search; use Sources to switch. Results can change between pages.</p>}

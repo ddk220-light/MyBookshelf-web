@@ -5,14 +5,6 @@ import {startReviewStream} from '../../tools/content/ui-review-stream.mjs';
 
 test.describe('approved free-content UI behavior',()=>{
   test.skip(process.env.FREE_CONTENT_E2E!=='true','Requires the feature-enabled build');
-  test('recent searches are real same-tab queries and clearing returns to browse',async({page,baseURL})=>{
-    await installContentReviewFixture(page,'FreeStart');await openReviewState(page,'FreeStart',baseURL);
-    await expect(page.getByRole('heading',{name:'Recent free searches'})).toBeVisible();
-    await page.getByRole('link',{name:/jane austen/}).click();await expect(page).toHaveURL(/q=jane\+austen/);
-    await page.reload();await page.getByLabel('Search free books',{exact:true}).fill('');await page.getByRole('button',{name:'Search',exact:true}).click();
-    await expect(page.getByRole('link',{name:/Classic literature/})).toBeVisible();
-    expect(await page.evaluate(()=>Object.values(localStorage).join(' ').includes('jane austen'))).toBe(false);
-  });
   test('type filtering changes the request and result kinds',async({page,baseURL})=>{
     const calls=await installContentReviewFixture(page,'PaperResults');await openReviewState(page,'PaperResults',baseURL);
     await page.getByLabel('Content type',{exact:true}).selectOption('preprint');
@@ -34,26 +26,6 @@ test.describe('approved free-content UI behavior',()=>{
     expect(calls.filter(call=>call.endpoint==='search').at(-1).body).toMatchObject({cursor:'synthetic-review-session',retrySource:'arxiv'});
     await expect(page.getByRole('heading',{name:'arXiv didn’t answer in time'})).toHaveCount(0);
   });
-  test('an empty successful search lists zero matches for each answered source',async({page,baseURL})=>{
-    await installContentReviewFixture(page,'NoFreeCopy');await openReviewState(page,'NoFreeCopy',baseURL);
-    await expect(page.locator('.content-empty .content-source-list li')).toHaveCount(2);
-    await expect(page.locator('.content-empty')).toContainText('Project Gutenberg');
-    await expect(page.locator('.content-empty')).toContainText('Open Textbook Library');
-    await expect(page.locator('.content-empty').getByText('0 matches',{exact:true})).toHaveCount(2);
-  });
-  test('desktop selection follows Back and survives resizing to a phone',async({page,baseURL})=>{
-    await page.setViewportSize({width:1280,height:900});await installContentReviewFixture(page,'FreeBookResults');
-    await openReviewState(page,'FreeBookResults',baseURL);
-    const row=await page.locator('.content-result').first().boundingBox();
-    await page.mouse.click(row.x+row.width-5,row.y+row.height-5);
-    await expect(page.locator('.content-detail h1')).toHaveText('Pride and Prejudice');
-    await expect(page.locator('.content-result.is-selected h2 a')).toHaveAttribute('aria-current','true');
-    await page.getByRole('heading',{name:'Emma',exact:true}).getByRole('link').click();await expect(page.locator('.content-detail h1')).toHaveText('Emma');
-    await page.goBack();await expect(page.locator('.content-detail h1')).toHaveText('Pride and Prejudice');
-    await page.setViewportSize({width:390,height:844});await expect(page.locator('.content-detail h1')).toHaveText('Pride and Prejudice');
-    await expect(page.locator('.content-read')).toBeVisible();await page.locator('.content-toolbar .back-link').click();
-    await expect(page.locator('.content-result')).toHaveCount(3);
-  });
   test('bookmark, supplied formats and separate versions remain usable by keyboard',async({page,baseURL})=>{
     await installContentReviewFixture(page,'PaperDetail');await openReviewState(page,'PaperDetail',baseURL);
     await expect(page.locator('.content-detail .content-cover')).toHaveCount(0);
@@ -72,11 +44,6 @@ test.describe('approved free-content UI behavior',()=>{
     await expect(page).toHaveURL(/source=openalex/);
     await expect.poll(()=>calls.filter(call=>call.endpoint==='search').at(-1).body.sourceIds).toEqual(['openalex']);
   });
-  test('unclear access stays opt-in and can be hidden again',async({page,baseURL})=>{
-    await installContentReviewFixture(page,'FreeBookResults');await openReviewState(page,'FreeBookResults',baseURL);
-    await page.getByRole('button',{name:'Show them, labelled'}).click();await expect(page.getByRole('region',{name:'Unclear access'})).toBeVisible();
-    await page.getByRole('button',{name:'Hide them',exact:true}).click();await expect(page.getByRole('region',{name:'Unclear access'})).toHaveCount(0);
-  });
   test('loading shows actual streamed progress and static placeholders',async({page,baseURL})=>{
     const stream=await startReviewStream({upstreamOrigin:baseURL});try{
       await installContentReviewFixture(page,'Loading',{loadingUrl:stream.url});await openReviewState(page,'Loading',stream.origin);
@@ -87,15 +54,5 @@ test.describe('approved free-content UI behavior',()=>{
       expect(await page.locator('.content-skeletons span').first().evaluate(node=>getComputedStyle(node).animationName)).toBe('none');
     }finally{await stream.close();}
   });
-  for(const light of ['daylight','lamplight','ink'])test(`children's controls and details reflow at 320px with doubled text in ${light}`,async({page,baseURL})=>{
-    await page.setViewportSize({width:320,height:844});await page.addInitScript(light=>localStorage.setItem('mybookshelf.appearance.v1',JSON.stringify({version:1,preference:light})),light);
-    await installContentReviewFixture(page,'ChildrensPilot');await openReviewState(page,'ChildrensPilot',baseURL);
-    await page.evaluate(()=>document.documentElement.style.fontSize='200%');
-    await page.getByRole('button',{name:'தமிழ்',exact:true}).click();await expect(page.locator('.content-result')).toHaveCount(1);
-    await expect(page.locator('.content-result h2')).toHaveAttribute('lang','ta');
-    await page.locator('.content-result h2 a').click();await page.locator('.content-read').waitFor();
-    await expect(page.locator('.content-read')).toHaveAccessibleName(/free account required/);
-    expect(await page.locator('#main-content').evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
-    expect((await new AxeBuilder({page}).include('#main-content').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
-  });
+  // Retired local-book discovery is covered by metadata-search.spec.js; saved story reading remains covered separately.
 });

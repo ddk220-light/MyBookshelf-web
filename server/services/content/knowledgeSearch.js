@@ -1,3 +1,4 @@
+import {isContentSourceRetired} from '../../../shared/content-source-availability.mjs';
 import {createHash,createHmac,timingSafeEqual} from 'node:crypto';
 import {CONTENT_POLICY_REVISION,parseContentSearch,parseContentResolve,readingActions,itemAccess,isReadableAccess,observedAccess} from './contracts.js';
 import {KNOWLEDGE_SOURCES,publicKnowledgeSources} from './knowledgeSources.js';
@@ -26,7 +27,7 @@ export function createKnowledgeService({env=process.env,adapters,now=()=>Date.no
       if(query.sourceIds?.length!==1||!KNOWLEDGE_SOURCES[id])throw fail('CONTENT_INVALID_REQUEST','Choose one source for each request.',400);
       if(query.retrySource&&query.retrySource!==id)throw fail('CONTENT_INVALID_REQUEST','Retry the selected source.',400);
       const config=KNOWLEDGE_SOURCES[id];
-      if(config.blocked)throw fail('CONTENT_DISABLED','This source is not connected here.',503,[status(id,'disabled')]);
+      if(config.blocked||isContentSourceRetired(id))throw fail('CONTENT_DISABLED','This source is not connected here.',503,[status(id,'disabled')]);
       if(query.languages.length&&(query.languages.length!==1||!config.languages?.includes(query.languages[0])))throw fail('CONTENT_FILTER_UNSUPPORTED','This source does not support that language filter.',400,[status(id,'unsupported')]);
       if(!query.kinds.some(k=>config.kinds.includes(k)))throw fail('CONTENT_FILTER_UNSUPPORTED','This source does not supply the selected content type.',400,[status(id,'unsupported')]);
       const binding=hash({...query,cursor:null,retrySource:null,profile:PROFILE,policy:CONTENT_POLICY_REVISION});

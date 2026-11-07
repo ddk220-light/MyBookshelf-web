@@ -51,11 +51,11 @@ test('older review evidence stays unknown; source lookup retains exact translati
   const shown=stale.search({query:'',collection:'children',includeUnclear:true});assert.equal(shown.items.length,3);
   assert.equal(shown.items[0].readingActions.length,0);assert.equal(shown.sources[0].freshness,'stale');
 });
-test('service routes the pilot independently and rejects unsupported mixed scope kinds explicitly',async()=>{
+test('service retires pilot discovery but preserves previously saved story resolution',async()=>{
   const service=createContentService({children:make(),local:{search:()=>{throw Error('must not call local books');}}});
-  assert.equal((await service.search({query:'',collection:'children'})).items.length,3);
+  await assert.rejects(service.search({query:'',collection:'children'}),e=>e.code==='CONTENT_DISABLED');
   assert.equal((await service.resolve({key:'fcd:v1:storyweaver:7777771'})).item.title,'Synthetic English pilot fixture');
-  await assert.rejects(service.search({query:'x',kinds:['book','article']}),e=>e.code==='CONTENT_FILTER_UNSUPPORTED');
+  await assert.rejects(service.search({query:'x',kinds:['book','article']}),e=>e.code==='CONTENT_DISABLED');
 });
 
 function accountManifest(){
@@ -83,13 +83,12 @@ test('account review rejects unknown charges, contradictory access, wrong notice
   }
 });
 
-test('ordinary free-book search includes reviewed source-account stories without contacting live providers',async()=>{
+test('retired stories cannot be discovered but saved record identity and reading conditions survive',async()=>{
   const reviewed=readChildrenManifest();const reviewedNow=Math.max(...reviewed.records.map(record=>Date.parse(record.review.reviewedAt)));
   const service=createContentService({env:{CONTENT_DISCOVERY_ENABLED:'true',CONTENT_CHILDREN_ENABLED:'true',CONTENT_CURSOR_SECRET:'test-free-book-search-without-store-secret'},now:()=>reviewedNow,
-    paperAdapter:{search:()=>{throw Error('Book search must not contact live papers');}}});
-  const result=await service.search({query:'குண்டு',access:'free',languages:['ta']});
-  assert.equal(result.items.length,1);assert.equal(result.items[0].key,'fcd:v1:storyweaver:2252');
-  assert.equal(result.items[0].access,'free_account_required');assert.equal(result.hiddenUnclear,0);
-  assert.equal((await service.resolve({key:result.items[0].key})).item.contributors.find(c=>c.role==='translator').name,'Manickavasagam Deivanayagam');
-  assert.equal((await service.search({query:'குண்டு',access:'free_full_text'})).items.length,0);
+    paperAdapter:{search:()=>{throw Error('Saved story lookup must not contact live papers');}}});
+  await assert.rejects(service.search({query:'குண்டு',access:'free',languages:['ta']}),e=>e.code==='CONTENT_DISABLED');
+  const result=await service.resolve({key:'fcd:v1:storyweaver:2252'});
+  assert.equal(result.item.access,'free_account_required');
+  assert.equal(result.item.contributors.find(c=>c.role==='translator').name,'Manickavasagam Deivanayagam');
 });
