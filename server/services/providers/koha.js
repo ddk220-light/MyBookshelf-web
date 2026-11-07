@@ -5,7 +5,7 @@ import { validateAndNormalize } from '../isbn.js';
 import { publicCatalogOrigin } from './publicCatalogOrigin.js';
 import ISBN from 'isbn3';
 import { kohaCatalogOrigin } from './kohaOrigin.js';
-import { firstIsbn } from './catalogMarkup.js';
+import { firstIsbn, bibliographicMaterialType } from './catalogMarkup.js';
 
 export function parseBiblioNumber(response) {
   const location = response.headers?.get?.('location') || response.url || '';
@@ -223,7 +223,13 @@ function parseHoldings(markup, identity, scope = {}) {
 }
 
 function configuration(library) {
-  const base = kohaCatalogOrigin(library) || publicCatalogOrigin(library);
+  // Older directory rows retain only the public catalog link. Derive a base
+  // from that configured link, while keeping HTTP pins and origin checks.
+  let configured = library;
+  if (!library.baseUrl && library.catalogUrl) {
+    try { configured = { ...library, baseUrl: new URL(library.catalogUrl).origin }; } catch { /* Reject invalid configuration below. */ }
+  }
+  const base = kohaCatalogOrigin(configured) || publicCatalogOrigin(configured);
   if (!base) throw publicError('CATALOG_CONFIGURATION_REQUIRED', 'Koha requires a reviewed public catalog origin');
   return base;
 }
@@ -338,8 +344,10 @@ export async function resolveCatalogRecord(library, recordId, options = {}) {
     }).filter(Boolean))];
     const observation = parseHoldings(clean, { matchKind: 'verified_work', recognizedExact: true }, library);
     if (!title || !observation || (library.kohaBranchCode && !observation.totalCopies)) throw publicError('CATALOG_UNRECOGNIZED', 'Catalog did not confirm this branch’s record');
-    return { recordId, title, authors, isbn, catalogUrl: url.toString(), observation: {
+    const materialType = bibliographicMaterialType(clean);
+    return { recordId, title, authors, isbn, ...(materialType ? { materialType } : {}), catalogUrl: url.toString(), observation: {
       ...observation, outcome: observation.outcome === 'unknown' && observation.totalCopies > 0 ? 'in_catalog' : observation.outcome,
+      ...(materialType ? { materialType } : {}),
       matchKind: 'verified_work', catalogUrl: url.toString() } };
   }, { deadlineAt });
 }
@@ -539,7 +547,7 @@ function partialRecords(records, library) {
 }
 
 function requestFailure(error) {
-  if (/^CATALOG_/.test(error?.code || '')) return error;
+  if (/^(?:CATALOG_|ROBOTS_|SOURCE_|PROVIDER_|UPSTREAM_|ORIGIN_)/.test(error?.code || '')) return error;
   const code = error?.name === 'AbortError' || /timeout|deadline/i.test(error?.message || '') ? 'CATALOG_TIMEOUT' : 'CATALOG_UNAVAILABLE';
   return publicError(code, 'Koha could not complete the public catalog request');
 }

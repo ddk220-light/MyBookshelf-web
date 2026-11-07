@@ -2,7 +2,10 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { inventory } from "../../server/services/catalog-connectors/inventory.js";
-import { hash } from "../../server/services/catalog-connectors/contracts.js";
+import {
+  hash,
+  failure,
+} from "../../server/services/catalog-connectors/contracts.js";
 
 export function initialize(
   store,
@@ -98,10 +101,11 @@ export function assessBook(record, query, existing) {
   if (!record?.recordId || !record.title)
     return { accepted: false, reason: "missing_identity" };
   const observation = record.observation || record.availability;
-  const format = record.format || observation?.format || "";
+  const materialType = record.materialType || observation?.materialType;
+  const format = materialType || record.format || observation?.format || "";
   if (
     /journal|periodical|thesis|dissertation|article|serial|map|audio|video/i.test(
-      format,
+      [format, record.format, observation?.format].filter(Boolean).join(" "),
     )
   )
     return { accepted: false, reason: "not_a_book" };
@@ -141,7 +145,7 @@ export function assessBook(record, query, existing) {
     return { accepted: false, reason: "membership_unconfirmed" };
   return {
     accepted: true,
-    reason: format
+    reason: /book|print|monograph|text/i.test(format)
       ? "verified_book_record"
       : "catalog_record_format_needs_review",
     formatConfirmed: /book|print|monograph|text/i.test(format),
@@ -256,6 +260,16 @@ export async function run(
   } = {},
 ) {
   const controller = new AbortController();
+  const controlPath = join(store.root, "audit-control.json");
+  if (
+    existsSync(controlPath) &&
+    JSON.parse(readFileSync(controlPath)).resumeAllowed === false
+  )
+    throw failure(
+      "AUDIT_REPAIR_GATE",
+      "Full audit is paused pending repair and cohort revalidation",
+      409,
+    );
   const signal = externalSignal
     ? AbortSignal.any([externalSignal, controller.signal])
     : controller.signal;

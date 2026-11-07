@@ -6,6 +6,9 @@ import * as eg from "../providers/egranthalaya.js";
 import * as indcat from "../providers/indcat.js";
 import * as libman from "../providers/libman.js";
 import * as vufind from "../providers/vufind.js";
+import * as vpl from "../providers/visakhapatnam.js";
+import * as academic from "../providers/discoveryAcademic.js";
+import * as community from "../providers/discoveryCommunity.js";
 import { connectorContext } from "./context.js";
 import { describe } from "./inventory.js";
 import { searchProfile, tokens, hash, failure, VERSION } from "./contracts.js";
@@ -18,13 +21,24 @@ const implementationFiles = [
 ].flatMap((dir) => {
   const base = new URL(dir, import.meta.url);
   return readdirSync(base)
-    .filter((name) => /\.(?:js|mjs)$/.test(name) && !name.includes(".test."))
+    .filter(
+      (name) => /\.(?:js|mjs|json)$/.test(name) && !name.includes(".test."),
+    )
     .sort()
     .map((name) => [dir + name, readFileSync(new URL(name, base), "utf8")]);
 });
-const implementationHash = hash(implementationFiles);
+export const implementationHash = hash(implementationFiles);
 
-const native = { koha, egranthalaya: eg, indcat, libman, vufind };
+const native = {
+  koha,
+  egranthalaya: eg,
+  indcat,
+  libman,
+  vufind,
+  vpl,
+  "discovery-academic": academic,
+  "discovery-community": community,
+};
 export class ConnectorService {
   constructor({
     coordinator,
@@ -201,7 +215,13 @@ export class ConnectorService {
           throw failure("INVALID_SOURCE_RESPONSE", "Invalid native total", 502);
         const fidelityCheck =
           descriptor.mode === "native_http"
-            ? verifyNativePage(entry.platform, ctx.responses, rows)
+            ? verifyNativePage(
+                entry.platform,
+                ctx.responses,
+                rows,
+                entry,
+                result.nativeProfile,
+              )
             : { verified: false, reason: "legacy_request_recipe_pending" };
         const records = rows.map((r, index) => ({
           ...r,
@@ -230,7 +250,8 @@ export class ConnectorService {
             ...profile,
             cursor: undefined,
             nativeProfile:
-              entry.platform === "egranthalaya"
+              result.nativeProfile ||
+              (entry.platform === "egranthalaya"
                 ? {
                     material: "Books",
                     field: profile.field === "title" ? "TITLE" : "ALL",
@@ -244,7 +265,9 @@ export class ConnectorService {
                     ? { field: "Title", pageSize: 10 }
                     : entry.platform === "libman"
                       ? { field: "TITLE" }
-                      : { field: "kw" },
+                      : entry.platform === "vpl"
+                        ? { field: "title", material: "Books" }
+                        : { field: "kw" }),
           },
           fidelity: fidelityCheck.verified
             ? "website_equivalent"

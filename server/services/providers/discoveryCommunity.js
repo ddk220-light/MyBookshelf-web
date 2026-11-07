@@ -169,11 +169,11 @@ function assertRmcScope(html, scope) {
   const selected = select && [...select[2].matchAll(/<option\b([^>]*)>/gi)].map(m => attributes(m[1])).filter(a => Object.hasOwn(a, 'selected'));
   if (!selected || selected.length !== 1 || selected[0].value !== scope) throw catalogError('Catalog returned another library', 'CATALOG_HOLDING_UNCONFIRMED');
 }
-export function parseRmc(html, library, query) {
+export function parseRmc(html, library, query, {native=false}={}) {
   assertRmcScope(html, library.communityCatalog.scope);
   const records = [];
   const starts = [...html.matchAll(/<input\b([^>]*\bname=["'][^"']*\$ItemMasterId["'][^>]*)>/gi)];
-  for (let i = 0; i < Math.min(starts.length, 30); i++) {
+  for (let i = 0; i < (native?starts.length:Math.min(starts.length, 30)); i++) {
     const a = attributes(starts[i][1]);
     const block = html.slice(starts[i].index, starts[i + 1]?.index || html.length);
     const title = text(block.match(/<h5\b[^>]*>([\s\S]*?)<\/h5>/i)?.[1]);
@@ -185,9 +185,9 @@ export function parseRmc(html, library, query) {
   const explicitZero = /No Records? Found|No Data Found|No records to display/i.test(text(html))
     || /\bmsgAlert_error\(\s*['"]No records found[.!]?['"]\s*\)/i.test(html);
   if (!records.length && !explicitZero) throw catalogError('Unrecognized empty municipal search');
-  return distinctRecords(records);
+  return native?records:distinctRecords(records);
 }
-async function rmcSearch(library, query, session) {
+async function rmcSearch(library, query, session, {native=false}={}) {
   let response = await session.read('/rmclibrary/generaldashboard');
   if (!response.text.includes('ctl00$body$ctl01')) throw catalogError('Public books navigation missing');
   response = await session.post(response.url, { ...hiddenFields(response.text), __EVENTTARGET: 'ctl00$body$ctl01', __EVENTARGUMENT: '' });
@@ -200,7 +200,7 @@ async function rmcSearch(library, query, session) {
   if (!input) throw catalogError('Public title input missing');
   const actualQuery = query.slice(0, 50);
   response = await session.post(response.url, { ...hiddenFields(response.text), ...fields, [input.name]: actualQuery });
-  return parseRmc(response.text, library, actualQuery);
+  return parseRmc(response.text, library, actualQuery,{native});
 }
 
 export function parseSindhiRecord(html, library, id) {
@@ -258,6 +258,14 @@ async function search(library, input, deadlineAt = Date.now() + 45_000) {
   }
 }
 export async function searchCatalog(library, query) { return search(library, query); }
+
+export function communityNativeProfile(library){const c=config(library);return {kind:c.family,supported:['pmb','rmc'].includes(c.family)};}
+export async function searchNativeCatalog(library,query){
+ const c=config(library);if(!communityNativeProfile(library).supported||boundedQuery(query)!==query||(c.family==='rmc'&&query.length>50))throw catalogError('Native website profile requires review or shorter literal input','UNSUPPORTED_PROFILE');
+ const records=c.family==='pmb'?await searchPmb(library,query,Date.now()+45_000,{native:true}):await rmcSearch(library,query,new CommunitySession(FAMILIES.rmc,Date.now()+45_000),{native:true});
+ const complete=records.searchComplete===true;
+ return {records,total:complete?records.length:null,hasMore:!complete,continuationUnsupported:!complete,nativeProfile:{field:c.family==='pmb'?'ALL':'Title',variant:c.family,branch:c.scope,...(c.family==='rmc'?{language:/[\u0a80-\u0aff]/.test(query)?'Gujarati':/[\u0900-\u097f]/.test(query)?'Hindi':'English'}:{})}};
+}
 
 export async function resolveCatalogRecord(library, id) {
   const c = config(library), deadlineAt = Date.now() + 45_000;

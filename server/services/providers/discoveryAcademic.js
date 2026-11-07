@@ -79,7 +79,7 @@ function hiddenForm(html){
 }
 const formRequest=(data)=>({method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(data).toString()});
 function json(response){try{return JSON.parse(response.text);}catch{throw catalogError('Catalog did not return bibliographic JSON');}}
-async function fetchQuery(library,q,mode,deadlineAt){
+async function fetchQuery(library,q,mode,deadlineAt,native=false){
   const c=config(library),read=anonymousSession(c,deadlineAt);let response,payload;
   if(c.kind==='srms'){
     const url='https://myportal.srms.ac.in/Library/OPACPanel/searchbookbytitle';
@@ -116,8 +116,8 @@ async function fetchQuery(library,q,mode,deadlineAt){
     const url=new URL('/result.aspx',c.url);url.search=new URLSearchParams({cmbval:mode==='isbn'?'ISBN/ISSN':'Title',search:q,RDB:'Contains',Typemate:'All',colltype:'All'});
     await read(url);response=await read(new URL('/EmployeeDataHandler.ashx',c.url));payload=json(response);
   }else throw catalogError('Public catalog method not implemented','CATALOG_UNSUPPORTED');
-  const result=parseAcademicResponse(c.kind,payload,{query:q,isbn:mode==='isbn'?validateAndNormalize(q):null});
-  return {...result,records:result.records.slice(0,MAX_RESULTS),complete:result.complete&&result.records.length<=MAX_RESULTS,read};
+  const result=parseAcademicResponse(c.kind,payload,{query:q,isbn:mode==='isbn'?validateAndNormalize(q):null,native});
+  return {...result,records:native?result.records:result.records.slice(0,MAX_RESULTS),complete:result.complete&&(native||result.records.length<=MAX_RESULTS),read};
 }
 async function enriched(b,c,read){
   if(c.kind==='libsoft'){
@@ -136,6 +136,25 @@ async function enriched(b,c,read){
     }catch{return b;}
   }
   return b;
+}
+const NATIVE_HTML=new Set(['libaitech','rps','libsoft','nios','librarika','mizoram','processcube','bmu','darshan']);
+export function academicNativeProfile(library){const c=config(library);return {kind:c.kind,url:c.url,supported:NATIVE_HTML.has(c.kind),field:['rps','processcube'].includes(c.kind)?'keyword':'title'};}
+export function nativeAcademicPage(kind,records,offset=0){
+ const clientPaging=['rps','libaitech'].includes(kind);
+ if(!Number.isSafeInteger(offset)||offset<0||offset%10||(!clientPaging&&offset))throw catalogError('Unsupported native page','UNSUPPORTED_PROFILE');
+ let all=records;
+ if(kind==='rps'){
+  if(records.some(r=>!/^\d+$/.test(r.nativeOrderKey||'')))throw catalogError('Website default numeric sort requires review');
+  all=[...records].sort((a,b)=>Number(a.nativeOrderKey)-Number(b.nativeOrderKey));
+ }
+ return {records:clientPaging?all.slice(offset,offset+10):all,...(clientPaging?{total:all.length,nextOffset:offset+10<all.length?offset+10:null,nativePage:{offset,pageSize:10,clientPaging:true}}:{})};
+}
+export async function searchNativeCatalog(library,query,{offset=0}={}){
+  const c=config(library);if(!NATIVE_HTML.has(c.kind)||boundedQuery(query)!==query)throw catalogError('Native website profile requires review or literal input within this form limit','UNSUPPORTED_PROFILE');
+  const result=await fetchQuery(library,query,'title',Date.now()+DEFAULT_TIMEOUT_MS,true);
+  const bookScope=['rps','libsoft','nios','mizoram','processcube','bmu','darshan'].includes(c.kind);
+  const records=finish(result,c,query).map(record=>({...record,...(bookScope?{materialType:'Book',materialTypeProof:'native_books_form_and_grid'}:{})})),page=nativeAcademicPage(c.kind,records,offset);
+  return {...page,total:page.total??(result.complete?records.length:null),hasMore:page.nativePage?Boolean(page.nextOffset):!result.complete,continuationUnsupported:!page.nativePage&&!result.complete,nativeProfile:{field:academicNativeProfile(library).field,material:bookScope?'Books':'unspecified',variant:c.kind,...page.nativePage}};
 }
 export async function searchCatalog(library,query){
   const c=config(library),q=boundedQuery(query),deadlineAt=Date.now()+DEFAULT_TIMEOUT_MS;

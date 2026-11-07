@@ -1,14 +1,156 @@
 import { failure } from "./contracts.js";
+import recipes from "./recipe-contracts.json" with { type: "json" };
+import { text } from "../providers/catalogMarkup.js";
+import { academicFidelity } from "./academic-fidelity.js";
+import { communityFidelity } from "./community-fidelity.js";
 
 // Deliberately independent of provider parsers: compare raw link identities
 // with the adapter's native page, without ranking or title matching.
-export function verifyNativePage(family, responses, records) {
-  if (!["koha", "egranthalaya", "indcat", "vufind"].includes(family))
+export function verifyNativePage(
+  family,
+  responses,
+  records,
+  entry = null,
+  nativeProfile = null,
+) {
+  if (
+    ![
+      "koha",
+      "egranthalaya",
+      "indcat",
+      "vufind",
+      "libman",
+      "vpl",
+      "discovery-academic",
+      "discovery-community",
+    ].includes(family)
+  )
     return { verified: false, reason: "website_display_recipe_pending" };
+  if (family === "koha" && records.length === 1) {
+    const redirect = [...responses]
+      .reverse()
+      .find(
+        (r) =>
+          r.status === 302 &&
+          r.location &&
+          new URL(r.url).pathname === "/cgi-bin/koha/opac-search.pl",
+      );
+    if (redirect) {
+      const target = new URL(redirect.location, redirect.url),
+        origin = new URL(redirect.url).origin;
+      if (
+        target.origin === origin &&
+        !target.username &&
+        !target.password &&
+        target.pathname === "/cgi-bin/koha/opac-detail.pl" &&
+        target.searchParams.getAll("biblionumber").length === 1 &&
+        target.searchParams.get("biblionumber") === String(records[0].recordId)
+      )
+        return {
+          verified: true,
+          method: "native_single_record_http_redirect",
+          nativeIds: [String(records[0].recordId)],
+        };
+    }
+  }
   const response = [...responses]
     .reverse()
     .find((r) => r.status === 200 && !r.url.endsWith("/robots.txt"));
   if (!response) return { verified: false, reason: "no_native_page" };
+  if (family === "discovery-academic")
+    return entry
+      ? academicFidelity(entry, response, records, nativeProfile)
+      : { verified: false, reason: "missing_website_variant" };
+  if (family === "discovery-community")
+    return entry
+      ? communityFidelity(entry, response, records)
+      : { verified: false, reason: "missing_website_variant" };
+  if (family === "vpl") {
+    const url = new URL(response.url);
+    if (
+      !/^\/books\/?$/.test(url.pathname) ||
+      url.searchParams.get("author") ||
+      url.searchParams.get("subject")
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Unexpected website title-search profile",
+        502,
+      );
+    const bodies = [
+      ...response.text.matchAll(/<tbody\b[^>]*>([^]*?)<\/tbody>/gi),
+    ];
+    if (bodies.length !== 1)
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Missing native catalog table body",
+        502,
+      );
+    const expected = [...bodies[0][1].matchAll(/<tr\b[^>]*>([^]*?)<\/tr>/gi)]
+      .map((row) =>
+        [...row[1].matchAll(/<td\b[^>]*>([^]*?)<\/td>/gi)].map((cell) =>
+          text(cell[1]),
+        ),
+      )
+      .filter((cells) => cells.length === 6)
+      .map((cells) => [cells[1], cells[3]]);
+    if (
+      JSON.stringify(expected) !==
+      JSON.stringify(records.map((r) => [r.title, r.authors?.[0] || ""]))
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Website book rows omitted or reordered",
+        502,
+      );
+    return {
+      verified: true,
+      method: "independent_native_title_author_table_order",
+      nativeRows: expected.length,
+    };
+  }
+  if (family === "libman") {
+    if (new URL(response.url).pathname !== recipes.libman.request.path)
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Unexpected LIBMAN website request",
+        502,
+      );
+    let raw;
+    try {
+      raw = JSON.parse(response.text);
+    } catch {
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Unrecognized LIBMAN website JSON",
+        502,
+      );
+    }
+    if (raw !== 0 && !Array.isArray(raw))
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Unrecognized LIBMAN website results",
+        502,
+      );
+    const ids = raw === 0 ? [] : raw.map((row) => String(row.TitleNo));
+    if (
+      ids.some((id) => !/^\d+$/.test(id)) ||
+      JSON.stringify(ids) !==
+        JSON.stringify(records.map((r) => String(r.recordId)))
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "LIBMAN native rows were omitted or reordered",
+        502,
+      );
+    return {
+      verified: true,
+      method: "reviewed_website_json_client_order",
+      recipeVersion: recipes.libman.version,
+      clientSha256: recipes.libman.clientSha256,
+      nativeIds: ids,
+    };
+  }
   const html = response.text
     .replace(/<!--[^]*?-->/g, "")
     .replace(/<(script|style)\b[^>]*>[^]*?<\/\1\s*>/gi, "");

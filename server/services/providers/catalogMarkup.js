@@ -17,6 +17,19 @@ export function firstIsbn(value) {
     .map(validateAndNormalize).find(Boolean) || null;
 }
 export const catalogError = (message, code = 'CATALOG_UNRECOGNIZED') => Object.assign(new Error(message), { code });
+
+// Bibliographic material is distinct from a library's local item category
+// (which can be "Medicine" or "Engineering"). Read only an explicit label.
+export function bibliographicMaterialType(html) {
+  const clean = String(html).replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '');
+  const values = new Set();
+  for (const label of clean.matchAll(/<span\b[^>]*class\s*=\s*["'][^"']*\blabel\b[^"']*["'][^>]*>\s*Material type\s*:\s*<\/span\s*>/gi)) {
+    const tail = clean.slice(label.index + label[0].length, label.index + label[0].length + 600);
+    const value = text(tail.split(/<span\b[^>]*class\s*=\s*["'][^"']*\blabel\b/i)[0].split(/<\/(?:span|div)\s*>/i)[0]);
+    if (value && value.length <= 100) values.add(value);
+  }
+  return values.size === 1 ? [...values][0] : null;
+}
 export function recordMetadata(html) {
   const title = text(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1]);
   const isbnFields = [...html.matchAll(/<span\b([^>]*)>([\s\S]*?)<\/span>/gi)]

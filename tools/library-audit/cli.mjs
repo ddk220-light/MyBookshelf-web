@@ -76,11 +76,16 @@ try {
             : "unsupported";
         counts[mode] = (counts[mode] || 0) + 1;
       }
+      const controlPath = join(directory, "audit-control.json");
+      const control = existsSync(controlPath)
+        ? JSON.parse(readFileSync(controlPath))
+        : null;
       const result = {
         at: new Date().toISOString(),
         total: m.inventory.total,
         counts,
-        readyToCollect: true,
+        readyToCollect: control?.resumeAllowed !== false,
+        repairGate: control?.resumeAllowed === false ? control.reason : null,
         readyToClaimAllQualified: false,
         unresolvedOmittedMappings: m.inventory.reconciliation.filter(
           (r) => !r.libraryId,

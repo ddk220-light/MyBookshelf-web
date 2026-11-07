@@ -88,9 +88,15 @@ export function parseIndcatRecord(html, library, recordId, expectedIsbn = null, 
   // A member's own bibliographic record may have no accessioned copies. It can
   // prove catalog presence after a scoped search, never borrowing availability.
   if (!owned && !ownBibliographicRecord) return null;
+  // This parser accepts the Books database only: both the native record
+  // identity and institution holding must use its explicit bk_ record kind.
+  // A generic title, ISBN or page count is never used to infer material type.
+  const bookKind = identity.control_no === `bk_${recordId}` || owned;
   return { recordId, title: fields.title.replace(/\s*\/\s*(?:by|edited by)\s+.+$/i, ''), authors: fields.author ? [fields.author] : [], isbn,
+    ...(bookKind ? { materialType: 'Book', materialTypeProof: 'indcat_books_bk_record_kind' } : {}),
     catalogUrl: recordUrl(code, recordId),
     observation: { outcome: 'in_catalog', matchKind: expectedIsbn ? 'exact_isbn' : 'verified_work', recognizedExact: true,
+      ...(bookKind ? { materialType: 'Book' } : {}),
       catalogUrl: recordUrl(code, recordId), locations: [{ name: library.name, status: 'unknown' }] } };
 }
 

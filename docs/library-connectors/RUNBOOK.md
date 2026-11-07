@@ -10,7 +10,7 @@ npm run test:library-connectors
 npm run library:audit -- preflight --dir docs/research/india-library-audit/runs/india-20261107
 ```
 
-The prepared full run contains **6,703 India libraries** with a target of 20 distinct books each. Its frozen inventory and the separate 11-library pilot are committed under `docs/research/india-library-audit/runs/`. The full run has not issued provider requests. Do not initialize it again. For a new country or a new inventory snapshot, choose a new run directory:
+The prepared full run contains **6,703 India libraries** with a target of 20 distinct books each. Its frozen inventory and the separate 11-library pilot are committed under `docs/research/india-library-audit/runs/`. It collected 553 assessed entries and one interrupted attempt before the owner's repair hold. Do not initialize it again. For a new country or a new inventory snapshot, choose a new run directory:
 
 ```sh
 npm run library:audit -- init --country US --dir /workspace/library-audits/us-pilot
@@ -19,6 +19,19 @@ npm run library:audit -- init --country US --dir /workspace/library-audits/us-pi
 Use `--libraries id,id` at initialization to select a pilot subset. It preserves the country's total as `universeTotal`. Alternate catalog routes are connections of the same library, not additional libraries. The 379 historically omitted connection rows remain explicit reconciliation work, not automatic targets.
 
 ## Execute or resume
+
+**Owner repair hold (7 November):** full collection is paused by `audit-control.json`. Both the runner and supervisor refuse to collect while `resumeAllowed` is false, including an accidental restart by an older scheduled prompt. The repair cohort freezes all **554 attempted IDs** without changing the 6,703-library denominator. Original failures are never overwritten. Run saved-body replay before duplicating provider requests:
+
+```sh
+node tools/library-audit/review-cohort.mjs
+node tools/library-audit/revalidate-run.mjs \
+  --dir docs/research/india-library-audit/revalidation/20261107 \
+  --batch-size 10 --concurrency 6 --publish
+```
+
+The repair supervisor has the same run/machine locks, pacing, source refusals, safe Git publishing and interruption behavior as full collection. It rechecks open entries once per implementation version, resumes saved books and queries, and then stops collecting when semantic work remains. A completed collection attempt is not a closed tooling gap. The existing scheduled repair task must analyze unresolved adapters and evidence instead of blindly repeating the same code. Read `execution.json`, `heartbeat.json`, `repair-goal.json`, `gate-report.json`, `repair-report.md` and `revalidation-status.csv` in that directory. A fresh process/heartbeat check is required before resuming; an old saved phase is not proof of liveness.
+
+Resume full collection only after every frozen entry has an evidence-backed corrected outcome, regression checks pass, no known code/equivalence/configuration gap is mislabelled as a provider failure, and corrected findings have been reconciled into the original journal with provenance. Connection errors describe reachability from this environment. Partial libraries still fail the twenty-book target. `gate-report.json` deliberately keeps full resume disabled until the final reconciliation step is implemented and verified. Do not manually flip the control just because the collector reaches the end of its queue.
 
 ```sh
 # A bounded pilot using actual catalog traffic

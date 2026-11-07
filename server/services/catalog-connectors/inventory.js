@@ -2,6 +2,8 @@ import { getAllLibraries } from "../directory.js";
 import { getProvider } from "../providers/index.js";
 import { readFileSync } from "node:fs";
 import { hash, VERSION } from "./contracts.js";
+import { academicNativeProfile } from "../providers/discoveryAcademic.js";
+import { communityNativeProfile } from "../providers/discoveryCommunity.js";
 
 export const nativeFamilies = new Set([
   "egranthalaya",
@@ -9,6 +11,9 @@ export const nativeFamilies = new Set([
   "koha",
   "libman",
   "vufind",
+  "vpl",
+  "discovery-academic",
+  "discovery-community",
 ]);
 export function describe(entry, connectionId = "primary") {
   const origins = [
@@ -19,8 +24,22 @@ export function describe(entry, connectionId = "primary") {
     ),
   ];
   const provider = getProvider({ ...entry, alternateCatalogs: [] });
+  let academicNative = false;
+  if (entry.platform === "discovery-academic") {
+    try {
+      academicNative = academicNativeProfile(entry).supported;
+    } catch {}
+  }
+  let communityNative = false;
+  if (entry.platform === "discovery-community") {
+    try {
+      communityNative = communityNativeProfile(entry).supported;
+    } catch {}
+  }
   const native =
     nativeFamilies.has(entry.platform) &&
+    (entry.platform !== "discovery-academic" || academicNative) &&
+    (entry.platform !== "discovery-community" || communityNative) &&
     !(entry.platform === "koha" && entry.publicCatalogApi);
   return {
     connectionId,
@@ -43,12 +62,21 @@ export function describe(entry, connectionId = "primary") {
     fields:
       entry.platform === "egranthalaya"
         ? ["keyword", "title"]
-        : ["libman", "vufind"].includes(entry.platform)
-          ? ["title"]
+        : ["libman", "vufind", "vpl", "discovery-academic"].includes(
+              entry.platform,
+            )
+          ? [
+              entry.platform === "discovery-academic" && academicNative
+                ? academicNativeProfile(entry).field
+                : "title",
+            ]
           : ["keyword"],
-    paging: ["koha", "vufind"].includes(entry.platform)
-      ? "native"
-      : "first_page",
+    paging:
+      ["koha", "vufind"].includes(entry.platform) ||
+      (academicNative &&
+        ["rps", "libaitech"].includes(academicNativeProfile(entry).kind))
+        ? "native"
+        : "first_page",
     fidelity: "pending_live_validation",
     policy: "robots_checked_on_request",
     adapterVersion: VERSION,

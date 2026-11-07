@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPAC | Search</title>    
+    <link rel="stylesheet" href="/OpacUI/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/OpacUI/Plugins/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="/OpacUI/Plugins/datatables/datatables.min.css">
+    <link rel="stylesheet" href="/OpacUI/Plugins/owlcarousel2/dist/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="/OpacUI/Plugins/owlcarousel2/dist/assets/owl.theme.default.min.css">    
+    <link href="/OpacUI/node_modules/fortawesome/fontawesome-free/css/all.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/OpacUI/SCSS/main.css">
+    <link href="/OpacUI/SCSS/Loader.css" rel="stylesheet" />
+    
+    <link href="/Content/toastr.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <style>
+        .menu-item a {
+        text-decoration:none
+        }
+    </style>
+
+</head>
+<body>
+
+    
+    <header>
+        <div class="container">
+            <span>                
+                <a href="" data-bs-toggle="modal" data-bs-target="#termsOfUseModal">                    
+                    Terms Of Use
+                </a>
+            </span>
+            <span class="mx-2">|</span>
+            <span class="">
+                <a href="https://play.google.com/store/apps/details?id=com.iitms.mobileopac" target="_blank">
+                    <img src="/OpacUI/Images/google-play.png" alt="">
+                    Google Play
+                </a>
+            </span>
+            <span class="mx-2">|</span>
+            <span class="">
+                <a href="" data-bs-toggle="modal" data-bs-target="#qrCodeModal">
+                    <img src="/OpacUI/Images/qr-code.png" alt="">
+                    Get App
+                </a>
+            </span>
+        </div>
+   </header>
+    
+
+  
+  <button class="back-btn"><a href="/Authentication/Index" id="btnBack"><i class="fi-rr-arrow-small-left"></i></a></button>
+    <div class="banner d-flex align-items-center justify-content-center move-this ">
+        <div class="form-group banner-group">
+            <h2 class="heading text-center">Online Public Access Catalogue</h2>
+            <div class="input-group mb-3 mt-3 hide" id="divLibSearchBox">
+                <input type="text" id="txtSearchLibrary" data-libid="0" class="form-control" placeholder="Search Library..."  >
+                <span class="input-group-text" id="moveAll"><i class="fi-rr-search"></i></span>
+              </div>
+        </div>
+    </div>
+        <div class="text-end pe-4 move-this"><a href="/OPAC_V3/BorrwerLogin" class="btn btn-primary btn-sm login-btn" id="login" data-tag-to="login">Borrower Login</a></div>
+    
+    
+   <div class="container move-this">
+       <div class="row">
+           <div class="col-lg-3 col-md-3 col-12 left-side">
+               <div class="sticky-panel">
+                   
+                   <div class="library-details pt-3">
+                       <img src="/Images/Common/nophoto.jpg" id="LibLogo" class="library-image" alt="">
+                       <div class="title text-center" id="DivLibName">Library Name</div>
+                       <div class="address text-center mt-2" id="DivLibAddr">Library Address</div>
+                       <div class="text-center my-3"><button class="btn btn-primary btn-sm revert-move" id="changeLibrary">Change Library</button></div>
+                   </div>
+                   
+                   
+                   
+
+                    
+                    <div class="main-panel" id='MenuPanel'>
+                        
+                        <div class="menu-item">
+                            <a href="/OPAC_V3/"><i class="fi-rr-home"></i>
+                            <span>Home</span></a>
+                        </div>
+                        
+                        <div class="menu-item">
+                            <a href="/OPAC_V3/NewArrivals"><i class="fi-rr-diamond"></i>
+                            <span>New Arrivals</span></a>
+                        </div>
+                        
+                        
+                        <div class="menu-item">
+                            <a href="/OPAC_V3/LibrarianBlog"><i class="fi-rr-book"></i>
+                            <span>Librarian Blog</span></a>
+                        </div>
+                        <div class="menu-item">
+                            <a href="/OPAC_V3/LibraryNews"><i class="fi-rr-document"></i>
+                            <span>News</span></a>
+                        </div>
+                        <div class="menu-item">
+                            <a href="/OPAC_V3/Videos"><i class="fi-rr-video-camera"></i>
+                            <span>Mastersoft Video</span></a>
+                        </div>
+                        
+                        
+                        
+                        
+                        <div class="sec-menu">
+                            <span class="privacy" data-bs-toggle="modal" data-bs-target="#privacyPolicyModal">Privacy Policy</span>
+                            
+                        </div>
+                    </div>
+                    
+                   
+               </div>
+           </div>
+           <div class="col-lg-9 col-md-9 col-12 right-side">
+                
+            <div class="row">
+
+                <div class="col-12 p-0 secondary-banner ">                    
+                    <div class="row ps-3 pe-3 secondary-banner-move">
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="col-12 mt-5 news-container d-flex">
+                    <div class="news">
+                        News
+                    </div>
+                   
+                    <div class="marquee w-100">
+                        <marquee id="NewsMorquee1" direction="left" onmouseover="this.stop()" onmouseout="this.start()" scrollamount="5">
+                            This is News...
+                        </marquee>                        
+                    </div>
+                </div>
+                
+            </div>   
+           
+               
+
+<style>
+    .book-details-container a {
+        color: white;
+    }
+</style>
+
+<div class="search-types secondary-tab updated-tabs mt-4">
+    <nav class="">
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            
+
+            <button class="nav-link showTabContent SearchContent active" id="nav-books-tab" data-searchcontent="Books" data-bs-toggle="tab" data-bs-target="#nav-books" type="button" role="tab" aria-controls="nav-books" aria-selected="true">Books</button>
+            <button class="nav-link showTabContent SearchContent" id="nav-Journal-tab" data-searchcontent="Journal" data-bs-toggle="tab" data-bs-target="#nav-books" type="button" role="tab" aria-controls="nav-books" aria-selected="false">Serial/Journal</button>
+            <button class="nav-link showTabContent SearchContent" id="nav-Dissertation-tab" data-searchcontent="Dissertation" data-bs-toggle="tab" data-bs-target="#nav-books" type="button" role="tab" aria-controls="nav-books" aria-selected="false">Dissertation/Thesis</button>
+            <button class="nav-link showTabContent SearchContent" id="nav-ebook-tab" data-searchcontent="Ebook" data-bs-toggle="tab" data-bs-target="#nav-books" type="button" role="tab" aria-controls="nav-books" aria-selected="false">E-Book Source</button>  
+            <button class="nav-link SearchContent" id="nav-ebookSubscrip-tab" data-searchcontent="EBookSubscription" data-bs-toggle="tab" data-bs-target="#nav-books" type="button" role="tab" aria-controls="nav-books" aria-selected="false">EBookSubscription</button>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-books" role="tabpanel" aria-labelledby="nav-books-tab">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-12" id="divBookSearchBy">
+                    <div class="form-group">
+                        <label class="form-label mb-0 text-sm" for="">Search By</label>
+                        <select id="ddlBookSearchBy" class="form-select">
+                            <option value="TITLE">Title</option>
+                            <option value="SUBTITLE">SubTitle</option>
+                            <option value="ACCNO">Accession No.</option>
+                            <option value="AUTHOR">Author</option>
+                            <option value="COAUTHOR">CoAuthor</option>
+                            <option value="MAINSUBJECT">Main Subject</option>
+                            <option value="SUBSUBJECT">Sub Subject</option>
+                            <option value="PUBLISHER">Publisher Name</option>
+                            <option value="PYEAR">Publishing Year</option>
+                            <option value="PPLACE">Publication City</option>
+                            <option value="KEYWORD">Keyword</option>
+                            <option value="CLASSNO">Classification No</option>
+                            <option value="ISBN">ISBN</option>
+                            <option value="TRANSLATED">Translated Books</option>
+                            <option value="EDITOR">Editor</option>
+                            <option value="DOCUMENTTYPE">Document Type</option>
+                            <option value="LANGUAGE">Language</option>  
+                            <option value="RACK_NAME">Rack Name</option>  
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12" id="divJournalSearchBy">
+                    <div class="form-group">
+                        <label class="form-label mb-0 text-sm" for="">Search By</label>
+                        <select id="ddlJournalSearchBy" class="form-select">
+                            <option value="Journal Title">Journal Title</option>
+                            <option value="Category">Category</option>
+                            <option value="Department">Department</option>
+                            <option value="Publisher">Publisher</option>
+                            <option value="Journal Type">Journal Type</option>
+                            <option value="Frequency">Frequency</option>
+                            <option value="ISSN">ISSN</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12" id="divDissertationSearchBy">
+                    <div class="form-group">
+                        <label class="form-label mb-0 text-sm" for="">Search By</label>
+                        <select id="ddlDissertationSearchBy" class="form-select">
+                            <option value="Title">Title</option>
+                            <option value="AUTHOR">Author</option>
+                            <option value="Editor/Guide">Editor/Guide</option>
+                            <option value="KEYWORDS">Keyword</option>
+                            <option value="Accession No.">Accession No.</option>
+                            <option value="Department">Department</option>
+                            <option value="Year/Batch">Year/Batch</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12" id="divEbookSearhBy">
+                    <div class="form-group">
+                        <label class="form-label mb-0 text-sm" for="">Search By</label>
+                        <select id="ddlEbookSearchBy" class="form-select">
+                            <option value="TITLE">Title</option>
+                            <option value="AUTHOR">Author</option>
+                            <option value="MAINSUBJECT">Main Subject</option>
+                            <option value="SUBSUBJECT">Sub Subject</option>
+                            <option value="PUBLISHER">Publisher Name</option>
+                            <option value="KEYWORD">Keyword</option>
+                            <option value="ISBN">ISBN</option>
+                            <option value="DOCUMENTTYPE">Document Type</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="form-group search-group">
+                        <label class="form-label mb-0 text-sm" for="">Search Text <b><sup>*</sup></b></label>
+                        <div class="input-group mb-3 mt-1">
+                            <input type="text" id="txtSearchText" class="form-control" placeholder="Enter text here to search..">
+                            <span class="input-group-text btnSearch"><i class="fi-rr-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12 forBookSearch">
+                    <div class="form-group">
+                        <label class="form-label mb-0 text-sm" for="">Book Series</label>
+                        <select id="ddlBookSeries" class="form-select">
+                            <option value="">Select...</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12 forBookSearch">
+                    <div class="form-group">
+                        <label class="form-label mb-0 text-sm" for="">Book Category</label>
+                        <select id="ddlBookCategory" class="form-select">
+                            <option value="">Select...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center button-container p-3">
+
+        <div>
+            <button id="btnOpenAdvSearch" class="btn btn-outline-primary btn-sm ms-2" data-bs-target="#advancedSearch" data-bs-toggle="modal">
+                <i class="fi-rr-filter top-1"></i>
+                Advanced Search
+            </button>
+            <a href="https://swayam.gov.in/" class="ms-2" target="_blank" style="text-align: right;">
+                <img src="/OpacUI/Images/swayam_logo.png" style="text-decoration: underline; cursor: pointer; height: 40px; width: 80px">
+            </a>
+        </div>
+
+        <div>
+            <button class="btn btn-primary btn-sm btnSearch" id="btnSearch">Search</button>
+            <button class="btn btn-outline-danger btn-sm ms-2" id="clearSearch">Clear</button>
+
+        </div>
+
+    </div>
+    <!--  -->
+    <div id="DivNewArrivalBooksSection">
+        <h5 class="mt-3 new-book-header d-flex justify-content-between align-items-center">
+            <span>New <span id="spnNewArrivalHead">Books</span></span>
+            
+        </h5>
+        <!--  -->
+        <div class="owl-carousel owl-theme mt-3 " id='slider1'>
+            
+            <!--  -->
+
+        </div>
+    </div>
+
+    <!--  -->
+    <div id="DivTopBooksSection">
+        <h5 class="mt-3 top-book-header d-flex justify-content-between align-items-center">
+            <span>Top <span id="spnTopBookHead">Books</span></span>
+            
+        </h5>
+        <!--  -->
+        <div class="owl-carousel owl-theme mt-3" id='slider2'>
+
+            <!--  -->
+            
+            <!--  -->
+
+        </div>
+    </div>
+
+
+    <!-- -->
+    <div class="book-search-container mt-3 row hide" id="divSearchResult">
+        
+
+        <!--  -->
+    </div>
+    <!--  -->
+</div>
+
+
+
+<!-- Journal Title details -->
+<div class="modal fade" id="newJournalDetails" aria-labelledby="newJournalDetails" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title d-flex align-items-center">
+                    <span id="spanJournalTitleName"></span>
+                    <div class="stars ms-2" id="divAvgRating1-Journal">
+                    </div>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-6"><b class="text-sm">No. Of Journals(s) Available:</b> <code class="text-md"><b id="presentJournalCount">0</b></code></div>
+                    <div class="col-lg-3 col-md-3 col-6"><b class="text-sm">No. Of Journals(s) Issued:</b> <code class="text-md"><b id="issuedJournalCount">0</b></code></div>
+
+                    
+
+                </div>
+                <div class="row book-details-container">
+                    <div class="col-2">
+                        <div class="book-image">
+                            <img src="/OpacUI/Images/default_books_image_grid.png" id="imgJournalTitle" alt=""></div>
+                    </div>
+                    <div class="col-10 ">
+                        <div class=" row  p-3 ms-2 me-2 mt-2">
+                            <div class="col-lg-12 col-md-12 col-12 row ">
+                                <div class="col-2 pe-0">
+                                    <b>Title : </b>
+                                </div>
+                                <div class="col-10 p-0 m-0">
+                                    <span class="title-span" data-titleid="0" id="spJournalTitle"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Category : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spJournalCategory"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Publisher : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spJournalPublisher"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Type : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spJournalType"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Department : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spJournalDepartment"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>ISSN : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spJournalISSN"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Frequency : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spJournalFrequency"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="updated-tabs mt-3 p-3" id="divFeedbackRating-Journal">
+                </div>
+
+                <div class="p-3">
+                    <h5>Existing Items</h5>
+                    <div class="row content-container pl-3 pr-3 py-4">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table class="table  regular" id="tblJournalList">
+                                    <thead>
+                                        <tr>
+                                            <th>Journal Name</th>
+                                            <th>Volume</th>
+                                            
+                                            <th>Issue No</th>
+                                            <th>Printed Issue No</th>
+                                            <th>Status</th>
+                                            <th>Issue Date</th>
+                                            <th>Return Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3">
+                    <h5 class="">Others Like This </h5>
+                    <div class="owl-carousel owl-theme mt-3" id='sliderRelatedJournal'>
+                        
+                        <!--  -->
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dissertation Title details -->
+<div class="modal fade" id="newDissertationDetails" aria-labelledby="newDissertationDetails" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title d-flex align-items-center">
+                    <span id="spanDissertationTitleName"></span>
+                    <div class="stars ms-2" id="divAvgRating1-Dissertation">
+                    </div>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                </div>
+                <div class="row book-details-container">
+                    <div class="col-2">
+                        <div class="book-image">
+                            <img src="/OpacUI/Images/default_books_image_grid.png" id="imgDissertationTitle" alt=""></div>
+                    </div>
+                    <div class="col-10 ">
+                        <div class=" row  p-3 ms-2 me-2 mt-2">
+                            <div class="col-lg-12 col-md-12 col-12 row ">
+                                <div class="col-2 pe-0">
+                                    <b>Title : </b>
+                                </div>
+                                <div class="col-10 p-0 m-0">
+                                    <span class="title-span" data-titleid="0" id="spDissertationTitle"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Author : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spDissertationAuthor"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Batch : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spDissertationBatch"></span>
+                                </div>
+                            </div>
+                                 
+                          <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Editor/Guide Name : </b>
+                                </div>
+                                <div class="col-7" id="spEditorGuideName">
+                                </div>
+                            </div>
+                              
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Edition : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spDissertationEdition"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Department : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spDissertationDepartment"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Keywords : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spDissertationKeywords"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>SeriesCode : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spDissertationSeriesCode"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>AccNo : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spDissertationAccNo"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Attachment : </b>
+                                </div>
+                                <div class="col-7" id="ancDissertationAttachment">
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Dissertation Link : </b>
+                                </div>
+                                <div class="col-7" id="spDissertationLink">
+                                    
+                                </div>
+                            </div>
+                            
+                       
+                        </div>
+                    </div>
+                </div>
+
+                <div class="updated-tabs mt-3 p-3" id="divFeedbackRating-Dissertation">
+                </div>
+
+
+                <div class="p-3">
+                    <h5 class="">Others Like This </h5>
+                    <div class="owl-carousel owl-theme mt-3" id='relatedDissertation'>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- EBook Title details -->
+<div class="modal fade" id="newEBookDetails" aria-labelledby="newEBookDetails" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title d-flex align-items-center">
+                    <span id="spanEBookTitleName"></span>
+                    <div class="stars ms-2" id="divAvgRating1-EBook">
+                    </div>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                </div>
+                <div class="row book-details-container">
+                    <div class="col-2">
+                        <div class="book-image">
+                            <img src="/OpacUI/Images/default_books_image_grid.png" id="imgEBookTitle" alt=""></div>
+                    </div>
+                    <div class="col-10 ">
+                        <div class=" row  p-3 ms-2 me-2 mt-2">
+                            <div class="col-lg-12 col-md-12 col-12 row ">
+                                <div class="col-2 pe-0">
+                                    <b>Title : </b>
+                                </div>
+                                <div class="col-10 p-0 m-0">
+                                    <span class="title-span" data-titleid="0" id="spEBookTitle"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-12 row ">
+                                <div class="col-2 pe-0">
+                                    <b>Sub-Title : </b>
+                                </div>
+                                <div class="col-10 p-0 m-0">
+                                    <span class="title-span" data-titleid="0" id="spEBookSubTitle"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Author : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spEBookAuthor"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Edition : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spEBookEdition"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Publisher : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spEBookPublisher"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>ISBN : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spEBookISBN"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Type : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spEBookType"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Keywords : </b>
+                                </div>
+                                <div class="col-7">
+                                    <span id="spEBookKeywords"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Attachment : </b>
+                                </div>
+                                <div class="col-7" id="ancEBookAttachment">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12 row">
+                                <div class="col-5">
+                                    <b>Website : </b>
+                                </div>
+                                <div class="col-7" id="ancEBookWebLink">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="updated-tabs mt-3 p-3" id="divFeedbackRating-EBook">
+                </div>
+
+
+                <div class="p-3">
+                    <h5 class="">Others Like This </h5>
+                    <div class="owl-carousel owl-theme mt-3" id='relatedEBook'>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" id="divESubscriptionSearchBy">
+    
+    <div class="panel-body">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="table-responsive">
+
+                            
+                            
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- advanced search modal -->
+<div class="modal fade" id="advancedSearch" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Advanced Search</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <code class="text-md">Search items where:</code>
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-group">
+                            <select id="ddlFirstSearchItem" class="form-select">
+                                <option selected value="PleaseSelect">Please Select</option>
+                                <option value="TITLE">Title</option>
+                                <option value="ACCNO">Accession No.</option>
+                                <option value="AUTHOR">Author</option>
+                                <option value="COAUTHOR">CoAuthor</option>
+                                <option value="MAINSUBJECT">Main Subject</option>
+                                <option value="SUBSUBJECT">Sub Subject</option>
+                                <option value="PUBLISHER">Publisher Name</option>
+                                <option value="PYEAR">Publishing Year</option>
+                                <option value="PPLACE">Publication City</option>
+                                <option value="KEYWORD">Keyword</option>
+                                <option value="CLASSNO">Classification No</option>
+                                <option value="ISBN">ISBN</option>
+                                <option value="TRANSLATED">Translated Books</option>
+                                <option value="EDITOR">Editor</option>
+                                <option value="DOCUMENTTYPE">Document Type</option>
+                                <option value="RACK_NAME">Rack Name</option> 
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-group">
+                            <select id="ddlFirstComparisonType" class="form-select">
+                                <option selected="selected" value="contains">contains</option>
+                                <option value="is equal to">is equal to</option>
+                                <option value="is not equal to">is not equal to</option>
+                                <option value="starts with">starts with</option>
+                                <option value="ends with">ends with</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-group search-group">
+                            <div class="input-group mb-3">
+                                <input id="txtFirstSearchText" type="text" class="form-control" placeholder="Search...">
+                                <span class="input-group-text" id=""><i class="fi-rr-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="FirstSecond" checked value="AND">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                                And
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="FirstSecond" value="OR">
+                            <label class="form-check-label" for="flexRadioDefault2">
+                                Or
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="FirstSecond" value="AND NOT">
+                            <label class="form-check-label" for="flexRadioDefault3">
+                                Not
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-group">
+                            <select id="ddlSecondSearchItem" class="form-select">
+                                <option selected value="PleaseSelect">Please Select</option>
+                                <option value="TITLE">Title</option>
+                                <option value="ACCNO">Accession No.</option>
+                                <option value="AUTHOR">Author</option>
+                                <option value="COAUTHOR">CoAuthor</option>
+                                <option value="MAINSUBJECT">Main Subject</option>
+                                <option value="SUBSUBJECT">Sub Subject</option>
+                                <option value="PUBLISHER">Publisher Name</option>
+                                <option value="PYEAR">Publishing Year</option>
+                                <option value="PPLACE">Publication City</option>
+                                <option value="KEYWORD">Keyword</option>
+                                <option value="CLASSNO">Classification No</option>
+                                <option value="ISBN">ISBN</option>
+                                <option value="TRANSLATED">Translated Books</option>
+                                <option value="EDITOR">Editor</option>
+                                <option value="DOCUMENTTYPE">Document Type</option>
+                                <option value="RACK_NAME">Rack Name</option> 
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-group">
+                            <select id="ddlSecondComparisonType" class="form-select">
+                                <option selected="selected" value="contains">contains</option>
+                                <option value="is equal to">is equal to</option>
+                                <option value="is not equal to">is not equal to</option>
+                                <option value="starts with">starts with</option>
+                                <option value="ends with">ends with</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-group search-group">
+                            <div class="input-group mb-3">
+                                <input id="txtSecondSearchText" type="text" class="form-control" placeholder="Search...">
+                                <span class="input-group-text" id=""><i class="fi-rr-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="SecondThird" checked value="AND">
+                            <label class="form-check-label" for="flexRadioDefault4">
+                                And
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="SecondThird" value="OR">
+                            <label class="form-check-label" for="flexRadioDefault5">
+                                Or
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="SecondThird" value="AND NOT">
+                            <label class="form-check-label" for="flexRadioDefault6">
+                                Not
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-group">
+                            <select id="ddlThirdSearchItem" class="form-select">
+                                <option selected value="PleaseSelect">Please Select</option>
+                                <option value="TITLE">Title</option>
+                                <option value="ACCNO">Accession No.</option>
+                                <option value="AUTHOR">Author</option>
+                                <option value="COAUTHOR">CoAuthor</option>
+                                <option value="MAINSUBJECT">Main Subject</option>
+                                <option value="SUBSUBJECT">Sub Subject</option>
+                                <option value="PUBLISHER">Publisher Name</option>
+                                <option value="PYEAR">Publishing Year</option>
+                                <option value="PPLACE">Publication City</option>
+                                <option value="KEYWORD">Keyword</option>
+                                <option value="CLASSNO">Classification No</option>
+                                <option value="ISBN">ISBN</option>
+                                <option value="TRANSLATED">Translated Books</option>
+                                <option value="EDITOR">Editor</option>
+                                <option value="DOCUMENTTYPE">Document Type</option>
+                                <option value="RACK_NAME">Rack Name</option> 
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-group">
+                            <select id="ddlThirdComparisonType" class="form-select">
+                                <option selected="selected" value="contains">contains</option>
+                                <option value="is equal to">is equal to</option>
+                                <option value="is not equal to">is not equal to</option>
+                                <option value="starts with">starts with</option>
+                                <option value="ends with">ends with</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="form-group search-group">
+                            <div class="input-group mb-3">
+                                <input id="txtThirdSearchText" type="text" class="form-control" placeholder="Search...">
+                                <span class="input-group-text" id=""><i class="fi-rr-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--  -->
+            </div>
+            <div class="modal-footer">
+                <button id="btnadvSearch" type="button" class="btn btn-primary">Search</button>
+                <button id="btnadvClear" type="button" class="btn btn-outline-danger">Clear</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+           
+             
+            <!--  -->
+        </div>
+       </div>
+   </div>
+
+    
+  <footer>
+      <div class="text-right">
+          <button class="btn btn-primary" id="scrollToTop">
+              <i class=" fi-rr-arrow-small-up"></i>
+          </button>
+      </div>
+  </footer>
+    
+
+
+<!-- modal start -->
+
+<!-- privacy policy modal -->
+<div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Privacy Policy</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Your privacy is important to us. It is Mastersoft ERP solutions pvt. ltd.'s policy to respect your privacy regarding any information we may collect from you across our website, www.iitms.co.in, and other sites we own and operate.
+            <br><br>
+
+            We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.
+            <br><br>
+            
+            We only retain collected information for as long as necessary to provide you with your requested service. What data we store, we’ll protect within commercially acceptable means to prevent loss and theft, as well as unauthorised access, disclosure, copying, use or modification.
+            <br><br>
+            
+            We don’t share any personally identifying information publicly or with third-parties, except when required to by law.
+            <br><br>
+            
+            Our website may link to external sites that are not operated by us. Please be aware that we have no control over the content and practices of these sites, and cannot accept responsibility or liability for their respective privacy policies.
+            <br><br>
+            
+            You are free to refuse our request for your personal information, with the understanding that we may be unable to provide you with some of your desired services.
+            <br><br>
+            
+            Your continued use of our website will be regarded as acceptance of our practices around privacy and personal information. If you have any questions about how we handle user data and personal information, feel free to contact us.
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>         
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- terms of use modal -->
+<div class="modal fade" id="termsOfUseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Terms Of Use</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            This Application Software is developed and owned by MasterSoft ERP Solutions Pvt. Ltd., Nagpur, India (MasterSoft). MasterSoft reserves its right of sole discretion to modify, update and/or terminate access/use of this Software at any point of time without notice.
+            <br><br>
+
+            Users must visit “Terms of use” link periodically to understand and abide by the applicable Terms of Use. By accessing this Software, it shall be implied that the User has read and agreed with the same, and any violation thereof shall be deemed to be willful act/omission on the part of such User.
+            <br><br>
+            
+            This Software permits access only to its Registered Users having valid login credentials, and any attempt of access through invalid/stolen/borrowed credentials is explicitly prohibited.
+            <br><br>
+            
+            Usage upon access is restricted to the Software Menu appearing on the screen, and any attempt to enlarge such access, to hack into or to illicitly use the Software shall be actionable under Cyber Laws and other relevant Laws of India.
+            <br><br>
+            
+            By accessing/using this Software, the User shall be implied to have acknowledged and granted permission for all of its activities in the Software to be monitored for the above purposes by MasterSoft.
+            <br><br>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- search all modal --> 
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <form action="/OPAC_V3/Index" method="post" name="formBookSearchModal">
+                <div class="modal-header">
+                  <h5 class="modal-title" >Search</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group search-group">
+                                <label class="form-label mb-0 text-sm" for="">Search Text <b><sup>*</sup></b></label>
+                                <div class="input-group mb-3 mt-1">
+                                    <input type="text" name="txtSearchText" class="form-control" placeholder="Enter text here to search..">
+                                    <span class="input-group-text" id=""><i class="fi-rr-search"></i></span>
+                                  </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-12">
+                            <div class="form-group">
+                                <label class="form-label mb-0 text-sm" for="">Book Series</label>
+                                <select id="ddlBookSeriesModal" name="ddlBookSeries" class="form-select" >
+                                    <option value="">Select...</option>                                        
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-12">
+                            <div class="form-group">
+                                <label class="form-label mb-0 text-sm" for="">Book Category</label>
+                                <select id="ddlBookCategoryModal" name="ddlBookCategory" class="form-select" >
+                                    <option value="">Select...</option>                                        
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-12">
+                            <div class="form-group">
+                                <label class="form-label mb-0 text-sm" for="">Search By</label>
+                                <select id="ddlBookSearchByModal" name="ddlBookSearchBy" class="form-select" >                                        
+                                    <option value="TITLE">Title</option>
+                                    <option value="SUBTITLE">SubTitle</option>    
+                                    <option value="ACCNO">Accession No.</option>
+                                    <option value="AUTHOR">Author</option>    
+                                    <option value="COAUTHOR">CoAuthor</option>                           
+                                    <option value="MAINSUBJECT">Main Subject</option>
+                                    <option value="SUBSUBJECT">Sub Subject</option>   
+                                    <option value="PUBLISHER">Publisher Name</option>
+                                    <option value="PYEAR">Publishing Year</option>  
+                                    <option value="PPLACE">Publication City</option>
+                                    <option value="KEYWORD">Keyword</option> 
+                                    <option value="CLASSNO">Classification No</option>  
+                                    <option value="ISBN">ISBN</option>
+                                    <option value="TRANSLATED">Translated Books</option>          
+                                    <option value="EDITOR">Editor</option>    
+                                    <option value="DOCUMENTTYPE">Document Type</option> 
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">          
+                  <button type="button" id="btnSubmitBookSearchModal" class="btn btn-primary">Search</button>
+                  <button type="reset" class="btn btn-outline-danger">Clear</button>
+                  <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+          </form>        
+      </div>
+    </div>
+  </div>
+
+
+  <!-- logout modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+          <form method="get" action="/OPAC_V3/LougOut">
+            <div class="modal-header">
+                <h5 class="modal-title">Logout</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger text-center" role="alert">
+                    Are you sure you want to <b>logout</b>?
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-primary">Logout</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+ 
+    <!-- qr code modal -->
+    <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Scan QR Code</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <img src="/OpacUI/Images/qrcode_mopac.png" class="d-block m-auto" alt="">
+            </div>
+            <div class="modal-footer">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Book Title details -->
+    <div class="modal fade" id="newBookDetails" aria-labelledby="newBookDetails" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title d-flex align-items-center">
+              <span id="spanBookTitleName"></span>
+            <div class="stars ms-2" id="divAvgRating1-Book">                
+                <div class="c-rating pb-1">
+                  <div>
+                      <span id="star"></span>
+                      <span id="y-star" class="avgRatings" style="width:0%"></span>        
+                  </div>
+                    <div>
+                      <span id="star"></span>
+                      <span id="y-star" class="avgRatings" style="width:0%"></span>        
+                  </div>
+                    <div>
+                      <span id="star"></span>
+                      <span id="y-star" class="avgRatings" style="width:0%"></span>        
+                  </div>
+                    <div>
+                      <span id="star"></span>
+                      <span id="y-star" class="avgRatings" style="width:0%"></span>        
+                  </div>
+                    <div>
+                      <span id="star"></span>
+                      <span id="y-star" class="avgRatings" style="width:0%"></span> 
+                  </div>
+                  
+                </div>
+                <span class='rating'>0.00</span><span class='rating'> Out Of 5</span>
+              </div>   
+            </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-6"><b class="text-sm">No. Of Book(s) Available:</b> <code class="text-md"><b id="presentBookCount">0</b></code></div>
+                <div class="col-lg-3 col-md-3 col-6"><b class="text-sm">No. Of Book(s) Issued:</b> <code class="text-md"><b id="issuedBookCount">0</b></code></div>
+
+                <div class="col-lg-6 col-md-6 col-6 text-end"><button type="button" disabled class="btn btn-outline-primary btn-sm " title="Please do borrower login first to use this feature." id="reserveBook">Reserve Item</button> <button type="button" disabled class="btn btn-outline-primary btn-sm" title="Please do borrower login first to use this feature." id="demandBook">Request For Demand Book</button></div>
+            </div>
+            <div class="row book-details-container">
+                <div class="col-2">
+                    <div class="book-image"><img src="/OpacUI/Images/default_books_image_grid.png" id="imgBookTitle"  alt=""></div>
+                </div>
+                <div class="col-10 ">
+                    <div class=" row  p-3 ms-2 me-2 mt-2">
+                        <div class="col-lg-12 col-md-12 col-12 row ">
+                            <div class="col-2 pe-0">
+                                <b>Title : </b>
+                            </div>
+                            <div class="col-10 p-0 m-0">
+                                <span class="title-span" data-titleId="0" id="spBookTitle"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-12 row">
+                            <div class="col-2">
+                                <b>Sub-Title : </b>
+                            </div>
+                            <div class="col-10 p-0 m-0">
+                                <span class="title-span"id="spBookSubTitle"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Subject : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spSubSubject"></span>
+                            </div>
+                        </div>
+                        
+
+                        
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Language : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spLanguageName"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Type : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookType"></span>
+                            </div>
+                        </div>
+                    
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Pages : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookPages"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Author : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookAuthor"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Class No : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookClassNo"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Co-Author : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookCoAuthor"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>ISBN : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookISBN"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Publisher : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookPublisher"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Keywords : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookSearchKeywords"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Volume No : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookVolumeNo"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>SeriesCode : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookSeriesCode"></span>
+                            </div>
+                        </div>
+
+                         <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>Document Type : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookDocType"></span>
+                            </div>
+                        </div>
+                        
+
+
+                        
+                          <div class="col-lg-6 col-md-6 col-12 row">
+                            <div class="col-5">
+                                <b>WebSite Link : </b>
+                            </div>
+                            <div class="col-7">
+                                <span id="spBookWebsiteLink"></span>
+                            </div>
+                        </div>
+                       
+
+                    </div>
+                </div>
+            </div>
+            
+            <div class="updated-tabs mt-3 p-3" id="divFeedbackRating-Book">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-feedback" role="tablist">
+                      <button class="nav-link active" id="nav-writeReview-tab" data-bs-toggle="tab" data-bs-target="#nav-writeReview" type="button" role="tab" aria-controls="nav-writeReview" aria-selected="true">Write A Review</button>
+                      <button class="nav-link" id="nav-review-tab" data-bs-toggle="tab" data-bs-target="#nav-review" type="button" role="tab" aria-controls="nav-review" aria-selected="false">Reviews</button>                      
+                    </div>
+                  </nav>
+                  <div class="tab-content rounded" id="nav-feedbackContent">
+                    <div class="tab-pane fade show active" id="nav-writeReview" role="tabpanel" aria-labelledby="nav-writeReview-tab">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-12">
+                                <div class="stars ms-2"  id="divAvgRating2">
+                                    
+                                    <div class="c-rating pb-1">
+                                        <div>
+                                            <span id="star"></span>
+                                            <span id="y-star" class="avgRatings" style="width:0%"></span>        
+                                        </div>
+                                        <div>
+                                            <span id="star"></span>
+                                            <span id="y-star" class="avgRatings" style="width:0%"></span>        
+                                        </div>
+                                        <div>
+                                            <span id="star"></span>
+                                            <span id="y-star" class="avgRatings" style="width:0%"></span>        
+                                        </div>
+                                        <div>
+                                            <span id="star"></span>
+                                            <span id="y-star" class="avgRatings" style="width:0%"></span>        
+                                        </div>
+                                        <div>
+                                            <span id="star"></span>
+                                            <span id="y-star" class="avgRatings" style="width:0%"></span> 
+                                        </div>
+                                        
+                                    </div>
+                                    <span class='rating'>0.00</span><span class='rating'> Out Of 5</span>
+                                  </div>
+                                <div class="progressbar-container mt-2">
+                                    <div class="progressbar-element">
+                                        <!--  -->
+                                        <div class="progressbar-element-title">
+                                            5 Star
+                                        </div>
+                                        <div class="progressbar-element-bar">
+                                            <div class="progress">
+                                                <div id="divProgressStar5" class="progress-bar bg-warning" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                              </div>
+                                        </div>
+                                        <div class="progressbar-element-percent">
+                                            <span id="spProgressbarPercentStar5">0%</span>
+                                        </div>
+                                    </div>
+                                    <!--  -->
+                                    <div class="progressbar-element">
+                                        <div class="progressbar-element-title">
+                                            4 Star
+                                        </div>
+                                        <div class="progressbar-element-bar">
+                                            <div class="progress">
+                                                <div id="divProgressStar4" class="progress-bar bg-warning" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                        </div>
+                                        <div class="progressbar-element-percent">
+                                            <span id="spProgressbarPercentStar4">0%</span>
+                                        </div>
+                                    </div>
+                                    <!--  -->
+                                    <div class="progressbar-element">
+                                        <div class="progressbar-element-title">
+                                            3 Star
+                                        </div>
+                                        <div class="progressbar-element-bar">
+                                            <div class="progress">
+                                                <div id="divProgressStar3" class="progress-bar bg-warning" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                        </div>
+                                        <div class="progressbar-element-percent">
+                                            <span id="spProgressbarPercentStar3">0%</span>
+                                        </div>
+                                    </div>
+                                    <!--  -->
+                                    <div class="progressbar-element">
+                                        <div class="progressbar-element-title">
+                                            2 Star
+                                        </div>
+                                        <div class="progressbar-element-bar">
+                                            <div class="progress">
+                                                <div id="divProgressStar2" class="progress-bar bg-warning" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                        </div>
+                                        <div class="progressbar-element-percent">
+                                            <span id="spProgressbarPercentStar2">0%</span>
+                                        </div>
+                                    </div>
+                                    <!--  -->
+                                    <div class="progressbar-element">
+                                        <div class="progressbar-element-title">
+                                            1 Star
+                                        </div>
+                                        <div class="progressbar-element-bar">
+                                            <div class="progress">
+                                                <div id="divProgressStar1" class="progress-bar bg-warning" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                        </div>
+                                        <div class="progressbar-element-percent">
+                                            <span id="spProgressbarPercentStar1">0%</span>
+                                        </div>
+                                    </div>
+                                    <!--  -->
+                                    
+
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12">
+                                <div class="feedback-submission-container">
+                                    <div id="half-stars-container">
+                                        <div class="rating-group" title="Hover on Stars to select rating and click on it to submit selected rating.">
+                                            <input onclick="SaveRatings()" class="rating__input rating__input--none" checked name="rating2" id="rating2-0" value="0" type="radio">
+                                            <label aria-label="0 stars" class="rating__label" for="rating2-0">&nbsp;</label>
+                                            <label aria-label="0.5 stars" class="rating__label rating__label--half" for="rating2-05"><i class="rating__icon rating__icon--star fa fa-star-half"></i></label>
+                                            <input onclick="SaveRatings()"  class="rating__input" name="rating2" id="rating2-05" value="0.5" type="radio">
+                                            <label aria-label="1 star" class="rating__label" for="rating2-10"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                            <input onclick="SaveRatings()"  class="rating__input" name="rating2" id="rating2-10" value="1" type="radio">
+                                            <label aria-label="1.5 stars" class="rating__label rating__label--half" for="rating2-15"><i class="rating__icon rating__icon--star fa fa-star-half"></i></label>
+                                            <input onclick="SaveRatings()"  class="rating__input" name="rating2" id="rating2-15" value="1.5" type="radio">
+                                            <label aria-label="2 stars" class="rating__label" for="rating2-20"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                            <input onclick="SaveRatings()"  class="rating__input" name="rating2" id="rating2-20" value="2" type="radio">
+                                            <label aria-label="2.5 stars" class="rating__label rating__label--half" for="rating2-25"><i class="rating__icon rating__icon--star fa fa-star-half"></i></label>
+                                            <input onclick="SaveRatings()"  class="rating__input" name="rating2" id="rating2-25" value="2.5" type="radio" >
+                                            <label aria-label="3 stars" class="rating__label" for="rating2-30"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                            <input onclick="SaveRatings()"  class="rating__input" name="rating2" id="rating2-30" value="3" type="radio">
+                                            <label aria-label="3.5 stars" class="rating__label rating__label--half" for="rating2-35"><i class="rating__icon rating__icon--star fa fa-star-half"></i></label>
+                                            <input onclick="SaveRatings()"  class="rating__input" name="rating2" id="rating2-35" value="3.5" type="radio">
+                                            <label aria-label="4 stars" class="rating__label" for="rating2-40"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                            <input onclick="SaveRatings()"  class="rating__input" name="rating2" id="rating2-40" value="4" type="radio">
+                                            <label aria-label="4.5 stars" class="rating__label rating__label--half" for="rating2-45"><i class="rating__icon rating__icon--star fa fa-star-half"></i></label>
+                                            <input onclick="SaveRatings()"  class="rating__input" name="rating2" id="rating2-45" value="4.5" type="radio">
+                                            <label aria-label="5 stars" class="rating__label" for="rating2-50"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                            <input onclick="SaveRatings()"  class="rating__input" name="rating2" id="rating2-50" value="5" type="radio">
+                                        </div>
+                                      
+                                    </div>
+                                    <div class="form-group">                                        
+                                        <textarea class="form-control" placeholder="Write a review..." id="ReviewTextArea"></textarea>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-outline-primary btn-sm" data-titleType="Book" onclick="SaveReview()" id="btnSubmitReview">Submit Review</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-review" role="tabpanel" aria-labelledby="nav-review-tab">
+                        <div class="card border-0 mb-0">
+                            <div class="card-footer blog-comments border-0" id="divReviewList">
+                                
+                            </div>
+                        </div>
+                    </div>
+                   
+                  </div>
+            </div>
+        
+            <div class="p-3">
+                <h5 id="bookListHeading">Existing Items</h5>
+                <div class="row content-container pl-3 pr-3 py-4">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table  regular" id="tblBookAccList">
+                                <thead>
+                                    <tr>
+                                        <th>Series Code</th>
+                                        <th>Accession No</th>
+                                        <th>Book Type</th>
+                                        <th>Rack Name</th>
+                                        <th>Book Status</th>
+                                        <th>Issue Date</th>
+                                        <th>Due Date</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3">
+                <h5 class="">Others Like This </h5>
+                <div class="owl-carousel owl-theme mt-3" id='sliderRelatedBook'>
+                    
+                                       
+                    <!--  -->
+                   
+                    <!--  -->
+                   
+                  </div>
+            </div>
+
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+      
+  <!-- modals end -->
+
+     
+    <div class="loader-area">
+        <div class="loader-parent">
+            <div class="loader">
+            </div>
+            <p class="text-center loading-msg"><strong>Loading....</strong></p>
+        </div>
+    </div>
+    
+
+    </body>
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+
+    [script omitted]    
+    
+
+    [script omitted]   
+
+    
+    
+    [script omitted]
+
+
+
+
+
+
+   
+  
+
+    
+</html>

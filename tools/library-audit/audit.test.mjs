@@ -434,7 +434,7 @@ test("independent fidelity check catches native result clipping and reordering",
     () => verifyNativePage("koha", responses, [{ recordId: "9" }]),
     { code: "FIDELITY_MISMATCH" },
   );
-  assert.equal(verifyNativePage("libman", responses, []).verified, false);
+  assert.equal(verifyNativePage("discovery-academic", responses, []).verified, false);
 });
 test("health checks never establish initial twenty-book qualification", async (t) => {
   const s = storeFor(t);

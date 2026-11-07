@@ -39,32 +39,32 @@ async function readJson(url, deadlineAt) {
 }
 
 // Search rows contain unrelated link/login fields; keep only public book metadata.
-export function parseLibmanSearch(json) {
+export function parseLibmanSearch(json, { native = false } = {}) {
   if (json === 0 || Array.isArray(json) && json.length === 0) return { records: [], total: 0 };
   if (!Array.isArray(json)) throw catalogError('Unrecognized LIBMAN search response');
   const seen = new Set();
   const records = [];
   for (const row of json) {
     const recordId = String(row?.TitleNo ?? '');
-    const title = clean(row?.Title1 || row?.Title);
+    const title = clean(native ? row?.Title1 : row?.Title1 || row?.Title);
     if (!ID.test(recordId) || !title) throw catalogError('Malformed LIBMAN search record');
-    if (seen.has(recordId)) continue;
+    if (!native && seen.has(recordId)) continue;
     seen.add(recordId);
     records.push({ recordId, title, isbn: firstIsbn(row.ISBN), authors: clean(row.AuthName) ? [clean(row.AuthName)] : [] });
   }
   return { records, total: records.length };
 }
 
-async function search(library, query, type, deadlineAt) {
+async function search(library, query, type, deadlineAt, native = false) {
   const { base, tenant } = settings(library);
   // The published UI permits letters, numbers, spaces and commas only. A title
   // prefix before punctuation remains a valid search, unlike replaying a colon
   // or apostrophe from the catalog's own title (the API returns error -100).
-  const q = (type === 'TITLE' ? clean(query).replace(/^[^\p{L}\p{N}]+/u, '').split(/[^\p{L}\p{N}\s,]/u)[0].trim() : clean(query)).slice(0, 200);
+  const q = native ? query : (type === 'TITLE' ? clean(query).replace(/^[^\p{L}\p{N}]+/u, '').split(/[^\p{L}\p{N}\s,]/u)[0].trim() : clean(query)).slice(0, 200);
   if (!q) throw catalogError('Empty LIBMAN query');
   const url = new URL(`${base}/GetBookSearchData/`);
   for (const [key, value] of Object.entries({ SearchCriteria: type, SearchText: q, Libraryid: tenant, SERIESCODE: '', BOOKCATEGORY: '' })) url.searchParams.set(key, value);
-  return cachedTask(`libman:search:${tenant}:${type}:${q}`, async () => parseLibmanSearch(await readJson(url.toString(), deadlineAt)), { deadlineAt });
+  return cachedTask(`libman:search:${tenant}:${type}:${q}:${native}`, async () => parseLibmanSearch(await readJson(url.toString(), deadlineAt), { native }), { deadlineAt });
 }
 
 function selectedDetail(json, recordId, tenant) {
@@ -119,7 +119,8 @@ export function parseLibmanRecord(json, library, recordId, { confirmedMemberReco
     observation.availableCopies = available;
     Object.assign(observation.locations[0], { availableCopies: available, totalCopies: total });
   }
-  return { recordId: String(recordId), title: value.TITLENAME, isbn: value.ISBN, authors: value.AUTHORNAME ? [value.AUTHORNAME] : [], observation };
+  return { recordId: String(recordId), title: value.TITLENAME, isbn: value.ISBN, authors: value.AUTHORNAME ? [value.AUTHORNAME] : [],
+    materialType: 'Book', materialTypeProof: 'libman_tenant_confirmed_book_detail', observation: { ...observation, materialType: 'Book' } };
 }
 
 export async function searchCatalog(library, query) {
@@ -133,8 +134,8 @@ export async function searchCatalog(library, query) {
 export async function searchNativeCatalog(library, query) {
   // Unlike the app's legacy title fallback, never silently clip punctuation.
   if (!/^[\p{L}\p{N}][\p{L}\p{N}\s,]*$/u.test(query) || query.length > 160) throw catalogError('This public form accepts letters, numbers, spaces and commas only', 'UNSUPPORTED_PROFILE');
-  const result = await search(library, query, 'TITLE', Date.now() + DEADLINE_MS);
-  return { ...result, hasMore: false };
+  const result = await search(library, query, 'TITLE', Date.now() + DEADLINE_MS, true);
+  return { ...result, records: result.records.map(record => ({ ...record, materialType: 'Book', materialTypeProof: 'libman_public_books_tab' })), hasMore: false };
 }
 
 export async function resolveCatalogRecord(library, recordId) {

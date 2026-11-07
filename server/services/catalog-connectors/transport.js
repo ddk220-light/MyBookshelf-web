@@ -300,10 +300,25 @@ export class Coordinator {
         const text = new TextDecoder(charset).decode(Buffer.concat(chunks));
         ctx.bytes += bytes;
         ctx.upstreamMs += Date.now() - start;
+        let redirectLocation = null;
+        if (
+          response.status >= 300 &&
+          response.status < 400 &&
+          response.headers.get("location")
+        ) {
+          try {
+            redirectLocation = safeUrl(
+              new URL(response.headers.get("location"), url),
+            );
+          } catch {
+            /* Invalid redirects remain unresolved. */
+          }
+        }
         ctx.responses.push({
           url: url.toString(),
           status: response.status,
           text,
+          location: redirectLocation,
         });
         if (ctx.responses.length > 3) ctx.responses.shift();
         const evidence = this.store?.body(
@@ -317,6 +332,7 @@ export class Coordinator {
           requestId,
           libraryId: ctx.libraryId,
           status: response.status,
+          redirectLocation,
           bytes,
           durationMs: Date.now() - start,
           evidence: evidence ? [evidence] : [],

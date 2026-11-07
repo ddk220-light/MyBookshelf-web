@@ -136,6 +136,17 @@ function checkpoint(label) {
   );
 }
 try {
+  const controlPath = join(directory, "audit-control.json");
+  if (
+    existsSync(controlPath) &&
+    JSON.parse(readFileSync(controlPath)).resumeAllowed === false
+  )
+    throw Object.assign(
+      new Error(
+        "Owner paused full collection pending repair/revalidation gate",
+      ),
+      { code: "AUDIT_REPAIR_GATE" },
+    );
   machine.acquire();
   machineHeld = true;
   store.acquire();
