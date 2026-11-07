@@ -62,4 +62,3 @@ Hosted anonymous verification confirms:
 record these checks. Browser origin responses used the configured proxy/CA trust
 with TLS verification enabled. Existing accounts, saved shelves and research
 schedules were not modified.
-
