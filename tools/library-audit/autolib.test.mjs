@@ -103,14 +103,12 @@ test("Autolib smart title filters match the actual advertised DataTables 1.13.5 
       'quote "alpha"',
       "“Wings of Fire”",
     ];
-    const table = dom.window
-      .jQuery("#books")
-      .DataTable({
-        data: titles.map((t) => [t]),
-        pageLength: 25,
-        order: [],
-        dom: "t",
-      });
+    const table = dom.window.jQuery("#books").DataTable({
+      data: titles.map((t) => [t]),
+      pageLength: 25,
+      order: [],
+      dom: "t",
+    });
     for (const query of [
       "wings fire",
       '"Wings of Fire"',
@@ -255,6 +253,12 @@ test("Autolib preserves copy identities and explicit material without giving cop
         native: true,
       }),
     { code: "EQUIVALENCE_UNPROVEN" },
+  );
+  assert.equal(
+    parseAcademicResponse("autolib", data, { query: "unknown", native: true })
+      .records.length,
+    1,
+    "An unrelated incomplete barcode cannot invalidate another native title query",
   );
 });
 test("the app-facing connector search and lookup retain the selected native copy without a false item URL", async () => {

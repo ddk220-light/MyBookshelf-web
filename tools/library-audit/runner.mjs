@@ -534,6 +534,29 @@ export async function run(
                       books.length > 0 &&
                       preliminary.accepted &&
                       preliminary.formatConfirmed;
+                    // Autolib's lookup repeats the same metadata export. It
+                    // cannot supply a material label absent from this native
+                    // row, so another request adds no book-type evidence.
+                    if (
+                      preliminary.accepted &&
+                      !preliminary.formatConfirmed &&
+                      result.effectiveProfile.nativeProfile?.variant ===
+                        "autolib"
+                    ) {
+                      store.append({
+                        type: "book_rejected",
+                        libraryId: library.libraryId,
+                        connectionId: route.connectionId,
+                        query,
+                        book: (({ recordRef, ...record }) => record)(candidate),
+                        observationKind: result.observationKind,
+                        reason: "catalog_record_format_needs_review",
+                        nextAction:
+                          "Review actual public material documentation; repeating the same export adds no type proof",
+                        evidence: result.evidence,
+                      });
+                      continue;
+                    }
                     const detail = sufficient
                       ? {
                           record: candidate,
