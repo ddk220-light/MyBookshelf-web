@@ -103,3 +103,70 @@ test("HTTP access refusals are retained beyond a timed cooldown until a permitte
   });
   assert.equal(ctx.requests, 1);
 });
+
+test("multi-day audit refreshes robots before using permission older than 24 hours", async () => {
+  let now = 0,
+    policyReads = 0,
+    searchReads = 0;
+  const coordinator = new Coordinator({
+    minGapMs: 0,
+    policyClock: () => now,
+    fetchImpl: async (url) => {
+      if (url.pathname === "/robots.txt") {
+        policyReads++;
+        return new Response(
+          policyReads === 1
+            ? "User-agent: *\nAllow: /"
+            : "User-agent: *\nDisallow: /search",
+        );
+      }
+      searchReads++;
+      return new Response("catalog response");
+    },
+  });
+  const context = () =>
+    coordinator.context({ allowedOrigins: ["https://catalog.test"] });
+  await context().request("https://catalog.test/search");
+  now = 23 * 60 * 60 * 1000;
+  await context().request("https://catalog.test/search");
+  assert.equal(policyReads, 1);
+  now = 24 * 60 * 60 * 1000;
+  await assert.rejects(context().request("https://catalog.test/search"), {
+    code: "ROBOTS_DISALLOWED",
+  });
+  assert.equal(policyReads, 2);
+  assert.equal(searchReads, 2);
+});
+
+test("expired robots permission is not reused if the refresh fails", async () => {
+  let now = 0,
+    policyReads = 0,
+    searchReads = 0;
+  const coordinator = new Coordinator({
+    minGapMs: 0,
+    policyClock: () => now,
+    fetchImpl: async (url) => {
+      if (url.pathname === "/robots.txt") {
+        policyReads++;
+        return new Response(
+          policyReads === 1 ? "User-agent: *\nAllow: /" : "Unavailable",
+          { status: policyReads === 1 ? 200 : 503 },
+        );
+      }
+      searchReads++;
+      return new Response("catalog response");
+    },
+  });
+  await coordinator
+    .context({ allowedOrigins: ["https://catalog.test"] })
+    .request("https://catalog.test/search");
+  now = 24 * 60 * 60 * 1000;
+  await assert.rejects(
+    coordinator
+      .context({ allowedOrigins: ["https://catalog.test"] })
+      .request("https://catalog.test/search"),
+    { code: "ROBOTS_UNAVAILABLE" },
+  );
+  assert.equal(searchReads, 1);
+  assert.equal(policyReads, 2);
+});

@@ -4,6 +4,7 @@ import { failure } from "./contracts.js";
 import { safeUrl, redact } from "./evidence.js";
 
 const AGENT = "MyBookshelfAudit/1.0 (+https://mybookshelf.cloud/privacy)";
+const ROBOTS_CACHE_MS = 24 * 60 * 60 * 1000;
 export function robotsRules(text, userAgent = "mybookshelfaudit") {
   const groups = [];
   let group = null,
@@ -67,15 +68,18 @@ export class Coordinator {
     concurrency = 8,
     store = null,
     robots = true,
+    policyClock = Date.now,
   } = {}) {
     this.fetch = fetchImpl;
     this.minGapMs = minGapMs;
     this.concurrency = concurrency;
     this.store = store;
     this.robots = robots;
+    this.policyClock = policyClock;
     this.observationKind = fetchImpl === fetch ? "live_http" : "fixture";
     this.lanes = new Map();
     this.policies = new Map();
+    this.policyExpires = new Map();
     this.cooldowns = new Map();
     this.refusals = new Map();
     this.active = 0;
@@ -139,6 +143,12 @@ export class Coordinator {
   async request(ctx, value, options = {}) {
     const url = this.check(ctx, value);
     if (this.robots && url.pathname !== "/robots.txt") {
+      if (
+        (this.policyExpires.get(url.origin) ?? Infinity) <= this.policyClock()
+      ) {
+        this.policies.delete(url.origin);
+        this.policyExpires.delete(url.origin);
+      }
       if (!this.policies.has(url.origin)) {
         const policy = this.raw(
           ctx,
@@ -146,18 +156,33 @@ export class Coordinator {
           {},
           true,
         ).then((r) => {
-          if (r.status === 404 || r.status === 410)
+          if (r.status === 404 || r.status === 410) {
+            this.policyExpires.set(
+              url.origin,
+              this.policyClock() + ROBOTS_CACHE_MS,
+            );
             return { rules: [], delay: 0 };
+          }
           if (!r.ok)
             throw failure(
               "ROBOTS_UNAVAILABLE",
               "Cannot establish provider robots policy",
               503,
             );
-          return robotsRules(r.text);
+          const parsed = robotsRules(r.text);
+          this.policyExpires.set(
+            url.origin,
+            this.policyClock() + ROBOTS_CACHE_MS,
+          );
+          return parsed;
         });
         this.policies.set(url.origin, policy);
-        policy.catch(() => this.policies.delete(url.origin));
+        policy.catch(() => {
+          if (this.policies.get(url.origin) === policy) {
+            this.policies.delete(url.origin);
+            this.policyExpires.delete(url.origin);
+          }
+        });
       }
       const policy = await this.policies.get(url.origin);
       if (!robotsAllowed(policy, url))
