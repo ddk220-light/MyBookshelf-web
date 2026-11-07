@@ -1,16 +1,17 @@
 # Paused India audit: repair and revalidation
-Generated 2026-11-07T18:12:41.612Z. Full collection remains paused.
-Frozen cohort: 554; evidence-backed reviewed outcomes: 506; still open: 48.
+Generated 2026-11-07T18:18:23.051Z. Full collection remains paused.
+Frozen cohort: 554; evidence-backed reviewed outcomes: 509; still open: 45.
 
 | Result | Libraries |
 |---|---:|
-| tooling_or_evidence_gap | 48 |
+| tooling_or_evidence_gap | 43 |
 | observed_connection_or_http_block | 193 |
 | clean_zero_replayed | 4 |
 | confirmed_policy_block | 113 |
 | confirmed_policy_or_access_block | 4 |
 | verified_20_replayed | 90 |
-| verified_20_live | 90 |
+| verified_20_live | 93 |
+| interrupted | 2 |
 | verified_partial_live | 5 |
 | confirmed_empty_live | 7 |
 
