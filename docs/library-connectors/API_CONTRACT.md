@@ -1,6 +1,6 @@
 # REST and MCP contract
 
-Proposed API version: `v1`, namespace `/api/catalog/v1`. These are design contracts, not existing endpoints. Implement OpenAPI 3.1 and JSON Schema validation in story C1 before the service endpoints. Existing `/api/v2/books/*` contracts remain behind a compatibility layer.
+API version: `v1`, namespace `/api/catalog/v1`. The internal subset is implemented with [OpenAPI 3.1](../../server/services/catalog-connectors/openapi.json) and runtime input checks. This document retains the broader design; [implementation status](IMPLEMENTATION_STATUS.md) and the [runbook](RUNBOOK.md) identify unsupported features. There is no hosted/public release. Existing `/api/v2/books/*` contracts remain behind a compatibility layer.
 
 ## Operations
 
@@ -29,7 +29,6 @@ Illustrative shape only; query and library ID are not a new successful test:
   "query": "Wings of Fire",
   "field": "keyword",
   "filters": {},
-  "locale": "en",
   "sort": "website_default",
   "pageSize": "website_default",
   "cursor": null,

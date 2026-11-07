@@ -1,6 +1,6 @@
 # Library connector platform: implementation design
 
-Status: proposed design, 7 November 2026. No implementation, live audit, new schedule or service deployment has started.
+Status: implementation in progress, 7 November 2026. The internal HTTP service, resumable runner, full India queue, reports and disabled scheduling support are implemented. A bounded live pilot is recorded. Read [implementation status](IMPLEMENTATION_STATUS.md) and the [operator runbook](RUNBOOK.md); design ambitions below are not claims that every adapter or public delivery milestone is complete.
 
 Build a reusable HTTP connector service that reproduces public catalog website searches, tests itself periodically and exposes the same capabilities to MyBookshelf, an API and eventually MCP clients. **No browser control, headless browser, screenshot requirement or browser fallback.** This owner decision supersedes the browser-based approach originally proposed in PR #187.
 

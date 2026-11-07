@@ -1,6 +1,6 @@
 # India library search audit: 20 books per library
 
-Status: revised for the owner’s HTTP-only direction. The [implementation design packet](../library-connectors/README.md) supersedes the earlier browser-control approach in this PR. No browser engine, rendered-page check or screenshot is required. This is planning only; implementation, collection and schedules have not started.
+Status: revised for the owner’s HTTP-only direction. The [implementation design packet](../library-connectors/README.md) supersedes the earlier browser-control approach in this PR. No browser engine, rendered-page check or screenshot is required. The [internal implementation and bounded pilot](../library-connectors/IMPLEMENTATION_STATUS.md) now exist. The full inventory is prepared for testing; comprehensive collection has not started and schedules remain disabled.
 
 ## Goal and measure
 

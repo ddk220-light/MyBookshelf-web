@@ -1,5 +1,7 @@
 # Engineering design
 
+The internal implementation now lives in the paths below. See [implementation status](IMPLEMENTATION_STATUS.md) for delivered behavior and remaining design work; public hosting/MCP and distributed coordination are not deployed.
+
 ## Architecture
 
 ```mermaid
@@ -23,7 +25,7 @@ flowchart TD
 
 No browser engine or browser-control fallback. The runner sends real HTTP requests. Fixtures emulate responses only in offline tests.
 
-Use Node 22 and the existing repository modules. Proposed additions: `server/services/catalog-connectors/` for contracts, descriptors, coordinator and service; `tools/library-audit/` for CLI, scheduler, journal and reports; `testdata/library-audit/` for sanitized fixtures; `docs/research/india-library-audit/` for versioned audit snapshots. Exact files are introduced story by story, not by moving every existing provider at once.
+Use Node 22 and the existing repository modules. Implementation paths: `server/services/catalog-connectors/` for contracts, descriptors, coordinator and service; `tools/library-audit/` for CLI, scheduler, journal and reports; `testdata/library-audit/` for sanitized fixtures; `docs/research/india-library-audit/` for versioned audit snapshots. Exact files are introduced story by story, not by moving every existing provider at once.
 
 ## Reuse and migration
 

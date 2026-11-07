@@ -1,6 +1,6 @@
 # Implementation backlog
 
-Status: ready for design review; all stories below are unstarted. This packet is a plan, not evidence that the service or schedules exist. Implement in the current repository, with isolated scoped branches/worktrees and small reviewable checkpoints. Preserve unrelated account/free-content work and current production source flags.
+Status: implementation underway after owner approval. The [implementation status](IMPLEMENTATION_STATUS.md) maps delivered behavior and remaining acceptance work; the [runbook](RUNBOOK.md) describes executable commands. The backlog below retains the full intended scope, including later public delivery. Implement in the current repository, with isolated scoped branches/worktrees and small reviewable checkpoints. Preserve unrelated account/free-content work and current production source flags.
 
 ## Milestones
 
