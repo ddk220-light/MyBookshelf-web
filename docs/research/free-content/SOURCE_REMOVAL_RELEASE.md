@@ -34,5 +34,31 @@ Verification before release:
   absent. Removal guards also reject requests before any provider/cache dispatch.
 
 Mobile screenshots are in `evidence/2026-11-07-source-removal/`.
-Production commit, deployment identity and hosted verification will be recorded
-after release. Existing account configuration is unchanged.
+
+## Verified production release
+
+PR [#185](https://github.com/ddk220-light/MyBookshelf-web/pull/185) merged at
+`c801088fae01443dcbe6e29f81b273ad23c1568c`. Vercel production deployment
+`dpl_4VSELLwipf6YMPAZRJNGikJ1UHrw` is READY and serves that exact commit at
+<https://mybookshelf.cloud>.
+
+Both complete CI runs passed: [push](https://github.com/ddk220-light/MyBookshelf-web/actions/runs/42320479988)
+and [PR](https://github.com/ddk220-light/MyBookshelf-web/actions/runs/42320486053).
+Hosted anonymous verification confirms:
+
+- 34 enabled sources; all five retired IDs are absent from the directory.
+- All five search requests return `CONTENT_DISABLED`, including access opt-in.
+  Retired pilot and old-cursor requests are also blocked.
+- Optional edition lookup returns no retired offers. A saved OpenStax Calculus
+  record still resolves with its original key and title.
+- NASA search continues to return 24 distinct records through pagination.
+- Actual mobile Chromium shows 34 connected sources and none of the retired
+  options. The remaining free-book browse links are present, the children's pilot
+  link is absent, and old retired routes redirect while preserving the query.
+  No browser page errors or horizontal overflow were observed.
+- The deployment-scoped error/fatal log scan returned no entries during checks.
+
+`production-api.json`, `production-browser.json` and `production-mobile.png`
+record these checks. Browser origin responses used the configured proxy/CA trust
+with TLS verification enabled. Existing accounts, saved shelves and research
+schedules were not modified.
