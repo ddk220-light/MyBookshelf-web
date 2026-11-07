@@ -1,0 +1,2403 @@
+
+
+
+
+
+
+
+
+
+
+     
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-results.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title>
+
+    
+        Results of search for 'History'
+    
+
+&rsaquo;
+Koha online catalog
+</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 23.0509000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="/opac-tmpl/bootstrap/lib/jquery/responsive.dataTables.min_23.0509000.css" type="text/css" rel="stylesheet">
+
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link type="text/css" href="/opac-tmpl/bootstrap/css/opac_23.0509000.css" rel="stylesheet">
+
+
+
+
+    <link href="/opac-tmpl/bootstrap/css/print_23.0509000.css" type="text/css" media="print" rel="stylesheet">
+
+
+    <style>body {
+    background: #ffffff none;
+    font-size: 13px;
+}
+#wrapper {
+     padding-left: 0px; 
+     padding-right: 0px; 
+}
+.navigation {
+    width: 100%;
+}
+.mainmenu, .submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  border: 7px solid #2f3a44;
+}
+.mainmenu li {
+    border: 1px solid #ffffff;
+    background-color: #17afaf;;
+}
+.mainmenu a {
+    display: block;
+    background-color: #17afaf;
+    text-decoration: none;
+    padding: 10px;
+    color: #ffffff;
+}
+.submenu {
+    overflow: auto;
+    max-height: 0;
+    -webkit-transition: all 0.5s ease-out;
+}
+.mainmenu a:hover {
+    background-color: #2f3a44;
+}
+.mainmenu li:hover .submenu {
+    display: block;
+    max-height: 200px;
+}
+.submenu a:hover {
+    background-color: #2f3a44;
+}
+#opac-main-search {
+    background: #2f3a44;
+    border-radius: 8px;
+}
+
+.navbar-expand {
+    background-color: #2f3a44;
+}
+
+.navbar-nav>li>a {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+#wrapper > .container-fluid:last-child {
+    margin-top: 32px;
+    max-width: none;
+    background-color: #2f3a44;
+    color: #fff;
+}
+.main {
+    box-shadow: 1px 1px 11px 5px #888888;
+}
+#login {
+    max-width: 100%;
+    background-color: #2f3a44;
+    padding: 12%;
+    /**border-radius: 12px;*/
+}
+
+.brief > label {
+    color: #ffffff;
+}
+
+.brief > legend {
+    color: #ffffff;
+}
+.breadcrumb {
+    background-color: #2f3a44;
+}
+item.active a:visited {
+    color: #ffffff;
+}
+#slideshow { 
+    margin: 25px auto; 
+    position: relative; 
+    width: auto; 
+    height: 350px; 
+    padding: 10px; 
+    box-shadow: 0 0 20px rgba(0,0,0,0.4); 
+}
+
+#slideshow > div { 
+    position: absolute; 
+    top: 10px; 
+    left: 10px; 
+    right: 10px; 
+    bottom: 10px; 
+}
+#slideshow img {
+    width: 100%;
+    height: 100%;
+}
+
+
+/** Navbar Aman */
+
+#navrl{
+ margin-top:10px;
+ padding:0px!important;
+}
+#headnav {
+    background: #2f3a44 !important;
+    width: 100%;
+    list-style: none;
+    position: relative;
+    left: 0;
+    display: block;
+    float: left;
+}
+#headnav li{
+ border-right: 1px solid white;
+ border-left: 1px solid white;
+ position: relative!important;
+    float: left!important;
+  list-style:none;
+}
+#headnav li a {
+    color: #ffffff;
+    font-size: 13px!important;
+    padding: 6px 19px!important;
+    text-shadow: none!important;
+    display: block!important;
+}
+#headnav .caret {
+    border-top-color: #ffffff;
+    border-bottom-color: #ffffff;
+}
+.navbar .nav li.dropdown.open>.dropdown-toggle, .navbar .nav li.dropdown.show>.dropdown-toggle, .navbar .nav li.dropdown.open.show>.dropdown-toggle {
+    background-color:#c00;
+}
+#headnav .dropdown-menu {
+    padding: 0px!important;
+    position: absolute!important;
+}
+#headnav .dropdown-menu>li {
+    background: #ffffff6b;
+    border-bottom: 1px solid #bda4a4;
+    padding: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    width: 100%;
+}
+#headnav .dropdown-menu>li:hover{
+    background: #0a1a32;
+}
+#headnav .dropdown-menu>li a:hover {
+    background: #c00;
+    color: white;
+}
+#headnav .dropdown-menu {
+    background: white;
+}
+#headnav .dropdown-menu li a{
+ color:black;
+ font-size: 13px!important;
+}
+.announcement{
+ background-color:white;
+}
+#timetable td{
+    background-color: #fff;
+    border: 1px solid #9c2c2c4f;
+    text-align: center;
+    padding: 5px;
+    font-size: 15px;
+    font-family: Times New Roman, Times, serif;
+    color: #416a6b;
+}
+.mySlides {
+  display:none;
+  height:400px;
+}
+
+/** NavbarEnd Aman */
+
+#outerwrap {
+  margin-top: 2%;
+    padding-top: 6px;
+    padding-right: 6px;
+    padding-bottom: 6px;
+    padding-left: 6px;
+    background-image: none;
+    background-color: #2f3a44  !important;
+  border-radius: 12px;
+}
+
+#logo {
+    background: none;
+}
+#opac-main-search label {
+    color: #ffffff;
+}
+.breadcrumb-item.active a:active, .breadcrumb-item.active a:hover, .breadcrumb-item.active a:link, .breadcrumb-item.active a:visited {
+    color: #ffffff;
+}
+
+#opac-main .maincontent {
+    max-width: 100%;
+}
+.logo-img{
+    margin-top: 0.5em;
+}
+/* Side Menu CSS start */
+
+#cssmenu {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  line-height: 1;
+  background: #2f3a44;
+  font-size: 12px;
+}
+#cssmenu ul,
+#cssmenu ul li,
+#cssmenu ul ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#cssmenu ul li {
+  float: left;
+  min-height: 1px;
+  line-height: 1em;
+  vertical-align: middle;
+  position: relative;
+border-bottom:1px solid white;
+}
+#cssmenu ul li.hover,
+#cssmenu ul li:hover {
+  position: relative;
+  z-index: 599;
+  cursor: default;
+}
+#cssmenu ul ul {
+  visibility: hidden;
+  position: absolute;
+  top: 100%;
+  left: 0px;
+  z-index: 598;
+  width: 100%;
+  background: #06224c;
+}
+#cssmenu ul ul li {
+  float: none;
+}
+#cssmenu ul ul ul {
+  top: -2px;
+  right: 0;
+}
+#cssmenu ul li:hover > ul {
+  visibility: visible;
+}
+#cssmenu ul ul {
+  top: 1px;
+  left: 99%;
+}
+#cssmenu ul li {
+  float: none;
+}
+#cssmenu ul ul {
+  margin-top: 1px;
+}
+#cssmenu ul ul li {
+  font-weight: normal;
+}
+#cssmenu a {
+    display: block;
+    padding: 15px 20px;
+    text-decoration: none;
+    text-transform: uppercase;
+   color: #ffffff;
+    font-weight: 500;
+}
+#cssmenu ul li {
+    float: none;
+    min-height: 1px;
+    line-height: 1em;
+    vertical-align: middle;
+    position: relative;
+}
+#cssmenu ul ul li:hover > a {
+    background: #4eb1ff;
+    color: #ffffff;
+}
+.local-login label {
+    color: #ffffff;
+}
+div#forgotpassword-main a {
+    color: #ffffff;
+}
+.table-curved {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    border: 4px solid #2f3a44;
+    margin-top: 2%;
+      font-size: 13px;
+	}
+	</style>
+
+
+
+    <link rel="search" type="application/opensearchdescription+xml" href="http://opac-library.tifrh.res.in/cgi-bin/koha/opac-search.pl?format=opensearchdescription" title="Search ">
+    <link rel="unapi-server" type="application/xml" title="unAPI" href="http://opac-library.tifrh.res.in/cgi-bin/koha/unapi" />
+
+
+[script omitted]
+
+[script omitted]
+[script omitted]
+
+<link rel="stylesheet" href="/opac-tmpl/lib/font-awesome/css/font-awesome.min_23.0509000.css" type="text/css">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="alternate" type="application/rss+xml" title=" Search RSS feed" href="http://opac-library.tifrh.res.in/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;count=50&amp;sort_by=acqdate_dsc&amp;format=rss" />
+</head>
+
+
+
+
+
+    
+
+
+    
+
+
+
+
+    
+
+<body ID="results" class="branch-default scrollto" >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<div id="wrapper">
+    <div id="header-region" class="noprint">
+        <nav class="navbar navbar-expand">
+            <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    Koha online
+                
+            </a>
+            </div>
+            
+                <div id="cartDetails" class="cart-message">Your cart is empty.</div>
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                    <li class="nav-item js-show">
+                        <a href="#" class="nav-link" title="Collect items you are interested in" id="cartmenulink" role="button">
+                            <i id="carticon" class="fa fa-shopping-cart fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Cart</span> <span id="basketcount"></span>
+                        </a>
+                    </li>
+                
+                <li class="divider-vertical"></li>
+                
+                    <li class="nav-item dropdown">
+                        <a href="/cgi-bin/koha/opac-shelves.pl" title="Show lists" class="nav-link dropdown-toggle" id="listsmenu" data-toggle="dropdown" role="button" aria-label="Show dropdown with detailed list information" aria-haspopup="true" aria-expanded="false"
+                            ><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                        </a>
+                        <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                            
+                                <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="-1" role="menuitem"><strong>Public lists</strong></a>
+                                
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=2&amp;sortfield=title" tabindex="-1" role="menuitem">New Arrivals</a>
+                                    
+                                    
+                                
+                                
+                                    <a class="dropdown-item listmenulink" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="-1" role="menuitem">View all</a>
+                                
+                            
+                            
+                                <div class="dropdown-divider"></div>
+                            
+                            
+                                <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="-1" role="menuitem"><strong>Your lists</strong></a>
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Log in to create your own lists</a>
+                                
+                            
+                        </div> <!-- / .dropdown-menu -->
+                    </li> <!-- / .nav-item.dropdown -->
+                
+            </ul> <!-- / .navbar-nav -->
+
+            
+                
+                <ul id="members" class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        
+                            
+                                
+                                    <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger"><i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a>
+                                
+                            
+                        
+
+                        
+                    </li>
+                    
+                        
+                            <li class="nav-item search_history">
+                                <a class="nav-link login-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">Search history</a>
+                            </li>
+                            <li class="divider-vertical"></li>
+                            <li class="nav-item">
+                                <a class="nav-link logout clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Delete your search history"><i class="fa fa-trash" aria-hidden="true"></i> Clear</a>
+                            </li>
+                        
+                    
+                </ul>
+            
+        </nav> <!-- /navbar -->
+
+        
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        
+    
+        <div id="opacheader">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div class="logo-img"><img class="img-responsive" src="/cgi-bin/koha/opac-retrieve-file.pl?id=0a89bd8d8e85fd7e1bd039aaf3825375" /></div></div>
+                </div>
+            
+        </div>
+    
+
+                    </div>
+                </div>
+            </div>
+        
+
+    </div> <!-- / header-region -->
+
+    
+        <div class="container-fluid">
+            
+                <div class="row">
+                    <div class="col">
+                            <div id="opac-main-search" class="mastheadsearch">
+                                
+                                    <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+                                        <div class="form-row align-items-center">
+                                            <div class="col-sm-auto order-2 order-sm-2">
+                                                <select name="idx" id="masthead_search" class="form-control">
+                                                    
+                                                        <option selected="selected" value="">Library catalog</option>
+                                                    
+                                                    
+                                                        <option value="ti">Title</option>
+                                                    
+                                                    
+                                                        <option value="au">Author</option>
+                                                    
+                                                    
+                                                        <option value="su">Subject</option>
+                                                    
+                                                    
+                                                        <option value="nb">ISBN</option>
+                                                    
+                                                    
+                                                        <option value="ns">ISSN</option>
+                                                    
+                                                    
+                                                        <option value="se">Series</option>
+                                                    
+                                                    
+                                                        
+                                                            <option value="callnum">Call number</option>
+                                                        
+                                                    
+                                                </select>
+                                            </div> <!-- /.col-sm-auto -->
+
+                                            <div class="col order-4 order-sm-3">
+                                                
+                                                    <input type="text" class="transl1 form-control" id="translControl1" name="q" value="History" /><span id="translControl"></span>
+                                                
+                                            </div> <!-- /.col -->
+
+                                            
+                                                
+                                                    
+                                                
+                                            
+
+                                            <div class="order-5 col-sm-auto">
+                                                <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+
+                                        </div> <!-- /.form-row -->
+                                        <input type="hidden" name="weight_search" value="1">
+                                    </form>
+                                
+                            </div><!-- /#opac-main-search -->
+                    </div> <!-- /.col -->
+                </div> <!-- /.row -->
+            
+
+            <div class="row">
+                <ul class="nav" id="moresearches">
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                    </li>
+                    
+                    
+                    
+                        <li class="nav-item">
+                            <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                        </li>
+                    
+                    
+                    
+                        <li class="nav-item">
+                            <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                        </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Library</span>
+                            
+                        </a>
+                    </li>
+                    
+    
+
+                </ul> <!-- /.nav#moresearches -->
+            </div> <!-- /.row -->
+        </div> <!-- /.container-fluid -->
+    
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalLoginLabel">Log in to your account</h2>
+                    <button type="button" class="closebtn" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            
+                            
+                            [form state omitted]
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    <label for="muserid">Login:</label>[form state omitted]
+                                    <label for="mpassword">Password:</label>[form state omitted]
+                                    <fieldset class="action">
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                
+                                    <div id="forgotpassword-modal" class="forgotpassword">
+                                        <a href="/cgi-bin/koha/opac-password-recovery.pl">Forgot your password?</a>
+                                    </div>
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form> <!-- /#auth -->
+            </div> <!-- /.modal-content -->
+        </div> <!-- /.modal-dialog -->
+    </div>  <!-- /#modalAuth  -->
+
+
+    <div class="main">
+        <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/cgi-bin/koha/opac-main.pl">Home</a>
+                </li>
+                
+                    
+                    <li class="breadcrumb-item active">
+                        
+                            <a href="#" aria-current="page" title="You searched for 'kw,wrdl: History'">Results of search for 'History'</a>
+                        
+                    </li>
+                
+            </ol>
+        </nav> <!-- /#breadcrumbs -->
+
+        
+
+        <div class="container-fluid">
+            <div class="row">
+                
+                    <div class="col-lg-2">
+                        <div id="facetcontainer">
+                            <!-- FACETS START -->
+                            
+
+
+
+    <div id="search-facets">
+        <h2><a href="#" class="menu-collapse-toggle">Refine your search</a></h2>
+        <ul class="menu-collapse">
+            
+            <li id="availability_facet"><h3 id="facet-availability">Availability</h3>
+                <ul>
+                    <li>
+                        
+                            <a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;sort_by=relevance&amp;limit=available">Limit to currently available items</a>
+                        
+                    </li>
+                </ul>
+                
+            </li>
+
+            
+                
+                    <li id="au_id">
+                        <h3 id="facet-authors">Authors</h3>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <ul>
+                            
+                            
+                              
+                            
+                            
+                              
+                            
+                            
+                            
+                            
+                            
+                                <li>
+                            
+                                  
+                                    
+                                    <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;sort_by=relevance&amp;count=20&limit=au:by%20Gleick,%20James" title="by Gleick, James">by Gleick, James</a></span>
+                                    
+                                  
+                                </li>
+                            
+                            
+                            
+                            
+                                <li>
+                            
+                                  
+                                    
+                                    <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;sort_by=relevance&amp;count=20&limit=au:Ford,%20Kenneth%20W" title="Ford, Kenneth W">Ford, Kenneth W</a></span>
+                                    
+                                  
+                                </li>
+                            
+                            
+                            
+                            
+                                <li>
+                            
+                                  
+                                    
+                                    <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;sort_by=relevance&amp;count=20&limit=au:Jean%20Matricon" title="Jean Matricon">Jean Matricon</a></span>
+                                    
+                                  
+                                </li>
+                            
+                            
+                            
+                            
+                                <li>
+                            
+                                  
+                                    
+                                    <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;sort_by=relevance&amp;count=20&limit=au:Rowlinson,%20J.S." title="Rowlinson, J.S.">Rowlinson, J.S.</a></span>
+                                    
+                                  
+                                </li>
+                            
+                            
+                            
+                            
+                                <li>
+                            
+                                  
+                                    
+                                    <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;sort_by=relevance&amp;count=20&limit=au:Sturtevant,%20A.H." title="Sturtevant, A.H.">Sturtevant, A.H.</a></span>
+                                    
+                                  
+                                </li>
+                            
+                            
+                            
+                            
+                                <li class="collapsible-facet" style="display:none">
+                            
+                                  
+                                    
+                                    <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;sort_by=relevance&amp;count=20&limit=au:Weatherall,%20James%20Owen" title="Weatherall, James Owen">Weatherall, James Ow...</a></span>
+                                    
+                                  
+                                </li>
+                            
+                            
+                            
+                            
+                                <li class="collapsible-facet" style="display:none">
+                            
+                                  
+                                    
+                                    <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;sort_by=relevance&amp;count=20&limit=au:%C2%A0Mukherjee,%20Siddhartha" title=" Mukherjee, Siddhartha"> Mukherjee, Siddhart...</a></span>
+                                    
+                                  
+                                </li>
+                            
+                            
+                                <li class="moretoggle">
+                                    <a href="#"><strong>Show more</strong></a>
+                                </li>
+                                <li class="moretoggle" style="display:none">
+                                    <a href="#"><strong>Show less</strong></a>
+                                </li>
+                            
+                        </ul>
+                    </li>
+                
+            
+                
+                    <li id="itype_id">
+                        
+                        
+                        
+                        
+                        
+                        <h3 id="facet-itemtypes">Item types</h3>
+                        
+                        
+                        
+                        
+                        <ul>
+                            
+                            
+                              
+                            
+                            
+                              
+                            
+                            
+                            
+                            
+                            
+                                <li>
+                            
+                                  
+                                    
+                                    <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;sort_by=relevance&amp;count=20&limit=itype:BK" title="BK">Books</a></span>
+                                    
+                                  
+                                </li>
+                            
+                            
+                        </ul>
+                    </li>
+                
+            
+                
+                    <li id="se_id">
+                        
+                        
+                        
+                        
+                        <h3 id="facet-series">Series</h3>
+                        
+                        
+                        
+                        
+                        
+                        <ul>
+                            
+                            
+                              
+                            
+                            
+                              
+                            
+                            
+                            
+                            
+                            
+                                <li>
+                            
+                                  
+                                    
+                                    <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;sort_by=relevance&amp;count=20&limit=se:a" title="a">a</a></span>
+                                    
+                                  
+                                </li>
+                            
+                            
+                        </ul>
+                    </li>
+                
+            
+        </ul>
+    </div>  <!-- / #search-facets -->
+
+    
+
+
+                            <!-- FACETS END -->
+                        </div>
+                    </div>
+                
+
+                
+                    <div class="col-lg-10 maincontent">
+                
+
+                
+                    
+                        <h1 id="numresults">
+                            Your search returned 7 results.
+                            <a href="http://opac-library.tifrh.res.in/cgi-bin/koha/opac-search.pl?idx=kw&q=History&amp;count=50&amp;sort_by=acqdate_dsc&amp;format=rss" class="btn btn-link rsssearchlink noprint" aria-label="Subscribe to this search">
+                                <i class="fa fa-rss rsssearchicon" aria-hidden="true" title="Subscribe to this search"></i>
+                            </a>
+                        </h1>
+                        
+                    
+                
+
+                <div id="userresults">
+                    
+
+                    
+                    
+                        
+                    
+                    
+
+                    <!-- Search Results Table -->
+                    
+
+                        <div class="searchresults">
+                            <form action="/cgi-bin/koha/opac-search.pl" method="get" name="bookbag_form" id="bookbag_form">
+                                <legend class="sr-only">Sort</legend>
+                                
+                                    
+                                        <input type="hidden" name="idx" value="kw"/>
+                                    
+                                        <input type="hidden" name="q" value="History"/>
+                                    
+                                    
+                                
+
+                                <div id="floating">
+                                    <div id="toolbar" class="toolbar row align-items-center">
+                                        <div id="top-pages" class="col">
+                                            
+
+
+                                        </div>
+                                        
+                                            <div class="sort_by col-sm-auto">
+                                                <label for="sort_by" class="sr-only">Sort by:</label>
+                                                <select id="sort_by" class="resort form-control form-control-sm" name="sort_by">
+                                                    <option value="relevance">Relevance</option>
+<optgroup label="Popularity">
+    
+        <option value="popularity_dsc">Popularity (most to least)</option>
+    
+    
+        <option value="popularity_asc">Popularity (least to most)</option>
+    
+</optgroup>
+<optgroup label="Author">
+    
+        <option value="author_az">Author (A-Z)</option>
+    
+    
+        <option value="author_za">Author (Z-A)</option>
+    
+</optgroup>
+<optgroup label="Call number">
+    
+        <option value="call_number_asc">Call number (0-9 to A-Z)</option>
+    
+    
+        <option value="call_number_dsc">Call number (Z-A to 9-0)</option>
+    
+</optgroup>
+<optgroup label="Dates">
+    
+        <option value="pubdate_dsc">Publication/Copyright date: Newest to oldest</option>
+    
+    
+        <option value="pubdate_asc">Publication/Copyright date: Oldest to newest</option>
+    
+    
+        <option value="acqdate_dsc">Acquisition date: Newest to oldest</option>
+    
+    
+        <option value="acqdate_asc">Acquisition date: Oldest to newest</option>
+    
+</optgroup>
+<optgroup label="Title">
+    
+        <option value="title_az">Title (A-Z)</option>
+    
+    
+        <option value="title_za">Title (Z-A)</option>
+    
+</optgroup>
+
+                                                </select>
+
+                                                
+                                            </div> <!-- /.sort_by -->
+                                            <div id="sortsubmit" class="sort_by col-auto">
+                                                <input type="submit" class="btn btn-primary btn-sm clearfix" value="Go" />
+                                            </div> <!-- /.sort_by -->
+                                        
+                                    </div> <!-- / #toolbar -->
+
+                                    <div class="selections-toolbar toolbar noprint">
+                                        
+                                            <div class="highlight_controls noprint">
+                                                <a href="#" class="btn btn-link btn-sm highlight_toggle" id="highlight_toggle_off"><i class="fa fa-fw fa-pencil" aria-hidden="true"></i> Unhighlight</a>
+                                                <a href="#" class="btn btn-link btn-sm highlight_toggle" id="highlight_toggle_on"><i class="fa fa-fw fa-pencil" aria-hidden="true"></i> Highlight</a>
+                                            </div>
+                                        
+
+                                        <div class="check_control">
+                                            <!-- checkall, clearall are now needed for placehold -->
+                                            <span class="clearall">
+                                                <a id="CheckAll" class="btn btn-link btn-sm" href="#">Select all</a>
+                                            </span>
+                                            <span class="checkall">
+                                                <a id="CheckNone" class="btn btn-link btn-sm" href="#">Clear all</a>
+                                            </span>
+                                        </div>
+
+                                        <div class="links">
+                                            
+                                                <span class="selections">Select titles to:</span>
+                                            
+                                            
+                                                <span class="addto">
+                                                    <select class="disabled form-control form-control-sm" name="addto" id="addto">
+                                                        <option>Add to...</option>
+                                                        
+                                                            <option value="addtocart">Cart</option>
+                                                        
+                                                        
+                                                            
+                                                            
+                                                            
+                                                            <option value="newlist">[ New list ]</option>
+                                                        
+                                                    </select>
+                                                    <input type="submit" class="btn btn-sm btn-primary" value="Save" />
+                                                </span>
+                                            
+
+                                            
+                                                <button class="btn btn-link btn-sm hold disabled" type="button">
+                                                    <i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Place hold
+                                                </button>
+                                            
+
+                                            
+                                        </div> <!-- / .links -->
+                                        
+                                    </div> <!-- / .selections-toolbar -->
+                                </div> <!-- /#floating -->
+
+                                <!-- TABLE RESULTS START -->
+                                <table class="table table-striped">
+                                    <caption class="sr-only">Results</caption>
+
+                                    <!-- Actual Search Results -->
+                                    
+                                        <tr>
+                                            
+                                            
+                                                
+                                            
+                                            <td class="selectcol">
+                                                
+                                                    <input type="checkbox" class="cb" id="bib462" name="biblionumber" value="462" aria-label="Select search result: The Gene - An Intimate History" /> <label for="bib462"></label>
+                                                
+                                            </td>
+
+                                            
+                                            <td class="numcol">
+                                                
+                                                    1.
+                                                
+                                            </td>
+
+                                            
+
+                                            
+                                            <td class="bibliocol">
+                                                
+                                                    
+                                                
+                                                <div class="coverimages cover-slides itemtype_BK" data-isbn="" data-imgtitle="The Gene - An Intimate History">
+                                                    <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=462">
+
+                                                        
+
+                                                        
+                                                            
+                                                                <span class="no-image">No cover image available</span>
+                                                            
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+                                                    </a>
+
+                                                    
+
+                                                    
+
+                                                </div>
+                                                
+                                                    <!-- COinS / Openurl -->
+                                                    <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=The%20Gene%20-%20An%20Intimate%20History%20Kunal%20Jagetiya&amp;amp;rft.au=%C2%A0Mukherjee%2C%20Siddhartha%20&amp;amp;rft.pub=Penguin%20Books"></span>
+                                                
+                                                <div id="title_summary_462" class="title_summary">
+
+                                                
+
+<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=462" class="title">The Gene - An Intimate History Kunal Jagetiya </a><span class="byAuthor">by</span> <ul class="author resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=au:%22%C2%A0Mukherjee%2C%20Siddhartha%20%22"> Mukherjee, Siddhartha</a></li></ul><div class="results_summary type">
+<span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/BK.png" alt="Text" class="materialtype mt_icon_BK"> Text</span><span class="results_format"><span class="label">; Format: </span>
+                    print
+                </span><span class="results_contents_literary"><span class="label">; Literary form: </span>
+                    Not fiction
+                </span> </div><div class="results_summary publisher">
+<span class="label">Publication details: </span> <span property="name" class="publisher_name">Penguin Books</span> <span property="datePublished" class="publisher_date"></span>
+</div><div class="results_summary availability">
+<span class="label">Availability: </span><span class="available reallyavailable"><span class="AvailabilityLabel"><strong>Items available for loan: </strong></span><span class="ItemSummary"><span class="available"><span class="ItemBranch">TIFRH, Library</span> (1). </span></span></span>
+</div>
+
+
+
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+
+
+                                                
+                                                    <div class="results_summary ratings">
+                                                        
+                                                        
+                                                        <div class="br-wrapper br-theme-fontawesome-stars">
+                                                            <div class="br-widget br-readonly">
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                            <br />
+                                                        
+                                                    </div> <!-- / .results_summary -->
+                                                
+
+                                                <div class="actions-menu noprint">
+    
+        
+            
+                
+                    <span class="actions"><a class="btn btn-link btn-sm" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=462"><i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Place hold</a></span>
+                
+            
+        
+    
+
+    
+
+    
+        
+    
+
+    
+
+    
+
+    
+        
+            <span class="actions cart-actions"><a data-biblionumber="462" class="btn btn-link btn-sm addtocart cart cart462" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart</a> <a style="display:none;" data-biblionumber="462" class="btn btn-link btn-sm remove cartRemove cartR462" href="#">(remove)</a></span>
+        
+    
+</div>
+
+
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            
+                                            
+                                                
+                                            
+                                            <td class="selectcol">
+                                                
+                                                    <input type="checkbox" class="cb" id="bib1204" name="biblionumber" value="1204" aria-label="Select search result: The cold wars: a history of superconductivity" /> <label for="bib1204"></label>
+                                                
+                                            </td>
+
+                                            
+                                            <td class="numcol">
+                                                
+                                                    2.
+                                                
+                                            </td>
+
+                                            
+
+                                            
+                                            <td class="bibliocol">
+                                                
+                                                    
+                                                
+                                                <div class="coverimages cover-slides itemtype_BK" data-isbn="0813532957" data-imgtitle="The cold wars: a history of superconductivity">
+                                                    <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1204">
+
+                                                        
+
+                                                        
+                                                            
+                                                                    <span title="The cold wars: a history of superconductivity" id="amazon-thumbnail2"><img src="https://images-na.ssl-images-amazon.com/images/P/0813532957.01.TZZZZZZZ.jpg" alt="" class="item-thumbnail" /></span>
+                                                            
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+                                                    </a>
+
+                                                    
+
+                                                    
+
+                                                </div>
+                                                
+                                                    <!-- COinS / Openurl -->
+                                                    <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=The%20cold%20wars%3A%20a%20history%20of%20superconductivity&amp;amp;rft.isbn=9780813532950&amp;amp;rft.au=Jean%20Matricon&amp;amp;rft.pub=Rutgers%20University%20Press&amp;amp;rft.date=2003"></span>
+                                                
+                                                <div id="title_summary_1204" class="title_summary">
+
+                                                
+
+<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=1204" class="title">The cold wars: a history of superconductivity </a><span class="byAuthor">by</span> <ul class="author resource_list">
+<li><a href="/cgi-bin/koha/opac-search.pl?q=au:%22Jean%20Matricon%22">Jean Matricon</a></li>
+<li><a href="/cgi-bin/koha/opac-search.pl?q=au:%22Jean%20Matricon%22">Jean Matricon</a></li>
+</ul><div class="results_summary type"> </div><span class="results_summary rda264"> Rutgers University Press 2003</span><div class="results_summary availability">
+<span class="label">Availability: </span><span class="available reallyavailable"><span class="AvailabilityLabel"><strong>Items available for loan: </strong></span><span class="ItemSummary"><span class="available"><span class="ItemBranch">TIFRH, Library</span> (1). </span></span></span>
+</div>
+
+
+
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+
+
+                                                
+                                                    <div class="results_summary ratings">
+                                                        
+                                                        
+                                                        <div class="br-wrapper br-theme-fontawesome-stars">
+                                                            <div class="br-widget br-readonly">
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                            <br />
+                                                        
+                                                    </div> <!-- / .results_summary -->
+                                                
+
+                                                <div class="actions-menu noprint">
+    
+        
+            
+                
+                    <span class="actions"><a class="btn btn-link btn-sm" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=1204"><i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Place hold</a></span>
+                
+            
+        
+    
+
+    
+
+    
+        
+    
+
+    
+
+    
+
+    
+        
+            <span class="actions cart-actions"><a data-biblionumber="1204" class="btn btn-link btn-sm addtocart cart cart1204" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart</a> <a style="display:none;" data-biblionumber="1204" class="btn btn-link btn-sm remove cartRemove cartR1204" href="#">(remove)</a></span>
+        
+    
+</div>
+
+
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            
+                                            
+                                                
+                                            
+                                            <td class="selectcol">
+                                                
+                                                    <input type="checkbox" class="cb" id="bib197" name="biblionumber" value="197" aria-label="Select search result: The Information" /> <label for="bib197"></label>
+                                                
+                                            </td>
+
+                                            
+                                            <td class="numcol">
+                                                
+                                                    3.
+                                                
+                                            </td>
+
+                                            
+
+                                            
+                                            <td class="bibliocol">
+                                                
+                                                    
+                                                
+                                                <div class="coverimages cover-slides itemtype_BK" data-isbn="0007225741" data-imgtitle="The Information">
+                                                    <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=197">
+
+                                                        
+
+                                                        
+                                                            
+                                                                    <span title="The Information" id="amazon-thumbnail3"><img src="https://images-na.ssl-images-amazon.com/images/P/0007225741.01.TZZZZZZZ.jpg" alt="" class="item-thumbnail" /></span>
+                                                            
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+                                                    </a>
+
+                                                    
+
+                                                    
+
+                                                </div>
+                                                
+                                                    <!-- COinS / Openurl -->
+                                                    <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=The%20Information%20a%20history%2C%20a%20theory%2C%20a%20flood&amp;amp;rft.isbn=9780007225743&amp;amp;rft.au=by%20Gleick%2C%20James%20&amp;amp;rft.pub=The%20Fourth%20Estate&amp;amp;rft.date=2011"></span>
+                                                
+                                                <div id="title_summary_197" class="title_summary">
+
+                                                
+
+<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=197" class="title">The Information a history, a theory, a flood </a><span class="byAuthor">by</span> <ul class="author resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=au:%22by%20Gleick%2C%20James%20%22">by Gleick, James</a></li></ul><div class="results_summary type">
+<span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/BK.png" alt="Text" class="materialtype mt_icon_BK"> Text</span><span class="results_format"><span class="label">; Format: </span>
+                    print
+                </span><span class="results_contents_literary"><span class="label">; Literary form: </span>
+                    Not fiction
+                </span> </div><div class="results_summary publisher">
+<span class="label">Publication details: </span><span class="publisher_place" property="location">London</span> <span property="name" class="publisher_name">The Fourth Estate</span> <span property="datePublished" class="publisher_date">2011</span>
+</div><div class="results_summary availability">
+<span class="label">Availability: </span><span class="available reallyavailable"><span class="AvailabilityLabel"><strong>Items available for loan: </strong></span><span class="ItemSummary"><span class="available"><span class="ItemBranch">TIFRH, Library</span> (1). </span></span></span>
+</div>
+
+
+
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+
+
+                                                
+                                                    <div class="results_summary ratings">
+                                                        
+                                                        
+                                                        <div class="br-wrapper br-theme-fontawesome-stars">
+                                                            <div class="br-widget br-readonly">
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                            <br />
+                                                        
+                                                    </div> <!-- / .results_summary -->
+                                                
+
+                                                <div class="actions-menu noprint">
+    
+        
+            
+                
+                    <span class="actions"><a class="btn btn-link btn-sm" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=197"><i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Place hold</a></span>
+                
+            
+        
+    
+
+    
+
+    
+        
+    
+
+    
+
+    
+
+    
+        
+            <span class="actions cart-actions"><a data-biblionumber="197" class="btn btn-link btn-sm addtocart cart cart197" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart</a> <a style="display:none;" data-biblionumber="197" class="btn btn-link btn-sm remove cartRemove cartR197" href="#">(remove)</a></span>
+        
+    
+</div>
+
+
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            
+                                            
+                                                
+                                            
+                                            <td class="selectcol">
+                                                
+                                                    <input type="checkbox" class="cb" id="bib213" name="biblionumber" value="213" aria-label="Select search result: The Physics of wall street" /> <label for="bib213"></label>
+                                                
+                                            </td>
+
+                                            
+                                            <td class="numcol">
+                                                
+                                                    4.
+                                                
+                                            </td>
+
+                                            
+
+                                            
+                                            <td class="bibliocol">
+                                                
+                                                    
+                                                
+                                                <div class="coverimages cover-slides itemtype_BK" data-isbn="0544112431" data-imgtitle="The Physics of wall street">
+                                                    <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=213">
+
+                                                        
+
+                                                        
+                                                            
+                                                                    <span title="The Physics of wall street" id="amazon-thumbnail4"><img src="https://images-na.ssl-images-amazon.com/images/P/0544112431.01.TZZZZZZZ.jpg" alt="" class="item-thumbnail" /></span>
+                                                            
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+                                                    </a>
+
+                                                    
+
+                                                    
+
+                                                </div>
+                                                
+                                                    <!-- COinS / Openurl -->
+                                                    <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=The%20Physics%20of%20wall%20street%20a%20brief%20history%20of%20predicting%20the%20unpredictable&amp;amp;rft.isbn=9780544112438&amp;amp;rft.au=Weatherall%2C%20James%20Owen%20&amp;amp;rft.pub=Houghton%20Mifflin%20Harcourt%20Publising%20Co.&amp;amp;rft.date=2013"></span>
+                                                
+                                                <div id="title_summary_213" class="title_summary">
+
+                                                
+
+<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=213" class="title">The Physics of wall street a brief history of predicting the unpredictable </a><span class="byAuthor">by</span> <ul class="author resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=au:%22Weatherall%2C%20James%20Owen%20%22">Weatherall, James Owen</a></li></ul><span class="results_summary series"><span class="label">Series: </span><a href="/cgi-bin/koha/opac-search.pl?q=se,phr:%22a%22">a</a></span><div class="results_summary type">
+<span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/BK.png" alt="Text" class="materialtype mt_icon_BK"> Text</span><span class="results_format"><span class="label">; Format: </span>
+                    print
+                </span><span class="results_contents_literary"><span class="label">; Literary form: </span>
+                    Not fiction
+                </span> </div><div class="results_summary publisher">
+<span class="label">Publication details: </span><span class="publisher_place" property="location">Boston</span> <span property="name" class="publisher_name">Houghton Mifflin Harcourt Publising Co.</span> <span property="datePublished" class="publisher_date">2013</span>
+</div><div class="results_summary availability">
+<span class="label">Availability: </span><span class="unavailable"><span class="AvailabilityLabel"><strong>Not available: </strong></span><span class="ItemSummary unavailable"><span class="unavailable_Checked out"><span class="ItemBranch">TIFRH, Library: Checked out</span> (1). </span></span></span>
+</div>
+
+
+
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+
+
+                                                
+                                                    <div class="results_summary ratings">
+                                                        
+                                                        
+                                                        <div class="br-wrapper br-theme-fontawesome-stars">
+                                                            <div class="br-widget br-readonly">
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                            <br />
+                                                        
+                                                    </div> <!-- / .results_summary -->
+                                                
+
+                                                <div class="actions-menu noprint">
+    
+        
+            
+                
+                    <span class="actions"><a class="btn btn-link btn-sm" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=213"><i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Place hold</a></span>
+                
+            
+        
+    
+
+    
+
+    
+        
+    
+
+    
+
+    
+
+    
+        
+            <span class="actions cart-actions"><a data-biblionumber="213" class="btn btn-link btn-sm addtocart cart cart213" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart</a> <a style="display:none;" data-biblionumber="213" class="btn btn-link btn-sm remove cartRemove cartR213" href="#">(remove)</a></span>
+        
+    
+</div>
+
+
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            
+                                            
+                                                
+                                            
+                                            <td class="selectcol">
+                                                
+                                                    <input type="checkbox" class="cb" id="bib339" name="biblionumber" value="339" aria-label="Select search result: Building the H Bomb" /> <label for="bib339"></label>
+                                                
+                                            </td>
+
+                                            
+                                            <td class="numcol">
+                                                
+                                                    5.
+                                                
+                                            </td>
+
+                                            
+
+                                            
+                                            <td class="bibliocol">
+                                                
+                                                    
+                                                
+                                                <div class="coverimages cover-slides itemtype_BK" data-isbn="9814618799" data-imgtitle="Building the H Bomb">
+                                                    <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=339">
+
+                                                        
+
+                                                        
+                                                            
+                                                                    <span title="Building the H Bomb" id="amazon-thumbnail5"><img src="https://images-na.ssl-images-amazon.com/images/P/9814618799.01.TZZZZZZZ.jpg" alt="" class="item-thumbnail" /></span>
+                                                            
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+                                                    </a>
+
+                                                    
+
+                                                    
+
+                                                </div>
+                                                
+                                                    <!-- COinS / Openurl -->
+                                                    <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=Building%20the%20H%20Bomb%20a%20personal%20history&amp;amp;rft.isbn=9789814618793&amp;amp;rft.au=Ford%2C%20Kenneth%20W&amp;amp;rft.pub=World%20Scientific&amp;amp;rft.date=2015"></span>
+                                                
+                                                <div id="title_summary_339" class="title_summary">
+
+                                                
+
+<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=339" class="title">Building the H Bomb a personal history </a><span class="byAuthor">by</span> <ul class="author resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=au:%22Ford%2C%20Kenneth%20W%22">Ford, Kenneth W</a></li></ul><div class="results_summary type">
+<span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/BK.png" alt="Text" class="materialtype mt_icon_BK"> Text</span><span class="results_format"><span class="label">; Format: </span>
+                    print
+                </span><span class="results_contents_literary"><span class="label">; Literary form: </span>
+                    Not fiction
+                </span> </div><div class="results_summary publisher">
+<span class="label">Publication details: </span><span class="publisher_place" property="location">New Jersey</span> <span property="name" class="publisher_name">World Scientific</span> <span property="datePublished" class="publisher_date">2015</span>
+</div><div class="results_summary availability">
+<span class="label">Availability: </span><span class="unavailable"><span class="AvailabilityLabel"><strong>Not available: </strong></span><span class="ItemSummary unavailable"><span class="unavailable_Checked out"><span class="ItemBranch">TIFRH, Library: Checked out</span> (1). </span></span></span>
+</div>
+
+
+
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+
+
+                                                
+                                                    <div class="results_summary ratings">
+                                                        
+                                                        
+                                                        <div class="br-wrapper br-theme-fontawesome-stars">
+                                                            <div class="br-widget br-readonly">
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                            <br />
+                                                        
+                                                    </div> <!-- / .results_summary -->
+                                                
+
+                                                <div class="actions-menu noprint">
+    
+        
+            
+                
+                    <span class="actions"><a class="btn btn-link btn-sm" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=339"><i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Place hold</a></span>
+                
+            
+        
+    
+
+    
+
+    
+        
+    
+
+    
+
+    
+
+    
+        
+            <span class="actions cart-actions"><a data-biblionumber="339" class="btn btn-link btn-sm addtocart cart cart339" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart</a> <a style="display:none;" data-biblionumber="339" class="btn btn-link btn-sm remove cartRemove cartR339" href="#">(remove)</a></span>
+        
+    
+</div>
+
+
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            
+                                            
+                                                
+                                            
+                                            <td class="selectcol">
+                                                
+                                                    <input type="checkbox" class="cb" id="bib476" name="biblionumber" value="476" aria-label="Select search result: Cohesion " /> <label for="bib476"></label>
+                                                
+                                            </td>
+
+                                            
+                                            <td class="numcol">
+                                                
+                                                    6.
+                                                
+                                            </td>
+
+                                            
+
+                                            
+                                            <td class="bibliocol">
+                                                
+                                                    
+                                                
+                                                <div class="coverimages cover-slides itemtype_BK" data-isbn="0521673550" data-imgtitle="Cohesion ">
+                                                    <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=476">
+
+                                                        
+
+                                                        
+                                                            
+                                                                    <span title="Cohesion " id="amazon-thumbnail6"><img src="https://images-na.ssl-images-amazon.com/images/P/0521673550.01.TZZZZZZZ.jpg" alt="" class="item-thumbnail" /></span>
+                                                            
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+                                                    </a>
+
+                                                    
+
+                                                    
+
+                                                </div>
+                                                
+                                                    <!-- COinS / Openurl -->
+                                                    <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=Cohesion%20%20a%20scientific%20history%20of%20intermolecular%20forces&amp;amp;rft.isbn=9780521673556&amp;amp;rft.au=Rowlinson%2C%20J.S.%20&amp;amp;rft.pub=Cambrdge%20University%20Press&amp;amp;rft.date=2002"></span>
+                                                
+                                                <div id="title_summary_476" class="title_summary">
+
+                                                
+
+<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=476" class="title">Cohesion  a scientific history of intermolecular forces </a><span class="byAuthor">by</span> <ul class="author resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=au:%22Rowlinson%2C%20J.S.%20%22">Rowlinson, J.S</a></li></ul><div class="results_summary type">
+<span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/BK.png" alt="Text" class="materialtype mt_icon_BK"> Text</span><span class="results_format"><span class="label">; Format: </span>
+                    print
+                </span><span class="results_contents_literary"><span class="label">; Literary form: </span>
+                    Not fiction
+                </span> </div><div class="results_summary publisher">
+<span class="label">Publication details: </span><span class="publisher_place" property="location">Cambridge</span> <span property="name" class="publisher_name">Cambrdge University Press</span> <span property="datePublished" class="publisher_date">2002</span>
+</div><div class="results_summary availability">
+<span class="label">Availability: </span><span class="available reallyavailable"><span class="AvailabilityLabel"><strong>Items available for loan: </strong></span><span class="ItemSummary"><span class="available"><span class="ItemBranch">TIFRH, Library</span> (1). </span></span></span>
+</div>
+
+
+
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+
+
+                                                
+                                                    <div class="results_summary ratings">
+                                                        
+                                                        
+                                                        <div class="br-wrapper br-theme-fontawesome-stars">
+                                                            <div class="br-widget br-readonly">
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                            <br />
+                                                        
+                                                    </div> <!-- / .results_summary -->
+                                                
+
+                                                <div class="actions-menu noprint">
+    
+        
+            
+                
+                    <span class="actions"><a class="btn btn-link btn-sm" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=476"><i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Place hold</a></span>
+                
+            
+        
+    
+
+    
+
+    
+        
+    
+
+    
+
+    
+
+    
+        
+            <span class="actions cart-actions"><a data-biblionumber="476" class="btn btn-link btn-sm addtocart cart cart476" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart</a> <a style="display:none;" data-biblionumber="476" class="btn btn-link btn-sm remove cartRemove cartR476" href="#">(remove)</a></span>
+        
+    
+</div>
+
+
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            
+                                            
+                                                
+                                            
+                                            <td class="selectcol">
+                                                
+                                                    <input type="checkbox" class="cb" id="bib760" name="biblionumber" value="760" aria-label="Select search result: A History of Genetics" /> <label for="bib760"></label>
+                                                
+                                            </td>
+
+                                            
+                                            <td class="numcol">
+                                                
+                                                    7.
+                                                
+                                            </td>
+
+                                            
+
+                                            
+                                            <td class="bibliocol">
+                                                
+                                                    
+                                                
+                                                <div class="coverimages cover-slides itemtype_BK" data-isbn="0879696079" data-imgtitle="A History of Genetics">
+                                                    <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=760">
+
+                                                        
+
+                                                        
+                                                            
+                                                                    <span title="A History of Genetics" id="amazon-thumbnail7"><img src="https://images-na.ssl-images-amazon.com/images/P/0879696079.01.TZZZZZZZ.jpg" alt="" class="item-thumbnail" /></span>
+                                                            
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+
+                                                        
+                                                    </a>
+
+                                                    
+
+                                                    
+
+                                                </div>
+                                                
+                                                    <!-- COinS / Openurl -->
+                                                    <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=A%20History%20of%20Genetics&amp;amp;rft.isbn=9780879696078&amp;amp;rft.au=Sturtevant%2C%20A.H.&amp;amp;rft.pub=Cold%20Spring%20Harbor%20Laboratory%20Press&amp;amp;rft.date=2001"></span>
+                                                
+                                                <div id="title_summary_760" class="title_summary">
+
+                                                
+
+<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=760" class="title">A History of Genetics </a><span class="byAuthor">by</span> <ul class="author resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=au:%22Sturtevant%2C%20A.H.%22">Sturtevant, A.H</a></li></ul><div class="results_summary type">
+<span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/BK.png" alt="Text" class="materialtype mt_icon_BK"> Text</span><span class="results_format"><span class="label">; Format: </span>
+                    print
+                </span><span class="results_contents_literary"><span class="label">; Literary form: </span>
+                    Not fiction
+                </span> </div><div class="results_summary publisher">
+<span class="label">Publication details: </span><span class="publisher_place" property="location">New York</span> <span property="name" class="publisher_name">Cold Spring Harbor Laboratory Press</span> <span property="datePublished" class="publisher_date">2001</span>
+</div><div class="results_summary availability">
+<span class="label">Availability: </span><span class="available reallyavailable"><span class="AvailabilityLabel"><strong>Items available for loan: </strong></span><span class="ItemSummary"><span class="available"><span class="ItemBranch">TIFRH, Library</span> (1). </span></span></span>
+</div>
+
+
+
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+                                                
+
+
+
+                                                
+                                                    <div class="results_summary ratings">
+                                                        
+                                                        
+                                                        <div class="br-wrapper br-theme-fontawesome-stars">
+                                                            <div class="br-widget br-readonly">
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                                    
+                                                                        <a href="#"></a>
+                                                                    
+                                                                
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                            <br />
+                                                        
+                                                    </div> <!-- / .results_summary -->
+                                                
+
+                                                <div class="actions-menu noprint">
+    
+        
+            
+                
+                    <span class="actions"><a class="btn btn-link btn-sm" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=760"><i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Place hold</a></span>
+                
+            
+        
+    
+
+    
+
+    
+        
+    
+
+    
+
+    
+
+    
+        
+            <span class="actions cart-actions"><a data-biblionumber="760" class="btn btn-link btn-sm addtocart cart cart760" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart</a> <a style="display:none;" data-biblionumber="760" class="btn btn-link btn-sm remove cartRemove cartR760" href="#">(remove)</a></span>
+        
+    
+</div>
+
+
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    
+                                </table>
+                            </form> <!-- / #bookbag_form -->
+
+                            <form id="hold_form" name="hold_form" method="get" action="/cgi-bin/koha/opac-reserve.pl">
+                                <legend class="sr-only">Pages</legend>
+                                <!-- The value will be set by holdBiblioNums() in basket.js -->
+                                <input id="hold_form_biblios" type="hidden" name="biblionumbers" value=""/>
+                            </form>
+                        </div> <!-- / .searchresults -->
+
+                        <div id="bottom-pages">
+
+</div>
+
+                    
+
+                    
+                    
+                    </div> <!-- / #userresults -->
+                </div> <!-- /.span10/12 -->
+            </div> <!-- / .row -->
+        </div> <!-- / .container-fluid -->
+    </div><!-- / .main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        
+    
+        <div id="opaccredits">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div class="container-fluid b-footer " style="ssmargin-top: 15px; position: relative; text-align: center;">
+<div class="container"></div>
+<div class="row-fluid">
+<div class="span12">
+<p style="font-size: 12px; color: #ffffff;">Copyright &copy; 2024. All right reserved.</p>
+</div>
+</div>
+<div class="row-fluid">
+<div class="span12">
+<p class="text-center" style="font-size: 12px; color: #ffffff;" id="check">Implemented, Customized &amp; Maintained by<br /><a class="koha_url" target="_blank" href="http://tiss.co.in/" style="color: #000000;" rel="noopener">Total IT Software Solutions Pvt. Ltd.</a></p>
+</div>
+</div>
+</div></div>
+                </div>
+            
+        </div>
+    
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+    </div> <!-- / #wrapper in masthead.inc -->
+
+    
+        
+    
+
+
+<!-- JavaScript includes -->
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+
+    [script omitted]
+    [script omitted]
+
+
+[script omitted]
+
+
+    [script omitted]
+
+
+[script omitted]
+
+
+
+
+
+
+
+
+
+[script omitted]
+[script omitted]
+
+    
+    
+    [script omitted]
+    [script omitted]
+    
+        [script omitted]
+    
+    
+    
+    [script omitted]
+
+
+
+
+</body>
+</html>
+
+
