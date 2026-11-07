@@ -12,7 +12,7 @@ import { EvidenceStore } from "../../server/services/catalog-connectors/evidence
 import { bibliographicMaterialType } from "../../server/services/providers/catalogMarkup.js";
 import * as koha from "../../server/services/providers/koha.js";
 import { parseIndcatRecord } from "../../server/services/providers/indcat.js";
-import { assessBook, run } from "./runner.mjs";
+import { assessBook, run, reduceRun } from "./runner.mjs";
 const fixture = (p) =>
   readFileSync(
     new URL("../../server/test/fixtures/" + p, import.meta.url),
@@ -695,4 +695,98 @@ test("a timeout invalidated by a scheduler bug remains open until a later comple
     classifyRevalidation(replay, live, events).classification,
     "observed_connection_or_http_block",
   );
+});
+
+test("native copy rows can repeat book IDs across different client pages while a real repeated page still stops", async (t) => {
+  for (const nativeCopies of [true, false]) {
+    const root = mkdtempSync(join(tmpdir(), "audit-copy-pages-")),
+      store = new EvidenceStore(root);
+    store.acquire();
+    t.after(() => {
+      store.release();
+      rmSync(root, { recursive: true, force: true });
+    });
+    const libraries = [
+        {
+          libraryId: "test:a",
+          name: "Fixture",
+          connections: [
+            {
+              connectionId: "primary",
+              family: "koha",
+              mode: "native_http",
+              origins: ["https://catalog.test"],
+            },
+          ],
+        },
+      ],
+      manifest = {
+        runId: "test",
+        target: 20,
+        inventory: { total: 1, libraries, inventoryHash: hash(libraries) },
+      };
+    store.save("manifest.json", manifest);
+    const evidence = store.body(
+        "Synthetic native copy pages; never live qualification",
+        "text/plain",
+      ),
+      recordsById = new Map();
+    let calls = 0;
+    const service = {
+      search: async (input) => {
+        calls++;
+        const offset = Number(input.cursor || 0),
+          records = Array.from({ length: offset < 20 ? 10 : 20 }, (_, i) => {
+            const id = offset < 20 ? "one" : String(i + 2),
+              record = {
+                recordId: id,
+                recordRef: id,
+                title: id === "one" ? "History common" : `History book ${id}`,
+                format: "Book",
+                observation: { outcome: "in_catalog" },
+                ...(nativeCopies
+                  ? { nativeOrderKey: String(offset + i + 1) }
+                  : {}),
+              };
+            recordsById.set(id, record);
+            return record;
+          });
+        return {
+          records,
+          effectiveProfile: {
+            nativeProfile: nativeCopies ? { clientPaging: true, offset } : {},
+          },
+          fidelity: "website_equivalent",
+          page: { nextCursor: offset < 20 ? String(offset + 10) : null },
+          evidence: [evidence],
+        };
+      },
+      resolve: async (id) => ({
+        record: recordsById.get(id),
+        evidence: [evidence],
+      }),
+    };
+    await run(store, service, {
+      queries: ["History"],
+      allowFixtureEvidence: true,
+    });
+    const result = reduceRun(manifest, store.events()).libraries[0];
+    if (nativeCopies) {
+      assert.equal(result.books.length, 20);
+      assert.equal(calls, 3);
+      assert.equal(result.blocker, null);
+    } else {
+      assert.equal(result.books.length, 1);
+      assert.equal(calls, 2);
+      assert.equal(result.blocker.code, "REPEATED_NATIVE_PAGE");
+      assert.ok(
+        store
+          .events()
+          .find(
+            (e) =>
+              e.type === "search_failed" && e.code === "REPEATED_NATIVE_PAGE",
+          ).evidence.length,
+      );
+    }
+  }
 });

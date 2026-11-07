@@ -13,7 +13,7 @@ const closedReplay = new Set([
   "clean_zero_replayed",
 ]);
 const tooling =
-  /UNSUPPORTED|CONFIGURATION|EQUIVALENCE|UNRECOGNIZED|FIDELITY|INVALID_|NO_VERIFIED_BOOKS|RESPONSE_TOO_LARGE|HOLDING_UNCONFIRMED/;
+  /UNSUPPORTED|CONFIGURATION|EQUIVALENCE|UNRECOGNIZED|FIDELITY|INVALID_|NO_VERIFIED_BOOKS|RESPONSE_TOO_LARGE|HOLDING_UNCONFIRMED|REPEATED_NATIVE_PAGE/;
 export function classifyRevalidation(replay, live, events) {
   const allHistory = events.filter((e) => e.libraryId === replay.libraryId);
   const checkpoint = [...allHistory]

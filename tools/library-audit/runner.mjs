@@ -416,9 +416,26 @@ export async function run(
                   },
                   { signal, attemptId },
                 );
-                const pageKey = hash(result.records.map((r) => r.recordId));
+                const nativePage = result.effectiveProfile?.nativeProfile;
+                const pageKey = hash({
+                  records: result.records.map((r) => [
+                    r.recordId,
+                    r.nativeOrderKey ?? null,
+                  ]),
+                  clientOffset:
+                    nativePage?.clientPaging === true
+                      ? nativePage.offset
+                      : null,
+                });
                 if (seenPages.has(pageKey))
-                  throw new Error("Repeated native page");
+                  throw Object.assign(
+                    failure(
+                      "REPEATED_NATIVE_PAGE",
+                      "Source repeated the same native page identity",
+                      502,
+                    ),
+                    { evidence: result.evidence },
+                  );
                 seenPages.add(pageKey);
                 store.append({
                   type: "search_completed",
