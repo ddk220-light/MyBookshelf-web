@@ -237,5 +237,48 @@
       }
     ],
     "qualificationScope": "Native search benchmark only; not complete app-path or every-item-link verification"
+  },
+  "iust": {
+    "state": "Primary native client reviewed; adapter and monograph/material proof remain open",
+    "reviewedAt": "2026-11-07T19:12:14.844648+00:00",
+    "client": "https://webopac.iust.ac.in/Scripts/pagination.js",
+    "clientSha256": "cad463b0cc9ed40607a0c5f5c710411baabd189f631f162778846efe610b9424",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/result.aspx",
+        "parameters": {
+          "cmbval": "Title",
+          "search": "<literal title query>",
+          "RDB": "Contains",
+          "Typemate": "All",
+          "colltype": "All"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/EmployeeDataHandler.ashx",
+        "condition": "Public anonymous dtfound cookie from the result-page request"
+      },
+      {
+        "method": "GET",
+        "path": "/ViewDetails.aspx",
+        "parameters": {
+          "ID": "<native RecID>"
+        },
+        "status": "Advertised active More Details request; not yet verified live"
+      }
+    ],
+    "paging": "First offered cmbrec select is 20 by default; source array b in order, first fresh-session page; sort control defaults to Select",
+    "authors": "Actual client drops the final Author character and splits on semicolons; retain raw metadata separately and match native display",
+    "nativeIdentity": "RecID; SrNo is source order, never a native catalog identity",
+    "itemLinks": "The info.aspx URL is commented out, not an active public link. ViewDetails.aspx is an inline metadata fragment. bookurldata is a separate read-only POST that may return an external content URL; never follow it into bulk downloads.",
+    "bookProof": "Textual Documents alone does not establish monograph rather than serial. Inspect native detailed metadata before assigning book credit.",
+    "scope": "Documentation analysis only; zero new passing libraries or verified twenty-book claims",
+    "nextActions": [
+      "Capture the actual ViewDetails.aspx response for an already observed RecID using the same anonymous public session",
+      "Implement native controls/paging/fidelity and metadata identity with tests before new qualification",
+      "Record POST-only, fragment and external-content links explicitly; verify available item links without binary downloads"
+    ]
   }
 }
