@@ -1,3 +1,4 @@
+import {isContentSourceRetired} from '../../../shared/content-source-availability.mjs';
 import {FULL_COLLECTION_SOURCES} from './fullCollectionSources.js';
 // Explicitly reviewed integrations, never runtime imports of research candidates.
 export const KNOWLEDGE_SOURCES = {
@@ -25,5 +26,5 @@ export const LOCAL_CONTENT_SOURCES=['gutenberg','open-textbook-library','bookdas
 export const PAPER_CONTENT_SOURCES=['europepmc','openalex','arxiv','doaj'];
 export const ALL_CONTENT_SOURCES=[...LOCAL_CONTENT_SOURCES,...PAPER_CONTENT_SOURCES,...Object.keys(KNOWLEDGE_SOURCES)];
 export function publicKnowledgeSources(enabled) {
-  return Object.entries(KNOWLEDGE_SOURCES).map(([id,{name,scope,kinds,languages,blocked,mode}])=>({id,name,scope,kinds,languages:languages||[],mode:mode||'live',enabled:enabled&&!blocked,...blocked?{reason:blocked}:{}}));
+  return Object.entries(KNOWLEDGE_SOURCES).filter(([id])=>!isContentSourceRetired(id)).map(([id,{name,scope,kinds,languages,blocked,mode}])=>({id,name,scope,kinds,languages:languages||[],mode:mode||'live',enabled:enabled&&!blocked,...blocked?{reason:blocked}:{}}));
 }

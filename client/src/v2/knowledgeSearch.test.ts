@@ -1,5 +1,5 @@
-import {describe,it,expect} from 'vitest';
-import {runKnowledgeSearch,type KnowledgeSource} from './knowledgeSearch';
+import {describe,it,expect,vi} from 'vitest';
+import {knowledgeSources,runKnowledgeSearch,type KnowledgeSource} from './knowledgeSearch';
 import type {ContentPage} from './contentTypes';
 import {PublicApiError} from './api';
 const sources=Array.from({length:5},(_,i)=>({id:String(i),name:String(i),scope:'fixture',kinds:['book'],languages:[],enabled:true,mode:'live'} as KnowledgeSource));
@@ -15,3 +15,5 @@ describe('cross-source search',()=>{
   await runKnowledgeSearch(sources,{query:'old'},controller.signal,()=>results++,async()=>{calls++;await new Promise(resolve=>setTimeout(resolve,1));controller.abort();return page;});expect(calls).toBe(3);expect(results).toBe(0);
  });
 });
+
+it('filters retired source options from an older directory response',async()=>{const fetch=vi.spyOn(globalThis,'fetch').mockResolvedValue(Response.json({sources:[{...sources[0],id:'core'},{...sources[0],id:'librivox'}]}));try{expect((await knowledgeSources(new AbortController().signal)).map(s=>s.id)).toEqual(['librivox']);}finally{fetch.mockRestore();}});

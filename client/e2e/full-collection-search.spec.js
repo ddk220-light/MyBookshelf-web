@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-const sources=[{id:'nasa-image-video-library',name:'NASA Image and Video Library',scope:'Search image, video and audio metadata across the library',kinds:['other'],languages:[],enabled:true,mode:'live'},{id:'core',name:'CORE',scope:'Search research titles',kinds:['article'],languages:[],enabled:true,mode:'live'}];
+const sources=[{id:'nasa-image-video-library',name:'NASA Image and Video Library',scope:'Search image, video and audio metadata across the library',kinds:['other'],languages:[],enabled:true,mode:'live'},{id:'osti',name:'OSTI',scope:'Search research titles',kinds:['article'],languages:[],enabled:true,mode:'live'}];
 const item={key:'fcd:v1:nasa-image-video-library:'+'a'.repeat(32),title:'Apollo lunar mission',kind:'other',contributors:[],identifiers:[],languages:['und'],subjects:[],relations:[],access:'unknown',locations:[],provenance:[],externalOnly:true,sourceActions:[{label:'Open at NASA',url:'https://images.nasa.gov/details/apollo',scope:'record'}],accessNote:'NASA image record · source usage conditions apply',readingActions:[]};
 test.describe('Full collection source links',()=>{
  test.skip(process.env.FREE_CONTENT_E2E!=='true','Requires discovery UI build');
@@ -8,7 +8,7 @@ test.describe('Full collection source links',()=>{
   await page.addInitScript(value=>localStorage.setItem('mybookshelf.appearance.v1',JSON.stringify({version:1,preference:value})),light);
   await page.route('**/api/account/session',route=>route.fulfill({json:{status:'guest'}}));
   await page.route('**/api/v2/content/sources',route=>route.fulfill({json:{sources}}));
-  await page.route('**/api/v2/content/search',route=>{const id=route.request().postDataJSON().sourceIds[0];return id==='core'?route.fulfill({status:503,json:{error:{code:'CONTENT_UNAVAILABLE',message:'This source is limiting requests. Please wait before trying it again.'},sources:[{id,status:'throttled',returned:0}]}}):route.fulfill({json:{items:[item],sources:[{id,status:'ok',returned:1}],coverage:'partial',nextCursor:null,hiddenUnclear:0,policyRevision:'fixture'}});});
+  await page.route('**/api/v2/content/search',route=>{const id=route.request().postDataJSON().sourceIds[0];return id==='osti'?route.fulfill({status:503,json:{error:{code:'CONTENT_UNAVAILABLE',message:'This source is limiting requests. Please wait before trying it again.'},sources:[{id,status:'throttled',returned:0}]}}):route.fulfill({json:{items:[item],sources:[{id,status:'ok',returned:1}],coverage:'partial',nextCursor:null,hiddenUnclear:0,policyRevision:'fixture'}});});
   await page.goto('/app/search?scope=knowledge&q=Apollo');
   await expect(page.getByRole('link',{name:'Apollo lunar mission (opens source record)'})).toHaveAttribute('href','https://images.nasa.gov/details/apollo');
   await expect(page.getByText('This source is limiting requests. Please wait before trying it again.')).toBeVisible();

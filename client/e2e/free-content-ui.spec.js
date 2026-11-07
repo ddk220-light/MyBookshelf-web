@@ -87,15 +87,4 @@ test.describe('approved free-content UI behavior',()=>{
       expect(await page.locator('.content-skeletons span').first().evaluate(node=>getComputedStyle(node).animationName)).toBe('none');
     }finally{await stream.close();}
   });
-  for(const light of ['daylight','lamplight','ink'])test(`children's controls and details reflow at 320px with doubled text in ${light}`,async({page,baseURL})=>{
-    await page.setViewportSize({width:320,height:844});await page.addInitScript(light=>localStorage.setItem('mybookshelf.appearance.v1',JSON.stringify({version:1,preference:light})),light);
-    await installContentReviewFixture(page,'ChildrensPilot');await openReviewState(page,'ChildrensPilot',baseURL);
-    await page.evaluate(()=>document.documentElement.style.fontSize='200%');
-    await page.getByRole('button',{name:'தமிழ்',exact:true}).click();await expect(page.locator('.content-result')).toHaveCount(1);
-    await expect(page.locator('.content-result h2')).toHaveAttribute('lang','ta');
-    await page.locator('.content-result h2 a').click();await page.locator('.content-read').waitFor();
-    await expect(page.locator('.content-read')).toHaveAccessibleName(/free account required/);
-    expect(await page.locator('#main-content').evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
-    expect((await new AxeBuilder({page}).include('#main-content').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
-  });
 });

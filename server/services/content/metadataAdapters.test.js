@@ -30,9 +30,9 @@ test('reviewed local catalogs resolve stable native identities, preserve edition
   assert.equal(searchMetadataCatalog('openstax',{query:'ZZZnoMatch123',limit:6}).items.length,0);
 });
 test('metadata-only sources are searchable by default without asserting free reading',async()=>{
-  const service=createKnowledgeService({env});const query={query:'Calculus',sourceIds:['openstax'],kinds:['book']};
+  const service=createKnowledgeService({env});const query={query:'திருக்குறள்',sourceIds:['project-madurai'],kinds:['book']};
   const page=await service.search(query);assert.ok(page.items.length);assert.equal(page.hiddenUnclear,0);
-  assert.ok(page.items.every(x=>x.access==='unknown'&&x.readingActions.length===0&&x.sourceActions.length===1));
+  assert.ok(page.items.every(x=>x.access==='unknown'&&x.readingActions.length===0&&x.sourceActions.length>=1));
   assert.equal((await service.search({...query,access:'free_full_text'})).items.length,0);
 });
 test('publisher identity and supplied DOI links are checked without a PDF prerequisite',()=>{

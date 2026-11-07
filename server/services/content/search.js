@@ -1,3 +1,4 @@
+import {isContentSourceRetired,localFreeSearchEnabled} from '../../../shared/content-source-availability.mjs';
 import {createKnowledgeService} from './knowledgeSearch.js';
 import {KNOWLEDGE_SOURCES,LOCAL_CONTENT_SOURCES} from './knowledgeSources.js';
 import {createHash,createHmac,timingSafeEqual} from 'node:crypto';
@@ -6,7 +7,7 @@ import {createEuropePmcAdapter} from './europePmc.js';
 import {createOpenalexAdapter} from './openalex.js';
 import {sourceSignal} from './sourceHttp.js';
 import {createChildrenService} from './children.js';
-import {CONTENT_POLICY_REVISION,parseContentSearch,parseContentResolve,parseContentKey,readingActions,observedAccess,itemAccess,isReadableAccess} from './contracts.js';
+import {CONTENT_POLICY_REVISION,parseContentSearch,parseContentResolve,parseContentLocate,parseContentKey,readingActions,observedAccess,itemAccess,isReadableAccess} from './contracts.js';
 
 const hash=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const failure=(code,message,status=503,sources)=>Object.assign(new Error(message),{code,status,sources});
@@ -19,7 +20,7 @@ const PROFILE='direct-live-v1';
 export function createContentService({env=process.env,local,paperAdapter=createEuropePmcAdapter(),
   adapters={},children,knowledge,now=()=>Date.now()}={}){
   local||=createLocalContentService({enabled:env.CONTENT_DISCOVERY_ENABLED==='true',cursorSecret:env.CONTENT_CURSOR_SECRET,now,
-    loadSnapshot:()=>readLocalSnapshots({includeChildren:env.CONTENT_CHILDREN_ENABLED==='true',now:now()})});
+    loadSnapshot:()=>readLocalSnapshots({includeChildren:env.CONTENT_CHILDREN_ENABLED==='true'&&!isContentSourceRetired('storyweaver'),now:now()})});
   const expanded=knowledge||createKnowledgeService({env,now});
   const providers={europepmc:paperAdapter,openalex:createOpenalexAdapter({apiKey:env.OPENALEX_API_KEY}),...adapters};
   const pilot=children||createChildrenService({enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&env.CONTENT_CHILDREN_ENABLED==='true',cursorSecret:env.CONTENT_CURSOR_SECRET,now});
@@ -84,16 +85,17 @@ export function createContentService({env=process.env,local,paperAdapter=createE
     }
   }
   return {
-    sources(){return {sources:[...expanded.sources(),...Object.entries(SOURCES).map(([id,s])=>({id,name:s.name,scope:s.scope,kinds:['article','preprint','chapter','thesis','report'],languages:id==='openalex'?['en','hi','ta']:[],enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&enabled(id),mode:'live'})),...LOCAL_CONTENT_SOURCES.map(id=>({id,name:({'gutenberg':'Project Gutenberg','open-textbook-library':'Open Textbook Library',bookdash:'Book Dash',storyweaver:'StoryWeaver'})[id],scope:'Reviewed catalog snapshot · coverage and freshness vary',kinds:[id==='open-textbook-library'?'learning_resource':'book'],languages:[],enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&(id!=='storyweaver'||env.CONTENT_CHILDREN_ENABLED==='true'),mode:'snapshot'}))]};},
-    locate(input){return local.locate(input);},
+    sources(){return {sources:[...expanded.sources(),...Object.entries(SOURCES).map(([id,s])=>({id,name:s.name,scope:s.scope,kinds:['article','preprint','chapter','thesis','report'],languages:id==='openalex'?['en','hi','ta']:[],enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&enabled(id),mode:'live'})),...LOCAL_CONTENT_SOURCES.filter(id=>!isContentSourceRetired(id)).map(id=>({id,name:({'gutenberg':'Project Gutenberg','open-textbook-library':'Open Textbook Library',bookdash:'Book Dash',storyweaver:'StoryWeaver'})[id],scope:'Reviewed catalog snapshot · coverage and freshness vary',kinds:[id==='open-textbook-library'?'learning_resource':'book'],languages:[],enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&(id!=='storyweaver'||env.CONTENT_CHILDREN_ENABLED==='true'),mode:'snapshot'}))]};},
+    locate(input){parseContentLocate(input);return localFreeSearchEnabled?local.locate(input):{items:[],policyRevision:CONTENT_POLICY_REVISION};},
     async search(input,{onSource=()=>{},signal}={}){
       const query=parseContentSearch(input);
+      if(query.sourceIds?.some(isContentSourceRetired)||query.collection==='children'&&isContentSourceRetired('storyweaver')||!localFreeSearchEnabled&&(!query.sourceIds?.length)&&(query.kinds.includes('book')||query.kinds.includes('learning_resource')))throw failure('CONTENT_DISABLED','This source is no longer connected. Search the connected sources in All knowledge.',503);
       if(query.sourceIds?.some(id=>KNOWLEDGE_SOURCES[id]))return expanded.search(input,{onSource,signal});
       if(query.collection==='children')return pilot.search(input);
       if(query.kinds.includes('book')||query.kinds.includes('learning_resource')){
         if(query.kinds.some(kind=>!['book','learning_resource'].includes(kind)))throw failure('CONTENT_FILTER_UNSUPPORTED','Choose free books or paper kinds for this search.',400);
         if(query.sourceIds?.some(id=>!LOCAL_CONTENT_SOURCES.includes(id))||query.retrySource)throw failure('CONTENT_FILTER_UNSUPPORTED','Paper source filters do not apply to book search.',400);
-        return local.search(input);
+        const page=local.search(input);return {...page,sources:page.sources.filter(s=>!isContentSourceRetired(s.id))};
       }
       ready();const id=selected(query);
       if(!enabled(id))throw failure('CONTENT_DISABLED','This paper source is not connected here. Choose another source or open its website.',503,rows(id,query));
