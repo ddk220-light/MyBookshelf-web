@@ -261,7 +261,13 @@ try {
             e.records?.length,
         )
         .map((e) => e.query);
-      row.queries = [...new Set([...old, ...(variants || termsFor(row))])];
+      row.queries = [
+        ...new Set([
+          ...(goal.queryPlans?.[row.libraryId]?.queries || []),
+          ...old,
+          ...(variants || termsFor(row)),
+        ]),
+      ];
     }
     // One runner owns the whole batch: its shared busyOrigins scheduler keeps
     // same-host jobs from consuming their request deadlines in a local queue.

@@ -272,7 +272,26 @@ export class Coordinator {
           options.maxResponseBytes || 5 * 1024 * 1024,
           16 * 1024 * 1024,
         );
-        if (Number(response.headers.get("content-length")) > limit) {
+        const contentType = response.headers.get("content-type") || "";
+        const redirectResponse =
+          response.status >= 300 && response.status < 400;
+        const skipRedirectBody =
+          redirectResponse && Boolean(options.allowedResponseTypes);
+        const bodySkipped =
+          !policyRequest &&
+          !redirectResponse &&
+          options.allowedResponseTypes &&
+          !options.allowedResponseTypes.includes(
+            contentType.split(";")[0].trim().toLowerCase(),
+          )
+            ? "unsupported_media_type"
+            : null;
+        if (bodySkipped || skipRedirectBody) await response.body?.cancel();
+        if (
+          !bodySkipped &&
+          !skipRedirectBody &&
+          Number(response.headers.get("content-length")) > limit
+        ) {
           await response.body?.cancel();
           throw failure(
             "RESPONSE_TOO_LARGE",
@@ -282,7 +301,7 @@ export class Coordinator {
         }
         const chunks = [];
         let bytes = 0;
-        if (response.body)
+        if (response.body && !bodySkipped && !skipRedirectBody)
           for await (const chunk of response.body) {
             bytes += chunk.length;
             if (bytes > limit)
@@ -334,6 +353,8 @@ export class Coordinator {
           status: response.status,
           redirectLocation,
           bytes,
+          contentType,
+          ...(bodySkipped ? { bodySkipped } : {}),
           durationMs: Date.now() - start,
           evidence: evidence ? [evidence] : [],
         });
@@ -374,6 +395,7 @@ export class Coordinator {
           headers: response.headers,
           url: url.toString(),
           text,
+          ...(bodySkipped ? { bodySkipped } : {}),
         };
       } catch (error) {
         const normalized =

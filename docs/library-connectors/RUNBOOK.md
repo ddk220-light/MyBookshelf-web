@@ -134,3 +134,18 @@ node tools/library-audit/full-run.mjs \
 It prioritizes hosts with the fewest assessed libraries so the large shared catalogs cannot hide other catalog families. It retains access refusals and rate-limit cooldowns across restart in `origin-state.json`; a 401/403 requires an actual permitted recovery. Robots policies are refreshed at least every 24 hours during the long run, and an unsuccessful refresh blocks further requests rather than reusing expired permission. `execution.json` describes worker state/counts, `heartbeat.json` advances with evidence, and `/tmp/mybookshelf-india-library-audit.log` records saved/pushed checkpoints. Confirm PID command, zombie state, locks and heartbeat before resuming. Never launch a second supervisor for the same source budget.
 
 Each batch completes before its report and Git snapshot are published. Unrelated staged changes or another writer's branch update stop publishing safely. Data checkpoint commits skip CI/preview builds; implementation changes still run tests. The supervisor emits `final-report.md` and `final-report.json` only when every frozen target has an outcome. The report explicitly distinguishes 20-book passes, partial findings, clean searches finding no books, and failures/unsupported methods; complete assessment does not imply every connection worked. The enabled completion watch checks hourly and delivers cumulative reports after every additional 100 distinct libraries reviewed, plus actionable blockers and the validated final report. Repair/revalidation IDs do not count again when full collection resumes. The read-only reporting archive is under `docs/research/india-library-audit/reporting/`; Git journals remain authoritative. The earlier free-knowledge recovery/reporting schedules stay paused.
+
+
+## Per-item link verification
+
+Run only at an exclusive checkpoint after the collector stops. This separate governed pass acquires the same run/machine locks, reads the original and repair journals, validates hashes, preserves original item observation dates and records new link-check dates separately. It does not change library publication or qualification counts.
+
+```sh
+node tools/library-audit/verify-links.mjs --dir docs/research/india-library-audit/revalidation/20261107 --limit 100
+# A useful bounded canary, before continuing the saved queue:
+node tools/library-audit/verify-links.mjs --dir docs/research/india-library-audit/revalidation/20261107 --libraries koha:cmd-kerala --item-only --limit 3
+```
+
+The queue covers every saved returned item and accepted book for the frozen cohort. Repeated observations are deduplicated; catalog/search handoffs and missing links never trigger item requests or establish an item-link pass. Only HTML is read, with bounded bodies; PDF/audio/other content is cancelled before download. Redirects remain origin/policy governed. HTTP success and confirmed native URL/title identity are separate outcomes; unrecognised page headings remain unresolved. Never reuse one successful item as proof for another. Failures/refusals remain saved; retries require a useful repair or recovery trigger rather than deleting completion history.
+
+Check `link-verification-queue.json`, `link-verification-progress.json`, `link-verification-summary.json` and `link-verification.csv`. Publish a scoped Git checkpoint after small batches before resuming another writer. The read-only review exporter also produces `item-link-checks.csv` from complete append-only journal lines. This CLI does not publish Git automatically. The final report still requires complete query/result/link reporting and actual app-path checks, not just a completed native search queue.
