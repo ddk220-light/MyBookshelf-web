@@ -14,6 +14,70 @@ export function academicFidelity(
   const profile = academicNativeProfile(entry);
   if (!profile.supported)
     return { verified: false, reason: "website_js_display_recipe_pending" };
+  if (profile.kind === "easylib") {
+    if (
+      new URL(response.url).pathname !== recipes.easylib.request.path ||
+      nativeProfile?.clientSha256 !== recipes.easylib.clientSha256 ||
+      !Number.isSafeInteger(nativeProfile?.pageSize) ||
+      !Number.isSafeInteger(nativeProfile?.offset) ||
+      nativeProfile.pageSize < 1 ||
+      nativeProfile.offset < 0 ||
+      nativeProfile.offset % nativeProfile.pageSize
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Unexpected Easylib client, request or native page",
+        502,
+      );
+    let data;
+    try {
+      data = JSON.parse(response.text);
+    } catch {
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Unrecognized Easylib native JSON",
+        502,
+      );
+    }
+    if (
+      !Array.isArray(data.realdata) ||
+      data.search !== nativeProfile.query ||
+      !Number.isSafeInteger(Number(data.recordsFiltered)) ||
+      Number(data.recordsFiltered) < 0
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Easylib query echo or native rows changed",
+        502,
+      );
+    const expected = data.realdata.map((r) => [
+      String(r.Fld_Title_No),
+      text(r.Fld_Title),
+      text(r.Fld_Authors),
+      text(r.Fld_NB_Type),
+    ]);
+    const observed = records.map((r) => [
+      r.sourceId,
+      r.title,
+      (r.authors || []).join(" "),
+      r.format || "",
+    ]);
+    if (JSON.stringify(expected) !== JSON.stringify(observed))
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Native Easylib identities, labels or row order changed",
+        502,
+      );
+    return {
+      verified: true,
+      method: "reviewed_native_easylib_keyword_client",
+      recipeVersion: recipes.easylib.version,
+      clientSha256: nativeProfile.clientSha256,
+      nativeRows: expected.length,
+      offset: nativeProfile.offset,
+      pageSize: nativeProfile.pageSize,
+    };
+  }
   if (profile.kind === "srms") {
     const offset = nativeProfile?.offset || 0;
     if (

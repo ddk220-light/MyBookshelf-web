@@ -643,6 +643,86 @@ test("timeouts use a stable transport cause rather than DOMException numeric cod
   );
 });
 
+test("a completed native repair attempt is classified independently of older unverified queries", async () => {
+  const { classifyRevalidation } = await import("./revalidation-report.mjs");
+  const replay = {
+    libraryId: "a",
+    classification: "tooling_or_evidence_gap",
+    diagnosedCode: "EQUIVALENCE_UNPROVEN",
+  };
+  const events = [
+    { type: "run_started", implementationHash: "old" },
+    {
+      type: "search_completed",
+      libraryId: "a",
+      fidelity: "unproven",
+      records: [],
+    },
+    { type: "library_checkpoint", libraryId: "a", state: "needs_review" },
+    { type: "revalidation_attempt_completed", libraryId: "a" },
+    { type: "run_started", implementationHash: "repaired" },
+    {
+      type: "search_completed",
+      libraryId: "a",
+      fidelity: "website_equivalent",
+      query: "Mathematics",
+      records: [],
+    },
+    { type: "library_checkpoint", libraryId: "a", state: "needs_review" },
+  ];
+  assert.equal(
+    classifyRevalidation(replay, { books: [] }, events).closed,
+    false,
+    "an old completion marker cannot finish the current attempt",
+  );
+  events.push({ type: "revalidation_attempt_completed", libraryId: "a" });
+  const empty = classifyRevalidation(replay, { books: [] }, events);
+  assert.equal(empty.classification, "confirmed_empty_live");
+  assert.equal(empty.books, 0);
+  assert.match(empty.reason, /recorded terms/);
+  const partial = structuredClone(events);
+  partial[5].records = [{ recordId: "one" }];
+  assert.equal(
+    classifyRevalidation(replay, { books: [{ recordId: "one" }] }, partial)
+      .classification,
+    "verified_partial_live",
+  );
+  partial[5].fidelity = "unproven";
+  assert.equal(
+    classifyRevalidation(replay, { books: [{ recordId: "one" }] }, partial)
+      .closed,
+    false,
+  );
+});
+
+test("a finished library retains its partial outcome when another library interrupts the batch", async () => {
+  const { classifyRevalidation } = await import("./revalidation-report.mjs");
+  const replay = { libraryId: "a", classification: "needs_live_recheck" };
+  const events = [
+    { type: "run_started", runAttempt: "current" },
+    {
+      type: "search_completed",
+      libraryId: "a",
+      fidelity: "website_equivalent",
+      records: [{ recordId: "one" }],
+    },
+    { type: "library_checkpoint", libraryId: "a", state: "needs_review" },
+    { type: "library_checkpoint", libraryId: "b", state: "interrupted" },
+    { type: "run_interrupted", runAttempt: "current" },
+  ];
+  assert.equal(
+    classifyRevalidation(replay, { books: [{ recordId: "one" }] }, events)
+      .classification,
+    "verified_partial_live",
+  );
+  events[2].state = "interrupted";
+  assert.equal(
+    classifyRevalidation(replay, { books: [{ recordId: "one" }] }, events)
+      .closed,
+    false,
+  );
+});
+
 test("a timeout invalidated by a scheduler bug remains open until a later completed recheck", async () => {
   const { classifyRevalidation } = await import("./revalidation-report.mjs");
   const replay = { libraryId: "a", classification: "needs_live_recheck" },

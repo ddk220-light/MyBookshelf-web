@@ -18,11 +18,13 @@ export function classifyRevalidation(replay, live, events) {
   const allHistory = events.filter((e) => e.libraryId === replay.libraryId);
   const checkpoint = [...allHistory]
     .reverse()
-    .find((e) => e.type === "library_checkpoint");
+    .find((e) => e.type === "library_checkpoint" && e.mode !== "health");
   const invalidated = [...allHistory]
     .reverse()
     .find((e) => e.type === "revalidation_outcome_invalidated");
-  if (invalidated && (!checkpoint || invalidated.at > checkpoint.at))
+  const checkpointIndex = checkpoint ? events.indexOf(checkpoint) : -1;
+  const invalidatedIndex = invalidated ? events.indexOf(invalidated) : -1;
+  if (invalidated && invalidatedIndex > checkpointIndex)
     return {
       classification: "needs_live_recheck",
       closed: false,
@@ -30,9 +32,34 @@ export function classifyRevalidation(replay, live, events) {
       reason: invalidated.reason,
     };
   const history = invalidated
-    ? allHistory.filter((e) => e.at > invalidated.at)
+    ? events
+        .slice(invalidatedIndex + 1)
+        .filter((e) => e.libraryId === replay.libraryId)
     : allHistory;
-  const queries = history.filter((e) => e.type === "search_completed");
+  // Old unverified queries remain evidence, but cannot contaminate the latest
+  // completed repair attempt or supply its transport/completion proof.
+  const runIndex =
+    checkpointIndex < 0
+      ? -1
+      : events
+          .slice(0, checkpointIndex + 1)
+          .findLastIndex((e) => e.type === "run_started");
+  const attemptHistory =
+    runIndex < 0
+      ? history
+      : events
+          .slice(Math.max(runIndex, invalidatedIndex + 1), checkpointIndex + 1)
+          .filter((e) => e.libraryId === replay.libraryId);
+  const queries = attemptHistory.filter((e) => e.type === "search_completed");
+  const runAttempt = runIndex < 0 ? null : events[runIndex].runAttempt;
+  const attemptEnded =
+    runAttempt &&
+    events.some(
+      (e, index) =>
+        index > checkpointIndex &&
+        e.runAttempt === runAttempt &&
+        ["run_completed", "run_interrupted"].includes(e.type),
+    );
   if (checkpoint && checkpoint.state !== "interrupted") {
     const equivalent = (e) =>
       e.fidelity === "website_equivalent" || e.fidelity?.verified === true;
@@ -67,12 +94,12 @@ export function classifyRevalidation(replay, live, events) {
           code: blocker.code,
           reason: blocker.reason,
         };
-      const failedSearch = [...history]
+      const failedSearch = [...attemptHistory]
         .reverse()
         .find((e) => e.type === "search_failed");
       const transport =
         failedSearch &&
-        history.some(
+        attemptHistory.some(
           (e) =>
             e.attemptId === failedSearch.attemptId &&
             (e.type === "request_failed" ||
@@ -97,7 +124,12 @@ export function classifyRevalidation(replay, live, events) {
       };
     }
     if (
-      history.some((e) => e.type === "revalidation_attempt_completed") &&
+      (attemptEnded ||
+        history.some(
+          (e) =>
+            e.type === "revalidation_attempt_completed" &&
+            events.indexOf(e) > checkpointIndex,
+        )) &&
       queries.length &&
       queries.every(equivalent)
     ) {

@@ -349,6 +349,7 @@ export async function run(
             cycle,
           });
         const books = reset ? [] : [...library.books];
+        let returnedCandidates = false;
         const tried =
           mode === "requalify"
             ? new Set()
@@ -416,6 +417,7 @@ export async function run(
                   },
                   { signal, attemptId },
                 );
+                returnedCandidates ||= result.records.length > 0;
                 const nativePage = result.effectiveProfile?.nativeProfile;
                 const pageKey = hash({
                   records: result.records.map((r) => [
@@ -635,20 +637,7 @@ export async function run(
           }
           if (blocker && /ROBOTS|BLOCKED|COOLDOWN/.test(blocker.code)) break;
         }
-        if (
-          !signal.aborted &&
-          !blocker &&
-          !books.length &&
-          store
-            .events({ cached: true })
-            .some(
-              (e) =>
-                e.type === "search_completed" &&
-                e.libraryId === library.libraryId &&
-                e.mode !== "health" &&
-                e.records?.length,
-            )
-        )
+        if (!signal.aborted && !blocker && !books.length && returnedCandidates)
           blocker = {
             code: "NO_VERIFIED_BOOKS",
             reason:

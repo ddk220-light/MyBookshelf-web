@@ -75,7 +75,7 @@ export function parseAcademicResponse(kind, payload, { query = '', isbn = null, 
     if (!Array.isArray(payload?.realdata) || integer(payload.recordsFiltered) === undefined || norm(payload.search) !== norm(query)) throw catalogError('Unrecognized or wrong-query Easylib response');
     const records = payload.realdata.map(r => {
       if (!/^[A-Za-z0-9_-]{1,80}$/.test(String(r.Fld_Title_No || ''))) throw catalogError('Missing Easylib title identity');
-      return book(r.Fld_Title,r.Fld_Authors,{sourceId:String(r.Fld_Title_No),isbn:firstIsbn(r.Fld_ISBN_No),publisher:text(r.Fld_Publisher),publishedDate:text(r.Fld_Published_Year),subjects:[text(r.Fld_Subject)].filter(v => v && v !== 'None'),callNumber:text(r.Fld_Call_No),totalCopies:integer(r.Fld_No_Copies)});
+      return book(r.Fld_Title,r.Fld_Authors,{sourceId:String(r.Fld_Title_No),isbn:firstIsbn(r.Fld_ISBN_No),publisher:text(r.Fld_Publisher),publishedDate:text(r.Fld_Published_Year),subjects:[text(r.Fld_Subject)].filter(v => v && v !== 'None'),callNumber:text(r.Fld_Call_No),format:text(r.Fld_NB_Type),totalCopies:integer(r.Fld_No_Copies)});
     });
     return proof(records,Number(payload.recordsFiltered) <= records.length,Number(payload.recordsFiltered) === 0);
   }
