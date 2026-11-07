@@ -145,10 +145,14 @@ export function assessBook(record, query, existing) {
     return { accepted: false, reason: "membership_unconfirmed" };
   return {
     accepted: true,
-    reason: /book|print|monograph|text/i.test(format)
-      ? "verified_book_record"
-      : "catalog_record_format_needs_review",
-    formatConfirmed: /book|print|monograph|text/i.test(format),
+    reason:
+      !record.materialTypeProofPending &&
+      /book|print|monograph|text/i.test(format)
+        ? "verified_book_record"
+        : "catalog_record_format_needs_review",
+    formatConfirmed:
+      !record.materialTypeProofPending &&
+      /book|print|monograph|text/i.test(format),
   };
 }
 export function reduceRun(manifest, events) {

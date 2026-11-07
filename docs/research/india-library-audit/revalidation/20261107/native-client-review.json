@@ -193,7 +193,7 @@
     "qualificationScope": "Native search benchmark only; not complete app-path or every-item-link verification"
   },
   "autolib": {
-    "state": "Three live twenty-book passes; SP Jain remains open and now has explicit Text Book title seeds from saved public metadata",
+    "state": "All four sites have live twenty-book native outcomes; app-path and every-item links remain open",
     "observed": "Configured double-slash landing returned HTTP 404; the single-slash page returned HTTP 200 at 2026-11-07T17:20:29Z",
     "canonicalUrl": "https://hdjc.autolib.org/index.php/booksearch",
     "nativeClient": "2329efff4df8ebcda38334d4b51bfa719ce48568beefa32b0ca0c555dd87b175",
@@ -208,7 +208,7 @@
     "semantics": "Title-column default smart word/quoted-phrase search, case insensitive, no accent/punctuation normalization; source order and client pages of 25",
     "nativeIdentity": "Barcode is a native copy identity; accession separate. Serial index not used as a native ID. Copies deduplicated for book target.",
     "offlineValidation": "Compared against captured actual jQuery and DataTables in a network-disabled DOM unit test; no browser control, live query or source qualification inferred.",
-    "currentOutcomeReviewAt": "2026-11-07T18:48:05.298438+00:00",
+    "currentOutcomeReviewAt": "2026-11-07T19:16:24.899Z",
     "currentNativeOutcomes": [
       {
         "libraryId": "discovery-academic:autolib-patna-bnmc",
@@ -230,16 +230,15 @@
       },
       {
         "libraryId": "discovery-academic:autolib-patna-spjain",
-        "classification": "tooling_or_evidence_gap",
-        "closed": false,
-        "books": 0,
-        "code": "NO_VERIFIED_BOOKS"
+        "classification": "verified_20_live",
+        "closed": true,
+        "books": 20
       }
     ],
     "qualificationScope": "Native search benchmark only; not complete app-path or every-item-link verification"
   },
   "iust": {
-    "state": "Primary native client reviewed; adapter and monograph/material proof remain open",
+    "state": "Native Title recipe and per-record MARC proof implemented; live qualification pending",
     "reviewedAt": "2026-11-07T19:12:14.844648+00:00",
     "client": "https://webopac.iust.ac.in/Scripts/pagination.js",
     "clientSha256": "cad463b0cc9ed40607a0c5f5c710411baabd189f631f162778846efe610b9424",
@@ -266,19 +265,30 @@
         "parameters": {
           "ID": "<native RecID>"
         },
-        "status": "Advertised active More Details request; not yet verified live"
+        "status": "One live HTML canary confirms matching ID/title and monograph MARC leader"
       }
     ],
     "paging": "First offered cmbrec select is 20 by default; source array b in order, first fresh-session page; sort control defaults to Select",
     "authors": "Actual client drops the final Author character and splits on semicolons; retain raw metadata separately and match native display",
     "nativeIdentity": "RecID; SrNo is source order, never a native catalog identity",
     "itemLinks": "The info.aspx URL is commented out, not an active public link. ViewDetails.aspx is an inline metadata fragment. bookurldata is a separate read-only POST that may return an external content URL; never follow it into bulk downloads.",
-    "bookProof": "Textual Documents alone does not establish monograph rather than serial. Inspect native detailed metadata before assigning book credit.",
+    "bookProof": "Each candidate requires its own matching native ID/title and MARC leader book-type/bibliographic-level proof; broad list labels never establish it",
     "scope": "Documentation analysis only; zero new passing libraries or verified twenty-book claims",
     "nextActions": [
-      "Capture the actual ViewDetails.aspx response for an already observed RecID using the same anonymous public session",
-      "Implement native controls/paging/fidelity and metadata identity with tests before new qualification",
-      "Record POST-only, fragment and external-content links explicitly; verify available item links without binary downloads"
-    ]
+      "Run paced supported native Title searches after current regressions",
+      "Keep serial/unknown records separate; verify each accepted monograph independently",
+      "Continue governed per-item links and actual app-path evidence"
+    ],
+    "detailCanary": {
+      "at": "2026-11-07T19:22:39.694Z",
+      "url": "https://webopac.iust.ac.in/ViewDetails.aspx?ID=25831",
+      "evidenceSha256": "2a8855185bef27d6f580bc9032d47c07a4f66dd70fccc6aa3d159fed0c20ab4e",
+      "observedStatus": 200,
+      "nativeIdAndTitleMatched": true,
+      "materialProof": "MARC leader positions 6=a and 7=m; Textual Documents alone is still insufficient",
+      "linkKind": "metadata_fragment",
+      "libraryPassesAdded": 0,
+      "eventId": "c06cbfa6-de75-4d4c-ba8e-c1d2177cdcd0"
+    }
   }
 }
