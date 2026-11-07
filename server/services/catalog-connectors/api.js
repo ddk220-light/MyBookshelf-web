@@ -222,15 +222,13 @@ export function createConnectorApi({ service, store, apiKey }) {
   );
   app.use((error, req, res, next) => {
     if (res.headersSent) return next(error);
-    res
-      .status(error.status || 502)
-      .json({
-        code: error.code || "CONNECTOR_ERROR",
-        message: error.status
-          ? error.message
-          : "Catalog operation failed; inspect internal evidence",
-        requestId: error.attemptId || null,
-      });
+    res.status(error.status || 502).json({
+      code: error.code || "CONNECTOR_ERROR",
+      message: error.status
+        ? error.message
+        : "Catalog operation failed; inspect internal evidence",
+      requestId: error.attemptId || null,
+    });
   });
   app.locals.stopAudit = async () => {
     if (active) {
