@@ -1,15 +1,18 @@
 {
   "schemaVersion": 1,
-  "at": "2026-11-07T18:34:03.292272+00:00",
-  "state": "local_collection_continues_publication_blocked",
+  "at": "2026-11-07T18:55:31.299706+00:00",
+  "state": "source_checkpoint_prepared_new_evidence_still_local",
   "lastRemoteCommit": "fc20376265c2edb96175286073c03b0d9213e211",
   "savedLocalCodeCommit": "2d94a7b9c7b5cbc8af21d42e43a4b0c374af8379",
-  "cause": "Command-line Git credential for github.com is unavailable; connected MCP access works but the 31 MB checkpoint upload reset before completing",
+  "cause": "Git transport credential is unavailable; GitHub MCP rejects multi-megabyte payloads (HTTP 413 at 5.5 MB)",
   "evidence": [
     "Git fetch: could not read Username for https://github.com",
     "GitHub MCP push_files: ConnectionResetError while sending 32 scoped files; no branch update confirmed"
   ],
-  "nextAction": "Owner restores Git publishing credential in cloud environment settings; do not paste credentials into chat. Until then run the same repair queue without --publish, save local checkpoints, and never discard unpublished evidence.",
+  "nextAction": "Publish a bounded source-only review checkpoint; retain the full newer evidence locally until normal Git publishing is restored. Do not start a second collector from the older remote heartbeat.",
   "fullAuditStillGated": true,
-  "productionChanged": false
+  "productionChanged": false,
+  "lastCompleteRemoteEvidenceCommit": "fc20376265c2edb96175286073c03b0d9213e211",
+  "localReviewed": 512,
+  "localOpenRepairCases": 42
 }
