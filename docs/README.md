@@ -62,6 +62,9 @@ the overview records the provenance and evidence limits.
 
 ## Development and handoff
 
+- [Proposed India library search audit](plans/2026-11-07-india-library-search-audit.md):
+  website verification of 20 distinct books per library, exact query/failure
+  reporting and a 6,703-entry repository baseline. Planning only; audit not started.
 - [Credential setup and verified Projects MCP access](development/credentials.md).
 - [Repository completeness audit](development/2026-10-31-repository-handoff.md).
 - [Root README](../README.md), [agent instructions](../AGENTS.md),
