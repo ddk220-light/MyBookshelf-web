@@ -170,3 +170,90 @@ test("expired robots permission is not reused if the refresh fails", async () =>
   assert.equal(searchReads, 1);
   assert.equal(policyReads, 2);
 });
+
+test("an interrupted job with a saved review blocker can resume instead of being selected forever without work", async (t) => {
+  const store = storeFor(t),
+    libraries = [row("a", "https://a.test")];
+  libraries[0].connections[0].mode = "native_http";
+  libraries[0].connections[0].connectionId = "primary";
+  store.save("manifest.json", {
+    runId: "test",
+    target: 20,
+    inventory: {
+      total: 1,
+      libraries,
+      inventoryHash: hash(libraries),
+      reconciliation: [],
+    },
+  });
+  store.append({
+    type: "library_checkpoint",
+    mode: "qualify",
+    libraryId: "a",
+    state: "interrupted",
+    blocker: { code: "NO_VERIFIED_BOOKS", reason: "Incomplete proof" },
+    nextAction: "Resume",
+  });
+  const evidence = store.body("synthetic empty native page", "text/plain");
+  let calls = 0;
+  const service = {
+    search: async () => {
+      calls++;
+      return {
+        records: [],
+        fidelity: "website_equivalent",
+        effectiveProfile: {},
+        page: {},
+        evidence: [evidence],
+      };
+    },
+  };
+  const { run } = await import("./runner.mjs");
+  const result = await run(store, service, {
+    queries: ["Mathematics"],
+    allowFixtureEvidence: true,
+  });
+  assert.equal(calls, 1);
+  assert.equal(result.libraries[0].lastAttemptState, "needs_review");
+  assert.equal(result.libraries[0].blocker, null);
+});
+
+test("cancellation after candidates arrive does not manufacture a terminal review blocker", async (t) => {
+  const store = storeFor(t),
+    libraries = [row("a", "https://a.test")];
+  libraries[0].connections[0].mode = "native_http";
+  libraries[0].connections[0].connectionId = "primary";
+  store.save("manifest.json", {
+    runId: "test",
+    target: 20,
+    inventory: {
+      total: 1,
+      libraries,
+      inventoryHash: hash(libraries),
+      reconciliation: [],
+    },
+  });
+  const evidence = store.body("synthetic unreviewed candidates", "text/plain"),
+    controller = new AbortController();
+  const service = {
+    search: async () => {
+      controller.abort();
+      return {
+        records: [{ recordId: "1", title: "Unreviewed book" }],
+        fidelity: "website_equivalent",
+        effectiveProfile: {},
+        page: {},
+        evidence: [evidence],
+      };
+    },
+  };
+  const { run } = await import("./runner.mjs");
+  const result = await run(store, service, {
+    queries: ["Mathematics"],
+    allowFixtureEvidence: true,
+    signal: controller.signal,
+  });
+  assert.equal(result.libraries[0].lastAttemptState, "interrupted");
+  assert.equal(result.libraries[0].blocker, null);
+  assert.equal(selectBatch(result, 1)[0], "a");
+});

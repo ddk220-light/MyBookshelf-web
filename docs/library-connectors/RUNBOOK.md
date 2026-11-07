@@ -37,7 +37,7 @@ npm run library:audit -- run \
 
 By default, e-Granthalaya uses the website's Title option for efficient book discovery; other families use their advertised field. `--field keyword` explicitly selects its ALL/LIKE search instead. The exact query, native controls, result order, count and rejected candidates remain in the journal. A member-scoped Books search can prove catalog presence; it does not prove a borrowable copy. A detail check is performed before using sufficient list evidence to count later books.
 
-`Ctrl-C`/SIGTERM cancels outstanding requests and checkpoints the run. Repeat the command to resume. A real interrupted/resumed pilot is saved. Ordinary failed searches are preserved; repeating a completed query automatically is avoided. Supply a new meaningful query for a shortfall. Do not edit old events to turn a failure into a success.
+`Ctrl-C`/SIGTERM cancels outstanding requests and checkpoints the run. Repeat the command to resume. Interrupted jobs remain resumable even if a provisional review reason was saved; recorded source access refusals remain enforced. A real interrupted/resumed pilot is saved. Ordinary failed searches are preserved; repeating a completed query automatically is avoided. Supply a new meaningful query for a shortfall. Do not edit old events to turn a failure into a success.
 
 ## Safe concurrency and locks
 

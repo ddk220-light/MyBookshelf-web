@@ -293,7 +293,7 @@ export async function run(
         (mode === "health" ||
           (mode === "requalify" && l.qualificationCycle !== cycle) ||
           l.books.length < manifest.target) &&
-        (!l.blocker || retryBlocked),
+        (!l.blocker || retryBlocked || l.lastAttemptState === "interrupted"),
     )
     .slice(0, limit);
   const runAttempt = randomUUID();
@@ -603,6 +603,7 @@ export async function run(
           if (blocker && /ROBOTS|BLOCKED|COOLDOWN/.test(blocker.code)) break;
         }
         if (
+          !signal.aborted &&
           !blocker &&
           !books.length &&
           store
