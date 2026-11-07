@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://apsc.easylib.net/assets/css/base.css">
+<style type="text/css">
+
+#login:hover{
+	cursor:pointer;
+}
+.sticky {
+    position: fixed;
+    width: 100%;
+	z-index: 9999;
+	background-color:white;
+	margin-bottom:-10px;
+	border-bottom:1px solid #f1f1f1;
+	
+}
+
+.nonsticky{
+	background-color:white;
+	margin-bottom:-10px;
+	border-bottom:1px solid #f1f1f1;
+}
+
+.dropdown-content a {
+	display:none;
+    color: black;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+	background-color:#f1f1f1;
+}
+
+.dropdown-content {
+	display:none;
+    position: absolute;
+     right: 0.5%;
+    background-color:white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index:2000;
+	border:1px solid #f1f1f1;
+}
+.dropbtn:hover .dropdown-content{
+	display:block;
+}
+.dropbtn {
+    cursor: pointer;
+}
+.dropbtn:hover {
+    color: #5375aa;
+}
+.clickLogin{
+	margin-right:0px;
+	margin-bottom:0px;
+	width:8%;
+	padding:5px;
+	padding-right: 10px;
+}
+.link{
+	padding:5px;
+}
+
+.afterLogin{
+	padding-left:5px;
+	font-size: 17px;
+}
+
+.afterLoginDiv{
+	margin-top: 5px;
+	margin-right: -5px;
+}
+
+#container{
+	width:100%;
+}
+
+#left{
+	float:left;
+	margin-left:11px;
+}
+
+#center{
+	margin:0px;
+	text-align:center;
+}
+
+#right{
+	right:0;
+	float:right;
+	margin-top:10px;
+}
+.cNameForMobile{
+	display:none;
+}
+.containerfluid{
+	width:100%;
+}
+.loginName{
+	
+	
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+	#center{
+		text-align:center;
+	}
+	#right{
+		right:0;
+		float:right;
+		overflow: scroll;
+	}
+
+	.sticky {
+		padding:0px;
+	}
+
+	.nonsticky{
+		padding:0px;
+	}
+	
+	.cNameForMobile{
+		display:none;
+	}
+}
+
+@media (min-width: 200px) and (max-width: 725px) {
+	#left{
+		float:left;
+	}
+	#center{
+		display:none;
+	}
+	#right{
+		margin-right:2px;
+		position:absolute;
+		overflow:hidden;
+		text-align:right;
+		overflow: scroll;
+	}
+	.loginToPart{
+		width:100%;
+		float:right;
+		margin-top:0px;
+		text-align:right;
+		
+	}
+	.cNameForMobile{
+		display:block;
+		font-size:12px;
+		margin-right:0px;
+		padding-bottom:10px;
+		float:right;
+		text-align:right;
+	}
+	.sticky {
+		margin-bottom:0px;
+		border-bottom:1px solid #f1f1f1;
+	}
+
+	.nonsticky{
+		margin-bottom:0px;
+		border-bottom:1px solid #f1f1f1;
+	}
+/*	.supportClass{
+		display: none;
+	}*/
+	.sessionStartedAtClass{
+		//display: none;
+		font-size:10px;
+	}
+	.cNameForMobile{
+		margin-top:10px;
+		margin-right:20%;
+		margin-left:10%;
+		font-size:14px;
+		color:brown;
+	}
+	header{
+		height:100px;
+	}
+
+}
+</style>
+
+<header id="nonstickyheader" class="nonsticky">
+    <div class="containerfluid row" id="container">
+		<div id="left" class="form-inline">
+			<!-- <a href="https://apsc.easylib.net/index.php"><img src="https://apsc.easylib.net/assets/img/logo.png" alt="Logo" data-retina="true" class="logo_normal"></a> -->
+		</div>
+		<div id="right" >
+			<div class="loginToPart">
+			 
+				<span class="clickLogin dropbtn">Login</span>
+				<div class="dropdown-content">
+					<a href="javascript:void(0)" data-toggle="modal" data-target="#myModal" class="librarianLoginLink link">Administrator</a>
+					<a href="javascript: void(0)" data-toggle="modal" data-target="#myModalMember" class="memeberLoginLink link">Student/Faculty (Regular)</a>
+					<a href="https://digilib-rho.vercel.app" class="vendorLoginLink link" target="_blank">Student/Faculty (API)</a>
+					<a href="javascript: void(0)" data-toggle="modal" data-target="#myModalVendor" class="vendorLoginLink link">Vendor</a>
+				</div>
+				
+			  
+			</div>
+						<div class="cNameForMobile" style="">
+				<!-- 					<div class="text-center" ><span>ACHARYA PATHASALA COLLEGE OF COMMERCE</span></div>
+				 -->
+				<div class="text-center" ><span>ACHARYA PATHASALA COLLEGE OF COMMERCE</span></div>
+			</div>
+		</div>
+		<div>
+						<div id="center">
+				<div class="collegeName header text-center" >
+					<span>ACHARYA PATHASALA COLLEGE OF COMMERCE</span></br>
+					<span></span>	
+				</div>
+			</div>	
+		</div>
+	</div>
+</header> <!-- End Header -->
+<div class="modal fade margin_120" id="myModal" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<form action="https://apsc.easylib.net/index.php/LoginController/LibrarianLoginNew" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+			<div class="modal-header form-inline">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="icon-login-1">Login Here</h4>
+			</div>
+			<div class="modal-body">
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					<span class="input-group-addon" id="basic-addon3">Username *</span>
+					[form state omitted]
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					<span class="input-group-addon" id="basic-addon3">Password *</span>
+					[form state omitted]
+					</div>
+				</div>
+				
+			</div><br/><br/>
+			<div class="modal-footer">
+				<div class="col-md-12 col-sm-12">
+					<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+			</form>		</div>
+	</div>
+</div><!-- end modal -->
+
+<!-- Modal -->
+<div class="modal fade margin_120" id="myModalMember" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+      	<form action="https://apsc.easylib.net/index.php/LoginController/MemberLogin" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+			<div class="modal-header form-inline">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="icon-login-1">Login Here</h4>           
+			</div>
+        	<div class="modal-body">
+				
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Member Id</span>
+					  [form state omitted]
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Password</span>
+					  [form state omitted]
+					</div>
+				</div>
+				
+        	</div><br/><br/>
+			<div class="modal-footer">
+				<div class="col-md-12 col-sm-12">
+			  		<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+			  		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			  	</div>
+			</div>
+		</form>      </div>
+    </div>
+  </div>
+  <div class="modal fade margin_120" id="myModalVendor" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+      	<form action="https://apsc.easylib.net/index.php/LoginController/VendorLogin" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+			<div class="modal-header">
+				<div class="form_title">
+                	<h4 class="icon-login-1">Login Here</h4>
+            	</div>               
+			  	<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+        	<div class="modal-body">
+				
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Vendor Email ID</span>
+					  [form state omitted]
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Password</span>
+					  [form state omitted]
+					</div>
+				</div>
+				
+        	</div><br/><br/>
+			<div class="modal-footer">
+				<div class="col-md-12 col-sm-12">
+			  		<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+			  		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			  	</div>
+			</div>
+			
+		</form>      </div>
+    </div>
+  </div><!-- end modal -->
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted][script omitted]
+ <!--
+##################################################################################
+# Copyright - Easylib Software Pvt Ltd
+# This code is a copyright of Easylib Software Pvt Ltd and must be used only at 
+# the site of deployment. Any unauthorized modification or distribution is a
+# violation of copyright law and is subject to prosecution. 
+##################################################################################
+# CHANGE LOG 
+##################################################################################
+# << Date >>>>> << Persons Name >>>> <<<< Changes done >>>>
+# 20-03-2019	Shivashankar	Added Copyright Lines.
+##################################################################################
+-->
+<link rel="stylesheet" href="https://apsc.easylib.net/assets/css/OpacHomeSearchResults.css">
+<link rel="stylesheet" href="https://apsc.easylib.net/assets/css/opacHomeCss.css">
+<link rel="stylesheet" href="https://apsc.easylib.net/assets/css/pagination/pagination.css">
+<style>
+	.checkedCountP {
+		margin: 10px;
+		margin-left: 20px;
+	}
+
+	.clearCheckBoxes {
+		margin: 10px;
+		margin-left: 20px;
+	}
+
+	.CheckedListMenu {
+		display: none;
+		width: 300px;
+		border: 1px solid #1c1c1c;
+	}
+
+	a.bookTitle {
+		font-size: 15px;
+		color: #0076B2;
+	}
+
+	a.bookData {
+		font-size: 17px;
+		color: #0076B2;
+	}
+
+	a.bookAuthor {
+		color: #0071a2;
+	}
+
+	a.bookPublisher {
+		color: #0071a2;
+	}
+
+	.bookicon {
+		margin-top: 65px;
+	}
+
+	img {
+		transition: transform 0.15s ease;
+	}
+
+	img:hover {
+		-webkit-transform: scale(3.5);
+		/* or some other value */
+		transform: scale(3.5);
+	}
+
+	#sideBarData {
+		max-height: 100%;
+		border-right: 1px solid #ebebeb;
+		overflow-y: auto;
+	}
+
+	.btn-group.special {
+		display: flex;
+	}
+
+	.special .btn {
+		flex: 1;
+		border-radius: 0;
+	}
+</style>
+
+<div class="mainDivs margin_120">
+	<div class="row">
+		<!--
+##################################################################################
+# Copyright - Easylib Software Pvt Ltd
+# This code is a copyright of Easylib Software Pvt Ltd and must be used only at 
+# the site of deployment. Any unauthorized modification or distribution is a
+# violation of copyright law and is subject to prosecution. 
+##################################################################################
+# CHANGE LOG 
+##################################################################################
+# << Date >>>>> << Persons Name >>>> <<<< Changes done >>>>
+# 13-09-2020	Mahantesh Maningol	Added Copyright Lines.
+##################################################################################
+-->
+
+<style>
+    .my-group .input-group-btn {
+        width: 10%;
+        border-bottom: none;
+        border-radius: 0;
+    }
+
+    .searchpage {
+        height: 80px;
+        background-color: #5375aa;
+    }
+
+    .searchBar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 80%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .input-group-btn .btn {
+        border-radius: 0px;
+        width: 100%;
+        /* border-right: 1px solid black; */
+    }
+
+    @media screen and (min-width : 768px) and (max-width : 1023px) {
+        .searchPage {
+            height: 120px;
+            background-size: 100% 100%;
+            background-color: #5375aa;
+            /*#251DA0;  /*#A1227C,#C70039,#A1227C*/
+            z-index: 1;
+            border: 2px solid #f7f7f7;
+        }
+
+        .searchBar {
+            left: 50%;
+            top: 50%;
+            width: 100%;
+            /* -webkit-transform: translate(0%, 0%);
+            transform: translate(0%, 0%); */
+            margin: 0px 5px 0px 5px;
+        }
+
+    }
+
+    @media screen and (min-width : 0px) and (max-width : 767px) {
+        .searchPage {
+            height: 160px;
+            background-size: 100% 100%;
+            background-color: #5375aa;
+            /*#251DA0;  /*#A1227C,#C70039,#A1227C*/
+            z-index: 1;
+            border: 2px solid #f7f7f7;
+        }
+
+        .searchBar {
+            left: 50%;
+            top: 50%;
+            width: 100%;
+            /* -webkit-transform: translate(0%, 0%);
+            transform: translate(0%, 0%); */
+            margin: 0px 5px 0px 5px;
+        }
+
+
+    }
+</style>
+<div class="col-md-12 searchpage">
+    <div class="input-group my-group searchBar">
+        <div class="input-group-btn">
+            <select class="form-control " id="homeBranch" name="Fld_Branch_Code"
+                style="border-top-left-radius: 4px;border-bottom-left-radius:4px">
+                <option value="0">Select Branch</option>
+            </select>
+        </div>
+        <div class="input-group-btn">
+            <select name="keywords" id="keyWordsDropDown" class="form-control dropdown-toggle">
+                
+                 <option value="">All</option>
+                <option value="@Title">@Title</option>
+                
+                <option value="@Author ">@Author</option>
+                <option value="@Publisher ">@Publisher</option>
+                <option value="@Subject ">@Subject</option>
+                <option value="@ISBN ">@ISBN</option>
+                <option value="@Published_Place ">@Published_Place</option>
+                <option value="@Published_Year ">@Published_Year</option>
+                <option value="@Class_No ">@Class_No</option>
+                <option value="@Call_No ">@Call_No</option>
+                <option value="@Accn_No ">@Accn_No</option>
+                <option value="@dept ">@Department</option>
+                <option value="@keyword ">@Keyword</option>
+                <option value="@Location ">@Location</option>
+                <option value="@Editor ">@Editor</option>
+                <option value="@Series ">@Series</option>
+                <option value="@Developer ">@Developer</option>
+                <option value="@Translator ">@Translator</option>
+                <option value="@No_Days ">@No_Days</option>
+            </select>
+        </div>
+        <input type="text" class="form-control" id="advancedSearch" autocomplete="off" placeholder="Search for Books, Author and More..." value="" 
+            aria-label="Search for...">
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-md btn-success" id="adSearchButton">Search</button>
+        </div>
+        <div class="input-group-btn">
+            <button class="btn btn-warning" style="border-top-right-radius: 4px;border-bottom-right-radius:4px"
+                onclick="document.getElementById('advancedSearch').value = ''">Clear</button>
+        </div>
+    </div>
+</div>
+[script omitted]
+[script omitted]		<div class="col-md-3 firstChild" id="sideBarData">
+			<div class="btn-group special" role="group" aria-label="Basic example">
+				<button type="button" class="btn btn-info btn-flat btn-sm" id="expandAll">Expand All</button>
+				<button type="button" class="btn btn-warning btn-flat btn-sm" id="compressAll">Compress All</button>
+			</div>
+			<div class="alltypes">
+				<p class="leftHeaders slidableAuthorDiv">Filter by Branch</p>
+				<div class="leftsideChilds" id="">
+					<p class="checkedCountP">Checked : <span class="checkedCount"></span><a href="#"
+							class="clearCheckBoxes">Clear</a></p>
+					<input type="text" placeholder="Search..." class="search_field">
+					<div class="leftSideData" id="">
+						<table class="table" id="relatedBranch" width="100%">
+
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="alltypes">
+				<div class="leftHeaders slidableAuthorDiv">Filter by Book/Non-Book Types</div>
+				<div class="leftsideChilds " id="">
+					<p class="checkedCountP ">Checked : <span class="checkedCount"></span><a href="#"
+							class="clearCheckBoxes">Clear</a></p>
+					<input type="text" placeholder="Search..." class="search_field">
+					<div class="leftSideData" id="">
+						<table class="table" id="allTypeOfBooks">
+
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="alltypes">
+				<div class="leftHeaders slidableAuthorDiv">Filter by Authors</div>
+				<div class="leftsideChilds">
+					<p class="checkedCountP">Checked : <span class="checkedCount"></span><a href="#"
+							class="clearCheckBoxes">Clear</a></p>
+					<input type="text" placeholder="Search..." class="search_field">
+					<div class="leftSideData">
+						<table class="table" id="allTypeOfAuthors">
+
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="alltypes">
+				<p class="leftHeaders slidableAuthorDiv">Filter by Publishers</p>
+				<div class="leftsideChilds" id="">
+					<p class="checkedCountP">Checked : <span class="checkedCount"></span><a href="#"
+							class="clearCheckBoxes">Clear</a></p>
+					<input type="text" placeholder="Search..." class="search_field">
+					<div class="leftSideData" id="">
+						<table class="table" id="publishers">
+
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="alltypes">
+				<p class="leftHeaders ">Filter by Subjects</p>
+				<div class="leftsideChilds" id="">
+					<p class="checkedCountP">Checked : <span class="checkedCount"></span><a href="#"
+							class="clearCheckBoxes">Clear</a></p>
+					<input type="text" placeholder="Search..." class="search_field">
+					<div class="leftSideData" id="">
+						<table class="table" id="subjectCodes" width="100%">
+
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="alltypes">
+				<p class="leftHeaders">Filter by Published Places</p>
+				<div class="leftsideChilds" id="">
+					<p class="checkedCountP">Checked : <span class="checkedCount"></span><a href="#"
+							class="clearCheckBoxes">Clear</a></p>
+					<input type="text" placeholder="Search..." class="search_field">
+					<div class="leftSideData" id="">
+						<table class="table" id="publishedPlaces" width="100%">
+
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="alltypes">
+				<p class="leftHeaders">Filter by Published Years</p>
+				<div class="leftsideChilds" id="">
+					<p class="checkedCountP">Checked : <span class="checkedCount"></span><a href="#"
+							class="clearCheckBoxes">Clear</a></p>
+					<input type="text" placeholder="Search..." class="search_field">
+					<div class="leftSideData" id="">
+						<table class="table" id="publishedYears" width="100%">
+
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-9 firstChild" id="rightside">
+			<div id="">
+				<div>
+					<div class="table_info">
+						Show <select style="" class="dropDownOfRowsPerPage" id="dropDownOfRowsPerPage">
+							<option value="5">5</option>
+							<option value="10">10</option>
+							<option value="25">25</option>
+							<option value="75">75</option>
+							<option value="100">100</option>
+						</select> entries
+					</div>
+					<div id="table_info"></div>
+				</div>
+				<div id="titlesInfo">
+					<table class="table" id="respTable" style="width:100%;">
+						<div class="dataTables_info" id="respTable_info" role="status" aria-live="polite"></div>
+						<thead class="hidden">
+							<tr>
+								<th></th>
+								<th></th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody class="tabledata">
+
+						</tbody>
+					</table>
+					<div id="pageData"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="BookModal" title="Book Availability" class="dialog" style="display: none;">
+	<table class="table table-bordered" id="BookTable">
+		<thead>
+			<tr>
+				<th>Accn Number</th>
+				<th>Status</th>
+				<th>Home Branch</th>
+				<th>Location</th>
+
+			</tr>
+		</thead>
+	</table>
+
+</div>
+
+
+<div id="AddreservedetailsModal" class="dialog" style="display: none;">
+	
+		<!-- <div class="col-md-6 rounded" style="margin-left:70px;"> -->
+			<div class="col-md-12" id="reservefields">
+		<form action="javascript:void(0);" name="AddreservedetailsForm" id="AddreservedetailsForm">
+              
+                <div class="row">
+
+                	<div class="col-md-12">
+					<div class="form-group">
+						<label class="asterisk_input"><b>Title:</b></label>
+						
+						<input type="text" name="rtitle" id="rtitle" class="form-control" readonly>
+					</div>
+				</div>
+
+
+                	</div>
+			
+			<div class="row">
+				<input type="hidden" name="rtitleno" id="rtitleno" class="form-control">
+				<input type="hidden" name="rauthor" id="rauthor" class="form-control">
+				<!-- <input type="hidden" name="titleno" id="titleno" class="form-control"> -->
+				<div class="col-md-12 ">
+					
+					<div class="form-group">
+						<label class="asterisk_input"><b>Member ID:</b></label>
+						<input type="text" name="rmemberid" id="rmemberid" class="form-control">
+					</div>
+					
+				</div>
+			
+			
+			
+			
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+				
+					
+					<div class="form-group">
+						<label class="asterisk_input"><b>Member Name:</b></label>
+						<input type="text" name="rmembername" id="rmembername" class="form-control">
+					</div>
+					
+				</div>
+			
+			
+			
+			
+			</div>
+			<div class="row">
+				
+			<div class="col-md-12 ">
+					
+					<div class="form-group">
+						<label class="asterisk_input"><b>Email ID:</b></label>
+						[form state omitted]
+					</div>
+					
+				</div>
+			
+			
+			
+			
+			</div>
+			<div class="row">
+				
+			<div class="col-md-12 ">
+					
+					<div class="form-group">
+						<label class="asterisk_input"><b>Mobile No:</b></label>
+						[form state omitted]
+					</div>
+					
+				</div>
+			
+			
+			
+			
+			</div>
+			<div class="row">
+			
+				<div class="col-md-12 ">
+					<div class="form-group">
+						<label class="asterisk_input"><b>Pickup:</b></label>
+						<input type="text" name="rpickup" id="rpickup" class="form-control">
+					</div>
+					
+				</div>
+			
+			
+			
+			
+			</div>
+		
+			<div class="row">
+				<div class="col-md-12 ">
+				
+					<div class="form-group">
+						<label class="asterisk_input"><b>Remarks:</b></label>
+						<textarea type="text" name="rRemarks" id="rRemarks" class="form-control" >
+						</textarea>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<div class="row mt10 text-center " >
+					<button class="btn btn-success btn-md" id="reserverdatasumbitBtn" style="width:100px">Submit</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+<!--[script omitted]-->
+[script omitted]
+ 
+	[script omitted]
+ [script omitted] <style type="text/css">
+footer{
+	background: #333 url(https://apsc.easylib.net/assets/img/pattern.png) repeat 0 0;
+	//padding: 10px 0 10px 0;
+}
+
+footer h4{
+	color:white;
+	font-size: 16px;
+}
+footer a{
+	color:white;
+	font-size: 16px;
+
+}
+footer p{
+	color:white;
+}
+footer span{
+	color:white
+}
+.footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
+}
+
+.versionDiv{
+	margin-top:100px;
+	font-size: 16px;
+}
+
+#version{
+	float:right;
+}
+
+.copyright{
+	margin-bottom: 100px;	
+}
+#libPol{
+	margin-top:8px;	
+}
+#libTeam{
+	margin-top:8px;
+}
+
+</style>
+<footer>
+	<div class="container">
+		<div class="row">
+				<div class="col-md-3" id='libPol'>
+				<!-- <a  href="https://apsc.easylib.net/index.php/OpacController/libraryPolicies"> Policies</a><br/><br/> -->
+				<!-- <a  href="http://bhadra2.easylib.net/?page_id=200" target="blank"> Policies</a><br/>
+				<a  href="http://bhadra2.easylib.net/?page_id=1893" target="blank"> Pricing</a><br/>
+				<a  href="http://bhadra2.easylib.net/?page_id=8" target="blank"> Contact US</a><br/> -->
+				<a  href="https://apsc.easylib.net/index.php/newfooterController/newlibraryaboutus" target="blank">About us</a><br/>
+					<a  href="https://apsc.easylib.net/index.php/newfooterController/newlibrarytermsandcondition" target="blank">Terms of service</a><br/>
+				<a  href="https://apsc.easylib.net/index.php/newfooterController/newlibraryprivacypolicy" target="blank">Privacy Statement</a><br/>
+				<a  href="https://apsc.easylib.net/index.php/newfooterController/newfLibraryPolicies" target="blank"> Refund Policy</a><br/>
+
+				<a  href="https://apsc.easylib.net/index.php/newfooterController/newfLibrarycontact" target="blank">Contact US</a><br/>
+					<a  href="https://apsc.easylib.net/index.php/newfooterController/newlibrarypricing" target="blank">Products and Pricing</a><br/>
+				<a href="http://easylib.net" class="copyright">© Easylib Software Pvt Ltd</a>
+			
+			</div>
+			<div class="col-md-3">
+							<h4>Contact Info</h4>
+				<a>.</a>
+				<a>.</a><br/>
+				<a href="mailto:userdata('collegeinfo')['Fld_Email']" id="email_footer">.</a>
+						<br>
+			<a class="versionDiv" title="Click here to get version information">
+								</div>
+
+			<div class="col-md-3" id='libTeam'>
+				<a href="https://apsc.easylib.net/index.php/OpacController/LibraryTeams">Team</a>
+				<br/><br/>
+				<a href="https://apsc.easylib.net/index.php"><img src="https://apsc.easylib.net/assets/img/positivessl.png" alt="Logo" data-retina="true" class="logo_normal"></a>
+			</div>
+			<div class="col-md-3">
+				<h4>Need Software Help?</h4>
+				<a href="tel://98440-81710" id="phone">+919844081710</a><br/>
+				<a href="mailto:[email omitted]" id="email_footer">[email omitted]</a></div>
+					<!-- <a  href="https://apsc.easylib.net/index.php/Bnmitcodecontroller/index">BNMIT</a>  -->
+			</div>
+		</div>
+
+	</div><!-- End container -->
+</footer><!-- End footer -->
+[script omitted]
+
