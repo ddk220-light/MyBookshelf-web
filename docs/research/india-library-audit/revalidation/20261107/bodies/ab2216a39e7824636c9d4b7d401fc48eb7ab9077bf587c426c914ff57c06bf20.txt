@@ -1,0 +1,931 @@
+var fbmobile=false;
+var offsetA=0,limitA=1;
+var offsetAc=0,limitAc=1;
+var offsetFb=0,limitFb=4;
+var offsetE=0,limitE=7;
+var offsetP=0,limitP=7;
+var offsetN=0,limitN=5;
+$(document).ready(function(){
+	
+	$('.metricsTitle').each(function(){
+		var query = $(this).attr('data-query');
+		$.ajax({
+			url:base_url+'index.php/DashBoardController/getQueryGoalMetricsData',
+			type:"POST",
+			data:{
+				query:query
+			}, 	
+			context: this,
+			success:function(data){
+				$(this).find('span').append(data.total);
+			},
+			error: function(xhr, status, error) {
+				console.warn(xhr.responseText);
+			}
+		});
+	});
+	
+	// $('#username').val('');
+	// $('#password').val('');
+	explorer(7,0);
+	partnetLibrarirs(7,0);
+	accomplishments(1,0);
+	getAnnouncementData(1,0);
+	featuredBooks(4,0);
+	geteNewsPaper(5,0);
+	if($(window).width() < 767){
+	    $('#featuredBooks').on('scroll', function() {
+	        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+	        	offsetFb = offsetFb+4;
+	        	featuredBooks(limitFb,offsetFb);
+	            fbmobile=true;
+	        }
+	    })
+    }else{
+    	fbmobile=false;
+    }
+
+	if(!checkSessoin()){
+		checkGuestLogin();
+		$("#userLogin").dialog({
+			height:"auto",
+			width:"430px",
+			modal: true,
+			closeOnEscape: false,
+		    open: function(event, ui) {
+		        $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+		    }
+		});
+	}
+});
+
+$('#loginLibUser').click(function(e){
+	e.preventDefault();
+	if($('form#loginForm').valid()){
+		var formdata = $('form#loginForm').serialize();
+		formdata = formdata+'&UserType=1';
+		memberLogin(formdata);
+	}
+});
+
+$('#loginLibStaff').click(function(e){
+	e.preventDefault();
+	if($('form#loginForm').valid()){
+		var formdata = $('form#loginForm').serialize();
+		formdata = formdata+'&UserType=0';
+		librarianLogin(formdata);
+	}
+});
+$('#loginVendor').click(function(e){
+	e.preventDefault();
+	if($('form#loginForm').valid()){
+		var formdata = $('form#loginForm').serialize();
+		formdata = formdata+'&UserType=2';
+		VendorLogin(formdata);
+	}
+});
+
+$(".homelogin").keyup(function(){
+	$('#errors').text('');
+});
+
+$("form#loginForm").validate({
+	errorPlacement: function(error, element) {
+	   	element.closest('div.input-group').next('.errorHelp').append(error);
+  	},
+    submitHandler: function(form) {
+      form.submit();
+    }
+});
+
+$(document).on('click','#guestBtn',function(){
+	var formdata = $('form#loginForm').serialize();
+	formdata = 'username=guest&password=guest&UserType=1';
+	memberLogin(formdata);
+});
+
+function checkGuestLogin(){
+	$.ajax({
+		type:"POST",
+		url:base_url+"index.php/LoginController/checkGuestLogin",
+		success:function(data){
+			if(data.db_error){
+				databaseError(data.db_error);
+			}else{
+				if(data.Fld_Allow_Guest_Login==1){
+					$('#bottomButtons').append('<button type="button" class="btn btn-sm btn-danger" id="guestBtn" style="width: 110px">Guest</button>');
+				}
+			}
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	})
+}
+/*$('form#loginForm').submit(function(e){
+	e.preventDefault();
+	var formdata = $(this).serialize();
+	var UserType = $('#UserType').val();
+	if(UserType==0){
+		librarianLogin(formdata);
+	}else{
+		memberLogin(formdata);
+	}
+})*/
+
+$('.headerTitle').click(function(){
+	var headerTitle = $(this).data('type');
+	switch(headerTitle){
+		case 'explore':
+			getAllExplores();
+			break;
+		case 'announce_list':
+			getAllAnnouncements();
+			break;
+		case 'partner_lib':
+			getAllPartLibs();
+			break;
+		case 'accomplish':
+			getAllAccoumplishments();
+			break;
+		case 'featured_books':
+			getAllFeaturedBooks();
+			break;
+		case 'paper_list':
+			geteNewsPaper();
+			break;	
+	}
+})
+
+function getAllAccoumplishments(){
+	$.ajax({
+		type:"POST",
+		url:base_url+'index.php/OpacController/getAllAccoumplishments',
+		success:function(data){
+			if(data.error){
+				$.alert(data.error);
+				$.alert(data.db_error);
+			}
+			$table = $('#accoumplishTable');
+			$table.children().remove();
+			$table.append('<thead />').children('thead')
+			.append('<tr />').children('tr')
+			.append($('<th>').text('Book Details'));
+			$table.append('<tbody />').children('tbody').attr('id','accoumplishBody');
+			$.each(data.accomplish,function(key,val){
+				var tag='<div class="row accomplish">'+
+							'<div class="header_div">'+val.Fld_Accomplishment_Title+'</div>'+
+							/*'<div class="col-md-12 fullimgPD" >'+
+								'<img src="'+base_url+'assets/fuploads/Easylib/'+val.Fld_Image1+'" class="fullimg" style="width:100%;height:500px;">'+
+							'</div>'+*/
+							'<div class="row allImages">'+
+								'<div class="col-md-4 text-center img">'+
+									'<img src="'+base_url+'assets/fuploads/Easylib/'+val.Fld_Image1+'" class="smallImg">'+
+								'</div>'+
+								'<div class="col-md-4 text-center img">'+
+									'<img src="'+base_url+'assets/fuploads/Easylib/'+val.Fld_Image2+'" class="smallImg">'+
+								'</div>'+
+								'<div class="col-md-4 text-center img">'+
+									'<img src="'+base_url+'assets/fuploads/Easylib/'+val.Fld_Image3+'" class="smallImg">'+
+								'</div>'+
+							'</div>'+
+							'<div class="">'+
+								'<div class="col-md-12">'+
+									'<p>'+val.Fld_Accomplishment_Desc+'</p>'+
+								'</div>'+
+							'</div>'+
+						'</div>';	
+				$('<tr>').append(
+					$('<td>').append(tag)
+				).appendTo('#accoumplishBody');
+			});
+			$table.DataTable({
+				destroy:true,
+				dom: 'Zlfrtip',
+				colResize: {
+						tableWidthFixed: true
+				}
+			});
+			$('#accoumplishDialog').dialog({
+				height: 700,
+		     	width: "90%",
+		     	modal: true,
+		     	buttons: { 
+		     		"Close": function () {
+		     		 	$(this).dialog("close"); 
+		     		} 
+		     	}
+			})
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	});
+}
+
+$(document).on('click','.smallImg',function(){
+	var src = $(this).attr('src');
+	$(this).closest('div.accomplish').find('div.fullimgPD').find('img.fullimg').attr('src',src);
+})
+
+function getAllFeaturedBooks(){
+	$.ajax({
+		type:"POST",
+		url:base_url+'index.php/OpacController/getAllFeaturedBooks',
+		success:function(data){
+			if(data.error){
+				$.alert(data.error);
+				$.alert(data.db_error);
+			}
+			$table = $('#featuredBookTable');
+			$table.children().remove();
+			$table.append('<thead />').children('thead')
+			.append('<tr />').children('tr')
+			.append($('<th>').text('Book Details'));
+			$table.append('<tbody />').children('tbody').attr('id','featuredBookBody');
+			$.each(data.featuredBooks,function(key,val){
+				var tag='<div class="col-md-12">'+
+							'<div class="col-md-3 featImg fbmd2child">'+
+								'<img src="'+base_url+'assets/fuploads/Easylib/'+val.Fld_FeaturedBook_Image+'" class="bookicon text-center" alt="Book Image">'+
+							'</div>'+
+							'<div class="col-md-9 featBookDetails">'+
+								'<div class="bottom-aligner"></div>'+
+								'<div class="bottom-content">'+
+								'<p>'+val.Fld_Title+'</p>';
+								if(val.Fld_Search_String){
+									tag+='<p>Search Sting : '+val.Fld_Search_String+'</p>';
+								}
+							tag+='<p>Entry Date : '+val.Fld_EntryDate+'</p>'+
+								'<p>Valid Till : '+val.Fld_ValidTill_Date+'</p>'+
+								'<p>Remarks : '+val.Fld_Remarks+'</p>'+
+								'</div>'+
+							'</div>'+
+						'</div>';
+								
+				$('<tr>').append(
+					$('<td>').append(tag)
+				).appendTo('#featuredBookBody');
+			});
+			$table.DataTable({
+				destroy:true,
+				dom: 'Zlfrtip',
+				colResize: {
+						tableWidthFixed: true
+				}
+			});
+			$('#featuredBookDialog').dialog({
+				height: 700,
+		     	width: "90%",
+		     	modal: true,
+		     	buttons: { 
+		     		"Close": function () {
+		     		 	$(this).dialog("close"); 
+		     		} 
+		     	}
+			})
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	});
+}
+
+function getAllPartLibs(){
+	$.ajax({
+		type:"POST",
+		url:base_url+'index.php/OpacController/getAllPartLibs',
+		success:function(data){
+			if(data.error){
+				$.alert(data.error);
+				$.alert(data.db_error);
+			}
+			$table = $('#partnerLibTable');
+			$table.children().remove();
+			$table.append('<thead />').children('thead')
+			.append('<tr />').children('tr')
+			.append($('<th>').text('Name'),
+				$('<th>').text('Link'));
+			$table.append('<tbody />').children('tbody').attr('id','partnerLibBody');
+			$.each(data.links,function(key,val){
+				$('<tr>').append(
+					$('<td>').text(val.Fld_PartnerLibrary_Name),
+					$('<td>').text(val.Fld_PartnerLibrary_URL)
+				).appendTo('#partnerLibBody');
+			});
+			$table.DataTable({
+				destroy:true,
+				dom: 'Zlfrtip',
+				colResize: {
+						tableWidthFixed: true
+				}
+			});
+			$('#partnerLibDialog').dialog({
+				height: 700,
+		     	width: "90%",
+		     	modal: true,
+		     	buttons: { 
+		     		"Close": function () {
+		     		 	$(this).dialog("close"); 
+		     		} 
+		     	}
+			})
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	})
+}
+
+function getAllAnnouncements(){
+	$.ajax({
+		type:"POST",
+		url:base_url+'index.php/OpacController/getAllAnnouncements',
+		success:function(data){
+			if(data.error){
+				$.alert(data.error);
+				$.alert(data.db_error);
+			}
+			$table = $('#announceTable');
+			$table.children().remove();
+			$table.append('<thead />').children('thead')
+			.append('<tr />').children('tr')
+			.append($('<th>').text('Tilte'),
+				$('<th>').text('Description'),
+				/*$('<th>').text('Start Date'),
+				$('<th>').text('End Date'),*/
+				$('<th>').text('Announced By'),
+				$('<th>').text('Type'),
+				$('<th>').text('Date of Announcement')
+				);
+			$table.append('<tbody />').children('tbody').attr('id','announceBody');
+			$.each(data.announce,function(key,val){
+				var announcedby = '<div>'+val.Fld_Announced_by+'<div style="color:#A51515">'+val.Fld_AnnouncedBy_Phone+'</div><div>'+val.Fld_AnnouncedBy_Email+'</div></div>';
+				$('<tr>').append(
+					$('<td>').text(val.Fld_Announcement_Title),
+					$('<td>').text(val.Fld_Announcement_Desc),
+					/*$('<td>').text(val.Fld_Announcement_Startdate),
+					$('<td>').text(val.Fld_Announcement_ExpiryDate),*/
+					$('<td>').append(announcedby),
+					$('<td>').text(val.Fld_Announcement_Type),
+					$('<td>').text(val.Fld_dateOfAnnouncing)
+				).appendTo('#announceBody');
+			});
+			$table.DataTable({
+				destroy:true,
+				dom: 'Zlfrtip',
+				colResize: {
+						tableWidthFixed: true
+				}
+			});
+			$('#announceDialog').dialog({
+				height: 700,
+		     	width: "90%",
+		     	modal: true,
+		     	buttons: { 
+		     		"Close": function () {
+		     		 	$(this).dialog("close"); 
+		     		} 
+		     	}
+			})
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	})
+}
+
+function getAllExplores(){
+	$.ajax({
+		type:"POST",
+		url:base_url+'index.php/OpacController/getAllExplores',
+		success:function(data){
+			if(data.error){
+				$.alert(data.error);
+				$.alert(data.db_error);
+			}
+			$table = $('#exploreTable');
+			$table.children().remove();
+			$table.append('<thead />').children('thead')
+			.append('<tr />').children('tr')
+			.append($('<th>').text('Tilte'),
+				//$('<th>').text('Search Criteria'),
+				$('<th>').text('Description'),
+				$('<th>').text('Remarks'));
+			$table.append('<tbody />').children('tbody').attr('id','exploreBody');
+			$.each(data.explore,function(key,val){
+				$('<tr>').append(
+					$('<td>').text(val.Fld_Explore_Title),
+					// $('<td>').text(val.Fld_Explore_Criteria),
+					$('<td>').text(val.Fld_Explore_Description),
+					$('<td>').text(val.Fld_Explore_Remarks)
+				).appendTo('#exploreBody');
+			});
+			$table.DataTable({
+				destroy:true,
+				dom: 'Zlfrtip',
+				colResize: {
+						tableWidthFixed: true
+				}
+			});
+			$('#exploreDialog').dialog({
+				height: 700,
+		     	width: "90%",
+		     	modal: true,
+		     	buttons: { 
+		     		"Close": function () {
+		     		 	$(this).dialog("close"); 
+		     		} 
+		     	}
+			})
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	})
+}
+function geteNewsPaper(limit,offset){
+	var content="";
+	$.ajax({
+		url:base_url + "index.php/OpacController/geteNewsPaper",
+		type:"POST",
+		data:{
+				limit:limit,
+				offset:offset
+		},
+		success:function(data){
+			$.each(data,function(key,value){
+				content += '<tr>'+
+								'<td><span class="textavathar" style="background:'+randomColors()+'">'+value.fld_Paper_Name.trim().charAt(0).toUpperCase()+'</span><a class="newsPaper" data-url1="'+value.fld_Paper_Link+'" onclick="updatePaperViews('+value.fld_Paper_Id+')" href="javascript:void(0);">'+value.fld_Paper_Name+'</a></td>'+
+							'</tr>';
+			});
+			if ($('#newsPaperTable').children()) {
+				$('#newsPaperTable').children().remove();
+			}
+			$('#newsPaperTable').append(content);
+		}
+	}) 
+}
+$(document).on('click','.newsPaper',function(){
+	var url = $(this).attr('data-url1');
+	if(url.indexOf('http') >= 0){
+		window.open(url,'_blank');
+	}
+	else{
+		window.open('http://'+url,'_blank');
+	}
+});
+function updatePaperViews(paperId){
+	//alert(paperId);
+	$.ajax({
+		type:"POST",
+		url:base_url + "index.php/OpacController/updatePaperViews",
+		data:{
+			paperId : paperId
+		},
+		success:function(data){
+			
+		}
+	})
+}
+
+$('.prevNext_p').click(function(e){
+	var prevnext = $(this).data('prevnext');
+	var type = $(this).data('type');
+	getoffsetAndMaxValAndStartVal(type,prevnext);
+})
+
+function getoffsetAndMaxValAndStartVal(type,prevnext){
+	$.ajax({
+		type:"POST",
+		url:base_url+'index.php/OpacController/getoffsetAndMaxValAndStartVal',
+		data:{
+			type:type,
+			prevnext:prevnext
+		},
+		success:function(data){
+			getRelatedData(data,type,prevnext);
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	})
+}
+
+function getRelatedData(data,type,prevnext){
+	switch(type){
+		case 'explore':
+			offsetE = getOffset(data,type,prevnext,offsetE,limitE);
+			explorer(limitE,offsetE);
+			break;
+		case 'announce_list':
+			offsetA = getOffset(data,type,prevnext,offsetA,limitA);
+			getAnnouncementData(limitA,offsetA);
+			break;
+		case 'partner_lib':
+			offsetP = getOffset(data,type,prevnext,offsetP,limitP);
+			partnetLibrarirs(limitP,offsetP);
+			break;
+		case 'accomplish':
+			offsetAc = getOffset(data,type,prevnext,offsetAc,limitAc);
+			accomplishments(limitAc,offsetAc);
+			break;
+		case 'featured_books':
+			offsetFb = getOffset(data,type,prevnext,offsetFb,limitFb);
+			featuredBooks(limitFb,offsetFb);
+			break;
+		case 'paper_list':
+			offsetN = getOffset(data,type,prevnext,offsetN,limitN);
+			geteNewsPaper(limitN,offsetN);
+			break;
+				
+	}
+}
+
+function getOffset(data,type,prevnext,offset,limit){
+	if(prevnext=="next"){
+		if(offset >= data.max-limit){
+			return offset;
+		}else{
+			offset = offset + limit
+			return offset;
+		}
+	}else{
+		if(offset <= 0){
+			return offset;
+		}else{
+			offset = offset - limit
+			return offset;
+		}
+	}
+}
+
+$(document).on('click','.explore',function(){
+	var searchStr = $(this).attr('data-searchStr');
+	$("#usingAtkeyword").trigger('click');
+	$('#advancedSearch').val(searchStr);
+	$('#adSearchButton').trigger('click');
+});
+
+$(document).on('click','.partLib',function(){
+	var url = $(this).attr('data-url');
+	if(url.indexOf('http') >= 0){
+		window.open(url,'_blank');
+	}
+	else{
+		window.open('http://'+url,'_blank');
+	}
+});
+
+$(document).on('click',".url",function(){
+	var url = $(this).text();
+	window.open(url,'_blank');
+});
+
+$("body").on('click','#customfblink',function(){
+	var url = $(this).attr('data-url');
+	window.open(url,'_blank');
+})
+
+function randomColor() {
+	var letters = 'B2D9A'.split('');
+	var color = '#';
+	for (var i = 0; i < 6; i++ ) {
+		color += letters[Math.floor(Math.random() * letters.length)];
+	}
+	return color;
+}
+
+function randomColors() {
+	var letters = 'A9D2B'.split('');
+	var color = '#';
+	for (var i = 0; i < 6; i++ ) {
+		color += letters[Math.floor(Math.random() * letters.length)];
+	}
+	return color;
+}
+
+
+function getAnnouncementData(limit,offset){
+	var tags="";
+	$.ajax({
+		url:base_url + "index.php/OpacController/AnnouncementsData",
+		type:"POST",
+		data:{
+			limit:limit,
+			offset:offset
+		},
+		success: function(data) {
+    console.log(data); // Log the response to the console for debugging
+
+    // Start constructing the tags string for appending content
+    var tags = '<div id="announce">' +
+                '<div id="" class="text-center">' +
+                    // Title: Check if 'Fld_Announcement_Title' exists
+                    (data && data.Fld_Announcement_Title 
+                        ? '<p id="announce_title" style="font-family:Sans-serif;color:red;font-size:20px">' + data.Fld_Announcement_Title + '</p>' 
+                        : '<p id="announce_title" style="font-family:Sans-serif;color:red;font-size:20px">No title available</p>') +
+                    
+                    // Description: Check if 'Fld_Announcement_Desc' exists
+                    (data && data.Fld_Announcement_Desc 
+                        ? '<p class="annouce_desc" id="annouce_desc" style="font-family:Sans-serif;color:green;font-size:15px">' + data.Fld_Announcement_Desc + '</p>' 
+                        : '<p class="annouce_desc" id="annouce_desc" style="font-family:Sans-serif;color:green;font-size:15px">No description available</p>') +
+
+                    // URL: Check if 'Fld_Forward_url' exists
+                    (data && data.Fld_Forward_url 
+                        ? '<a class="url" href="' + data.Fld_Forward_url + '" id="announce_url1" style="font-family:Sans-serif;color:blue">' + data.Fld_Forward_url + '</a>' 
+                        : '<a class="url" href="javascript:void(0);" id="announce_url1" style="font-family:Sans-serif;color:blue">No URL available</a>') +
+                '</div>' +
+                
+                // Image: Check if 'Fld_Announcement_Image' exists
+                (data && data.Fld_Announcement_Image 
+                    ? '<div id="Annoumentimage"><img style="object-fit:cover;width:100%;height:100%;" src="' + base_url + 'assets/fuploads/Easylib/' + data.Fld_Announcement_Image + '" class="" alt="Announcement Image"></div>' 
+                    : '<div id="Annoumentimage"><p>No image available</p></div>') +
+
+                // Announcer data: Check if 'Fld_Announced_by', 'Fld_AnnouncedBy_Phone', and 'Fld_AnnouncedBy_Email' exist
+                '<div id="Announcerdata">' +
+                    (data && data.Fld_Announced_by ? '<p id="announce_by" style="font-family:Sans-serif;color:green">' + data.Fld_Announced_by + '</p>' : '') +
+                    (data && data.Fld_AnnouncedBy_Phone ? '<p id="announce_byPhone" style="font-family:Sans-serif;color:green">' + data.Fld_AnnouncedBy_Phone + '</p>' : '') +
+                    (data && data.Fld_AnnouncedBy_Email ? '<p id="announce_byEmail" style="font-family:Sans-serif;color:green">' + data.Fld_AnnouncedBy_Email + '</p>' : '') +
+                '</div>' +
+            '</div>';
+
+    // Remove the previous announcement if it exists
+    if($('#announce')) {
+        $('#announce').remove();
+    }
+
+    // Append the new content to the donor list
+    $('#donorslist').append(tags);
+
+    // Truncate descriptions if they are too long
+    $(".annouce_desc").each(function () {
+        var text = $(this).text();
+        if (text.length > 500) {
+            $(this).text(text.substr(0, text.lastIndexOf(' ', 497)) + '...');
+        }
+    });
+},
+error: function(xhr, status, error) {
+    console.warn(xhr.responseText); // Log any errors that occur during the request
+}
+	})}
+document.addEventListener("DOMContentLoaded", function(event) {
+   document.querySelectorAll('img').forEach(function(img){
+  	img.onerror = function(){this.style.display='none';};
+   })
+});
+function partnetLibrarirs(limit,offset){
+	var content="";
+	$.ajax({
+		url:base_url + "index.php/OpacController/partnerLibrariesData",
+		type:"POST",
+		data:{
+				limit:limit,
+				offset:offset
+		},
+		success:function(data){
+			$.each(data,function(key,value){
+				content += 	'<tr>'+
+								'<td><span class="textavathar" style="background:'+randomColors()+'">'+value.Fld_PartnerLibrary_Name.trim().charAt(0).toUpperCase()+'</span><a class="partLib" data-url="'+value.Fld_PartnerLibrary_URL+'" onclick="sendEBookId('+value.Fld_id+')" href="javascript:void(0);">'+value.Fld_PartnerLibrary_Name+'</a></td>'+
+							'</tr>';
+			});
+			if ($('#partner_lib').children()) {
+				$('#partner_lib').children().remove();
+			}
+			$('#partner_lib').append(content);
+			$('.partLib').each(function(){
+				var text = $(this).text();
+				if (text.length > 55) {
+					$(this).text(text.substr(0, text.lastIndexOf(' ', 52)) + '...');
+				}
+			});
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+		
+	});
+}
+	
+function featuredBooks(limit,offset){
+	var content = "",i=0;
+	$.ajax({
+		url:base_url + "index.php/OpacController/featuredBooks",
+		type:"POST",
+		data:{
+				limit:limit,
+				offset:offset
+		},
+		success:function(data){
+			$.each(data,function(key,value){
+				if(i==0){
+					content +=	'<div class="col-md-2 col-md-offset-1-and-half">';
+				}
+				else{
+					content +=	'<div class="col-md-2">';
+				}
+				content += 	'<div  class="fbmd2child">'+ 
+								'<img class="bookicon text-center" style="display:block;" src="'+base_url+'assets/fuploads/Easylib/'+value.Fld_FeaturedBook_Image+'">'+
+								'<div class="desc text-center">'+value.Fld_Title+'</div>'+
+							'</div>'+
+							'</div>';
+				i++;
+			});
+			if(!fbmobile){
+				$('#featured_books').children().remove();
+			}
+			$('#featured_books').append(content);
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+		
+	});
+}
+
+function explorer(limit,offset){
+	var content = "",i=0;
+	$.ajax({
+		url:base_url + "index.php/OpacController/exploreBooks",
+		type:"POST",
+		data:{
+				limit:limit,
+				offset:offset
+		},
+		success:function(data){
+			$.each(data,function(key,value){
+				content += 	'<tr>'+
+								'<td><span class="textavathar" style="background:'+randomColor()+'">'+value.Fld_Explore_Title.trim().charAt(0).toUpperCase()+'</span><a class="explore" data-searchStr="'+value.Fld_Explore_Criteria+'" href="javascript:void(0);">'+value.Fld_Explore_Title+'</a></td>'+
+							'</tr>';
+				i++;
+			});
+			if ($('#exploreBook').children()) {
+				$('#exploreBook').children().remove();
+			}
+			$('#exploreBook').append(content);
+			$('.explore').each(function(){
+				var text = $(this).text();
+				if (text.length > 55) {
+					$(this).text(text.substr(0, text.lastIndexOf(' ', 52)) + '...');
+				}
+			});
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	});
+}
+
+function accomplishments(limit,offset){
+	var content = "",i=0;
+	$.ajax({
+		url:base_url + "index.php/OpacController/accomplishments",
+		type:"POST",
+		data:{
+			limit:limit,
+			offset:offset
+		},
+		success:function(data){
+			if(data && data !=null){
+				content +=	'<div class="accomplishments">'+
+								'<p class="text-center accomplishment_title" style="font-weight:bold;font-size:16px;">'+data.Fld_Accomplishment_Title+'</p>'+
+								'<div id="myCarousel" class="carousel slide" data-ride="carousel" style="height:350px">'+
+									'<div class="carousel-inner">';
+								if(data.Fld_Image1 && data.Fld_Image1 != null){
+							content +=  '<div class="item active">'+
+											'<img src="'+base_url+'assets/fuploads/Easylib/'+data.Fld_Image1+'"  style="width:100%;height:300px;">'+
+										'</div>';
+								}
+								if(data.Fld_Image2 && data.Fld_Image2 != null){
+							content +=	'<div class="item">'+
+											'<img src="'+base_url+'assets/fuploads/Easylib/'+data.Fld_Image2+'"  style="width:100%;height:300px;">'+
+										'</div>';
+								}
+								if(data.Fld_Image3 && data.Fld_Image3 != null){
+							content +=	'<div class="item">'+
+											'<img src="'+base_url+'assets/fuploads/Easylib/'+data.Fld_Image3+'"  style="width:100%;height:300px;">'+
+										'</div>';
+								}
+						content +=	'</div>'+
+									'<a class="left carousel-control" href="#myCarousel" data-slide="prev">'+
+										'<span class="glyphicon glyphicon-chevron-left"></span>'+
+										'<span class="sr-only">Previous</span>'+
+									'</a>'+
+									'<a class="right carousel-control" href="#myCarousel" data-slide="next">'+
+										'<span class="glyphicon glyphicon-chevron-right"></span>'+
+										'<span class="sr-only">Next</span>'+
+									'</a>'+
+								'</div>'+
+								'<p class="accomplishment_Desc">'+data.Fld_Accomplishment_Desc+'</p>'+
+							'</div>';
+				if($('.accomplishments')){
+					$('.accomplishments').remove();
+				}
+				$('#accomplish').append(content);
+				$('.accomplishment_Desc').each(function(){
+				var text = $(this).text();
+				if (text.length > 300) {
+					$(this).text(text.substr(0, text.lastIndexOf(' ', 297)) + '...');
+				}
+			});
+			}
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	});
+}
+
+function librarianLogin(formdata){
+	$.ajax({
+		url:base_url+'index.php/LoginController/LibrarianLogin1',
+		type:"POST",
+		data:formdata,
+		success:function(data){
+			if(data.error){
+				$('#errors').children().remove();
+				$('#errors').append('<p style="color:red">'+data.error+'</p>');
+			}else{
+				$("#userLogin").dialog("close");
+				$.alert('Welcome '+data.loginInfo.Fld_FirstName);
+				//window.location.reload();
+				window.location.reload();
+			}
+			
+		},
+		error:function(xhr,status,error){
+			console.log(xhr.responseText);
+		}
+	})
+}
+function VendorLogin(formdata){
+	$.ajax({
+		url:base_url+'index.php/LoginController/VendorLogin1',
+		type:"POST",
+		data:formdata,
+		success:function(data){
+			if(data.error){
+				$('#errors').children().remove();
+				$('#errors').append('<p style="color:red">'+data.error+'</p>');
+			}else{
+				$("#userLogin").dialog("close");
+				$.alert('Welcome '+data.loginInfo.Fld_Name);
+				//window.location.reload();
+				window.location.href=base_url+'vendorController/requestForBooksList';
+			}
+			
+		},
+		error:function(xhr,status,error){
+			console.log(xhr.responseText);
+		}
+	})
+}
+function memberLogin(formdata){
+	$.ajax({
+		url:base_url+'index.php/LoginController/MemberLogin1',
+		type:"POST",
+		data:formdata,
+		success:function(data){
+			if(data.error){
+				$('#errors').children().remove();
+				$('#errors').append('<p style="color:red">'+data.error+'</p>');
+			}else{
+				$("#userLogin").dialog("close");
+				$.alert('Welcome '+data.loginInfo.Fld_FirstName);
+				window.location.reload();
+			}
+		},
+		error:function(xhr,status,error){
+			console.log(xhr.responseText);
+		}
+	})
+}
+
+function sendEBookId(eBookId){
+	$.ajax({
+		type:"POST",
+		url:base_url+'index.php/OpacController/updateCounntOfViewOrDownload',
+		data:{
+			eBookId:eBookId
+		},
+		success:function(data){
+			
+		}
+	});
+}
+
+// $('#clearLogin').click(function(){
+// 	$('#username').val('');
+// 	$('#password').val('');
+// 	$('#errors').children().remove();
+// })
+
+$('#clearLogin').click(function(){
+	clearSearchForm();
+})
+
+function clearSearchForm(){
+		$('form#loginForm *').filter(':input').each(function(){
+			$(this).val('');
+		});
+}

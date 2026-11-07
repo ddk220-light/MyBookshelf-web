@@ -127,7 +127,12 @@
                   "type": "string"
                 },
                 "title": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The native displayed title. A Koha audit row whose native title is empty retains an empty string and metadataWarnings: [missing_title]; it cannot count as a verified book."
+                },
+                "metadataWarnings": {
+                  "type": "array",
+                  "items": { "type": "string", "enum": ["missing_title"] }
                 },
                 "recordRef": {
                   "type": "string"

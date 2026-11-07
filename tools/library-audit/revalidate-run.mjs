@@ -189,9 +189,25 @@ try {
         )
         .map((e) => e.libraryId),
     );
-    const pending = review.libraries.filter(
-      (r) => !r.closed && !completed.has(r.libraryId),
-    );
+    const goal = JSON.parse(readFileSync(join(directory, "repair-goal.json")));
+    const pending = review.libraries.filter((r) => {
+      if (
+        r.closed ||
+        completed.has(r.libraryId) ||
+        goal.deferredRevalidation?.[r.libraryId]
+      )
+        return false;
+      // A known unsupported/legacy recipe cannot acquire native fidelity by
+      // repeating the same API call. Leave it open for semantic repair; a
+      // newly implemented native recipe automatically becomes eligible.
+      try {
+        return service
+          .capabilities(r.libraryId)
+          .connections.some((connection) => connection.mode === "native_http");
+      } catch {
+        return false;
+      }
+    });
     const priorities = new Map(
       (
         JSON.parse(readFileSync(join(directory, "repair-goal.json")))

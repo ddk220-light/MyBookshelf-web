@@ -74,7 +74,9 @@ export function describe(entry, connectionId = "primary") {
     paging:
       ["koha", "vufind"].includes(entry.platform) ||
       (academicNative &&
-        ["rps", "libaitech"].includes(academicNativeProfile(entry).kind))
+        ["srms", "rps", "libaitech"].includes(
+          academicNativeProfile(entry).kind,
+        ))
         ? "native"
         : "first_page",
     fidelity: "pending_live_validation",

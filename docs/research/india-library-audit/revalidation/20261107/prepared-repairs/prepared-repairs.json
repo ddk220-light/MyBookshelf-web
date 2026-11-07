@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-11-07T15:39:58.055998+00:00",
+  "state": "offline_prepared_not_applied",
+  "baseline": {
+    "sourceCommit": "c7985eefdfbc926404fe5ac1f5685a2ada1b405c",
+    "files": {
+      "server/services/providers/discoveryAcademicParsers.js": "3837e80148158ea393ca992dca6e5a37799eade6bc596ec54987bc1732562ec5",
+      "server/services/providers/koha.js": "63b12d28a21623f737c9cc0f7b1a7020b179658af5319f31b9e87cfbb214dac5",
+      "server/services/catalog-connectors/service.js": "2aca3476effbd0428436581347614944a9ac0102925a7b424a26594918d1f0ee",
+      "server/services/catalog-connectors/fidelity.js": "0ddd0056d193002e25d621daad072262dc8b413c414f0fb4a6a737a7f4fe9e99",
+      "server/services/catalog-connectors/openapi.json": "82c3e1485cad9720dfc7dc3311f587d48c7d451098149ef4b2c06783e49d0128"
+    },
+    "scope": "offline preparation only; active collector unchanged; zero provider requests; no working-count changes"
+  },
+  "zeroProviderRequests": true,
+  "workingCountIncrease": 0,
+  "candidateFiles": {
+    "server/services/providers/discoveryAcademicParsers.js": {
+      "baselineSha256": "3837e80148158ea393ca992dca6e5a37799eade6bc596ec54987bc1732562ec5",
+      "preparedSha256": "ed41a82e54cb40f9c56eca0fb3249a5d683a7d4b37e39a1cfe29e5d4532d1ce7"
+    },
+    "server/services/providers/koha.js": {
+      "baselineSha256": "63b12d28a21623f737c9cc0f7b1a7020b179658af5319f31b9e87cfbb214dac5",
+      "preparedSha256": "beee7804286ff0fcc622351152603c081cba2647b762e9c3a1a6685d8fb52a99"
+    },
+    "server/services/catalog-connectors/service.js": {
+      "baselineSha256": "2aca3476effbd0428436581347614944a9ac0102925a7b424a26594918d1f0ee",
+      "preparedSha256": "8dd0b6a9ef86406e622989a427e44d5552488e89c9df75c1c482044c6504db1c"
+    },
+    "server/services/catalog-connectors/fidelity.js": {
+      "baselineSha256": "0ddd0056d193002e25d621daad072262dc8b413c414f0fb4a6a737a7f4fe9e99",
+      "preparedSha256": "ac4b1887f487463fa9a922cce1fee503c763d580494bcccddadf087ce164d862"
+    },
+    "server/services/catalog-connectors/openapi.json": {
+      "baselineSha256": "82c3e1485cad9720dfc7dc3311f587d48c7d451098149ef4b2c06783e49d0128",
+      "preparedSha256": "7270a8a7133b2cbfe762289f765f08d7140bd29d46b0771e02061446257337cb"
+    },
+    "tools/library-audit/prepared-repairs.test.mjs": {
+      "baselineSha256": null,
+      "preparedSha256": "0e380e7e9486462568cc17b73f2024a815b7f8b6e5705cc86e34da5ccefe8c07"
+    },
+    "server/test/fixtures/catalog-audit/librarika-bncollege-landing.html": {
+      "baselineSha256": null,
+      "preparedSha256": "636134fdd614fd07f0d1a9e60f36d5745a3bcd6dff340e37778ae93edcf8acd6"
+    },
+    "server/test/fixtures/catalog-audit/cmd-koha-marc-search.html": {
+      "baselineSha256": null,
+      "preparedSha256": "ffd0655082dfbfd19affc025905df702ecb7e1919238a86a005e4549a7472633"
+    },
+    "server/test/fixtures/catalog-audit/bhatkhande-empty-titles.html": {
+      "baselineSha256": null,
+      "preparedSha256": "77b95dfdd2d050489afe9f61237a6fc1af74c44bf291cd2ffb468a2353e43944"
+    }
+  },
+  "patchFile": "/workspace/library-audit-repairs-preparation/20261107/patches/native-search-repairs.patch",
+  "patchSha256": "2424c47e2a20f5f260be4ea1f8893954a1d4fa305904a69cf39f4fae640d50ca",
+  "tests": {
+    "command": "node --test --test-reporter=spec tools/library-audit/*.test.mjs server/services/providers/discoveryAcademic.test.js server/services/providers/koha.test.js server/services/libraryBookSearch.test.js",
+    "passed": 147,
+    "failed": 0,
+    "log": "candidate-regressions.log",
+    "scope": "Separate source snapshot with mocked/saved responses and loopback API tests; no fresh library verification"
+  },
+  "findings": {
+    "discovery-academic:librarika-bncollege": {
+      "cause": "Original broad challenge detector stopped on the initial HTTP 200 catalog form; exact raw matched text was redacted, so denial is unconfirmed.",
+      "next": "After worker stops, apply/regress detector repair; append revalidation_outcome_invalidated with original evidence provenance; run one permitted native form search. Stop on a real challenge.",
+      "evidence": [
+        "runs/india-20261107/bodies/636134fdd614fd07f0d1a9e60f36d5745a3bcd6dff340e37778ae93edcf8acd6.txt"
+      ],
+      "evidenceHashes": {
+        "runs/india-20261107/bodies/636134fdd614fd07f0d1a9e60f36d5745a3bcd6dff340e37778ae93edcf8acd6.txt": "636134fdd614fd07f0d1a9e60f36d5745a3bcd6dff340e37778ae93edcf8acd6"
+      },
+      "originalObservations": [
+        {
+          "run": "runs/india-20261107",
+          "responseEventId": "d0f571a4-37c7-427f-a7bd-884e8a373ad9",
+          "observedAt": "2026-11-07T06:44:27.812Z",
+          "status": 200,
+          "requestUrl": "https://bncollege.librarika.com/search",
+          "method": "GET",
+          "sha256": "636134fdd614fd07f0d1a9e60f36d5745a3bcd6dff340e37778ae93edcf8acd6"
+        }
+      ]
+    },
+    "koha:cmd-kerala": {
+      "cause": "Native search links select opac-MARCdetail.pl; existing parser accepts only opac-detail.pl and discarded all twenty titled native rows.",
+      "next": "After worker stops, apply/regress strict same-origin MARC-link parsing; paced live query and exact book/holding resolution still required.",
+      "evidence": [
+        "revalidation/20261107/bodies/ffd0655082dfbfd19affc025905df702ecb7e1919238a86a005e4549a7472633.txt"
+      ],
+      "evidenceHashes": {
+        "revalidation/20261107/bodies/ffd0655082dfbfd19affc025905df702ecb7e1919238a86a005e4549a7472633.txt": "ffd0655082dfbfd19affc025905df702ecb7e1919238a86a005e4549a7472633"
+      },
+      "originalObservations": [
+        {
+          "run": "revalidation/20261107",
+          "responseEventId": "effe098a-ec70-4e88-b7ce-d763fa336d90",
+          "observedAt": "2026-11-07T14:05:17.898Z",
+          "status": 200,
+          "requestUrl": "https://opac.cmd.kerala.gov.in/cgi-bin/koha/opac-search.pl?idx=kw&q=History",
+          "method": "GET",
+          "sha256": "ffd0655082dfbfd19affc025905df702ecb7e1919238a86a005e4549a7472633"
+        }
+      ]
+    },
+    "koha:bhatkhande": {
+      "cause": "One native result page includes two empty-title anchors, IDs 11517 and 12052. Parser skips them while fidelity oracle includes their IDs; this is an unresolved metadata/display handling gap, not proof of an unavailable library.",
+      "next": "Prepared native-only empty-title row handling preserves all nineteen source IDs/order and flags the two untitled rows. Independent fidelity verifies those missing titles against raw markup. The evaluator rejects them as missing identity; ordinary app search still skips them. Apply only after worker stops, then perform a paced live recheck.",
+      "evidence": [
+        "revalidation/20261107/bodies/77b95dfdd2d050489afe9f61237a6fc1af74c44bf291cd2ffb468a2353e43944.txt"
+      ],
+      "evidenceHashes": {
+        "revalidation/20261107/bodies/77b95dfdd2d050489afe9f61237a6fc1af74c44bf291cd2ffb468a2353e43944.txt": "77b95dfdd2d050489afe9f61237a6fc1af74c44bf291cd2ffb468a2353e43944"
+      },
+      "originalObservations": [
+        {
+          "run": "revalidation/20261107",
+          "responseEventId": "7f57e9ef-b03c-4470-824b-4abd3d7aad45",
+          "observedAt": "2026-11-07T14:05:27.011Z",
+          "status": 200,
+          "requestUrl": "https://library.bhatkhandeuniversity.ac.in/cgi-bin/koha/opac-search.pl?idx=kw&q=The+Discovery+of+India&offset=20",
+          "method": "GET",
+          "sha256": "77b95dfdd2d050489afe9f61237a6fc1af74c44bf291cd2ffb468a2353e43944"
+        }
+      ]
+    },
+    "indcat:indcat-abha-783384": {
+      "cause": "Saved response advertises ten results but has no native book_search record links. Sanitized evidence cannot establish which records the website displayed.",
+      "next": "Review a paced current native form response and primary client contract after the worker stops. Retain as evidence/tooling gap until record identities and holdings are proved.",
+      "evidence": [
+        "revalidation/20261107/bodies/a287c6a12602be4d716f2172a0a28efd8faced8ea11e615fd072d901813bb03e.txt"
+      ],
+      "evidenceHashes": {
+        "revalidation/20261107/bodies/a287c6a12602be4d716f2172a0a28efd8faced8ea11e615fd072d901813bb03e.txt": "a287c6a12602be4d716f2172a0a28efd8faced8ea11e615fd072d901813bb03e"
+      },
+      "originalObservations": [
+        {
+          "run": "revalidation/20261107",
+          "responseEventId": "1cbc3d2a-ea84-4ef1-aef3-1dc73a017379",
+          "observedAt": "2026-11-07T13:52:56.474Z",
+          "status": 200,
+          "requestUrl": "https://indcat.inflibnet.ac.in/index.php/search/checkuniv",
+          "method": "POST",
+          "sha256": "a287c6a12602be4d716f2172a0a28efd8faced8ea11e615fd072d901813bb03e"
+        }
+      ]
+    },
+    "indcat:indcat-amit-303002": {
+      "cause": "Saved response advertises ten results but has no native book_search record links; a nonzero headline is not an item identity.",
+      "next": "Same evidence review as Abhayapuri; do not turn the headline into a successful search or a confirmed source failure.",
+      "evidence": [
+        "revalidation/20261107/bodies/4e6ea8860ea8aad4123c5b88ebb162d197f8f358770aa2907f31a99ed67d1edb.txt"
+      ],
+      "evidenceHashes": {
+        "revalidation/20261107/bodies/4e6ea8860ea8aad4123c5b88ebb162d197f8f358770aa2907f31a99ed67d1edb.txt": "4e6ea8860ea8aad4123c5b88ebb162d197f8f358770aa2907f31a99ed67d1edb"
+      },
+      "originalObservations": [
+        {
+          "run": "revalidation/20261107",
+          "responseEventId": "7f1aef16-3935-41a7-a5d8-3c81175567a7",
+          "observedAt": "2026-11-07T13:55:18.463Z",
+          "status": 200,
+          "requestUrl": "https://indcat.inflibnet.ac.in/index.php/search/checkuniv",
+          "method": "POST",
+          "sha256": "4e6ea8860ea8aad4123c5b88ebb162d197f8f358770aa2907f31a99ed67d1edb"
+        }
+      ]
+    }
+  },
+  "nextSafeActions": [
+    "Wait for the active collector to stop; verify PID, both locks and remote freshness before any code or Git writer",
+    "Verify baseline file hashes before applying the patch; preserve unrelated changes",
+    "Append the BN College invalidation/review correction with original observation date and evidence hash, never delete the old failure",
+    "Re-run full audit/provider regressions and refresh implementation regression attestation; review-cohort and revalidation report must reflect the open correction",
+    "Run meaningful governed canaries and continue remaining repairs, then reconcile all 554 entries before opening the full-run gate",
+    "Archive this preparation and read-only reporting tools into PR #188 at a safe Git checkpoint"
+  ],
+  "patchReplay": {
+    "validated": true,
+    "method": "Apply to disposable baseline copy and compare all resulting bytes against the tested snapshot, including CRLF and unterminated saved responses",
+    "filesChecked": 9
+  },
+  "appConfigurationReview": {
+    "json": "app-search-configuration.json",
+    "csv": "app-search-configuration.csv",
+    "liveQueries": 0,
+    "changesToActivationState": 0,
+    "scope": "Actual app-facing service capability configuration only, not a working search classification"
+  }
+}

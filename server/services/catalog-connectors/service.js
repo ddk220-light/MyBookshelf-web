@@ -200,7 +200,13 @@ export class ConnectorService {
               typeof r.recordId !== "string" ||
               !r.recordId ||
               typeof r.title !== "string" ||
-              !r.title,
+              (!r.title &&
+                !(
+                  r.title === "" &&
+                  entry.platform === "koha" &&
+                  descriptor.mode === "native_http" &&
+                  r.metadataWarnings?.includes("missing_title")
+                )),
           )
         )
           throw failure(
@@ -307,16 +313,24 @@ export class ConnectorService {
       ref.libraryId,
       ref.connectionId,
       "resolve",
-      async ({ entry }) => {
+      async ({ entry, descriptor }) => {
         if (hash(entry) !== ref.configHash || ref.version !== VERSION)
           throw failure("CONFIG_CHANGED", "Catalog configuration changed", 409);
         const provider = this.providerFor(entry);
-        if (!provider?.resolveCatalogRecord)
+        const adapter = native[entry.platform];
+        const resolveRecord = provider?.resolveCatalogRecord
+          ? (id) => provider.resolveCatalogRecord(id)
+          : descriptor.mode === "native_http" && adapter?.resolveCatalogRecord
+            ? (id) => adapter.resolveCatalogRecord(entry, id)
+            : null;
+        // Native metadata search must not depend on borrowing/availability
+        // publication flags. Keep already-configured app resolvers preferred.
+        if (!resolveRecord)
           throw failure(
             "UNSUPPORTED_PROFILE",
             "Record resolution not supported",
           );
-        const record = await provider.resolveCatalogRecord(ref.recordId);
+        const record = await resolveRecord(ref.recordId);
         if (!record || record.recordId !== ref.recordId)
           throw failure(
             "INVALID_SOURCE_RESPONSE",

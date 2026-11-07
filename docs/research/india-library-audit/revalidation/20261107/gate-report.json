@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-07T16:32:01.884Z",
+  "generatedAt": "2026-11-07T17:28:42.952Z",
   "cohortTotal": 554,
   "cohortHash": "6b0f902f8fa1355eaafc07b6dca96dae815cc47f1a7fbfb68bdfce526c4ae8cf",
-  "implementationHash": "f2a5817ccf398f567c1cadd3c730d23f49075988fd3b0b3f5ee60a5e9c66c0b3",
-  "closed": 486,
-  "remaining": 68,
+  "implementationHash": "060a9332fb3575394b1c634c630bbcf239c8547fccdfde7e1d5e4be07f811382",
+  "closed": 485,
+  "remaining": 69,
   "counts": {
     "tooling_or_evidence_gap": 68,
     "observed_connection_or_http_block": 191,
@@ -14,7 +14,7 @@
     "confirmed_policy_or_access_block": 4,
     "verified_20_replayed": 90,
     "verified_20_live": 75,
-    "confirmed_access_block": 1,
+    "interrupted": 1,
     "verified_partial_live": 4,
     "confirmed_empty_live": 4
   },
@@ -117,12 +117,12 @@
       "classification": "tooling_or_evidence_gap",
       "closed": false,
       "books": 0,
-      "code": "FIDELITY_MISMATCH",
-      "reason": "Adapter omitted or reordered native result IDs",
-      "liveAttempts": 3,
+      "code": "NO_VERIFIED_BOOKS",
+      "reason": "Catalog returned candidates, but none met the required book, relevance and membership evidence checks",
+      "liveAttempts": 11,
       "replayMethod": "saved_source_replay_not_fresh_provider_contact",
       "sourceObservedThrough": "2026-11-07T06:50:31.142Z",
-      "nextAction": "Inspect evidence and fix request/parser before retry"
+      "nextAction": "Review rejected records and institution-specific queries"
     },
     {
       "libraryId": "koha:british-council-india",
@@ -252,12 +252,12 @@
       "classification": "tooling_or_evidence_gap",
       "closed": false,
       "books": 0,
-      "code": "CATALOG_UNRECOGNIZED",
-      "reason": "Missing catalog search results",
-      "liveAttempts": 3,
+      "code": "NO_VERIFIED_BOOKS",
+      "reason": "Catalog returned candidates, but none met the required book, relevance and membership evidence checks",
+      "liveAttempts": 11,
       "replayMethod": "saved_source_replay_not_fresh_provider_contact",
       "sourceObservedThrough": "2026-11-07T07:11:22.827Z",
-      "nextAction": "Inspect evidence and fix request/parser before retry"
+      "nextAction": "Review rejected records and institution-specific queries"
     },
     {
       "libraryId": "koha:cvmu",
@@ -3505,14 +3505,15 @@
       "libraryId": "discovery-academic:librarika-bncollege",
       "name": "B. N. College Bhagalpur Library",
       "family": "discovery-academic",
-      "classification": "confirmed_access_block",
-      "closed": true,
+      "classification": "interrupted",
+      "closed": false,
       "books": 0,
-      "reason": "Evidence replay with original observation dates; not a fresh provider request",
-      "liveAttempts": 0,
+      "code": "CATALOG_PROVIDER_BLOCKED",
+      "reason": "Live recheck or semantic adapter review remains open",
+      "liveAttempts": 1,
       "replayMethod": "saved_source_replay_not_fresh_provider_contact",
       "sourceObservedThrough": "2026-11-07T06:44:27.816Z",
-      "nextAction": "Run initial qualification"
+      "nextAction": "Review rejected candidates and add institution-specific queries"
     },
     {
       "libraryId": "discovery-academic:libsoft-rcet",

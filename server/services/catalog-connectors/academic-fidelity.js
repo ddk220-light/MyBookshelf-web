@@ -1,6 +1,7 @@
 import { failure } from "./contracts.js";
 import { text, attributes } from "../providers/catalogMarkup.js";
 import { academicNativeProfile } from "../providers/discoveryAcademic.js";
+import recipes from "./recipe-contracts.json" with { type: "json" };
 
 // Independent field/order oracle for server-rendered website variants. It
 // reads displayed rows directly and does not call the provider's parser.
@@ -13,6 +14,62 @@ export function academicFidelity(
   const profile = academicNativeProfile(entry);
   if (!profile.supported)
     return { verified: false, reason: "website_js_display_recipe_pending" };
+  if (profile.kind === "srms") {
+    const offset = nativeProfile?.offset || 0;
+    if (
+      new URL(response.url).pathname !== recipes.srms.request.path ||
+      !Number.isSafeInteger(offset) ||
+      offset < 0 ||
+      offset % 10
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Unexpected native SRMS request or page",
+        502,
+      );
+    let data;
+    try {
+      data = JSON.parse(response.text);
+    } catch {
+      throw failure("FIDELITY_MISMATCH", "Unrecognized native SRMS JSON", 502);
+    }
+    if (
+      !Array.isArray(data) ||
+      data.some(
+        (row) =>
+          !row ||
+          typeof row.title !== "string" ||
+          !Object.hasOwn(row, "author_name"),
+      )
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Native SRMS bibliography columns changed",
+        502,
+      );
+    const expected = data
+      .slice(offset, offset + 10)
+      .map((row) => [text(row.title), text(row.author_name)]);
+    if (
+      JSON.stringify(expected) !==
+      JSON.stringify(
+        records.map((row) => [row.title, (row.authors || []).join(" ")]),
+      )
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "SRMS native title/author rows were clipped or reordered",
+        502,
+      );
+    return {
+      verified: true,
+      method: "reviewed_native_srms_title_client",
+      recipeVersion: recipes.srms.version,
+      clientSha256: recipes.srms.clientSha256,
+      nativeRows: expected.length,
+      offset,
+    };
+  }
   const html = response.text.replace(
       /<(script|style)\b[^>]*>[^]*?<\/\1\s*>/gi,
       "",

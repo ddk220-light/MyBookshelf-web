@@ -1,0 +1,177 @@
+
+    var searchVal = 'Mathematics';
+    $(document).ready(function () {
+        $("#advancedSearch").val(searchVal);
+        getHomeBranch();
+        getLibraryBranchParam();
+    })
+    var searchvalue = "";
+    $("#keyWordsDropDown").change(function () {
+        // $("#usingOnlyBook").prop("checked", false);
+        $("#usingAtkeyword").trigger('click');
+        searchvalue = $('#advancedSearch').val();
+        var selectedkeyword = $(this).val();
+        $('#advancedSearch').val(searchvalue + " " + selectedkeyword);
+        $('#advancedSearch').focus();
+    });
+
+    $('#adSearchButton').click(function () {
+        searchvalue = $('#advancedSearch').val();
+        searchvalue = searchvalue.split('+').join('%2b');
+        searchvalue = searchvalue.split('&').join('%26');
+        searchvalue = searchvalue.split('#').join('%23');
+        search(searchvalue);
+    });
+
+    $("#advancedSearch").keyup(function (event) {
+        if (event.keyCode === 13) {
+            $("#adSearchButton").click();
+        }
+    });
+
+/*    $('#advancedSearch').autocomplete({
+        source: function (request, response) {
+            $.ajax({
+               // url: `${node_url}easyautocomplete`,
+                url: base_url + "index.php/OpacController/typeAheadKeywordData",
+                data: JSON.stringify({ q: request.term,
+                    wt:'json'
+                }),
+                // dataType : 'jsonp',
+                contentType: 'application/json',
+                // jsonpCallback: 'callback',
+                type: "POST",
+                success: function (res) {
+                    var data = res.response;
+                    if (data.numFound > 0) {
+                        response($.map(data.docs, function (item) {
+                            console.log(item)
+                            return {
+                                label: item.fld_title,
+                                val: item.fld_title
+                            };
+                        }))
+                        //appendTo: "#advancedSearch";
+                    } else {
+                        // response([{ label: 'No results found.', val: -1}]);
+                    }
+                }
+            });
+        },
+        select: function (e, u) {
+            if (u.item.val == -1) {
+                return false;
+            }
+        }
+    });*/
+   
+
+     $('#advancedSearch').autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: base_url + "index.php/OpacController/typeAheadKeywordData",
+                data: { prefix: request.term },
+                dataType: "json",
+                type: "POST",
+                success: function (data) {
+                    if (data.length > 0) {
+                        response($.map(data, function (item) {
+                            //alert(item);
+                            return {
+                                label: item.Fld_Title,
+                                val: item.Fld_Title
+                            };
+                        }))
+                        //appendTo: "#advancedSearch";
+                    } else {
+                        // response([{ label: 'No results found.', val: -1}]);
+                    }
+                }
+            });
+        },
+        select: function (e, u) {
+            if (u.item.val == -1) {
+                return false;
+            }
+        }
+    });
+
+    function search(searchvalue) {
+        searchvalue = searchvalue.ltrim();
+        $('#adSearchButton').prop("disabled", false);
+        if (searchvalue) {
+            window.location.href = base_url + "index.php/OpacController/searchResultPage?search=" + searchvalue;
+        } else {
+            $('#adSearchButton').prop("disabled", true);
+        }
+    }
+
+    String.prototype.ltrim = function () {
+        return this.replace(/^\s+/, "");
+    }
+
+    $("#adSearchButton").click(function () {
+        var searchSring = $("#advancedSearch").val();
+        $.ajax({
+            type: "post",
+            url: base_url + 'index.php/OpacController/insertSearchedString',
+            data: { searchSring: searchSring },
+            success: function (data) {
+
+            }
+        })
+
+    })
+
+    function getLibraryBranchParam() {
+        $.ajax({
+            type: "POST",
+            url: base_url + "index.php/OpacController/getLibraryBranchParam",
+            success: function (data) {
+                if (data.Fld_allow_Library_Branch == 0) {
+                    //$.alert("Hello");
+                    $('#homeBranch').hide();
+                }
+
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            }
+        })
+    }
+    function getHomeBranch() {
+        $.ajax({
+            type: "GET",
+            url: base_url + "index.php/OpacController/getHomeBranch",
+            success: function (data) {
+                $data = $("#homeBranch");
+                var tag = "";
+                $.each(data.branch, function (key, val) {
+                    tag += '<option value="' + val.Fld_Branch_Id + '">' + val.Fld_Branch_Name + '</option>';
+                })
+                $data.children().slice(1).remove();
+                $data.append(tag);
+
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            }
+        });
+    }
+    $('#homeBranch').change(function () {
+        var branchCode = $('#homeBranch').val();
+        $.ajax({
+            type: "POST",
+            url: base_url + 'index.php/OpacController/getHomeBranchName',
+            data: {
+                branchCode: branchCode
+            },
+            success: function (data) {
+                $('#advancedSearch').val('@Home_Branch ' + data.Fld_Branch_Name);
+
+            },
+            error: function (xhr, status, error) {
+                console.warn(xhr.responseText);
+            }
+        })
+    })

@@ -1,0 +1,646 @@
+$(document).on('mouseover', '.bookData', function () {
+    $('#BookModal').dialog({
+        width: "60%",
+        height: "300",
+        modal: true
+    })
+    var BookTitleNo = $(this).attr('data-bookCode');
+    getBookAvailability(BookTitleNo);
+
+})
+$(document).on('mouseleave','#BookModal',function(){
+	$('#BookModal').dialog('close');
+})
+function getBookAvailability(BookTitleNo) {
+    //alert(BookTitleNo);
+    $.ajax({
+        type: "GET",
+        url: "../OpacController/getBookAvailability",
+        data: {
+            BookTitleNo: BookTitleNo
+        },
+        success: function (data) {
+            if (data.db_error) {
+                databaseError(data.db_error);
+            } else if (data.error) {
+                $.alert(data.error);
+            } else {
+                var $table = $('#BookTable');
+                $table.children().remove();
+                $table.append('<thead />').children('thead')
+                    .append('<tr />').children('tr')
+                    .append('<th>Accn Number</th>' +
+                        '<th>Status</th>' +
+                        '<th>Home Branch</th>' +
+                        '<th>Location</th>');
+                $table.append('<tbody/>').children('tbody')
+                    .attr('id', 'BookTableBody');
+                $.each(data.book, function (key, val) {
+                    $('<tr class="textSize">').append(`
+                        <td>${val.Fld_Accn_No}</td>
+                        <td>${val.status}</td>
+                        <td>${val.homeBranch}</td>
+                        <td>${val.Fld_Location}</td>
+                    `).appendTo('#BookTableBody');
+                })
+                $table.dataTable({
+                    "destroy": true
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log(xhr.responseText);
+        }
+    });
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+searchVal = urlParams.get('search');
+var NBTCode = null, PBCode = null, SBCode = null, AuthorCode = null;
+var length = 5, toFrom;
+var countOfresultsOnSearchString = '', myParam = '';
+var page = 1;
+$(document).ready(function () {
+    length = $('#dropDownOfRowsPerPage option:selected').val();
+    var hash = window.location.hash;
+    hash = hash.split('#')[1];
+    if (hash) {
+        changePagination(hash)
+    } else {
+        changePagination(page);
+    }
+
+    setTimeout(function () {
+        getBookTypeWiseCount();
+        getAuthorWiseCount();
+        getPublisherWiseCount();
+        getSubjectWiseCount();
+        getPublishedPlaceWiseCount();
+        getPublishedYearWiseCount();
+        getBranchWiseCount();
+    }, 5000);
+    $("#advancedSearch").val(searchVal);
+    $("#respTable_length").hide();
+    $("#respTable_filter").hide();
+    var $div = $(".slidableAuthorDiv").next('div');
+    $div.slideDown();
+    myParam = location.search.split('search=')[1]
+    myParam = myParam.split('%20').join(' ');
+});
+$("#expandAll").on('click', function () {
+    var $div = $(".leftHeaders").next('div');
+    $div.slideDown();
+})
+$("#compressAll").on('click', function () {
+    var $div = $(".leftHeaders").next('div');
+    $div.slideUp();
+})
+
+$(".leftHeaders").on('click', function () {
+    var $div = $(this).next('div');
+    $div.slideToggle();
+});
+
+$('.search_field').on('keyup', function () {
+    var value = $(this).val();
+    var patt = new RegExp(value, "i");
+    var tableId = $(this).closest('div').find('table').attr('id');
+    $('#' + tableId).find('tr').each(function () {
+        if (!($(this).find('td').text().search(patt) >= 0)) {
+            $(this).hide();
+        }
+        if (($(this).find('td').text().search(patt) >= 0)) {
+            $(this).show();
+        }
+    });
+});
+
+$(document).on('click', ".bookAuthor", function () {
+    var author = $(this).text();
+    searchVal = "@Author " + author;
+    search(searchVal); // calling the js search function written in the view/Opac/SearchHomeScreen page
+});
+
+$(document).on('click', ".bookPublisher", function () {
+    var publisher = $(this).text();
+    searchVal = "@Publisher " + publisher;
+    search(searchVal);
+});
+
+
+
+var obj = {};
+obj.allTypeOfBooks = new Array();
+obj.publishers = new Array();
+obj.subjectCodes = new Array();
+obj.allTypeOfAuthors = new Array();
+obj.publishedPlaces = new Array();
+obj.publishedYears = new Array();
+obj.relatedBranch = new Array();
+
+$(document).on('click', '.typeOfBooks', function () {
+    var val = $(this).attr('data-Code');
+    var tableId = $(this).closest('table').attr('id');
+    obj[tableId] = getObjectKeyValues(val, obj[tableId]);
+    changePagination('1');
+});
+
+$(document).on('click', '.typeOfPublishers', function () {
+    val = $(this).attr('data-Code');
+    var tableId = $(this).closest('table').attr('id');
+    obj[tableId] = getObjectKeyValues(val, obj[tableId]);
+    changePagination('1');
+});
+
+$(document).on('click', '.typeOfSubjects', function () {
+    val = $(this).attr('data-Code');
+    var tableId = $(this).closest('table').attr('id');
+    obj[tableId] = getObjectKeyValues(val, obj[tableId]);
+    changePagination('1');
+});
+
+$(document).on('click', '.typeOfAuthors', function () {
+    val = $(this).attr('data-Code');
+    var tableId = $(this).closest('table').attr('id');
+    obj[tableId] = getObjectKeyValues(val, obj[tableId]);
+    changePagination('1');
+});
+
+$(document).on('click', '.pubPlaces', function () {
+    val = $(this).attr('data-Code');
+    var tableId = $(this).closest('table').attr('id');
+    obj[tableId] = getObjectKeyValues(val, obj[tableId]);
+    changePagination('1');
+});
+
+$(document).on('click', '.pubYears', function () {
+    val = $(this).attr('data-Code');
+    var tableId = $(this).closest('table').attr('id');
+    obj[tableId] = getObjectKeyValues(val, obj[tableId]);
+    changePagination('1');
+});
+$(document).on('click', '.relatedBranch', function () {
+    val = $(this).attr('data-Code');
+    var tableId = $(this).closest('table').attr('id');
+    obj[tableId] = getObjectKeyValues(val, obj[tableId]);
+    changePagination('1');
+});
+
+$("#dropDownOfRowsPerPage").on('change', function () {
+    length = $(this).find('option:selected').val();
+    changePagination('1');
+});
+
+function getObjectKeyValues(val, arr) {
+    if ($.inArray(val, arr) != -1) {
+        arr = $.grep(arr, function (value) {
+            return value != val;
+        });
+    } else {
+        arr.push(val);
+    }
+    return arr;
+}
+
+function changePagination(pageId) {
+    start = (pageId - 1) * length;
+    $.ajax({
+        url: "../OpacController/advancedSearchFunc",
+        type: "POST",
+        datatype: "json",
+        cache: false,
+        data: {
+            search: searchVal,
+            pageId: pageId,
+            start: start,
+            length: length,
+            object: obj
+        },
+        success: function (data) {
+            var setSearch = '';
+            var lastRow = 0;
+            setSearch = searchVal.split('+').join('%2b');
+            setSearch = setSearch.split('#').join('%23');
+            var tags = "", publisherSpanOfTd = "", materialTypeSpanOfTd = "",softCopy= "", authorSpanOfTd = '', callNoSpanOfTd = '', classNumber = '';
+            $.each(data.realdata, function (key, value) {
+                if (value.Fld_Publisher == null || value.Fld_Publisher == '') {
+                    publisherSpanOfTd = '';
+                }
+                else if (value.Fld_Publisher) {
+                    publisherSpanOfTd = '<span class="titles publisherShowOrHide">Publisher:</span><a href="javascript:void(0);" class="bookPublisher">' + value.Fld_Publisher + '</a>&nbsp;&nbsp;';
+                }
+
+                 if (value.Fld_Published_Year) {
+                    publishery = '<span class="titles">Publisher Year:</span>' + value.Fld_Published_Year + '<br/>';
+                }
+                else if (value.Fld_Published_Year == null || value.Fld_Published_Year == '') {
+                    publishery = '';
+                }
+
+              
+                if (value.Fld_Authors) {
+                    authorSpanOfTd = '<span class="titles">Author:</span><a href="javascript:void(0);" class="bookAuthor">' + value.Fld_Authors + '</a><br/>';
+                }
+                else if (value.Fld_Class_No == null || value.Fld_Class_No == '') {
+                    authorSpanOfTd = '';
+                }
+                  if (value.Fld_NB_Type == null || value.Fld_NB_Type == '') {
+                    materialTypeSpanOfTd = '';
+                }
+                else if (value.Fld_NB_Type) {
+                    materialTypeSpanOfTd = '<span class="titles">Material Type:</span><span>' + value.Fld_NB_Type + '</span>&nbsp;&nbsp;';
+                }
+
+                   if (value.Fld_Call_No) {
+                    classNumber = '<span class="titles">Call No.:</span><span>' + value.Fld_Call_No + '<span>&nbsp;&nbsp;';
+                }
+                else if (value.Fld_Call_No == null || value.Fld_Call_No == '') {
+                    classNumber = '';
+                }
+                if (value.Fld_Class_No) {
+                    callNoSpanOfTd = '<span class="titles">Class No.:</span><span>' + value.Fld_Class_No + '</span><br/>';
+                }
+                else if (value.Fld_Authors == null || value.Fld_Authors == '') {
+                    callNoSpanOfTd = '';
+                }
+             
+                if (value.Fld_Cat_Edition) {
+                    edition = '<span class="titles">Edition:</span>' + value.Fld_Cat_Edition + '<br/>';
+                }
+                else if (value.Fld_Cat_Edition == null || value.Fld_Cat_Edition == '') {
+                    edition = '';
+                }
+                if (value.Fld_Sub_Title) {
+                    Subtitle = '<span class="titles">Subtitle:</span>' + value.Fld_Sub_Title + '<br/>';
+                }
+                else if (value.Fld_Sub_Title == null || value.Fld_Sub_Title == '') {
+                    Subtitle = '';
+                }
+                
+                if (value.Fld_SoftCopy_PicPath) {
+                    bookImage = '<td><img class="bookicon"  src="'+base_url+'assets/fuploads/accessionAndCatalogue/' + value.Fld_SoftCopy_PicPath + '""></td>';
+                }
+                else if (value.Fld_SoftCopy_PicPath == null || value.Fld_SoftCopy_PicPath == '') {
+                    bookImage = '<td><img class="bookicon" src="http://covers.openlibrary.org/b/isbn/' + value.Fld_ISBN_No + '.jpg" /></td>';
+                }
+                if(value.Fld_SoftCopy_Path){
+                    softCopy = '<td><a class="softcopy" style="margin-left: -125%;color:#736AFF" href="'+base_url+'assets/fuploads/accessionAndCatalogue/'+value.Fld_SoftCopy_Path+'" target="_blank" title="Click here to view book copy">View Copy</a></td>';
+                }else if(value.Fld_SoftCopy_Path == null || value.Fld_SoftCopy_Path==''){
+                    softCopy='';
+                }
+
+                tags += '<tr>' +
+                    '<td>' + ((((length * (pageId - 1)) + 1) + lastRow)) + '</td>' +
+                    '<td id="mainTd"><a href="' + base_url + 'index.php/OpacController/bookDetailsController?search=' + setSearch + '&tlno=' + value.Fld_Title_No + '" class="bookTitle">' + value.Fld_Title + '</a><br/>' +
+                    '' + authorSpanOfTd + '' +
+                    '<span class="titles">Title No:</span><span>' + value.Fld_Title_No + '</span> &nbsp;&nbsp;' +
+                    '<span class="titles">Total Copies:</span><span>' + value.Fld_No_Copies + '</span><br>' +
+                    '' + Subtitle + '' +
+                    '' + publisherSpanOfTd + '' +
+                      '' + publishery + '' +
+                    '' + materialTypeSpanOfTd + '' +
+                    '' + classNumber + '' +
+                    '' + callNoSpanOfTd + '' +
+                    '' + edition + '' +
+                   
+                    '<a href="javascript:void(0);" class="bookData examAction" data-bookCode="' + value.Fld_Title_No + '">Check Availability</a>&nbsp;&nbsp;' +
+                   //'<a href="javascript:void(0);" class="reserverdatacollect" Style="color:darkblue;font-size:15px"data-reserve="' + value.Fld_Title_No + '">Reserve</a>' +
+                    
+                    '<a href="javascript:void(0);" class="reserverdatacollect" Style="color:#0076B2;font-size:17px;"data-reserve="' + value.Fld_Title_No + '" data-reservetitle="' + value.Fld_Title + '" data-reserveauthor="' + value.Fld_Authors + '">Request</a>' +
+                    //'<span class="titles">Status : </span><span>'+value.Fld_Status+'</span><br>'+
+                    //'<td><img class="bookicon" height="10%" width="20%" src="'+base_url+'assets/img/opacHome/book.png"></td>'+
+                    '' + bookImage + '' +
+                    '' + softCopy + '' +
+                    '</tr>';
+                //toFrom = value.rownum;
+                lastRow++;
+            });
+            var content = "";
+            content += '<p class="showing">Showing ' + ((length * (pageId - 1)) + 1) + ' to ' + ((length * (pageId - 1)) + 5) + ' of ' + data.recordsFiltered + ' (Filtered from ' + data.recordsTotal + ' total entries)</p>';
+            //content +='<p class="showing">Showing '+(start+1)+' to '+toFrom+' of '+data.recordsFiltered+' (Filtered from '+data.recordsTotal+' total entries)</p>';
+            if ($('#table_info').children()) {
+                $("#table_info").children().remove();
+            }
+            $('#table_info').append(content);
+            if ($(".tabledata").children()) {
+                $(".tabledata").children().remove();
+            }
+            $(".tabledata").append(tags);
+            //getpagination(pageId,data.recordsFiltered);
+
+            //mpagination is a user(easylib user) defined function and all needs to send tree arguments in page Id, records per page, total num of rows and in order.
+            //paging = easypagination(pageId,length,data.recordsFiltered);
+            $('#pageData').children().remove();
+            $('#pageData').easypagination({
+                pageNo: pageId,
+                recordsPerPage: length,
+                totalRecords: data.recordsFiltered
+            });
+            $('.pageClick').one('click', function (e) {
+                //to get further pages you have to use 'pageClick' class name only and get the data-pageNum attribute which gives the current page Id.
+                e.stopPropagation();
+                e.preventDefault();
+                pageId = $(this).attr('page');
+                page = pageId;
+                changePagination(pageId);
+
+            });
+            if (myParam !== '') {
+                countOfresultsOnSearchString = data.recordsFiltered;
+                updateSearchTrackTable(countOfresultsOnSearchString);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.warn(xhr.responseText);
+        }
+    });
+}
+
+$(document).on('click', 'a.bookTitle', function (e) {
+    e.preventDefault();
+    window.location.hash = '#' + page;
+    var loc = window.location;
+    window.history.pushState('', '', loc.origin + loc.pathname + loc.search + '#' + loc.hash.split('#')[1]);
+    window.location.href = $(this).attr('href');
+})
+
+function getBookTypeWiseCount() {
+    $.ajax({
+        type: "POST",
+        url: '../OpacController/getBookTypeWiseCount',
+        data: {
+            search: searchVal,
+        },
+        success: function (data) {
+            var tags = "", $i = 1;
+            $.each(data, function (key, val) {
+                if (val.total !== null) {
+                    tags += '<tr>' +
+                        '<td style="padding-left:10px"><input type="checkbox" name="typeOfBooks" class="typeOfBooks" data-column="Fld_NB_Type_Code' + $i + '" data-Code="' + val.Fld_NB_Type_Code + '"><span class="typeOfBooksText">  ' + val.Fld_NB_Type + '</span></td>' +
+                        '<td style="text-align:right;padding-right:10px">' + val.total + '</td>' +
+                        '</tr>';
+                }
+                $i++;
+            });
+            $("#allTypeOfBooks").append(tags);
+        },
+        error: function (xhr, status, error) {
+            console.warn(xhr.responseText);
+        }
+    });
+}
+
+function getPublisherWiseCount() {
+    $.ajax({
+        type: "POST",
+        url: '../OpacController/getPublisherWiseCount',
+        data: {
+            search: searchVal,
+        },
+        success: function (data) {
+            var tags = "";
+            $.each(data, function (key, val) {
+                if (val.total !== null) {
+                    tags += '<tr>' +
+                        '<td style="padding-left:10px"><input type="checkbox" name="typeOfBooks" class="typeOfPublishers" id="" data-Code="' + val.Fld_Publisher_Code + '"><span class="typeOfPublishersText">  ' + val.Fld_Publisher + '</span></td>' +
+                        '<td style="text-align:right;padding-right:10px">' + val.total + '</td>' +
+                        '</tr>';
+                }
+            });
+            $("#publishers").append(tags);
+        },
+        error: function (xhr, status, error) {
+            console.warn(xhr.responseText);
+        }
+    });
+}
+
+function getSubjectWiseCount() {
+    $.ajax({
+        type: "POST",
+        url: '../OpacController/getSubjectWiseCount',
+        data: {
+            search: searchVal,
+        },
+        success: function (data) {
+            var tags = "";
+            $.each(data, function (key, val) {
+                if (val.total !== null) {
+                    tags += '<tr>' +
+                        '<td width="50%" style="padding-left:10px;;"><input type="checkbox" name="typeOfBooks" class="typeOfSubjects" id="" data-Code="' + val.Fld_Subject_Code + '"><span class="typeOfSubjectsText">  ' + val.Fld_Subject + '</span></td>' +
+                        '<td style="text-align:right;padding-right:10px">' + val.total + '</td>' +
+                        '</tr>';
+                }
+            });
+            $("#subjectCodes").append(tags);
+        },
+        error: function (xhr, status, error) {
+            console.warn(xhr.responseText);
+        }
+    });
+}
+
+function getAuthorWiseCount() {
+    $.ajax({
+        type: "POST",
+        url: '../OpacController/getAuthorWiseCount',
+        data: {
+            search: searchVal,
+        },
+        success: function (data) {
+            var tags = "";
+            $.each(data, function (key, val) {
+                if (val.total !== null) {
+                    tags += '<tr>' +
+                        '<td width="50%" style="padding-left:10px;;"><input type="checkbox" name="typeOfBooks" class="typeOfAuthors" id="" data-Code="' + val.Fld_Authors + '"><span class="typeOfSubjectsText">  ' + val.Fld_Authors + '</span></td>' +
+                        '<td style="text-align:right;padding-right:10px">' + val.total + '</td>' +
+                        '</tr>';
+                }
+            });
+            $("#allTypeOfAuthors").append(tags);
+        },
+        error: function (xhr, status, error) {
+            console.warn(xhr.responseText);
+        }
+    });
+}
+
+function getPublishedPlaceWiseCount() {
+    $.ajax({
+        type: "POST",
+        url: '../OpacController/getPublishedPlaceWiseCount',
+        data: {
+            search: searchVal,
+        },
+        success: function (data) {
+            var tags = "";
+            $.each(data, function (key, val) {
+                if (val.total !== null) {
+                    tags += '<tr>' +
+                        '<td width="50%" style="padding-left:10px;;"><input type="checkbox" name="typeOfBooks" class="pubPlaces" id="" data-Code="' + val.Fld_Published_Place + '"><span class="typeOfPlaceText">  ' + val.Fld_Published_Place + '</span></td>' +
+                        '<td style="text-align:right;padding-right:10px">' + val.total + '</td>' +
+                        '</tr>';
+                }
+            });
+            $("#publishedPlaces").append(tags);
+        },
+        error: function (xhr, status, error) {
+            console.warn(xhr.responseText);
+        }
+    });
+}
+
+function getPublishedYearWiseCount() {
+    $.ajax({
+        type: "POST",
+        url: '../OpacController/getPublishedYearWiseCount',
+        data: {
+            search: searchVal,
+        },
+        success: function (data) {
+            var tags = "";
+            $.each(data, function (key, val) {
+                if (val.total !== null) {
+                    tags += '<tr>' +
+                        '<td width="50%" style="padding-left:10px;;"><input type="checkbox" name="typeOfBooks" class="pubYears" id="" data-Code="' + val.Fld_Published_Year + '"><span class="typeOfPlaceText">  ' + val.Fld_Published_Year + '</span></td>' +
+                        '<td style="text-align:right;padding-right:10px">' + val.total + '</td>' +
+                        '</tr>';
+                }
+            });
+            $("#publishedYears").append(tags);
+        },
+        error: function (xhr, status, error) {
+            console.warn(xhr.responseText);
+        }
+    });
+}
+function getBranchWiseCount() {
+    $.ajax({
+        type: "POST",
+        url: '../OpacController/getBranchWiseCount',
+        data: {
+            search: searchVal,
+        },
+        success: function (data) {
+            var tags = "";
+            $.each(data, function (key, val) {
+                if (val.total !== null) {
+                    tags += '<tr>' +
+                        '<td width="50%" style="padding-left:10px;;"><input type="checkbox" name="typeOfBooks" class="relatedBranch" id="" data-Code="' + val.Fld_Branch_Code + '"><span class="typeOfPlaceText">  ' + val.Fld_Branch_Name + '</span></td>' +
+                        '<td style="text-align:right;padding-right:10px">' + val.total + '</td>' +
+                        '</tr>';
+                }
+            });
+            $("#relatedBranch").append(tags);
+        },
+        error: function (xhr, status, error) {
+            console.warn(xhr.responseText);
+        }
+    });
+}
+
+var checkboxObject = {};
+
+checkboxObject.allTypeOfBooks = new Array();
+checkboxObject.publishers = new Array();
+checkboxObject.subjectCodes = new Array();
+checkboxObject.allTypeOfAuthors = new Array();
+checkboxObject.publishedPlaces = new Array();
+checkboxObject.publishedYears = new Array();
+checkboxObject.relatedBranch = new Array();
+$(document).on('change', 'input[name="typeOfBooks"]', function () {
+    var tableId = $(this).closest('table').attr('id');
+    var value = $(this).parent('td').find('span').text();
+    checkboxObject[tableId] = getObjectKeyValues(value, checkboxObject[tableId]);
+    $(this).parents('div.leftsideChilds').find('span.checkedCount').text(checkboxObject[tableId].length);
+});
+
+$('.clearCheckBoxes').click(function () {
+    $parent = $(this).parents('div.leftsideChilds');
+    var tableId = $parent.find('table').attr('id');
+    $table = $parent.find('table');
+    $('#' + tableId + ' td input:checkbox').prop('checked', false);
+    obj[tableId] = [];
+    changePagination(1);
+    checkboxObject[tableId] = [];
+    $parent.find('span.checkedCount').text(checkboxObject[tableId].length);
+});
+
+$('checkedCount').hover(
+    function () {
+        $parent = $(this).parents('div.leftsideChilds');
+        var tableId = $parent.find('table').attr('id');
+        var tags = '<div class="CheckedListMenu"><ul>';
+        $.each(checkboxObject[tableId], function (key, val) {
+            tags += '<li>' + val + '</li>';
+        });
+        tags += '</ul></div>';
+        if ($parent.find('.CheckedListMenu')) {
+            $parent.find('.CheckedListMenu').remove();
+        }
+        $($parent.find('p.checkedCountP')).append(tags);
+    },
+    function () {
+        //alert($parent.find('.CheckedListMenu'));
+        $($parent.find('.CheckedListMenu')).stop(true, true).slideDown('medium');
+    },
+    function () {
+        $($parent.find('.CheckedListMenu')).stop(true, true).slideUp('medium');
+    }
+);
+
+function updateSearchTrackTable(countOfresultsOnSearchString) {
+    $.ajax({
+        type: "post",
+        url: base_url + 'index.php/OpacController/updateSearchTrackTable',
+        data: {
+            countOfresultsOnSearchString: countOfresultsOnSearchString,
+            myParam: myParam
+        },
+        success: function (data) {
+
+        }
+    })
+}
+
+$(document).on('click','.reserverdatacollect',function(){
+    var restitleno = $(this).attr('data-reserve');
+    var restitle = $(this).attr('data-reservetitle');
+    var resauthor = $(this).attr('data-reserveauthor');
+    $("#AddreservedetailsModal").dialog({
+        modal: true,
+       //title: "Reservation Request",
+        width: "300px",
+        height:"640"
+    });
+   
+ $('#rtitleno').val(restitleno);
+ $('#rtitle').val(restitle);
+  $('#rauthor').val(resauthor);
+
+});	
+
+$('#reserverdatasumbitBtn').click(function(){
+    var form=$("#AddreservedetailsForm");
+    $.ajax({
+        type:"POST",
+        url:base_url+"index.php/OpacController/reservebookrequest",
+        data:form.serialize(),
+        success:function(data){
+            if(data.success){
+                $.alert("Book Requested successfully");
+                $('#AddreservedetailsModal').dialog('close');
+            }else if(data.fail){
+                $.alert("Book Requested Not,please try once again");
+            }
+            else if (data.success1){
+                $.alert(data.success1);
+                $('#AddreservedetailsModal').dialog('close');
+            }
+
+        }
+    })
+});
+
+
+

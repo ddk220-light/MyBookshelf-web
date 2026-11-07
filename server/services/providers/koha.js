@@ -258,16 +258,23 @@ export function scopeSearch(url, library) {
 
 
 
-export function parseExpandedKohaCatalogSearch(html, searchUrl, limit = 10) {
+export function parseExpandedKohaCatalogSearch(html, searchUrl, limit = 10, { preserveEmptyTitles = false } = {}) {
   const clean = markupOnly(html), books = new Map();
   const isResults = [...clean.matchAll(/<body\b([^>]*)>/gi)].some(m => attrs(m[1]).id === 'results');
   if (!isResults) throw publicError('CATALOG_UNRECOGNIZED', 'Unrecognized catalog search');
   for (const m of clean.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
     const a = attrs(m[1]);
-    if (!(a.class || '').split(/\s+/).includes('title') || !a.href?.includes('opac-detail.pl')) continue;
-    const url = detailUrl(a.href, searchUrl), recordId = url.searchParams.get('biblionumber');
+    if (!(a.class || '').split(/\s+/).includes('title') || !/opac-(?:MARC)?detail\.pl/i.test(a.href || '')) continue;
+    // Some public catalogs select their MARC display as the native result
+    // link. The same scoped biblionumber remains the bibliographic identity.
+    const nativeUrl = new URL(decode(a.href), searchUrl);
+    if (!['/cgi-bin/koha/opac-detail.pl','/cgi-bin/koha/opac-MARCdetail.pl'].includes(nativeUrl.pathname)) throw publicError('CATALOG_UNRECOGNIZED', 'Koha returned an unrecognized record display');
+    const canonical = new URL(nativeUrl);canonical.pathname = '/cgi-bin/koha/opac-detail.pl';
+    const url = detailUrl(canonical.toString(), searchUrl), recordId = url.searchParams.get('biblionumber');
     const title = text(m[2]).slice(0, 500);
-    if (title) books.set(recordId, { recordId, title, authors: [] });
+    // Audit pages retain an explicitly untitled native row for fidelity and
+    // rejection evidence. Ordinary app search continues to omit untitled rows.
+    if (title || preserveEmptyTitles) books.set(recordId, { recordId, title, authors: [], ...(!title ? { metadataWarnings: ['missing_title'] } : {}) });
   }
   if (!books.size && !/No results found!/i.test(text(clean))) throw publicError('CATALOG_UNRECOGNIZED', 'Missing catalog search results');
   return [...books.values()].slice(0, limit);
@@ -282,7 +289,7 @@ export async function searchNativeCatalog(library, query, { offset = 0 } = {}) {
     const target = detailUrl(response.headers.get('location'), url);
     return { records: [await resolveCatalogRecord(library, target.searchParams.get('biblionumber'))], total: 1, hasMore: false };
   }
-  const records = parseExpandedKohaCatalogSearch(response.text, url, Infinity);
+  const records = parseExpandedKohaCatalogSearch(response.text, url, Infinity, { preserveEmptyTitles: true });
   const plain = text(markupOnly(response.text));
   const totalMatch = plain.match(/Your search returned\s+([\d,]+)\s+results?/i);
   const total = totalMatch ? Number(totalMatch[1].replaceAll(',', '')) : !records.length ? 0 : null;

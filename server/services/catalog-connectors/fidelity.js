@@ -155,11 +155,17 @@ export function verifyNativePage(
     .replace(/<!--[^]*?-->/g, "")
     .replace(/<(script|style)\b[^>]*>[^]*?<\/\1\s*>/gi, "");
   let ids = [];
+  const missingTitleIds = new Set();
   if (family === "koha") {
     for (const m of html.matchAll(/<a\b([^>]*)>[^]*?<\/a>/gi))
       if (/class\s*=\s*["'][^"']*\btitle\b/i.test(m[1])) {
         const id = m[1].match(/biblionumber=(\d+)/)?.[1];
-        if (id) ids.push(id);
+        if (id) {
+          ids.push(id);
+          if (!text(m[0].replace(/^<a\b[^>]*>|<\/a>$/gi, "")))
+            missingTitleIds.add(id);
+          else missingTitleIds.delete(id);
+        }
       }
   } else if (family === "egranthalaya") {
     for (const m of html.matchAll(/<a\b([^>]*)>/gi))
@@ -198,6 +204,20 @@ export function verifyNativePage(
       }
   }
   ids = [...new Set(ids)];
+  if (
+    family === "koha" &&
+    records.some(
+      (r) =>
+        r.title === "" &&
+        (!missingTitleIds.has(String(r.recordId)) ||
+          !r.metadataWarnings?.includes("missing_title")),
+    )
+  )
+    throw failure(
+      "FIDELITY_MISMATCH",
+      "Untitled row was not demonstrated in the native result page",
+      502,
+    );
   if (!ids.length && records.length)
     return {
       verified: false,

@@ -47,7 +47,16 @@ function grouped(records, complete) {
   return [...result.values()];
 }
 export function rejectChallenge(html) {
-  if (/cf-chl-|challenge-platform|checking your browser|verify you are human|captcha|just a moment/i.test(html)) throw catalogError('Public catalog access challenge','CATALOG_PROVIDER_BLOCKED');
+  // A site-wide CAPTCHA loader or a book title mentioning CAPTCHA does not
+  // establish a denied search. Actual challenge pages/widgets still stop us.
+  const markup = String(html).replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '').replace(/<!--[\s\S]*?-->/g, '');
+  const gate = /^(?:just a moment(?:\.{3}|…)?|checking your browser(?:\b|$)|(?:please\s+)?verify (?:that )?you are (?:a )?human(?:\b|$)|attention required\b)/i;
+  const challengeHeading = [...markup.matchAll(/<(title|h1)\b[^>]*>([\s\S]*?)<\/\1\s*>/gi)].some(m => gate.test(text(m[2])));
+  const activeCaptcha = [...markup.matchAll(/<(?:input|textarea|iframe|div|span)\b([^>]*)>/gi)].some(m => {
+    const a = attributes(m[1]);
+    return [a.name, a.id, a.class].filter(Boolean).some(value => /(?:^|[\s_.\[\]-])(?:(?:g|h)[-_])?(?:re)?captcha(?:[\s_.\[\]-]|$)/i.test(value));
+  });
+  if (/cf-chl-|challenge-platform/i.test(html) || challengeHeading || activeCaptcha || gate.test(text(markup))) throw catalogError('Public catalog access challenge','CATALOG_PROVIDER_BLOCKED');
   if (/fatal error:|server error in ['"]|exception details:|<(?:title|h1)\b[^>]*>\s*(?:\d{3}\s*)?(?:access denied|unauthorized)/i.test(html)) throw catalogError('Catalog application error','CATALOG_UNAVAILABLE');
 }
 export function parseAcademicResponse(kind, payload, { query = '', isbn = null, native = false } = {}) {
