@@ -62,6 +62,6 @@ test('knowledge source directory is public and no-store, with policy holds disti
   assert.equal(response.status,200);assert.equal(response.headers['cache-control'],'no-store');assert.equal(response.headers['set-cookie'],undefined);
   assert.equal(response.body.sources.find(s=>s.id==='librivox').enabled,true);
   assert.equal(response.body.sources.find(s=>s.id==='wikipedia').enabled,false);
-  assert.equal(response.body.sources.some(s=>s.id==='gutenberg'),false);
+  assert.equal(response.body.sources.find(s=>s.id==='gutenberg').mode,'snapshot');
   assert.ok(!response.text.includes('synthetic-directory-secret'));
 });

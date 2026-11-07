@@ -16,7 +16,4 @@ describe('cross-source search',()=>{
  });
 });
 
-it('filters retired source options even if an old server response still advertises them',async()=>{
- const fetch=vi.spyOn(globalThis,'fetch').mockResolvedValue(Response.json({sources:[{...sources[0],id:'core'},{...sources[0],id:'librivox'}]}));
- try{expect((await knowledgeSources(new AbortController().signal)).map(s=>s.id)).toEqual(['librivox']);}finally{fetch.mockRestore();}
-});
+it('filters retired source options from an older directory response',async()=>{const fetch=vi.spyOn(globalThis,'fetch').mockResolvedValue(Response.json({sources:[{...sources[0],id:'core'},{...sources[0],id:'librivox'}]}));try{expect((await knowledgeSources(new AbortController().signal)).map(s=>s.id)).toEqual(['librivox']);}finally{fetch.mockRestore();}});

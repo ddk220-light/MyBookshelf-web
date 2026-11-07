@@ -13,8 +13,8 @@ test.describe('retired source removal',()=>{
   await page.goto('/app/search?scope=knowledge');
   await expect(page.getByRole('combobox',{name:'Source',exact:true})).toHaveText(/All connected sources \(1\)/);
   for(const id of Object.keys(retired))await expect(page.locator(`select option[value="${id}"]`)).toHaveCount(0);
-  await expect(page.getByRole('navigation',{name:'Search scope'}).getByRole('link',{name:'Free to read',exact:true})).toHaveCount(0);
-  for(const path of ['scope=knowledge&source=core&q=history','scope=free&q=history','scope=free&collection=children&q=rain','scope=free&collection=textbooks&q=calculus&source=open-textbook-library']){
+  await expect(page.getByRole('navigation',{name:'Search scope'}).getByRole('link',{name:'Free to read',exact:true})).toHaveCount(1);
+  for(const path of ['scope=knowledge&source=core&q=history','scope=free&collection=children&q=rain']){
    await page.goto('/app/search?'+path);await expect(page).toHaveURL(/scope=knowledge/);await expect(page.getByLabel('Search all knowledge',{exact:true})).toBeVisible();
   }
   expect(calls.length).toBeGreaterThan(0);expect(calls.every(c=>c.sourceIds?.length===1&&c.sourceIds[0]==='librivox'&&!c.collection)).toBe(true);

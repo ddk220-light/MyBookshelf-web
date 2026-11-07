@@ -55,7 +55,7 @@ test('service retires pilot discovery but preserves previously saved story resol
   const service=createContentService({children:make(),local:{search:()=>{throw Error('must not call local books');}}});
   await assert.rejects(service.search({query:'',collection:'children'}),e=>e.code==='CONTENT_DISABLED');
   assert.equal((await service.resolve({key:'fcd:v1:storyweaver:7777771'})).item.title,'Synthetic English pilot fixture');
-  await assert.rejects(service.search({query:'x',kinds:['book','article']}),e=>e.code==='CONTENT_DISABLED');
+  await assert.rejects(service.search({query:'x',kinds:['book','article']}),e=>e.code==='CONTENT_FILTER_UNSUPPORTED');
 });
 
 function accountManifest(){
@@ -87,7 +87,7 @@ test('retired stories cannot be discovered but saved record identity and reading
   const reviewed=readChildrenManifest();const reviewedNow=Math.max(...reviewed.records.map(record=>Date.parse(record.review.reviewedAt)));
   const service=createContentService({env:{CONTENT_DISCOVERY_ENABLED:'true',CONTENT_CHILDREN_ENABLED:'true',CONTENT_CURSOR_SECRET:'test-free-book-search-without-store-secret'},now:()=>reviewedNow,
     paperAdapter:{search:()=>{throw Error('Saved story lookup must not contact live papers');}}});
-  await assert.rejects(service.search({query:'குண்டு',access:'free',languages:['ta']}),e=>e.code==='CONTENT_DISABLED');
+  assert.equal((await service.search({query:'குண்டு',access:'free',languages:['ta']})).items.length,0);
   const result=await service.resolve({key:'fcd:v1:storyweaver:2252'});
   assert.equal(result.item.access,'free_account_required');
   assert.equal(result.item.contributors.find(c=>c.role==='translator').name,'Manickavasagam Deivanayagam');

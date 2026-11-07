@@ -20,7 +20,7 @@ const PROFILE='direct-live-v1';
 export function createContentService({env=process.env,local,paperAdapter=createEuropePmcAdapter(),
   adapters={},children,knowledge,now=()=>Date.now()}={}){
   local||=createLocalContentService({enabled:env.CONTENT_DISCOVERY_ENABLED==='true',cursorSecret:env.CONTENT_CURSOR_SECRET,now,
-    loadSnapshot:()=>readLocalSnapshots({includeChildren:env.CONTENT_CHILDREN_ENABLED==='true',now:now()})});
+    loadSnapshot:()=>readLocalSnapshots({includeChildren:env.CONTENT_CHILDREN_ENABLED==='true'&&!isContentSourceRetired('storyweaver'),now:now()})});
   const expanded=knowledge||createKnowledgeService({env,now});
   const providers={europepmc:paperAdapter,openalex:createOpenalexAdapter({apiKey:env.OPENALEX_API_KEY}),...adapters};
   const pilot=children||createChildrenService({enabled:env.CONTENT_DISCOVERY_ENABLED==='true'&&env.CONTENT_CHILDREN_ENABLED==='true',cursorSecret:env.CONTENT_CURSOR_SECRET,now});
@@ -89,13 +89,13 @@ export function createContentService({env=process.env,local,paperAdapter=createE
     locate(input){parseContentLocate(input);return localFreeSearchEnabled?local.locate(input):{items:[],policyRevision:CONTENT_POLICY_REVISION};},
     async search(input,{onSource=()=>{},signal}={}){
       const query=parseContentSearch(input);
-      if(query.sourceIds?.some(isContentSourceRetired)||query.collection==='children'&&!localFreeSearchEnabled||!localFreeSearchEnabled&&(!query.sourceIds?.length)&&(query.kinds.includes('book')||query.kinds.includes('learning_resource')))throw failure('CONTENT_DISABLED','This source is no longer connected. Search the connected sources in All knowledge.',503);
+      if(query.sourceIds?.some(isContentSourceRetired)||query.collection==='children'&&isContentSourceRetired('storyweaver')||!localFreeSearchEnabled&&(!query.sourceIds?.length)&&(query.kinds.includes('book')||query.kinds.includes('learning_resource')))throw failure('CONTENT_DISABLED','This source is no longer connected. Search the connected sources in All knowledge.',503);
       if(query.sourceIds?.some(id=>KNOWLEDGE_SOURCES[id]))return expanded.search(input,{onSource,signal});
       if(query.collection==='children')return pilot.search(input);
       if(query.kinds.includes('book')||query.kinds.includes('learning_resource')){
         if(query.kinds.some(kind=>!['book','learning_resource'].includes(kind)))throw failure('CONTENT_FILTER_UNSUPPORTED','Choose free books or paper kinds for this search.',400);
         if(query.sourceIds?.some(id=>!LOCAL_CONTENT_SOURCES.includes(id))||query.retrySource)throw failure('CONTENT_FILTER_UNSUPPORTED','Paper source filters do not apply to book search.',400);
-        return local.search(input);
+        const page=local.search(input);return {...page,sources:page.sources.filter(s=>!isContentSourceRetired(s.id))};
       }
       ready();const id=selected(query);
       if(!enabled(id))throw failure('CONTENT_DISABLED','This paper source is not connected here. Choose another source or open its website.',503,rows(id,query));

@@ -113,7 +113,7 @@ it('disabled paper search offers free books with the same query instead of an ou
     message:'Paper search is not connected yet.',sources:[{id:'arxiv',status:'disabled',returned:0}]}));
   mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=Mathematics');
   await screen.findByRole('heading',{name:'Paper search isn’t enabled yet'});
-  expect(screen.getByRole('link',{name:'Search all knowledge instead'})).toHaveAttribute('href','/app/search?scope=knowledge&q=Mathematics');
+  expect(screen.getByRole('link',{name:'Search free books instead'})).toHaveAttribute('href','/app/search?scope=free&q=Mathematics');
   expect(screen.queryByRole('button',{name:'Try again'})).not.toBeInTheDocument();
   expect(screen.queryByText('Free-reading sources aren’t answering')).not.toBeInTheDocument();
 });

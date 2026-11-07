@@ -85,7 +85,7 @@ test.describe('free-content discovery',()=>{
     await expect(page.getByRole('button',{name:'Sources',exact:true})).toBeVisible();
     expect(await page.locator('#main-content').evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
   });
-  test('previously saved stories retain their source condition and shelf compatibility',async({page})=>{
+  test('saved stories keep source reading conditions after discovery retirement',async({page})=>{
     const story={...fixture,key:'fcd:v1:storyweaver:7777778',kind:'book',title:'Synthetic free-account browser story',access:'free_account_required',
       locations:[{...fixture.locations[0],id:'story',host:'StoryWeaver',access:'free_account_required',landingUrl:'https://storyweaver.org.in/en/stories/7777778-synthetic-fixture'}],
       readingActions:[{locationId:'story',label:'Read at StoryWeaver',url:'https://storyweaver.org.in/en/stories/7777778-synthetic-fixture',requiresAccount:true,downloads:[]}]};
