@@ -1,0 +1,142 @@
+
+        $(document).ready(function() {
+            $('#datatable-responsive').DataTable({
+         lengthMenu : [[50, 500, 5000, -1], [50, 500, 5000, "All"]],
+              dom: 'Bfrtip',
+              iDisplayLength: 25,
+              buttons: [
+                 
+                  'excelHtml5',
+                  'csvHtml5',
+                
+                  'pageLength'
+              ],
+             
+                
+"ajax": "https://hdjc.autolib.org/index.php/Booksearch/getallbook",
+"order":[],
+columnDefs:[
+                {
+	                "target":[2,3,4,5,6,7,8,9,10,11],
+	                 "orderable":true,
+	                
+                }],
+
+
+ initComplete: function () {
+                   
+                        var notApplyFilteronColumn = [];
+                        var inputFilteronColumn =[2,3,4,5,6,7,8,9,10,11];
+                        var showFilterBox ='afterHeading'; // beforeHeading, afterHeading
+                       // $('.gtp-dt-filter-row').remove();
+                        var theadSecondRow='<tr class="gtp-dt-filter-row">';
+                        $(this).find('thead tr th').each(function(index){
+	                            theadSecondRow +='<td class="gtp-dt-select-filter-'+ index +'"></td>';
+                        });
+                        theadSecondRow +='</tr>';
+                        if(showFilterBox ==='beforeHeading'){
+	                            $(this).find('thead').prepend(theadSecondRow);
+                        } else if(showFilterBox === 'afterHeading'){
+	                            $(theadSecondRow).insertAfter($(this).find('thead tr'));
+                        } 
+                     
+                     
+                     
+            // Apply the search
+            this.api().columns().every( function (index) {
+                 var column =this;
+                
+                if(inputFilteronColumn.indexOf(index)>=0 && notApplyFilteronColumn.indexOf(index) <0) {
+                     $('td.gtp-dt-select-filter-'+index).html('<input type="text" placeholder="Search" size=10 class="gtp-dt-input-filter form-control">');
+                     $('td input.gtp-dt-input-filter').on('keyup change clear', function() {
+                      
+                         if(column.search() !== this.value) {
+                        		column
+                        		     .column( $(this).parent().index()+':visible' )
+	                        		.search(this.value)
+		                        	.draw();
+                        	}
+                     });
+                }    
+                
+            });
+        }
+});
+    
+    $('#datatable-responsive1').DataTable( {
+              dom: 'Bfrtip',
+              iDisplayLength: 15,
+              buttons: [
+                  'copyHtml5',
+                  'excelHtml5',
+                  'csvHtml5',
+                  'pdfHtml5',
+                  'pageLength'
+              ],
+              search: true
+          });
+    
+        });
+   
+    
+  $("#librarycardno").blur(function(){
+      var libcardno=$(this).val();
+      if(libcardno){
+       $.ajax({
+                data :{libcardno:libcardno},
+                url  :"https://hdjc.autolib.org/index.php/booksearch/checkcard", 
+                type :'POST',
+                success: function(data){
+                 if(data!="Card found")
+                 {
+                    alert(data);
+                    $("#librarycardno").val('');
+                 }
+                }
+                });
+      }
+      else
+      {
+          alert('Enter Libraryr card No.');
+      }
+  })
+  
+  function mulrequest(id=null)
+  {
+       var card=$("#library").val();
+          if(card)
+          {
+          card=card+','+id;
+          }
+          else
+          {
+              card=id;
+          }
+          $("#library").val(card);
+      
+  }
+  
+  $("#mulreq").click(function(){
+      var libcardno=$("#librarycardno").val();
+      var email=$("#txtemail").val();
+      var sess=$("#txtsession").val();
+      var barcode=$("#library").val();
+      if(libcardno){
+       $.ajax({
+                data :{libcardno:libcardno, email:email,sess:sess,barcode:barcode},
+                url  :"https://hdjc.autolib.org/index.php/booksearch/bookrequest", 
+                type :'POST',
+                success: function(data){
+                 if(data!="Card found")
+                 {
+                    alert(data);
+                    $("#librarycardno").val('');
+                 }
+                }
+                });
+      }
+      else
+      {
+          alert('Enter Libraryr card No.');
+      }
+  });

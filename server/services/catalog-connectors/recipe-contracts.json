@@ -1,0 +1,55 @@
+{
+  "libman": {
+    "version": "libman-opac-v3-20261107",
+    "reviewedAt": "2026-11-07",
+    "clientUrl": "https://libcloud.mastersofterp.in/Scripts/OPAC_V3/OpacSearch.js",
+    "clientSha256": "2dbee086477a3bc74b0dd846ea3f554d9fe84e44394ecf8d2ce5e454c8ea9f14",
+    "evidenceRoot": "docs/research/india-library-audit/revalidation/20261107/recipe-evidence",
+    "searchFunction": "SearchBooks",
+    "displayFunction": "LoadSearchedBookResult",
+    "request": {
+      "method": "GET",
+      "path": "/OPAC_V3/GetBookSearchData/",
+      "fields": [
+        "SearchCriteria",
+        "SearchText",
+        "Libraryid",
+        "SERIESCODE",
+        "BOOKCATEGORY"
+      ]
+    },
+    "field": "TITLE",
+    "recordId": "TitleNo",
+    "title": "Title1",
+    "order": "source array order through $.each(data)",
+    "count": "data.length; 0 means recognized empty",
+    "paging": "all rows in scrollable div; no client filtering, sort or paging",
+    "materialScope": "Books tab, separate from Journal/Dissertation/Ebook APIs"
+  },
+  "srms": {
+    "version": "srms-opac-title-20261107",
+    "reviewedAt": "2026-11-07",
+    "clientUrl": "https://myportal.srms.ac.in/Library/OPACPanel/OPAC1",
+    "clientSha256": "afdf5752d5fa1355fa854d1972fc3104e47afe87ef036f859d472b4e7e2fd2de",
+    "originalClientBodySha256": "590979e40ed1edd4fb272399a2953a73fd6bacc22eb1dc6ef726690f5db67ba1",
+    "institutionSelectorBodySha256": "07635c3443c07d7c64c9866c67167b33a09f0d70da5312c00a4d214ed563b373",
+    "sourceRoot": "docs/research/india-library-audit/revalidation/20261107",
+    "searchFunction": "searchbookbytitle",
+    "field": "Title radio control (not the nine-request ALL control)",
+    "request": {
+      "method": "POST",
+      "path": "/Library/OPACPanel/searchbookbytitle",
+      "fields": ["searchvalue", "colg"]
+    },
+    "display": ["title", "author_name"],
+    "recordId": "No native record ID supplied; deterministic per-library bibliographic fingerprint, not an assigned API ID",
+    "order": "Generated serial number ascending; source array order",
+    "paging": {
+      "mode": "client",
+      "pageSize": 10,
+      "basis": "DataTables default with no local order/pageLength override in the captured title handler"
+    },
+    "materialScope": "Public OPAC Books found table and book-detail modal; native title-only control",
+    "scope": "Public college selector maps each configured colg code to the exact institution name"
+  }
+}

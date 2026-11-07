@@ -1,6 +1,7 @@
 import http from 'node:http';
 import https from 'node:https';
 import { constants as cryptoConstants } from 'node:crypto';
+import { connectorContext } from '../catalog-connectors/context.js';
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 const CACHE_TTL_MS = 60_000;
@@ -87,6 +88,7 @@ function setCachedValue(key, value, ttlMs) {
 }
 
 export async function cachedTask(key, task, { ttlMs = CACHE_TTL_MS, deadlineAt, shouldCache = () => true } = {}) {
+  if (connectorContext.getStore()) return task();
   const hit = cachedValue(key);
   if (hit !== undefined) return hit;
   if (inFlight.has(key)) return raceDeadline(inFlight.get(key), deadlineAt);
@@ -182,6 +184,7 @@ function retryableError(error) {
 // Retry only idempotent upstream reads by default. The original deadline is
 // shared by every attempt, so retries cannot turn into an unbounded wait.
 export async function request(url, options = {}) {
+  if (connectorContext.getStore()) return connectorContext.getStore().request(url, options);
   const configuredRetries = options.retries;
   const method = String(options.method || 'GET').toUpperCase();
   const retries = Number.isInteger(configuredRetries)

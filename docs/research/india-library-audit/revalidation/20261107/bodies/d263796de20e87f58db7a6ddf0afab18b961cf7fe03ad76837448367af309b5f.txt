@@ -1,0 +1,1561 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: errorpage.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title
+    >An error has occurred &rsaquo; Central Library, IIT Bhubaneswar catalog</title
+>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" />
+<!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="9afc9534cff49062c86e9c329830339238028582,3cf7611272e9ee7f93f74bb7cde45c805629b97d,1794060916" />
+
+
+<link rel="shortcut icon" href="https://old.iitbbs.ac.in/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="https://old.iitbbs.ac.in/favicon.ico" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/opac_25.1106000.css">
+
+
+
+
+    <link media="print" rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/print_25.1106000.css">
+
+
+    <!-- prettier-ignore-start -->
+    <style>/* KOHA OPAC NAVIGATION BAR */
+
+.navbar,
+.navbar-expand,
+.navbar-nav {
+    background-color: #001429 !important; 
+}
+
+.navbar a,
+.navbar-nav .nav-link,
+.navbar-nav > li > a {
+    color: #1377a7 !important;
+}
+
+.navbar a:hover,
+.navbar a:focus,
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+    color: #008000 !important;
+    background-color: transparent !important;
+}
+
+/* Lists */
+#listsmenu,
+#listsmenu a,
+#listsmenu .listslabel {
+    color: #ffffff !important;
+}
+
+/* Logged-in user */
+#user-menu .userlabel,
+#user-menu .fa-user,
+#user-menu::after,
+#user-menu.dropdown-toggle::after {
+    color: #ffffff !important;
+    border-top-color: #ffffff !important;
+}
+
+#loggedinuser-menu a[href*="opac-user.pl"],
+#loggedinuser-menu a[href*="opac-search-history.pl"] {
+    color: #1377a7 !important;
+}
+
+/* Login text + icon */
+#members .login-link,
+#members .login-link .userlabel,
+#members .login-link i {
+    color: #ffffff !important;
+}
+
+/* Search history */
+#members .search_history,
+#members .search_history a,
+#members .search_history,
+#members .search_history i {
+    color: #ffffff !important;
+}
+
+#opacheader {
+    padding: 8px 12px 0;
+    background: linear-gradient(to bottom, #ffffff, #f4f8fb);
+    border-bottom: 2px solid #003366;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+#opacheader ul {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+#opacheader li {
+    display: inline-block;
+    margin: 0 3px;
+}
+
+#opacheader li a {
+    display: inline-block;
+    padding: 9px 18px;
+    color: #003366 !important;
+    background: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid #d2dee8;
+    border-bottom: 1px solid #005b96;
+    border-radius: 7px 7px 0 0;
+    transition: 0.3s ease;
+}
+
+/* Hover */
+#opacheader li a:hover {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #003366, #0077a8);
+    border-color: #003366;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(0, 51, 102, 0.25);
+}
+
+/* Active tab */
+#opacheader li.active a,
+#opacheader li a.active {
+    color: #ffffff !important;
+    background: #003366;
+    border-color: #003366;
+    font-weight: 600;
+}
+
+/* Links */
+
+a,
+a:hover,
+a:focus {
+    color: #1377a7 !important;
+}
+
+/* Navigation Bar */
+
+.navbar-inverse .navbar-inner {
+    background: #1377a7;
+    border-color: #1377a7;
+}
+
+/* Navigation Links */
+
+.navbar-inverse .brand,
+.navbar-inverse .nav > li > a,
+#members a {
+    color: #1377a7 !important;
+}
+
+/* Search Form */
+
+#opac-main-search,
+.mastheadsearch {
+    background: #1377a7;
+}
+
+.mastheadsearch label {
+    color: #fff;
+}
+
+#searchform select {
+    display: inline-block;
+    width: auto;
+    background: #fff;
+    color: #333;
+    border: 1px solid #cfd8dc;
+    transition: .2s;
+}
+
+#searchform select:hover {
+    border-color: #1565c0;
+}
+
+#searchform select:focus {
+    border-color: #1565c0;
+    box-shadow: 0 0 0 .2rem rgba(21,101,192,.2);
+}
+
+/* Buttons */
+
+.btn-primary {
+    color: #000;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+    background: #F2F2EF !important;
+    background-image: none !important;
+}
+
+/* Miscellaneous */
+
+.no-image {
+    display: none !important;
+}
+
+.navbar-inverse .divider-vertical {
+    border-left-color: #1377a7;
+    border-right-color: #1377a7;
+}
+
+body {
+    background: #fff;
+    font-family: sans-serif;
+    font-size: 14px;
+}
+
+/* Library Hours */
+
+.library-hours {
+    max-width: 700px;
+    margin: 20px auto;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    border: 1px solid #d9d9d9;
+}
+
+.library-hours table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.library-hours .heading{
+    background:linear-gradient(90deg,#005b96,#0086b3);
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    text-align:center;
+    padding:12px;
+}
+
+.library-hours td{
+    padding:12px 15px;
+    border-bottom:1px solid #e6e6e6;
+    font-size:15px;
+}
+
+.library-hours tr:nth-child(even){
+    background:#f8fbfd;
+}
+
+.library-hours tr:hover{
+    background:#eef8ff;
+    transition:0.3s;
+}
+
+.library-hours .day{
+    font-weight:bold;
+    color:#003366;
+    width:40%;
+}
+
+.library-hours .time{
+    text-align:center;
+    color:#444;
+    font-weight:600;
+}
+
+.library-hours .section{
+    background:#0077a3;
+    color:#fff;
+    font-size:17px;
+    font-weight:bold;
+    text-align:center;
+}
+
+.library-hours .note{
+    color:#d40000;
+    font-weight:bold;
+}
+
+.library-hours .icon{
+    font-size:18px;
+    margin-right:6px;
+}
+
+/* Library Location Google Map */
+.map-card{
+    max-width:700px;
+    margin:20px auto;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#ffffff;
+    border:1px solid #d6e4ef;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
+}
+
+.map-header{
+    background:linear-gradient(90deg,#005b96,#0086b3);
+    color:#fff;
+    text-align:center;
+    padding:14px;
+    font-size:20px;
+    font-weight:bold;
+    letter-spacing:.5px;
+}
+
+.map-body{
+    padding:15px;
+    background:#f8fbfd;
+}
+
+.map-body p{
+    margin:0 0 12px;
+    text-align:center;
+    color:#444;
+    font-size:15px;
+}
+
+.map-frame{
+    border:4px solid #ffffff;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+.map-frame iframe{
+    width:100%;
+    height:300px;
+    border:0;
+}
+
+.map-footer{
+    text-align:center;
+    padding:15px;
+    background:#ffffff;
+}
+
+.map-btn{
+    display:inline-block;
+    background:#0086b3;
+    color:#ffffff !important;
+    text-decoration:none;
+    padding:10px 22px;
+    border-radius:30px;
+    font-size:15px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.map-btn:hover{
+    background:#005b96;
+    color:#ffffff !important;
+    text-decoration:none;
+}
+
+@media (max-width:768px){
+    .map-header{
+        font-size:18px;
+    }
+
+    .map-frame iframe{
+        height:250px;
+    }
+}
+#login {
+    display: none;
+}</style>
+    <!-- prettier-ignore-end -->
+
+
+
+
+
+[script omitted]
+
+[script omitted]
+[script omitted]
+
+<link type="text/css" href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_25.1106000.css" rel="stylesheet">
+<link rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/brands.min_25.1106000.css" type="text/css">
+<link rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/solid.min_25.1106000.css" type="text/css">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body id="error404" class="error">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<!-- prettier-ignore-start -->
+<!-- closed in opac-bottom.inc -->
+<div id="wrapper">
+<!-- prettier-ignore-end -->
+<header id="header-region" class="noprint">
+    <nav class="navbar navbar-expand">
+        <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    Central Library, IIT Bhubaneswar
+                
+            </a>
+        </div>
+        
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                <li role="presentation" class="divider-vertical"></li>
+                
+                    
+                        <li class="nav-item dropdown">
+                            <a
+                                href="/cgi-bin/koha/opac-shelves.pl"
+                                title="Show lists"
+                                class="nav-link dropdown-toggle"
+                                id="listsmenu"
+                                data-bs-toggle="dropdown"
+                                role="button"
+                                aria-label="Show dropdown with detailed list information"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                ><i class="fa fa-list fa-fw fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                            </a>
+                            <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="0" role="menuitem"><strong>Public lists</strong></a>
+                                    
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=149&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Newly Arrived Books - 06-11-2026</a
+                                        >
+                                        
+                                        
+                                    
+                                    
+                                
+                                
+                                    <div class="dropdown-divider"></div>
+                                
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="0" role="menuitem"><strong>Your lists</strong></a>
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="0" role="menuitem">Log in to create your own lists</a>
+                                    
+                                
+                            </div>
+                            <!-- / .dropdown-menu -->
+                        </li>
+                        <!-- / .nav-item.dropdown -->
+                    
+                
+                
+            </ul>
+            <!-- / .navbar-nav -->
+        
+        
+            
+            
+            <ul id="members" class="navbar-nav">
+                <li class="nav-item dropdown dropdown-menu-end">
+                    
+                        
+                            
+                                <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger" aria-label="Log in to your account"
+                                    ><i class="fa fa-user fa-fw fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a
+                                >
+                            
+                        
+                    
+
+                    
+                </li>
+                <!-- Cookie consent button for non logged-in users -->
+                
+                    <li role="presentation" style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                    <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                        <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                            <i class="fa fa-cookie-bite fa-fw fa-icon-black" aria-hidden="true"></i>
+                            <span class="cookieconsentlabel">Your cookies</span>
+                        </a>
+                    </li>
+                
+                
+                    
+                        <li role="presentation" class="divider-vertical"></li>
+                        <li class="nav-item search_history">
+                            <a class="nav-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">
+                                <i class="fa fa-calendar-days fa-fw fa-icon-black" aria-hidden="true"></i>
+                                <span class="search_history_label">Search history</span>
+                            </a>
+                        </li>
+                    
+                
+            </ul>
+        
+    </nav>
+    <!-- /navbar -->
+
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opacheader">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><a href="https://koha.iitbbs.ac.in/"><img src="/opac-tmpl/bootstrap/images/opac.svg" /></a>
+<ul>
+<li><a href="https://koha.iitbbs.ac.in/">Catalogue Home</a></li>
+<li><a href="https://library.iitbbs.ac.in/" target="_blank" rel="noopener">Library Website</a></li>
+<li><a href="https://library.iitbbs.ac.in/online-e-resources.php" target="_blank" rel="noopener">E-Resources</a></li>
+<li><a href="https://library.iitbbs.ac.in/e-resources-a2z.php" target="_blank" rel="noopener">E-Journals</a></li>
+<li><a href="https://library.iitbbs.ac.in/publications.php" target="_blank" rel="noopener">Research Publications</a></li>
+<li><a href="https://library.iitbbs.ac.in/phd-thesis.php" target="_blank" rel="noopener">PhD Theses</a></li>
+<li><a href="https://idr.iitbbs.ac.in/" target="_blank" rel="noopener">Digital Repository</a></li>
+<li><a href="https://iitbbs.mapmyaccess.com/" target="_blank" title="MapMyAccess" rel="noopener">MapMyAccess</a></li>
+</ul></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+</header>
+<!-- / header-region -->
+
+
+    <div class="container-fluid">
+        
+            <div class="row">
+                <div class="col">
+                    <div id="opac-main-search" class="mastheadsearch">
+                        
+                            <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" role="search">
+                                <div class="row gx-2">
+                                    <div class="col-sm-auto order-2 order-sm-2">
+                                        <label for="masthead_search" class="visually-hidden">Search the catalog by:</label>
+                                        <select name="idx" id="masthead_search" class="form-select">
+                                            
+                                                <option value="" data-placeholder="Search the catalog">Library catalog</option>
+                                            
+                                            
+                                                <option value="ti" data-placeholder="Search the catalog by title">Title</option>
+                                            
+                                            
+                                                <option value="au" data-placeholder="Search the catalog by author">Author</option>
+                                            
+                                            
+                                                <option value="su" data-placeholder="Search the catalog by subject">Subject</option>
+                                            
+                                            
+                                                <option value="nb" data-placeholder="Search the catalog by ISBN">ISBN</option>
+                                            
+                                            
+                                                <option value="ns" data-placeholder="Search the catalog by ISSN">ISSN</option>
+                                            
+                                            
+                                                <option value="se" data-placeholder="Search the catalog by series">Series</option>
+                                            
+                                            
+                                                
+                                                    <option value="callnum" data-placeholder="Search the catalog by call number">Call number</option>
+                                                
+                                            
+                                        </select>
+                                    </div>
+                                    <!-- /.col-sm-auto -->
+
+                                    <div class="col order-4 order-sm-3">
+                                        
+                                            <label for="translControl1" class="visually-hidden">Search the catalog</label>
+                                            <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" placeholder="Search the catalog" /><span id="translControl"></span>
+                                        
+                                    </div>
+                                    <!-- /.col -->
+
+                                    
+                                        
+                                            
+                                        
+                                    
+
+                                    <div class="order-5 col-sm-auto">
+                                        <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.form-row -->
+                                <input type="hidden" name="weight_search" value="1" />
+                            </form>
+                         </div
+                    ><!-- /#opac-main-search -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        
+
+        <div class="row">
+            <ul class="nav" id="moresearches">
+                <li class="nav-item">
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                </li>
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-course-reserves.pl">Course reserves</a>
+                    </li>
+                
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                    </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-topissues.pl">Most popular</a>
+                    </li>
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Contact</span>
+                            
+                        </a>
+                    </li>
+                
+                
+    
+
+            </ul>
+            <!-- /.nav#moresearches -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="modalLoginLabel">Log in to your account</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    [form state omitted]
+
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            
+                            
+                            [form state omitted]
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    
+    <label for="muserid">Card number or username:</label>
+[form state omitted] <label for="mpassword">Password:</label
+                                    >[form state omitted]
+                                    <fieldset class="action">
+                                        [form state omitted]
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                
+                                    <div id="forgotpassword-modal" class="forgotpassword">
+                                        <p><a href="/cgi-bin/koha/opac-password-recovery.pl">Forgot your password?</a></p>
+                                    </div>
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form>
+                <!-- /#auth -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /#modalAuth  -->
+
+
+
+
+
+<main class="main">
+    
+    <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumb">
+            
+            
+                
+    
+        <li class="breadcrumb-item"> 
+                    <a href="/cgi-bin/koha/opac-main.pl" title="Home">Home</a>
+                 </li>
+    
+
+                <li class="breadcrumb-item active">
+            <a aria-current="page" aria-disabled="true" tabindex="-1"> 
+            <span>An error has occurred</span>
+         </a>
+        </li>
+            
+        </ol>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            
+            
+                
+                <div class="col-lg-2">
+                    <div id="navigation"> 
+
+
+
+
+
+
+    
+    
+        <div id="OpacNavBottom">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div class="map-card">
+<div class="map-header">📍 Central Library</div>
+<div class="map-body">
+<div class="map-frame"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.662398033572!2d85.66880741401347!3d20.148127386481924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a19ad5bb3fe14d1%3A0x8c6a9a6e1343c108!2sCentral%20Library%2C%20IIT%20Bhubaneswar!5e0!3m2!1sen!2sin!4v1569493989828!5m2!1sen!2sin" allowfullscreen="" loading="lazy">
+            </iframe></div>
+</div>
+<div class="map-footer"><a class="map-btn" href="https://maps.google.com/?q=Central+Library+IIT+Bhubaneswar" target="_blank" rel="noopener"> 🧭 Get Directions </a></div>
+</div></div>
+                </div>
+            
+        </div>
+    
+
+
+ </div>
+                </div>
+            
+
+            <div class="col-10 order-first order-md-first order-lg-2">
+                <div id="errormsg404">
+                    <h1>Sorry, the requested page is not available</h1>
+                    <h2>Error 404</h2>
+                    <p><strong>This message can have the following reason(s):</strong></p>
+                    <ul>
+                        
+
+                        
+
+                        
+
+                        
+
+                        
+                            <li>You made use of an external link to a catalog item that is no longer available.</li>
+                            <li>You followed an outdated link e.g. from a search engine or a bookmark.</li>
+                            <li>You tried to access a page that needs authentication.</li>
+                            <li>An internal link in our catalog home page is broken and the page does not exist.</li>
+                        
+                        
+                    </ul>
+                    <h2>What's next?</h2>
+                    <ul>
+                        
+                        <li>You can use the menu and links at the top of the page</li>
+                        <li>You can search our catalog using the search form at the top of this page.</li>
+                        <li><a href="/cgi-bin/koha/opac-main.pl">Return to the catalog home page.</a></li>
+                    </ul>
+                    <h2>Report issues and broken links</h2>
+                    <ul>
+                        <li>To report this error, please contact the Koha Administrator. <a href="mailto:circulation.library%40iitbbs.ac.in">Send email</a>.</li>
+                    </ul>
+                </div>
+                <!-- / #errormsg404 -->
+            </div>
+            <!-- / .col-lg10/12 -->
+        </div>
+        <!-- / .row -->
+    </div>
+    <!-- / .container-fluid -->
+</main>
+<!-- / .main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opaccredits">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><style>
+/*=====================================================
+        IIT BHUBANESWAR KOHA OPAC FOOTER
+=====================================================*/
+.opac-footer{
+    margin-top:20px;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f8fbfd;
+    border:1px solid #d9e4ec;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,91,150,.15);
+}
+
+/* Statistics Header */
+
+.stats-header{
+    background:linear-gradient(90deg,#005b96,#0086b3);
+    color:#ffffff;
+    text-align:center;
+    padding:9px;
+    font-size:20px;
+    font-weight:bold;
+    letter-spacing:.5px;
+}
+
+/* Statistics */
+
+.stats-row{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:15px;
+    padding:20px;
+    background:#f8fbfd;
+}
+
+.stat-box{
+    width:160px;
+    background:#ffffff;
+    border:1px solid #d9e4ec;
+    border-top:4px solid #0086b3;
+    border-bottom:4px solid #0086b3;
+    border-radius:10px;
+    text-align:center;
+    padding:16px;
+    transition:.3s;
+}
+
+.stat-box:hover{
+    transform:translateY(-5px);
+    box-shadow:0 8px 18px rgba(0,91,150,.18);
+}
+
+.stat-icon{
+    font-size:32px;
+    margin-bottom:8px;
+}
+
+.stat-number{
+    font-size:24px;
+    font-weight:bold;
+    color:#005b96;
+}
+
+.stat-title{
+    color:#555;
+    font-size:14px;
+}
+
+/* Contact */
+
+.footer-contact{
+    background:#eaf7ff;
+    margin:0 18px 18px;
+    padding:12px 18px;
+    border-radius:10px;
+    border-left:5px solid #0086b3;
+    border-right:5px solid #0086b3;
+    text-align:center;
+    color:#333;
+    font-size:14px;
+    line-height:1.8;
+}
+
+.footer-contact strong{
+    color:#005b96;
+}
+
+.footer-contact a{
+    color:#005b96;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.footer-contact a:hover{
+    color:#0086b3;
+    text-decoration:underline;
+}
+
+/* Bottom */
+
+.footer-bottom{
+    background:#005b96;
+    color:#ffffff;
+    text-align:center;
+    padding:12px;
+    font-size:14px;
+}
+
+.footer-bottom strong{
+    color:#ffffff;
+}
+
+@media(max-width:768px){
+
+.stats-row{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.stat-box{
+    width:auto;
+}
+
+.footer-contact{
+    font-size:14px;
+    padding:10px;
+}
+
+}
+</style>
+<footer class="opac-footer">
+<div class="stats-header">📊 Library Statistics</div>
+<div class="stats-row">
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">📚</div>
+<div class="stat-number" data-target="28000">0</div>
+</div>
+<div class="stat-title">Books</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">💻</div>
+<div class="stat-number" data-target="65000">0</div>
+</div>
+<div class="stat-title">E-Books</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">📰</div>
+<div class="stat-number" data-target="16000">0</div>
+</div>
+<div class="stat-title">E-Journals</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">🎓</div>
+<div class="stat-number" data-target="428">0</div>
+</div>
+<div class="stat-title">Theses</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">📖</div>
+<div class="stat-number" data-target="680000">0</div>
+</div>
+<div class="stat-title">E-Theses &amp; Dissertations</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">📰</div>
+<div class="stat-number" data-target="7000">0</div>
+</div>
+<div class="stat-title">E-Magazines &amp; Newspapers</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">🗄️</div>
+<div class="stat-number" data-target="60">0</div>
+</div>
+<div class="stat-title">E-Databases</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">👥</div>
+<div class="stat-number" data-target="3800">0</div>
+</div>
+<div class="stat-title">Users</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">📚</div>
+<div class="stat-number" data-target="8000">0</div>
+</div>
+<div class="stat-title">Publications</div>
+</div>
+</div>
+[script omitted]
+<div class="footer-contact">☎ <strong>Phone:</strong> <a href="tel:+916747138750">+91-674-713-8750</a> &nbsp;&nbsp;|&nbsp;&nbsp; 📖 <strong>Circulation Desk E-mail:</strong> <a href="mailto:[email omitted]"> [email omitted] </a> (Circulation Related Queries) <br />✉ <strong>Help Desk E-mail:</strong> <a href="mailto:[email omitted]"> [email omitted] </a> (General Queries)</div>
+<div class="footer-bottom"><strong>Maintained by</strong> Central Library, IIT Bhubaneswar &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Powered by</strong> Koha Integrated Library System</div>
+</footer><!--Start of Tawk.to Script-->
+[script omitted]
+<!--End of Tawk.to Script--></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+    <!-- prettier-ignore-start -->
+    </div> <!-- / #wrapper in masthead.inc -->
+    <!-- prettier-ignore-end -->
+
+    
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+
+    [script omitted]
+
+[script omitted]
+
+    [script omitted]
+
+
+[script omitted]
+
+    [script omitted]
+
+
+
+
+    [script omitted]
+
+
+
+
+
+
+[script omitted]
+[script omitted]
+[script omitted]
+
+
+
+
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+<!-- js-date-format.inc -->
+[script omitted]
+<!-- / js-date-format.inc -->
+
+
+[script omitted]
+
+
+
+
+    [script omitted]
+
+
+
+
+
+
+</body>
+<!-- prettier-ignore-start -->
+</html>
+<!-- prettier-ignore-end -->
+
+

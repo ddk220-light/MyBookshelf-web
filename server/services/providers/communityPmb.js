@@ -28,11 +28,11 @@ function rowFields(html) {
   }
   return fields;
 }
-export function parsePmbSearch(html, library) {
+export function parsePmbSearch(html, library, {native=false}={}) {
   assertView(html, library);
   const records = [];
   const blocks = html.split(/(?=<div\b[^>]*id=["']record_container_\d+["'])/i).slice(1);
-  for (const block of blocks.slice(0, 15)) {
+  for (const block of native?blocks:blocks.slice(0, 15)) {
     const id = block.match(/id=["']record_container_(\d+)["']/i)?.[1];
     const title = text(block.match(/<span\b[^>]*class=["'][^"']*tit1_notCourte[^"']*["'][^>]*>([\s\S]*?)<\/span>/i)?.[1]);
     const authorBlock = block.match(/<span\b[^>]*class=["'][^"']*auteur_notCourte[^"']*["'][^>]*>([\s\S]*?)<\/span>/i)?.[1] || '';
@@ -41,7 +41,7 @@ export function parsePmbSearch(html, library) {
   }
   if (!records.length && !/aucun r[ée]sultat|aucune notice|0\s+(?:notice|r[ée]sultat)|no results/i.test(text(html))) throw catalogError('Unrecognized branch search results');
   const count = text(html.match(/<span\b[^>]*id=["']searchResult-nbResults["'][^>]*>([\s\S]*?)<\/span>/i)?.[1]);
-  const distinct = distinctRecords(records);
+  const distinct = native?records:distinctRecords(records);
   return markSearchComplete(distinct, /^\d+$/.test(count) && Number(count) === records.length
     && records.length === blocks.length && distinct.length === records.length);
 }
@@ -75,7 +75,7 @@ export function parsePmbRecord(html, library, id) {
     }
     if (!scopeLabels(library).includes(afLabel(cells.localisation))) continue;
     const status = normalized(cells['disponibilité'] || cells.disponibilite);
-    owned.push({ callNumber: cells.cote || null,
+    owned.push({ callNumber: cells.cote || null, material:cells.support || null,
       status: /sorti jusqu|en pret|emprunte/.test(status) ? 'unavailable'
         : /disponible/.test(status) && !/indisponible|non disponible|consultation sur place/.test(status) ? 'available' : 'unknown' });
   }
@@ -91,9 +91,12 @@ export function parsePmbRecord(html, library, id) {
   // No network-wide counts: only the exact selected branch's visible copies.
   if (complete) obs.totalCopies = owned.length;
   if (complete && owned.every(r => r.status !== 'unknown')) obs.availableCopies = owned.filter(r => r.status === 'available').length;
-  return { recordId: id, title, authors, isbn: firstIsbn(fields.record_code), catalogUrl, observation: obs };
+  const isBook=owned.every(row=>normalized(row.material)==='livre');
+  return { recordId: id, title, authors, isbn: firstIsbn(fields.record_code), catalogUrl, observation: obs,
+    ...(isBook?{materialType:'Book',materialTypeProof:'selected_branch_copy_support_livre'}:{}) };
 }
-export async function searchPmb(library, query, deadlineAt) {
+export async function searchPmb(library, query, deadlineAt, {native=false}={}) {
+  if(native&&boundedQuery(query)!==query)throw catalogError('Literal input exceeds the reviewed form profile','UNSUPPORTED_PROFILE');
   const session = new CommunitySession(ORIGIN, deadlineAt), home = await session.read(viewUrl(library));
   assertView(home.text, library);
   const form = [...home.text.matchAll(/<form\b([^>]*)>([\s\S]*?)<\/form>/gi)].find(m => attributes(m[1]).name === 'search_input');
@@ -103,7 +106,7 @@ export async function searchPmb(library, query, deadlineAt) {
   const url = new URL(attributes(form[1]).action, ORIGIN);
   if (url.origin !== ORIGIN || url.pathname !== '/index.php' || url.searchParams.get('lvl') !== 'more_results') throw catalogError('Unexpected public search action');
   const result = await session.post(url.toString(), { ...fields, user_query: boundedQuery(query), look_ALL: '1', typdoc: '' }, { Referer: viewUrl(library) });
-  return parsePmbSearch(result.text, library);
+  return parsePmbSearch(result.text, library,{native});
 }
 export async function resolvePmb(library, id, deadlineAt) {
   if (!/^\d{1,20}$/.test(id)) throw catalogError('Invalid catalog record');

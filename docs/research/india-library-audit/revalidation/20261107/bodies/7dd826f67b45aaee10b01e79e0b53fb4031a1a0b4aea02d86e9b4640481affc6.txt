@@ -1,0 +1,304 @@
+var offset = 1,offsettl=1,offsetfb=4,offsetpl=7,offsetex=7,offsetac=1,fbmobile=false;
+$(document).ready(function(){
+	loadCurrentPage();
+	$("#AL_P, #AL_N").click(function(){
+		offset = ($(this).attr('id')=='AL_N') ? offset + 1 : offset - 1;
+		if (offset<0)
+			offset=1;
+		else
+			loadCurrentPage();
+	});
+	
+	featuredBooks();
+	$("#FB_P, #FB_N").click(function(){
+		offsetfb = ($(this).attr('id')=='FB_N') ? offsetfb + 4 : offsetfb - 4;
+		if (offsetfb<0)
+			offsetfb=0;
+		else
+			featuredBooks();
+	});
+
+	if($(window).width() < 767){
+	    $('#featuredBooks').on('scroll', function() {
+	        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+	            featuredBooks();
+	            offsetfb=offsetfb+4;
+	            fbmobile=true;
+	        }
+	    })
+    }else{
+    	fbmobile=false;
+    }
+	
+	partnetLibrarirs();
+	$("#PL_P, #PL_N").click(function(){
+		offsetpl = ($(this).attr('id')=='PL_N') ? offsetpl + 7 : offsetpl - 7;
+		if (offsetpl<0)
+			offsetpl=0;
+		else
+			partnetLibrarirs();
+	});
+	
+	explorer();
+	$("#EX_P, #EX_N").click(function(){
+		offsetex = ($(this).attr('id')=='EX_N') ? offsetex + 7 : offsetex - 7;
+		if (offsetex<0)
+			offsetex=0;
+		else
+			explorer();
+	});
+	
+	accomplishments();
+	$("#AC_P, #AC_N").click(function(){
+		offsetac = ($(this).attr('id')=='AC_N') ? offsetac + 1 : offsetac - 1;
+		if (offsetac<0)
+			offsetac=0;
+		else
+			accomplishments();
+	});
+});
+
+$(document).on('click','.explore',function(){
+	var searchStr = $(this).attr('data-searchStr');
+	$("#usingAtkeyword").trigger('click');
+	$('#advancedSearch').val(searchStr);
+	$('#adSearchBtn').trigger('click');
+});
+
+$(document).on('click','.partLib',function(){
+	var url = $(this).attr('data-url');
+	window.open('http://'+url,'_blank');
+});
+
+$(".url").on('click',function(){
+	var url = $(this).text();
+	window.open(url,'_blank');
+});
+
+$("body").on('click','#customfblink',function(){
+	var url = $(this).attr('data-url');
+	window.open(url,'_blank');
+})
+
+function randomColor() {
+	var letters = 'B2D9A'.split('');
+	var color = '#';
+	for (var i = 0; i < 6; i++ ) {
+		color += letters[Math.floor(Math.random() * letters.length)];
+	}
+	return color;
+}
+
+function randomColors() {
+	var letters = 'A9D2B'.split('');
+	var color = '#';
+	for (var i = 0; i < 6; i++ ) {
+		color += letters[Math.floor(Math.random() * letters.length)];
+	}
+	return color;
+}
+
+function loadCurrentPage(){
+	var tags="";
+	$.ajax({
+		url:base_url + "index.php/OpacController/AnnouncementsData",
+		type:"POST",
+		data:{
+				offset:offset
+		},
+		success:function(data){
+			tags += '<div id="announce">'+
+						'<div id="" class="text-center">'+
+							//'<p id="announce_title" style="font-weight:bold;">'+data.Fld_Announcement_Id+'</p>'+
+							'<p id="announce_title" style="font-weight:bold;">'+data.Fld_Announcement_Title+'</p>'+
+							'<p class="annouce_desc" id="annouce_desc">'+data.Fld_Announcement_Desc+'</p>'+
+							'<a class="url" href="javascript:void(0);" id="announce_url1">'+data.Fld_Forward_url+'</a>'+
+							//'<p id="announce_date">Start Date : '+data.Fld_Announcement_date+' End Date : '+data.Fld_Announcement_ExpiryDate+'</p>'+		
+						'</div>'+
+						'<br/>'+
+						'<div id="Announcer">'+
+							'<p id="announce_by">'+data.Fld_Announced_by+'</p>'+		
+							'<p id="announce_byPhone">'+data.Fld_AnnouncedBy_Phone+'</p>'+		
+							'<p id="announce_byEmail">'+data.Fld_AnnouncedBy_Email+'</p>'+
+						'</div>'+
+					'</div>';
+				if($('#announce')) {
+					$('#announce').remove()
+				}
+				$('#donorslist').append(tags);
+				$(".annouce_desc").each(function () {
+					var text = $(this).text();
+					if (text.length > 500) {
+						$(this).text(text.substr(0, text.lastIndexOf(' ', 497)) + '...');
+					}
+				});
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+		
+	});
+}
+function partnetLibrarirs(){
+	var content="";
+	$.ajax({
+		url:base_url + "index.php/OpacController/partnerLibrariesData",
+		type:"POST",
+		data:{
+				limit:offsetpl-7,
+				offset:offsetpl
+		},
+		success:function(data){
+			$.each(data,function(key,value){
+				content += 	'<tr>'+
+								'<td><span class="textavathar" style="background:'+randomColors()+'">'+value.Fld_PartnerLibrary_Name.trim().charAt(0).toUpperCase()+'</span><a class="partLib" data-url="'+value.Fld_PartnerLibrary_URL+'" href="javascript:void(0);">'+value.Fld_PartnerLibrary_Name+'</a></td>'+
+							'</tr>';
+			});
+			if ($('#partner_lib').children()) {
+				$('#partner_lib').children().remove();
+			}
+			$('#partner_lib').append(content);
+			$('.partLib').each(function(){
+				var text = $(this).text();
+				if (text.length > 55) {
+					$(this).text(text.substr(0, text.lastIndexOf(' ', 52)) + '...');
+				}
+			});
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+		
+	});
+}
+	
+function featuredBooks(){
+	var content = "",i=0;
+	$.ajax({
+		url:base_url + "index.php/OpacController/featuredBooks",
+		type:"POST",
+		data:{
+				limit:offsetfb-4,
+				offset:offsetfb
+		},
+		success:function(data){
+			$.each(data,function(key,value){
+				if(i==0){
+					content +=	'<div class="col-md-2 col-md-offset-1-and-half">';
+				}
+				else{
+					content +=	'<div class="col-md-2">';
+				}
+				content += 	'<div  class="fbmd2child">'+ 
+								'<a href="javascript:void(0);" id="customfblink" data-url="'+value.Fld_Search_String+'"><img class="bookicon text-center" style="display:block;" src="'+base_url+'assets/fuploads/Easylib/'+value.Fld_FeaturedBook_Image+'"></a>'+
+								'<div class="desc text-center">'+value.Fld_Title+'</div>'+
+							'</div>'+
+							'</div>';
+				i++;
+			});
+			if(!fbmobile){
+				$('#featured_books').children().remove();
+			}
+			$('#featured_books').append(content);
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+		
+	});
+}
+
+function explorer(){
+	var content = "",i=0;
+	$.ajax({
+		url:base_url + "index.php/OpacController/exploreBooks",
+		type:"POST",
+		data:{
+				limit:offsetex-7,
+				offset:offsetex
+		},
+		success:function(data){
+			$.each(data,function(key,value){
+				content += 	'<tr>'+
+								'<td><span class="textavathar" style="background:'+randomColor()+'">'+value.Fld_Explore_Title.trim().charAt(0).toUpperCase()+'</span><a class="explore" data-searchStr="'+value.Fld_Explore_Criteria+'" href="javascript:void(0);">'+value.Fld_Explore_Title+'</a></td>'+
+							'</tr>';
+				i++;
+			});
+			if ($('#exploreBook').children()) {
+				$('#exploreBook').children().remove();
+			}
+			$('#exploreBook').append(content);
+			$('.explore').each(function(){
+				var text = $(this).text();
+				if (text.length > 55) {
+					$(this).text(text.substr(0, text.lastIndexOf(' ', 52)) + '...');
+				}
+			});
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	});
+}
+
+function accomplishments(){
+	var content = "",i=0;
+	$.ajax({
+		url:base_url + "index.php/OpacController/accomplishments",
+		type:"POST",
+		data:{
+			limit:offsetac-1,
+			offset:offsetac
+		},
+		success:function(data){
+			if(data && data !=null){
+				content +=	'<div class="accomplishments">'+
+								'<p class="text-center accomplishment_title" style="font-weight:bold;font-size:16px;">'+data.Fld_Accomplishment_Title+'</p>'+
+								'<div id="myCarousel" class="carousel slide" data-ride="carousel">'+
+									'<div class="carousel-inner">';
+								if(data.Fld_Image1 && data.Fld_Image1 != null){
+							content +=  '<div class="item active">'+
+											'<img src="'+base_url+'assets/fuploads/Easylib/'+data.Fld_Image1+'"  style="width:100%;height:300px;">'+
+										'</div>';
+								}
+								if(data.Fld_Image2 && data.Fld_Image2 != null){
+							content +=	'<div class="item">'+
+											'<img src="'+base_url+'assets/fuploads/Easylib/'+data.Fld_Image2+'"  style="width:100%;height:300px;">'+
+										'</div>';
+								}
+								if(data.Fld_Image3 && data.Fld_Image3 != null){
+							content +=	'<div class="item">'+
+											'<img src="'+base_url+'assets/fuploads/Easylib/'+data.Fld_Image3+'"  style="width:100%;height:300px;">'+
+										'</div>';
+								}
+						content +=	'</div>'+
+									'<a class="left carousel-control" href="#myCarousel" data-slide="prev">'+
+										'<span class="glyphicon glyphicon-chevron-left"></span>'+
+										'<span class="sr-only">Previous</span>'+
+									'</a>'+
+									'<a class="right carousel-control" href="#myCarousel" data-slide="next">'+
+										'<span class="glyphicon glyphicon-chevron-right"></span>'+
+										'<span class="sr-only">Next</span>'+
+									'</a>'+
+								'</div>'+
+								'<p class="accomplishment_Desc">'+data.Fld_Accomplishment_Desc+'</p>'+
+							'</div>';
+				if($('.accomplishments')){
+					$('.accomplishments').remove();
+				}
+				$('#accomplish').append(content);
+				$('.accomplishment_Desc').each(function(){
+				var text = $(this).text();
+				if (text.length > 300) {
+					$(this).text(text.substr(0, text.lastIndexOf(' ', 297)) + '...');
+				}
+			});
+			}
+		},
+		error: function(xhr, status, error) {
+			console.warn(xhr.responseText);
+		}
+	});
+}
+
+
