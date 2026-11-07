@@ -5,6 +5,7 @@ import { connectorContext } from '../catalog-connectors/context.js';
 import { validateAndNormalize } from '../isbn.js';
 import { attributes, catalogError } from './catalogMarkup.js';
 import { fetchNativeEasylib } from './easylibNative.js';
+import { fetchNativeAutolib } from './autolibNative.js';
 import { parseAcademicResponse, recordFingerprint, normalizeCatalogTitle, rejectChallenge, parseEasylibAvailability, parseDarshanIsbn, parseLibsoftDetails } from './discoveryAcademicParsers.js';
 
 const CONFIGS = JSON.parse(readFileSync(new URL('./discoveryAcademicConfigs.json',import.meta.url),'utf8'));
@@ -99,7 +100,7 @@ async function fetchQuery(library,q,mode,deadlineAt,native=false,offset=0){
   }else if(c.kind==='libaitech'){
     const u=new URL(c.url);u.search=new URLSearchParams({search_in:'1',q,search_type:'1'});response=await read(u);payload=response.text;
   }else if(c.kind==='autolib'){
-    payload=await cachedTask(`academic-export:${library.academicCatalogId}`,async()=>json(await read(c.exportUrl)),{ttlMs:60*60*1000,deadlineAt});
+    if(native || connectorContext.getStore()){const result=await fetchNativeAutolib(c,read);payload=result.payload;nativePage=result.contract;}else payload=await cachedTask(`academic-export:${library.academicCatalogId}`,async()=>json(await read(c.exportUrl)),{ttlMs:60*60*1000,deadlineAt});
   }else if(c.kind==='rps'){
     response=await read(c.url,formRequest({search:q,save:''}));payload=response.text;
   }else if(c.kind==='libsoft'){
@@ -132,8 +133,8 @@ async function fetchQuery(library,q,mode,deadlineAt,native=false,offset=0){
     const url=new URL('/result.aspx',c.url);url.search=new URLSearchParams({cmbval:mode==='isbn'?'ISBN/ISSN':'Title',search:q,RDB:'Contains',Typemate:'All',colltype:'All'});
     await read(url);response=await read(new URL('/EmployeeDataHandler.ashx',c.url));payload=json(response);
   }else throw catalogError('Public catalog method not implemented','CATALOG_UNSUPPORTED');
-  const result=parseAcademicResponse(c.kind,payload,{query:q,isbn:mode==='isbn'?validateAndNormalize(q):null,native});
-  return {...result,records:native?result.records:result.records.slice(0,MAX_RESULTS),complete:result.complete&&(native||result.records.length<=MAX_RESULTS),read,...(nativePage?{nativePage,nativeTotal:Number(payload.recordsFiltered)}:{})};
+  const result=parseAcademicResponse(c.kind,payload,{query:q,isbn:mode==='isbn'?validateAndNormalize(q):null,native:native||(c.kind==='autolib'&&Boolean(connectorContext.getStore()))});
+  return {...result,records:native?result.records:result.records.slice(0,MAX_RESULTS),complete:result.complete&&(native||result.records.length<=MAX_RESULTS),read,...(nativePage?{nativePage,...(c.kind==='easylib'?{nativeTotal:Number(payload.recordsFiltered)}:{})}:{})};
 }
 async function enriched(b,c,read){
   if(c.kind==='libsoft'){
@@ -153,7 +154,7 @@ async function enriched(b,c,read){
   }
   return b;
 }
-const NATIVE_SEARCH=new Set(['srms','easylib','libaitech','rps','libsoft','nios','librarika','mizoram','processcube','bmu','darshan']);
+const NATIVE_SEARCH=new Set(['autolib','srms','easylib','libaitech','rps','libsoft','nios','librarika','mizoram','processcube','bmu','darshan']);
 export function academicNativeProfile(library){const c=config(library);return {kind:c.kind,url:c.url,supported:NATIVE_SEARCH.has(c.kind),field:['easylib','rps','processcube'].includes(c.kind)?'keyword':'title'};}
 export function nativeAcademicPage(kind,records,offset=0){
  const clientPaging=['srms','rps','libaitech'].includes(kind);
@@ -171,6 +172,11 @@ export async function searchNativeCatalog(library,query,{offset=0}={}){
   if(c.kind==='easylib'){
     const total=result.nativeTotal,hasMore=offset+result.records.length<total;
     return {records:finish(result,c,query),total,hasMore,nextOffset:hasMore?offset+result.nativePage.pageSize:null,nativeProfile:{field:'keyword',material:'mixed',variant:c.kind,...result.nativePage}};
+  }
+  if(c.kind==='autolib'){
+    if(!Number.isSafeInteger(offset)||offset<0||offset%25)throw catalogError('Unsupported native Autolib page','UNSUPPORTED_PROFILE');
+    const records=finish(result,c,query),nextOffset=offset+25<records.length?offset+25:null;
+    return {records:records.slice(offset,offset+25),total:records.length,nextOffset,hasMore:nextOffset!==null,nativeProfile:{field:'title',material:'mixed',variant:c.kind,offset,query,...result.nativePage}};
   }
   const bookScope=['srms','rps','libsoft','nios','mizoram','processcube','bmu','darshan'].includes(c.kind);
   const records=finish(result,c,query).map(record=>({...record,...(bookScope?{materialType:'Book',materialTypeProof:'native_books_form_and_grid'}:{})})),page=nativeAcademicPage(c.kind,records,offset);

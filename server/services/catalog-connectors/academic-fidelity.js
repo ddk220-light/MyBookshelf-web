@@ -2,6 +2,8 @@ import { failure } from "./contracts.js";
 import { text, attributes } from "../providers/catalogMarkup.js";
 import { academicNativeProfile } from "../providers/discoveryAcademic.js";
 import recipes from "./recipe-contracts.json" with { type: "json" };
+import { reviewedEasylibClient } from "../providers/easylibNative.js";
+import { autolibSmartMatch } from "../providers/autolibNative.js";
 
 // Independent field/order oracle for server-rendered website variants. It
 // reads displayed rows directly and does not call the provider's parser.
@@ -14,10 +16,64 @@ export function academicFidelity(
   const profile = academicNativeProfile(entry);
   if (!profile.supported)
     return { verified: false, reason: "website_js_display_recipe_pending" };
+  if (profile.kind === "autolib") {
+    if (
+      new URL(response.url).pathname !== recipes.autolib.request.path ||
+      nativeProfile?.clientSha256 !== recipes.autolib.inlineCanonicalSha256 ||
+      nativeProfile?.dataTablesVersion !== "1.13.5" ||
+      nativeProfile?.titleColumn !== 5 ||
+      nativeProfile?.pageSize !== 25 ||
+      !Number.isSafeInteger(nativeProfile?.offset) ||
+      nativeProfile.offset < 0 ||
+      nativeProfile.offset % 25 ||
+      typeof nativeProfile.query !== "string"
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Unexpected Autolib native client or page",
+        502,
+      );
+    let data;
+    try {
+      data = JSON.parse(response.text);
+    } catch {
+      throw failure("FIDELITY_MISMATCH", "Invalid Autolib metadata JSON", 502);
+    }
+    if (
+      !Array.isArray(data.data) ||
+      data.data.some((r) => !Array.isArray(r) || r.length !== 12)
+    )
+      throw failure("FIDELITY_MISMATCH", "Autolib columns changed", 502);
+    const expected = data.data
+      .filter((r) => autolibSmartMatch(r[5], nativeProfile.query))
+      .slice(nativeProfile.offset, nativeProfile.offset + 25)
+      .map((r) => [text(r[2]), text(r[5]), text(r[6]), text(r[11])]);
+    const observed = records.map((r) => [
+      r.sourceId,
+      r.title,
+      (r.authors || []).join(" "),
+      r.format,
+    ]);
+    if (JSON.stringify(expected) !== JSON.stringify(observed))
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Autolib identities, material labels or native filtered order changed",
+        502,
+      );
+    return {
+      verified: true,
+      method: "reviewed_native_autolib_title_datatables",
+      recipeVersion: recipes.autolib.version,
+      clientSha256: nativeProfile.clientSha256,
+      nativeRows: expected.length,
+      offset: nativeProfile.offset,
+      pageSize: 25,
+    };
+  }
   if (profile.kind === "easylib") {
     if (
       new URL(response.url).pathname !== recipes.easylib.request.path ||
-      nativeProfile?.clientSha256 !== recipes.easylib.clientSha256 ||
+      !reviewedEasylibClient(nativeProfile?.clientSha256) ||
       !Number.isSafeInteger(nativeProfile?.pageSize) ||
       !Number.isSafeInteger(nativeProfile?.offset) ||
       nativeProfile.pageSize < 1 ||

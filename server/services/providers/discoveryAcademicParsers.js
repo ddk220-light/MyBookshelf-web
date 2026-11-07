@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { autolibSmartMatch } from './autolibNative.js';
 import { attributes, text, firstIsbn, catalogError } from './catalogMarkup.js';
 
 const integer = value => /^\d+$/.test(String(value ?? '').trim()) ? Number(value) : undefined;
@@ -67,6 +68,8 @@ export function parseAcademicResponse(kind, payload, { query = '', isbn = null, 
   }
   if (kind === 'autolib') {
     if (!Array.isArray(payload?.data) || payload.data.some(r => !Array.isArray(r) || r.length < 9)) throw catalogError('Unrecognized public book export');
+    if(native && payload.data.some(r=>r.length!==12||!text(r[2])||text(r[2])==='NA'))throw catalogError('Native Autolib barcode/column contract requires review','EQUIVALENCE_UNPROVEN');
+    if(native){const selected=payload.data.filter(r=>autolibSmartMatch(r[5],query));return proof(selected.map(r=>book(r[5],r[6],{sourceId:text(r[2]),recordIdKind:'native_copy_barcode',accessionNumber:text(r[3]),isbn:firstIsbn(r[4]),publisher:text(r[8]),subjects:[text(r[7])].filter(Boolean),format:text(r[11]),totalCopies:1})),true,selected.length===0);}
     const all = payload.data.map(r => book(r[5],r[6],{isbn:firstIsbn(r[4]),publisher:text(r[8]),subjects:[text(r[7])].filter(Boolean),totalCopies:1}));
     const selected = all.filter(b => isbn ? b.isbn === isbn : norm(b.title).includes(norm(query)));
     return proof(native?selected:grouped(selected,true),true,selected.length === 0);

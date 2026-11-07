@@ -2,6 +2,15 @@ import { createHash } from "node:crypto";
 import { attributes, catalogError } from "./catalogMarkup.js";
 import recipes from "../catalog-connectors/recipe-contracts.json" with { type: "json" };
 
+export function reviewedEasylibClient(sha256) {
+  return (
+    sha256 === recipes.easylib.clientSha256 ||
+    recipes.easylib.reviewedClientVariants.some(
+      (client) => client.sha256 === sha256,
+    )
+  );
+}
+
 // The reviewed page contains duplicate IDs; jQuery's #id lookup selects first.
 export function easylibPageSize(html) {
   const select = [
@@ -58,7 +67,7 @@ export async function fetchNativeEasylib(c, query, read, offset = 0) {
     );
   const client = await read(clientUrl);
   const clientSha256 = createHash("sha256").update(client.text).digest("hex");
-  if (clientSha256 !== recipes.easylib.clientSha256)
+  if (!reviewedEasylibClient(clientSha256))
     throw catalogError(
       "Easylib client version changed; review its public request/display contract",
       "EQUIVALENCE_UNPROVEN",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "reviewedAt": "2026-11-07T17:22:17.028854+00:00",
+  "reviewedAt": "2026-11-07T18:11:41.525094+00:00",
   "method": "primary public website/client inspection; not book qualification",
   "srms": {
     "state": "native title recipe implemented; live cohort tests next",
@@ -22,7 +22,7 @@
     ]
   },
   "easylib": {
-    "state": "Native keyword/client/default-control repair implemented; live per-site verification pending",
+    "state": "Six fresh twenty-book passes; one observed HTTP 500; AIMS/SJEC request-equivalent client diffs reviewed, live rechecks next",
     "homepageControl": "advancedSearch/adSearchButton -> index.php/OpacController/searchResultPage?search=<encoded query>",
     "nativeField": "keyword by default, not title-only",
     "nativeRequest": {
@@ -48,7 +48,7 @@
     "itemLink": "index.php/OpacController/bookDetailsController?search=<query>&tlno=<Fld_Title_No>",
     "knownMismatch": "Historical legacy adapter requested MAX_RESULTS=20 and sent object as a JSON string; reviewed site default is five with omitted empty filter arrays. Native repair is implemented and needs fresh tests.",
     "nextActions": [
-      "Read each site’s actual default select/control and matching client contract",
+      "Read each site\u2019s actual default select/control and matching client contract",
       "Implement server paging without truncating native realdata",
       "Retain mixed material labels; verify actual item links via governed HTML-only reads",
       "Run meaningful queries across the nine sites after the implementation changes"
@@ -57,10 +57,20 @@
       "05230bf69a50839c7a9e0fad677b40f92b448a4d1bd8a92130759f4e6c21781e",
       "84ab1f1bf6322b5da6b4f1c0fefb5d7436b663836face95709b370037aa53044",
       "c885176be9d93bde9d11c7874035739e59ed616db25f0b1dd71577e27a4ace7a"
+    ],
+    "reviewedVariants": [
+      {
+        "hash": "52b19603ce5eba5ca5f2e40b224851543bf34e798b47287365b6b5dbbbaff5f3",
+        "basis": "reservation-only success-handler difference"
+      },
+      {
+        "hash": "4cb2124bbf34f26a957f04d0046f9fa5d841c09154bbf11ffe95af0e5ff00d99",
+        "basis": "layout/reservation differences; title/author/material/native IDs/request/paging unchanged"
+      }
     ]
   },
   "autolib": {
-    "state": "Open native-adapter gap, canonical website recovered",
+    "state": "Native adapter implemented; live host checks next",
     "observed": "Configured double-slash landing returned HTTP 404; the single-slash page returned HTTP 200 at 2026-11-07T17:20:29Z",
     "canonicalUrl": "https://hdjc.autolib.org/index.php/booksearch",
     "nativeClient": "2329efff4df8ebcda38334d4b51bfa719ce48568beefa32b0ca0c555dd87b175",
@@ -70,6 +80,10 @@
       "Normalize the verified landing URL without changing activation",
       "Review exact DataTables smart column-filter semantics, raw field indices and native row/edition identity",
       "Implement equivalence and run real queries across the four hosts; a landing-page recovery is not a qualified connector"
-    ]
+    ],
+    "dataTablesVersion": "1.13.5 (CSS alone previously showed 1.11.3; actual advertised JS is 1.13.5)",
+    "semantics": "Title-column default smart word/quoted-phrase search, case insensitive, no accent/punctuation normalization; source order and client pages of 25",
+    "nativeIdentity": "Barcode is a native copy identity; accession separate. Serial index not used as a native ID. Copies deduplicated for book target.",
+    "offlineValidation": "Compared against captured actual jQuery and DataTables in a network-disabled DOM unit test; no browser control, live query or source qualification inferred."
   }
 }

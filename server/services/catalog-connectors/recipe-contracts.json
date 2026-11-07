@@ -52,11 +52,61 @@
     "materialScope": "Public OPAC Books found table and book-detail modal; native title-only control",
     "scope": "Public college selector maps each configured colg code to the exact institution name"
   },
+  "autolib": {
+    "version": "autolib-title-datatables-native-20261107",
+    "reviewedAt": "2026-11-07",
+    "evidenceRoot": "docs/research/india-library-audit/revalidation/20261107",
+    "inlineEvidenceSha256": "2329efff4df8ebcda38334d4b51bfa719ce48568beefa32b0ca0c555dd87b175",
+    "inlineCanonicalSha256": "29c45dc0b22b344c75dd11f8dbb21e98c130086d6f1f40fbd57b8808c230ba24",
+    "canonicalization": "Replace the exact catalog origin with CATALOG_ORIGIN, CRLF with LF, then trim outer whitespace",
+    "dataTablesUrl": "https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js",
+    "dataTablesEvidenceSha256": "4a20199d45c7b3b9180461baa8f93a383e0438ac921a8bbcef0c3ab5c986c1c3",
+    "jqueryEvidenceSha256": "ab0d063b4ff2827192c0e44103d3091457a1d2374c3b6243721c5679bb61eae2",
+    "columns": [
+      "Sr No.",
+      "Action",
+      "Barcode",
+      "Accession No",
+      "ISBN Number",
+      "Book Title",
+      "Author",
+      "Subject",
+      "Publisher",
+      "Almira No",
+      "Self",
+      "Book Type"
+    ],
+    "field": "Book Title column (5); default DataTables smart, case-insensitive, non-regex search",
+    "request": {
+      "method": "GET",
+      "path": "/index.php/Booksearch/getallbook",
+      "scope": "Public catalog metadata only; matched in memory, without runtime import"
+    },
+    "paging": {
+      "mode": "client",
+      "pageSize": 25,
+      "order": "source array order; order []"
+    },
+    "nativeRecordId": "Barcode identifies a copy; accession retained separately. Serial row index is not a native identity. Distinct-book qualification deduplicates copies by title/ISBN",
+    "links": "Source exposes a catalog handoff and copy actions, no proven public per-record link"
+  },
   "easylib": {
     "version": "easylib-keyword-native-20261107",
     "reviewedAt": "2026-11-07",
     "clientPath": "/assets/js/homepage/OpacHomeSearchResults.js",
     "clientSha256": "84ab1f1bf6322b5da6b4f1c0fefb5d7436b663836face95709b370037aa53044",
+    "reviewedClientVariants": [
+      {
+        "sha256": "52b19603ce5eba5ca5f2e40b224851543bf34e798b47287365b6b5dbbbaff5f3",
+        "observedHost": "aims.easylib.net",
+        "difference": "Only the reservation success handler differs; keyword request, realdata fields, source order, item links and paging are unchanged"
+      },
+      {
+        "sha256": "4cb2124bbf34f26a957f04d0046f9fa5d841c09154bbf11ffe95af0e5ff00d99",
+        "observedHost": "sjec.easylib.net",
+        "difference": "Bibliographic label layout and reservation controls differ; keyword request, title/author/material/native ID fields, item links and paging are unchanged. Published year is not displayed by this client"
+      }
+    ],
     "clientUrl": "https://sjccb.easylib.net/assets/js/homepage/OpacHomeSearchResults.js",
     "evidenceRoot": "docs/research/india-library-audit/revalidation/20261107",
     "field": "keyword",

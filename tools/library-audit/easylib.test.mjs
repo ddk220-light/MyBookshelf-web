@@ -144,6 +144,37 @@ test("changed Easylib clients or controls stop before a query is sent; off-origi
   assert.equal(mock.calls.length, 1);
 });
 
+test("reviewed Easylib client variants preserve the request, native identity and order contract", async () => {
+  for (const variant of recipes.easylib.reviewedClientVariants) {
+    const js = readFileSync(
+      new URL(
+        `../../docs/research/india-library-audit/revalidation/20261107/bodies/${variant.sha256}.txt`,
+        import.meta.url,
+      ),
+      "utf8",
+    );
+    assert.equal(createHash("sha256").update(js).digest("hex"), variant.sha256);
+    const data = payload(),
+      mock = requestMock(data, { js });
+    const result = await connectorContext.run(
+      { deadlineAt: Date.now() + 120000, request: mock.request },
+      () =>
+        searchNativeCatalog({ academicCatalogId: "easylib:sjccb" }, "Wings"),
+    );
+    assert.equal(result.nativeProfile.clientSha256, variant.sha256);
+    assert.equal(result.records[0].sourceId, "025629");
+    assert.equal(
+      academicFidelity(
+        { academicCatalogId: "easylib:sjccb" },
+        { url: mock.calls[2].url, text: JSON.stringify(data) },
+        result.records,
+        result.nativeProfile,
+      ).verified,
+      true,
+    );
+  }
+});
+
 test("unreviewed JavaScript widget templates are a client-contract gap, not a demonstrated access challenge", async () => {
   const mock = requestMock(payload(), {
     js:
