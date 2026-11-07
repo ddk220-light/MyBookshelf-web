@@ -196,6 +196,13 @@ export async function searchCatalog(library, query) {
   } }));
 }
 
+export async function searchNativeCatalog(library, query, { page = 1 } = {}) {
+  if (text(query) !== query) throw catalogError('Query would be transformed by this catalog profile', 'UNSUPPORTED_PROFILE');
+  const result = await search(library, query, 'Title', Date.now() + DEADLINE_MS, page);
+  const hasMore = result.total > (page - 1) * 10 + result.records.length;
+  return { ...result, hasMore, nextPage: hasMore ? page + 1 : undefined };
+}
+
 export async function resolveCatalogRecord(library, id) {
   const deadlineAt = Date.now() + DEADLINE_MS;
   const value = await detail(library, String(id), deadlineAt);

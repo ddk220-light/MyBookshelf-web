@@ -130,6 +130,13 @@ export async function searchCatalog(library, query) {
   } }));
 }
 
+export async function searchNativeCatalog(library, query) {
+  // Unlike the app's legacy title fallback, never silently clip punctuation.
+  if (!/^[\p{L}\p{N}][\p{L}\p{N}\s,]*$/u.test(query) || query.length > 160) throw catalogError('This public form accepts letters, numbers, spaces and commas only', 'UNSUPPORTED_PROFILE');
+  const result = await search(library, query, 'TITLE', Date.now() + DEADLINE_MS);
+  return { ...result, hasMore: false };
+}
+
 export async function resolveCatalogRecord(library, recordId) {
   const deadlineAt = Date.now() + DEADLINE_MS;
   const value = await detail(library, String(recordId), deadlineAt);

@@ -252,7 +252,7 @@ export function scopeSearch(url, library) {
 
 
 
-export function parseExpandedKohaCatalogSearch(html, searchUrl) {
+export function parseExpandedKohaCatalogSearch(html, searchUrl, limit = 10) {
   const clean = markupOnly(html), books = new Map();
   const isResults = [...clean.matchAll(/<body\b([^>]*)>/gi)].some(m => attrs(m[1]).id === 'results');
   if (!isResults) throw publicError('CATALOG_UNRECOGNIZED', 'Unrecognized catalog search');
@@ -264,7 +264,31 @@ export function parseExpandedKohaCatalogSearch(html, searchUrl) {
     if (title) books.set(recordId, { recordId, title, authors: [] });
   }
   if (!books.size && !/No results found!/i.test(text(clean))) throw publicError('CATALOG_UNRECOGNIZED', 'Missing catalog search results');
-  return [...books.values()].slice(0, 10);
+  return [...books.values()].slice(0, limit);
+}
+
+export async function searchNativeCatalog(library, query, { offset = 0 } = {}) {
+  const url = scopeSearch(new URL('/cgi-bin/koha/opac-search.pl', configuration(library)), library);
+  url.searchParams.set('idx', 'kw'); url.searchParams.set('q', query);
+  if (offset) url.searchParams.set('offset', String(offset));
+  const response = await publicRead(url, catalogDeadline(library), { allowRecordSelection: true });
+  if (response.status === 302) {
+    const target = detailUrl(response.headers.get('location'), url);
+    return { records: [await resolveCatalogRecord(library, target.searchParams.get('biblionumber'))], total: 1, hasMore: false };
+  }
+  const records = parseExpandedKohaCatalogSearch(response.text, url, Infinity);
+  const plain = text(markupOnly(response.text));
+  const totalMatch = plain.match(/Your search returned\s+([\d,]+)\s+results?/i);
+  const total = totalMatch ? Number(totalMatch[1].replaceAll(',', '')) : !records.length ? 0 : null;
+  let nextOffset;
+  for (const m of response.text.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+    const a = attrs(m[1]); if (!a.href || !(/\bnext\b/i.test(`${a.rel || ''} ${a.title || ''} ${text(m[2])}`))) continue;
+    const next = new URL(a.href, url);
+    const n = Number(next.searchParams.get('offset'));
+    if (next.origin === url.origin && next.pathname === url.pathname && Number.isSafeInteger(n) && n > offset) nextOffset = n;
+  }
+  const hasMore = nextOffset != null ? true : total == null ? null : total > offset + records.length;
+  return { records, total, hasMore, nextOffset, continuationUnsupported: hasMore === true && nextOffset == null };
 }
 
 export async function searchCatalog(library, query) {

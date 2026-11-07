@@ -113,7 +113,7 @@ export function hyphenatedIsbn(value) {
   return null;
 }
 
-export function searchForm(html, { libraryCode, query, clusterSearch = false }) {
+export function searchForm(html, { libraryCode, query, clusterSearch = false, field = 'ALL' }) {
   if (!/^[A-Z0-9_]{1,32}$/.test(libraryCode || '')) return null;
   const markup = withoutScripts(html);
   const form = markup.match(/<form\b([^>]*)>([\s\S]*?)<\/form\s*>/i);
@@ -139,7 +139,8 @@ export function searchForm(html, { libraryCode, query, clusterSearch = false }) 
   if (!hasSearchButton || !fields.get('__VIEWSTATE') || !fields.has('txt_Search')
       || !libraries?.options.some((option) => option.value === libraryCode)
       || (clusterSearch && !libraries.options.some((option) => option.value === 'All Libraries'))
-      || !selectedOption(form[2], 'DDL_Field')?.options.some((option) => option.value === 'ALL')) return null;
+      || !['ALL', 'TITLE'].includes(field)
+      || !selectedOption(form[2], 'DDL_Field')?.options.some((option) => option.value === field)) return null;
   // Replay only anonymous search. Cluster mode is the current cluster only;
   // the separate cross-cluster union search and member login stay unused.
   for (const name of ['txtMemberNo', 'txtPassword', 'txt_captcha']) fields.set(name, '');
@@ -149,7 +150,7 @@ export function searchForm(html, { libraryCode, query, clusterSearch = false }) 
   fields.set('__EVENTTARGET', '');
   fields.set('__EVENTARGUMENT', '');
   for (const [name, value] of Object.entries({
-    DDL_Materials: 'Books', txt_Search: query, DDL_Field: 'ALL', DDL_Boolean: 'LIKE',
+    DDL_Materials: 'Books', txt_Search: query, DDL_Field: field, DDL_Boolean: 'LIKE',
     DDL_OrderBy: 'TITLE', DDL_SortBy: 'ASC', DDL_Pages: '20', DDL_Library: clusterSearch ? 'All Libraries' : libraryCode,
     Basic_Search_Bttn: 'Search',
   })) fields.set(name, value);
@@ -393,7 +394,7 @@ export function clusterIsbnQuery(value) {
   return isbn ? (isbn.startsWith('978') ? isbn.slice(3, -1) : isbn) : null;
 }
 
-export function parseCatalogSearch(html, libraryCode) {
+export function parseCatalogSearch(html, libraryCode, limit = 10) {
   const clean = withoutScripts(html);
   if (selectedOption(clean, 'DDL_Library')?.selected !== libraryCode) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog search scope changed');
   const count = spanById(clean, 'Label37')?.match(/^Your Search Returned\s+(\d+)\s+Record\(s\)$/i);
@@ -408,7 +409,34 @@ export function parseCatalogSearch(html, libraryCode) {
     books.push({ recordId, title, authors: [], isbn: firstIsbn(spanById(clean, `Repeater1_ISBNLbl_${index}`)) });
   }
   if (Number(count[1]) && !books.length) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog records missing');
-  return books.slice(0, 10);
+  return books.slice(0, limit);
+}
+
+// Audit/service entry point: preserve the whole native first page and its
+// total. Unimplemented stateful continuation is explicit, never exhaustion.
+export async function searchNativeCatalog(library, query, { field = 'keyword' } = {}) {
+  const { url, libraryCode } = configuration(library), deadlineAt = Date.now() + TIMEOUT_MS;
+  blocked();
+  const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
+  const home = await getText(url, options); requireResponse(home, '/OPAC/Default.aspx');
+  const fields = searchForm(home.text, { libraryCode, query, field: field === 'title' ? 'TITLE' : 'ALL' }), cookie = sessionCookie(home.headers);
+  if (!fields || !cookie) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog search form changed');
+  const response = await getText(url, { ...options, method: 'POST', body: fields.toString(), headers: { Cookie: cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
+  requireResponse(response, '/OPAC/Default.aspx');
+  for (const control of ['DDL_Field', 'DDL_Materials', 'DDL_Boolean', 'DDL_OrderBy', 'DDL_SortBy', 'DDL_Pages']) {
+    if (selectedOption(response.text, control)?.selected !== fields.get(control)) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog changed the search controls');
+  }
+  const queryInput = [...response.text.matchAll(/<input\b([^>]*)>/gi)].map(m => attributes(m[1])).find(a => a.name === 'txt_Search');
+  if (queryInput?.value !== query) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog changed the search query');
+  // The response proves membership and material scope, not a borrowable copy.
+  // Native order/IDs stay unchanged; this avoids a detail fetch per result.
+  const records = parseCatalogSearch(response.text, libraryCode, Infinity).map(record => ({
+    ...record, format: 'Book',
+    observation: { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true,
+      membershipProof: 'native_member_scoped_books_search', locations: [{ name: library.name, status: 'unknown' }] },
+  }));
+  const total = Number(spanById(withoutScripts(response.text), 'Label37').match(/\d+/)[0]);
+  return { records, total, hasMore: total > records.length, continuationUnsupported: total > records.length };
 }
 
 // Title/author discovery uses the chosen member's public ALL/LIKE form.

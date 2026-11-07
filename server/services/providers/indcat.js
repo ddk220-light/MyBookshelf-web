@@ -34,7 +34,7 @@ function inputs(html) {
 }
 function markup(html) { return html.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, ''); }
 
-export function parseIndcatSearch(html, code) {
+export function parseIndcatSearch(html, code, limit = 10) {
   const clean = markup(html), fields = inputs(clean);
   if (fields.part_uni !== code) throw catalogError('Catalog search scope changed');
   const total = text(clean).match(/Total\s+(\d+)\s+Records? found/i);
@@ -52,7 +52,7 @@ export function parseIndcatSearch(html, code) {
     if (title) records.set(data.book_detail, { recordId: data.book_detail, title, authors: [] });
   }
   if (Number(total[1]) > 0 && !records.size) throw catalogError('Missing catalog records');
-  return { total: Number(total[1]), records: [...records.values()].slice(0, 10) };
+  return { total: Number(total[1]), records: [...records.values()].slice(0, limit) };
 }
 
 export function parseIndcatRecord(html, library, recordId, expectedIsbn = null, { confirmedMemberRecord = false } = {}) {
@@ -103,9 +103,9 @@ async function read(url, options = {}) {
   if (!response.ok || response.url !== url) throw catalogError('Catalog request failed', 'CATALOG_UNAVAILABLE');
   return response;
 }
-async function search(library, query, isbn = false, deadlineAt = Date.now() + 60_000) {
+async function search(library, query, isbn = false, deadlineAt = Date.now() + 60_000, native = false) {
   const code = config(library);
-  return cachedTask(`indcat:search:${code}:${isbn}:${query}`, () => enqueueTask('indcat', async () => {
+  return cachedTask(`indcat:search:${code}:${isbn}:${query}:${native}`, () => enqueueTask('indcat', async () => {
     const home = await read(scopeUrl(code), { deadlineAt });
     const fields = inputs(markup(home.text));
     if (fields.part_uni !== code || !/^[a-zA-Z0-9_-]{16,128}$/.test(fields.csrf_test_name || '')) throw catalogError('Catalog search form changed');
@@ -114,10 +114,14 @@ async function search(library, query, isbn = false, deadlineAt = Date.now() + 60
       opt: isbn ? 'exact' : 'free', submit: 'Search', limits: '10', csrf_test_name: fields.csrf_test_name });
     const result = await read(`${ORIGIN}${PATH}`, { deadlineAt, method: 'POST',
       headers: { Cookie: cookies, Referer: scopeUrl(code), 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() });
-    return parseIndcatSearch(result.text, code);
+    return parseIndcatSearch(result.text, code, native ? Infinity : 10);
   }, { deadlineAt }), { deadlineAt });
 }
 export async function searchCatalog(library, query) { return (await search(library, query)).records; }
+export async function searchNativeCatalog(library, query) {
+  const result = await search(library, query, false, Date.now() + 60_000, true);
+  return { ...result, hasMore: result.total > result.records.length, continuationUnsupported: result.total > result.records.length };
+}
 export async function resolveCatalogRecord(library, recordId, expectedIsbn = null, deadlineAt = Date.now() + 60_000, confirmedMemberRecord = false) {
   const code = config(library);
   const raw = await cachedTask(`indcat:record:${code}:${recordId}`, async () => {
