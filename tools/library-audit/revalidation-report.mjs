@@ -15,11 +15,24 @@ const closedReplay = new Set([
 const tooling =
   /UNSUPPORTED|CONFIGURATION|EQUIVALENCE|UNRECOGNIZED|FIDELITY|INVALID_|NO_VERIFIED_BOOKS|RESPONSE_TOO_LARGE|HOLDING_UNCONFIRMED/;
 export function classifyRevalidation(replay, live, events) {
-  const history = events.filter((e) => e.libraryId === replay.libraryId),
-    queries = history.filter((e) => e.type === "search_completed");
-  const checkpoint = [...history]
+  const allHistory = events.filter((e) => e.libraryId === replay.libraryId);
+  const checkpoint = [...allHistory]
     .reverse()
     .find((e) => e.type === "library_checkpoint");
+  const invalidated = [...allHistory]
+    .reverse()
+    .find((e) => e.type === "revalidation_outcome_invalidated");
+  if (invalidated && (!checkpoint || invalidated.at > checkpoint.at))
+    return {
+      classification: "needs_live_recheck",
+      closed: false,
+      books: live.books.length,
+      reason: invalidated.reason,
+    };
+  const history = invalidated
+    ? allHistory.filter((e) => e.at > invalidated.at)
+    : allHistory;
+  const queries = history.filter((e) => e.type === "search_completed");
   if (checkpoint && checkpoint.state !== "interrupted") {
     const equivalent = (e) =>
       e.fidelity === "website_equivalent" || e.fidelity?.verified === true;
@@ -83,7 +96,11 @@ export function classifyRevalidation(replay, live, events) {
         reason: blocker.reason,
       };
     }
-    if (queries.length && queries.every(equivalent)) {
+    if (
+      history.some((e) => e.type === "revalidation_attempt_completed") &&
+      queries.length &&
+      queries.every(equivalent)
+    ) {
       if (live.books.length)
         return {
           classification: "verified_partial_live",
@@ -103,6 +120,7 @@ export function classifyRevalidation(replay, live, events) {
     }
   }
   if (
+    !invalidated &&
     closedReplay.has(replay.classification) &&
     (replay.classification !== "clean_zero_replayed" ||
       replay.verifiedNativeSearches > 0) &&

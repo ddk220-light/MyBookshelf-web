@@ -434,7 +434,10 @@ test("independent fidelity check catches native result clipping and reordering",
     () => verifyNativePage("koha", responses, [{ recordId: "9" }]),
     { code: "FIDELITY_MISMATCH" },
   );
-  assert.equal(verifyNativePage("discovery-academic", responses, []).verified, false);
+  assert.equal(
+    verifyNativePage("discovery-academic", responses, []).verified,
+    false,
+  );
 });
 test("health checks never establish initial twenty-book qualification", async (t) => {
   const s = storeFor(t);
@@ -547,10 +550,12 @@ test("audit workers keep independent hosts moving when many members share a cata
   m.inventory.inventoryHash = hash(m.inventory.libraries);
   s.save("manifest.json", m);
   const started = [];
+  const actualQueries = {};
   let unionActive = false;
   const svc = {
     search: async (p) => {
       started.push(p.libraryId);
+      actualQueries[p.libraryId] = p.query;
       if (p.libraryId !== "test:4") {
         assert.equal(unionActive, false);
         unionActive = true;
@@ -566,9 +571,18 @@ test("audit workers keep independent hosts moving when many members share a cata
       };
     },
   };
-  await run(s, svc, { mode: "health", concurrency: 2 });
+  const queriesByLibrary = Object.fromEntries(
+    [1, 2, 3, 4].map((i) => [`test:${i}`, [`Subject ${i}`]]),
+  );
+  await run(s, svc, { mode: "health", concurrency: 2, queriesByLibrary });
   assert.deepEqual(started.slice(0, 2), ["test:1", "test:4"]);
   assert.equal(started.length, 4);
+  assert.deepEqual(actualQueries, {
+    "test:1": "Subject 1",
+    "test:2": "Subject 2",
+    "test:3": "Subject 3",
+    "test:4": "Subject 4",
+  });
 });
 
 test("an alternative route can recover a parser failure without retaining a stale blocker", async (t) => {

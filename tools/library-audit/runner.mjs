@@ -250,6 +250,7 @@ export async function run(
     mode = "qualify",
     cycle = null,
     queries = null,
+    queriesByLibrary = null,
     field = null,
     signal: externalSignal,
     concurrency = 3,
@@ -362,6 +363,7 @@ export async function run(
             action: "Review an official permitted catalog route",
           };
         const seeds =
+          queriesByLibrary?.[library.libraryId] ||
           queries ||
           (mode === "health"
             ? [

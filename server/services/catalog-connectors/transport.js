@@ -376,16 +376,27 @@ export class Coordinator {
           text,
         };
       } catch (error) {
+        const normalized =
+          error.name === "TimeoutError"
+            ? Object.assign(
+                failure(
+                  "UPSTREAM_TIMEOUT",
+                  "Source request exceeded its allowed timeout",
+                  504,
+                ),
+                { cause: error },
+              )
+            : error;
         this.store?.append({
           type: "request_failed",
           attemptId: ctx.attemptId,
           requestId,
           libraryId: ctx.libraryId,
-          code: error.code || error.name || "TRANSPORT_ERROR",
-          causeCode: error.cause?.code || null,
+          code: normalized.code || normalized.name || "TRANSPORT_ERROR",
+          causeCode: normalized.cause?.code || null,
           durationMs: Date.now() - start,
         });
-        throw error;
+        throw normalized;
       }
     } finally {
       if (acquired) this.active--;

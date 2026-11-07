@@ -192,10 +192,18 @@ try {
     const pending = review.libraries.filter(
       (r) => !r.closed && !completed.has(r.libraryId),
     );
+    const priorities = new Map(
+      (
+        JSON.parse(readFileSync(join(directory, "repair-goal.json")))
+          .priorityLibraryIds || []
+      ).map((id, index) => [id, index]),
+    );
     // Corrected native adapters first, then other reachable research gaps. Each
     // library gets one deliberate pass per implementation, never an infinite retry.
     pending.sort(
       (a, b) =>
+        (priorities.get(a.libraryId) ?? Number.MAX_SAFE_INTEGER) -
+          (priorities.get(b.libraryId) ?? Number.MAX_SAFE_INTEGER) ||
         Number(
           service
             .capabilities(b.libraryId)
@@ -239,32 +247,26 @@ try {
         .map((e) => e.query);
       row.queries = [...new Set([...old, ...(variants || termsFor(row))])];
     }
-    // Different useful query plans share a single origin coordinator and lock.
-    let index = 0;
-    const outcomes = await Promise.allSettled(
-      Array.from({ length: Math.min(concurrency, batch.length) }, async () => {
-        while (index < batch.length && !controller.signal.aborted) {
-          const row = batch[index++];
-          await run(store, service, {
-            libraryIds: [row.libraryId],
-            queries: row.queries,
-            concurrency: 1,
-            retryBlocked: true,
-            retryReason:
-              "Owner-authorized bug repair and bounded live cohort revalidation; this implementation has not rechecked this entry",
-            signal: controller.signal,
-          });
-          if (!controller.signal.aborted)
-            store.append({
-              type: "revalidation_attempt_completed",
-              libraryId: row.libraryId,
-              implementationHash,
-            });
-        }
-      }),
-    );
-    const failed = outcomes.find((r) => r.status === "rejected");
-    if (failed) throw failed.reason;
+    // One runner owns the whole batch: its shared busyOrigins scheduler keeps
+    // same-host jobs from consuming their request deadlines in a local queue.
+    await run(store, service, {
+      libraryIds: batch.map((row) => row.libraryId),
+      queriesByLibrary: Object.fromEntries(
+        batch.map((row) => [row.libraryId, row.queries]),
+      ),
+      concurrency,
+      retryBlocked: true,
+      retryReason:
+        "Owner-authorized adapter and shared-origin scheduler repairs with bounded cohort revalidation",
+      signal: controller.signal,
+    });
+    if (!controller.signal.aborted)
+      for (const row of batch)
+        store.append({
+          type: "revalidation_attempt_completed",
+          libraryId: row.libraryId,
+          implementationHash,
+        });
     store.save("origin-state.json", {
       at: at(),
       cooldowns: [...coordinator.cooldowns],

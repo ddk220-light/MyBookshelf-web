@@ -610,6 +610,11 @@ test("live revalidation understands saved website-equivalent fidelity and keeps 
     "verified_20_live",
   );
   assert.equal(
+    classifyRevalidation(replay, { books: [{ recordId: "1" }] }, events).closed,
+    false,
+  );
+  events.push({ type: "revalidation_attempt_completed", libraryId: "a" });
+  assert.equal(
     classifyRevalidation(replay, { books: [{ recordId: "1" }] }, events)
       .classification,
     "verified_partial_live",
@@ -617,5 +622,77 @@ test("live revalidation understands saved website-equivalent fidelity and keeps 
   assert.equal(
     classifyRevalidation(replay, { books: [] }, events).closed,
     false,
+  );
+});
+
+test("timeouts use a stable transport cause rather than DOMException numeric codes", async () => {
+  const { Coordinator } = await import(
+    "../../server/services/catalog-connectors/transport.js"
+  );
+  const coordinator = new Coordinator({
+    robots: false,
+    minGapMs: 0,
+    fetchImpl: async () => {
+      throw new DOMException("Timed out", "TimeoutError");
+    },
+  });
+  const ctx = coordinator.context({ allowedOrigins: ["https://catalog.test"] });
+  await assert.rejects(
+    ctx.request("https://catalog.test/search"),
+    (e) => e.code === "UPSTREAM_TIMEOUT" && e.cause.name === "TimeoutError",
+  );
+});
+
+test("a timeout invalidated by a scheduler bug remains open until a later completed recheck", async () => {
+  const { classifyRevalidation } = await import("./revalidation-report.mjs");
+  const replay = { libraryId: "a", classification: "needs_live_recheck" },
+    live = { books: [], blocker: { code: 23, reason: "Timed out" } };
+  const events = [
+    {
+      type: "response_received",
+      libraryId: "a",
+      attemptId: "one",
+      status: 503,
+    },
+    { type: "search_failed", libraryId: "a", attemptId: "one" },
+    {
+      type: "library_checkpoint",
+      libraryId: "a",
+      state: "blocked",
+      at: "2026-11-07T13:00:00Z",
+    },
+    {
+      type: "revalidation_outcome_invalidated",
+      libraryId: "a",
+      at: "2026-11-07T14:00:00Z",
+      reason: "Same-origin scheduler bug; recheck required",
+    },
+  ];
+  assert.equal(classifyRevalidation(replay, live, events).closed, false);
+  events.push({
+    type: "library_checkpoint",
+    libraryId: "a",
+    state: "blocked",
+    at: "2026-11-07T15:00:00Z",
+  });
+  assert.equal(classifyRevalidation(replay, live, events).closed, false);
+  events.push(
+    {
+      type: "response_received",
+      libraryId: "a",
+      attemptId: "two",
+      status: 503,
+      at: "2026-11-07T15:00:01Z",
+    },
+    {
+      type: "search_failed",
+      libraryId: "a",
+      attemptId: "two",
+      at: "2026-11-07T15:00:02Z",
+    },
+  );
+  assert.equal(
+    classifyRevalidation(replay, live, events).classification,
+    "observed_connection_or_http_block",
   );
 });
