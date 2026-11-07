@@ -117,7 +117,7 @@ export function parseAcademicResponse(kind, payload, { query = '', isbn = null, 
       const holding = after.match(/<table\b[^>]*class=['"][^'"]*\bcustom-responsive\b[^'"]*['"][^>]*>([\s\S]*?)<\/table>/i)?.[1];
       const copies = rows(holding).filter(r => r.length === 7).map(r => ({name:text(r[6]) || f.location || 'Library',status:status(r[1])}));
       const known = copies.length && copies.every(r => r.status !== 'unknown');
-      return book(f.title,f.author,{isbn:firstIsbn(f.isbn),publisher:f.publisher,publishedDate:f['year of publication'],subjects:[f.subjects].filter(Boolean),callNumber:f['call no'],outcome:copies.some(r => r.status === 'available') ? 'available' : known ? 'none_available' : 'in_catalog',...(copies.length ? {totalCopies:copies.length} : {}),...(known ? {availableCopies:copies.filter(r => r.status === 'available').length} : {}),locations:copies});
+      return book(f.title,f.author,{...(f['material type']?{materialType:f['material type'],materialTypeProof:'labeled_public_bibliographic_material_type'}:{}),isbn:firstIsbn(f.isbn),publisher:f.publisher,publishedDate:f['year of publication'],subjects:[f.subjects].filter(Boolean),callNumber:f['call no'],outcome:copies.some(r => r.status === 'available') ? 'available' : known ? 'none_available' : 'in_catalog',...(copies.length ? {totalCopies:copies.length} : {}),...(known ? {availableCopies:copies.filter(r => r.status === 'available').length} : {}),locations:copies});
     });
     const form = /id=['"]search_form['"]/.test(html) && [...html.matchAll(/<input\b([^>]*)>/gi)].some(m => { const a=attributes(m[1]); return a.name === 'q' && norm(a.value) === norm(query); });
     if (!records.length && !form) throw catalogError('Unrecognized WebOPAC search page');
@@ -157,7 +157,7 @@ export function parseAcademicResponse(kind, payload, { query = '', isbn = null, 
     const dataRows=rows(t);if(dataRows.some(r=>r.length!==8))throw catalogError('Darshan result columns changed');
     const records=dataRows.map(r=>{
       const href=[...r[0].matchAll(/<a\b([^>]*)>/gi)].map(m=>attributes(m[1]).href).find(Boolean),u=new URL(href||'https://invalid.invalid','https://library.darshan.ac.in');
-      if(u.origin!=='https://library.darshan.ac.in'||u.pathname!=='/Home/BookInformation'||!/^[A-Za-z0-9+/_=-]{1,80}$/.test(u.searchParams.get('Enc_MaterialID')||''))throw catalogError('Unexpected Darshan book link');
+      if(u.origin!=='https://library.darshan.ac.in'||u.pathname!=='/Home/BookInformation'||!/^[A-Za-z0-9+/$=_-]{1,80}$/.test(u.searchParams.get('Enc_MaterialID')||''))throw catalogError('Unexpected Darshan book link');
       const total=integer(text(r[5])),avail=integer(text(r[6]));if(total===undefined||avail===undefined||avail>total)throw catalogError('Invalid copy counts');
       return book(r[0],r[1],{sourceId:u.searchParams.get('Enc_MaterialID'),publisher:text(r[2]),format:text(r[3]),totalCopies:total,availableCopies:avail,outcome:avail?'available':'none_available',locations:[{name:text(r[7])||'Library',status:avail?'available':'unavailable',totalCopies:total,availableCopies:avail}]});
     });return proof(native?records:grouped(records,true),true,!records.length);

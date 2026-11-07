@@ -52,6 +52,37 @@ export function academicFidelity(
   };
   let expected = [],
     observed = records.map((r) => r.nativeDisplayTitle || r.title);
+  const explicitEmpty =
+    (kind === "processcube" && /\bTotal Books:\s*0\b/i.test(text(html))) ||
+    (kind === "bmu" && /\bNo books found\./i.test(text(html))) ||
+    (kind === "mizoram" && /\b0 Records Found\b/i.test(text(html)));
+  if (explicitEmpty) {
+    const tableId = {
+      processcube: "grid_book",
+      bmu: "gvBooks",
+      mizoram: "DataList1",
+    }[kind];
+    const positiveRows =
+      kind === "mizoram"
+        ? /DataList1_ctl(?!00_)\d+_lblTitle/.test(html)
+        : tableBodies((a) => a.id === tableId).some((body) =>
+            rows(body).some(
+              (cells) => cells.length === (kind === "bmu" ? 7 : 9),
+            ),
+          );
+    if (records.length || positiveRows)
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Website zero marker contradicts result records",
+        502,
+      );
+    return {
+      verified: true,
+      method: "independent_explicit_native_empty",
+      variant: kind,
+      nativeRows: 0,
+    };
+  }
   if (kind === "rps") {
     const raw = rows(table("myTable")).filter((r) => r.length === 8);
     if (raw.some((r) => !/^\d+$/.test(r[0])))

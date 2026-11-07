@@ -19,6 +19,98 @@ const fixture = (p) =>
     "utf8",
   );
 
+test("valid native empty pages do not need a result table and cannot hide invented records", async () => {
+  const { parseAcademicResponse } = await import(
+      "../../server/services/providers/discoveryAcademicParsers.js"
+    ),
+    { verifyNativePage } = await import(
+      "../../server/services/catalog-connectors/fidelity.js"
+    );
+  const configs = JSON.parse(
+    readFileSync(
+      new URL(
+        "../../server/services/providers/discoveryAcademicConfigs.json",
+        import.meta.url,
+      ),
+    ),
+  );
+  for (const [kind, path] of [
+    ["processcube", "catalog-audit/processcube-empty.html"],
+    ["bmu", "discovery-academic/bmu-empty.html"],
+    ["mizoram", "discovery-academic/mizoram-empty.html"],
+  ]) {
+    const [academicCatalogId, c] = Object.entries(configs).find(
+        ([, c]) => c.kind === kind,
+      ),
+      html = fixture(path),
+      records = parseAcademicResponse(kind, html, { native: true }).records;
+    assert.equal(records.length, 0);
+    const responses = [{ url: c.url, status: 200, text: html }];
+    assert.equal(
+      verifyNativePage("discovery-academic", responses, records, {
+        academicCatalogId,
+      }).verified,
+      true,
+      kind,
+    );
+    assert.throws(
+      () =>
+        verifyNativePage(
+          "discovery-academic",
+          responses,
+          [{ title: "Invented book" }],
+          { academicCatalogId },
+        ),
+      { code: "FIDELITY_MISMATCH" },
+    );
+  }
+});
+
+test("Darshan public record IDs preserve documented dollar characters and remain pinned to the source origin", async () => {
+  const { parseAcademicResponse } = await import(
+      "../../server/services/providers/discoveryAcademicParsers.js"
+    ),
+    { verifyNativePage } = await import(
+      "../../server/services/catalog-connectors/fidelity.js"
+    );
+  const html = fixture("catalog-audit/darshan-dollar-id.html"),
+    records = parseAcademicResponse("darshan", html, { native: true }).records;
+  assert.ok(records.length > 20);
+  assert.ok(records.some((r) => r.sourceId.includes("$")));
+  const configs = JSON.parse(
+      readFileSync(
+        new URL(
+          "../../server/services/providers/discoveryAcademicConfigs.json",
+          import.meta.url,
+        ),
+      ),
+    ),
+    [academicCatalogId, c] = Object.entries(configs).find(
+      ([, c]) => c.kind === "darshan",
+    );
+  assert.equal(
+    verifyNativePage(
+      "discovery-academic",
+      [{ url: c.url, status: 200, text: html }],
+      records,
+      { academicCatalogId },
+    ).verified,
+    true,
+  );
+  assert.throws(
+    () =>
+      parseAcademicResponse(
+        "darshan",
+        html.replaceAll(
+          "/Home/BookInformation?",
+          "https://other.test/Home/BookInformation?",
+        ),
+        { native: true },
+      ),
+    { code: "CATALOG_UNRECOGNIZED" },
+  );
+});
+
 test("explicit bibliographic Text type is separate from a local Medicine category", async () => {
   const html = fixture("catalog-audit/srhu-material.html");
   assert.equal(bibliographicMaterialType(html), "Text");
@@ -83,6 +175,15 @@ test("native academic HTML rows retain copy rows and website order across review
       query: "Mathematics",
       native: true,
     });
+    if (kind === "libaitech")
+      assert.ok(
+        records.every(
+          (r) =>
+            r.materialType === "Textual Documents" &&
+            r.materialTypeProof ===
+              "labeled_public_bibliographic_material_type",
+        ),
+      );
     const responses = [{ url: c.url, status: 200, text: html }];
     assert.equal(
       verifyNativePage("discovery-academic", responses, records, {

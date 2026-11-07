@@ -127,7 +127,7 @@ async function enriched(b,c,read){
   if(c.kind==='easylib'&&c.availability&&/^[A-Za-z0-9_-]{1,80}$/.test(b.sourceId||'')){
     try {const u=new URL('/index.php/OpacController/getBookAvailability',c.url);u.searchParams.set('BookTitleNo',b.sourceId);return {...b,...parseEasylibAvailability(json(await read(u)))};}catch{return b;}
   }
-  if(c.kind==='darshan'&&/^[A-Za-z0-9+/_=-]{1,80}$/.test(b.sourceId||'')){
+  if(c.kind==='darshan'&&/^[A-Za-z0-9+/$=_-]{1,80}$/.test(b.sourceId||'')){
     const u=new URL('/Home/BookInformation',c.url);u.searchParams.set('Enc_MaterialID',b.sourceId);
     try{
       const response=await read(u),returned=new URL(response.url);
