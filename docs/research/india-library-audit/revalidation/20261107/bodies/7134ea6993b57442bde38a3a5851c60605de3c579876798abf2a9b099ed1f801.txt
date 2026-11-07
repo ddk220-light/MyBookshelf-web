@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html>
+<head><title>
+	Library OPAC
+</title><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .available {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .issued {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .search-box {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form method="post" action="./LibraryOPAC.aspx" id="form1">
+[form state omitted]
+
+[form state omitted]
+[form state omitted]
+        
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+<style>
+    .navbar-brand img {
+        height: 40px;
+        margin-right: 10px;
+    }
+    .navbar {
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .navbar-brand span {
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top border-bottom">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="Default.aspx">
+            <img src="https://upload.wikimedia.org/wikipedia/en/c/c3/Baba_Mastnath_University_logo.png" alt="Logo" />
+            <span>Baba Mastnath University</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" href="Default.aspx"><i class="fas fa-home me-1"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://stu.bmu.ac.in/"><i class="fas fa-user-graduate me-1"></i> Student Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/emp"><i class="fas fa-user-tie me-1"></i> Employee Login</a>
+                </li>
+                <!-- Add more links as needed -->
+            </ul>
+        </div>
+    </div>
+</nav>
+
+[script omitted]
+<!-- Google tag (gtag.js) -->
+[script omitted]
+[script omitted]
+        <!-- Hero Section -->
+        <div class="position-relative text-white mb-5">
+            <img src="img/lib.png" class="img-fluid w-100" style="height: 350px; object-fit: cover;" alt="Library OPAC Banner" />
+            <div class="position-absolute top-50 start-50 translate-middle text-center">
+                <h1 class="fw-bold text-shadow">Library OPAC – Search Catalog</h1>
+                <p class="lead text-shadow">Baba Mastnath University, Rohtak</p>
+            </div>
+        </div>
+
+        <div class="container mt-4">
+            <h3 class="text-primary mb-3"><i class="fas fa-book-open-reader me-2"></i>Library OPAC – Search Catalog</h3>
+
+            <!-- 🔍 Search Section -->
+            <div class="search-box shadow-sm mb-4">
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold"><i class="fas fa-filter me-1"></i>Search By</label>
+                        <select name="ddlSearchType" id="ddlSearchType" class="form-select">
+	<option value="All">Library catalog</option>
+	<option selected="selected" value="Title">Title</option>
+	<option value="Author">Author</option>
+	<option value="Subject">Subject</option>
+	<option value="ISBN">ISBN</option>
+	<option value="ISSN">ISSN</option>
+	<option value="Series">Series</option>
+	<option value="CallNo">Call number</option>
+
+</select>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="form-label fw-semibold"><i class="fas fa-keyboard me-1"></i>Search Term</label>
+                        <input name="txtKeyword" type="text" value="History" id="txtKeyword" class="form-control" placeholder="Enter search term..." />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-semibold d-block invisible">Search</label>
+                        <input type="submit" name="btnSearch" value="Search" id="btnSearch" class="btn btn-primary w-100" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- 📋 Result Table -->
+            <div>
+	<table class="table table-bordered table-hover" cellspacing="0" rules="all" border="1" id="gvBooks">
+		<tr class="table-light">
+			<th scope="col">&#128216; Title</th><th scope="col">✍️ Author</th><th scope="col">&#128218; Subject</th><th scope="col">&#127963;️ Library</th><th scope="col">&#128290; Accession No</th><th scope="col">📌 Location</th><th scope="col">✅ Status</th>
+		</tr><tr>
+			<td>Clinical Examination &amp; History Taking</td><td>Sood Babita</td><td>&nbsp;</td><td>Nursing</td><td>2302</td><td>
+                            Rack <strong>RK05</strong> / Shelf <strong>SH01</strong>
+                        </td><td>
+                            <span class='status-badge available'>
+                                Available
+                            </span>
+                        </td>
+		</tr><tr>
+			<td>History of india medicine</td><td>G.Muphopadhyaya</td><td>Medicine</td><td>Ayurveda</td><td>2718</td><td>
+                            Rack <strong>RK09</strong> / Shelf <strong>SH04</strong>
+                        </td><td>
+                            <span class='status-badge available'>
+                                Available
+                            </span>
+                        </td>
+		</tr><tr>
+			<td>History of india medicine</td><td>G.Muphopadhyaya</td><td>Medicine</td><td>Ayurveda</td><td>2717</td><td>
+                            Rack <strong>RK09</strong> / Shelf <strong>SH04</strong>
+                        </td><td>
+                            <span class='status-badge available'>
+                                Available
+                            </span>
+                        </td>
+		</tr><tr>
+			<td>History of medicine in india</td><td>Priyavert sharma</td><td>Medicine</td><td>Ayurveda</td><td>2713</td><td>
+                            Rack <strong>RK09</strong> / Shelf <strong>SH04</strong>
+                        </td><td>
+                            <span class='status-badge available'>
+                                Available
+                            </span>
+                        </td>
+		</tr><tr>
+			<td>History of vedic literature</td><td>Satya Shrava</td><td>General Book</td><td>Ayurveda</td><td>4784</td><td>
+                            Rack <strong>RK13</strong> / Shelf <strong>SH03</strong>
+                        </td><td>
+                            <span class='status-badge available'>
+                                Available
+                            </span>
+                        </td>
+		</tr><tr>
+			<td>History of indian medicine</td><td>G.Mukundapadhyaya</td><td>General Book</td><td>Ayurveda</td><td>4766</td><td>
+                            Rack <strong>RK13</strong> / Shelf <strong>SH03</strong>
+                        </td><td>
+                            <span class='status-badge available'>
+                                Available
+                            </span>
+                        </td>
+		</tr><tr>
+			<td>History &amp; philosphy of ayurveda</td><td>Subhas Ranade</td><td>Itihas</td><td>Ayurveda</td><td>7931</td><td>
+                            Rack <strong>RK23</strong> / Shelf <strong>SH02</strong>
+                        </td><td>
+                            <span class='status-badge available'>
+                                Available
+                            </span>
+                        </td>
+		</tr><tr>
+			<td>History &amp; philosphy of ayurveda</td><td>Subhas Ranade</td><td>Itihas</td><td>Ayurveda</td><td>7930</td><td>
+                            Rack <strong>RK23</strong> / Shelf <strong>SH02</strong>
+                        </td><td>
+                            <span class='status-badge available'>
+                                Available
+                            </span>
+                        </td>
+		</tr><tr>
+			<td>History &amp; philosphy of ayurveda</td><td>Subhas Ranade</td><td>Itihas</td><td>Ayurveda</td><td>7929</td><td>
+                            Rack <strong>RK23</strong> / Shelf <strong>SH02</strong>
+                        </td><td>
+                            <span class='status-badge available'>
+                                Available
+                            </span>
+                        </td>
+		</tr><tr>
+			<td>History &amp; philosphy of ayurveda</td><td>Subhas Ranade</td><td>Itihas</td><td>Ayurveda</td><td>7928</td><td>
+                            Rack <strong>RK23</strong> / Shelf <strong>SH02</strong>
+                        </td><td>
+                            <span class='status-badge available'>
+                                Available
+                            </span>
+                        </td>
+		</tr><tr>
+			<td colspan="7"><table>
+				<tr>
+					<td><span>1</span></td><td><a href="javascript:__doPostBack(&#39;gvBooks&#39;,&#39;Page$2&#39;)">2</a></td><td><a href="javascript:__doPostBack(&#39;gvBooks&#39;,&#39;Page$3&#39;)">3</a></td><td><a href="javascript:__doPostBack(&#39;gvBooks&#39;,&#39;Page$4&#39;)">4</a></td><td><a href="javascript:__doPostBack(&#39;gvBooks&#39;,&#39;Page$5&#39;)">5</a></td><td><a href="javascript:__doPostBack(&#39;gvBooks&#39;,&#39;Page$6&#39;)">6</a></td><td><a href="javascript:__doPostBack(&#39;gvBooks&#39;,&#39;Page$7&#39;)">7</a></td><td><a href="javascript:__doPostBack(&#39;gvBooks&#39;,&#39;Page$8&#39;)">8</a></td><td><a href="javascript:__doPostBack(&#39;gvBooks&#39;,&#39;Page$9&#39;)">9</a></td><td><a href="javascript:__doPostBack(&#39;gvBooks&#39;,&#39;Page$10&#39;)">10</a></td><td><a href="javascript:__doPostBack(&#39;gvBooks&#39;,&#39;Page$11&#39;)">...</a></td>
+				</tr>
+			</table></td>
+		</tr>
+	</table>
+</div>
+        </div>
+    </form>
+</body>
+</html>
