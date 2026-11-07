@@ -15,6 +15,10 @@ import { getLibraryById } from "../../server/services/directory.js";
 import { readManifest, run, termsFor } from "./runner.mjs";
 import { report } from "./report.mjs";
 import { revalidationReport } from "./revalidation-report.mjs";
+import {
+  revalidationAttemptKey,
+  completedRevalidationKeys,
+} from "./revalidation-plans.mjs";
 const args = process.argv.slice(2),
   option = (k, d) => {
     const i = args.indexOf("--" + k);
@@ -179,21 +183,18 @@ try {
   let review = state("revalidating_cohort");
   checkpoint();
   while (!controller.signal.aborted) {
-    const completed = new Set(
-      store
-        .events({ cached: true })
-        .filter(
-          (e) =>
-            e.type === "revalidation_attempt_completed" &&
-            e.implementationHash === implementationHash,
-        )
-        .map((e) => e.libraryId),
-    );
+    const completed = completedRevalidationKeys(store.events({ cached: true }));
     const goal = JSON.parse(readFileSync(join(directory, "repair-goal.json")));
     const pending = review.libraries.filter((r) => {
       if (
         r.closed ||
-        completed.has(r.libraryId) ||
+        completed.has(
+          revalidationAttemptKey(
+            r.libraryId,
+            implementationHash,
+            goal.queryPlans?.[r.libraryId],
+          ),
+        ) ||
         goal.deferredRevalidation?.[r.libraryId]
       )
         return false;
@@ -268,6 +269,19 @@ try {
           ...(variants || termsFor(row)),
         ]),
       ];
+      row.attemptKey = revalidationAttemptKey(
+        row.libraryId,
+        implementationHash,
+        goal.queryPlans?.[row.libraryId],
+      );
+      store.append({
+        type: "revalidation_plan_selected",
+        libraryId: row.libraryId,
+        implementationHash,
+        attemptKey: row.attemptKey,
+        queries: row.queries,
+        planSourceEvents: goal.queryPlans?.[row.libraryId]?.sourceEvents || [],
+      });
     }
     // One runner owns the whole batch: its shared busyOrigins scheduler keeps
     // same-host jobs from consuming their request deadlines in a local queue.
@@ -288,6 +302,7 @@ try {
           type: "revalidation_attempt_completed",
           libraryId: row.libraryId,
           implementationHash,
+          attemptKey: row.attemptKey,
         });
     store.save("origin-state.json", {
       at: at(),
