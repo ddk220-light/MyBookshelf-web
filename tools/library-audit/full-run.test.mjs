@@ -1,0 +1,105 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtempSync, rmSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { EvidenceStore } from "../../server/services/catalog-connectors/evidence.js";
+import { Coordinator } from "../../server/services/catalog-connectors/transport.js";
+import { hash } from "../../server/services/catalog-connectors/contracts.js";
+import { selectBatch, finalReport, auditSummary } from "./final-report.mjs";
+
+function storeFor(t) {
+  const root = mkdtempSync(join(tmpdir(), "library-full-test-"));
+  const store = new EvidenceStore(root);
+  store.acquire();
+  t.after(() => {
+    store.release();
+    rmSync(root, { recursive: true, force: true });
+  });
+  return store;
+}
+const row = (id, origin, state = null) => ({
+  libraryId: id,
+  name: id,
+  country: "IN",
+  connections: [{ family: "koha", origins: [origin] }],
+  books: [],
+  lastAttemptState: state,
+});
+test("batches prioritize untested hosts and never repeat assessed targets", () => {
+  const rows = [
+    row("a1", "https://a.test", "needs_review"),
+    row("a2", "https://a.test"),
+    row("a3", "https://a.test"),
+    row("b1", "https://b.test"),
+    row("c1", "https://c.test"),
+  ];
+  assert.deepEqual(selectBatch({ libraries: rows }, 3), ["b1", "c1", "a2"]);
+  assert.equal(
+    auditSummary({ total: 5, libraries: rows, booksVerified: 0 }).remaining,
+    4,
+  );
+});
+test("final report cannot be generated before all libraries have an outcome", (t) => {
+  const store = storeFor(t),
+    libraries = [row("a", "https://a.test")];
+  store.save("manifest.json", {
+    runId: "test",
+    target: 20,
+    inventory: {
+      total: 1,
+      libraries,
+      inventoryHash: hash(libraries),
+      reconciliation: [],
+    },
+  });
+  assert.throws(() => finalReport(store), /outcome for every target/);
+});
+test("completed pass reports blocked libraries honestly without claiming twenty-book completion", (t) => {
+  const store = storeFor(t),
+    libraries = [row("a", "https://a.test")];
+  store.save("manifest.json", {
+    runId: "test",
+    target: 20,
+    inventory: {
+      total: 1,
+      libraries,
+      inventoryHash: hash(libraries),
+      reconciliation: [],
+    },
+  });
+  store.append({
+    type: "library_checkpoint",
+    mode: "qualify",
+    libraryId: "a",
+    state: "blocked",
+    blocker: { code: "ROBOTS_DISALLOWED", reason: "Provider rules" },
+    nextAction: "Wait",
+  });
+  const result = finalReport(store);
+  assert.equal(result.remaining, 0);
+  assert.equal(result.allLibrariesHaveOutcome, true);
+  assert.equal(result.allLibrariesHaveTwentyBooks, false);
+  assert.equal(result.blockerCauses.ROBOTS_DISALLOWED.libraries, 1);
+  assert(
+    readFileSync(join(store.root, "final-report.md"), "utf8").includes(
+      "Blocked/failed",
+    ),
+  );
+});
+test("HTTP access refusals are retained beyond a timed cooldown until a permitted recovery", async () => {
+  const c = new Coordinator({
+    robots: false,
+    minGapMs: 0,
+    fetchImpl: async () => new Response("Forbidden", { status: 403 }),
+  });
+  const ctx = c.context({ allowedOrigins: ["https://a.test"] });
+  await assert.rejects(ctx.request("https://a.test/search"), {
+    code: "SOURCE_ACCESS_BLOCKED",
+  });
+  c.cooldowns.clear();
+  await assert.rejects(ctx.request("https://a.test/search"), {
+    code: "SOURCE_ACCESS_BLOCKED",
+  });
+  assert.equal(ctx.requests, 1);
+});

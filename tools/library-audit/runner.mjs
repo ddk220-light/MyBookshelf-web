@@ -602,6 +602,25 @@ export async function run(
           }
           if (blocker && /ROBOTS|BLOCKED|COOLDOWN/.test(blocker.code)) break;
         }
+        if (
+          !blocker &&
+          !books.length &&
+          store
+            .events({ cached: true })
+            .some(
+              (e) =>
+                e.type === "search_completed" &&
+                e.libraryId === library.libraryId &&
+                e.mode !== "health" &&
+                e.records?.length,
+            )
+        )
+          blocker = {
+            code: "NO_VERIFIED_BOOKS",
+            reason:
+              "Catalog returned candidates, but none met the required book, relevance and membership evidence checks",
+            action: "Review rejected records and institution-specific queries",
+          };
         const nextAction =
           books.length >= manifest.target
             ? "Schedule fresh health checks"

@@ -181,6 +181,7 @@ export class EvidenceStore {
   validate() {
     const rows = this.events();
     const ids = new Set();
+    const checkedBodies = new Set();
     for (const row of rows) {
       if (ids.has(row.eventId)) throw new Error("Duplicate event ID");
       ids.add(row.eventId);
@@ -195,10 +196,16 @@ export class EvidenceStore {
       for (const ref of row.evidence || []) {
         if (
           ref.path !== `bodies/${ref.sha256}.txt` ||
-          !/^[a-f0-9]{64}$/.test(ref.sha256) ||
-          hash(readFileSync(join(this.root, ref.path), "utf8")) !== ref.sha256
+          !/^[a-f0-9]{64}$/.test(ref.sha256)
         )
           throw new Error("Missing or mismatched evidence");
+        if (!checkedBodies.has(ref.sha256)) {
+          if (
+            hash(readFileSync(join(this.root, ref.path), "utf8")) !== ref.sha256
+          )
+            throw new Error("Missing or mismatched evidence");
+          checkedBodies.add(ref.sha256);
+        }
       }
     }
     return { events: rows.length, valid: true };

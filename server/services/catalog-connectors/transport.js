@@ -77,6 +77,7 @@ export class Coordinator {
     this.lanes = new Map();
     this.policies = new Map();
     this.cooldowns = new Map();
+    this.refusals = new Map();
     this.active = 0;
   }
   context({
@@ -104,6 +105,12 @@ export class Coordinator {
   }
   check(ctx, url) {
     const u = new URL(url);
+    if (this.refusals.has(u.origin))
+      throw failure(
+        "SOURCE_ACCESS_BLOCKED",
+        `Source returned HTTP ${this.refusals.get(u.origin).status}; a permitted recovery is required`,
+        503,
+      );
     if (
       !["http:", "https:"].includes(u.protocol) ||
       u.username ||
@@ -290,6 +297,12 @@ export class Coordinator {
           evidence: evidence ? [evidence] : [],
         });
         if ([401, 403, 429].includes(response.status)) {
+          if (response.status !== 429)
+            this.refusals.set(origin, {
+              status: response.status,
+              at: new Date().toISOString(),
+              evidence: ctx.evidence,
+            });
           const retry = response.headers.get("retry-after"),
             seconds = Number(retry);
           const until =

@@ -105,3 +105,17 @@ npm run library:audit -- schedule --dir RUN_DIRECTORY
 ```
 
 The saved `schedule.json` defaults to `enabled: false`, a rolling weekly health interval, 30-day requalification interval, 25-library tick budget and three workers. No cron/cloud job is installed and the old research schedules stay paused. When a new monitor is explicitly enabled, set its configuration and invoke `schedule --execute` from one controlled timer. Each tick respects locks, skips blockers needing investigation, and reports overdue work. Enabling a timer is separate from implementing the runner.
+
+## Comprehensive India run
+
+The owner authorized the full run on 7 November 2026. The detached supervisor uses the same connector/evaluator, keeps one coordinator and both locks for the whole run, and serially publishes batches of ten assessed libraries:
+
+```sh
+node tools/library-audit/full-run.mjs \
+  --dir docs/research/india-library-audit/runs/india-20261107 \
+  --batch-size 10 --concurrency 6 --publish
+```
+
+It prioritizes hosts with the fewest assessed libraries so the large shared catalogs cannot hide other catalog families. It retains access refusals and rate-limit cooldowns across restart in `origin-state.json`; a 401/403 requires an actual permitted recovery. `execution.json` describes worker state/counts, `heartbeat.json` advances with evidence, and `/tmp/mybookshelf-india-library-audit.log` records saved/pushed checkpoints. Confirm PID command, zombie state, locks and heartbeat before resuming. Never launch a second supervisor for the same source budget.
+
+Each batch completes before its report and Git snapshot are published. Unrelated staged changes or another writer's branch update stop publishing safely. Data checkpoint commits skip CI/preview builds; implementation changes still run tests. The supervisor emits `final-report.md` and `final-report.json` only when every frozen target has an outcome. The report explicitly distinguishes 20-book passes, partial findings, clean searches finding no books, and failures/unsupported methods; complete assessment does not imply every connection worked. User notification is requested only for the final report or a blocker needing their action. The earlier free-knowledge recovery/reporting schedules stay paused.

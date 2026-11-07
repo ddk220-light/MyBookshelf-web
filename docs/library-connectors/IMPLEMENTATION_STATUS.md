@@ -2,7 +2,7 @@
 
 [Draft PR #188](https://github.com/ddk220-light/MyBookshelf-web/pull/188) contains this implementation and the approved design from #187.
 
-The internal HTTP testing system is implemented and the **6,703-library India queue is prepared**. A separate pilot has verified **20 distinct books for one library**. The comprehensive country audit has not started. No browser control, production release or recurring job was started.
+The internal HTTP testing system is implemented and the **6,703-library India queue is prepared**. A separate pilot has verified **20 distinct books for one library**. This page records the implementation/pilot checkpoint. The owner has since authorized the comprehensive country audit; read the full run’s `execution.json` and `heartbeat.json` for live state. The full-run supervisor saves/pushes small batches and generates a final report after every target has an outcome. No browser control or production release is involved.
 
 Use the [runbook](RUNBOOK.md), [full library list](../research/india-library-audit/runs/india-20261107/library-status.csv) and [pilot results](../research/india-library-audit/runs/pilot-http-20261107/library-status.csv). The broader design and backlog remain useful acceptance criteria; this checkpoint does not assert all their future features are complete.
 
