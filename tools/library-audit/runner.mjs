@@ -121,7 +121,9 @@ export function assessBook(record, query, existing) {
   if (
     existing.some(
       (r) =>
-        r.recordId === record.recordId ||
+        (r.recordId === record.recordId &&
+          (r.connectionId || "primary") ===
+            (record.connectionId || "primary")) ||
         key(
           r.title
             .split(/\s+\/\s+/)[0]
@@ -172,7 +174,11 @@ export function reduceRun(manifest, events) {
       row.qualificationCycle = e.cycle;
       completed.delete(e.libraryId);
     }
-    if (["search_completed", "search_failed", "search_interrupted"].includes(e.type)) {
+    if (
+      ["search_completed", "search_failed", "search_interrupted"].includes(
+        e.type,
+      )
+    ) {
       row.attempts++;
       const { records, ...summary } = e;
       row.queries.push({ ...summary, returned: records?.length || 0 });
@@ -180,9 +186,13 @@ export function reduceRun(manifest, events) {
     }
     if (
       e.type === "book_accepted" &&
-      !row.books.some((b) => b.recordId === e.book.recordId)
+      !row.books.some(
+        (b) =>
+          b.recordId === e.book.recordId &&
+          (b.connectionId || "primary") === (e.connectionId || "primary"),
+      )
     )
-      row.books.push(e.book);
+      row.books.push({ ...e.book, connectionId: e.connectionId || "primary" });
     if (e.type === "library_checkpoint" && e.mode !== "health") {
       row.blocker = e.blocker || null;
       row.nextAction = e.nextAction;
@@ -206,7 +216,11 @@ export function reduceRun(manifest, events) {
     if (r.books.length >= manifest.target) r.status = "20 verified";
     else if (r.books.length) r.status = "1–19 found";
     else if (r.blocker) r.status = "Blocked/failed";
-    else if (completed.has(r.libraryId) && r.lastAttemptState !== "interrupted" && !r.queries.some((q) => q.returned))
+    else if (
+      completed.has(r.libraryId) &&
+      r.lastAttemptState !== "interrupted" &&
+      !r.queries.some((q) => q.returned)
+    )
       r.status = "No books found";
   }
   const libraries = [...rows.values()],
@@ -440,14 +454,24 @@ export async function run(
                   throw new Error(
                     "Qualification requires fresh live HTTP evidence",
                   );
-                for (const candidate of result.records) {
+                for (const nativeRecord of result.records) {
+                  const candidate = {
+                    ...nativeRecord,
+                    connectionId: route.connectionId,
+                  };
                   if (
                     signal?.aborted ||
                     books.length >= manifest.target ||
                     checked >= maxRecordsPerQuery
                   )
                     break;
-                  if (books.some((b) => b.recordId === candidate.recordId))
+                  if (
+                    books.some(
+                      (b) =>
+                        b.recordId === candidate.recordId &&
+                        (b.connectionId || "primary") === route.connectionId,
+                    )
+                  )
                     continue;
                   checked++;
                   try {
@@ -489,7 +513,13 @@ export async function run(
                       throw new Error(
                         "Record proof requires live HTTP evidence",
                       );
-                    const decision = assessBook(detail.record, query, books);
+                    const { recordRef: unusedRecordRef, ...record } =
+                      detail.record;
+                    const provedRecord = {
+                      ...record,
+                      connectionId: route.connectionId,
+                    };
+                    const decision = assessBook(provedRecord, query, books);
                     // Unknown material types remain review candidates, not passes.
                     const explicitBookScope =
                       result.effectiveProfile.nativeProfile?.material ===
@@ -502,7 +532,7 @@ export async function run(
                       libraryId: library.libraryId,
                       connectionId: route.connectionId,
                       query,
-                      book: detail.record,
+                      book: provedRecord,
                       observationKind: allowFixtureEvidence
                         ? "fixture"
                         : result.observationKind,
@@ -511,10 +541,12 @@ export async function run(
                         : decision.reason,
                       evidence: [...result.evidence, ...detail.evidence],
                     });
-                    if (accepted) books.push(detail.record);
+                    if (accepted) books.push(provedRecord);
                   } catch (error) {
                     store.append({
-                      type: signal.aborted ? "record_interrupted" : "record_failed",
+                      type: signal.aborted
+                        ? "record_interrupted"
+                        : "record_failed",
                       libraryId: library.libraryId,
                       query,
                       recordId: candidate.recordId,
@@ -538,13 +570,15 @@ export async function run(
                   reason: error.message,
                   evidence: error.evidence || [],
                 });
-                blocker = signal.aborted ? null : {
-                  code,
-                  reason: error.message,
-                  action: /ROBOTS|BLOCKED|COOLDOWN/.test(code)
-                    ? "Wait for permitted access or documented recovery"
-                    : "Inspect evidence and fix request/parser before retry",
-                };
+                blocker = signal.aborted
+                  ? null
+                  : {
+                      code,
+                      reason: error.message,
+                      action: /ROBOTS|BLOCKED|COOLDOWN/.test(code)
+                        ? "Wait for permitted access or documented recovery"
+                        : "Inspect evidence and fix request/parser before retry",
+                    };
                 nextCursor = null;
               }
             } while (

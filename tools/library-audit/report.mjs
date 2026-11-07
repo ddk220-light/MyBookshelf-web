@@ -48,7 +48,11 @@ export function report(store) {
     nextAction: l.nextAction,
   }));
   const searches = events
-    .filter((e) => ["search_completed", "search_failed", "search_interrupted"].includes(e.type))
+    .filter((e) =>
+      ["search_completed", "search_failed", "search_interrupted"].includes(
+        e.type,
+      ),
+    )
     .map((e) => ({
       libraryId: e.libraryId,
       at: e.at,
@@ -70,6 +74,7 @@ export function report(store) {
       libraryId: e.libraryId,
       query: e.query,
       ...e.book,
+      connectionId: e.connectionId || "primary",
       evidence: e.evidence,
     }));
   const failures = events
@@ -132,6 +137,7 @@ export function report(store) {
       [
         "libraryId",
         "query",
+        "connectionId",
         "recordId",
         "title",
         "authors",

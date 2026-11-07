@@ -622,27 +622,108 @@ test("review shortfalls do not monopolize every later scheduled tick", () => {
   );
 });
 
-test('cancelled operator jobs are idempotent, checkpointed and resumable without a false provider blocker', async t => {
-  const store=storeFor(t);smallManifest(store);let started=0;
-  const service={search:async (_input,{signal})=>{started++;await new Promise((resolve,reject)=>{signal.addEventListener('abort',()=>reject(new DOMException('Cancelled','AbortError')),{once:true});});}};
-  const app=createConnectorApi({service,store,apiKey:secret});
-  const body={mode:'qualify',libraryIds:['koha:test']};
-  const submit=()=>request(app).post('/api/catalog/v1/audit-runs').set('Authorization',`Bearer ${secret}`).set('Idempotency-Key','one-job');
+test("cancelled operator jobs are idempotent, checkpointed and resumable without a false provider blocker", async (t) => {
+  const store = storeFor(t);
+  smallManifest(store);
+  let started = 0;
+  const service = {
+    search: async (_input, { signal }) => {
+      started++;
+      await new Promise((resolve, reject) => {
+        signal.addEventListener(
+          "abort",
+          () => reject(new DOMException("Cancelled", "AbortError")),
+          { once: true },
+        );
+      });
+    },
+  };
+  const app = createConnectorApi({ service, store, apiKey: secret });
+  const body = { mode: "qualify", libraryIds: ["koha:test"] };
+  const submit = () =>
+    request(app)
+      .post("/api/catalog/v1/audit-runs")
+      .set("Authorization", `Bearer ${secret}`)
+      .set("Idempotency-Key", "one-job");
   await submit().send(body).expect(202);
-  await submit().send(body).expect(202);assert.equal(started,1);
-  await submit().send({...body,mode:'health'}).expect(409);
-  await request(app).post('/api/catalog/v1/audit-runs/test-run/cancel').set('Authorization',`Bearer ${secret}`).expect(202);
+  await submit().send(body).expect(202);
+  assert.equal(started, 1);
+  await submit()
+    .send({ ...body, mode: "health" })
+    .expect(409);
+  await request(app)
+    .post("/api/catalog/v1/audit-runs/test-run/cancel")
+    .set("Authorization", `Bearer ${secret}`)
+    .expect(202);
   await app.locals.stopAudit();
-  const progress=JSON.parse(readFileSync(join(store.root,'progress.json')));
-  assert.equal(progress.libraries[0].blocker,null);assert.equal(progress.libraries[0].lastAttemptState,'interrupted');assert.equal(progress.libraries[0].status,'Not checked/checking');
-  assert.equal(store.events().filter(e=>e.type==='search_interrupted').length,1);
-  assert.equal(JSON.parse(readFileSync(join(store.root,'submissions.json')))[hash('one-job')].state,'interrupted');
+  const progress = JSON.parse(readFileSync(join(store.root, "progress.json")));
+  assert.equal(progress.libraries[0].blocker, null);
+  assert.equal(progress.libraries[0].lastAttemptState, "interrupted");
+  assert.equal(progress.libraries[0].status, "Not checked/checking");
+  assert.equal(
+    store.events().filter((e) => e.type === "search_interrupted").length,
+    1,
+  );
+  assert.equal(
+    JSON.parse(readFileSync(join(store.root, "submissions.json")))[
+      hash("one-job")
+    ].state,
+    "interrupted",
+  );
 });
 
-test('scoped book-list evidence avoids needless per-book detail calls after one detail probe',async t=>{
-  const store=storeFor(t);smallManifest(store);let details=0;
-  const evidence=store.body('synthetic scoped book-list evidence','text/plain');
-  const records=Array.from({length:20},(_,i)=>({recordId:String(i),recordRef:String(i),title:`Mathematics ${i}`,format:'Book',observation:{outcome:'in_catalog'}}));
-  const service={search:async()=>({records,fidelity:'website_equivalent',effectiveProfile:{},page:{},evidence:[evidence]}),resolve:async ref=>{details++;return {record:records[Number(ref)],evidence:[evidence]};}};
-  const result=await run(store,service,{queries:['Mathematics'],allowFixtureEvidence:true});assert.equal(result.booksVerified,20);assert.equal(details,1);
+test("scoped book-list evidence avoids needless per-book detail calls after one detail probe", async (t) => {
+  const store = storeFor(t);
+  smallManifest(store);
+  let details = 0;
+  const evidence = store.body(
+    "synthetic scoped book-list evidence",
+    "text/plain",
+  );
+  const records = Array.from({ length: 20 }, (_, i) => ({
+    recordId: String(i),
+    recordRef: String(i),
+    title: `Mathematics ${i}`,
+    format: "Book",
+    observation: { outcome: "in_catalog" },
+  }));
+  const service = {
+    search: async () => ({
+      records,
+      fidelity: "website_equivalent",
+      effectiveProfile: {},
+      page: {},
+      evidence: [evidence],
+    }),
+    resolve: async (ref) => {
+      details++;
+      return { record: records[Number(ref)], evidence: [evidence] };
+    },
+  };
+  const result = await run(store, service, {
+    queries: ["Mathematics"],
+    allowFixtureEvidence: true,
+  });
+  assert.equal(result.booksVerified, 20);
+  assert.equal(details, 1);
+});
+
+test("record IDs are local to a connection while duplicate book titles remain shared", () => {
+  const a = {
+    connectionId: "primary",
+    recordId: "1",
+    title: "Applied Mathematics",
+    format: "Book",
+    observation: { outcome: "in_catalog" },
+  };
+  const b = {
+    ...a,
+    connectionId: "alternate-1",
+    title: "Discrete Mathematics",
+  };
+  assert.equal(assessBook(b, "Mathematics", [a]).accepted, true);
+  assert.equal(
+    assessBook({ ...b, title: a.title }, "Mathematics", [a]).reason,
+    "duplicate_book",
+  );
 });

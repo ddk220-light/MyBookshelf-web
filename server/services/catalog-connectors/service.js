@@ -205,6 +205,8 @@ export class ConnectorService {
             : { verified: false, reason: "legacy_request_recipe_pending" };
         const records = rows.map((r, index) => ({
           ...r,
+          catalogUrl: r.catalogUrl || descriptor.catalogUrl,
+          linkKind: r.catalogUrl ? "record" : "catalog",
           nativeRank: index + 1,
           recordRef: this.refs.sign({
             kind: "record",
@@ -298,7 +300,13 @@ export class ConnectorService {
             "Record identity changed",
             502,
           );
-        return { record };
+        return {
+          record: {
+            ...record,
+            catalogUrl: record.catalogUrl || entry.catalogUrl,
+            linkKind: record.catalogUrl ? "record" : "catalog",
+          },
+        };
       },
       options,
     );
