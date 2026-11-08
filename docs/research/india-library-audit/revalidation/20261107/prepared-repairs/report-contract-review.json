@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-08T00:41:55.514910+00:00",
+  "state": "candidate_row_metric_fixed_other_contract_gaps_open",
+  "providerRequests": 0,
+  "newLibraryPasses": 0,
+  "findings": [
+    {
+      "file": "tools/library-audit/final-report.mjs",
+      "issue": "searches.returnedItems counts queries with nonempty records rather than actual returned candidate rows",
+      "example": "Two successful queries returning2 and3 rows currently report2 returnedItems; expected5 rows and separate2 queriesWithItems",
+      "nextAction": "Add a fixture-backed unit regression and separate query-grain versus row-grain metrics before final publication"
+    },
+    {
+      "file": "tools/library-audit/final-report.mjs",
+      "issue": "Final table groups any blocker with zero books as blocked/failed, including unfinished adapters/equivalence work",
+      "nextAction": "Keep unfinished engineering separate from policy/access and environment/HTTP outcomes in final totals and family rows"
+    },
+    {
+      "file": "tools/library-audit/report.mjs",
+      "issue": "books.csv maps all book_accepted history rather than current selected books while summary uses current reduced books",
+      "nextAction": "Export current selected books and separately retain source-dated book-observation history; reconcile selected rows to summary"
+    },
+    {
+      "file": "tools/library-audit/final-report.mjs",
+      "issue": "Final generation checks assessed libraries but does not establish complete query/result/link reporting or include link CSV references",
+      "nextAction": "Integrate the governed link queue/outcomes and ALL returned candidates into permanent reports; refuse final completion when required evidence remains unchecked, while reporting genuine failed links honestly"
+    }
+  ],
+  "scope": "These are report-contract gaps, not new provider failures. Full audit resume remains gated; do not edit a live collector. Preserve original journals and do not generate an early final report.",
+  "resolvedFindings": [
+    {
+      "issue": "returnedItems counted nonempty queries instead of candidate rows",
+      "resolution": "Separate queriesWithItems and returnedItems; expanded existing regression covers2+3 candidate rows, an empty query and a failed query",
+      "currentAuditTests": 100
+    }
+  ]
+}

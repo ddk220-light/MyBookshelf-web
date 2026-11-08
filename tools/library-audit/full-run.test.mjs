@@ -76,11 +76,40 @@ test("completed pass reports blocked libraries honestly without claiming twenty-
     blocker: { code: "ROBOTS_DISALLOWED", reason: "Provider rules" },
     nextAction: "Wait",
   });
+  // Query counts and candidate-row counts have different grains. Repeated
+  // books across queries remain returned observations, never distinct books.
+  for (const [query, count] of [
+    ["History", 2],
+    ["Science", 3],
+    ["Poetry", 0],
+  ])
+    store.append({
+      type: "search_completed",
+      libraryId: "a",
+      query,
+      records: Array.from({ length: count }, (_, i) => ({
+        recordId: String(i),
+        title: query + " " + i,
+      })),
+      evidence: [],
+    });
+  store.append({
+    type: "search_failed",
+    libraryId: "a",
+    query: "Mathematics",
+    code: "SOURCE_ACCESS_BLOCKED",
+    evidence: [],
+  });
   const result = finalReport(store);
   assert.equal(result.remaining, 0);
   assert.equal(result.allLibrariesHaveOutcome, true);
   assert.equal(result.allLibrariesHaveTwentyBooks, false);
   assert.equal(result.blockerCauses.ROBOTS_DISALLOWED.libraries, 1);
+  assert.equal(result.searches.queriesWithItems, 2);
+  assert.equal(result.searches.returnedItems, 5);
+  assert.equal(result.searches.attempts, 4);
+  assert.equal(result.searches.empty, 1);
+  assert.equal(result.searches.failed, 1);
   assert(
     readFileSync(join(store.root, "final-report.md"), "utf8").includes(
       "Blocked/failed",

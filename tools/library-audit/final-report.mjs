@@ -90,9 +90,14 @@ export function finalReport(store) {
     blockerCauses: causes,
     searches: {
       attempts: searches.length,
-      returnedItems: searches.filter(
+      queriesWithItems: searches.filter(
         (e) => e.type === "search_completed" && e.records?.length,
       ).length,
+      returnedItems: searches.reduce(
+        (count, e) =>
+          count + (e.type === "search_completed" ? e.records?.length || 0 : 0),
+        0,
+      ),
       empty: searches.filter(
         (e) => e.type === "search_completed" && !e.records?.length,
       ).length,
