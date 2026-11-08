@@ -1,5 +1,7 @@
 # Shared-method search audit
 
+**Latest e-Granthalaya direction:** [Five-library/fifty-title collection](../../docs/research/india-library-audit/search-triage/egranthalaya-fifty-20261108/README.md) uses independent per-library sessions, 250 maximum outstanding searches, one-minute minimum batch starts and three-minute request deadlines. The owner removed item-detail fetching from this search-only pass. The older methods and resolver requirements below remain historical and are not silently substituted into this new run.
+
 This is the owner's new three-category audit. It is separate from the paused
 20-book comprehensive audit and never changes its gate or journals.
 

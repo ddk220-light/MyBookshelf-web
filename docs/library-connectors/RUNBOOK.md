@@ -1,5 +1,7 @@
 # Running the library connector audit
 
+**Latest owner direction, 8 November:** Resume e-Granthalaya using the [five-library/fifty-title runner](../research/india-library-audit/search-triage/egranthalaya-fifty-20261108/README.md): 60-second minimum batch-start spacing, 180-second request timeout, previous batch fully settled before the next. This supersedes the prior pause only for this catalog family. Do not launch the old supervisors or change app sources.
+
 **Owner pause, 8 November:** The new search-triage main collector and its hourly watcher are now paused for redesign. Do not resume automatically. The [fifty-query benchmark and plan](../research/india-library-audit/search-triage/experiments/cluster-throughput-20261108/REPORT.md) supersede earlier assumptions about per-library request setup. Main audit/runtime code remains unchanged.
 
 **Current owner direction (8 November):** the older comprehensive run remains paused. The replacement lightweight three-category process is documented in [tools/library-triage/README.md](../../tools/library-triage/README.md). It uses a separate frozen queue and does not open the old repair gate. The commands below describe the historical twenty-book audit.
