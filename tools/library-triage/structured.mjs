@@ -57,7 +57,9 @@ export class SharedSearchService {
     return this.native.execute(input.libraryId,input.connectionId,'structured_search',async({entry},ctx)=>{
       let url,parsed;
       if(entry.platform==='koha') {
-        url=new URL('/cgi-bin/koha/opac-search.pl',entry.baseUrl);
+        // Legacy directory rows may store only the reviewed public catalog URL.
+        // The native Koha resolver uses the same configured-origin fallback.
+        url=new URL('/cgi-bin/koha/opac-search.pl',entry.baseUrl || entry.catalogUrl);
         url.search=new URLSearchParams({idx:'kw',q:input.query,count:'20',sort_by:'relevance',format:'rss'});
         scopeSearch(url,entry);
       }else{

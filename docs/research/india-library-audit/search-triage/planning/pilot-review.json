@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-08T04:52:45.111315+00:00",
+  "status": "paused_for_shared_request_fix",
+  "pilotCompletedUnique": 11,
+  "newWorking": 1,
+  "newBlocked": 1,
+  "needsWork": 9,
+  "bug": "Koha RSS wrapper required baseUrl while two native configs supply only catalogUrl",
+  "affectedIds": [
+    "koha:arul-anandar",
+    "koha:cmd-kerala"
+  ],
+  "repair": "Derive RSS request origin from configured catalogUrl when baseUrl is absent, matching native resolver",
+  "validation": "31 local audit/structured/checkpoint regressions pass; new catalog-only fixture",
+  "next": "Meaningful targeted retry for two affected IDs, then resume remaining selected pilot IDs; do not blindly repeat provider policy failures",
+  "originalFailuresPreserved": true
+}

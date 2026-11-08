@@ -51,6 +51,16 @@ test('IndCat scope gap stops before provider traffic; no unscoped hit can pass',
  assert.throws(()=>service.search({libraryId:'indcat:test'}),/institution-holdings/);assert.equal(requests,0);
 });
 
+test('Koha catalog-only configuration reaches RSS on its configured origin',async t=>{
+ const dir=mkdtempSync(join(tmpdir(),'koha-catalog-only-')),store=new EvidenceStore(dir);store.acquire();t.after(()=>{store.release();rmSync(dir,{recursive:true,force:true});});
+ const urls=[];
+ const coordinator=new Coordinator({store,robots:false,minGapMs:0,fetchImpl:async url=>{urls.push(new URL(url));return new Response(rss,{headers:{'Content-Type':'application/rss+xml'}});}});
+ const entry={platform:'koha',catalogUrl:'https://test.invalid/cgi-bin/koha/opac-main.pl'};
+ const native=new ConnectorService({coordinator,secret:'test-only-0123456789abcdef0123456789abcdef',lookup:()=>entry});
+ const result=await new SharedSearchService(native).search({libraryId:'koha:test',connectionId:'primary',query:'History'});
+ assert.equal(urls.length,1);assert.equal(urls[0].origin,'https://test.invalid');assert.equal(urls[0].pathname,'/cgi-bin/koha/opac-search.pl');assert.equal(urls[0].searchParams.get('format'),'rss');assert.equal(result.records[0].recordId,'123');
+});
+
 test('VuFind API preserves institution and building filters in the documented base path',async t=>{
  const dir=mkdtempSync(join(tmpdir(),'vufind-api-test-')),store=new EvidenceStore(dir);store.acquire();t.after(()=>{store.release();rmSync(dir,{recursive:true,force:true});});
  const urls=[];const coordinator=new Coordinator({store,robots:false,minGapMs:0,fetchImpl:async url=>{urls.push(new URL(url));return new Response('{"status":"OK","resultCount":1,"records":[{"id":"abc.123","title":"History"}]}',{headers:{'Content-Type':'application/json'}});}});
