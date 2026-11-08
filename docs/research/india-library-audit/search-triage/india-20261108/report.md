@@ -2,12 +2,12 @@
 
 | Status | Libraries |
 |---|---:|
-| Working | 1194 |
-| Needs work (includes not yet tested) | 4998 |
+| Working | 1204 |
+| Needs work (includes not yet tested) | 4988 |
 | Blocked / deferred | 511 |
 | Total | 6703 |
 
-3883 await a shared-method test; 2820 have an assessed outcome (including saved blockers and offline exclusions). 1817 have source contact recorded by this run. No old search pass is promoted. Twenty-book qualification, complete link verification and app activation are separate.
+3783 await a shared-method test; 2920 have an assessed outcome (including saved blockers and offline exclusions). 1917 have source contact recorded by this run. No old search pass is promoted. Twenty-book qualification, complete link verification and app activation are separate.
 
 Methods: Koha RSS/XML, VuFind Search API, e-Granthalaya shared HTML, and Libman shared JSON. IndCat SRU remains Needs work until institution-specific holdings and identity mapping are proved; union hits cannot qualify a library. Existing native item resolvers confirm identity and holdings after structured search. API failures do not silently fall back to HTML search.
 
