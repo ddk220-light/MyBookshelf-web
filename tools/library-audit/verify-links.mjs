@@ -16,6 +16,7 @@ import {
   verifyItemLink,
   linkVerificationReport,
 } from "./link-verification.mjs";
+import { runOriginJobs } from "./origin-jobs.mjs";
 const args = process.argv.slice(2),
   option = (name, def) => {
     const i = args.indexOf("--" + name);
@@ -24,7 +25,10 @@ const args = process.argv.slice(2),
 const directory = resolve(
     option("dir", "docs/research/india-library-audit/revalidation/20261107"),
   ),
-  limit = Number(option("limit", "100"));
+  limit = Number(option("limit", "100")),
+  concurrency = Number(option("concurrency", "3"));
+if (!Number.isSafeInteger(concurrency) || concurrency < 1 || concurrency > 8)
+  throw Error("Invalid link concurrency");
 if (!Number.isSafeInteger(limit) || limit < 1 || limit > 1000)
   throw Error("Invalid link verification budget");
 if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY)
@@ -87,7 +91,7 @@ try {
   });
   const libraryFilter = option("libraries", null)?.split(",");
   let processed = 0;
-  for (const job of jobs
+  const selectedJobs = jobs
     .filter(
       (j) =>
         !completed.has(j.jobId) &&
@@ -95,43 +99,51 @@ try {
         (!args.includes("--item-only") ||
           ["record", "metadata_fragment"].includes(j.kind)),
     )
-    .slice(0, limit)) {
-    if (controller.signal.aborted) break;
-    const descriptor = service.connection(
-      job.libraryId,
-      job.connectionId,
-    ).descriptor;
-    const result = await verifyItemLink(job, coordinator, descriptor, {
-      signal: controller.signal,
-    });
-    store.append({
-      type: "link_verification_completed",
-      implementationHash,
-      observationKind: coordinator.observationKind,
-      ...result,
-    });
-    completed.add(job.jobId);
-    processed++;
-    store.save("link-verification-progress.json", {
-      schemaVersion: 1,
-      at: new Date().toISOString(),
-      implementationHash,
-      total: jobs.length,
-      processed: completed.size,
-      remaining: jobs.filter((j) => !completed.has(j.jobId)).length,
-      lastJobId: job.jobId,
-      scope:
-        "Link outcomes do not change library qualification counts; unconfirmed identities remain unresolved",
-    });
-    console.log(
-      JSON.stringify({
-        jobId: job.jobId,
-        libraryId: job.libraryId,
-        outcome: result.outcome,
-        identityConfirmed: result.identityConfirmed,
-      }),
-    );
-  }
+    .slice(0, limit);
+  const descriptors = new Map(
+    selectedJobs.map((job) => [
+      job.jobId,
+      service.connection(job.libraryId, job.connectionId).descriptor,
+    ]),
+  );
+  await runOriginJobs(selectedJobs, {
+    concurrency,
+    signal: controller.signal,
+    originFor: (job) => descriptors.get(job.jobId).origins[0] || job.libraryId,
+    run: async (job) => {
+      const descriptor = descriptors.get(job.jobId);
+      const result = await verifyItemLink(job, coordinator, descriptor, {
+        signal: controller.signal,
+      });
+      store.append({
+        type: "link_verification_completed",
+        implementationHash,
+        observationKind: coordinator.observationKind,
+        ...result,
+      });
+      completed.add(job.jobId);
+      processed++;
+      store.save("link-verification-progress.json", {
+        schemaVersion: 1,
+        at: new Date().toISOString(),
+        implementationHash,
+        total: jobs.length,
+        processed: completed.size,
+        remaining: jobs.filter((j) => !completed.has(j.jobId)).length,
+        lastJobId: job.jobId,
+        scope:
+          "Link outcomes do not change library qualification counts; unconfirmed identities remain unresolved",
+      });
+      console.log(
+        JSON.stringify({
+          jobId: job.jobId,
+          libraryId: job.libraryId,
+          outcome: result.outcome,
+          identityConfirmed: result.identityConfirmed,
+        }),
+      );
+    },
+  });
   console.log(JSON.stringify({ processed, ...linkVerificationReport(store) }));
 } finally {
   if (held && coordinator)

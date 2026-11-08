@@ -1,0 +1,56 @@
+--- a/tools/library-audit/verify-links.mjs
++++ b/tools/library-audit/verify-links.mjs
+@@ -16,6 +16,7 @@
+   verifyItemLink,
+   linkVerificationReport,
+ } from "./link-verification.mjs";
++import { runOriginJobs } from "./origin-jobs.mjs";
+ const args = process.argv.slice(2),
+   option = (name, def) => {
+     const i = args.indexOf("--" + name);
+@@ -24,7 +25,9 @@
+ const directory = resolve(
+     option("dir", "docs/research/india-library-audit/revalidation/20261107"),
+   ),
+-  limit = Number(option("limit", "100"));
++  limit = Number(option("limit", "100")),
++  concurrency = Number(option("concurrency", "3"));
++if(!Number.isSafeInteger(concurrency)||concurrency<1||concurrency>8)throw Error("Invalid link concurrency");
+ if (!Number.isSafeInteger(limit) || limit < 1 || limit > 1000)
+   throw Error("Invalid link verification budget");
+ if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY)
+@@ -87,7 +90,7 @@
+   });
+   const libraryFilter = option("libraries", null)?.split(",");
+   let processed = 0;
+-  for (const job of jobs
++  const selectedJobs = jobs
+     .filter(
+       (j) =>
+         !completed.has(j.jobId) &&
+@@ -95,12 +98,10 @@
+         (!args.includes("--item-only") ||
+           ["record", "metadata_fragment"].includes(j.kind)),
+     )
+-    .slice(0, limit)) {
+-    if (controller.signal.aborted) break;
+-    const descriptor = service.connection(
+-      job.libraryId,
+-      job.connectionId,
+-    ).descriptor;
++    .slice(0, limit);
++  const descriptors = new Map(selectedJobs.map(job=>[job.jobId,service.connection(job.libraryId,job.connectionId).descriptor]));
++  await runOriginJobs(selectedJobs,{concurrency,signal:controller.signal,originFor:job=>descriptors.get(job.jobId).origins[0]||job.libraryId,run:async job=>{
++    const descriptor = descriptors.get(job.jobId);
+     const result = await verifyItemLink(job, coordinator, descriptor, {
+       signal: controller.signal,
+     });
+@@ -131,7 +132,7 @@
+         identityConfirmed: result.identityConfirmed,
+       }),
+     );
+-  }
++  }});
+   console.log(JSON.stringify({ processed, ...linkVerificationReport(store) }));
+ } finally {
+   if (held && coordinator)

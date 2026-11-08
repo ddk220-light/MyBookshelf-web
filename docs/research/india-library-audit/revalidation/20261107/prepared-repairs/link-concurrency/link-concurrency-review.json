@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-08T00:34:02.454446+00:00",
+  "state": "prepared_not_applied",
+  "liveWorkerCodeChanged": false,
+  "providerRequests": 0,
+  "newLibraryPasses": 0,
+  "baseline": {
+    "path": "tools/library-audit/verify-links.mjs",
+    "sha256": "bda6818442b31bc6a7d56ece47f82fddcb00bbbcb72514459cea1c735493b780"
+  },
+  "files": [
+    "origin-jobs.mjs",
+    "origin-jobs.test.mjs",
+    "verify-links.concurrent.mjs",
+    "link-concurrency.patch"
+  ],
+  "purpose": "Independent provider origins can progress in one governed link-check process without parallel jobs waiting on the same origin budget. The shared Coordinator still enforces robots, refusals, cooldowns, source gaps and request caps.",
+  "validation": "100 audit regressions pass in an isolated source snapshot with the candidate CLI and scheduler; three of these verify independent-origin concurrency, per-origin serialization, failure draining and cancellation. No provider requests or added passes.",
+  "nextAction": "At a safe checkpoint after PID47083 stops and locks release, verify baseline, review/apply candidate, rerun complete audit/server checks, refresh implementation attestation and reports, publish scoped research checkpoint, then continue remaining native repairs/link queue without changing the full resume gate.",
+  "setupCorrection": "The first isolated suite lacked six primary client fixtures (94 passed/2 fixture setup failures). Copied their exact committed hash-verified bytes; the complete rerun passes100/100.",
+  "candidateFiles": {
+    "origin-jobs.mjs": "748a66b006c1577da65dde28a5a1c0779c1897be240918dbe8d56103b2d5f9eb",
+    "origin-jobs.test.mjs": "3c51bdcd843f71721fed001e41f689c9e30ff9c8b7c6bc99ee2a6f127dd34aea",
+    "verify-links.concurrent.mjs": "e29c476b4965ecbb666536a94c5ea7ccfbcba931af7916591357e97a80717b27"
+  }
+}
