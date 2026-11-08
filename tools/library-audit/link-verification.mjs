@@ -4,6 +4,7 @@ import { rejectChallenge } from "../../server/services/providers/discoveryAcadem
 import { parseIndcatRecord } from "../../server/services/providers/indcat.js";
 import { parsePmbRecord } from "../../server/services/providers/communityPmb.js";
 import { getLibraryById } from "../../server/services/directory.js";
+import { VMEDU_CLIENT } from "../../server/services/providers/catalogNative.js";
 import { writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { csvCell } from "./report.mjs";
@@ -16,6 +17,15 @@ function normalized(value) {
     .trim();
 }
 function candidateLink(record) {
+  if (
+    record.nativeLookup?.kind === "metadata_post_lookup" &&
+    record.nativeLookup.operation === "getPublicLinkIndividualResourceData" &&
+    record.nativeLookup.path === "/api/library/publicLink.php"
+  )
+    return {
+      url: VMEDU_CLIENT.origin + record.nativeLookup.path,
+      kind: "metadata_post_lookup",
+    };
   const observation = record.observation || record.availability || {};
   if (observation.catalogLinkKind === "record" && observation.catalogUrl)
     return { url: observation.catalogUrl, kind: "record" };
@@ -38,6 +48,7 @@ export function buildLinkQueue(events) {
       const link = candidateLink(record),
         connectionId = event.connectionId || "primary";
       const nativeId =
+        record.nativeRecordId ||
         record.sourceId ||
         (!/^(?:a1_|c1_)/.test(record.recordId) ? record.recordId : null);
       const key = hash([
@@ -61,6 +72,7 @@ export function buildLinkQueue(events) {
         title: record.title,
         url: link.url,
         kind: link.kind,
+        ...(record.nativeLookup ? { nativeLookup: record.nativeLookup } : {}),
         sourceObservedAt: event.at,
         sourceEvents: [event.eventId],
       });
@@ -215,7 +227,24 @@ export async function verifyItemLink(
     sourceObservedAt: job.sourceObservedAt,
     sourceEvents: job.sourceEvents,
   };
-  if (!job.url || !["record", "metadata_fragment"].includes(job.kind))
+  if (job.kind === "metadata_post_lookup")
+    return {
+      ...base,
+      method: "POST",
+      tested: false,
+      identityConfirmed: false,
+      outcome: "post_only_metadata_lookup_no_item_url",
+      permanentItemURL: null,
+      itemUrlAvailable: false,
+      nativeLookup: job.nativeLookup,
+      reason:
+        "Native public modal metadata uses POST; separate native lookup evidence does not create a permanent item URL",
+      evidence: [],
+    };
+  if (
+    !job.url ||
+    !["record", "metadata_fragment", "metadata_post_lookup"].includes(job.kind)
+  )
     return {
       ...base,
       tested: false,
@@ -380,6 +409,10 @@ export function linkVerificationReport(store) {
     "title",
     "url",
     "kind",
+    "method",
+    "permanentItemURL",
+    "itemUrlAvailable",
+    "nativeLookup",
     "tested",
     "outcome",
     "identityConfirmed",
@@ -429,6 +462,18 @@ export function linkVerificationReport(store) {
     ).length,
     identityConfirmed: rows.filter(
       (row) => row.identityConfirmed && row.outcome !== "retry_pending",
+    ).length,
+    getItemLinksConfirmed: rows.filter(
+      (row) =>
+        row.identityConfirmed &&
+        row.kind !== "metadata_post_lookup" &&
+        row.outcome !== "retry_pending",
+    ).length,
+    postOnlyMetadataLookups: rows.filter(
+      (row) =>
+        row.kind === "metadata_post_lookup" &&
+        row.outcome !== "unchecked" &&
+        row.outcome !== "retry_pending",
     ).length,
     outcomes: Object.fromEntries(
       [...new Set(rows.map((row) => row.outcome))].map((outcome) => [

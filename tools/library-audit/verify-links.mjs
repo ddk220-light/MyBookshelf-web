@@ -124,7 +124,9 @@ try {
         (!retryIds.length || retryIds.includes(j.jobId)) &&
         (!libraryFilter || libraryFilter.includes(j.libraryId)) &&
         (!args.includes("--item-only") ||
-          ["record", "metadata_fragment"].includes(j.kind)),
+          ["record", "metadata_fragment", "metadata_post_lookup"].includes(
+            j.kind,
+          )),
     )
     .slice(0, limit);
   const descriptors = new Map(

@@ -279,6 +279,8 @@ export class Coordinator {
         start = Date.now();
       ctx.requests++;
       let bodyFields;
+      if (options.body instanceof FormData)
+        bodyFields = redact(Object.fromEntries(options.body));
       if (typeof options.body === "string") {
         try {
           bodyFields = redact(JSON.parse(options.body));
@@ -373,7 +375,10 @@ export class Coordinator {
         }
         ctx.responses.push({
           url: url.toString(),
+          method: options.method || "GET",
+          bodyFields,
           status: response.status,
+          contentType: response.headers.get("content-type") || null,
           text,
           location: redirectLocation,
         });

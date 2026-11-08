@@ -9,6 +9,7 @@ import * as vufind from "../providers/vufind.js";
 import * as vpl from "../providers/visakhapatnam.js";
 import * as academic from "../providers/discoveryAcademic.js";
 import * as community from "../providers/discoveryCommunity.js";
+import * as catalog from "../providers/catalogNative.js";
 import { connectorContext } from "./context.js";
 import { describe } from "./inventory.js";
 import { searchProfile, tokens, hash, failure, VERSION } from "./contracts.js";
@@ -30,6 +31,7 @@ const implementationFiles = [
 export const implementationHash = hash(implementationFiles);
 
 const native = {
+  catalog,
   koha,
   egranthalaya: eg,
   indcat,
@@ -203,7 +205,6 @@ export class ConnectorService {
               (!r.title &&
                 !(
                   r.title === "" &&
-                  entry.platform === "koha" &&
                   descriptor.mode === "native_http" &&
                   r.metadataWarnings?.includes("missing_title")
                 )),

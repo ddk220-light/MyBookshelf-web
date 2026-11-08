@@ -3,6 +3,7 @@ import recipes from "./recipe-contracts.json" with { type: "json" };
 import { text, attributes } from "../providers/catalogMarkup.js";
 import { academicFidelity } from "./academic-fidelity.js";
 import { communityFidelity } from "./community-fidelity.js";
+import { catalogFidelity } from "./catalog-fidelity.js";
 
 // Deliberately independent of provider parsers: compare raw link identities
 // with the adapter's native page, without ranking or title matching.
@@ -23,9 +24,14 @@ export function verifyNativePage(
       "vpl",
       "discovery-academic",
       "discovery-community",
+      "catalog",
     ].includes(family)
   )
     return { verified: false, reason: "website_display_recipe_pending" };
+  if (family === "catalog")
+    return entry
+      ? catalogFidelity(entry, responses, records, nativeProfile)
+      : { verified: false, reason: "missing_native_catalog_variant" };
   if (family === "koha" && records.length === 1) {
     const redirect = [...responses]
       .reverse()

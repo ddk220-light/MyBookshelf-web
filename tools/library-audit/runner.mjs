@@ -359,9 +359,23 @@ export async function run(
           mode === "requalify"
             ? new Set()
             : triedByLibrary.get(library.libraryId) || new Set();
-        const routes = library.connections.filter(
-          (c) => c.mode !== "unsupported",
-        );
+        // The frozen inventory records historical capability, not whether a
+        // subsequently repaired native method may run. Preserve that snapshot
+        // and use current capabilities only for the same connection/origins.
+        const currentRoutes = service.capabilities?.(
+          library.libraryId,
+        )?.connections;
+        const routes = library.connections.filter((c) => {
+          if (c.mode !== "unsupported") return true;
+          const current = currentRoutes?.find(
+            (r) => r.connectionId === c.connectionId,
+          );
+          return (
+            current?.mode === "native_http" &&
+            JSON.stringify([...(current.origins || [])].sort()) ===
+              JSON.stringify([...(c.origins || [])].sort())
+          );
+        });
         if (!routes.length)
           blocker = {
             code: "UNSUPPORTED_PROFILE",

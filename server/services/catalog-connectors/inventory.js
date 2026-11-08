@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { hash, VERSION } from "./contracts.js";
 import { academicNativeProfile } from "../providers/discoveryAcademic.js";
 import { communityNativeProfile } from "../providers/discoveryCommunity.js";
+import { catalogNativeProfile } from "../providers/catalogNative.js";
 
 export const nativeFamilies = new Set([
   "egranthalaya",
@@ -14,6 +15,7 @@ export const nativeFamilies = new Set([
   "vpl",
   "discovery-academic",
   "discovery-community",
+  "catalog",
 ]);
 export function describe(entry, connectionId = "primary") {
   const origins = [
@@ -38,6 +40,7 @@ export function describe(entry, connectionId = "primary") {
   }
   const native =
     nativeFamilies.has(entry.platform) &&
+    (entry.platform !== "catalog" || catalogNativeProfile(entry).supported) &&
     (entry.platform !== "discovery-academic" || academicNative) &&
     (entry.platform !== "discovery-community" || communityNative) &&
     !(entry.platform === "koha" && entry.publicCatalogApi);
@@ -61,17 +64,19 @@ export function describe(entry, connectionId = "primary") {
         : "unsupported",
     fields: ["egranthalaya", "indcat"].includes(entry.platform)
       ? ["keyword", "title"]
-      : communityNative && communityNativeProfile(entry).field
-        ? [communityNativeProfile(entry).field]
-        : ["libman", "vufind", "vpl", "discovery-academic"].includes(
-              entry.platform,
-            )
-          ? [
-              entry.platform === "discovery-academic" && academicNative
-                ? academicNativeProfile(entry).field
-                : "title",
-            ]
-          : ["keyword"],
+      : entry.platform === "catalog" && catalogNativeProfile(entry).supported
+        ? [catalogNativeProfile(entry).field]
+        : communityNative && communityNativeProfile(entry).field
+          ? [communityNativeProfile(entry).field]
+          : ["libman", "vufind", "vpl", "discovery-academic"].includes(
+                entry.platform,
+              )
+            ? [
+                entry.platform === "discovery-academic" && academicNative
+                  ? academicNativeProfile(entry).field
+                  : "title",
+              ]
+            : ["keyword"],
     paging:
       ["koha", "vufind"].includes(entry.platform) ||
       (communityNative && communityNativeProfile(entry).paging === "native") ||
