@@ -140,16 +140,17 @@ The implemented `tools/library-triage/supervisor.mjs --batch-size 100
 --concurrency 6 --publish` runs bounded batches and validates/publishes only after
 each child stops. It has a separate reservation, a pause file, a 10-second
 heartbeat and preserves errors instead of force-pushing. The CLI rejects unrelated
-writers during that reservation. It stops safely if the journal exceeds 60 MiB;
-compatible 20 MiB JSONL segments/readers remain follow-up engineering before that
-limit, preserving old history. No single-file size limit may silently lose data.
+writers during that reservation. The triage-only evidence store seals journals at 20 MiB and continues in numbered
+append-only files, with a hashed journal-index.json. Old files never move or
+change. Readers validate all sealed hashes and preserve interrupted active tails.
 The owner-authorized run may start within this bound. No automatic twenty-book
 enrichment is implied by this supervisor.
 
 ## Reporting every 1,000 newly checked libraries
 
 The hourly automation is **report-only**. It does not start providers or restore
-old schedules. Read the new manifest, progress and complete journal lines. Count
+old schedules. Read the new manifest, progress and complete journal lines across every sealed
+and active file in journal-index.json (events.jsonl alone before rollover). Count
 distinct frozen library IDs with completed `triage_outcome` events in this run;
 retries, route attempts, later book enrichment and the 796 offline baseline do
 not increase that number. Cross-check against CSV/progress; expose discrepancies
@@ -182,8 +183,8 @@ or if the owner stops it. Existing old free-knowledge/audit schedules stay pause
 
 1. Validate the frozen 24-ID pilot and current queue; run at concurrency six.
 2. Measure the 24-case pilot; fix shared method mistakes once, not per library.
-3. Use the tested bounded publishing supervisor; add segmented readers before
-   the 60 MiB guard and validate counter, interruption and missing-hash handling.
+3. Use the tested bounded publishing supervisor; use the tested segmented readers
+   and validate counter, interruption and missing-hash handling.
 4. Continue classification A across all eligible pending libraries; separately
    implement/test enrichment B with this versioned book pack and exact budgets.
 5. Sample Working libraries to twenty books, publish separate honest sample

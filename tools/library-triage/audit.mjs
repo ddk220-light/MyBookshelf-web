@@ -19,7 +19,7 @@ export const METHODS = {
 // No system-level API claim is converted into proof of an enabled provider API.
 // Structured search wrappers reuse the coordinator; item identity and library
 // membership still require the existing native resolver. IndCat's gap stays open.
-export const VERSION = hash([implementationHash, ...['audit.mjs', 'cli.mjs', 'structured.mjs'].map(f => readFileSync(new URL(f, import.meta.url), 'utf8'))]);
+export const VERSION = hash([implementationHash, ...['audit.mjs', 'cli.mjs', 'structured.mjs', 'evidence.mjs'].map(f => readFileSync(new URL(f, import.meta.url), 'utf8'))]);
 const json = p => JSON.parse(readFileSync(p, 'utf8'));
 const norm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 export function relevant(record, query) {
@@ -27,18 +27,30 @@ export function relevant(record, query) {
   const text = ` ${norm([record?.title, ...(record?.authors || [])].join(' '))} `;
   return words.length > 0 && words.every(w => text.includes(` ${w} `));
 }
+export function sameNativeTitle(search, detail) {
+  const a=norm(search?.title), b=norm(detail?.title);
+  if(a===b)return Boolean(a);
+  // Koha RSS omits the statement of responsibility displayed on the detail page.
+  // Accept only an exact title followed by "by" and independently parsed author
+  // tokens. Never use arbitrary prefixes or fuzzy title matching.
+  if(!a || !b.startsWith(a+' by '))return false;
+  const credit=b.slice(a.length+4).split(' ').filter(Boolean);
+  const authors=new Set((detail.authors||[]).flatMap(x=>norm(x).split(' ')).filter(x=>x!=='by'));
+  return credit.length>0 && credit.every(x=>authors.has(x));
+}
 export function itemProof(search, detail, query, response, resolved) {
   const observation = detail?.observation || detail?.availability;
   if (response?.observationKind !== 'live_http' || resolved?.observationKind !== 'live_http') return 'not_live';
   if (!response.freshness?.sourceContacted || !resolved.freshness?.sourceContacted) return 'no_fresh_source_contact';
   if (!response.evidence?.length || !resolved.evidence?.length) return 'missing_evidence';
   if (!['website_equivalent','supported_structured_search'].includes(response.fidelity)) return 'unproven_query_scope_or_equivalence';
-  if (!search?.recordId || detail?.recordId !== search.recordId || !norm(detail.title) || norm(detail.title) !== norm(search.title)) return 'item_identity_mismatch';
+  if (!search?.recordId || detail?.recordId !== search.recordId || !sameNativeTitle(search,detail)) return 'item_identity_mismatch';
   if (!relevant(search, query) || !relevant(detail, query)) return 'relevance_unconfirmed';
   if (!['available', 'none_available', 'in_catalog'].includes(observation?.outcome)) return 'library_membership_unconfirmed';
   // A generic handoff alone cannot pass. Some native records are POST-only;
   // their resolved content can pass searchability while link limitations stay explicit.
-  if (!detail.catalogUrl || !['record', 'metadata_fragment', 'post_only', 'form_post'].includes(detail.linkKind)) return 'item_link_unconfirmed';
+  const resolvedNativeCatalogItem=detail.linkKind==='catalog' && observation.recognizedExact===true && observation.matchKind==='verified_work';
+  if (!detail.catalogUrl || (!['record', 'metadata_fragment', 'post_only', 'form_post'].includes(detail.linkKind) && !resolvedNativeCatalogItem)) return 'item_link_unconfirmed';
   try { if (!['http:', 'https:'].includes(new URL(detail.catalogUrl).protocol)) return 'item_link_unconfirmed'; }
   catch { return 'item_link_unconfirmed'; }
   return null;

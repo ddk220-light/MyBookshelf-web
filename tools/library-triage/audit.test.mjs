@@ -130,3 +130,17 @@ test('early batch selection includes independent core families',t=>{
 test('spreadsheet exports escape source-supplied formulas without changing raw evidence',async()=>{
  const {quote}=await import('./audit.mjs');assert.equal(quote('=HYPERLINK("bad")'),'"\'=HYPERLINK(""bad"")"');assert.equal(quote('Ordinary title'),'"Ordinary title"');
 });
+
+test('native author credit may extend exact RSS title without conflating other works',async t=>{
+ const s=setup(t),svc=fakeService(s),response=await svc.search(),resolved=await svc.resolve(),r=response.records[0];
+ assert.equal(itemProof(r,{...r,title:'History of India / by A Writer'},'History',response,resolved),null);
+ assert.equal(itemProof(r,{...r,title:'History of India / by Someone Else'},'History',response,resolved),'item_identity_mismatch');
+ assert.equal(itemProof(r,{...r,title:'History of India and Pakistan'},'History',response,resolved),'item_identity_mismatch');
+});
+test('fresh native scoped item can pass with catalog handoff but handoff alone cannot',async t=>{
+ const s=setup(t),svc=fakeService(s),response=await svc.search(),resolved=await svc.resolve(),r=response.records[0];
+ const detail={...r,linkKind:'catalog',observation:{outcome:'in_catalog',recognizedExact:true,matchKind:'verified_work'}};
+ assert.equal(itemProof(r,detail,'History',response,resolved),null);
+ assert.equal(itemProof(r,detail,'History',response,{...resolved,evidence:[]}),'missing_evidence');
+ assert.equal(itemProof(r,{...detail,observation:{outcome:'unknown',recognizedExact:true,matchKind:'verified_work'}},'History',response,resolved),'library_membership_unconfirmed');
+});

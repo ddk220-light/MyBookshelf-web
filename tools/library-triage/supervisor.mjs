@@ -1,9 +1,10 @@
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn, spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { EvidenceStore } from "../../server/services/catalog-connectors/evidence.js";
+import { TriageEvidenceStore } from "./evidence.mjs";
 import { readManifest, report, validate } from "./audit.mjs";
 
 const BRANCH = "feat/library-connector-audit";
@@ -75,7 +76,7 @@ export async function superviseTriage(args = process.argv.slice(2)) {
   )
     throw Error("Use a tracked India audit directory");
   const leader = new EvidenceStore(stateDirectory),
-    store = new EvidenceStore(directory),
+    store = new TriageEvidenceStore(directory),
     machine = new EvidenceStore(
       join(tmpdir(), "mybookshelf-library-connector-coordinator"),
     );
@@ -162,10 +163,6 @@ export async function superviseTriage(args = process.argv.slice(2)) {
         );
       if (git(["rev-parse", "HEAD"]) !== expectedLocal)
         throw Error("Local branch changed during triage supervision");
-      // Bound a single append-only journal below Git's file limit.
-      // Stop safely for segmented-reader engineering instead of losing evidence.
-      if (statSync(join(directory, "events.jsonl")).size > 60 * 1024 * 1024)
-        throw Error("Journal reached 60 MiB; add compatible segmentation before resuming");
       phase = "collecting";
       child = spawn(
         process.execPath,

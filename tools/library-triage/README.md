@@ -13,7 +13,9 @@ This is the owner's new three-category audit. It is separate from the paused
    or transport blocker. A temporary unreachable route is not an offline library.
 
 Twenty books, material-type classification and a full link sweep do not hold up
-this searchability count. A generic link alone cannot pass. A resolved item can
+this searchability count. A generic link alone cannot pass. Fresh native ID/title and library-holdings
+resolution can pass when the public URL is only a catalog handoff; the handoff
+is still labelled as such and is not an item URL or direct-link check. A resolved item can
 be POST-only; the report distinguishes native resolution from independently
 opening the returned item URL. No borrowing availability is inferred from
 catalog presence. A pass is scoped to the saved query/method/library, not a claim
@@ -135,8 +137,8 @@ Use `node tools/library-triage/supervisor.mjs --batch-size 100 --concurrency 6 -
 for safe stopped-child Git checkpoints. The supervisor reservation lives at
 `/workspace/library-audit-review/search-triage-supervisor`; create its `pause` file
 to stop at the next batch boundary, or SIGTERM the verified parent to interrupt
-its tracked child safely. Do not edit while parent or child is live. A 60 MiB
-journal guard stops for segmentation work. Twenty-book enrichment remains a
+its tracked child safely. Do not edit while parent or child is live. The triage-only evidence store seals journals at 20 MiB and appends to numbered
+segments. Read all files in journal-index.json; old journals never move or change. Twenty-book enrichment remains a
 separate implementation; current classification stops at first proved item.
 An enabled hourly report-only watcher delivers each 1,000 new unique outcomes;
 older audit/free-knowledge schedules remain paused.

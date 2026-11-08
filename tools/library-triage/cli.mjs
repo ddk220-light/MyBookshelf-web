@@ -6,6 +6,7 @@ import { randomBytes } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { EnvHttpProxyAgent, setGlobalDispatcher } from 'undici';
 import { EvidenceStore } from '../../server/services/catalog-connectors/evidence.js';
+import { TriageEvidenceStore } from "./evidence.mjs";
 import { Coordinator } from '../../server/services/catalog-connectors/transport.js';
 import { ConnectorService } from '../../server/services/catalog-connectors/service.js';
 import { SharedSearchService } from './structured.mjs';
@@ -26,7 +27,7 @@ for(const old of ['runs/india-20261107','revalidation/20261107']) {
   const forbidden=join(ROOT,'docs/research/india-library-audit',old);
   if(dir===forbidden||dir.startsWith(forbidden+'/'))throw Error('Use a separate search-triage directory');
 }
-const store=new EvidenceStore(dir), machine=new EvidenceStore(join(tmpdir(),'mybookshelf-library-connector-coordinator'));
+const store=new TriageEvidenceStore(dir), machine=new EvidenceStore(join(tmpdir(),'mybookshelf-library-connector-coordinator'));
 const controller=new AbortController();
 process.once('SIGINT',()=>controller.abort());process.once('SIGTERM',()=>controller.abort());
 let held=false,machineHeld=false,coordinator,timer;
