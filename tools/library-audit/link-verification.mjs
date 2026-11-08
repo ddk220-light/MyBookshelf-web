@@ -1,6 +1,8 @@
 import { hash } from "../../server/services/catalog-connectors/contracts.js";
 import { text } from "../../server/services/providers/catalogMarkup.js";
 import { rejectChallenge } from "../../server/services/providers/discoveryAcademicParsers.js";
+import { parseIndcatRecord } from "../../server/services/providers/indcat.js";
+import { getLibraryById } from "../../server/services/directory.js";
 import { writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { csvCell } from "./report.mjs";
@@ -80,7 +82,7 @@ export function confirmItemIdentity(job, response) {
       final.searchParams.getAll(key).includes(value),
     );
   const nativeId = String(job.nativeId || "");
-  const nativeIdInUrl =
+  let nativeIdInUrl =
     Boolean(nativeId) &&
     ([...final.searchParams].some(
       ([key, value]) =>
@@ -92,6 +94,43 @@ export function confirmItemIdentity(job, response) {
   const headings = [
     ...response.text.matchAll(/<h[1-4]\b[^>]*>([\s\S]*?)<\/h[1-4]\s*>/gi),
   ].map((m) => text(m[1]));
+  if (
+    final.origin === "https://indcat.inflibnet.ac.in" &&
+    final.pathname === "/index.php/search/book_search"
+  ) {
+    const library = getLibraryById(job.libraryId),
+      alternate = /^alternate-([1-9]\d*)$/.exec(job.connectionId || "primary");
+    const entry = alternate
+      ? library?.alternateCatalogs?.[Number(alternate[1]) - 1]
+      : library;
+    try {
+      const identity = JSON.parse(
+        Buffer.from(
+          final.searchParams.get("getDetails") || "",
+          "base64",
+        ).toString("utf8"),
+      );
+      nativeIdInUrl =
+        entry?.platform === "indcat" &&
+        String(identity.book_detail) === nativeId &&
+        (identity.singleclg || identity.university) ===
+          entry.indcatInstitutionCode;
+      // The saved source event supplies scoped-search provenance; the actual
+      // detail must independently retain this member's book/holding identity.
+      const record = nativeIdInUrl
+        ? parseIndcatRecord(response.text, entry, nativeId, null, {
+            confirmedMemberRecord: true,
+          })
+        : null;
+      if (record)
+        headings.push(
+          record.title.replace(/\s*\/\s*(?:by|edited by)\s+.+$/i, ""),
+        );
+      else nativeIdInUrl = false;
+    } catch {
+      nativeIdInUrl = false;
+    }
+  }
   // IUST's advertised More Details link is an inline metadata fragment. It
   // carries an explicit native ID and a labelled Title cell, not a heading.
   if (

@@ -92,7 +92,8 @@ try {
       (j) =>
         !completed.has(j.jobId) &&
         (!libraryFilter || libraryFilter.includes(j.libraryId)) &&
-        (!args.includes("--item-only") || j.kind === "record"),
+        (!args.includes("--item-only") ||
+          ["record", "metadata_fragment"].includes(j.kind)),
     )
     .slice(0, limit)) {
     if (controller.signal.aborted) break;

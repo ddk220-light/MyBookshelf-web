@@ -280,6 +280,7 @@ try {
         implementationHash,
         attemptKey: row.attemptKey,
         queries: row.queries,
+        field: goal.queryPlans?.[row.libraryId]?.field || null,
         planSourceEvents: goal.queryPlans?.[row.libraryId]?.sourceEvents || [],
       });
     }
@@ -289,6 +290,11 @@ try {
       libraryIds: batch.map((row) => row.libraryId),
       queriesByLibrary: Object.fromEntries(
         batch.map((row) => [row.libraryId, row.queries]),
+      ),
+      fieldsByLibrary: Object.fromEntries(
+        batch
+          .filter((row) => goal.queryPlans?.[row.libraryId]?.field)
+          .map((row) => [row.libraryId, goal.queryPlans[row.libraryId].field]),
       ),
       concurrency,
       retryBlocked: true,
