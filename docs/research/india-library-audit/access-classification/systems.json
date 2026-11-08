@@ -1,0 +1,344 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-08",
+  "scope": "Offline classification only; no endpoint probes, provider requests, activation or audit restart.",
+  "categoryPolicy": {
+    "1": "A documented structured search mechanism exists at system level; installation enablement and library scope may remain untested.",
+    "2": "An identifiable shared website JSON/HTML request implementation exists, with maintenance and verification work still possible.",
+    "3": "Bespoke/unmapped method or platform without an established shared request implementation. Can include working custom methods.",
+    "4": "Every frozen route has a saved access/policy/transport blocker. Not proof of permanent failure."
+  },
+  "initialReleasePolicy": "Both categories 1 and 2 may qualify after supported relevant searches in the correct library and usable item links are verified. Classification itself releases nothing.",
+  "documentationStatus": "External URLs are system documentation reviewed during the preceding planning research; they are not new per-library endpoint tests or archived fresh responses in this classification.",
+  "systems": {
+    "koha": {
+      "category": 1,
+      "method": "Built-in OPAC RSS/XML search plus public MARCXML record lookup",
+      "evidence": [
+        "https://api.koha-community.org/",
+        "https://github.com/Koha-Community/Koha/blob/main/koha-tmpl/opac-tmpl/bootstrap/en/modules/opac-opensearch.tt",
+        "docs/research/india-library-audit/koha-interface-check-20261108/analysis.json"
+      ],
+      "nextAction": "Later verify the permitted RSS query, paging, native identity and local holdings on each selected installation. Five saved installations demonstrate this route.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification",
+      "requestLead": {
+        "search": "GET /cgi-bin/koha/opac-search.pl?q=<query>&format=rss",
+        "record": "GET /api/v1/public/biblios/<native-id> with Accept: application/marcxml+xml",
+        "qualification": "Five saved provider probes only; RSS search and REST record access are separate capabilities."
+      }
+    },
+    "indcat": {
+      "category": 1,
+      "method": "Official IndCat-GEN SRU search (candidate); library holdings scope unverified",
+      "evidence": [
+        "https://indcat.inflibnet.ac.in/index.php/main/sruManual",
+        "server/services/providers/indcat.js"
+      ],
+      "nextAction": "Later test the documented unauthenticated SRU endpoint and institution-specific holdings. A union catalog hit alone cannot pass an individual library.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification",
+      "requestLead": {
+        "search": "GET https://indcatsru.inflibnet.ac.in/biblio?query=dc.title%3D<query>&maximumRecords=10&operation=searchRetrieve&recordSchema=marcxml",
+        "qualification": "Official manual lead, not a request performed here. Confirm SRU version and institution holdings support in a later pilot."
+      }
+    },
+    "vufind": {
+      "category": 1,
+      "method": "Upstream Search/Record API (candidate; installation permission required)",
+      "evidence": [
+        "https://github.com/vufind-org/vufind/blob/dev/config/vufind/searches.ini",
+        "https://github.com/vufind-org/vufind/blob/dev/config/vufind/permissions.ini",
+        "server/services/providers/vufind.js"
+      ],
+      "nextAction": "Later verify that the provider enables API access and supports the exact library/building scope; retain shared HTML as a possible alternative.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification",
+      "requestLead": {
+        "configuration": "Upstream [API] searchAccessPermission=access.api.Search and record access permissions",
+        "qualification": "No universal provider URL or enabled permission is inferred. Inspect installation configuration/documented endpoint before later testing."
+      }
+    },
+    "egranthalaya": {
+      "category": 2,
+      "method": "Shared anonymous ASP.NET HTML form with cluster/member selection",
+      "evidence": [
+        "server/services/providers/egranthalaya.js",
+        "https://egranthalaya.nic.in/Guidelines.aspx",
+        "https://egranthalaya.nic.in/eG4.aspx",
+        "https://egranthalaya.nic.in/Documentation.aspx",
+        "https://informaticsweb.nic.in/sites/default/files/info_oct_2022_V9_14feb23_final_compressed.pdf"
+      ],
+      "nextAction": "Reuse the shared HTML recipe in a later small representative cluster pilot. Verify member selection, native record identity and result equivalence before scaling.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification",
+      "structuredUpgrade": "NIC documents XML/JSON services and registered-user exports, but an anonymous public library-scoped search API is not established. Incoming ISBN/Z39.50 imports and RFID integrations do not establish such access."
+    },
+    "libman": {
+      "category": 2,
+      "method": "Shared public website JSON search scoped by libraryid and book category",
+      "evidence": [
+        "server/services/providers/libman.js",
+        "docs/research/india-library-audit/revalidation/20261107/recipe-evidence/libman-client-review.json",
+        "https://library.mastersofterp.com/LibWebsite/Index"
+      ],
+      "nextAction": "Later verify the shared client request, library ID, title IDs, paging and item links on representative deployments.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification",
+      "structuredUpgrade": "Advertised secured-key integration API is a documentation lead, not proven anonymous catalog search."
+    },
+    "academic:autolib": {
+      "category": 2,
+      "method": "Autolib public metadata JSON and native DataTables Title semantics",
+      "evidence": [
+        "server/services/providers/autolibNative.js",
+        "docs/research/india-library-audit/revalidation/20261107/native-client-review.json"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:easylib": {
+      "category": 2,
+      "method": "Easylib website JSON search and native paging",
+      "evidence": [
+        "server/services/providers/easylibNative.js",
+        "docs/research/india-library-audit/revalidation/20261107/native-client-review.json"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:libaitech": {
+      "category": 2,
+      "method": "Libaitech shared website search/record HTML",
+      "evidence": [
+        "server/services/providers/discoveryAcademic.js",
+        "server/services/providers/discoveryAcademicConfigs.json"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:libsoft": {
+      "category": 2,
+      "method": "Libsoft shared website search/detail HTML",
+      "evidence": [
+        "server/services/providers/discoveryAcademic.js",
+        "server/services/providers/discoveryAcademicParsers.js"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:librarika": {
+      "category": 2,
+      "method": "Librarika public catalog form and item HTML",
+      "evidence": [
+        "server/services/providers/discoveryAcademic.js",
+        "server/services/providers/discoveryAcademicConfigs.json"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:srms": {
+      "category": 2,
+      "method": "SRMS shared Title JSON client with college IDs and native paging",
+      "evidence": [
+        "server/services/providers/discoveryAcademic.js",
+        "server/services/providers/discoveryAcademicConfigs.json"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:processcube": {
+      "category": 2,
+      "method": "ProcessCube shared public ASP.NET form",
+      "evidence": [
+        "server/services/providers/discoveryAcademic.js",
+        "server/services/providers/discoveryAcademicConfigs.json"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:nios": {
+      "category": 2,
+      "method": "NIOS Libsys website form; version-specific shared method",
+      "evidence": [
+        "server/services/providers/discoveryAcademic.js",
+        "server/services/providers/discoveryAcademicConfigs.json"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "community:pmb": {
+      "category": 2,
+      "method": "PMB shared OPAC HTML with branch views and local holdings",
+      "evidence": [
+        "server/services/providers/discoveryCommunity.js",
+        "docs/research/india-library-audit/revalidation/20261107/prepared-repairs/pmb-item-title/application-record.json"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "community:rmc": {
+      "category": 2,
+      "method": "Rajkot shared ASP.NET catalog with branch selectors",
+      "evidence": [
+        "server/services/providers/discoveryCommunity.js"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "community:surat": {
+      "category": 2,
+      "method": "Surat shared Title JSON/DataTables search with branch selectors",
+      "evidence": [
+        "server/services/providers/communitySuratNative.js",
+        "docs/research/india-library-audit/revalidation/20261107/prepared-repairs/surat-native-client-review.json"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "vmedulife": {
+      "category": 2,
+      "method": "vmedulife public website JSON client with institute-bound Title/resource requests",
+      "evidence": [
+        "server/services/providers/catalogNative.js"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "libsys": {
+      "category": 2,
+      "method": "Libsys10 shared website JSON client; native search equivalence remains open",
+      "evidence": [
+        "server/services/providers/libsys.js",
+        "docs/research/india-library-audit/revalidation/20261107/prepared-repairs/remaining-native-method-review.json"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "chamo": {
+      "category": 2,
+      "method": "Chamo website HTML search/record method; current implementation is IITM-specific",
+      "evidence": [
+        "server/services/providers/chamo.js"
+      ],
+      "nextAction": "Reuse/review this shared website method in a later bounded pilot. Prove the selected library scope, query behavior, native IDs and item links; incomplete adapter/material evidence remains open.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "slim": {
+      "category": 3,
+      "method": "SLIM/HSNC platform identified; shared public request contract not yet established",
+      "evidence": [
+        "docs/research/india-library-audit/revalidation/20261107/prepared-repairs/remaining-native-method-review.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "vpl": {
+      "category": 3,
+      "method": "Visakhapatnam bespoke website",
+      "evidence": [
+        "server/services/providers/visakhapatnam.js"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:mizoram": {
+      "category": 3,
+      "method": "Mizoram institution-specific website method",
+      "evidence": [
+        "server/services/providers/discoveryAcademic.js",
+        "server/services/providers/discoveryAcademicConfigs.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:darshan": {
+      "category": 3,
+      "method": "Darshan institution-specific website method",
+      "evidence": [
+        "server/services/providers/discoveryAcademic.js",
+        "server/services/providers/discoveryAcademicConfigs.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:bmu": {
+      "category": 3,
+      "method": "BMU institution-specific ASP.NET method",
+      "evidence": [
+        "server/services/providers/discoveryAcademic.js",
+        "server/services/providers/discoveryAcademicConfigs.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:rps": {
+      "category": 3,
+      "method": "RPS institution-specific HTML method",
+      "evidence": [
+        "server/services/providers/discoveryAcademic.js",
+        "server/services/providers/discoveryAcademicConfigs.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "academic:iust": {
+      "category": 3,
+      "method": "IUST institution-specific JSON client and MARC metadata fragments",
+      "evidence": [
+        "server/services/providers/iustNative.js"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "community:nmmc": {
+      "category": 3,
+      "method": "NMMC local catalog",
+      "evidence": [
+        "docs/research/india-library-audit/revalidation/20261107/prepared-repairs/remaining-native-method-review.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "community:rmrl": {
+      "category": 3,
+      "method": "Roja Muthiah local catalog",
+      "evidence": [
+        "docs/research/india-library-audit/revalidation/20261107/prepared-repairs/remaining-native-method-review.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "community:santhom": {
+      "category": 3,
+      "method": "Santhom local catalog",
+      "evidence": [
+        "docs/research/india-library-audit/revalidation/20261107/prepared-repairs/remaining-native-method-review.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "community:shodhak": {
+      "category": 3,
+      "method": "Shodhak local catalog",
+      "evidence": [
+        "docs/research/india-library-audit/revalidation/20261107/prepared-repairs/remaining-native-method-review.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "community:sindhi": {
+      "category": 3,
+      "method": "Sindhi Sanchaya network; common public search contract not yet established",
+      "evidence": [
+        "docs/research/india-library-audit/revalidation/20261107/prepared-repairs/remaining-native-method-review.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    },
+    "individual": {
+      "category": 3,
+      "method": "Unmapped or bespoke public catalog",
+      "evidence": [
+        "docs/research/india-library-audit/revalidation/20261107/prepared-repairs/remaining-native-method-review.json"
+      ],
+      "nextAction": "Keep as individual/unestablished-method work. Later inspect saved primary evidence for a reusable supported route before investing in a custom connector. This is not a library failure.",
+      "claimScope": "system-level access candidate; per-library enablement, scope and results require verification"
+    }
+  }
+}
