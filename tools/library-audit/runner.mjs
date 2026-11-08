@@ -255,6 +255,7 @@ export async function run(
     cycle = null,
     queries = null,
     queriesByLibrary = null,
+    fieldsByLibrary = null,
     field = null,
     signal: externalSignal,
     concurrency = 3,
@@ -379,6 +380,7 @@ export async function run(
         for (const route of routes) {
           blocker = null;
           const routeField =
+            fieldsByLibrary?.[library.libraryId] ||
             field ||
             (mode === "health"
               ? library.queries.find(

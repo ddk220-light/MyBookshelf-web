@@ -59,18 +59,17 @@ export function describe(entry, connectionId = "primary") {
       : provider?.searchCatalog
         ? "legacy_http_review"
         : "unsupported",
-    fields:
-      entry.platform === "egranthalaya"
-        ? ["keyword", "title"]
-        : ["libman", "vufind", "vpl", "discovery-academic"].includes(
-              entry.platform,
-            )
-          ? [
-              entry.platform === "discovery-academic" && academicNative
-                ? academicNativeProfile(entry).field
-                : "title",
-            ]
-          : ["keyword"],
+    fields: ["egranthalaya", "indcat"].includes(entry.platform)
+      ? ["keyword", "title"]
+      : ["libman", "vufind", "vpl", "discovery-academic"].includes(
+            entry.platform,
+          )
+        ? [
+            entry.platform === "discovery-academic" && academicNative
+              ? academicNativeProfile(entry).field
+              : "title",
+          ]
+        : ["keyword"],
     paging:
       ["koha", "vufind"].includes(entry.platform) ||
       (academicNative &&

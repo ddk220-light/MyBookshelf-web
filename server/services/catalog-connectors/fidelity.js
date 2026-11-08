@@ -1,6 +1,6 @@
 import { failure } from "./contracts.js";
 import recipes from "./recipe-contracts.json" with { type: "json" };
-import { text } from "../providers/catalogMarkup.js";
+import { text, attributes } from "../providers/catalogMarkup.js";
 import { academicFidelity } from "./academic-fidelity.js";
 import { communityFidelity } from "./community-fidelity.js";
 
@@ -174,6 +174,29 @@ export function verifyNativePage(
         if (id) ids.push(id);
       }
   } else if (family === "indcat") {
+    if (nativeProfile?.field === "title") {
+      const select = [
+        ...html.matchAll(/<select\b([^>]*)>([\s\S]*?)<\/select>/gi),
+      ].find((m) => attributes(m[1]).name === "field");
+      const selected = [...(select?.[2] || "").matchAll(/<option\b([^>]*)>/gi)]
+        .map((m) => attributes(m[1]))
+        .filter((a) => Object.hasOwn(a, "selected"));
+      const inputs = [...html.matchAll(/<input\b([^>]*)>/gi)].map((m) =>
+        attributes(m[1]),
+      );
+      if (
+        selected.length !== 1 ||
+        selected[0].value !== "title" ||
+        inputs.find((a) => a.name === "title")?.value !== nativeProfile.query ||
+        inputs.find((a) => a.name === "part_uni")?.value !==
+          entry?.indcatInstitutionCode
+      )
+        throw failure(
+          "FIDELITY_MISMATCH",
+          "IndCat native field, literal query or institution scope changed",
+          502,
+        );
+    }
     for (const m of html.matchAll(
       /href\s*=\s*["']([^"']*\/search\/book_search\?[^"']+)["']/gi,
     )) {
