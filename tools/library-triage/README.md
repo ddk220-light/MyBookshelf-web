@@ -125,3 +125,18 @@ Validate evidence and counts at a stopped checkpoint, then commit/push only the
 new run's files. There is no automatic Git push or deployment. Keep the original
 append-only journals intact. Long-run evidence segmentation remains a later
 storage concern; use small stopped Git checkpoints while collecting.
+
+## Parallel launch and sampling plan
+
+See [parallel run plan](../../docs/research/india-library-audit/search-triage/planning/PARALLEL_RUN_PLAN.md)
+and its 80-title JSON/CSV pack. The owner authorized a 24-library pilot at six-way
+concurrency followed by continuous classification if operational checks pass.
+Use `node tools/library-triage/supervisor.mjs --batch-size 100 --concurrency 6 --publish`
+for safe stopped-child Git checkpoints. The supervisor reservation lives at
+`/workspace/library-audit-review/search-triage-supervisor`; create its `pause` file
+to stop at the next batch boundary, or SIGTERM the verified parent to interrupt
+its tracked child safely. Do not edit while parent or child is live. A 60 MiB
+journal guard stops for segmentation work. Twenty-book enrichment remains a
+separate implementation; current classification stops at first proved item.
+An enabled hourly report-only watcher delivers each 1,000 new unique outcomes;
+older audit/free-knowledge schedules remain paused.

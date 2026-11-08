@@ -43,6 +43,8 @@ function saveOrigins(){if(coordinator)store.save('origin-state.json',Object.from
 try {
   if(command==='validate') {console.log(JSON.stringify(validate(store)));process.exitCode=0;}
   else {
+    const reservation='/workspace/library-audit-review/search-triage-supervisor/writer.lock';
+    if(existsSync(reservation) && JSON.parse(readFileSync(reservation,'utf8')).id !== process.env.LIBRARY_TRIAGE_SUPERVISOR_ID)throw Error('Search triage supervisor owns the reservation; do not overlap');
     // Parent supervisors also reserve editing/collection between child batches.
     if(existsSync('/workspace/library-audit-review/link-supervisor/writer.lock'))throw Error('Legacy link supervisor owns a reservation; do not overlap');
     machine.acquire();machineHeld=true;store.acquire();held=true;
