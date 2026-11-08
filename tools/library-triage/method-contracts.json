@@ -1,0 +1,62 @@
+{
+  "reviewedAt": "2026-11-08T04:35:41.572588+00:00",
+  "scope": "Searchability audit method contracts; documentation/fixtures are not live provider passes.",
+  "koha": {
+    "method": "GET",
+    "path": "/cgi-bin/koha/opac-search.pl",
+    "parameters": {
+      "idx": "kw",
+      "q": "<exact query>",
+      "count": "20",
+      "sort_by": "relevance",
+      "format": "rss"
+    },
+    "scope": "Existing configured branch filters via scopeSearch; native record resolver must independently confirm local membership.",
+    "identity": "Same-origin opac-detail.pl biblionumber from RSS item/link; matched ID/title in resolved native item.",
+    "sources": [
+      "https://github.com/Koha-Community/Koha/blob/main/koha-tmpl/opac-tmpl/bootstrap/en/modules/opac-opensearch.tt",
+      "docs/research/india-library-audit/koha-interface-check-20261108/analysis.json"
+    ]
+  },
+  "vufind": {
+    "method": "GET",
+    "path": "<configured base path>/api/v1/search",
+    "parameters": {
+      "lookfor": "<exact query>",
+      "type": "Title",
+      "limit": "10",
+      "filter[]": "existing institution/building filters",
+      "field[]": [
+        "id",
+        "title"
+      ]
+    },
+    "response": "status=OK; resultCount integer; records array (may be omitted for zero); id/title fields",
+    "scope": "Preserve configured institution/building filters; require native item holdings confirmation. An installation may disable its API.",
+    "sources": [
+      "https://github.com/vufind-org/vufind/blob/dev/module/VuFindApi/config/module.config.php",
+      "https://github.com/vufind-org/vufind/blob/dev/module/VuFindApi/src/VuFindApi/Action/SearchApi/SearchAction.php",
+      "https://github.com/vufind-org/vufind/blob/dev/module/VuFindApi/src/VuFindApi/Action/AbstractApiAction.php",
+      "https://github.com/vufind-org/vufind/blob/dev/config/vufind/SearchApiRecordFields.yaml"
+    ]
+  },
+  "indcat": {
+    "status": "Needs work: STRUCTURED_SCOPE_UNVERIFIED",
+    "reason": "Documented SRU union search does not yet establish institution-local holdings filtering or a verified mapping to native item IDs. No repeated union searches per library.",
+    "source": "https://indcat.inflibnet.ac.in/index.php/main/sruManual"
+  },
+  "egranthalaya": {
+    "method": "existing member/cluster-scoped native Title HTML form",
+    "source": "server/services/providers/egranthalaya.js",
+    "api": "Anonymous public API not established"
+  },
+  "libman": {
+    "method": "existing library-bound public website JSON Title search",
+    "source": "server/services/catalog-connectors/recipe-contracts.json#libman"
+  },
+  "failedDocumentationLookups": [
+    "https://raw.githubusercontent.com/vufind-org/vufind/dev/module/VuFind/src/VuFind/Controller/ApiController.php",
+    "https://raw.githubusercontent.com/vufind-org/vufind/dev/module/VuFindApi/src/VuFindApi/Controller/SearchApiController.php"
+  ],
+  "failureExplanation": "404 on obsolete controller paths; current upstream request handlers are under Action/SearchApi. No provider test was performed by those documentation reads."
+}
