@@ -14,6 +14,8 @@ import { readManifest } from "./runner.mjs";
 import {
   buildLinkQueue,
   verifyItemLink,
+  saveLinkResult,
+  pendingLinkRetries,
   linkVerificationReport,
 } from "./link-verification.mjs";
 import { runOriginJobs } from "./origin-jobs.mjs";
@@ -84,12 +86,36 @@ try {
       const s = JSON.parse(readFileSync(join(root, "origin-state.json")));
       for (const [k, v] of s.cooldowns || []) coordinator.cooldowns.set(k, v);
       for (const [k, v] of s.refusals || []) coordinator.refusals.set(k, v);
+      for (const [k, v] of s.policyFailures || [])
+        coordinator.policyFailures.set(k, v);
+      for (const [k, v] of s.originReadyAt || [])
+        coordinator.originReadyAt.set(k, v);
     }
   const service = new ConnectorService({
     coordinator,
     secret: randomBytes(32).toString("hex"),
   });
   const libraryFilter = option("libraries", null)?.split(",");
+  const retryIds = [
+      ...new Set(option("retry-jobs", "").split(",").filter(Boolean)),
+    ],
+    retryReason = option("retry-reason", "");
+  if (retryIds.length) {
+    if (
+      retryIds.length > 100 ||
+      retryReason.trim().length < 12 ||
+      retryIds.some((id) => !jobs.some((job) => job.jobId === id))
+    )
+      throw Error(
+        "Retry requires known job IDs and a concrete repair/recovery reason",
+      );
+    store.append({
+      type: "link_verification_retry_requested",
+      jobIds: retryIds,
+      reason: retryReason,
+    });
+  }
+  for (const id of pendingLinkRetries(store.events())) completed.delete(id);
   let processed = 0;
   const selectedJobs = jobs
     .filter(
@@ -115,13 +141,11 @@ try {
       const result = await verifyItemLink(job, coordinator, descriptor, {
         signal: controller.signal,
       });
-      store.append({
-        type: "link_verification_completed",
+      const complete = saveLinkResult(store, result, {
         implementationHash,
         observationKind: coordinator.observationKind,
-        ...result,
       });
-      completed.add(job.jobId);
+      if (complete) completed.add(job.jobId);
       processed++;
       store.save("link-verification-progress.json", {
         schemaVersion: 1,
@@ -144,13 +168,26 @@ try {
       );
     },
   });
-  console.log(JSON.stringify({ processed, ...linkVerificationReport(store) }));
+  const summary = linkVerificationReport(store);
+  store.save("link-verification-last-run.json", {
+    at: new Date().toISOString(),
+    pid: process.pid,
+    interrupted: controller.signal.aborted,
+    attemptedThisInvocation: processed,
+    processed: summary.processed,
+    remaining: summary.remaining,
+  });
+  console.log(
+    JSON.stringify({ attemptedThisInvocation: processed, ...summary }),
+  );
 } finally {
   if (held && coordinator)
     store.save("origin-state.json", {
       at: new Date().toISOString(),
       cooldowns: [...coordinator.cooldowns],
       refusals: [...coordinator.refusals],
+      policyFailures: [...coordinator.policyFailures],
+      originReadyAt: [...coordinator.originReadyAt],
     });
   if (held) store.release();
   if (machineHeld) machine.release();

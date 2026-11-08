@@ -5,6 +5,7 @@ import { safeUrl, redact } from "./evidence.js";
 
 const AGENT = "MyBookshelfAudit/1.0 (+https://mybookshelf.cloud/privacy)";
 const ROBOTS_CACHE_MS = 24 * 60 * 60 * 1000;
+const POLICY_FAILURE_RETRY_MS = 5 * 60 * 1000;
 export function robotsRules(text, userAgent = "mybookshelfaudit") {
   const groups = [];
   let group = null,
@@ -78,8 +79,10 @@ export class Coordinator {
     this.policyClock = policyClock;
     this.observationKind = fetchImpl === fetch ? "live_http" : "fixture";
     this.lanes = new Map();
+    this.originReadyAt = new Map();
     this.policies = new Map();
     this.policyExpires = new Map();
+    this.policyFailures = new Map();
     this.cooldowns = new Map();
     this.refusals = new Map();
     this.active = 0;
@@ -109,12 +112,21 @@ export class Coordinator {
   }
   check(ctx, url) {
     const u = new URL(url);
-    if (this.refusals.has(u.origin))
-      throw failure(
-        "SOURCE_ACCESS_BLOCKED",
-        `Source returned HTTP ${this.refusals.get(u.origin).status}; a permitted recovery is required`,
-        503,
+    if (this.refusals.has(u.origin)) {
+      const refusal = this.refusals.get(u.origin);
+      throw Object.assign(
+        failure(
+          "SOURCE_ACCESS_BLOCKED",
+          refusal.reason ||
+            `Source returned HTTP ${refusal.status}; a permitted recovery is required`,
+          503,
+        ),
+        {
+          causeAttemptId: refusal.attemptId,
+          causeRunDirectory: refusal.sourceRunDirectory,
+        },
       );
+    }
     if (
       !["http:", "https:"].includes(u.protocol) ||
       u.username ||
@@ -143,6 +155,21 @@ export class Coordinator {
   async request(ctx, value, options = {}) {
     const url = this.check(ctx, value);
     if (this.robots && url.pathname !== "/robots.txt") {
+      const recentFailure = this.policyFailures.get(url.origin);
+      if (recentFailure?.until > this.policyClock())
+        throw Object.assign(
+          failure(
+            "ROBOTS_UNAVAILABLE",
+            "Provider robots policy is unavailable; wait for the recorded retry time before another policy request",
+            503,
+          ),
+          {
+            retryAfterAt: new Date(recentFailure.until).toISOString(),
+            causeAttemptId: recentFailure.attemptId,
+            causeRunDirectory: recentFailure.sourceRunDirectory,
+          },
+        );
+      this.policyFailures.delete(url.origin);
       if (
         (this.policyExpires.get(url.origin) ?? Infinity) <= this.policyClock()
       ) {
@@ -156,6 +183,7 @@ export class Coordinator {
           {},
           true,
         ).then((r) => {
+          this.policyFailures.delete(url.origin);
           if (r.status === 404 || r.status === 410) {
             this.policyExpires.set(
               url.origin,
@@ -177,10 +205,18 @@ export class Coordinator {
           return parsed;
         });
         this.policies.set(url.origin, policy);
-        policy.catch(() => {
+        policy.catch((error) => {
           if (this.policies.get(url.origin) === policy) {
             this.policies.delete(url.origin);
             this.policyExpires.delete(url.origin);
+            if (!ctx.signal?.aborted)
+              this.policyFailures.set(url.origin, {
+                until: this.policyClock() + POLICY_FAILURE_RETRY_MS,
+                at: new Date().toISOString(),
+                code: error.code || error.name,
+                attemptId: ctx.attemptId,
+                sourceRunDirectory: this.store?.root,
+              });
           }
         });
       }
@@ -198,7 +234,9 @@ export class Coordinator {
   async raw(ctx, url, options = {}, policyRequest = false) {
     this.check(ctx, url);
     const origin = url.origin,
-      prior = this.lanes.get(origin) || Promise.resolve(0);
+      prior =
+        this.lanes.get(origin) ||
+        Promise.resolve(this.originReadyAt.get(origin) || 0);
     let release;
     const held = new Promise((r) => {
       release = r;
@@ -364,6 +402,8 @@ export class Coordinator {
               status: response.status,
               at: new Date().toISOString(),
               evidence: ctx.evidence,
+              attemptId: ctx.attemptId,
+              sourceRunDirectory: this.store?.root,
             });
           const retry = response.headers.get("retry-after"),
             seconds = Number(retry);
@@ -422,12 +462,12 @@ export class Coordinator {
       }
     } finally {
       if (acquired) this.active--;
-      release(
-        Math.max(
-          nextAt,
-          Date.now() + Math.max(this.minGapMs, ctx.crawlDelay || 0),
-        ),
+      const readyAt = Math.max(
+        nextAt,
+        Date.now() + Math.max(this.minGapMs, ctx.crawlDelay || 0),
       );
+      this.originReadyAt.set(origin, readyAt);
+      release(readyAt);
     }
   }
 }

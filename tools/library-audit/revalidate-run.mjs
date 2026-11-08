@@ -175,6 +175,10 @@ try {
         coordinator.cooldowns.set(origin, until);
       for (const [origin, refusal] of saved.refusals || [])
         coordinator.refusals.set(origin, refusal);
+      for (const [origin, failure] of saved.policyFailures || [])
+        coordinator.policyFailures.set(origin, failure);
+      for (const [origin, until] of saved.originReadyAt || [])
+        coordinator.originReadyAt.set(origin, until);
     }
   const service = new ConnectorService({
     coordinator,
@@ -314,6 +318,8 @@ try {
       at: at(),
       cooldowns: [...coordinator.cooldowns],
       refusals: [...coordinator.refusals],
+      policyFailures: [...coordinator.policyFailures],
+      originReadyAt: [...coordinator.originReadyAt],
     });
     report(store);
     review = state(
@@ -355,6 +361,8 @@ try {
       at: at(),
       cooldowns: [...coordinator.cooldowns],
       refusals: [...coordinator.refusals],
+      policyFailures: [...coordinator.policyFailures],
+      originReadyAt: [...coordinator.originReadyAt],
     });
   if (held) store.release();
   if (machineHeld) machine.release();

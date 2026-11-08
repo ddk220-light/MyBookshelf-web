@@ -260,6 +260,19 @@ export async function verifyItemLink(
       evidence: ctx.evidence,
     };
   } catch (error) {
+    if (error.code === "CATALOG_PROVIDER_BLOCKED") {
+      const origin = new URL(hops.at(-1)?.url || job.url).origin;
+      coordinator.refusals.set(origin, {
+        status: null,
+        kind: "html_access_guard",
+        reason:
+          "An HTML access guard was triggered; review the saved primary evidence before another request",
+        at: new Date().toISOString(),
+        evidence: ctx.evidence,
+        attemptId: ctx.attemptId,
+        sourceRunDirectory: coordinator.store?.root,
+      });
+    }
     return {
       ...base,
       attempted: true,
@@ -268,17 +281,44 @@ export async function verifyItemLink(
         ctx.responses.some(
           (r) => !new URL(r.url).pathname.endsWith("/robots.txt"),
         ),
-      outcome: "blocked_or_failed",
+      outcome: signal?.aborted ? "interrupted" : "blocked_or_failed",
       identityConfirmed: false,
       code: error.code || error.name,
       reason: error.message,
+      retryAfterAt: error.retryAfterAt || null,
+      causeAttemptId: error.causeAttemptId || null,
+      causeRunDirectory: error.causeRunDirectory || null,
       hops,
       evidence: ctx.evidence,
     };
   }
 }
 
+export function saveLinkResult(store, result, metadata = {}) {
+  const complete = result.outcome !== "interrupted";
+  store.append({
+    type: complete
+      ? "link_verification_completed"
+      : "link_verification_interrupted",
+    ...metadata,
+    ...result,
+  });
+  return complete;
+}
+
+export function pendingLinkRetries(events) {
+  const pending = new Set();
+  for (const event of events) {
+    if (event.type === "link_verification_retry_requested")
+      for (const id of event.jobIds) pending.add(id);
+    if (event.type === "link_verification_completed")
+      pending.delete(event.jobId);
+  }
+  return pending;
+}
+
 export function linkVerificationReport(store) {
+  const pending = pendingLinkRetries(store.events({ cached: true }));
   const latest = new Map();
   for (const event of store.events({ cached: true }))
     if (event.type === "link_verification_completed")
@@ -287,10 +327,16 @@ export function linkVerificationReport(store) {
   const queue = existsSync(queuePath)
     ? JSON.parse(readFileSync(queuePath)).jobs
     : [];
+  if ([...pending].some((id) => !queue.some((job) => job.jobId === id)))
+    throw Error(
+      "A pending retry no longer maps to the current link queue; reconcile its saved identity",
+    );
   const rows = queue.map((job) => ({
     ...job,
     ...latest.get(job.jobId),
-    outcome: latest.get(job.jobId)?.outcome || "unchecked",
+    outcome: pending.has(job.jobId)
+      ? "retry_pending"
+      : latest.get(job.jobId)?.outcome || "unchecked",
   }));
   const fields = [
     "jobId",
@@ -307,6 +353,9 @@ export function linkVerificationReport(store) {
     "finalUrl",
     "code",
     "reason",
+    "retryAfterAt",
+    "causeAttemptId",
+    "causeRunDirectory",
     "sourceObservedAt",
     "at",
     "hops",
@@ -325,9 +374,29 @@ export function linkVerificationReport(store) {
     schemaVersion: 1,
     at: new Date().toISOString(),
     total: queue.length,
-    checked: rows.filter((row) => row.outcome !== "unchecked").length,
-    remaining: rows.filter((row) => row.outcome === "unchecked").length,
-    identityConfirmed: rows.filter((row) => row.identityConfirmed).length,
+    processed: rows.filter(
+      (row) => !["unchecked", "retry_pending"].includes(row.outcome),
+    ).length,
+    checked: rows.filter(
+      (row) => !["unchecked", "retry_pending"].includes(row.outcome),
+    ).length,
+    checkedDefinition:
+      "Legacy processed-job count, including handoffs and refusals; not successful item requests",
+    itemResponsesObserved: rows.filter(
+      (row) => row.tested === true && row.outcome !== "retry_pending",
+    ).length,
+    classifiedWithoutItemResponse: rows.filter(
+      (row) =>
+        !["unchecked", "retry_pending"].includes(row.outcome) &&
+        row.tested !== true,
+    ).length,
+    pendingRetries: pending.size,
+    remaining: rows.filter((row) =>
+      ["unchecked", "retry_pending"].includes(row.outcome),
+    ).length,
+    identityConfirmed: rows.filter(
+      (row) => row.identityConfirmed && row.outcome !== "retry_pending",
+    ).length,
     outcomes: Object.fromEntries(
       [...new Set(rows.map((row) => row.outcome))].map((outcome) => [
         outcome,

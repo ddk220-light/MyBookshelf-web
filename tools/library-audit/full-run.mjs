@@ -177,6 +177,10 @@ try {
       coordinator.cooldowns.set(origin, until);
     for (const [origin, refusal] of saved.refusals || [])
       coordinator.refusals.set(origin, refusal);
+    for (const [origin, failure] of saved.policyFailures || [])
+      coordinator.policyFailures.set(origin, failure);
+    for (const [origin, until] of saved.originReadyAt || [])
+      coordinator.originReadyAt.set(origin, until);
   }
   state("running", {
     batchSize,
@@ -209,6 +213,8 @@ try {
       at: at(),
       cooldowns: [...coordinator.cooldowns],
       refusals: [...coordinator.refusals],
+      policyFailures: [...coordinator.policyFailures],
+      originReadyAt: [...coordinator.originReadyAt],
     });
     const result = report(store);
     state(controller.signal.aborted ? "interrupted" : "running", {
@@ -231,6 +237,8 @@ try {
           at: at(),
           cooldowns: [...coordinator.cooldowns],
           refusals: [...coordinator.refusals],
+          policyFailures: [...coordinator.policyFailures],
+          originReadyAt: [...coordinator.originReadyAt],
         });
       state("interrupted", {
         error: { code: error.code || error.name, reason: error.message },
