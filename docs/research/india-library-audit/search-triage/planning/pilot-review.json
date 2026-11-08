@@ -1,10 +1,10 @@
 {
   "at": "2026-11-08T04:52:45.111315+00:00",
-  "status": "paused_for_shared_request_fix",
-  "pilotCompletedUnique": 11,
-  "newWorking": 1,
-  "newBlocked": 1,
-  "needsWork": 9,
+  "status": "pilot_complete_operational_checks_passed",
+  "pilotCompletedUnique": 24,
+  "newWorking": 11,
+  "newBlocked": 2,
+  "needsWork": 11,
   "bug": "Koha RSS wrapper required baseUrl while two native configs supply only catalogUrl",
   "affectedIds": [
     "koha:arul-anandar",
@@ -12,12 +12,279 @@
   ],
   "repair": "Derive RSS request origin from configured catalogUrl when baseUrl is absent, matching native resolver",
   "validation": "41 tests pass (20 audit, 8 structured, 5 supervisor, 8 segmented evidence)",
-  "next": "Recheck the five completed cases affected by proof-rule repairs, resume remaining pilot IDs, then launch continuous six-worker classification after validation",
+  "next": "Launch continuous supervisor for 5,883 pending libraries at concurrency six; persist 100-library Git checkpoints",
   "originalFailuresPreserved": true,
   "sharedProofFixes": [
     "Exact Koha RSS title can match detail title plus independently parsed author credit; no fuzzy prefix matching",
     "Fresh native ID/title/local-holdings proof can establish searchability when its public URL is only a catalog handoff; no direct item URL pass implied"
   ],
   "storage": "20 MiB sealed append-only journals, hash index, active-tail recovery; original evidence files stay unchanged",
-  "updatedAt": "2026-11-08T04:56:15.268980+00:00"
+  "updatedAt": "2026-11-08T05:00:56.028437+00:00",
+  "sourceContactRecorded": 18,
+  "metrics": {
+    "includesPreservedFailedAndInterruptedAttempts": true,
+    "requestStarts": 151,
+    "responsesObserved": 148,
+    "httpStatusCounts": {
+      "404": 13,
+      "200": 131,
+      "503": 3,
+      "502": 1
+    },
+    "responseP50Ms": 1032.5,
+    "responseP95Ms": 6572,
+    "responseBytes": 10295193,
+    "minimumObservedSameOriginGapSeconds": 2.999,
+    "observedPeakRssKiB": 230780,
+    "peakRssScope": "Observed final pilot process; not an estimate of future full-run memory"
+  },
+  "outcomes": [
+    {
+      "libraryId": "koha:arul-anandar",
+      "status": "Needs work",
+      "sourceContactRecorded": false,
+      "reasons": [
+        "CONNECTOR_ERROR"
+      ],
+      "eventId": "0e77472b-e7f5-4d36-ad38-1eb623bc5bee",
+      "observedAt": "2026-11-08T04:52:59.058Z"
+    },
+    {
+      "libraryId": "koha:cmd-kerala",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "dad33f80-618d-4400-85b3-d8309b72d2ce",
+      "observedAt": "2026-11-08T04:53:10.093Z"
+    },
+    {
+      "libraryId": "indcat:indcat-cali-673635",
+      "status": "Needs work",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "STRUCTURED_SCOPE_UNVERIFIED",
+        "ROBOTS_UNAVAILABLE"
+      ],
+      "eventId": "c2f02ac7-9792-4141-802b-081f7be80939",
+      "observedAt": "2026-11-08T04:51:54.987Z"
+    },
+    {
+      "libraryId": "indcat:indcat-kanu-670567",
+      "status": "Needs work",
+      "sourceContactRecorded": false,
+      "reasons": [
+        "STRUCTURED_SCOPE_UNVERIFIED",
+        "ROBOTS_UNAVAILABLE"
+      ],
+      "eventId": "34d3899c-fc23-44d4-ad70-17ecb9051be5",
+      "observedAt": "2026-11-08T04:51:54.996Z"
+    },
+    {
+      "libraryId": "indcat:indcat-krla-695034",
+      "status": "Needs work",
+      "sourceContactRecorded": false,
+      "reasons": [
+        "STRUCTURED_SCOPE_UNVERIFIED",
+        "ROBOTS_UNAVAILABLE"
+      ],
+      "eventId": "73490a00-7824-4633-ac7f-eef5c7e4f4ec",
+      "observedAt": "2026-11-08T04:51:55.002Z"
+    },
+    {
+      "libraryId": "indcat:indcat-mgnd-686560",
+      "status": "Needs work",
+      "sourceContactRecorded": false,
+      "reasons": [
+        "STRUCTURED_SCOPE_UNVERIFIED",
+        "ROBOTS_UNAVAILABLE"
+      ],
+      "eventId": "e691ce6c-97be-4b3e-ac21-870308ee5c69",
+      "observedAt": "2026-11-08T04:51:55.010Z"
+    },
+    {
+      "libraryId": "indcat:indcat-nals-682017",
+      "status": "Needs work",
+      "sourceContactRecorded": false,
+      "reasons": [
+        "STRUCTURED_SCOPE_UNVERIFIED",
+        "ROBOTS_UNAVAILABLE"
+      ],
+      "eventId": "c0d2a1b5-1f06-478d-a7dc-db18a1a0ba2b",
+      "observedAt": "2026-11-08T04:51:55.016Z"
+    },
+    {
+      "libraryId": "koha:lbsnaa-gandhi-smriti",
+      "status": "Blocked / deferred",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "ROBOTS_UNAVAILABLE"
+      ],
+      "eventId": "02c59293-e9d8-4570-b7fa-74924ca4eb47",
+      "observedAt": "2026-11-08T04:51:55.026Z"
+    },
+    {
+      "libraryId": "indcat:indcat-indu-382115",
+      "status": "Needs work",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "STRUCTURED_SCOPE_UNVERIFIED",
+        "NO_RELEVANT_ITEMS_FOR_TESTED_TERMS"
+      ],
+      "eventId": "f29fd6fc-7fa4-45c5-95d8-33095c3a5b25",
+      "observedAt": "2026-11-08T04:52:00.703Z"
+    },
+    {
+      "libraryId": "koha:iiit-kottayam",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "77d34ce4-ff35-4c11-acae-cd836ecc3890",
+      "observedAt": "2026-11-08T04:52:04.595Z"
+    },
+    {
+      "libraryId": "koha:assam-womens-university",
+      "status": "Needs work",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "item_identity_mismatch"
+      ],
+      "eventId": "1b1e4c77-d205-4181-9556-2d11bfc272da",
+      "observedAt": "2026-11-08T04:57:08.047Z"
+    },
+    {
+      "libraryId": "egranthalaya:uplibraries-dllucamr",
+      "status": "Needs work",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "NO_RELEVANT_ITEMS_FOR_TESTED_TERMS"
+      ],
+      "eventId": "10e096d4-1e88-45ba-bb14-0f9f6c8920d1",
+      "observedAt": "2026-11-08T04:53:47.316Z"
+    },
+    {
+      "libraryId": "libman:100",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "fe4a31fa-ed3a-446d-8cbc-716fa5d57114",
+      "observedAt": "2026-11-08T04:56:57.750Z"
+    },
+    {
+      "libraryId": "koha:iit-bhubaneswar",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "17e3afaf-5717-4379-8a0c-f4f1ce7622c2",
+      "observedAt": "2026-11-08T04:56:58.251Z"
+    },
+    {
+      "libraryId": "koha:sree-sankaracharya-sanskrit",
+      "status": "Blocked / deferred",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "ROBOTS_UNAVAILABLE",
+        "ROBOTS_UNAVAILABLE"
+      ],
+      "eventId": "c3532d99-4d8e-473b-8f1b-e66ac93ae5f0",
+      "observedAt": "2026-11-08T04:57:08.004Z"
+    },
+    {
+      "libraryId": "libman:101",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "96c2e5d1-fd6e-4f49-b7ce-40b403983258",
+      "observedAt": "2026-11-08T04:57:08.076Z"
+    },
+    {
+      "libraryId": "libman:102",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "02c55781-92b4-4ff4-9df7-bd67bb202f3c",
+      "observedAt": "2026-11-08T04:57:20.946Z"
+    },
+    {
+      "libraryId": "libman:103",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "688a458e-a544-4bc5-97c0-e556ff28b0a8",
+      "observedAt": "2026-11-08T04:57:40.084Z"
+    },
+    {
+      "libraryId": "egranthalaya:publiclibraries-hkmslib",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "b62ff40b-82b9-4829-b768-36685d8302f0",
+      "observedAt": "2026-11-08T04:57:58.199Z"
+    },
+    {
+      "libraryId": "egranthalaya:tamilnadu-tkgacm",
+      "status": "Needs work",
+      "sourceContactRecorded": false,
+      "reasons": [
+        "CATALOG_CONFIGURATION_REQUIRED"
+      ],
+      "eventId": "b1179a8d-49b2-4ba0-b3eb-cf41a4dd8003",
+      "observedAt": "2026-11-08T04:57:58.206Z"
+    },
+    {
+      "libraryId": "egranthalaya:aps-aatsftp",
+      "status": "Needs work",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "NO_RELEVANT_ITEMS_FOR_TESTED_TERMS"
+      ],
+      "eventId": "31b69ef0-2cef-46fb-b4a7-108afd4c64b9",
+      "observedAt": "2026-11-08T04:58:21.745Z"
+    },
+    {
+      "libraryId": "egranthalaya:aps-sska125",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "a5c8a9b8-dec4-4a41-81bb-0ac1301140d5",
+      "observedAt": "2026-11-08T04:58:46.222Z"
+    },
+    {
+      "libraryId": "egranthalaya:asi-asieb",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "3ac54577-c7cb-4264-ad19-39cd268ea93c",
+      "observedAt": "2026-11-08T04:59:17.487Z"
+    },
+    {
+      "libraryId": "egranthalaya:assembly-bhsectlib",
+      "status": "Working",
+      "sourceContactRecorded": true,
+      "reasons": [
+        "RELEVANT_SCOPED_ITEM_RESOLVED"
+      ],
+      "eventId": "dcc3ba1b-f5a8-4fcf-8ca1-a9bc51395d37",
+      "observedAt": "2026-11-08T05:00:00.845Z"
+    }
+  ]
 }
