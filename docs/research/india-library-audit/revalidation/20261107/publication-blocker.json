@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "at": "2026-11-08T00:26:26.101041+00:00",
-  "state": "source_published_evidence_pending",
+  "at": "2026-11-08T00:35:34.794116+00:00",
+  "state": "resolved",
   "lastRemoteCommit": "fc20376265c2edb96175286073c03b0d9213e211",
   "savedLocalCodeCommit": "2d94a7b9c7b5cbc8af21d42e43a4b0c374af8379",
-  "cause": "Connected GitHub app published the exact source-only tree. Workspace Git transport is unavailable; the configured MCP token cannot write trees (404), and multi-megabyte MCP payloads return 413.",
+  "cause": "Historical missing Git authentication is resolved: fresh fetch, dry-run push and actual full checkpoint push succeeded.",
   "evidence": [
     "Git fetch: could not read Username for https://github.com",
     "GitHub MCP push_files: ConnectionResetError while sending 32 scoped files; no branch update confirmed"
   ],
-  "nextAction": "Continue local audit work. Restore workspace Git credential to publish complete provider journals; bounded source checkpoints can use the connected GitHub app. Do not repeat the unconfirmed large blob upload.",
+  "nextAction": "Publish new complete checkpoints through ordinary Git after every safe collector boundary. Do not use large MCP payload workarounds.",
   "fullAuditStillGated": true,
   "productionChanged": false,
-  "lastCompleteRemoteEvidenceCommit": "fc20376265c2edb96175286073c03b0d9213e211",
-  "localReviewed": 514,
-  "localOpenRepairCases": 40,
+  "lastCompleteRemoteEvidenceCommit": "5e79342",
+  "localReviewed": 516,
+  "localOpenRepairCases": 38,
   "remoteSourceCodeCommit": "b80f9d9a4cfb093d1502f50380fd7af2576c9836",
   "localBranchNeedsReconciliation": false,
   "localReconciledWithRemoteCodeCommit": "b80f9d9a4cfb093d1502f50380fd7af2576c9836",
@@ -22,5 +22,7 @@
     "startedAt": "2026-11-07",
     "bytes": 8296223,
     "result": "No confirmed result; request wait aborted. Do not retry large payloads blindly."
-  }
+  },
+  "gitWriteAccessVerified": true,
+  "lastCompleteRemoteEvidenceBranch": "research/audit-publish-checkpoint-20261108-indcat"
 }
