@@ -540,14 +540,14 @@ export async function run(
                       books.length > 0 &&
                       preliminary.accepted &&
                       preliminary.formatConfirmed;
-                    // Autolib's lookup repeats the same metadata export. It
-                    // cannot supply a material label absent from this native
-                    // row, so another request adds no book-type evidence.
+                    // Autolib repeats its export, and Surat repeats a copy-row
+                    // search. Neither supplies an absent bibliographic type.
                     if (
                       preliminary.accepted &&
                       !preliminary.formatConfirmed &&
-                      result.effectiveProfile.nativeProfile?.variant ===
-                        "autolib"
+                      ["autolib", "surat"].includes(
+                        result.effectiveProfile.nativeProfile?.variant,
+                      )
                     ) {
                       store.append({
                         type: "book_rejected",

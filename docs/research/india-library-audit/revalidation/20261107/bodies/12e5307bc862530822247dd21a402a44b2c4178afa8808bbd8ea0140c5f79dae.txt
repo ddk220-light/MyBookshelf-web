@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Online Library">
+    <meta name="author" content="Surat Municipal Corporation">
+    <title>Search - Online SMC Library</title>
+    <link href="/LMS/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="/LMS/Content/bootstrap/css/bootstrap-1.0.css" rel="stylesheet"/>
+<link href="/LMS/Content/datepicker/jquery.datetimepicker.css" rel="stylesheet"/>
+
+    <link href="/LMS/Content/metisMenu/metisMenu.css" rel="stylesheet"/>
+<link href="/LMS/Content/metisMenu/metisSubmenu.css" rel="stylesheet"/>
+
+    <link href="/LMS/Content/fontawesome/css/font-awesome.css" rel="stylesheet"/>
+
+    <link href="/LMS/Content/css/AdminPanel-0.9.css" rel="stylesheet"/>
+
+    [script omitted]
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        [script omitted]
+        [script omitted]
+    <![endif]-->
+</head>
+<body>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" style="margin-bottom: 0">
+            <div class="navbar-header" style="height: 95px;">
+                <div class="logo-wrapper">
+                    <div class="pull-left">
+                        <a class="navbar-brand" href="http://www.suratmunicipal.gov.in" target="_blank">
+                            <img src="/LMS/Content/images/smc_logo.png" alt="Surat Municipal Corporation" id="imgLogo" />
+                        </a>
+                    </div>
+                    <div class="pull-left">
+                        <a class="navbar-brand" href="#" style="padding: 0px;">
+                            <h3>
+                                e-Library
+                                <br />
+                                <label>Surat Municipal Corporation </label>
+                            </h3>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- /.navbar-header -->
+        </nav>
+        <!-- Notification View -->
+
+        <!-- Dynamic Page Body goes here -->
+        <div id="page-wrapper">
+            
+<link href="/LMS/Content/datatables/dataTables.bootstrap.css" rel="stylesheet"/>
+<link href="/LMS/Content/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet"/>
+
+<link href="/LMS/Content/themes/base/jquery.ui.core.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.resizable.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.selectable.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.accordion.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.autocomplete.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.button.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.dialog.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.slider.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.tabs.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.datepicker.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.progressbar.css" rel="stylesheet"/>
+<link href="/LMS/Content/themes/base/jquery.ui.theme.css" rel="stylesheet"/>
+
+
+<div class="container topPadding30">
+    <!-- BEGIN LOGIN FORM -->
+    <div class="row">
+        <!-- Modal HTML -->
+        <div id="myModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="htitle"></h4>
+                    </div>
+                    <div class="modal-body" id="dvbody">
+
+                    </div>
+                 
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-horizontal">
+
+        <div class="form-group">
+            <label for="inputEmail" class="control-label col-sm-2 col-md-2 col-lg-2 col-sm-offset-2 col-md-offset-2  col-lg-offset-2">Library</label>
+            <div class="col-sm-6 col-md-6 col-lg-6">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-institution"></i>
+                    </span>
+                    <select class="form-control" id="drpLibrary" name="DataValueField"><option value="">All Library</option>
+<option value="1">NARMAD CENTRAL LIBRARY</option>
+<option value="2">DR. VISHNUPRASAD TRIVEDI VIVIDHLAKSHI LIBRARY</option>
+<option value="5">SHREE ATALBIHARI VAJPAYEE LIBRARY</option>
+<option value="6">SHREE KESHUBHAI PATEL LIBRARY</option>
+<option value="7">SHREE CHHATRAPATI SHIVAJI MAHARAJJEE PUSTAKALAY</option>
+</select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2 col-md-2 col-lg-2 col-sm-offset-2 col-md-offset-2  col-lg-offset-2" for="drpClassification" id="lblClassification">
+                Classification
+            </label>
+            <div class="col-sm-6 col-md-6 col-lg-6">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-institution"></i>
+                    </span>
+                    <select class="form-control" id="drpClassification" name="DataValueField"><option value="">All</option>
+<option value="1">Generalities [000-009]</option>
+<option value="2">Bibliography [010-019]</option>
+<option value="3">Library &amp; Information Sciences [020-029]</option>
+<option value="4">General Encyclopedic works [030-039]</option>
+<option value="5"> [040-049]</option>
+<option value="6">General Serial Publications [050-059]</option>
+<option value="7">General Organizations [060-069]</option>
+<option value="8">Newa Media, Jouranalism, Publishing [070-079]</option>
+<option value="9">General Collection [080-089]</option>
+<option value="10">Manuscripts &amp; book rarities [090-099]</option>
+<option value="11">Philosophy &amp; Psychology [100-109]</option>
+<option value="12">Metaphysics [110-119]</option>
+<option value="13">Epistemology, Casuation, Humankind [120-129]</option>
+<option value="14">Paranormal Phenomena &amp; arts [130-139]</option>
+<option value="15">Specific Philosophical Schools [140-149]</option>
+<option value="16">Psychology [150-159]</option>
+<option value="17">Logic [160-169]</option>
+<option value="18">Ethic, Moral Philosophy [170-179]</option>
+<option value="19">Ancient, Medival, Oriental Philosophy [180-189]</option>
+<option value="20">Modern Western Philosophy [190-199]</option>
+<option value="21">Religion [200-209]</option>
+<option value="22">Philosophy &amp; theory of religion [210-219]</option>
+<option value="23">Bible [220-229]</option>
+<option value="24">Christian Theology [230-239]</option>
+<option value="25">Christian Moral &amp; devotional theology [240-249]</option>
+<option value="26">Christian orders &amp; Local Church  [250-259]</option>
+<option value="27">Christian Social Theology [260-269]</option>
+<option value="28">Christian Church History [270-279]</option>
+<option value="29">Christian Denominations &amp; Sects [280-289]</option>
+<option value="30">Other &amp; Comparative Religion [290-299]</option>
+<option value="31">Social Sciences [300-309]</option>
+<option value="32">General Statistics   [310-319]</option>
+<option value="33">Political Science [320-329]</option>
+<option value="34">Economics [330-339]</option>
+<option value="35">Law [340-349]</option>
+<option value="36">Public Administration [350-359]</option>
+<option value="37">Social Problems &amp; Services; Association [360-369]</option>
+<option value="38">Education [370-379]</option>
+<option value="39">Commerce, Communications, Transportation [380-389]</option>
+<option value="40">Customs, etiquette, folklore [390-399]</option>
+<option value="41">Language [400-409]</option>
+<option value="42">Linguistics [410-419]</option>
+<option value="43">English &amp; Old English [420-429]</option>
+<option value="44">Germanic Languages : German [430-439]</option>
+<option value="45">Romance Languages : French [440-449]</option>
+<option value="46">Italian, Romanian, Rheto-Romanic [450-459]</option>
+<option value="47">Spanish &amp; Portuguese Languages    [460-469]</option>
+<option value="48">Italic Languages : Latin [470-479]</option>
+<option value="49">Hellenic Languages : Classical Greek [480-489]</option>
+<option value="50">Other Languages [490-499]</option>
+<option value="51">Natural Sciences &amp; Mathematics [500-509]</option>
+<option value="52">Mathematics   [510-519]</option>
+<option value="53">Astronomy &amp; allied sciences [520-529]</option>
+<option value="54">Physics [530-539]</option>
+<option value="55">Chemistry &amp; allied sciences [540-549]</option>
+<option value="56">Earth Sciences [550-559]</option>
+<option value="57">Paleontology : Paleozoology [560-569]</option>
+<option value="58">Life Sciences Biology [570-579]</option>
+<option value="59">Botanical Sciences [580-589]</option>
+<option value="60">Zoological Sciences  [590-599]</option>
+<option value="61">Technology Applied Sciences  [600-609]</option>
+<option value="62">Medical Sciences : Medicine [610-619]</option>
+<option value="63">Engineering &amp; allied operations [620-629]</option>
+<option value="64">Agriculture [630-639]</option>
+<option value="65">Home Economics &amp; Family Living [640-649]</option>
+<option value="66">Management &amp; auxiliary services [650-659]</option>
+<option value="67">Chemical Engineering [660-669]</option>
+<option value="68">Manufacturing [670-679]</option>
+<option value="69">Manufacture For Specific Uses [680-689]</option>
+<option value="70">Buildings [690-699]</option>
+<option value="71">The Arts Fine &amp; Decorative Arts [700-709]</option>
+<option value="72">Civic &amp; Landscape Art [710-719]</option>
+<option value="73">Architecture [720-729]</option>
+<option value="74">Plastic Arts : Sculpture [730-739]</option>
+<option value="75">Drawing &amp; Decorative Arts [740-749]</option>
+<option value="76">Painting &amp; Paintings [750-759]</option>
+<option value="77">Graphic Arts : Printmaking &amp; Prints [760-769]</option>
+<option value="78">Photography &amp; Photographs [770-779]</option>
+<option value="79">Music [780-789]</option>
+<option value="80">Recreational &amp; Performing Arts  [790-799]</option>
+<option value="81">Literature &amp; Rhetoric [800-809]</option>
+<option value="82">American Literature in English [810-819]</option>
+<option value="83">English &amp; Old English Literatures [820-829]</option>
+<option value="84">Literature of Germanic Languages  [830-839]</option>
+<option value="85">Literature of Romance Languages [840-849]</option>
+<option value="86">Italian, Romanian, Rheto-Romanic [850-859]</option>
+<option value="87">Spanish &amp; Portuguese Literatures [860-869]</option>
+<option value="88">Italic Literatures : Latin [870-879]</option>
+<option value="89">Hellenic Literatures : Classical Greek [880-889]</option>
+<option value="90">Literatures of other Languages [890-899]</option>
+<option value="91">Geography &amp; History [900-909]</option>
+<option value="92">Geography &amp; Travel [910-919]</option>
+<option value="93">Biography, Genealogy, Insignia [920-929]</option>
+<option value="94">History Of Ancient World [930-939]</option>
+<option value="95">General History Of Europe [940-949]</option>
+<option value="96">General History Of Asia : Far East [950-959]</option>
+<option value="97">General History Of Africa  [960-969]</option>
+<option value="98">General History Of North America [970-979]</option>
+<option value="99">General History Of South America [980-989]</option>
+<option value="100">General History Of Other Areas [990-999]</option>
+</select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2 col-md-2 col-lg-2 col-sm-offset-2 col-md-offset-2  col-lg-offset-2" for="SearchBy">Search By</label>
+            <div class="col-sm-6 col-md-6 col-lg-6">
+                <div class="input-group">
+                    <label class="radio-inline">
+                        <input checked="True" id="rdBookName" name="SearchBy" onClick="setSearchBox(this)" type="radio" value="Book Name" /> Book Name
+
+                    </label>
+                    <label class="radio-inline">
+                        <input id="rdAuthorName" name="SearchBy" onClick="setSearchBox(this)" type="radio" value="Author Name" /> Author Name
+                    </label>
+                    <label class="radio-inline">
+                        <input id="rdBookCode" name="SearchBy" onClick="setSearchBox(this)" type="radio" value="Book Code" /> Book Code
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2 col-md-2 col-lg-2 col-sm-offset-2 col-md-offset-2  col-lg-offset-2" for="txtSearchBy" id="lblSearch">
+                Book Name
+            </label>
+            <div class="col-sm-6 col-md-6 col-lg-6">
+
+                <input class="form-control" id="txtSearchBy" maxlength="50" name="txtSearchBy" placeholder="Type to search" type="text" value="" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-6 col-md-6 col-lg-6 col-sm-offset-4 col-md-offset-4  col-lg-offset-4">
+                <button id="btnSearch" role="button" data-toggle="tooltip" data-placement="top" type="button" value="Search" title="Search" class="btn btn-primary" onclick="searchList()">
+                    <i class="fa fa-search"></i>Search
+                </button>
+                <button id="btnReset" role="button" data-toggle="tooltip" data-placement="top" type="button" value="Reset" title="Reset" class="btn btn-primary" onclick="reset()">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="row" id="dvSearchList">
+    <div class="col-sm-12 col-sm-offset-0 col-md-12 col-md-offset-0 col-lg-12 col-lg-offset-0">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                List Of Book
+            </div>
+            <div class="panel-body table-responsive">
+                <table id="tblSearch" class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Book Code</th>
+                            <th>
+                                Book Name<br />
+                                Author Name<br />
+                                Classification No.
+                            </th>
+                            <th>Language</th>
+                            <th>Book Status</th>
+                            <th>Library</th>
+                            <th>Section Name</th>
+                            <th>Issue Date</th>
+                            <th>Expected Return Date</th>
+                            <th>Average Rating</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="dvmsg" style="display: none">
+
+    <table id="tblMsg" class="table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Sorry, Book does not found.</th>
+            </tr>
+        </thead>
+    </table>
+
+</div>
+
+<input type="hidden" id="hdnSearchBy" />
+<div>
+    <input id="dataRepo" type="hidden" />
+</div>
+
+
+
+
+
+        </div>
+        <!-- Footer -->
+        <div class="panel panel-default">
+            <div class="panel-footer text-center">
+                Copyright &copy; SMC, All rights reserved.
+            </div>
+        </div>
+        <!-- ./ Footer -->
+    </div>
+    <!-- Main Container End-->
+    <!-- JS Script -->
+    [script omitted]
+
+    [script omitted]
+[script omitted]
+
+    [script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+
+    [script omitted]
+
+    [script omitted]
+[script omitted]
+
+    [script omitted]
+[script omitted]
+
+    
+    [script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+
+    [script omitted]
+
+    [script omitted]
+
+</body>
+</html>

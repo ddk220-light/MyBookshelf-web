@@ -142,6 +142,8 @@ IndCat advertises separate All-fields and Title controls. The audit API exposes 
 
 ## Per-item link verification
 
+Surat's reviewed native Title method uses its actual DataTables 1.10.4 client, ten-row pages, one-page pipeline, BookName ascending and the selected branch. Native counts/IDs represent copies; identical titles do not inflate the book target. The saved public columns do not establish item-specific material types. Those rows stay unresolved for the twenty-book benchmark without another useful type proof; repeating the same copy lookup cannot supply that proof. The saved five-branch live canaries and public client hashes are under `revalidation/20261107/prepared-repairs/surat-*`.
+
 Run only at an exclusive checkpoint after the collector stops. This separate governed pass acquires the same run/machine locks, reads the original and repair journals, validates hashes, preserves original item observation dates and records new link-check dates separately. It does not change library publication or qualification counts.
 
 ```sh

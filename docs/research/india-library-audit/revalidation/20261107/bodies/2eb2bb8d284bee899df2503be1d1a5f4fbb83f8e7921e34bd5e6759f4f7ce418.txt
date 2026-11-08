@@ -1,0 +1,246 @@
+var searchData = function () {
+    return {
+        init: function () {
+            $('#dvmsg').hide();
+            $("#hdnSearchBy").val(App.getRepo("dataRepo", "BookName"));
+            $('#dvSearchList').hide();
+            App.AutoCompleteSearchTextBox('txtSearchBy', App.getRepo("dataRepo", "AutoCompleteBookSearch"));
+            $("#txtSearchBy").focus();
+        }
+    }
+}();
+
+function setSearchBox(obj) {
+    $('#dvSearchBox').show();
+    $("#txtSearchBy").val('');
+    if (obj.id == "rdBookName") {
+        $("#lblSearch").text("Book Name");
+        $("#txtSearchBy").attr('maxlength', '70');
+        $("#hdnSearchBy").val(App.getRepo("dataRepo", "BookName"));
+        App.AutoCompleteSearchTextBox('txtSearchBy', App.getRepo("dataRepo", "AutoCompleteBookSearch"));
+    }
+    else if (obj.id == "rdAuthorName") {
+        $("#lblSearch").text("Author Name");
+        $("#txtSearchBy").attr('maxlength', '70');
+        $("#hdnSearchBy").val(App.getRepo("dataRepo", "AuthorName"));
+        App.AutoCompleteSearchTextBox('txtSearchBy', App.getRepo("dataRepo", "AutoCompleteAuthorSearch"));
+    }
+    else {
+        $("#lblSearch").text("Book Code");
+        $("#txtSearchBy").attr('maxlength', '8');
+        $("#hdnSearchBy").val(App.getRepo("dataRepo", "BookCode"));
+        App.AutoCompleteSearchTextBox('txtSearchBy', App.getRepo("dataRepo", "AutoCompleteBookCodeSearch"));
+    }
+    $("#txtSearchBy").focus();
+}
+function searchList() {
+    if (!$("input[name='SearchBy']:checked").val()) {
+        $.growlUI('Please correct ', "Please select search by option");
+
+    }
+        //else if ($('#txtSearchBy').val() == null || $('#txtSearchBy').val() == undefined || isEmpty($('#txtSearchBy').val()))
+        //{
+        //    $.growlUI('Please correct', "Please enter value");
+        //    $('#txtSearchBy').focus();
+        //}
+    else
+        fetchResult();
+}
+
+function reset() {
+    $('select').prop('selectedIndex', 0);
+    $('input:radio[name=SearchBy]').each(function () { $(this).prop('checked', false); });
+
+    $("#lblSearch").text("Book Name");
+    $("#txtSearchBy").attr('maxlength', '70');
+    $("#hdnSearchBy").val(App.getRepo("dataRepo", "BookName"));
+    $("#rdBookName").prop("checked", true)
+    $('#txtSearchBy').val('');
+    $("#dvSearchList").hide();
+    $("#dvmsg").hide();
+
+    App.AutoCompleteSearchTextBox('txtSearchBy', App.getRepo("dataRepo", "AutoCompleteBookSearch"));
+    $("#txtSearchBy").focus();
+}
+
+function fetchResult() {
+    $("#btnSearch").attr("disabled", "disabled");
+    $("#btnSearch").text("Please wait");
+
+    var aVAILABLE = App.getRepo("dataRepo", "AVAILABLE");
+    var iSSUED = App.getRepo("dataRepo", "ISSUED");
+
+    var getLoaderURL = App.getRepo("dataRepo", "LoaderUrl");
+    $.blockUI({ message: '<h4 class="text-info"><img src="' + getLoaderURL + '" /> Please wait...</h4>' });
+    var getSearchURL = App.getRepo("dataRepo", "searchData");
+
+    try {
+        $('#tblSearch').dataTable({
+            destroy: true,
+            "dom": '<"pull-left"f><"pull-right"l><"clearfix">rt<"pull-left"i><"pull-right"p>',
+            "processing": true,
+            "serverSide": true,
+            "bFilter": false,
+            "initComplete": function () {
+                $("#btnSearch").removeAttr("disabled");
+                $("#btnSearch").html('<i class="fa fa-search"></i> Search');
+                $.unblockUI();
+            },
+            // responsive: true,
+
+            "Sort": true,
+            "fnDrawCallback": function (oSettings) {
+                if (oSettings.aiDisplay.length == 0) {
+                    $("#dvSearchList").hide();
+                    $("#dvmsg").show();
+                }
+                else {
+                    $("#dvSearchList").show();
+                    $("#dvmsg").hide();
+                }
+            },
+            //"aLengthMenu" : [[2,5,10,15],[2,5,10,15]],
+            "columns": [
+        { "data": "BookCode", "orderable": false },
+        { "data": "BookName", "orderable": false },
+        { "data": "Language", "orderable": false },
+        { "data": "BookStatus", "orderable": false },
+        { "data": "LibraryName", "orderable": false },
+        { "data": "SectionName", "orderable": false },
+        { "data": "IssueDate", "orderable": false },
+        { "data": "ExpectedReturnDate", "orderable": false },
+        { "data": "AverageRating", "orderable": false }
+
+            ],
+            "columnDefs": [
+                    {
+                        // The `data` parameter refers to the data for the cell (defined by the
+                        // `data` option, which defaults to the column being worked with, in
+                        // this case `data: 0`.
+                        "render": function (data, type, row) {
+                            return row.BookName + "<br/>" + row.AuthorName + "<br/>" + row.ClassificationNo;
+                        },
+                        "targets": 1
+                    },
+                      {
+                          // The `data` parameter refers to the data for the cell (defined by the
+                          // `data` option, which defaults to the column being worked with, in
+                          // this case `data: 0`.
+                          "render": function (data, type, row) {
+                              if (row.BookStatus == aVAILABLE)
+                                  return "<label class='text-success'>" + row.BookStatus + "</label>";
+                              else if (row.BookStatus == iSSUED)
+                                  return "<label class='text-danger'>" + row.BookStatus + "</label>";
+                              else
+                                  return "<label class='text-warning'>" + row.BookStatus + "</label>";
+                          },
+                          "targets": 3
+                      },
+                         {
+
+                             "render": function (data, type, row) {
+                                 if (row.AverageRating > 0) {
+                                     var returnData = '<center>&nbsp;<a title="Rate this Book" href="javascript:BookrateListing(' + row.BookId + ')"><i class="fa fa-star fa-2x" style="color: #FF912C"></i></a><br/>&nbsp;<font color="	#333399"><b>( ' + row.AverageRating + ' /  5 )</b></font></center>';
+                                     return returnData;
+                                 }
+                                 else {
+                                     var returnData = '<center>&nbsp;<i class="fa fa-star-o fa-2x" style="color: #FF912C"></i><br/>&nbsp;<font color="	#333399"><b>( ' + row.AverageRating + ' /  5 )</b></font></center>';
+                                     return returnData;
+                                 }
+                             },
+                             "width": "20px",
+                             "targets": 8
+
+                         },
+                      {
+
+                          "render": function (data, type, row) {
+                              var returnData = '&nbsp; <a title="Rate this Book" href="javascript:ratingBook(' + row.BookId + ');"><i class="fa fa-star"></i></a> ';
+                              return returnData;
+                          },
+                          "width": "20px",
+                          "targets": 9
+
+                      },
+
+            ],
+            "order": [[1, 'asc']],
+            //"order": [],
+            "ajax": $.fn.dataTable.pipeline({
+                url: getSearchURL,
+                pages: 1, // number of pages to cache
+                data: function (dData) {
+                    var customParam = {
+                        "SearchType": $("#hdnSearchBy").val(),
+                        "SearchBy": $('#txtSearchBy').val(),
+                        "LibraryId": $('#drpLibrary').val(),
+                        "bookCLSVal": $('#drpClassification').val()
+                    };
+                    dData.CustomData = customParam;
+                }
+            })
+        });
+    }
+    catch (error) {
+        $.growlUI('Error', error.message);
+    }
+
+}
+
+
+function ratingBook(id) {
+    //var url = App.getRepo("dataRepo", "RateBook");
+    //alert(url);
+    PageId = "SearchBook";
+    $('#htitle').text("Add Book Rate");
+    $.blockUI({ message: '<h4 class="text-info">Please wait...</h4>' });
+    $.ajax({
+        type: 'GET',
+        url: "/Master/RateBook", //url
+        dataType: 'HTML',
+        cache: false,
+        data: { id: id, PageId: PageId},
+        success: function (obj) {
+            if (obj.toLowerCase().indexOf("redirecturl") >= 0) {
+                var jsonObject = JSON.parse(obj);
+                App.isRedirectionUrl(jsonObject);
+            }
+            else {
+                $('#dvbody').html(obj);
+                $('#myModal').modal('show');
+                $.unblockUI();
+            }
+        },
+        error: function (ex) {
+            alert('Failed to rate: ' + ex.statusText);
+        }
+    });
+
+}
+
+function BookrateListing(id) {
+
+    $('#htitle').text("Book Rating List");
+    $.blockUI({ message: '<h4 class="text-info">Please wait...</h4>' });
+    $.ajax({
+        type: 'GET',
+        url: "/Master/BookRateList", //url
+        dataType: 'HTML',
+        cache: false,
+        data: { BookId: id },
+        success: function (obj) {
+            if (obj.toLowerCase().indexOf("redirecturl") >= 0) {
+                var jsonObject = JSON.parse(obj);
+                App.isRedirectionUrl(jsonObject);
+            }
+            else {
+                $('#dvbody').html(obj);
+                $('#myModal').modal('show');
+                $.unblockUI();
+            }
+        },
+        error: function (ex) {
+            alert('Failed to rate: ' + ex.statusText);
+        }
+    });
+}

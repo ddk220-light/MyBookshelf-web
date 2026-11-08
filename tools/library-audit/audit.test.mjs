@@ -478,48 +478,50 @@ test("fixture responses cannot qualify a library in a real run", async (t) => {
   assert.equal(result.booksVerified, 0);
   assert.equal(result.counts["Blocked/failed"], 1);
 });
-test("Autolib rows with no material label remain unresolved without repeating the same export as a lookup", async (t) => {
-  const s = storeFor(t);
-  smallManifest(s);
-  let lookups = 0;
-  const svc = {
-    search: async () => ({
-      records: [
-        {
-          recordId: "copy-1",
-          recordRef: "not-used",
-          title: "Physics",
-          authors: [],
-          format: "",
-          observation: { outcome: "in_catalog" },
+test("Autolib and Surat unknown material rows remain unresolved without repeating an export/copy lookup", async (t) => {
+  for (const variant of ["autolib", "surat"]) {
+    const s = storeFor(t);
+    smallManifest(s);
+    let lookups = 0;
+    const svc = {
+      search: async () => ({
+        records: [
+          {
+            recordId: "copy-1",
+            recordRef: "not-used",
+            title: "Physics",
+            authors: [],
+            format: "",
+            observation: { outcome: "in_catalog" },
+          },
+        ],
+        observationKind: "fixture",
+        freshness: { sourceContacted: true },
+        fidelity: "website_equivalent",
+        effectiveProfile: {
+          nativeProfile: { variant, material: "unspecified" },
         },
-      ],
-      observationKind: "fixture",
-      freshness: { sourceContacted: true },
-      fidelity: "website_equivalent",
-      effectiveProfile: {
-        nativeProfile: { variant: "autolib", material: "mixed" },
+        page: {},
+        evidence: [],
+      }),
+      resolve: async () => {
+        lookups++;
+        throw Error(
+          "Repeating the same export supplies no missing material type",
+        );
       },
-      page: {},
-      evidence: [],
-    }),
-    resolve: async () => {
-      lookups++;
-      throw Error(
-        "Repeating the same export supplies no missing material type",
-      );
-    },
-  };
-  const result = await run(s, svc, {
-    queries: ["Physics"],
-    allowFixtureEvidence: true,
-  });
-  assert.equal(lookups, 0);
-  assert.equal(result.booksVerified, 0);
-  assert.equal(
-    s.events().find((e) => e.type === "book_rejected").reason,
-    "catalog_record_format_needs_review",
-  );
+    };
+    const result = await run(s, svc, {
+      queries: ["Physics"],
+      allowFixtureEvidence: true,
+    });
+    assert.equal(lookups, 0);
+    assert.equal(result.booksVerified, 0);
+    assert.equal(
+      s.events().find((e) => e.type === "book_rejected").reason,
+      "catalog_record_format_needs_review",
+    );
+  }
 });
 test("schedule stays disabled and exposes due work without issuing requests", async (t) => {
   const s = storeFor(t);

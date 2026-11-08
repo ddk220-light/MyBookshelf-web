@@ -63,7 +63,7 @@ export function verifyNativePage(
       : { verified: false, reason: "missing_website_variant" };
   if (family === "discovery-community")
     return entry
-      ? communityFidelity(entry, response, records)
+      ? communityFidelity(entry, response, records, nativeProfile)
       : { verified: false, reason: "missing_website_variant" };
   if (family === "vpl") {
     const url = new URL(response.url);

@@ -4,6 +4,7 @@ import { validateAndNormalize } from '../isbn.js';
 import { CommunitySession, hiddenFields, jsonResponse } from './communitySession.js';
 import { aggregateObservations, boundedQuery, distinctRecords, fingerprint, markSearchComplete, normalized, observation, parseReplayId, replayId } from './communityRecords.js';
 import { PMB_SCOPES, resolvePmb, searchPmb } from './communityPmb.js';
+import { searchNativeSurat } from './communitySuratNative.js';
 
 const FAMILIES = Object.freeze({
   surat: 'https://office.suratmunicipal.org', rmc: 'https://emp.rmc.gov.in', rmrl: 'https://rmrl.in',
@@ -259,9 +260,10 @@ async function search(library, input, deadlineAt = Date.now() + 45_000) {
 }
 export async function searchCatalog(library, query) { return search(library, query); }
 
-export function communityNativeProfile(library){const c=config(library);return {kind:c.family,supported:['pmb','rmc'].includes(c.family)};}
-export async function searchNativeCatalog(library,query){
+export function communityNativeProfile(library){const c=config(library);return {kind:c.family,supported:['pmb','rmc','surat'].includes(c.family),...(c.family==='surat'?{field:'title',paging:'native'}:{})};}
+export async function searchNativeCatalog(library,query,options={}){
  const c=config(library);if(!communityNativeProfile(library).supported||boundedQuery(query)!==query||(c.family==='rmc'&&query.length>50))throw catalogError('Native website profile requires review or shorter literal input','UNSUPPORTED_PROFILE');
+ if(c.family==='surat')return searchNativeSurat(library,query,options);
  const records=c.family==='pmb'?await searchPmb(library,query,Date.now()+45_000,{native:true}):await rmcSearch(library,query,new CommunitySession(FAMILIES.rmc,Date.now()+45_000),{native:true});
  const complete=records.searchComplete===true;
  return {records,total:complete?records.length:null,hasMore:!complete,continuationUnsupported:!complete,nativeProfile:{field:c.family==='pmb'?'ALL':'Title',variant:c.family,branch:c.scope,...(c.family==='rmc'?{language:/[\u0a80-\u0aff]/.test(query)?'Gujarati':/[\u0900-\u097f]/.test(query)?'Hindi':'English'}:{})}};

@@ -61,17 +61,20 @@ export function describe(entry, connectionId = "primary") {
         : "unsupported",
     fields: ["egranthalaya", "indcat"].includes(entry.platform)
       ? ["keyword", "title"]
-      : ["libman", "vufind", "vpl", "discovery-academic"].includes(
-            entry.platform,
-          )
-        ? [
-            entry.platform === "discovery-academic" && academicNative
-              ? academicNativeProfile(entry).field
-              : "title",
-          ]
-        : ["keyword"],
+      : communityNative && communityNativeProfile(entry).field
+        ? [communityNativeProfile(entry).field]
+        : ["libman", "vufind", "vpl", "discovery-academic"].includes(
+              entry.platform,
+            )
+          ? [
+              entry.platform === "discovery-academic" && academicNative
+                ? academicNativeProfile(entry).field
+                : "title",
+            ]
+          : ["keyword"],
     paging:
       ["koha", "vufind"].includes(entry.platform) ||
+      (communityNative && communityNativeProfile(entry).paging === "native") ||
       (academicNative &&
         ["iust", "autolib", "srms", "easylib", "rps", "libaitech"].includes(
           academicNativeProfile(entry).kind,
