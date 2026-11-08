@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { autolibSmartMatch } from './autolibNative.js';
+import { iustAuthors } from './iustNative.js';
 import { attributes, text, firstIsbn, catalogError } from './catalogMarkup.js';
 
 const integer = value => /^\d+$/.test(String(value ?? '').trim()) ? Number(value) : undefined;
@@ -84,7 +85,7 @@ export function parseAcademicResponse(kind, payload, { query = '', isbn = null, 
   }
   if (kind === 'iust') {
     if (!Array.isArray(payload) || payload.some(r => !/^\d+$/.test(String(r.RecID)) || typeof r.Title !== 'string')) throw catalogError('Unrecognized SOUL bibliographic response');
-    return proof(payload.map(r => book(r.Title,r.Author,{sourceId:String(r.RecID),isbn:firstIsbn(r.isbn),publisher:text(r.Publisher),publishedDate:text(r.Year),format:text(r.TypeofMaterial)})),true,payload.length === 0);
+    return proof(payload.map(r => book(r.Title,r.Author,{sourceId:String(r.RecID),isbn:firstIsbn(r.isbn),publisher:text(r.Publisher),publishedDate:text(r.Year),format:text(r.TypeofMaterial),...(native?{authors:iustAuthors(r.Author),nativeRawAuthor:r.Author,materialTypeProofPending:true}:{})})),true,payload.length === 0);
   }
   const html = String(payload || '');
   if (kind === 'libsoft') {

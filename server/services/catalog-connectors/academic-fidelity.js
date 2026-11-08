@@ -16,6 +16,87 @@ export function academicFidelity(
   const profile = academicNativeProfile(entry);
   if (!profile.supported)
     return { verified: false, reason: "website_js_display_recipe_pending" };
+  if (profile.kind === "iust") {
+    if (
+      nativeProfile?.clientSha256 !== recipes.iust.clientSha256 ||
+      ![20, 50, 100, 200].includes(nativeProfile?.pageSize) ||
+      !Number.isSafeInteger(nativeProfile?.offset) ||
+      nativeProfile.offset < 0 ||
+      nativeProfile.offset % nativeProfile.pageSize
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Unreviewed IUST native display contract",
+        502,
+      );
+    if (nativeProfile.emptyFromNativeCookie) {
+      if (
+        records.length ||
+        new URL(response.url).pathname !== recipes.iust.clientPath
+      )
+        throw failure(
+          "FIDELITY_MISMATCH",
+          "IUST native empty-search evidence changed",
+          502,
+        );
+      return {
+        verified: true,
+        method: "reviewed_iust_native_empty_cookie",
+        nativeRows: 0,
+        recipeVersion: recipes.iust.version,
+      };
+    }
+    let data;
+    try {
+      data = JSON.parse(response.text);
+    } catch {
+      throw failure("FIDELITY_MISMATCH", "Invalid IUST native data", 502);
+    }
+    if (
+      new URL(response.url).pathname !== "/EmployeeDataHandler.ashx" ||
+      !Array.isArray(data)
+    )
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "Unexpected IUST native data request",
+        502,
+      );
+    const expected = data
+      .slice(
+        nativeProfile.offset,
+        nativeProfile.offset + nativeProfile.pageSize,
+      )
+      .map((r) => [
+        String(r.RecID),
+        text(r.Title),
+        String(r.Author || "")
+          .substring(0, String(r.Author || "").length - 1)
+          .split(";")
+          .map(text)
+          .filter(Boolean),
+        text(r.TypeofMaterial),
+      ]);
+    const observed = records.map((r) => [
+      r.sourceId,
+      r.title,
+      r.authors,
+      r.format,
+    ]);
+    if (JSON.stringify(expected) !== JSON.stringify(observed))
+      throw failure(
+        "FIDELITY_MISMATCH",
+        "IUST native identity, authors, order or material labels changed",
+        502,
+      );
+    return {
+      verified: true,
+      method: "reviewed_iust_native_client",
+      nativeRows: expected.length,
+      recipeVersion: recipes.iust.version,
+      offset: nativeProfile.offset,
+      pageSize: nativeProfile.pageSize,
+    };
+  }
   if (profile.kind === "autolib") {
     if (
       new URL(response.url).pathname !== recipes.autolib.request.path ||

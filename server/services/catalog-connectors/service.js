@@ -232,7 +232,7 @@ export class ConnectorService {
         const records = rows.map((r, index) => ({
           ...r,
           catalogUrl: r.catalogUrl || descriptor.catalogUrl,
-          linkKind: r.catalogUrl ? "record" : "catalog",
+          linkKind: r.linkKind || (r.catalogUrl ? "record" : "catalog"),
           nativeRank: index + 1,
           recordRef: this.refs.sign({
             kind: "record",
@@ -341,7 +341,8 @@ export class ConnectorService {
           record: {
             ...record,
             catalogUrl: record.catalogUrl || entry.catalogUrl,
-            linkKind: record.catalogUrl ? "record" : "catalog",
+            linkKind:
+              record.linkKind || (record.catalogUrl ? "record" : "catalog"),
           },
         };
       },

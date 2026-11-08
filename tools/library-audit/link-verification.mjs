@@ -92,6 +92,22 @@ export function confirmItemIdentity(job, response) {
   const headings = [
     ...response.text.matchAll(/<h[1-4]\b[^>]*>([\s\S]*?)<\/h[1-4]\s*>/gi),
   ].map((m) => text(m[1]));
+  // IUST's advertised More Details link is an inline metadata fragment. It
+  // carries an explicit native ID and a labelled Title cell, not a heading.
+  if (
+    job.kind === "metadata_fragment" &&
+    final.origin === "https://webopac.iust.ac.in" &&
+    final.pathname === "/ViewDetails.aspx"
+  ) {
+    const id = response.text.match(
+      /<span\b[^>]*\bid=['"]id['"][^>]*>([\s\S]*?)<\/span>/i,
+    );
+    const title = response.text.match(
+      /<th\b[^>]*>\s*Title\s*<\/th>\s*<td\b[^>]*>([\s\S]*?)<\/td>/i,
+    );
+    if (text(id?.[1] || "") === nativeId && title)
+      headings.push(text(title[1]));
+  }
   const titleConfirmed =
     Boolean(normalized(job.title)) &&
     headings.some((h) => normalized(h) === normalized(job.title));
@@ -127,7 +143,7 @@ export async function verifyItemLink(
     sourceObservedAt: job.sourceObservedAt,
     sourceEvents: job.sourceEvents,
   };
-  if (!job.url || job.kind !== "record")
+  if (!job.url || !["record", "metadata_fragment"].includes(job.kind))
     return {
       ...base,
       tested: false,

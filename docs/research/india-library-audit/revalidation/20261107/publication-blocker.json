@@ -1,18 +1,26 @@
 {
   "schemaVersion": 1,
-  "at": "2026-11-07T18:55:31.299706+00:00",
-  "state": "source_checkpoint_prepared_new_evidence_still_local",
+  "at": "2026-11-07T19:02:31.906282+00:00",
+  "state": "source_published_evidence_pending",
   "lastRemoteCommit": "fc20376265c2edb96175286073c03b0d9213e211",
   "savedLocalCodeCommit": "2d94a7b9c7b5cbc8af21d42e43a4b0c374af8379",
-  "cause": "Git transport credential is unavailable; GitHub MCP rejects multi-megabyte payloads (HTTP 413 at 5.5 MB)",
+  "cause": "Connected GitHub app published the exact source-only tree. Workspace Git transport is unavailable; the configured MCP token cannot write trees (404), and multi-megabyte MCP payloads return 413.",
   "evidence": [
     "Git fetch: could not read Username for https://github.com",
     "GitHub MCP push_files: ConnectionResetError while sending 32 scoped files; no branch update confirmed"
   ],
-  "nextAction": "Publish a bounded source-only review checkpoint; retain the full newer evidence locally until normal Git publishing is restored. Do not start a second collector from the older remote heartbeat.",
+  "nextAction": "Continue local repairs. Once Git publishing access is restored, fetch/check current remote and publish preserved local evidence without forcing. Connected GitHub app can publish bounded source checkpoints; the configured MCP token cannot write repository trees.",
   "fullAuditStillGated": true,
   "productionChanged": false,
   "lastCompleteRemoteEvidenceCommit": "fc20376265c2edb96175286073c03b0d9213e211",
-  "localReviewed": 512,
-  "localOpenRepairCases": 42
+  "localReviewed": 514,
+  "localOpenRepairCases": 40,
+  "remoteSourceCodeCommit": "ff6fb10d4d8953d47297a625f6e6a3a32d676a42",
+  "localBranchNeedsReconciliation": false,
+  "localReconciledWithRemoteCodeCommit": "ff6fb10d4d8953d47297a625f6e6a3a32d676a42",
+  "lastUnconfirmedLargeBlobUpload": {
+    "startedAt": "2026-11-07",
+    "bytes": 8296223,
+    "result": "No confirmed result; request wait aborted. Do not retry large payloads blindly."
+  }
 }

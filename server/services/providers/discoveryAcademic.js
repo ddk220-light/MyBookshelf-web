@@ -6,6 +6,7 @@ import { validateAndNormalize } from '../isbn.js';
 import { attributes, catalogError } from './catalogMarkup.js';
 import { fetchNativeEasylib } from './easylibNative.js';
 import { fetchNativeAutolib } from './autolibNative.js';
+import { fetchNativeIust, parseIustDetails } from './iustNative.js';
 import { parseAcademicResponse, recordFingerprint, normalizeCatalogTitle, rejectChallenge, parseEasylibAvailability, parseDarshanIsbn, parseLibsoftDetails } from './discoveryAcademicParsers.js';
 
 const CONFIGS = JSON.parse(readFileSync(new URL('./discoveryAcademicConfigs.json',import.meta.url),'utf8'));
@@ -58,11 +59,11 @@ function easylibRecordUrl(c,b,q){
   if(c.kind!=='easylib'||!/^[A-Za-z0-9_-]{1,80}$/.test(b.sourceId||''))return null;
   const url=new URL('/index.php/OpacController/bookDetailsController',c.url);url.search=new URLSearchParams({search:q,tlno:b.sourceId});return url.toString();
 }
-function finish(result,c,q){return result.records.map(b=>{const url=easylibRecordUrl(c,b,q);return {...b,recordId:recordId(q,b),...(url?{catalogUrl:url,linkKind:'record'}:{}),observation:{...publicObservation(b,c),...(url?{catalogUrl:url,catalogLinkKind:'record'}:{})}};});}
+function finish(result,c,q){return result.records.map(b=>{const fragment=c.kind==='iust'&&b.materialTypeProofPending?new URL('/ViewDetails.aspx?ID='+encodeURIComponent(b.sourceId),c.url).toString():null,url=easylibRecordUrl(c,b,q)||fragment,linkKind=fragment?'metadata_fragment':'record';return {...b,recordId:recordId(q,b),...(url?{catalogUrl:url,linkKind}:{}),observation:{...publicObservation(b,c),...(url?{catalogUrl:url,catalogLinkKind:linkKind}:{})}};});}
 function cookieParts(headers){return typeof headers?.getSetCookie==='function'?headers.getSetCookie():[headers?.get?.('set-cookie')].filter(Boolean);}
 function anonymousSession(c,deadlineAt){
   const origin=new URL(c.url).origin,cookies=new Map();
-  return async function read(url,options={}){
+  const read = async function read(url,options={}){
     let current=new URL(url,c.url),opts={...options};
     for(let i=0;i<4;i++){
       if(current.origin!==origin||current.username||current.password)throw catalogError('Catalog origin mismatch','CATALOG_CONFIGURATION_REQUIRED');
@@ -81,6 +82,8 @@ function anonymousSession(c,deadlineAt){
     }
     throw catalogError('Too many public catalog redirects');
   };
+  read.cookie = name => cookies.get(name);
+  return read;
 }
 function hiddenForm(html){
   const params=new URLSearchParams();
@@ -129,6 +132,8 @@ async function fetchQuery(library,q,mode,deadlineAt,native=false,offset=0){
     }
   }else if(c.kind==='darshan'){
     await read(c.url);response=await read(new URL('/Home/_SearchResult',c.url),formRequest({F_FieldName:mode==='isbn'?'ISBN':'Title',F_FieldValue:q,F_MaterialTypeID:'1',btnShow:'Search'}));payload=response.text;
+  }else if(c.kind==='iust'&&native){
+    const result=await fetchNativeIust(c,q,read,offset);payload=result.payload;nativePage=result.nativePage;
   }else if(c.kind==='iust'){
     const url=new URL('/result.aspx',c.url);url.search=new URLSearchParams({cmbval:mode==='isbn'?'ISBN/ISSN':'Title',search:q,RDB:'Contains',Typemate:'All',colltype:'All'});
     await read(url);response=await read(new URL('/EmployeeDataHandler.ashx',c.url));payload=json(response);
@@ -137,6 +142,11 @@ async function fetchQuery(library,q,mode,deadlineAt,native=false,offset=0){
   return {...result,records:native?result.records:result.records.slice(0,MAX_RESULTS),complete:result.complete&&(native||result.records.length<=MAX_RESULTS),read,...(nativePage?{nativePage,...(c.kind==='easylib'?{nativeTotal:Number(payload.recordsFiltered)}:{})}:{})};
 }
 async function enriched(b,c,read){
+  if(c.kind==='iust'&&b.materialTypeProofPending){
+    const u=new URL('/ViewDetails.aspx',c.url);u.searchParams.set('ID',b.sourceId);
+    const response=await read(u,{allowedResponseTypes:['text/html']});
+    return {...parseIustDetails(response.text,b),catalogRecordUrl:u.toString(),linkKind:'metadata_fragment'};
+  }
   if(c.kind==='libsoft'){
     const u=new URL('/details.php',c.url);u.searchParams.set('dtitle',b.title);u.searchParams.set('dauthor',b.authors.join(' '));
     try{return {...b,...parseLibsoftDetails((await read(u)).text,b),catalogRecordUrl:u.toString()};}catch{return b;}
@@ -154,7 +164,7 @@ async function enriched(b,c,read){
   }
   return b;
 }
-const NATIVE_SEARCH=new Set(['autolib','srms','easylib','libaitech','rps','libsoft','nios','librarika','mizoram','processcube','bmu','darshan']);
+const NATIVE_SEARCH=new Set(['iust','autolib','srms','easylib','libaitech','rps','libsoft','nios','librarika','mizoram','processcube','bmu','darshan']);
 export function academicNativeProfile(library){const c=config(library);return {kind:c.kind,url:c.url,supported:NATIVE_SEARCH.has(c.kind),field:['easylib','rps','processcube'].includes(c.kind)?'keyword':'title'};}
 export function nativeAcademicPage(kind,records,offset=0){
  const clientPaging=['srms','rps','libaitech'].includes(kind);
@@ -173,6 +183,10 @@ export async function searchNativeCatalog(library,query,{offset=0}={}){
     const total=result.nativeTotal,hasMore=offset+result.records.length<total;
     return {records:finish(result,c,query),total,hasMore,nextOffset:hasMore?offset+result.nativePage.pageSize:null,nativeProfile:{field:'keyword',material:'mixed',variant:c.kind,...result.nativePage}};
   }
+  if(c.kind==='iust'){
+    const records=finish(result,c,query),pageSize=result.nativePage.pageSize,nextOffset=offset+pageSize<records.length?offset+pageSize:null;
+    return {records:records.slice(offset,offset+pageSize),total:records.length,nextOffset,hasMore:nextOffset!==null,nativeProfile:{field:'title',material:'mixed',variant:c.kind,...result.nativePage}};
+  }
   if(c.kind==='autolib'){
     if(!Number.isSafeInteger(offset)||offset<0||offset%25)throw catalogError('Unsupported native Autolib page','UNSUPPORTED_PROFILE');
     const records=finish(result,c,query),nextOffset=offset+25<records.length?offset+25:null;
@@ -188,11 +202,11 @@ export async function searchCatalog(library,query){
 }
 export async function resolveCatalogRecord(library,id){
   const c=config(library),[q,key]=decodeRecord(id),deadlineAt=requestDeadline();
-  const result=await fetchQuery(library,q,'title',deadlineAt),b=result.records.find(b=>recordFingerprint(b)===key);
+  const result=await fetchQuery(library,q,'title',deadlineAt,c.kind==='iust'&&Boolean(connectorContext.getStore())),b=result.records.find(b=>recordFingerprint(b)===key);
   if(!b)return null;
   const rich=await enriched(b,c,result.read);
-  const url=rich.catalogRecordUrl||easylibRecordUrl(c,rich,q);
-  return {...rich,recordId:id,...(url?{catalogUrl:url}:{}),observation:{...publicObservation(rich,c),...(url?{catalogUrl:url,catalogLinkKind:'record'}:{})}};
+  const url=rich.catalogRecordUrl||easylibRecordUrl(c,rich,q),linkKind=rich.linkKind||'record';
+  return {...rich,recordId:id,...(url?{catalogUrl:url}:{}),observation:{...publicObservation(rich,c),...(url?{catalogUrl:url,catalogLinkKind:linkKind}:{})}};
 }
 function possibleTitle(b,title,author){
   const a=normalizeCatalogTitle(b.title),target=normalizeCatalogTitle(title);
