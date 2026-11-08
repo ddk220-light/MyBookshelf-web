@@ -245,6 +245,13 @@ test("governed IUST fragment links verify native ID and labelled title while pre
     ).identityConfirmed,
     false,
   );
+  assert.equal(
+    confirmItemIdentity(job, {
+      url: job.url,
+      text: "<h1>" + job.title + "</h1>",
+    }).identityConfirmed,
+    false,
+  );
   const coordinator = new Coordinator({
     robots: false,
     minGapMs: 0,

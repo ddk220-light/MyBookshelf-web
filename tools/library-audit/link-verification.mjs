@@ -2,6 +2,7 @@ import { hash } from "../../server/services/catalog-connectors/contracts.js";
 import { text } from "../../server/services/providers/catalogMarkup.js";
 import { rejectChallenge } from "../../server/services/providers/discoveryAcademicParsers.js";
 import { parseIndcatRecord } from "../../server/services/providers/indcat.js";
+import { parsePmbRecord } from "../../server/services/providers/communityPmb.js";
 import { getLibraryById } from "../../server/services/directory.js";
 import { writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
@@ -98,6 +99,7 @@ export function confirmItemIdentity(job, response) {
     final.origin === "https://indcat.inflibnet.ac.in" &&
     final.pathname === "/index.php/search/book_search"
   ) {
+    headings.length = 0;
     const library = getLibraryById(job.libraryId),
       alternate = /^alternate-([1-9]\d*)$/.exec(job.connectionId || "primary");
     const entry = alternate
@@ -138,14 +140,45 @@ export function confirmItemIdentity(job, response) {
     final.origin === "https://webopac.iust.ac.in" &&
     final.pathname === "/ViewDetails.aspx"
   ) {
+    headings.length = 0;
     const id = response.text.match(
       /<span\b[^>]*\bid=['"]id['"][^>]*>([\s\S]*?)<\/span>/i,
     );
     const title = response.text.match(
       /<th\b[^>]*>\s*Title\s*<\/th>\s*<td\b[^>]*>([\s\S]*?)<\/td>/i,
     );
-    if (text(id?.[1] || "") === nativeId && title)
-      headings.push(text(title[1]));
+    nativeIdInUrl = nativeIdInUrl && text(id?.[1] || "") === nativeId;
+    if (nativeIdInUrl && title) headings.push(text(title[1]));
+  }
+  if (
+    final.origin === "https://mediatheques-afinde.org" &&
+    final.pathname === "/index.php" &&
+    final.searchParams.get("lvl") === "notice_display"
+  ) {
+    headings.length = 0;
+    const library = getLibraryById(job.libraryId),
+      alternate = /^alternate-([1-9]\d*)$/.exec(job.connectionId || "primary"),
+      entry = alternate
+        ? library?.alternateCatalogs?.[Number(alternate[1]) - 1]
+        : library;
+    // PMB's title is a labelled catalog field, not an HTML heading. Require
+    // canonical native identity, the requested branch view and actual local
+    // holdings; a matching title elsewhere in this network is insufficient.
+    nativeIdInUrl =
+      entry?.communityCatalog?.family === "pmb" &&
+      final.searchParams.getAll("id").length === 1 &&
+      final.searchParams.get("id") === nativeId &&
+      final.searchParams.getAll("opac_view").length === 1 &&
+      final.searchParams.get("opac_view") === entry.communityCatalog.scope;
+    try {
+      const record = nativeIdInUrl
+        ? parsePmbRecord(response.text, entry, nativeId)
+        : null;
+      if (record) headings.push(record.title);
+      else nativeIdInUrl = false;
+    } catch {
+      nativeIdInUrl = false;
+    }
   }
   const titleConfirmed =
     Boolean(normalized(job.title)) &&

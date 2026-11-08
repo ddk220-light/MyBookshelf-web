@@ -121,6 +121,7 @@ try {
     .filter(
       (j) =>
         !completed.has(j.jobId) &&
+        (!retryIds.length || retryIds.includes(j.jobId)) &&
         (!libraryFilter || libraryFilter.includes(j.libraryId)) &&
         (!args.includes("--item-only") ||
           ["record", "metadata_fragment"].includes(j.kind)),
