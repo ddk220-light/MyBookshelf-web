@@ -9,13 +9,13 @@ import {EvidenceStore} from '../../server/services/catalog-connectors/evidence.j
 import {Coordinator} from '../../server/services/catalog-connectors/transport.js';
 import {TriageEvidenceStore} from './evidence.mjs';
 import {readManifest,reduce} from './audit.mjs';
-import {publishTriageCheckpoint} from './supervisor.mjs';
+import {publishRecoverably} from './checkpoint-recovery.mjs';
 import {CONFIG,sha,persistentMaps,catalogUrl,makeSession,requestBody,sessionCookie,inspectSearch,jobId,nextStartAt,summarizeLibrary,BatchEvidenceStore,exportBatch,csv} from './egranthalaya-batch-core.mjs';
 const ROOT=fileURLToPath(new URL('../../',import.meta.url));
 export const DEFAULT='docs/research/india-library-audit/search-triage/egranthalaya-fifty-20261108';
 const STATE='/workspace/library-audit-review/egranthalaya-fifty-supervisor';
 const read=p=>JSON.parse(readFileSync(p,'utf8'));
-const git=args=>{const r=spawnSync('git',args,{cwd:ROOT,encoding:'utf8',timeout:120000,maxBuffer:2*1024*1024});if(r.status!==0)throw Error('Git '+args[0]+' failed; evidence remains saved: '+r.stderr.slice(-300));return r.stdout.trim();};
+const git=args=>{const r=spawnSync('git',args,{cwd:ROOT,encoding:'utf8',timeout:60000,maxBuffer:2*1024*1024});if(r.status!==0)throw Error('Git '+args[0]+' failed; evidence remains saved: '+String(r.stderr||r.error?.message||'').slice(-600));return r.stdout.trim();};
 export function initialize(directory){
  const root=new TriageEvidenceStore(directory);if(existsSync(join(directory,'manifest.json')))throw Error('Already initialized; resume existing queue');
  const parent=join(ROOT,'docs/research/india-library-audit/search-triage/india-20261108'),source=new TriageEvidenceStore(parent),m=readManifest(source),rows=reduce(m,source.events()),old=new Map(rows.map(r=>[r.libraryId,r]));
@@ -72,14 +72,15 @@ export async function supervise(args=process.argv.slice(2)){
  if(args.includes('--init'))return console.log(JSON.stringify({total:initialize(directory).total}));
  const require=createRequire(import.meta.url),{EnvHttpProxyAgent,setGlobalDispatcher}=require('undici');if(process.env.HTTP_PROXY||process.env.HTTPS_PROXY)setGlobalDispatcher(new EnvHttpProxyAgent());
  const root=new TriageEvidenceStore(directory),machine=new EvidenceStore(join(tmpdir(),'mybookshelf-library-connector-coordinator')),leader=new EvidenceStore(stateDir),publish=args.includes('--publish'),stop=new AbortController();
- let phase='starting',batch=null,lastStart=0,progress=null,expected=null,heartbeat=null,held=false,rheld=false,lheld=false;const path=relative(ROOT,directory);let batchProgress=null;
- const save=()=>{if(!lheld)return;leader.save('progress.json',{pid:process.pid,host:leader.owner.host,startedAt:leader.owner.startedAt,at:new Date().toISOString(),phase,directory,batch,batchProgress,progress,lastBatchStartedAt:lastStart?new Date(lastStart).toISOString():null,nextBatchNotBefore:lastStart?new Date(lastStart+CONFIG.minBatchStartIntervalMs).toISOString():null,lastPublishedCommit:expected,publish});};
+ let phase='starting',batch=null,lastStart=0,progress=null,expected=null,heartbeat=null,held=false,rheld=false,lheld=false;const path=relative(ROOT,directory);let batchProgress=null,publicationRetry=null,lastError=null,lastPublished=null;
+ const save=()=>{if(!lheld)return;leader.save('progress.json',{pid:process.pid,host:leader.owner.host,startedAt:leader.owner.startedAt,at:new Date().toISOString(),phase,directory,batch,batchProgress,progress,lastBatchStartedAt:lastStart?new Date(lastStart).toISOString():null,nextBatchNotBefore:lastStart?new Date(lastStart+CONFIG.minBatchStartIntervalMs).toISOString():null,lastPublishedCommit:lastPublished,publicationRetry,lastError,publish});};
+ const checkpoint=async()=>{phase='publishing';save();expected=await publishRecoverably({git,path,expectedLocal:expected,readState:()=>existsSync(join(stateDir,'publication.json'))?read(join(stateDir,'publication.json')):null,writeState:value=>leader.save('publication.json',value),signal:stop.signal,onRetry:value=>{publicationRetry=value;phase='publication_retry';save();console.error(JSON.stringify({type:'publication_retry',...value}));}});lastPublished=expected;publicationRetry=null;phase='publishing_complete';save();};
  const cancel=()=>stop.abort();process.once('SIGTERM',cancel);process.once('SIGINT',cancel);
  try{
   for(const p of ['/workspace/library-audit-review/search-triage-supervisor/writer.lock','/workspace/library-audit-review/link-supervisor/writer.lock'])if(existsSync(p))throw Error('Another supervisor owns the audit');
   leader.acquire();lheld=true;machine.acquire();held=true;root.acquire();rheld=true;const manifest=checkManifest(root);root.events({repairTail:true});root.validate();
   if(git(['branch','--show-current'])!=='feat/library-connector-audit'||git(['status','--porcelain','--','server','shared','tools/library-triage','tools/library-audit']))throw Error('Commit implementation changes before collection');
-  expected=git(['rev-parse','HEAD']);if(publish){git(['fetch','origin','feat/library-connector-audit']);if(git(['rev-parse','FETCH_HEAD'])!==expected)throw Error('Remote differs; reconcile without force push');}
+  expected=git(['rev-parse','HEAD']);
   progress=report(root,manifest);save();heartbeat=setInterval(()=>{if(existsSync(join(stateDir,'pause')))stop.abort();save();},5000);
   const coordinator=new Coordinator({store:root,minGapMs:0,concurrency:1});
   for(const p of [join(ROOT,'docs/research/india-library-audit/runs/india-20261107/origin-state.json'),join(ROOT,'docs/research/india-library-audit/revalidation/20261107/origin-state.json'),join(ROOT,'docs/research/india-library-audit/search-triage/india-20261108/origin-state.json'),join(directory,'origin-state.json')])if(existsSync(p))for(const k of persistentMaps)for(const [o,v] of read(p)[k]||[])if(k==='cooldowns'||k==='originReadyAt')coordinator[k].set(o,Math.max(coordinator[k].get(o)||0,v));else coordinator[k].set(o,v);
@@ -87,8 +88,10 @@ export async function supervise(args=process.argv.slice(2)){
   const finishedBatches=new Set(history.filter(e=>e.type==='fifty_batch_complete').map(e=>e.batch));
   // Verify immutable finished evidence on resume; never infer success from a cursor alone.
   for(const e of history.filter(e=>e.type==='fifty_batch_complete')){const bs=new BatchEvidenceStore(join(directory,'batches',e.batch));bs.validate();if(sha(readFileSync(join(bs.root,'validation.json')))!==e.validationSha256||sha(readFileSync(join(bs.root,'summary.json')))!==e.summarySha256)throw Error('Completed batch checkpoint mismatch');} 
+  // Publish preserved results before new provider requests, including an interrupted push.
+  if(publish)await checkpoint();
   for(let offset=0;offset<manifest.total&&!stop.signal.aborted;offset+=5){
-   batch=String(Math.floor(offset/5)+1).padStart(4,'0');if(finishedBatches.has(batch))continue;
+   batch=String(Math.floor(offset/5)+1).padStart(4,'0');if(finishedBatches.has(batch))continue;batchProgress=null;
    const fs=statfsSync(directory);if(fs.bavail*fs.bsize<2*1024**3)throw Error('Less than 2 GiB disk remaining; stop before evidence loss');
    if(existsSync(join(stateDir,'pause')))break;
    phase='waiting_between_batches';save();const wait=Math.max(0,nextStartAt(lastStart,Date.now())-Date.now());if(wait)await sleep(wait,undefined,{signal:stop.signal});if(stop.signal.aborted)break;
@@ -102,7 +105,7 @@ export async function supervise(args=process.argv.slice(2)){
    const existing=new Set(root.events({cached:true}).filter(e=>e.type==='fifty_library_outcome').map(e=>e.libraryId));
    for(const outcome of exported.outcomes)if(!existing.has(outcome.libraryId)){const source=bs.events({cached:true}).findLast(e=>e.type==='batch_library_outcome'&&e.libraryId===outcome.libraryId);root.append({type:'fifty_library_outcome',libraryId:outcome.libraryId,outcome,batchPath,sourceEventId:source.eventId,observedAt:source.at});}
    if(result.complete)root.append({type:'fifty_batch_complete',batch,validationSha256:sha(readFileSync(join(bs.root,'validation.json'))),summarySha256:sha(readFileSync(join(bs.root,'summary.json')))});
-   progress=report(root,manifest);root.validate();phase='publishing';save();if(publish)expected=publishTriageCheckpoint({git,path,expectedLocal:expected});
+   progress=report(root,manifest);root.validate();phase='publishing';save();if(publish)await checkpoint();
    console.log(JSON.stringify({batch,...result,assessed:progress.assessed,pending:progress.pending,commit:expected}));
    if(result.fatal||result.overload){phase=result.fatal?'paused_provider_refusal':'paused_high_transport_failure';save();return;}
    if(result.interrupted||!result.complete){phase='paused_interrupted';save();return;}
@@ -114,10 +117,10 @@ export async function supervise(args=process.argv.slice(2)){
    root.save('final-report.json',{...progress,validatedAt:new Date().toISOString(),artifacts,definition:'Completed fifty-query assessment is not universal twenty-book success or verified item-link access.'});
    csv(join(directory,'artifact-index.csv'),artifacts.flatMap(a=>a.files.map(f=>({batch:a.batch,path:a.basePath+'/'+f.name,sha256:f.sha256}))));
    writeFileSync(join(directory,'final-report.md'),'# e-Granthalaya fifty-title search report\n\n'+JSON.stringify(progress,null,2)+'\n\nAll '+manifest.total+' frozen entries have an assessed outcome. Completion does not mean every library yielded twenty records.\n\n[Per-library status](libraries.csv) · [All query/result/item/failure CSV partitions and hashes](artifact-index.csv) · [Machine-readable report](final-report.json)\n\nResults are member-scoped native bibliographic records on the first Title/Books page. Empty queries are not evidence of an empty collection. Item URLs are saved but were not fetched; no app publication changed.\n');
-   if(publish)expected=publishTriageCheckpoint({git,path,expectedLocal:expected});
+   if(publish)await checkpoint();
   }
   phase=progress.pending?'paused':'fifty_search_queue_complete';save();
- }catch(e){phase=stop.signal.aborted?'paused_interrupted':'error';save();console.error(e.stack);if(!stop.signal.aborted)process.exitCode=1;}
+ }catch(e){phase=stop.signal.aborted?'paused_interrupted':'error';lastError={code:e.code||e.name,message:e.message,at:new Date().toISOString()};save();console.error(e.stack);if(!stop.signal.aborted)process.exitCode=1;}
  finally{clearInterval(heartbeat);if(rheld)root.release();if(held)machine.release();if(lheld)leader.release();}
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))await supervise();

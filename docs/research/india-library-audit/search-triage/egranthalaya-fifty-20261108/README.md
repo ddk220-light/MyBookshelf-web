@@ -20,6 +20,8 @@ Do not reinitialize. Inspect actual host/PID/start time/non-zombie command, adva
 
 The single supervisor owns the provider loop and publishes only after all batch requests settle, retaining its exclusive machine/run reservation between batches. Five logical library jobs use asynchronous HTTP; five AI agents or five CPU processes are unnecessary. Every five-library checkpoint validates body hashes, reparses successful response evidence to reconcile saved records, regenerates CSVs, commits and pushes only this run directory. Changed remote history stops publication safely; never force-push. A disk guard stops below 2 GiB free.
 
+Temporary Git fetch/push failures retry with backoff from 30 seconds to five minutes, with visible heartbeat and retry reason. A durable publication transaction recovers interrupted pushes without repeating searches or commits. Authentication failures and divergent Git history stop for repair; no force push is permitted. The hourly task now actively diagnoses, tests, repairs and resumes stopped work, and reports every hourly check while stopped. It publishes preserved results before sending new provider requests. Provider refusals still require useful review, not blind retries.
+
 ## Outputs
 
 - [Progress](progress.json) and [per-library status](libraries.csv): current unique-ID totals. Pending is separate; old three-query outcomes are not counted as fresh fifty-query coverage.
