@@ -22,6 +22,8 @@ The single supervisor owns the provider loop and publishes only after all batch 
 
 Temporary Git fetch/push failures retry with backoff from 30 seconds to five minutes, with visible heartbeat and retry reason. A durable publication transaction recovers interrupted pushes without repeating searches or commits. Authentication failures and divergent Git history stop for repair; no force push is permitted. The hourly task now actively diagnoses, tests, repairs and resumes stopped work, and reports every hourly check while stopped. It publishes preserved results before sending new provider requests. Provider refusals still require useful review, not blind retries.
 
+**No Vercel builds or deployments for analysis.** The committed `vercel.json` disables automatic deployments for this audit branch and `research/**`. Skip commit markers are insufficient. The publisher checks the committed rule before any fetch/push and refuses enabled overrides. Never invoke Vercel build/deploy/promote for research. See [build-cost incident and prevention](vercel-build-incident-20261110.json).
+
 ## Outputs
 
 - [Progress](progress.json) and [per-library status](libraries.csv): current unique-ID totals. Pending is separate; old three-query outcomes are not counted as fresh fifty-query coverage.

@@ -25,6 +25,11 @@ function scoped(names,path){return !names||names.split('\n').every(n=>n.startsWi
 export async function publishRecoverably({git,path,expectedLocal,readState=()=>null,writeState=()=>{},signal,onRetry,wait}){
  if(!/^docs\/research\/india-library-audit\/search-triage\//.test(path)||path.split('/').includes('..'))throw Error('Unapproved publication scope');
  if(git(['branch','--show-current'])!==BRANCH)throw Error('Audit branch changed');
+ // Commit-message skip markers do not disable Vercel Git deployments. Require
+ // the committed branch rule before touching the remote. Fail closed if an
+ // enabled pattern could override it (Vercel combines matching true rules).
+ const deploymentRules=JSON.parse(git(['show','HEAD:vercel.json'])).git?.deploymentEnabled;
+ if(!deploymentRules||typeof deploymentRules!=='object'||deploymentRules[BRANCH]!==false||Object.values(deploymentRules).some(v=>v===true))throw Error('Audit publishing blocked: committed Vercel deployment-disable rule required');
  let transaction=readState();if(transaction?.phase==='published')transaction=null;
  const head=git(['rev-parse','HEAD']);
  if(transaction){

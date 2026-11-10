@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import {publishRecoverably,retryGit,transientGitError} from './checkpoint-recovery.mjs';
 const path='docs/research/india-library-audit/search-triage/egranthalaya-fifty-20261108';
 function fixture(){
- const s={head:'base',remote:'base',staged:'',dirty:true,commits:0,fetches:0,pushes:0,calls:[],saved:null,message:'',failFetch:0,failPush:0,ackLost:false};
+ const s={head:'base',remote:'base',staged:'',dirty:true,commits:0,fetches:0,pushes:0,calls:[],saved:null,message:'',failFetch:0,failPush:0,ackLost:false,deploymentRules:{'feat/library-connector-audit':false,'research/**':false}};
  const git=a=>{s.calls.push(a);switch(a[0]){
   case 'branch':return 'feat/library-connector-audit';
+  case 'show':return JSON.stringify({git:{deploymentEnabled:s.deploymentRules}});
   case 'rev-parse':return a[1]==='FETCH_HEAD'?s.remote:a[1]==='HEAD^'?'base':s.head;
   case 'diff':return s.staged;
   case 'fetch':s.fetches++;if(s.failFetch-->0)throw Error('Git fetch failed: error: 503');return '';
@@ -27,3 +28,4 @@ test('remote divergence fails before staging or pushing',async()=>{const {s,opts
 test('unrelated staged files remain untouched',async()=>{const {s,opts}=fixture();s.staged='client/unrelated.ts';await assert.rejects(publishRecoverably(opts),/Unrelated staged/);assert.equal(s.fetches,0);assert.equal(s.staged,'client/unrelated.ts');});
 test('authentication errors are surfaced rather than retried indefinitely',async()=>{let calls=0;await assert.rejects(retryGit(()=>{calls++;throw Error('Authentication failed');},{wait:async()=>{throw Error('must not wait');}}),/Authentication/);assert.equal(calls,1);assert.equal(transientGitError(Error('Git push failed: HTTP 403')),false);});
 test('retry backoff is capped and remains interruptible',async()=>{let calls=0;const retry=[];assert.equal(await retryGit(()=>{if(++calls<=6)throw Error('error: 503');return 'ok';},{onRetry:x=>retry.push(x.delayMs),wait:async()=>{}}),'ok');assert.deepEqual(retry,[30000,60000,120000,240000,300000,300000]);});
+test('missing or overridden deployment-disable rules block all remote and commit operations',async()=>{for(const rules of [undefined,{},false,{'feat/library-connector-audit':true},{'feat/library-connector-audit':false,'*':true}]){const {s,opts}=fixture();s.deploymentRules=rules;await assert.rejects(publishRecoverably(opts),/deployment-disable rule required/);assert.equal(s.fetches,0);assert.equal(s.pushes,0);assert.equal(s.commits,0);assert(!s.calls.some(a=>a[0]==='add'));}});
