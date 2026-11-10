@@ -33,3 +33,7 @@ Temporary Git fetch/push failures retry with backoff from 30 seconds to five min
 - On completion: `final-report.md`, `final-report.json`, and `artifact-index.csv` linking and hashing every per-batch query/result/item/failure CSV. Large lists stay partitioned to avoid Git single-file limits.
 
 **Working** means at least one relevant specific native bibliographic item returned in the selected member's Books search. Valid empty searches are separate from failed requests. Twenty distinct native bibliographic records are a sampling benchmark; duplicate IDs across queries never inflate the count. Edition/work deduplication is not inferred from similar titles. Item URLs are saved as session-dependent, not checked; no borrowability, app-path proof or deployment is implied. No app libraries are removed, hidden, disabled or activated.
+
+## Final checkpoint
+
+All 5,036 frozen IDs are assessed. See [the final report](final-report.md), [independent validation](final-validation.json), [needs-work list](needs-work-libraries.csv) and [artifact index](artifact-index.csv). This completes the native search audit pass; twenty-record success, failed requests, empty terms and untested item URLs remain separate. No app source changed.
