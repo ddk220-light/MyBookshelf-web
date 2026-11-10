@@ -4,6 +4,76 @@ Offline analysis of the global app directory and existing India audit evidence.
 No collector, account, hosting, app publication, public API or deployment is used.
 All recurring research jobs stay paused. Original journals and bodies are untouched.
 
+## Private review and staged app registry
+
+After an existing import, prepare the versioned registry and summary caches:
+
+```sh
+npm run library:registry -- --node /path/to/node22
+npm run library:registry:compare
+npm run library:review
+```
+
+Open `http://127.0.0.1:4322` on the machine running the review. To use it on your
+PC, run the tools alongside your downloaded SQLite file and pass `--db PATH`.
+The server binds **only** to IPv4 loopback, checks Host/Origin, uses SQLite
+read-only/query-only connections, and never contacts providers. No remote tunnel
+or hosted dashboard is configured. `--port` changes only the local port.
+
+The interface includes country/system/status filters, exact query/field filters,
+original date ranges, library and book drill-downs, complete ordered query results,
+observation history, link-check outcomes and evidence references. APIs use
+`limit` (1–500, default 100) and `offset`; CSV downloads stream every matching row,
+not just the visible page. The JSON API preserves exact values. Review CSVs prefix
+formula-like text with an apostrophe to protect spreadsheet imports. Unknown
+metadata stays unknown. Summary coverage/metadata metrics describe the whole
+imported snapshot; `filteredSearches` describes the selected query/date filters.
+Library-page metrics are all-time observations, not holdings counts.
+
+Local read interfaces are `GET /api/summary`, `/api/libraries`, `/api/searches`,
+`/api/results`, `/api/books`, `/api/observations`, `/api/checks`, `/api/links` and
+`/api/failures`; library/search/book/event details accept an encoded ID path segment.
+`GET /api/export/<dataset>.csv` uses identical filters. These are private review
+interfaces, **not** additions to the production public API. Historical connection
+configuration is returned only for an explicitly recorded matching fingerprint;
+today's configuration is never attached retroactively to an old search.
+
+Outputs under `current/registry/`:
+
+- `library-registry.json`: complete private registry, all current routes and reasons.
+- `eligible-library-proposal.json`: small future app input, approved connections only.
+- `connection-versions.json`: immutable indexed configurations, including superseded versions.
+- `connection-readiness.csv`: audit methods, statically inspected app methods/capabilities and gaps.
+- `analysis-summary.json` / `.md`: country/system coverage, sample metrics and limitations.
+- `registry-manifest.json`: artifact checksums and deterministic snapshot identity.
+
+The unused server-side `library-registry.js` reader verifies artifact hashes,
+route/alias uniqueness and eligibility consistency. It exposes an explicit safe
+public projection without private configurations/evidence. It is **not imported by
+the production directory or live search API**. The comparison command reads the
+current directory/configuration and provider function names without invoking them.
+Missing direct catalog-search methods do not prove a library cannot support some
+other mode, such as ISBN lookup. Static methods do not prove live search success.
+Catalog system/subtype and adapter family are separate for grouped academic and
+community methods; exact native profiles and institution configuration are retained.
+
+Schema version 2 is an additive migration. Connection versions are immutable and
+captured before current pointers change. `indexed_at` is an index date, never an
+observation date. Historical unknown versions remain unknown. Cache tables are
+rebuildable; `prepare`, `import` and `enrich` refresh them under the same exclusive
+import lease. Keep the SQLite file outside Git and the application bundle.
+
+The registry's eventual app assessment must also include
+`appImplementationFingerprint`, matching the statically inspected server search
+implementation. An older success cannot authorize a changed API implementation.
+Its `configurationFingerprint` must still match the actual tested connection.
+The earlier configuration-only app eligibility export remains available for compatibility;
+use the versioned **eligible-library-proposal** for staged integration. Currently
+both proposals are empty because app-search proof has not been collected.
+
+Live API upgrades, new app-path verification, production filtering, hosting,
+R2 provisioning and recurring checks remain deferred. No raw files are deleted.
+
 ## Build and review
 
 Requires Node 22 (directory inventory only) and Python 3.12+ with standard-library
@@ -49,8 +119,8 @@ app assessments use the explicit contract below; no fresh searches are made.
 `catalog_records`, `record_observations`, `book_decisions`, `link_checks`,
 `events`, `event_locations`, `sources`, `evidence_refs`, `evidence_files`,
 `evidence_objects`, `metadata_extractions`, `invalidations`, `unmapped_evidence`.
-`schema.sql` initializes schema version 1. Migrate derived views in `connect`;
-future physical table changes require a new explicit versioned migration.
+`schema.sql` initializes the original tables; `migrations.py` applies explicit
+versioned additions. Future physical table changes require another migration.
 
 CSV exports cover the latest library status, all checks, exact queries/profiles,
 ALL returned candidates, distinct observed records, observation history, book

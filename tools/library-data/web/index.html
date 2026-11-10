@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Library evidence review · MyBookshelf</title><link rel="stylesheet" href="/review.css"></head>
+<body><header><span class="eyebrow">MYBOOKSHELF / PRIVATE REVIEW</span><h1>Library evidence, in one place.</h1>
+<p>Explore saved searches, observed books and connection readiness. This interface never searches a provider.</p>
+<p id="snapshot" class="muted" role="status">Loading the imported snapshot…</p></header>
+<main><section class="notice"><strong>Three different facts:</strong> a native search worked; a relevant book was verified; the app search was verified. These are tracked separately. Collection counts describe a sample, not complete holdings or borrowing availability.</section>
+<form id="filters"><label>Country<select name="country"><option value="">All countries</option><option value="IN">India</option><option value="US">USA</option><option value="CA">Canada</option><option value="JP">Japan</option><option value="NZ">New Zealand</option></select></label>
+<label>Catalog system<select name="system" id="systems"><option value="">All systems</option></select></label>
+<label>Native status<select name="status"><option value="">All statuses</option><option>Working</option><option>Needs work</option><option>Blocked/deferred</option><option>Not checked</option></select></label>
+<label>Library name contains<input name="name" autocomplete="off"></label><label>Canonical library ID<input name="library" autocomplete="off"></label>
+<label>Exact search term<input name="query" autocomplete="off"></label><label>Search field<input name="field" placeholder="e.g. title" autocomplete="off"></label>
+<label>From date (UTC)<input type="date" name="since"></label><label>Through date (UTC)<input type="date" name="until"></label>
+<div class="form-actions"><button type="submit">Apply filters</button><button type="reset" class="secondary">Reset</button></div></form>
+<nav aria-label="Review datasets" id="tabs"></nav><p id="message" role="status" aria-live="polite"></p>
+<section id="overview"></section><section id="listing"><div class="section-heading"><h2 id="heading">Libraries</h2><a id="download" class="button secondary">Download filtered CSV</a></div>
+<p id="scope" class="muted"></p><div id="table" class="table-wrap"></div><div id="pagination" class="pagination"></div></section>
+<section id="detail" hidden tabindex="-1" aria-label="Selected observation details"></section>
+<footer>Read-only local analysis · Dates refer to original observations. Metadata recovery dates are shown separately. CSV exports protect spreadsheet formula cells; JSON retains exact values. Production library visibility is unchanged.</footer></main>
+<script type="module" src="/review.js"></script></body></html>

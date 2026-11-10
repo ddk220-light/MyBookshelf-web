@@ -16,6 +16,9 @@ def connect(path):
  path.parent.mkdir(parents=True,exist_ok=True)
  db=sqlite3.connect(path);db.row_factory=sqlite3.Row
  db.executescript('DROP VIEW IF EXISTS library_current; DROP VIEW IF EXISTS library_books; DROP VIEW IF EXISTS returned_results;');db.executescript((HERE/'schema.sql').read_text());db.execute("UPDATE checks SET status='Blocked/deferred' WHERE status='Blocked / deferred'");db.execute('PRAGMA busy_timeout=30000');db.execute('PRAGMA cache_size=-131072')
+ db.commit()
+ from migrations import migrate
+ migrate(db)
  return db
 
 def safe(root,path):
@@ -49,10 +52,12 @@ def map_id(db,ident):
  return r[0] if r else None
 
 def seed(db,snapshot):
+ from migrations import retain_connection, retain_snapshot_runtime
  full={e['id']:e for e in snapshot.get('entries',[])}
  for e in snapshot['inventory']['libraries']:
   db.execute('INSERT OR REPLACE INTO libraries VALUES(?,?,?,?,?)',(e['libraryId'],e['name'],e['country'],e['connections'][0]['family'],js(e)))
-  # Current routes are replaced, history retains its original labels and fingerprints.
+  # Preserve configuration bytes before updating the current route pointers.
+  for previous in db.execute('SELECT * FROM connections WHERE library_id=?',(e['libraryId'],)).fetchall():retain_connection(db,previous)
   db.execute('DELETE FROM connections WHERE library_id=?',(e['libraryId'],))
   for i,c in enumerate(e['connections']):
    config={k:v for k,v in c.items() if k not in ('connectionId','fidelity')}
@@ -60,13 +65,16 @@ def seed(db,snapshot):
    if entry is not None:config['directoryEntry']=entry if i==0 else entry.get('alternateCatalogs',[])[i-1]
    fp=digest(js(config).encode());cid=digest(js([e['libraryId'],config]).encode())
    db.execute('INSERT INTO connections VALUES(?,?,?,?,?)',(cid,e['libraryId'],c['connectionId'],fp,js(config)))
+   retain_connection(db,dict(id=cid,library_id=e['libraryId'],label=c['connectionId'],fingerprint=fp,config_json=js(config)))
  for alias,target in snapshot['aliases'].items():
   target=map_id(db,target)
   if target:db.execute('INSERT OR REPLACE INTO aliases VALUES(?,?)',(alias,target))
+ retain_snapshot_runtime(db,snapshot)
 
 def add_record(db,eid,lib,label,date,r,suffix):
  native=r.get('nativeId') or r.get('sourceId') or r.get('recordId')
  copy=r.get('copyId') or r.get('barcode') or r.get('identityKind')=='copy'
+ if copy:native=r.get('copyId') or r.get('barcode') or native
  # A fingerprint/lookup token is explicitly not an assigned bibliographic identifier.
  kind='copy' if copy else 'fingerprint' if not native or r.get('nativeLookup') or r.get('recordIdIsFingerprint') else 'native_bibliographic'
  key=digest(js([lib,label,kind,native or eid+suffix]).encode())
@@ -135,7 +143,7 @@ def normalize(db,e,source,line,root):
   reason=js(block) if block else e.get('state')
  elif typ=='app_search_assessment':
   # Explicit import contract only: no native event, fixture or provider lookup is promoted.
-  kind='app';status='Working' if e.get('relevantSpecificBook') is True and e.get('correctLibraryScope') is True and e.get('nativeRecordId') and e.get('query') and e.get('evidence') and obs_kind=='live_http' else 'Needs work'
+  kind='app';status='Interrupted' if e.get('interrupted') or e.get('completed') is False else 'Working' if e.get('relevantSpecificBook') is True and e.get('correctLibraryScope') is True and e.get('nativeRecordId') and e.get('query') and e.get('evidence') and obs_kind=='live_http' and not e.get('error') and e.get('ok') is not False else 'Needs work'
   reason=e.get('reason')
  if status:
   if status=='Blocked / deferred':status='Blocked/deferred'
@@ -270,7 +278,16 @@ def restore(db,root,sha,destination):
  if file_hash(target)!=sha:raise ValueError('Restore byte verification failed')
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('command',choices=['import','export','validate','query','restore','enrich']);ap.add_argument('--root',type=pathlib.Path,default=HERE.parents[1]);ap.add_argument('--db',type=pathlib.Path,default=pathlib.Path('/workspace/library-data/library-data.sqlite'));ap.add_argument('--out',type=pathlib.Path,default=pathlib.Path('/workspace/library-data/current'));ap.add_argument('--node',default='node');ap.add_argument('--full',action='store_true');ap.add_argument('--country');ap.add_argument('--system');ap.add_argument('--library');ap.add_argument('--query');ap.add_argument('--since');ap.add_argument('--sha256');ap.add_argument('--destination');args=ap.parse_args();root=args.root.resolve()
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('command',choices=['import','export','validate','query','restore','enrich','prepare']);ap.add_argument('--root',type=pathlib.Path,default=HERE.parents[1]);ap.add_argument('--db',type=pathlib.Path,default=pathlib.Path('/workspace/library-data/library-data.sqlite'));ap.add_argument('--out',type=pathlib.Path,default=pathlib.Path('/workspace/library-data/current'));ap.add_argument('--node',default='node');ap.add_argument('--full',action='store_true');ap.add_argument('--country');ap.add_argument('--system');ap.add_argument('--library');ap.add_argument('--query');ap.add_argument('--since');ap.add_argument('--sha256');ap.add_argument('--destination');args=ap.parse_args();root=args.root.resolve()
+ if args.command=='prepare':
+  import fcntl
+  from registry import refresh, export_registry
+  lease=open(str(args.db)+'.import.lock','a');fcntl.flock(lease,fcntl.LOCK_EX|fcntl.LOCK_NB)
+  db=connect(args.db)
+  seed(db,json.loads(subprocess.check_output([args.node,str(HERE/'directory-snapshot.mjs')],cwd=root)));db.commit()
+  from enrich import enrich
+  enrich(db,root);refresh(db)
+  print(js(export_registry(db,args.out/'registry')));return
  if args.command in ('import',):
   import fcntl
   args.db.parent.mkdir(parents=True,exist_ok=True)
@@ -294,6 +311,8 @@ def main():
   if not result['valid']:raise ValueError(js(result))
   from enrich import enrich
   enrich(db,root)
+  from registry import refresh, export_registry
+  refresh(db);export_registry(db,args.out/'registry')
   summary=export(db,args.out);(args.out/'validation.json').write_text(json.dumps(result,indent=2)+'\n');print(js(summary))
  else:
   db=sqlite3.connect('file:'+str(args.db.resolve())+'?mode=ro',uri=True);db.row_factory=sqlite3.Row
@@ -303,7 +322,9 @@ def main():
    lease=open(str(args.db)+'.import.lock','a');fcntl.flock(lease,fcntl.LOCK_EX|fcntl.LOCK_NB)
    db.close();db=connect(args.db)
    from enrich import enrich
-   print(js({'newMetadataExtractions':enrich(db,root)}));print(js(export(db,args.out)))
+   print(js({'newMetadataExtractions':enrich(db,root)}))
+   from registry import refresh, export_registry
+   refresh(db);export_registry(db,args.out/'registry');print(js(export(db,args.out)))
   elif args.command=='validate':
    result=validate(db,root,args.full);print(js(result));sys.exit(0 if result['valid'] else 1)
   elif args.command=='restore':restore(db,root,args.sha256,args.destination)

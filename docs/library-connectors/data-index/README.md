@@ -1,5 +1,9 @@
 # Global library evidence index — implementation checkpoint
 
+The next stage adds a versioned app-registry proposal and private local review
+interface. See [registry/review implementation](REGISTRY.md). Production API
+alignment and app verification are deferred; the current directory is unchanged.
+
 Implemented 10 November 2026 on PR #188. No app sources, production deployment,
 provider collection or recurring jobs were changed. No data was deleted.
 
