@@ -1,0 +1,1658 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://ahmcm.easylib.net/assets/css/base.css">
+<style type="text/css">
+
+#login:hover{
+	cursor:pointer;
+}
+.sticky {
+    position: fixed;
+    width: 100%;
+	z-index: 9999;
+	background-color:white;
+	margin-bottom:-10px;
+	border-bottom:1px solid #f1f1f1;
+	
+}
+
+.nonsticky{
+	background-color:white;
+	margin-bottom:-10px;
+	border-bottom:1px solid #f1f1f1;
+}
+
+.dropdown-content a {
+	display:none;
+    color: black;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+	background-color:#f1f1f1;
+}
+
+.dropdown-content {
+	display:none;
+    position: absolute;
+     right: 0.5%;
+    background-color:white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index:2000;
+	border:1px solid #f1f1f1;
+}
+.dropbtn:hover .dropdown-content{
+	display:block;
+}
+.dropbtn {
+    cursor: pointer;
+}
+.dropbtn:hover {
+    color: #5375aa;
+}
+.clickLogin{
+	margin-right:0px;
+	margin-bottom:0px;
+	width:8%;
+	padding:5px;
+	padding-right: 10px;
+}
+.link{
+	padding:5px;
+}
+
+.afterLogin{
+	padding-left:5px;
+	font-size: 17px;
+}
+
+.afterLoginDiv{
+	margin-top: 5px;
+	margin-right: -5px;
+}
+
+#container{
+	width:100%;
+}
+
+#left{
+	float:left;
+	margin-left:11px;
+}
+
+#center{
+	margin:0px;
+	text-align:center;
+}
+
+#right{
+	right:0;
+	float:right;
+	margin-top:10px;
+}
+.cNameForMobile{
+	display:none;
+}
+.containerfluid{
+	width:100%;
+}
+.loginName{
+	
+	
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+	#center{
+		text-align:center;
+	}
+	#right{
+		right:0;
+		float:right;
+		overflow: scroll;
+	}
+
+	.sticky {
+		padding:0px;
+	}
+
+	.nonsticky{
+		padding:0px;
+	}
+	
+	.cNameForMobile{
+		display:none;
+	}
+}
+
+@media (min-width: 200px) and (max-width: 725px) {
+	#left{
+		float:left;
+	}
+	#center{
+		display:none;
+	}
+	#right{
+		margin-right:2px;
+		position:absolute;
+		overflow:hidden;
+		text-align:right;
+		overflow: scroll;
+	}
+	.loginToPart{
+		width:100%;
+		float:right;
+		margin-top:0px;
+		text-align:right;
+		
+	}
+	.cNameForMobile{
+		display:block;
+		font-size:12px;
+		margin-right:0px;
+		padding-bottom:10px;
+		float:right;
+		text-align:right;
+	}
+	.sticky {
+		margin-bottom:0px;
+		border-bottom:1px solid #f1f1f1;
+	}
+
+	.nonsticky{
+		margin-bottom:0px;
+		border-bottom:1px solid #f1f1f1;
+	}
+/*	.supportClass{
+		display: none;
+	}*/
+	.sessionStartedAtClass{
+		//display: none;
+		font-size:10px;
+	}
+	.cNameForMobile{
+		margin-top:10px;
+		margin-right:20%;
+		margin-left:10%;
+		font-size:14px;
+		color:brown;
+	}
+	header{
+		height:100px;
+	}
+
+}
+</style>
+
+<header id="nonstickyheader" class="nonsticky">
+    <div class="containerfluid row" id="container">
+		<div id="left" class="form-inline">
+			<!-- <a href="https://ahmcm.easylib.net/index.php"><img src="https://ahmcm.easylib.net/assets/img/logo.png" alt="Logo" data-retina="true" class="logo_normal"></a> -->
+		</div>
+		<div id="right" >
+			<div class="loginToPart">
+			 
+    <!-- Add Create Ticket button before the login dropdown -->
+	  <!-- <a class=""  onclick="createNewTicket()">
+            <span class=""
+                >New Ticket</span>
+        </a> -->
+		 <!-- <a class="zoomin" data-toggle="tooltip" title="You can see the Customized Search Report of Periodical Subscriptions." target="_blank" href="https://ahmcm.easylib.net/index.php/TicketListCt/index">
+            <span class=""
+                >New Ticket</span>
+        </a>
+				<button type="button" id="create-ticket" class="btn btn-primary" onclick="createNewTicket1()">New Ticket</button> -->
+    <span class="clickLogin dropbtn">Login</span>
+    <div class="dropdown-content">
+        <a href="javascript:void(0)" data-toggle="modal" data-target="#myModal" class="librarianLoginLink link">Login</a>
+        <!-- <a href="javascript: void(0)" data-toggle="modal" data-target="#myModalMember" class="memeberLoginLink link">Student/Faculty (Regular)</a> -->
+        <a href="https://digilib-rho.vercel.app" class="vendorLoginLink link" target="_blank">API Login</a>
+        <a href="javascript: void(0)" data-toggle="modal" data-target="#myModalVendor" class="vendorLoginLink link">Vendor</a>
+    </div>
+ 
+			</div>
+						<div class="cNameForMobile" style="">
+				<!--  -->
+				<div class="text-center" ><span>ALVA'S HOMOEOPATHIC MEDICAL COLLEGE, MOODBIDRI</span></div>
+			</div>
+		</div>
+		<div>
+						<div id="center">
+				<div class="collegeName header text-center" >
+					<span>ALVA'S HOMOEOPATHIC MEDICAL COLLEGE, MOODBIDRI</span></br>
+					<span></span>	
+				</div>
+			</div>	
+		</div>
+	</div>
+</header> <!-- End Header -->
+ <div class="modal fade margin_120" id="myModal" role="dialog">
+	<div class="modal-dialog">
+		
+		<div class="modal-content">
+			<form action="https://ahmcm.easylib.net/index.php/LoginController/LibrarianLoginNew" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+			<div class="modal-header form-inline">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h5 class="icon-login-1"><strong>Login Here</strong></h5>
+			</div>
+			<div class="modal-body">
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					<span class="input-group-addon" id="basic-addon3"><b>Username *</b></span>
+					[form state omitted]
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					<span class="input-group-addon" id="basic-addon3"><b>Password *</b></span>
+					[form state omitted]
+					</div>
+				</div>
+				
+			</div>
+			<div class="modal-footer">
+				<div class="col-md-12 col-sm-12">
+					<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+			</form>
+			<div class="modal-body" style="border-top: 1px solid #ddd; margin-top: 0; padding-top: 10px; padding-bottom: 0;">
+			<h5><strong>Login with OTP</strong></h5>
+			<form action="https://ahmcm.easylib.net/index.php/LoginController/MemberLoginOTP" id="otpLoginForm" method="post" accept-charset="utf-8">
+			<div class="form-group">
+			<label for="otpEmail">Email ID</label>
+			[form state omitted]
+			</div>
+
+			<div class="form-group">
+			<span id="otpStatus" class="text-danger" style="display:none;"></span>
+			<span id="otpSuccess" class="text-success" style="display:none;"></span>
+			</div>
+
+			<div id="otpButtons" class="form-group">
+			<button type="button" class="btn btn-primary" onclick="sendOTP()">Send OTP</button>
+			
+
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			</div>
+
+			<div id="otpInputSection" style="display:none;">
+			<div class="form-group">
+				<label for="otp_code">Enter OTP</label>
+				<div id="otpTimer" class="text-danger font-weight-bold" style="margin-top: 10px;"></div>
+				<input type="text" name="otp_code" class="form-control" placeholder="Enter OTP">
+			</div>
+			<div class="form-group">
+        <button type="submit" class="btn btn-success">Enter</button>
+        <button type="button" class="btn btn-warning" onclick="resendOTP()" id="resendBtn">Resend OTP</button>
+        <button type="button" class="btn btn-default" onclick="cancelOTP()">Cancel</button>
+    </div>
+	
+</div>
+			</div>
+			</form>		</div>
+
+		</div>
+	</div>
+</div>
+<!-- Modal -->
+<div class="modal fade margin_120" id="myModalMember" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+      	<form action="https://ahmcm.easylib.net/index.php/LoginController/MemberLogin" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+			<div class="modal-header form-inline">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="icon-login-1">Login Here</h4>           
+			</div>
+        	<div class="modal-body">
+				
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Member Id</span>
+					  [form state omitted]
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Password</span>
+					  [form state omitted]
+					</div>
+				</div>
+				
+        	</div><br/><br/>
+			<div class="modal-footer">
+				<div class="col-md-12 col-sm-12">
+			  		<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+			  		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			  	</div>
+			</div>
+		</form>      </div>
+    </div>
+  </div>
+  <div class="modal fade margin_120" id="myModalVendor" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+      	<form action="https://ahmcm.easylib.net/index.php/LoginController/VendorLogin" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+			<div class="modal-header">
+				<div class="form_title">
+                	<h4 class="icon-login-1">Login Here</h4>
+            	</div>               
+			  	<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+        	<div class="modal-body">
+				
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Vendor Email ID</span>
+					  [form state omitted]
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Password</span>
+					  [form state omitted]
+					</div>
+				</div>
+				
+        	</div><br/><br/>
+			<div class="modal-footer">
+				<div class="col-md-12 col-sm-12">
+			  		<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+			  		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			  	</div>
+			</div>
+			
+		</form>      </div>
+    </div>
+  </div><!-- end modal -->
+   <div id="AddPastContactModal2" class="dialog" style="display: none;">
+<div class="col-md-12">
+	<form action="javascript:void(0);" name="addPastContactForm2" id="addPastContactForm2">
+		<div class="row">
+			<input type="hidden" name="Fld_OrgId_2" id="PastorgId_2" class="form-control">
+			<input type="hidden" name="Fld_projId_2" id="PastprojId_2" class="form-control">
+
+			<div class="col-md-6" style="">
+    <div class="input-group">
+        <label class="asterisk_input"><b>Org ID</b></label>
+        <input type="text" name="org_id_2" id="org_id_2" class="form-control" aria-label="Org ID">
+        <span class="input-group-btn">
+            <button id="fetchOrgBtn" class="btn btn-primary" style="margin-top: 25px;">Fetch</button>
+            <!-- <span data-toggle="modal" id="Orgentry1" class="btn btn-info default" style="margin-top: 25px;"><i class="fa fa-edit"></i></span> -->
+        </span>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="form-group">
+        <label class="asterisk_input"><b>Org Name</b></label>
+        <div style="display: flex; align-items: center;">
+            <input type="text" name="org_name_2" id="org_name_2" class="form-control" aria-label="Org Name" style="width: auto; flex-grow: 1;">
+            <span data-toggle="modal" id="Orgentry1" class="btn btn-info default"  title="Edit Organization">
+                <i class="fa fa-edit"></i>
+            </span>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- <div class="col-md-6">
+    <div class="form-group">
+        <label class="asterisk_input"><b>Contact Person:</b></label>
+        <select name="Fld_Contact_Id_2" id="Fld_Contact_Id_2" class="form-control" required>
+            <option value=""></option>
+        </select>
+    </div>
+</div> -->
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Contact Person:</b></label>
+					<select name="Fld_Contact_Id_2" id="Fld_Contact_Id_2" class="form-control" required>
+						<option value=""></option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Easylib Person:</b></label>
+					<select name="Fld_Easylib_Person_Id_2" id="Fld_Easylib_Person_Id_2" class="form-control">
+    <option value="">Select</option>
+</select>
+
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Member ID:</b></label>
+					<input type="text" name="Fld_Member_Id_2" id="Fld_Member_Id_2" class="form-control">
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Contact Type:</b></label>
+					<select name="Fld_Contact_Type_Id_2" id="Fld_Contact_Type_Id_2" class="form-control">
+						<option value=""></option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Date:</b></label>
+					<input type="text" name="Fld_Date_2" id="Fld_Date_2" class="picDate form-control" required>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Duration (enter time in minutes):</b></label>
+					<input type="number" name="Fld_Duration_2" id="Fld_Duration_2" class="form-control" required>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Remarks:</b></label>
+					<textarea name="Fld_Remarks_2" id="Fld_Remarks_2" class="form-control" rows="3"></textarea>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-10">
+			<div class="row text-center" style="margin-left:70px;margin-top: 30px">
+				<button class="btn btn-success btn-md" id="savePastBtn2" style="width:100px">Save</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+	 <div id="ListPastContactModal2" class="dialog" style="display: none;">
+	<div class="col-md-12">	
+		<div class="header_div" style="margin-left:-50px;color: #0080ff" id="Organization_Name2"></div>
+		<table class="table table-bordered" id="listPastContactTable2">
+			<thead>
+				<tr>
+					<th style="width:5%">Activity Id</th>
+					<th style="width:10%">Contact Person</th>
+					<th style="width:10%">Easylib Person</th>
+					<th style="width:10%">Member ID</th>
+					<th style="width:10%">Contact Type</th>
+					<th style="width:10%">Date</th>
+					<th style="width:10%">Duration</th>
+					<th style="width:10%">Entry Date</th>
+					<th style="">Remarks</th>
+							
+				</tr>
+			</thead>
+			<tbody id="listPastContactTableBody2">
+					
+			</tbody>
+		</table>
+	</div>
+</div>
+<div id="csaOrgModal1" title="Org Name" class="dialog" style="display: none;">
+	<p><b>Double click on the record to select it</b></p>
+	<table class="table table-bordered" id="CSTable1">
+		<thead>
+			<tr>
+				<th>Org Name</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+<!-- <div id="createTicketModal1" class="dialog" style="display: none;">
+	<div class="col-md-12">
+		<form action="javascript:void(0);" name="createTicketForm1" id="createTicketForm1">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Ticket No:</label>
+						<input type="text" name="fld_ticket_id2" id="ticket_id2" class="form-control" readonly>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Org ID:</label>
+						<input type="text" name="fld_org_id2" id="fld_org_id2" class="form-control" >
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Person ID:</label>
+						<input type="text" name="fld_person_id2" id="fld_person_id2" class="form-control" >
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Opened Date:</label>
+						<input type="text" name="fld_ticket_opened_date2" id="ticket_opened_date2" class="form-control"value = "07-11-2026" readonly>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Opened By:<sup style="color: red">*</sup></label>
+						<input type="text" name="fld_ticket_opened_by2" id="ticket_opened_by2" class="form-control">
+						<b><p id="validateOpenedBy1"></p></b>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Ticket Title:<sup style="color: red">*</sup></label>
+						<input type="text" name="fld_title2" id="title2" class="form-control" placeholder="Enter ticket name">
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Type:<sup style="color: red">*</sup></label>
+						<select name="fld_ticket_type_id2" id="ticket_type_id2" class="form-control">
+							<option value="">Select Type</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Subtype:</label>
+						<select name="fld_ticket_subtype_id2" id="ticket_subtype_id2" class="form-control">
+							<option value="">Select Subtype</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Ticket Description:</label>
+						<textarea type="text" name="fld_description2" rows="4" id="description2" class="form-control" placeholder="Allows 2500 characters only."></textarea>
+						<b><p id="charNum1"> </p></b>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Status:<sup style="color: red">*</sup></label>
+						<select name="fld_status_id2" id="status_id2" class="form-control">
+							<option value="">Select Status</option>
+						</select>
+					</div>
+				</div>
+				
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Severity:</label>
+						<select name="fld_severity2" id="severity_drp2" class="form-control">
+							<option value="">Select Severity</option>
+							<option value="Minor">Minor</option>
+							<option value="Moderate">Moderate</option>
+							<option value="Critical">Critical</option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3 uploadedFile">
+					</div>
+				</div>
+
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Priority:</label>
+						<select name="fld_priority2" id="priority_drp2" class="form-control">
+							<option value="">Select Priority</option>
+							<option value="High">High</option>
+							<option value="Medium">Medium</option>
+							<option value="Low">Low</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Related Product:</label>
+						<select name="fld_product_id2" id="product_id2" class="form-control">
+							<option value="">Select Product</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Related Module:</label>
+						<select name="fld_module_id2" id="module_id2" class="form-control">
+							<option value="">Select Module</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+                    <div class="form-group">
+                        <label>Upload File/Screenshot:</label>
+                        <input type="file" class="form-control" id="fld_pic_path" name="fld_pic_path">
+                    </div>
+                </div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Assign To:</label>
+						<input type="text" name="fld_assign_to_mbr2" id="assign_to_mbr2" class="form-control">
+						<b><p id="validateAssignTo1"></p></b>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-10">
+					<div class="row text-center" style="margin-left:70px;margin-top: 10px">
+						<button class="btn btn-primary btn-md ticketData" id="createTicketBtn1" style="width:100px">Submit</button>
+						<input type="button"class="btn btn-secondary btn-md" name="closeTicket2" id="closeTicket2" style="width:100px" value="Close">
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div> -->
+</div>
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted][script omitted]
+ <!--
+##################################################################################
+# Copyright - Easylib Software Pvt Ltd
+# This code is a copyright of Easylib Software Pvt Ltd and must be used only at 
+# the site of deployment. Any unauthorized modification or distribution is a
+# violation of copyright law and is subject to prosecution. 
+##################################################################################
+# CHANGE LOG 
+##################################################################################
+# << Date >>>>> << Persons Name >>>> <<<< Changes done >>>>
+# 28-06-2025    Sumeet Ainapur  Added Notes
+# 06-02-2019	Mahantesh	Added this file.
+##################################################################################
+  -->
+<link rel="stylesheet" href="https://ahmcm.easylib.net/assets/css/opacHomeCss.css">
+<style>
+    .threeslides {
+        margin-top: 10px;
+        height: 420px;
+        /*box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .08);
+	border-radius:5px;*/
+        background-color: white;
+        /* border:1px solid #f7f7f7; 	 */
+        position: relative;
+        overflow-y: auto;
+        overflow-x: hidden;
+        border: 1px solid #f1f1f1;
+        -webkit-box-shadow: 0px 0px 3px 1px #ccc;
+         /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+  */
+        -moz-box-shadow: 0px 0px 3px 1px #ccc;
+         /* Firefox 3.5 - 3.6  */
+        box-shadow: 0px 0px 3px 1px #ccc; 
+
+    }
+    
+
+    /* .threeslides:hover { */
+        /* -webkit-box-shadow: 5px 6px 5px 10px #ccc; */
+         /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+  */
+        /* -moz-box-shadow: 5px 6px 5px 10px #ccc; */
+         /* Firefox 3.5 - 3.6  */
+        /* box-shadow: 0px 0px 5px 6px #ccc; */
+         /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5  */
+    /* } */
+
+    .homeBlocks .col-md-4 {
+        padding-left: -10px !important;
+        padding-right: -10px !important;
+    }
+
+    .container-outer {
+        overflow-x: scroll;
+        width: 100%
+    }
+
+    .container-inner {
+        width: 100%;
+        white-space: nowrap;
+    }
+
+    .aspmenus > .container-inner {
+        width: 100%;
+        white-space: normal;
+    }
+
+    .btn-secondary {
+        color: #fff;
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+        color: #fff;
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+    
+  
+</style>
+<div class="container-fluid">
+    <div class="row">
+                <div class="col-md-12 ">
+            <!--
+##################################################################################
+# Copyright - Easylib Software Pvt Ltd
+# This code is a copyright of Easylib Software Pvt Ltd and must be used only at 
+# the site of deployment. Any unauthorized modification or distribution is a
+# violation of copyright law and is subject to prosecution. 
+##################################################################################
+# CHANGE LOG 
+##################################################################################
+# << Date >>>>> << Persons Name >>>> <<<< Changes done >>>>
+# 13-09-2020	Mahantesh Maningol	Added Copyright Lines.
+##################################################################################
+-->
+
+<style>
+    .my-group .input-group-btn {
+        width: 10%;
+        border-bottom: none;
+        border-radius: 0;
+    }
+
+    .searchpage {
+        height: 80px;
+        background-color: #5375aa;
+    }
+
+    .searchBar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 80%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .input-group-btn .btn {
+        border-radius: 0px;
+        width: 100%;
+        /* border-right: 1px solid black; */
+    }
+
+    @media screen and (min-width : 768px) and (max-width : 1023px) {
+        .searchPage {
+            height: 120px;
+            background-size: 100% 100%;
+            background-color: #5375aa;
+            /*#251DA0;  /*#A1227C,#C70039,#A1227C*/
+            z-index: 1;
+            border: 2px solid #f7f7f7;
+        }
+
+        .searchBar {
+            left: 50%;
+            top: 50%;
+            width: 100%;
+            /* -webkit-transform: translate(0%, 0%);
+            transform: translate(0%, 0%); */
+            margin: 0px 5px 0px 5px;
+        }
+
+    }
+
+    @media screen and (min-width : 0px) and (max-width : 767px) {
+        .searchPage {
+            height: 160px;
+            background-size: 100% 100%;
+            background-color: #5375aa;
+            /*#251DA0;  /*#A1227C,#C70039,#A1227C*/
+            z-index: 1;
+            border: 2px solid #f7f7f7;
+        }
+
+        .searchBar {
+            left: 50%;
+            top: 50%;
+            width: 100%;
+            /* -webkit-transform: translate(0%, 0%);
+            transform: translate(0%, 0%); */
+            margin: 0px 5px 0px 5px;
+        }
+
+
+    }
+</style>
+<div class="col-md-12 searchpage">
+    <div class="input-group my-group searchBar">
+        <div class="input-group-btn">
+            <select class="form-control " id="homeBranch" name="Fld_Branch_Code"
+                style="border-top-left-radius: 4px;border-bottom-left-radius:4px">
+                <option value="0">Select Branch</option>
+            </select>
+        </div>
+        <div class="input-group-btn">
+            <select name="keywords" id="keyWordsDropDown" class="form-control dropdown-toggle">
+                
+                 <option value="">All</option>
+                <option value="@Title">@Title</option>
+                
+                <option value="@Author ">@Author</option>
+                <option value="@Publisher ">@Publisher</option>
+                <option value="@Subject ">@Subject</option>
+                <option value="@ISBN ">@ISBN</option>
+                <option value="@Published_Place ">@Published_Place</option>
+                <option value="@Published_Year ">@Published_Year</option>
+                <option value="@Class_No ">@Class_No</option>
+                <option value="@Call_No ">@Call_No</option>
+                <option value="@Accn_No ">@Accn_No</option>
+                <option value="@dept ">@Department</option>
+                <option value="@keyword ">@Keyword</option>
+                <option value="@Location ">@Location</option>
+                <option value="@Editor ">@Editor</option>
+                <option value="@Series ">@Series</option>
+                <option value="@Developer ">@Developer</option>
+                <option value="@Translator ">@Translator</option>
+                <option value="@No_Days ">@No_Days</option>
+            </select>
+        </div>
+        <input type="text" class="form-control" id="advancedSearch" autocomplete="off" placeholder="Search for Books, Author and More..." value="" 
+            aria-label="Search for...">
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-md btn-success" id="adSearchButton">Search</button>
+        </div>
+        <div class="input-group-btn">
+            <button class="btn btn-warning" style="border-top-right-radius: 4px;border-bottom-right-radius:4px"
+                onclick="document.getElementById('advancedSearch').value = ''">Clear</button>
+        </div>
+		<div style="width: 20px; display: inline-block;"></div>
+        <div class="input-group-btn">
+            <a href="https://ahmcm.easylib.net/helpController/index" class="btn btn-info" id="knowMoreButton">Know More</a>
+        </div>
+    </div>
+</div>
+[script omitted]
+[script omitted]        </div>
+                    <div class="col-md-12">
+                <style>
+    #aspmenus {
+        /* left: 50%; */
+        /* top: 50%; */
+        /* width: 100%; */
+        -webkit-transform: translate(0%, 0%);
+        transform: translate(0%, 0%);
+        /* margin: 0px 5px 0px 5px; */
+        /* height:120px; */
+        max-height: 150px !important;
+
+        overflow-x: auto;
+        vertical-align: middle;
+        /* padding-top: 30px; */
+        /* white-space: wrap; */
+    }
+
+
+
+
+
+    .aspTextAvathar {
+        display: inline-block;
+        padding: 3px 10px 3px 10px;
+        margin: 10px 1px 10px 1px;
+        font-size: 16px;
+        /* width: 2em; */
+        color: "white";
+        max-height: 420px;
+        line-height: 2.5em;
+        text-align: center;
+        /* border:2px solid orange; */
+        /* color:white; */
+        /* border-radius: 10%; */
+        vertical-align: middle;
+        /* border: calc(8px + 0.2vw) solid linear-gradient(#ff3cac, #562b7c, #2b86c5); */
+        /* background-origin: border-box;
+        background-clip: content-box, border-box;
+        background-size: cover;
+        box-sizing: border-box; */
+        overflow-y: scroll;
+        /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1); */
+        /* margin-right: 5px; */
+    }
+
+    a.aspTextAvathar {
+        text-decoration: none;
+    }
+
+    a.aspTextAvathar:hover {
+        transform: scale(1.2);
+        color: white;
+    }
+</style>
+<div class="col-md-12 threeslides container-outer aspmenus" id="aspmenus">
+    <div class="header_div">Search IN</div>
+    <div class="container-inner">
+                <a class="aspTextAvathar" href="https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=fld_input_1"
+            target="blank">IEEE Explore</a>
+                <a class="aspTextAvathar" href="https://www.bmj.com/search/advanced/fld_input_1"
+            target="blank">Search BMJ</a>
+                <a class="aspTextAvathar" href="https://www.uptodate.com/contents/search?search=fld_input_1&x=9&y=21"
+            target="blank">Up to Date</a>
+                <a class="aspTextAvathar" href="https://apidocs-dialog.proquest.com/#!/home"
+            target="blank">
+Pro Quest</a>
+                <a class="aspTextAvathar" href="https://www.uptodate.com/home/ehr-interface"
+            target="blank">Walter Cluwers Extended</a>
+                <a class="aspTextAvathar" href="
+https://thescipub.com/search/?query=fld_input_1"
+            target="blank">Science Publications</a>
+            </div>
+</div>
+
+[script omitted]            </div>
+                        <div class="col-md-12"  >
+                <style>
+a.textavathar{
+    width: 3em;
+    height: 3em;
+    line-height: 3.1em;
+    border-radius: 100%;
+    vertical-align: middle;
+    background-origin: border-box;
+        background-clip: content-box, border-box;
+        background-size: cover;
+        box-sizing: border-box;
+        box-shadow: 4px 5px 0px 0px rgb(105,105,105);
+
+}
+a.textavathar{
+    text-decoration: none;
+}
+a.zoomin:hover {
+  transform: scale(1.3);
+  color: white; /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+#shortcuts{
+    overflow-x: scroll;
+}
+</style>
+<div class="col-md-12 threeslides container-outer text-center" style="height: 200px;" id="shortcuts">
+    <div class="header_div" >Short-Cuts
+    <div class="linkOtherScreensDIv container-inner">
+
+
+        <div style="border: 20px solid  ;border-color:lightskyblue;border-radius:10px ;border-width:2px;box-sizing: border-box;display: inline-block; padding: 10px;background-color: ghostwhite;box-shadow: 10px 10px 10px ghostwhite ;">
+
+            <p style="color: darkred;">Physical collections</p>
+        <a class="zoomin" data-toggle="tooltip" data-toggle="tooltip" title="This option gives you ability to see list of all physical collection at the library including books and various non books like Book CDs, Audio CDs, User Manuals, Video CDs, Project Reports etc that are available in the library." target="_blank"
+            href="https://ahmcm.easylib.net/index.php/CatalogueAndAccessionController/index">
+            <span class=""
+                >A</span>
+        </a>
+       
+        
+        <a class="zoomin" data-toggle="tooltip" title="You can perform searches on the library collection by
+        Keyword, Subject, Author, Publisher, Distributor (Vendor) and Title itself." target="_blank" href="https://ahmcm.easylib.net/index.php/QuickSearchCt/indexhome">
+            <span class="" >Q</span>
+        </a>
+       
+        <a class="zoomin" data-toggle="tooltip" title="Many more searches available by articles, subscriptions,advanced search conditions etc just like it was in Client server version of Easylib application" target="_blank" href="https://ahmcm.easylib.net/index.php/OpacController/opacMainSearchView">
+            <span class=""
+                >M</span>
+        </a>
+       
+         <a class="zoomin" data-toggle="tooltip" title="New arrivals at your library since last 100 days. You can also modify the days." target="_blank" href="https://ahmcm.easylib.net/index.php/NewPurchasesCt/index1"><span class=""
+                >NA</span></a>
+
+                 <a class="zoomin" data-toggle="tooltip" title="Another way to search the collection at your library. All different search methods give the same results. Whichever you are comfortable with, use that search method." target="_blank" href="https://ahmcm.easylib.net/index.php/OpacController1/index"><span class=""
+                >O</span></a>
+         </div>
+
+
+       <div style="border: 20px solid  ;border-color:lightskyblue;border-radius:10px ;border-width:2px;box-sizing: border-box;display: inline-block; padding: 10px;background-color:ghostwhite;box-shadow: 10px 10px 10px ghostwhite;">
+         <p style="color: darkred;">Periodical collections</p>
+        <span style="margin-left:3%;">
+           
+        <a class="zoomin" data-toggle="tooltip" title="You can see the list of journals, periodicals, magazines subscribed at your library along with details of years of subscription, various issues available, link to the electronic equivalent of those journals etc." target="_blank" href="https://ahmcm.easylib.net/index.php/PeriodicalsController/periodicalListForOpac">
+            <span class=""
+                >PR</span>
+        </a>
+         <!-- <a class="zoomin" data-toggle="tooltip" title="You can see the list of New journals Arrivals" target="_blank" href="https://ahmcm.easylib.net/index.php/NewJournalsopacCt/index">
+            <span class=""
+                >NJ</span>
+        </a> -->
+        <a class="zoomin" data-toggle="tooltip" title="You can see the list of Periodical Loose Issues." target="_blank" href="https://ahmcm.easylib.net/index.php/periodicalLooseIssueCustReportCt/indexhome">
+            <span class=""
+                >PLI</span>
+        </a>
+
+        <a class="zoomin" data-toggle="tooltip" title="You can see the Customized Search Report of Periodical Subscriptions." target="_blank" href="https://ahmcm.easylib.net/index.php/customizedSearchPerSubCt/indexhome">
+            <span class=""
+                >PS</span>
+        </a> 
+
+          </span>
+          
+        </div>
+       
+
+        <!-- <a class="zoomin" data-toggle="tooltip" target="_blank" href="">
+			<span class="" title="Main Search" >M</span>
+		</a>
+        <a class="zoomin" data-toggle="tooltip" target="_blank" href=""><span class="" title="New Arrivals" >NA</span></a> -->
+       
+       <!-- <div style="border: 20px solid  ;border-color:lightskyblue;border-radius:5px ;border-width:2px;box-sizing: border-box;display: inline-block; padding: 10px;background-color: aliceblue;box-shadow: 10px 10px 10px aliceblue;"> -->
+
+       <!--  <a class="zoomin" data-toggle="tooltip" title="Personal digital library. Your library gives Professors,staff and select users ability to build own digital library and share it with other users of your library. Click here to see the collections made available by your peers. Talk to your librarian if you wish to have your collection available for search by others." target="_blank" href="https://ahmcm.easylib.net/index.php/PersonalDigitalCt/index"><span class=""
+                >PD</span></a> -->
+              <div style="border: 20px solid  ;border-color:lightskyblue;border-radius:10px ;border-width:2px;box-sizing: border-box;display: inline-block; padding: 10px;background-color: ghostwhite;box-shadow: 10px 10px 10px ghostwhite;">
+
+                    <p style="color: darkred;">Digital collections</p>
+          <span style="margin-left: 2%; padding-top: 3px;">
+          <a class="zoomin" data-toggle="tooltip" title="E stands for electronic books or eBooks available at your library. You have ability to read them online or download." target="_blank" href="https://ahmcm.easylib.net/index.php/EBookSearchController/EBookSearchHome">
+            <span class=""
+                >E</span>
+        </a>
+        
+        
+        <a class="zoomin" data-toggle="tooltip" title="See list of e-Books by eBook type (like handbooks, news papers, project reports etc) or by departments " target="_blank" href="https://ahmcm.easylib.net/index.php/EBookTypeCt/EBookSearchHome">
+            <span class=""
+                >EBT</span>
+        </a>
+
+
+        <a class="zoomin" data-toggle="tooltip" title="See list of e-Books by course and branches offered at your campus" target="_blank" href="https://ahmcm.easylib.net/index.php/EBookCourseCt/EBookSearchHome">
+            <span class="" >EBC</span>
+        </a>
+        </span>
+
+        <a class="zoomin" data-toggle="tooltip" title="You can perform searches on the ebook collection by Subject, Author, Publisher, Distributor (Vendor) and Title itself." target="_blank" href="https://ahmcm.easylib.net/index.php/ebookQuickSearchCt/indexhome">
+            <span class="" >EBQ</span>
+        </a>
+        </span>
+
+        <a class="zoomin" data-toggle="tooltip" target="_blank" title="Your library has subscribed to various digital contents.By clicking on this link, you get to see the list of all subscriptions. "
+            href="https://ahmcm.easylib.net/index.php/DigitalLibraryController/DigitalSubscriptionsListInOpac">
+            <span class=""
+                >D</span>
+        </a>
+          <a class="zoomin" data-toggle="tooltip" title="Institutional repository is a collection of digital items at your library. They include electronic books, previous year question papers, thesis, publications of the staff, annual books, photographs, videos and many other digital contents. Click to browse through the collection and view the material." target="_blank" href="https://ahmcm.easylib.net/index.php/DigitalLibrarySearchOpacCt/index">
+            <span class=""
+                >IR</span>
+        </a>
+                <a class="zoomin" data-toggle="tooltip" title="Your own organizations research output, faculty and student publications are listed here. Contact the librarian to get your articles listed on this page." target="_blank"
+            href="https://ahmcm.easylib.net/index.php/PublicationController/authPublicationListLoad">
+            <span class=""
+               >OP</span>
+        </a>
+		  <a class="zoomin" data-toggle="tooltip" title="This Option gives you all the Question Papers that are uploaded in the Digital Library ." target="_blank"
+            href="https://ahmcm.easylib.net/index.php/QuestionPaperListCt/QuestionPaperList">
+            <span class=""
+               >QP</span>
+        </a>
+         
+        </div>
+
+
+        <div style="border: 20px solid  ;border-color:lightskyblue;border-radius:10px ;border-width:2px;box-sizing: border-box;display: inline-block; padding: 10px;background-color: ghostwhite;box-shadow: 10px 10px 5px ghostwhite ;">
+
+            <p style="color: darkred;">Others</p>
+			
+		<span style="margin-left: 2%;">
+        <a class="zoomin" data-toggle="tooltip" title="Event Registrration Form" target="_blank" href="https://espl82.easylib.net/eventregformCt/index"><span class=""
+                >EV</span></a>
+
+        <a class="zoomin" data-toggle="tooltip" title="Active display board" target="_blank" href="https://ahmcm.easylib.net/index.php/MainKioskopacController/kisokDisplayView"><span class=""
+                >DB</span></a>
+                
+        <a class="zoomin" data-toggle="tooltip" title="Member Self Entry Screen" target="_blank" href="https://ahmcm.easylib.net/index.php/memberSelfServiceEntryopacController/index"><span class=""
+                >MSE</span></a>
+                
+       
+				
+		 <a class="zoomin" data-toggle="tooltip" title="Provide Feedback to open forms" target="_blank" href="https://ahmcm.easylib.net/index.php/FeedBack/libraryFeedBackCt/getParticularMemberFeedBack"><span class=""
+                >F</span></a>
+
+         
+         </span>
+          <a class="zoomin" data-toggle="tooltip" target="_blank" title="Your organization can create multiple groups and you have the option to join those groups. Joining the groups helps you get regular communication relevant to the specific group. Ask your librarian on any questions. " href="https://ahmcm.easylib.net/index.php/RequestToJoinGroupCt/opacView">
+            <span class=""
+                >C</span>
+        </a>
+         <a class="zoomin" data-toggle="tooltip" title="Admission screen" target="_blank" href="https://ahmcm.easylib.net/index.php/admission/admissionEntryCt/index"><span class=""
+                >AS</span></a>
+        <a class="zoomin" data-toggle="tooltip" title="Member Catalogue Entry" target="_blank" href="https://ahmcm.easylib.net/index.php/memberCatalogueCt/index">
+            <span class="" >MC</span>
+        </a> 
+        <a class="zoomin" data-toggle="tooltip" title="Member Book Customized Search" target="_blank" href="https://ahmcm.easylib.net/index.php/CustomizedSearchMbrCt/index">
+            <span class=""
+                >MB</span>
+        </a> 
+        <a class="zoomin" data-toggle="tooltip" title="Find the details of members" target="_blank" href="https://ahmcm.easylib.net/index.php/findingMembersCt/membersListController">
+            <span class=""
+                >FM</span>
+        </a>
+        <a class="zoomin" data-toggle="tooltip" title=" Catalogue Report" target="_blank" href="https://ahmcm.easylib.net/index.php/CustomizedmcReportCt/index">
+            <span class="" >CCR</span>
+        </a>  
+			<a class="zoomin" data-toggle="tooltip" title="Create New Ticket" target="_blank" href="https://ahmcm.easylib.net/index.php/TicketListCt/index">
+    <span class="">NT</span>
+</a>
+     </div>
+         </div>
+    </div>
+</div>
+[script omitted]            </div>
+                    <div class="col-md-12"  >
+                <style>
+    .fbmd2child img {
+        margin: 0px;
+        width: 150px;
+        height: 200px;
+    }
+</style>
+<div class="col-md-12 threeslides" id="featuredBooks">
+    <p id="fetbook" class="headerTitle" data-type="featured_books">Featured Books</p>
+    <div id="featured_books" class="carousel slide" data-ride="carousel">
+
+    </div>
+    <div id="feat_book">
+        <a id="FB_P" style="color:black;" class="left carousel-control prevNext_p" data-type="featured_books"
+            data-prevnext="prev" href="#myCarousel" data-slide="">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a id="FB_N" style="color:black;" class="right carousel-control prevNext_p" data-type="featured_books"
+            data-prevnext="next" href="#myCarousel" data-slide="">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+    </div>
+</div>            </div>
+                    <div class="col-md-12">
+                <!--
+##################################################################################
+# Copyright - Easylib Software Pvt Ltd
+# This code is a copyright of Easylib Software Pvt Ltd and must be used only at 
+# the site of deployment. Any unauthorized modification or distribution is a
+# violation of copyright law and is subject to prosecution. 
+##################################################################################
+# CHANGE LOG 
+##################################################################################
+# << Date >>>>> << Persons Name >>>> <<<< Changes done >>>>
+# 29-12-2021	Lohith B J	Added Copyright Lines.
+##################################################################################
+-->
+<style>
+/*.nav {
+    background-color: #FFFFFF !important;
+}*/
+/*.nav>li>a {
+    background-color: #00001a !important;
+}*/
+</style>
+<div class="col-md-12 container-outer " id="">
+    <div class="container-inner">
+        <ul class="nav nav-tabs">
+                    </ul>
+        <ul class="tab-content">
+                    </ul>
+    </div>
+</div>
+            </div>
+                        <div class="col-md-4" >
+                <style>
+   
+    .carousel-control.left{
+        background-image: none !important;
+    }
+
+    .carousel-control.right{
+        background-image: none !important;
+    }
+</style>
+<div class="col-md-12 threeslides" /*style="height:500px !important"*/>
+    <div class="header_div headerTitle" data-type="accomplish">Photo Gallery</div>
+    <div class="center" id="accomplish">
+
+    </div>
+    <div class="prevNext" id="announce_list">
+        <p id="AC_P" class="prevNext_p" data-type="accomplish" data-prevnext="prev" style="float:left;">
+            < Prev </p>
+                <p id="AC_N" class="prevNext_p" data-type="accomplish" data-prevnext="next" style="float:right;">Next >
+                </p>
+    </div>
+</div>            </div>
+                <div class="col-md-4 homeBlocks">
+            <!--
+##################################################################################
+# Copyright - Easylib Software Pvt Ltd
+# This code is a copyright of Easylib Software Pvt Ltd and must be used only at 
+# the site of deployment. Any unauthorized modification or distribution is a
+# violation of copyright law and is subject to prosecution. 
+##################################################################################
+# CHANGE LOG 
+##################################################################################
+# << Date >>>>> << Persons Name >>>> <<<< Changes done >>>>
+# 13-09-2020	Mahantesh Maningol	Added Copyright Lines.
+##################################################################################
+-->
+
+<div class="col-md-12 threeslides">
+    <div class="header_div headerTitle" data-type="announce_list">Announcements</div>
+    <div>
+        <div class="center" id="donorslist">
+
+        </div>
+        <div class="prevNext" id="announce_list">
+            <p id="AL_P" class="prevNext_p" data-type="announce_list" data-prevnext="prev" style="float:left;">
+                < Prev </p>
+                    <p id="AL_N" class="prevNext_p" data-type="announce_list" data-prevnext="next" style="float:right;">
+                        Next ></p>
+        </div>
+    </div>
+</div>        </div>
+                <div class="col-md-4">
+            <div class="col-md-12 threeslides" id="slid1">
+    <div class="header_div headerTitle" data-type="partner_lib">Useful Links</div>
+    <div>
+        <table class="table hometable" id="">
+            <tbody class="borderless" id="partner_lib">
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="prevNext">
+        <p id="PL_P" class="prevNext_p" data-type="partner_lib" data-prevnext="prev" style="float:left;">
+            < Prev </p>
+                <p id="PL_N" class="prevNext_p" data-type="partner_lib" data-prevnext="next" style="float:right;">Next >
+                </p>
+    </div>
+</div>        </div>
+                    <div class="col-md-4"  >
+                <!--
+##################################################################################
+# Copyright - Easylib Software Pvt Ltd
+# This code is a copyright of Easylib Software Pvt Ltd and must be used only at 
+# the site of deployment. Any unauthorized modification or distribution is a
+# violation of copyright law and is subject to prosecution. 
+##################################################################################
+# CHANGE LOG 
+##################################################################################
+# << Date >>>>> << Persons Name >>>> <<<< Changes done >>>>
+# 07-12-2020	Lohith B J	Added Copyright Lines.
+##################################################################################
+-->
+<style>
+
+</style>
+
+<div class="col-md-12 threeslides">
+    <div class="header_div headerTitle" data-type="paper_list">E News Paper</div>
+    <div>
+        <table class="table hometable" id="">
+            <tbody class="borderless" id="newsPaperTable">
+            
+            </tbody>
+        </table>
+    </div> 
+        <div class="prevNext" id="paper_list">
+            <p id="NP_P" class="prevNext_p" data-type="paper_list" data-prevnext="prev" style="float:left;">
+                < Prev </p>
+                    <p id="NP_N" class="prevNext_p" data-type="paper_list" data-prevnext="next" style="float:right;">
+                        Next ></p>
+        </div>
+</div>            </div>
+                <div class="col-md-4 homeBlocks">
+            <!--
+##################################################################################
+# Copyright - Easylib Software Pvt Ltd
+# This code is a copyright of Easylib Software Pvt Ltd and must be used only at 
+# the site of deployment. Any unauthorized modification or distribution is a
+# violation of copyright law and is subject to prosecution. 
+##################################################################################
+# CHANGE LOG 
+##################################################################################
+# << Date >>>>> << Persons Name >>>> <<<< Changes done >>>>
+# 13-09-2020	Mahantesh Maningol	Added Copyright Lines.
+##################################################################################
+-->
+<style>
+
+    </style>
+<div class="col-md-12 threeslides" id="slid1">
+    <div class="header_div headerTitle" data-type="explore">Explore</div>
+    <table class="table hometable" id="">
+        <tbody class="borderless" id="exploreBook">
+        
+        </tbody>
+    </table>
+    <div class="prevNext" id="announce_list">
+        <p id="EX_P" class="prevNext_p" data-type="explore" data-prevnext="prev" style="float:left;">< Prev </p>
+        <p id="EX_N" class="prevNext_p" data-type="explore" data-prevnext="next" style="float:right;">Next ></p>
+    </div>
+</div>        </div>
+                <div class="col-md-4">
+            <div class="col-md-12 threeslides">
+    <div class="header_div">About Your Library</div>
+    <!--<a href="https://ahmcm.easylib.net/index.php/checkInOutController/checkIn" id="checkInOut" class="checkInOut">Check In/Out</a><br/>
+				<a href="https://ahmcm.easylib.net/index.php/CatalogueAndAccessionController/index" id="catAccession" class="catAccession">Reports</a>-->
+        <div class="row" id="mainDivForDbId" db-dataattr = >
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="title metricsTitle text-center" style="color:#85111a;font-size:18px;" ></div>
+                                                    </div>
+                    </div>  
+                </div>
+
+    <!-- <label>Books</label>
+    <ul>
+        <li>Total number of books : 
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Undefined variable $books</p>
+<p>Filename: Home/AboutLibrary.php</p>
+<p>Line Number: 28</p>
+
+
+</div>
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Trying to access array offset on value of type null</p>
+<p>Filename: Home/AboutLibrary.php</p>
+<p>Line Number: 28</p>
+
+
+</div></li>
+        <li>Total number of non-books : 
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Undefined variable $books</p>
+<p>Filename: Home/AboutLibrary.php</p>
+<p>Line Number: 29</p>
+
+
+</div>
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Trying to access array offset on value of type null</p>
+<p>Filename: Home/AboutLibrary.php</p>
+<p>Line Number: 29</p>
+
+
+</div></li>
+    </ul>
+    <label>Members</label>
+    <ul>
+        <li>Total Number of Members : 
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Undefined variable $members</p>
+<p>Filename: Home/AboutLibrary.php</p>
+<p>Line Number: 33</p>
+
+
+</div>
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Trying to access array offset on value of type null</p>
+<p>Filename: Home/AboutLibrary.php</p>
+<p>Line Number: 33</p>
+
+
+</div></li>
+        <li>Total Number of Active Members : 
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Undefined variable $members</p>
+<p>Filename: Home/AboutLibrary.php</p>
+<p>Line Number: 34</p>
+
+
+</div>
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Trying to access array offset on value of type null</p>
+<p>Filename: Home/AboutLibrary.php</p>
+<p>Line Number: 34</p>
+
+
+</div></li>
+        <li>Total Number of Non Active Members : 
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Undefined variable $members</p>
+<p>Filename: Home/AboutLibrary.php</p>
+<p>Line Number: 35</p>
+
+
+</div>
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Trying to access array offset on value of type null</p>
+<p>Filename: Home/AboutLibrary.php</p>
+<p>Line Number: 35</p>
+
+
+</div></li>
+    </ul> -->
+</div>        </div>
+            </div>
+</div>
+    <div id="exploreDialog" title="List of Explores" style="display: none">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table-bordered table-responsive" id="exploreTable">
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="announceDialog" title="List of Announcements" style="display: none">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table-bordered table-responsive" id="announceTable">
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="partnerLibDialog" title="List of External Links" style="display: none">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table-bordered table-responsive" id="partnerLibTable">
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="partnerLibDialog" title="List of External Links" style="display: none">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table-bordered table-responsive" id="partnerLibTable">
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="featuredBookDialog" title="List of Featured Books" style="display: none">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table-bordered table-responsive" id="featuredBookTable">
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="accoumplishDialog" title="List of Featured Books" style="display: none">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table-bordered table-responsive" id="accoumplishTable">
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="PaperDialog" title="List of Paper" style="display: none">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table-bordered table-responsive" id="newsPaperTable">
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div id="PasResetModal" class="dialog" style="display: none;">
+	<div class="form-group">
+      <label for="email">Your Email Id:</label>
+      [form state omitted]
+    </div>
+    <button type="submit" class="btn btn-success" id="resetPass">Send</button>
+    <br><br><p>Note: If email id field is empty,please contact your librarian and update your mail id.</p>
+</div>
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+<style type="text/css">
+footer{
+	background: #333 url(https://ahmcm.easylib.net/assets/img/pattern.png) repeat 0 0;
+	//padding: 10px 0 10px 0;
+}
+
+footer h4{
+	color:white;
+	font-size: 16px;
+}
+footer a{
+	color:white;
+	font-size: 16px;
+
+}
+footer p{
+	color:white;
+}
+footer span{
+	color:white
+}
+.footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
+}
+
+.versionDiv{
+	margin-top:100px;
+	font-size: 16px;
+}
+
+#version{
+	float:right;
+}
+
+.copyright{
+	margin-bottom: 100px;	
+}
+#libPol{
+	margin-top:8px;	
+}
+#libTeam{
+	margin-top:8px;
+}
+
+</style>
+<footer>
+	<div class="container">
+		<div class="row">
+				<div class="col-md-3" id='libPol'>
+				<!-- <a  href="https://ahmcm.easylib.net/index.php/OpacController/libraryPolicies"> Policies</a><br/><br/> -->
+				<!-- <a  href="http://bhadra2.easylib.net/?page_id=200" target="blank"> Policies</a><br/>
+				<a  href="http://bhadra2.easylib.net/?page_id=1893" target="blank"> Pricing</a><br/>
+				<a  href="http://bhadra2.easylib.net/?page_id=8" target="blank"> Contact US</a><br/> -->
+				<a  href="https://ahmcm.easylib.net/index.php/newfooterController/newlibraryaboutus" target="blank">About us</a><br/>
+					<a  href="https://ahmcm.easylib.net/index.php/newfooterController/newlibrarytermsandcondition" target="blank">Terms of service</a><br/>
+				<a  href="https://ahmcm.easylib.net/index.php/newfooterController/newlibraryprivacypolicy" target="blank">Privacy Statement</a><br/>
+				<a  href="https://ahmcm.easylib.net/index.php/newfooterController/newfLibraryPolicies" target="blank"> Refund Policy</a><br/>
+
+				<a  href="https://ahmcm.easylib.net/index.php/newfooterController/newfLibrarycontact" target="blank">Contact US</a><br/>
+					<a  href="https://ahmcm.easylib.net/index.php/newfooterController/newlibrarypricing" target="blank">Products and Pricing</a><br/>
+				<a href="http://easylib.net" class="copyright">© Easylib Software Pvt Ltd</a>
+			
+			</div>
+			<div class="col-md-3">
+						<br>
+			<a class="versionDiv" title="Click here to get version information">
+								</div>
+
+			<div class="col-md-3" id='libTeam'>
+				<a href="https://ahmcm.easylib.net/index.php/OpacController/LibraryTeams">Team</a>
+				<br/><br/>
+				<a href="https://ahmcm.easylib.net/index.php"><img src="https://ahmcm.easylib.net/assets/img/positivessl.png" alt="Logo" data-retina="true" class="logo_normal"></a>
+			</div>
+			<div class="col-md-3">
+				<h4>Need Software Help?</h4>
+				<a href="tel://98440-81710" id="phone">+919844081710</a><br/>
+				<a href="mailto:[email omitted]" id="email_footer">[email omitted]</a></div>
+					<!-- <a  href="https://ahmcm.easylib.net/index.php/Bnmitcodecontroller/index">BNMIT</a>  -->
+			</div>
+		</div>
+
+	</div><!-- End container -->
+</footer><!-- End footer -->
+[script omitted]
+

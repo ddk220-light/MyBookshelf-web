@@ -1,0 +1,1435 @@
+/*
+    Created by Saurabh Jatpele [21-Mar-2022]
+*/
+
+$(document).ready(function () {
+    
+    SearchTabChange();
+    //GetNewArrivalBooks();
+    //GetTopAndNewArrivalBooks(contentSearching);
+
+});
+
+var contentSearching = "Books";
+
+$(".SearchContent").click(function ()
+{
+    contentSearching = $(this).attr("data-searchContent");
+
+    SearchTabChange();
+    
+});
+
+function SearchTabChange()
+{
+    $(".forBookSearch").hide();
+
+    $("#divBookSearchBy").hide();
+    $("#divJournalSearchBy").hide();
+    $("#divDissertationSearchBy").hide();
+    $("#divEbookSearhBy").hide();
+    $("#btnOpenAdvSearch").hide();
+    $("#divESubscriptionSearchBy").hide();
+
+    $("#divSearchResult").html("");
+
+    switch (contentSearching) {
+        case "Books":
+            $(".forBookSearch").show();
+            $("#divBookSearchBy").show();
+            $("#btnOpenAdvSearch").show();
+            break;
+
+        case "Journal":
+            $("#divJournalSearchBy").show();
+            break;
+
+        case "Dissertation":
+            $("#divDissertationSearchBy").show()
+            break;
+
+        case "Ebook":
+            $("#divEbookSearhBy").show();
+            break;
+//Added by Rahul Kahate 06-10-2022
+        case "EBookSubscription":
+            $("#divESubscriptionSearchBy").show();
+            $("#nav-tabContent").hide();
+            $("#btnSearch").hide();
+            $("#clearSearch").hide();
+
+            SearchEBookSubscription();
+            break;
+            // End by Rahul Kahate 06-10-2022
+    }
+
+    GetTopAndNewArrivalBooks(contentSearching);
+    $("#spnNewArrivalHead").text(contentSearching);
+    $("#spnTopBookHead").text(contentSearching);
+
+}
+
+$('.btnSearch').click(function () {
+
+    if ($("#txtSearchText").val().trim() == "") {
+        toastr.warning("Please Enter Text To Search");
+        $('#txtSearchText').focus();
+        return false;
+    }
+
+    // ADDED BY SONALI ON [30 APRIL 2026] - TID 50870 - VAPT XSS Protection - Client Side Validation
+    var searchText = $("#txtSearchText").val().trim();
+
+    // Step 1: Check for dangerous special characters
+    // Allow only: letters, numbers, spaces, and comma
+    // Block: hyphen, apostrophe, period, parentheses, and all special characters
+    var specialCharPattern = /[!@#$%^&*_+=\[\]{};:"\\|<>?\/~\'.()]/;
+    if (specialCharPattern.test(searchText)) {
+        toastr.error("Special characters are not allowed. Only letters, numbers, spaces, and commas are permitted.");
+        $('#txtSearchText').focus();
+        return false;
+    }
+
+    // Step 2: Check for dangerous XSS patterns
+    var dangerousPatterns = [
+        /<script/i,
+        /<\/script>/i,
+        /javascript:/i,
+        /onerror/i,
+        /onload/i,
+        /onclick/i,
+        /onmouseover/i,
+        /<iframe/i,
+        /<embed/i,
+        /<object/i,
+        /eval\s*\(/i,
+        /alert\s*\(/i,
+        /document\./i,
+        /window\./i,
+        /<img/i,
+        /<svg/i,
+        /<style/i
+    ];
+
+    var isInvalid = false;
+    for (var i = 0; i < dangerousPatterns.length; i++) {
+        if (dangerousPatterns[i].test(searchText)) {
+            isInvalid = true;
+            break;
+        }
+    }
+
+    if (isInvalid) {
+        toastr.error("Invalid input detected. HTML tags and script elements are not allowed.");
+        $('#txtSearchText').focus();
+        return false;
+    }
+    // END BY SONALI
+
+    if (!CheckIfLibrarySelected()) {        
+        return false;
+    }
+    
+    switch (contentSearching)
+    {
+        case "Books":
+            SearchBooks();
+            break;
+
+        case "Journal":
+            SearchJournal();
+            break;
+
+        case "Dissertation":
+            SearchDissertation();
+            break;
+
+        case "Ebook":
+            SearchEbooks();
+            break;
+
+        //case "EBookSubscription":
+        //    SearchEBookSubscription();
+        //    break;
+
+    }
+    
+});
+
+$('#clearSearch').click(function () {
+
+    $("#txtSearchText").val("");
+    $("#ddlBookSeries").val("");
+    $("#ddlBookCategory").val("");
+    $("#ddlBookSearchBy").val("TITLE");
+    $("#ddlJournalSearchBy").val("Journal Title");
+    $("#ddlDissertationSearchBy").val("Title");
+    $("#ddlEbookSearchBy").val("TITLE");
+    $('#divSearchResult').html("");
+
+});
+
+$('#btnadvClear').click(function () {
+
+    $("#txtFirstSearchText").val("");
+    $("#txtSecondSearchText").val("");
+    $("#txtThirdSearchText").val("");
+
+    $("#ddlFirstSearchItem").val("PleaseSelect");
+    $("#ddlSecondSearchItem").val("PleaseSelect");
+    $("#ddlThirdSearchItem").val("PleaseSelect");
+
+    $("#ddlFirstComparisonType").val("contains");
+    $("#ddlSecondComparisonType").val("contains");
+    $("#ddlThirdComparisonType").val("contains");
+    
+    $('#divSearchResult').html("");
+
+});
+
+function LoadSearchedBookResult(data)
+{
+    debugger;
+    var html = "";
+    if (data != null && data != "-99") {
+        if (data != 0) {
+            html = "<p><label>Total Match(es) Found : " + data.length + "</label></p>"
+            html += "<div class='row' style='max-height:300px; overflow-y:scroll'>"
+            $.each(data, function (key, item) {
+
+                var BookImage = item.BookImage == null || item.BookImage == "" ? "/OpacUI/Images/default_books_image_list.png" : item.BookImage;
+
+                html += '<div class="col-lg-6 col-md-6 col-12 "> ' +
+                           '<div class="book-search p-2"> ' +
+                               '<img src="' + BookImage + '" class="book-search-image" id="imgOfTitle' + item.TitleNo + '" alt=""> ' +
+                               '<div class=""> ' +
+                                   '<div class="book-search-title" data-bs-toggle="modal" data-bs-target="#newBookDetails" onclick="return GetBookTitleDetails(' + item.TitleNo + ')" >' + item.Title1 + ' </div> ' +
+                                   '<div class="book-search-sec-info">Author : <span>' + item.AuthName + '</span></div> ' +
+                                   '<div class="book-search-sec-info">Publisher : <span>' + item.Publisher + '</span></div> ' +
+                                   '<div class="book-search-sec-info">Pub-Year : <span>' + item.PubYear + '</span></div> ' + '</span> &nbsp;&nbsp; ClassNo : <span>' + item.ClassNo + '</span></div> ' + //Added ClassNo by Gunjan Samarth 17-08-2023
+                               '</div> ' +
+                           '</div> ' +
+                       '</div> ';                
+            });
+            html += "</div>"
+
+            $('#divSearchResult').html(html);           
+
+        }
+        else {
+            toastr.warning("Sorry, no match found for searched text!");
+        }
+    }
+    else {
+        toastr.warning("SOMETHING WENT WRONG");
+    }
+    $('#divSearchResult').html(html);
+    $(".loader-area, .loader").fadeOut('slow');
+}
+
+function SearchBooks() {
+
+    $(".loader-area, .loader").css("display", "block");
+
+    var model = {
+        SearchCriteria: $("#ddlBookSearchBy").val(),
+        SearchText: $('#txtSearchText').val().trim(),
+        Libraryid: $('#txtSearchLibrary').attr("data-libid"),
+        SERIESCODE: $('#ddlBookSeries').val(),
+        BOOKCATEGORY: $('#ddlBookCategory').val(),
+    };
+    
+    $.ajax({
+        url: "/OPAC_V3/GetBookSearchData/",
+        data: model,
+        type: "GET",
+        //contentType: "application/json;charset=utf-8",
+        success: function (data) {
+            // ADDED BY SONALI ON [30 APRIL 2026] - TID 50870 - Handle XSS/SQL Injection validation error
+            if (data == -100) {
+                toastr.error("Invalid input detected. Please remove special characters and try again.");
+                $(".loader-area, .loader").fadeOut('slow');
+                return;
+            }
+            // END BY SONALI
+            
+            LoadSearchedBookResult(data);
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred !');
+            $(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+}
+
+function SearchJournal()
+{
+    $(".loader-area, .loader").css("display", "block");
+
+    var model = {
+        SearchCriteria: $("#ddlJournalSearchBy").val(),
+        SearchText: $('#txtSearchText').val().trim(),
+        Libraryid: $('#txtSearchLibrary').attr("data-libid")
+    };
+
+    $.ajax({
+        url: "/OPAC_V3/GetJournalSearchData/",
+        data: model,
+        type: "GET",
+        //contentType: "application/json;charset=utf-8",
+        success: function (data) {
+
+            // ADDED BY SONALI ON [30 APRIL 2026] - TID 50870 - Handle XSS/SQL Injection validation error
+            if (data == -100) {
+                toastr.error("Invalid input detected. Please remove special characters and try again.");
+                $(".loader-area, .loader").fadeOut('slow');
+                return;
+            }
+            // END BY SONALI
+
+            var html = "";
+            if (data != null && data != "-99") {
+                if (data != 0) {
+                    html = "<p><label>Total Match Found : " + data.length + "</label></p>"
+                    html += "<div class='row' style='max-height:300px; overflow-y:scroll'>"
+                    $.each(data, function (key, item) {
+
+                        var JournalImage = item.JournalImage == null || item.JournalImage == "" ? "/OpacUI/Images/default_books_image_list.png" : item.JournalImage;
+                        var Link = "<span>No Link Found!</span>";
+                        if (item.Url != "")
+                        {
+                            Link = '<a href="' + item.Url + '" target="_blank">Go To Link</a>';
+                        }
+
+                        html += '<div class="col-lg-6 col-md-6 col-12 "> ' +
+                                   '<div class="book-search p-2"> ' +
+                                       '<img src="' + JournalImage + '" class="book-search-image" id="imgOfTitle' + item.TitleNo + '" alt=""> ' +
+                                       '<div class=""> ' +
+                                           '<div class="book-search-title" data-bs-toggle="modal" data-bs-target="#newJournalDetails" onclick="return GetJournalTitleDetails(' + item.JOURTITLENO + ')" >' + item.JOURTITLENAME + ' </div> ' +
+                                           '<div class="book-search-sec-info">Category : <span>' + item.NAME + '</span></div> ' +
+                                           '<div class="book-search-sec-info">Publisher : <span>' + item.PUBNAME + '</span></div> ' +
+                                           //'<div class="book-search-sec-info">ISSN : <span>' + item.ISSN + '</span></div> ' +                                           
+                                           '<div class="book-search-sec-info">URL : ' + Link + '</div> ' +
+                                       '</div> ' +
+                                   '</div> ' +
+                               '</div> ';
+                    });
+
+                    html += "</div>"
+
+                    $('#divSearchResult').html(html);
+                }
+                else {
+                    toastr.warning("Sorry, no match found for searched text!");
+                }
+            }
+            else {
+                toastr.warning("SOMETHING WENT WRONG");
+            }
+
+            $('#divSearchResult').html(html);
+            $(".loader-area, .loader").fadeOut('slow');
+            
+        },
+        error: function () {
+            toastr.error('Exception Occurred !');
+            $(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+}
+
+function SearchDissertation() {
+    $(".loader-area, .loader").css("display", "block");
+
+    var model = {
+        SearchCriteria: $("#ddlDissertationSearchBy").val(),
+        SearchText: $('#txtSearchText').val().trim(),
+        Libraryid: $('#txtSearchLibrary').attr("data-libid")
+    };
+
+    $.ajax({
+        url: "/OPAC_V3/GetDissertationSearchData/",
+        data: model,
+        type: "GET",
+        success: function (data) {
+
+            // ADDED BY SONALI ON [30 APRIL 2026] - TID 50870 - Handle XSS/SQL Injection validation error
+            if (data == -100) {
+                toastr.error("Invalid input detected. Please remove special characters and try again.");
+                $(".loader-area, .loader").fadeOut('slow');
+                return;
+            }
+            // END BY SONALI
+
+            var html = "";
+            if (data != null && data != "-99") {
+                if (data != 0) {
+                    html = "<p><label>Total Match Found : " + data.length + "</label></p>"
+                    html += "<div class='row' style='max-height:300px; overflow-y:scroll'>"
+                    var i = 0;
+                    $.each(data, function (key, item) {
+
+                        var DissertationImage = item.DissertationImage == null || item.DissertationImage == "" ? "/OpacUI/Images/default_books_image_list.png" : item.DissertationImage;
+                        var Link = "No Attachment Found!";
+                        if (item.EFILE != "") {
+                            Link = '<a class="fa fa-download" href="/LibDocFiles/LIBRARY/' + item.EFILE + '" target="_blank"></a>';
+                        }
+
+                        html += '<div class="col-lg-6 col-md-6 col-12 "> ' +
+                                   '<div class="book-search p-2"> ' +
+                                       '<img src="' + DissertationImage + '" class="book-search-image" id="imgOfTitle' + item.DISSNO + '" alt=""> ' +
+                                       '<div class=""> ' +
+                                           '<div class="book-search-title" data-bs-toggle="modal" data-bs-target="#newDissertationDetails" onclick="return GetDissertationDetails(' + item.DISSNO + ')" >' + item.Title + ' </div> ' +
+                                           '<div class="book-search-sec-info">Author : <span>' + item.AUTHOR + '</span></div> ' +
+                                           '<div class="book-search-sec-info">Year/Batch : <span>' + item.BATCH + '</span></div> ' +
+                                           //'<div class="book-search-sec-info">ISSN : <span>' + item.ISSN + '</span></div> ' +                                           
+                                           '<div class="book-search-sec-info">Attatchment : <span id="AttatchOfTitle' + item.DISSNO + '">' + Link + '</span></div> ' +
+                                       '</div> ' +
+                                   '</div> ' +
+                               '</div> ';
+
+                        i += 1;
+                    });
+
+                    html += "</div>"
+
+                    $('#divSearchResult').html(html);
+                }
+                else {
+                    toastr.warning("Sorry, no match found for searched text!");
+                }
+            }
+            else {
+                toastr.warning("SOMETHING WENT WRONG");
+            }
+
+            $('#divSearchResult').html(html);
+            $(".loader-area, .loader").fadeOut('slow');
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred !');
+            $(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+}
+
+function SearchEbooks()
+{
+    $(".loader-area, .loader").css("display", "block");
+
+    var model = {
+        SearchCriteria: $("#ddlEbookSearchBy").val(),
+        SearchText: $('#txtSearchText').val().trim(),
+        Libraryid: $('#txtSearchLibrary').attr("data-libid")
+    };
+
+    $.ajax({
+        url: "/OPAC_V3/GetEBookSearchData/",
+        data: model,
+        type: "GET",
+        success: function (data) {
+
+            // ADDED BY SONALI ON [30 APRIL 2026] - TID 50870 - Handle XSS/SQL Injection validation error
+            if (data == -100) {
+                toastr.error("Invalid input detected. Please remove special characters and try again.");
+                $(".loader-area, .loader").fadeOut('slow');
+                return;
+            }
+            // END BY SONALI
+
+            var html = "";
+            if (data != null && data != "-99") {
+                if (data != 0) {
+                    html = "<p><label>Total Match Found : " + data.length + "</label></p>"
+                    html += "<div class='row' style='max-height:300px; overflow-y:scroll'>"
+                    var i = 0;
+                    $.each(data, function (key, item) {
+
+                        var BookImage = item.BookImage == null || item.BookImage == "" ? "/OpacUI/Images/default_books_image_list.png" : item.BookImage;
+                        //var Link = "No Attachment Found!";
+                        //if (item.EFILE != "") {
+                        //    Link = '<a class="fa fa-download" href="/LibDocFiles/LIBRARY/' + item.EFILE + '" target="_blank"></a>';
+                        //}
+
+                        html += '<div class="col-lg-6 col-md-6 col-12 "> ' +
+                                   '<div class="book-search p-2"> ' +
+                                       '<img src="' + BookImage + '" class="book-search-image" id="imgOfTitle' + item.TitleNo + '" alt=""> ' +
+                                       '<div class=""> ' +
+                                           '<div class="book-search-title" data-bs-toggle="modal" data-bs-target="#newEBookDetails" onclick="return GetEBookDetails(' + item.TitleNo + ')" >' + item.Title + ' </div> ' +
+                                           '<div class="book-search-sec-info">Author : <span>' + item.AuthName + '</span></div> ' +
+                                           '<div class="book-search-sec-info">Publisher : <span>' + item.Publisher + '</span></div> ' +
+                                           '<div class="book-search-sec-info">Edition : <span>' + item.Edition + '</span></div> ' +
+                                           //'<div class="book-search-sec-info">Attatchment : <span id="AttatchOfTitle' + item.DISSNO + '">' + Link + '</span></div> ' +
+                                       '</div> ' +
+                                   '</div> ' +
+                               '</div> ';
+
+                        i += 1;
+                    });
+
+                    html += "</div>"
+
+                    $('#divSearchResult').html(html);
+                }
+                else {
+                    toastr.warning("Sorry, no match found for searched text!");
+                }
+            }
+            else {
+                toastr.warning("SOMETHING WENT WRONG");
+            }
+
+            $('#divSearchResult').html(html);
+            $(".loader-area, .loader").fadeOut('slow');
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred !');
+            $(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+}
+// Added by Rahul Kahate 06-10-2022
+function SearchEBookSubscription()
+{
+    $(".loader-area, .loader").css("display", "block");
+
+    var model = {
+    //    SearchCriteria: $("#ddlEbookSearchBy").val(),
+    //    SearchText: $('#txtSearchText').val().trim(),
+        Libraryid: $('#txtSearchLibrary').attr("data-libid")
+    };
+
+    //var oTable = $('#EBookSubsciption').DataTable({
+    //    destroy: true,
+    //    dom: 'Bfrtip',
+    //    //buttons: [
+    //    //     {
+    //    //         extend: 'copy',
+    //    //         text: '<i class="fa fa-files-o fa-lg"></i>',
+    //    //         titleAttr: 'Copy'
+    //    //     },
+    //    //{
+    //    //    extend: 'excel',
+    //    //    text: '<i class="fa fa-file-excel-o fa-lg" style="color:green"></i>',
+    //    //    titleAttr: 'Excel'
+    //    //},
+    //    //{
+    //    //    extend: 'csv',
+    //    //    text: '<i class="fa fa-file-text-o fa-lg" style="color:blue"></i>',
+    //    //    titleAttr: 'CSV'
+    //    //},
+    //    //{
+    //    //    extend: 'pdf',
+    //    //    text: '<i class="fa fa-file-pdf-o fa-lg" style="color:red"></i>',
+    //    //    titleAttr: 'PDF'
+    //    //}
+    //    //],
+    //    "ajax": {
+    //        "url": '/OPAC_V3/GetEBookSubscriptionSearchData/',
+    //        "data":model,
+    //        "type": "get",
+    //        "datatype": "json"
+    //    },
+    //    "columns": [
+    //        { "data": "Title", "autoWidth": false },
+    //              { "data": "AuthName", "autoWidth": false },
+    //                { "data": "Publisher", "autoWidth": false },
+    //                 { "data": "Edition", "autoWidth": false }
+    //                  //{ "data": "State", "autoWidth": false },
+    //                  // { "data": "PhoneNo", "autoWidth": false },
+    //                  // { "data": "Email", "autoWidth": false }
+    //        //{
+    //        //    "data": "PubNo", "width": "20px", "render": function (data) {
+    //        //        return '<img src="/Images/Common/Edit.png.png" style="cursor:pointer" height="20px" width="20px" data-toggle="modal" data-target="#myModal" onclick="return UpdateData(' + data + ')" />';
+    //        //    }
+    //       // }
+    //    ],
+
+    //})
+
+
+
+    $.ajax({
+        url: "/OPAC_V3/GetEBookSubscriptionSearchData/",
+        data: model,
+        type: "POST",
+        success: function (data) {
+           
+                
+                var html = "";
+            if (data != null && data != "-99") {
+                if (data != 0) {
+                    console.log(data);
+                    html = "<p><label>Total Match Found : " + data.length + "</label></p>"
+                    html += "<div class='row' style='max-height:300px; overflow-y:scroll'>"
+                    //alert(data.length);
+                    var i = 0;
+                    html += "<table id='EBookSubsciption' class='table'>"
+                    html += "   <thead>"
+                    html += "<tr>"  
+                    html += "<th>TITLENAME</th>"
+                    html += "<th>AUTHORNAME</th>"
+                    html += "<th>PUBLISHERNAME</th>"
+                    html += "<th>EDITION</th>"
+                    html += "<th>WEBSITELINK</th>"
+                    html += "<th>WEBSITELINK USERNAME</th>"
+                    html += "<th>WEBSITELINK PASSWORD</th>"
+                    html += "</tr>"
+                    html += "</thead>"
+                   
+                    //for (var i = 0; i < data.length - 2; i++) {
+                    //    html += "<tr>"
+                    //    html += "<td>TITLENAME1</td>"
+                    //    html += "<td>AUTHORNAME1</td>"
+                    //    html += "<td>PUBLISHERNAME1</td>"
+                    //    html += "<td>EDITION1</td>"
+                    //    html += "</tr>"
+                    //    //tr = $('<tr/>');
+                    //    //tr.append("<td>" + (i + 1) + " : " + data[i] + "</td>");
+
+                    //    //$('table').append(tr);
+                    //}
+                    $.each(data, function (key, item) {
+                       
+                        //html+="<tr>"
+                        html += "<tr>"
+                        html += "<td>"+item.Title+"</td>"
+                        html += "<td>"+item.AuthName+"</td>"
+                        html += "<td>"+item.Publisher+"</td>"
+                        html += "<td>" + item.Edition + "</td>"
+                        //html += "<td><a href='" + item.WEBSITELINK + "' id='txtWebsitelink" + item.TitleNo + "' target='blank' value='" + item.WEBSITELINK + "'>" + item.WEBSITELINK + "</a></td>"
+                        if (item.WEBSITELINK == null) {
+                            html += "<td></td>"
+                        }
+                        else {
+                            html += "<td><button type='button' id='btnWebsitelink' onclick='return savWebsiteLog(this)' class='btn text-info'>" + item.WEBSITELINK + "</button></td>"
+                        }
+                        html += "<td>" + item.WEBSITELINK_USERNAME + "</td>"
+                        html += "<td>" + item.WEBSITELINK_PASSWORD + "</td>"
+
+                        html += '<input type="hidden" id="hdfTitleNo" value="' + item.TitleNo + '" /> '
+                        html += "</tr>"
+                       
+                        i += 1;
+                    });
+                    html += "</table>"
+                    html += "</div>"
+                    
+                    $('#divESubscriptionSearchBy').html(html);
+
+                   
+
+
+                }
+                else {
+                    toastr.warning("Sorry, no match found for searched text!");
+                }
+            }
+            else {
+                toastr.warning("SOMETHING WENT WRONG");
+            }
+
+            $('#divSearchResult').html(html);
+            $(".loader-area, .loader").fadeOut('slow');
+        
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred !');
+            $(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+}
+// End by Rahul Kahate 06-10-2022
+
+
+
+
+//$('#btnWebsitelink').click(function () {
+//    var websitelink = $('#btnWebsitelink').text();
+
+//});
+
+
+//function GetWebsiteLink(website) {
+//    alert("Test Website");
+
+
+//}
+
+
+//function GetBookReturnData(website) {
+//    debugger;
+//    var TitleNo = $('#hdfTitleNo').val();
+
+//        var link = $('#txtWebsitelink' + TitleNo + '').text();
+//        alert(link);
+//};
+
+//$('#websitelink').click(function () {
+//    alert('test anchor');
+////    var TitleNo = $('#hdfTitleNo').val();
+
+////    var link = $('#txtWebsitelink' + TitleNo + '').text();
+////    alert(link);
+
+//});
+
+
+function GetJournalTitleDetails(TitleNo) {
+    
+    var TitleType = "Journal";
+  
+    AttachFeedbackRatingDiv(TitleType);
+    AttachAvgRatingDiv(TitleType);
+    $("#btnSubmitReview").attr("data-titleType", TitleType);
+
+    $(".loader-area, .loader").css("display", "block");
+    
+    $.ajax({
+        url: "/OPAC_V3/GetJournalDetails?TitleNo=" + TitleNo + "&LibId=" + $('#txtSearchLibrary').attr("data-libid"),
+        type: "GET",
+        dataType: 'json',
+        success: function (data) {
+                if (data != null && data != -99) {
+                //$("#reserveBook").hide();
+                //$("#demandBook").hide();
+
+                //if (AllowBookReservation)
+                //{ $("#reserveBook").show(); }
+
+                //if (AllowBookDemand)
+                //{ $("#demandBook").show(); }
+
+                $("#presentJournalCount").text(data.TOTAL_COPIES);
+                $("#issuedJournalCount").text(data.ISSUED_COPIES);
+
+                $("#imgJournalTitle").attr("src", $("#imgOfTitle" + TitleNo).attr("src"))
+
+                $("#spanJournalTitleName").text(data.JOURTITLENAME);
+                $("#spJournalTitle").text(data.JOURTITLENAME);
+                $("#spJournalTitle").attr("data-titleId", TitleNo);
+                $("#spJournalCategory").text(data.CATEGOURY);
+                $("#spJournalType").text(data.JOURTITLETYPE);
+                $("#spJournalDepartment").text(data.DEPTNAME);
+                $("#spJournalPublisher").text(data.PUBNAME);
+                $("#spJournalFrequency").text(data.FREQUENCY);
+                $("#spJournalISSN").text(data.ISSN);
+                
+
+                var html = "";
+                $.each(data.JournalSerialDetailsLists, function (key, item)
+                {
+                    if (item.ISSUEDATE.trim() == null || item.ISSUEDATE.trim() == "") {
+                        item.ISSUEDATE = '  -  ';
+                    }
+
+                    if (item.RETURNDATE.trim() == null || item.RETURNDATE.trim() == "") {
+                        item.RETURNDATE = '  -  ';
+                    }
+
+                    html += '<tr>';
+                    html += '<td>' + item.JOURTITLENAME + ' </td>';
+                    html += '<td>' + item.VOLUME + ' </td>';  //Added By MayurW[10-11-2022]
+                    html += '<td>' + item.ISSUE + ' </td>';
+                    html += '<td>' + item.PRINTEDISSUE + '</td>';
+                    html += '<td>' + item.STATUS + '  </td>';
+                    html += '<td>' + item.ISSUEDATE + '  </td>';
+                    html += '<td>' + item.RETURNDATE + '  </td>';
+
+                    html += '</tr>';
+                });
+
+                if (TblBookAccList != null) {
+                    TblBookAccList.destroy();
+                }
+                $('#tblJournalList tbody').html(html);
+                TblBookAccList = $('#tblJournalList').DataTable({
+                    destroy: true,
+                });
+
+                var html = "";
+                $.each(data.RandomTitleList, function (key, item) {
+
+                    html += '<div class="item">'
+                    html += '  <div class="book-card p-2">'
+                    html += '      <img src="/OpacUI/Images/default_books_image_grid.png" class="book-card-image"  id="imgOfTitle' + item.Titleno + '"  alt="">'
+                    html += '      <div class="book-card-title" onclick="return GetJournalTitleDetails(' + item.Titleno + ')" >' + item.TitleName + '</div>'
+                    html += '      <div class="book-card-sec-info">Publisher : <span>' + item.AuthorName + '</span></div>'
+                    //html += '      <div class="book-card-sec-info">Pub-Year : <span>1996</span></div>'
+                    html += '  </div>'
+                    html += '</div>'
+
+                });
+
+                $('#sliderRelatedJournal').html(html);
+                RefreshSlider("sliderRelatedJournal");
+
+                $(".loader-area, .loader").fadeOut('slow');
+
+            }
+            else {
+                toastr.error('Exception Occurred !');
+                $(".loader-area, .loader").fadeOut('slow');
+            }
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred !');
+            $(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+        
+    GetTitleRatingLikesFeedback(TitleNo, TitleType);
+    
+}
+
+function GetDissertationDetails(TitleNo)
+{
+    AttachFeedbackRatingDiv("Dissertation");
+    AttachAvgRatingDiv("Dissertation");
+    $("#btnSubmitReview").attr("data-titleType", "Thesis");
+
+    $(".loader-area, .loader").css("display", "block");
+
+    $.ajax({
+        url: "/OPAC_V3/GetDissertationDetails?TitleNo=" + TitleNo + "&LibId=" + $('#txtSearchLibrary').attr("data-libid"),
+        type: "GET",
+        dataType: 'json',
+        success: function (data) {
+
+            if (data != null && data != -99)
+            {
+                $("#imgDissertationTitle").attr("src", $("#imgOfTitle" + TitleNo).attr("src"))
+
+                $("#spanDissertationTitleName").text(data.Title);
+                $("#spDissertationTitle").text(data.Title);
+                $("#spDissertationTitle").attr("data-titleId", TitleNo);
+                $("#spDissertationAuthor").text(data.AUTHOR);
+                $("#spDissertationBatch").text(data.BATCH);
+                $("#spDissertationEdition").text(data.EDITION);
+                $("#spDissertationDepartment").text(data.DEPARTMENT);
+                $("#spDissertationKeywords").text(data.KEYWORDS);
+
+                // Added by Rahul Kahate 03-08-2023
+                $("#spDissertationAccNo").text(data.ACCNO);
+                $("#spDissertationSeriesCode").text(data.SERIESCODE);
+                // End By Rahul Kahate 03-08-2023
+                $("#spEditorGuideName").text(data.GUIDE); //ADDED BY TANVI BELE ON [15-12-2025]
+                
+                // added by sonali on [19-05-2023]
+                var site = "<span>No Link Found!</span>";
+                if (data.DISSERTLINK != "") {
+                    site = '<a href="' + data.DISSERTLINK + '" target="_blank">Go To Link</a>';
+                }
+                $("#spDissertationLink").html(site);
+
+                // END BY SONALI [19-05-2023]
+                var attachment = "<span>  </span>"
+                if ($("#AttatchOfTitle" + TitleNo).length)
+                {
+                    attachment = $("#AttatchOfTitle" + TitleNo).html();
+                }
+
+                $("#ancDissertationAttachment").html(attachment);
+
+
+                var html = "";
+                $.each(data.RandomBook, function (key, item) {
+                    
+                    html += '<div class="item">'
+                    html += '  <div class="book-card p-2">'
+                    html += '      <img src="/OpacUI/Images/default_books_image_grid.png" class="book-card-image"  id="imgOfTitle' + item.Titleno + '"  alt="">'
+                    html += '      <div class="book-card-title" onclick="return GetDissertationDetails(' + item.Titleno + ')" >' + item.TitleName + '</div>'
+                    html += '      <div class="book-card-sec-info">Author : <span>' + item.AuthorName + '</span></div>'
+                    //html += '      <div class="book-card-sec-info">Pub-Year : <span>1996</span></div>'
+                    html += '  </div>'
+                    html += '</div>'
+                    
+                });
+
+                $('#relatedDissertation').html(html);
+                RefreshSlider("relatedDissertation");
+
+                $(".loader-area, .loader").fadeOut('slow');
+
+            }
+            else {
+                toastr.error('Exception Occurred !');
+                $(".loader-area, .loader").fadeOut('slow');
+            }
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred !');
+            $(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+
+    
+    GetTitleRatingLikesFeedback(TitleNo, "Thesis");
+    
+}
+
+function GetEBookDetails(TitleNo)
+{
+    var TitleType = "EBook";
+    AttachFeedbackRatingDiv(TitleType);
+    AttachAvgRatingDiv(TitleType);
+    $("#btnSubmitReview").attr("data-titleType", TitleType);
+
+    $(".loader-area, .loader").css("display", "block");
+
+    $.ajax({
+        url: "/OPAC_V3/GetEBookDetails?TitleNo=" + TitleNo + "&LibId=" + $('#txtSearchLibrary').attr("data-libid"),
+        type: "GET",
+        dataType: 'json',
+        success: function (data) {
+
+            if (data != null && data != -99) {
+                $("#imgEBookTitle").attr("src", $("#imgOfTitle" + TitleNo).attr("src"))
+
+                $("#spanEBookTitleName").text(data.TITLENAME);
+                $("#spEBookTitle").text(data.TITLENAME);
+                $("#spEBookTitle").attr("data-titleId", TitleNo);
+                $("#spEBookSubTitle").text(data.SUBTITLE);
+                $("#spEBookAuthor").text(data.AUTHORNAME);
+                $("#spEBookEdition").text(data.EDITION);
+                $("#spEBookPublisher").text(data.PUBNAME);
+                $("#spEBookISBN").text(data.ISBN);
+                $("#spEBookType").text(data.BTYPENAME);
+                $("#spEBookKeywords").text(data.Keyword);
+
+                var attachment = "<span>No Attachment Found!</span>";
+                if (data.ATTACHMENT != "") {
+                    attachment = '<a class="fa fa-download" href="/LibDocFiles/LIBRARY/' + data.ATTACHMENT + '" target="_blank"></a>';
+                }
+                $("#ancEBookAttachment").html(attachment);
+
+                var site = "<span>No Link Found!</span>";
+                if (data.WEBSITELINK != "") {
+                    site = '<a href="' + data.WEBSITELINK + '" target="_blank">Go To Website</a>';
+                }
+                $("#ancEBookWebLink").html(site);
+
+                var html = "";
+                $.each(data.SameAuthorBooks, function (key, item) {
+
+                    html += '<div class="item">'
+                    html += '  <div class="book-card p-2">'
+                    html += '      <img src="/OpacUI/Images/default_books_image_grid.png" class="book-card-image"  id="imgOfTitle' + item.Titleno + '"  alt="">'
+                    html += '      <div class="book-card-title" onclick="return GetEBookDetails(' + item.Titleno + ')" >' + item.TitleName + '</div>'
+                    html += '      <div class="book-card-sec-info">Author : <span>' + item.AuthorName + '</span></div>'
+                    //html += '      <div class="book-card-sec-info">Pub-Year : <span>1996</span></div>'
+                    html += '  </div>'
+                    html += '</div>'
+
+                });
+
+                $('#relatedEBook').html(html);
+                RefreshSlider("relatedEBook");
+
+                $(".loader-area, .loader").fadeOut('slow');
+
+            }
+            else {
+                toastr.error('Exception Occurred !');
+                $(".loader-area, .loader").fadeOut('slow');
+            }
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred !');
+            $(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+
+
+    GetTitleRatingLikesFeedback(TitleNo, TitleType);
+
+}
+
+
+/// --- Added for Advance Search --->>
+$("#btnadvSearch").click(function () {
+    //if ($('#selectcategory_3').prop('checked') == true) {
+    //    return false;
+    //}
+
+    var _searchCriteria = [];
+    if ($("#ddlFirstSearchItem").val() == "PleaseSelect") {
+        toastr.warning(" Please select first item to search.");
+        $("#ddlFirstSearchItem").focus();
+        return false;
+
+    } else if ($("#txtFirstSearchText").val() == "") {
+        toastr.warning("Please enter first search text.");
+        $("#txtFirstSearchText").focus();
+        return false;
+    } else {
+        var criterion = { SearchItem: $("#ddlFirstSearchItem").val(), ComparisonType: $("#ddlFirstComparisonType").val(), SearchText: $("#txtFirstSearchText").val().trim(), JoinType: "" };
+        _searchCriteria.push(criterion);
+    }
+    if ($("#ddlSecondSearchItem").val() == "PleaseSelect" || $("#txtSecondSearchText").val() == "") {
+
+    }
+    else {
+
+        var Join = $("input[name='FirstSecond']:checked").val();
+
+
+        var criterion = { SearchItem: $("#ddlSecondSearchItem").val(), ComparisonType: $("#ddlSecondComparisonType").val(), SearchText: $("#txtSecondSearchText").val().trim(), JoinType: Join };
+        _searchCriteria.push(criterion);
+    }
+    if ($("#ddlThirdSearchItem").val() == "PleaseSelect" || $("#txtThirdSearchText").val() == "") {
+
+    }
+    else {
+        var Join = $("input[name='SecondThird']:checked").val();
+
+        var criterion = { SearchItem: $("#ddlThirdSearchItem").val(), ComparisonType: $("#ddlThirdComparisonType").val(), SearchText: $("#txtThirdSearchText").val().trim(), JoinType: Join };
+        _searchCriteria.push(criterion);
+    }
+
+
+    var string = "";
+    var SearchCriteria = "User has searched for "; //added by saurabh jatpele [05-May-2022]
+    $.each(_searchCriteria, function (key, item) {
+
+
+
+        if (item.JoinType == "") {
+
+        } else {
+            string += " " + item.JoinType + " ";
+            SearchCriteria += " " + item.JoinType.toLowerCase() + " ";  //added by saurabh jatpele [05-May-2022]
+        }
+
+        switch (item.SearchItem) {
+            case "TITLE":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LT.TITLENAME ' + GetString + ' )';
+                SearchCriteria += "title that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+
+            case "ACCNO":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(AR.ACCNO ' + GetString + ' )';
+                SearchCriteria += "accession no. that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "AUTHOR":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LA.AUTHORNAME ' + GetString + ' )';
+                SearchCriteria += "author that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "COAUTHOR":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LC.AUTHORNAME ' + GetString + ' )';
+                SearchCriteria += "co-author that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "MAINSUBJECT":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LMS.MSUBNAME ' + GetString + ' )';
+                SearchCriteria += "main-subject that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "SUBSUBJECT":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LSS.SSUBNAME ' + GetString + ' )';
+                SearchCriteria += "sub-subject that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "PUBLISHER":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LP.PUBNAME ' + GetString + ' )';
+                SearchCriteria += "PUBLISHER that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "PYEAR":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LT.PYEAR ' + GetString + ' )';
+                SearchCriteria += "book publishing year that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "PPLACE":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(TCCM.CITYNAME ' + GetString + ' )';
+                SearchCriteria += "book publishing place that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "KEYWORD":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string = '(LT.KEYWORDS ' + GetString + ' )';
+                SearchCriteria += "keyword that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "CLASSNO":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LT.CLASSNO ' + GetString + ' )';
+                SearchCriteria += "clasification no. that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "ISBN":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LT.ISBN ' + GetString + ' )';
+                SearchCriteria += "ISBN No. that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "TRANSLATED":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LT.TRANSLATED ' + GetString + ' )';
+                SearchCriteria += "translated book that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "EDITOR":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LT.EDITOR ' + GetString + ' )';
+                SearchCriteria += "editor that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+            case "DOCUMENTTYPE":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(LBT.BTYPENAME ' + GetString + ' )';
+                SearchCriteria += "document type that " + item.ComparisonType + " '" + item.SearchText + "'";  //added by saurabh jatpele [05-May-2022]
+                break;
+                //Added by tanvi bele on [28-01-2026]
+            case "RACK_NAME":
+                var GetString = GetComparisonString(item.ComparisonType, item.SearchText);
+                string += '(BR.RACK_NAME ' + GetString + ' )';
+                SearchCriteria += "rack name that " + item.ComparisonType + " '" + item.SearchText + "'";  
+                break;
+                //End by Tanvi
+            default:
+                break;
+        }
+
+        string = "(" + string + ")";
+        
+    });
+
+    var model = {
+        SearchCriteria: SearchCriteria, //added by saurabh jatpele [05-May-2022]
+        SearchText: string,
+        Libraryid: $('#txtSearchLibrary').attr("data-libid"),
+        SERIESCODE: $('#ddlBookSeries').val(),
+        BOOKCATEGORY: $('#ddlBookCategory').val(),
+    };
+
+    $(".loader-area, .loader").css("display", "block");
+
+    $.ajax({
+        url: "/OPAC_V3/GetBooksAdvanceSearchData/",
+        data: JSON.stringify(model),
+        type: "POST",
+        contentType: "application/json;charset=utf-8",
+        success: function (data)
+        {
+            LoadSearchedBookResult(data);
+            if (data != null && data != "-99") { $('#advancedSearch').modal('toggle'); }
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred !');
+            $(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+
+
+});
+
+var GetComparisonString = function (ComparisonType, SearchText) {
+    var str;
+
+    var searchstr;
+
+    try {
+        searchstr = parseInt(SearchText);
+    }
+    catch (err) {
+        searchstr == SearchText;
+    }
+
+    switch (ComparisonType) {
+        case "contains":
+            if (Number.isInteger(searchstr) == true) {
+                str = "= " + searchstr;
+            }
+            else {
+                str = " Like N'%" + SearchText + "%' ";
+            }
+            break;
+        case "is equal to":
+            if (Number.isInteger(searchstr) == true)
+                str = "= " + searchstr;
+            else
+                str = "LIKE N'" + SearchText + "' ";
+            break;
+
+        case "is not equal to":
+            if (Number.isInteger(searchstr) == true)
+                str = "<> " + searchstr;
+            else
+                str = "NOT LIKE N'" + SearchText + "' ";
+            break;
+
+        case "starts with":
+            if (Number.isInteger(searchstr) == true)
+                str = "= " + searchstr;
+            else
+                str = "LIKE N'" + SearchText + "%' ";
+            break;
+
+        case "ends with":
+            if (Number.isInteger(searchstr) == true)
+                str = "= " + searchstr;
+            else
+                str = "LIKE N'%" + SearchText + "' ";
+            break;
+
+        default:
+            break;
+
+    }
+    return str;
+}
+
+//-----------------------///
+
+function GetNewArrivalBooks()
+{
+    $.ajax({
+        url: "/OPAC_V3/GetNewArrivalBooksData?Record=10&LibraryID=" + $('#txtSearchLibrary').attr("data-libid"),
+        type: "GET",
+        dataType: 'json',
+        success: function (data) {
+
+            if (data != null && data != -99) {
+                
+                var html = "";
+                $.each(data, function (key, item) {
+
+                    html += '<div class="item">'
+                    html += '  <div class="book-card p-2">'
+                    html += '      <img src="/OpacUI/Images/default_books_image_grid.png" class="book-card-image"  id="imgOfTitle' + item.TITLENO + '"  alt="">'
+                    html += '      <div class="book-card-title"  data-bs-toggle="modal" data-bs-target="#newBookDetails" onclick="return GetBookTitleDetails(' + item.TITLENO + ')" >' + item.TITLE + '</div>'
+                    html += '      <div class="book-card-sec-info">Author : <span>' + item.AUTHOR + '</span></div>'
+                    html += '      <div class="book-card-sec-info">Publisher : <span>' + item.PUBLISHER + '</span></div>'
+                    html += '      <div class="book-card-sec-info">Pub-Year : <span>' + item.PYEAR + '</span></div>'
+                    html += '  </div>'
+                    html += '</div>'
+
+                });
+
+                $('#slider1').html(html);
+                RefreshSlider("slider1");              
+
+            }
+            else {
+                toastr.error('Exception Occurred While Fetching New-Arrival Books List !');
+                //$(".loader-area, .loader").fadeOut('slow');
+            }
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred While Fetching New-Arrival Books List!');
+            //$(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+}
+
+function GetTopAndNewArrivalBooks(TitleType) {
+    $.ajax({
+        url: "/OPAC_V3/GetTopBooksData?Libraryid=" + $('#txtSearchLibrary').attr("data-libid") + "&TitleType=" + TitleType,
+        type: "GET",
+        dataType: 'json',
+        success: function (data) {
+
+            if (data != null && data != -99) {
+
+                var html = "";
+
+                var TitleModalId = "";
+                var GetTitleDetialFunc = "";
+
+                switch (TitleType) {
+                    case "Books":
+                        TitleModalId = "newBookDetails";
+                        GetTitleDetialFunc = "GetBookTitleDetails";
+                        break;
+
+                    case "Journal":
+                        TitleModalId = "newJournalDetails";
+                        GetTitleDetialFunc = "GetJournalTitleDetails";
+                        break;
+
+                    case "Dissertation":
+                        TitleModalId = "newDissertationDetails";
+                        GetTitleDetialFunc = "GetDissertationDetails";
+                        break;
+
+                    case "Ebook":
+                        TitleModalId = "newEBookDetails";
+                        GetTitleDetialFunc = "GetEBookDetails";
+                        break;
+
+                }
+
+                if (data.DiscoverBooks == null || data.DiscoverBooks.length < 1) {
+                    $('#slider1').html("");
+                    $("#DivNewArrivalBooksSection").hide();
+                }
+                else
+                {
+                    $.each(data.DiscoverBooks, function (key, item) {
+
+                        html += '<div class="item">'
+                        html += '  <div class="book-card p-2">'
+                        html += '      <img src="/OpacUI/Images/default_books_image_grid.png" class="book-card-image"  id="imgOfTitle' + item.Titleno + '"  alt="">'
+                        html += '      <div class="book-card-title"  data-bs-toggle="modal" data-bs-target="#' + TitleModalId + '" onclick="return ' + GetTitleDetialFunc + '(' + item.Titleno + ')" >' + item.TitleName + '</div>'
+                        html += '      <div class="book-card-sec-info">Author : <span>' + item.AuthorName + '</span></div>'
+                        //html += '      <div class="book-card-sec-info">Publisher : <span>' + item.Publisher + '</span></div>'
+                        //html += '      <div class="book-card-sec-info">Pub-Year : <span>' + item.PubYear + '</span></div>'
+
+                        html += '<div class="stars ms-2 NewArrival" data-rating="' + item.Rating + '">'
+                        html += '    <div class="c-rating pb-1">'
+                        html += '        <div>'
+                        html += '            <span id="star"></span>'
+                        html += '            <span id="y-star" class="avgRatings" style="width:0%"></span>'
+                        html += '        </div>'
+                        html += '        <div>'
+                        html += '            <span id="star"></span>'
+                        html += '            <span id="y-star" class="avgRatings" style="width:0%"></span>'
+                        html += '        </div>'
+                        html += '        <div>'
+                        html += '            <span id="star"></span>'
+                        html += '            <span id="y-star" class="avgRatings" style="width:0%"></span>'
+                        html += '        </div>'
+                        html += '        <div>'
+                        html += '            <span id="star"></span>'
+                        html += '            <span id="y-star" class="avgRatings" style="width:0%"></span>'
+                        html += '        </div>'
+                        html += '        <div>'
+                        html += '            <span id="star"></span>'
+                        html += '            <span id="y-star" class="avgRatings" style="width:0%"></span>'
+                        html += '        </div>'
+                        //html += '        @*<div class="rating-count">'
+                        //html += '            <p class="mb-0">(261)</p>' 
+                        //html += '        </div>*@'
+                        html += '    </div>'
+                        //html += '    <span class="rating">0.00</span><span class="rating"> Out Of 5</span>'
+                        html += '</div>'
+
+                        html += '  </div>'
+                        html += '</div>'
+
+                    });
+
+                    $('#slider1').html(html);
+                    html = "";
+                    RefreshSlider("slider1");
+                    $("#DivNewArrivalBooksSection").show();
+                    SetTitleRatingsByClassName("NewArrival");
+                }
+
+                if (data.TopTenBooks == null || data.TopTenBooks.length < 1) {
+                    $('#slider2').html("");
+                    $("#DivTopBooksSection").hide();
+                }
+                else {
+                    $.each(data.TopTenBooks, function (key, item) {
+
+                        html += '<div class="item">'
+                        html += '  <div class="book-card p-2">'
+                        html += '      <img src="/OpacUI/Images/default_books_image_grid.png" class="book-card-image"  id="imgOfTitle' + item.Titleno + '"  alt="">'
+                        html += '      <div class="book-card-title"  data-bs-toggle="modal" data-bs-target="#' + TitleModalId + '" onclick="return ' + GetTitleDetialFunc + '(' + item.Titleno + ')" >' + item.TitleName + '</div>'
+                        html += '      <div class="book-card-sec-info">Author : <span>' + item.AuthorName + '</span></div>'
+                        //html += '      <div class="book-card-sec-info">Publisher : <span>' + item.Publisher + '</span></div>'
+                        //html += '      <div class="book-card-sec-info">Pub-Year : <span>' + item.PubYear + '</span></div>'
+
+                        html += '<div class="stars ms-2 TopBooks" data-rating="' + item.Rating + '">'
+                        html += '    <div class="c-rating pb-1">'
+                        html += '        <div>'
+                        html += '            <span id="star"></span>'
+                        html += '            <span id="y-star" class="avgRatings" style="width:0%"></span>'
+                        html += '        </div>'
+                        html += '        <div>'
+                        html += '            <span id="star"></span>'
+                        html += '            <span id="y-star" class="avgRatings" style="width:0%"></span>'
+                        html += '        </div>'
+                        html += '        <div>'
+                        html += '            <span id="star"></span>'
+                        html += '            <span id="y-star" class="avgRatings" style="width:0%"></span>'
+                        html += '        </div>'
+                        html += '        <div>'
+                        html += '            <span id="star"></span>'
+                        html += '            <span id="y-star" class="avgRatings" style="width:0%"></span>'
+                        html += '        </div>'
+                        html += '        <div>'
+                        html += '            <span id="star"></span>'
+                        html += '            <span id="y-star" class="avgRatings" style="width:0%"></span>'
+                        html += '        </div>'
+                        //html += '        @*<div class="rating-count">'
+                        //html += '            <p class="mb-0">(261)</p>' 
+                        //html += '        </div>*@'
+                        html += '    </div>'
+                        //html += '    <span class="rating">0.00</span><span class="rating"> Out Of 5</span>'
+                        html += '</div>'
+
+                        html += '  </div>'
+                        html += '</div>'
+
+                    });
+
+                    $('#slider2').html(html);
+                    html = "";
+                    RefreshSlider("slider2");
+                    $("#DivTopBooksSection").show();
+                    SetTitleRatingsByClassName("TopBooks");
+                }
+                
+
+            }
+            else {
+                toastr.error('Exception Occurred While Fetching Top Books List !');
+                //$(".loader-area, .loader").fadeOut('slow');
+            }
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred While Fetching Top Books List!');
+            //$(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+}
+
+function savWebsiteLog(websitelink) {
+
+    
+    //if (websitelink ^= 'http')
+    //{
+    //    alert(websitelink.innerText);
+    //}
+    //$('[class^=main]')
+    window.open(websitelink.innerText,'_blank')
+
+    $.ajax({
+        url: "/OPAC_V3/WebSiteLinkLog?Library_id=" + $('#txtSearchLibrary').attr("data-libid") + "&Websitelink=" + websitelink.innerText,
+        type: "GET",
+        dataType: 'json',
+        success: function (data) {
+
+        },
+        error: function () {
+            toastr.error('Exception Occurred While Saving Log records!');
+            //$(".loader-area, .loader").fadeOut('slow');
+
+        }
+    });
+
+
+
+}

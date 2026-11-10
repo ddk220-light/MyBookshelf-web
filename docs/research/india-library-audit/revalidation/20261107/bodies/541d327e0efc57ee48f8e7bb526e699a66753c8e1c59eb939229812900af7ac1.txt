@@ -1,0 +1,2218 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://sdmmc.easylib.net/assets/css/base.css">
+<style type="text/css">
+
+#login:hover{
+	cursor:pointer;
+}
+.sticky {
+    position: fixed;
+    width: 100%;
+	z-index: 9999;
+	background-color:white;
+	margin-bottom:-10px;
+	border-bottom:1px solid #f1f1f1;
+	
+}
+
+.nonsticky{
+	background-color:white;
+	margin-bottom:-10px;
+	border-bottom:1px solid #f1f1f1;
+}
+
+.dropdown-content a {
+	display:none;
+    color: black;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+	background-color:#f1f1f1;
+}
+
+.dropdown-content {
+	display:none;
+    position: absolute;
+     right: 0.5%;
+    background-color:white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index:2000;
+	border:1px solid #f1f1f1;
+}
+.dropbtn:hover .dropdown-content{
+	display:block;
+}
+.dropbtn {
+    cursor: pointer;
+}
+.dropbtn:hover {
+    color: #5375aa;
+}
+.clickLogin{
+	margin-right:0px;
+	margin-bottom:0px;
+	width:8%;
+	padding:5px;
+	padding-right: 10px;
+}
+.link{
+	padding:5px;
+}
+
+.afterLogin{
+	padding-left:5px;
+	font-size: 17px;
+}
+
+.afterLoginDiv{
+	margin-top: 5px;
+	margin-right: -5px;
+}
+
+#container{
+	width:100%;
+}
+
+#left{
+	float:left;
+	margin-left:11px;
+}
+
+#center{
+	margin:0px;
+	text-align:center;
+}
+
+#right{
+	right:0;
+	float:right;
+	margin-top:10px;
+}
+.cNameForMobile{
+	display:none;
+}
+.containerfluid{
+	width:100%;
+}
+.loginName{
+	
+	
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+	#center{
+		text-align:center;
+	}
+	#right{
+		right:0;
+		float:right;
+		overflow: scroll;
+	}
+
+	.sticky {
+		padding:0px;
+	}
+
+	.nonsticky{
+		padding:0px;
+	}
+	
+	.cNameForMobile{
+		display:none;
+	}
+}
+
+@media (min-width: 200px) and (max-width: 725px) {
+	#left{
+		float:left;
+	}
+	#center{
+		display:none;
+	}
+	#right{
+		margin-right:2px;
+		position:absolute;
+		overflow:hidden;
+		text-align:right;
+		overflow: scroll;
+	}
+	.loginToPart{
+		width:100%;
+		float:right;
+		margin-top:0px;
+		text-align:right;
+		
+	}
+	.cNameForMobile{
+		display:block;
+		font-size:12px;
+		margin-right:0px;
+		padding-bottom:10px;
+		float:right;
+		text-align:right;
+	}
+	.sticky {
+		margin-bottom:0px;
+		border-bottom:1px solid #f1f1f1;
+	}
+
+	.nonsticky{
+		margin-bottom:0px;
+		border-bottom:1px solid #f1f1f1;
+	}
+/*	.supportClass{
+		display: none;
+	}*/
+	.sessionStartedAtClass{
+		//display: none;
+		font-size:10px;
+	}
+	.cNameForMobile{
+		margin-top:10px;
+		margin-right:20%;
+		margin-left:10%;
+		font-size:14px;
+		color:brown;
+	}
+	header{
+		height:100px;
+	}
+
+}
+</style>
+
+<header id="nonstickyheader" class="nonsticky">
+    <div class="containerfluid row" id="container">
+		<div id="left" class="form-inline">
+			<!-- <a href="https://sdmmc.easylib.net/index.php"><img src="https://sdmmc.easylib.net/assets/img/logo.png" alt="Logo" data-retina="true" class="logo_normal"></a> -->
+		</div>
+		<div id="right" >
+			<div class="loginToPart">
+			 
+    <!-- Add Create Ticket button before the login dropdown -->
+	  <!-- <a class=""  onclick="createNewTicket()">
+            <span class=""
+                >New Ticket</span>
+        </a> -->
+		 <!-- <a class="zoomin" data-toggle="tooltip" title="You can see the Customized Search Report of Periodical Subscriptions." target="_blank" href="https://sdmmc.easylib.net/index.php/TicketListCt/index">
+            <span class=""
+                >New Ticket</span>
+        </a>
+				<button type="button" id="create-ticket" class="btn btn-primary" onclick="createNewTicket1()">New Ticket</button> -->
+    <span class="clickLogin dropbtn">Login</span>
+    <div class="dropdown-content">
+        <a href="javascript:void(0)" data-toggle="modal" data-target="#myModal" class="librarianLoginLink link">Login</a>
+        <!-- <a href="javascript: void(0)" data-toggle="modal" data-target="#myModalMember" class="memeberLoginLink link">Student/Faculty (Regular)</a> -->
+        <a href="https://digilib-rho.vercel.app" class="vendorLoginLink link" target="_blank">API Login</a>
+        <a href="javascript: void(0)" data-toggle="modal" data-target="#myModalVendor" class="vendorLoginLink link">Vendor</a>
+    </div>
+ 
+			</div>
+						<div class="cNameForMobile" style="">
+				<!-- 					<div class="text-center" ><span>SDM College of Medical Sciences and Hospital </span></div>
+				 -->
+				<div class="text-center" ><span>SDM College of Medical Sciences and Hospital </span></div>
+			</div>
+		</div>
+		<div>
+						<div id="center">
+				<div class="collegeName header text-center" >
+					<span>SDM College of Medical Sciences and Hospital </span></br>
+					<span>Central Library</span>	
+				</div>
+			</div>	
+		</div>
+	</div>
+</header> <!-- End Header -->
+ <div class="modal fade margin_120" id="myModal" role="dialog">
+	<div class="modal-dialog">
+		
+		<div class="modal-content">
+			<form action="https://sdmmc.easylib.net/index.php/LoginController/LibrarianLoginNew" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+			<div class="modal-header form-inline">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h5 class="icon-login-1"><strong>Login Here</strong></h5>
+			</div>
+			<div class="modal-body">
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					<span class="input-group-addon" id="basic-addon3"><b>Username *</b></span>
+					[form state omitted]
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					<span class="input-group-addon" id="basic-addon3"><b>Password *</b></span>
+					[form state omitted]
+					</div>
+				</div>
+				
+			</div>
+			<div class="modal-footer">
+				<div class="col-md-12 col-sm-12">
+					<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+			</form>
+			<div class="modal-body" style="border-top: 1px solid #ddd; margin-top: 0; padding-top: 10px; padding-bottom: 0;">
+			<h5><strong>Login with OTP</strong></h5>
+			<form action="https://sdmmc.easylib.net/index.php/LoginController/MemberLoginOTP" id="otpLoginForm" method="post" accept-charset="utf-8">
+			<div class="form-group">
+			<label for="otpEmail">Email ID</label>
+			[form state omitted]
+			</div>
+
+			<div class="form-group">
+			<span id="otpStatus" class="text-danger" style="display:none;"></span>
+			<span id="otpSuccess" class="text-success" style="display:none;"></span>
+			</div>
+
+			<div id="otpButtons" class="form-group">
+			<button type="button" class="btn btn-primary" onclick="sendOTP()">Send OTP</button>
+			
+
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			</div>
+
+			<div id="otpInputSection" style="display:none;">
+			<div class="form-group">
+				<label for="otp_code">Enter OTP</label>
+				<div id="otpTimer" class="text-danger font-weight-bold" style="margin-top: 10px;"></div>
+				<input type="text" name="otp_code" class="form-control" placeholder="Enter OTP">
+			</div>
+			<div class="form-group">
+        <button type="submit" class="btn btn-success">Enter</button>
+        <button type="button" class="btn btn-warning" onclick="resendOTP()" id="resendBtn">Resend OTP</button>
+        <button type="button" class="btn btn-default" onclick="cancelOTP()">Cancel</button>
+    </div>
+	
+</div>
+			</div>
+			</form>		</div>
+
+		</div>
+	</div>
+</div>
+<!-- Modal -->
+<div class="modal fade margin_120" id="myModalMember" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+      	<form action="https://sdmmc.easylib.net/index.php/LoginController/MemberLogin" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+			<div class="modal-header form-inline">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="icon-login-1">Login Here</h4>           
+			</div>
+        	<div class="modal-body">
+				
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Member Id</span>
+					  [form state omitted]
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Password</span>
+					  [form state omitted]
+					</div>
+				</div>
+				
+        	</div><br/><br/>
+			<div class="modal-footer">
+				<div class="col-md-12 col-sm-12">
+			  		<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+			  		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			  	</div>
+			</div>
+		</form>      </div>
+    </div>
+  </div>
+  <div class="modal fade margin_120" id="myModalVendor" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+      	<form action="https://sdmmc.easylib.net/index.php/LoginController/VendorLogin" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+			<div class="modal-header">
+				<div class="form_title">
+                	<h4 class="icon-login-1">Login Here</h4>
+            	</div>               
+			  	<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+        	<div class="modal-body">
+				
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Vendor Email ID</span>
+					  [form state omitted]
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<div class="input-group">
+					  <span class="input-group-addon asterisk_input" id="basic-addon3">Password</span>
+					  [form state omitted]
+					</div>
+				</div>
+				
+        	</div><br/><br/>
+			<div class="modal-footer">
+				<div class="col-md-12 col-sm-12">
+			  		<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+			  		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			  	</div>
+			</div>
+			
+		</form>      </div>
+    </div>
+  </div><!-- end modal -->
+   <div id="AddPastContactModal2" class="dialog" style="display: none;">
+<div class="col-md-12">
+	<form action="javascript:void(0);" name="addPastContactForm2" id="addPastContactForm2">
+		<div class="row">
+			<input type="hidden" name="Fld_OrgId_2" id="PastorgId_2" class="form-control">
+			<input type="hidden" name="Fld_projId_2" id="PastprojId_2" class="form-control">
+
+			<div class="col-md-6" style="">
+    <div class="input-group">
+        <label class="asterisk_input"><b>Org ID</b></label>
+        <input type="text" name="org_id_2" id="org_id_2" class="form-control" aria-label="Org ID">
+        <span class="input-group-btn">
+            <button id="fetchOrgBtn" class="btn btn-primary" style="margin-top: 25px;">Fetch</button>
+            <!-- <span data-toggle="modal" id="Orgentry1" class="btn btn-info default" style="margin-top: 25px;"><i class="fa fa-edit"></i></span> -->
+        </span>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="form-group">
+        <label class="asterisk_input"><b>Org Name</b></label>
+        <div style="display: flex; align-items: center;">
+            <input type="text" name="org_name_2" id="org_name_2" class="form-control" aria-label="Org Name" style="width: auto; flex-grow: 1;">
+            <span data-toggle="modal" id="Orgentry1" class="btn btn-info default"  title="Edit Organization">
+                <i class="fa fa-edit"></i>
+            </span>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- <div class="col-md-6">
+    <div class="form-group">
+        <label class="asterisk_input"><b>Contact Person:</b></label>
+        <select name="Fld_Contact_Id_2" id="Fld_Contact_Id_2" class="form-control" required>
+            <option value=""></option>
+        </select>
+    </div>
+</div> -->
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Contact Person:</b></label>
+					<select name="Fld_Contact_Id_2" id="Fld_Contact_Id_2" class="form-control" required>
+						<option value=""></option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Easylib Person:</b></label>
+					<select name="Fld_Easylib_Person_Id_2" id="Fld_Easylib_Person_Id_2" class="form-control">
+    <option value="">Select</option>
+</select>
+
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Member ID:</b></label>
+					<input type="text" name="Fld_Member_Id_2" id="Fld_Member_Id_2" class="form-control">
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Contact Type:</b></label>
+					<select name="Fld_Contact_Type_Id_2" id="Fld_Contact_Type_Id_2" class="form-control">
+						<option value=""></option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Date:</b></label>
+					<input type="text" name="Fld_Date_2" id="Fld_Date_2" class="picDate form-control" required>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Duration (enter time in minutes):</b></label>
+					<input type="number" name="Fld_Duration_2" id="Fld_Duration_2" class="form-control" required>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="asterisk_input"><b>Remarks:</b></label>
+					<textarea name="Fld_Remarks_2" id="Fld_Remarks_2" class="form-control" rows="3"></textarea>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-10">
+			<div class="row text-center" style="margin-left:70px;margin-top: 30px">
+				<button class="btn btn-success btn-md" id="savePastBtn2" style="width:100px">Save</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+	 <div id="ListPastContactModal2" class="dialog" style="display: none;">
+	<div class="col-md-12">	
+		<div class="header_div" style="margin-left:-50px;color: #0080ff" id="Organization_Name2"></div>
+		<table class="table table-bordered" id="listPastContactTable2">
+			<thead>
+				<tr>
+					<th style="width:5%">Activity Id</th>
+					<th style="width:10%">Contact Person</th>
+					<th style="width:10%">Easylib Person</th>
+					<th style="width:10%">Member ID</th>
+					<th style="width:10%">Contact Type</th>
+					<th style="width:10%">Date</th>
+					<th style="width:10%">Duration</th>
+					<th style="width:10%">Entry Date</th>
+					<th style="">Remarks</th>
+							
+				</tr>
+			</thead>
+			<tbody id="listPastContactTableBody2">
+					
+			</tbody>
+		</table>
+	</div>
+</div>
+<div id="csaOrgModal1" title="Org Name" class="dialog" style="display: none;">
+	<p><b>Double click on the record to select it</b></p>
+	<table class="table table-bordered" id="CSTable1">
+		<thead>
+			<tr>
+				<th>Org Name</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+<!-- <div id="createTicketModal1" class="dialog" style="display: none;">
+	<div class="col-md-12">
+		<form action="javascript:void(0);" name="createTicketForm1" id="createTicketForm1">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Ticket No:</label>
+						<input type="text" name="fld_ticket_id2" id="ticket_id2" class="form-control" readonly>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Org ID:</label>
+						<input type="text" name="fld_org_id2" id="fld_org_id2" class="form-control" >
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Person ID:</label>
+						<input type="text" name="fld_person_id2" id="fld_person_id2" class="form-control" >
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Opened Date:</label>
+						<input type="text" name="fld_ticket_opened_date2" id="ticket_opened_date2" class="form-control"value = "08-11-2026" readonly>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Opened By:<sup style="color: red">*</sup></label>
+						<input type="text" name="fld_ticket_opened_by2" id="ticket_opened_by2" class="form-control">
+						<b><p id="validateOpenedBy1"></p></b>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Ticket Title:<sup style="color: red">*</sup></label>
+						<input type="text" name="fld_title2" id="title2" class="form-control" placeholder="Enter ticket name">
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Type:<sup style="color: red">*</sup></label>
+						<select name="fld_ticket_type_id2" id="ticket_type_id2" class="form-control">
+							<option value="">Select Type</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Subtype:</label>
+						<select name="fld_ticket_subtype_id2" id="ticket_subtype_id2" class="form-control">
+							<option value="">Select Subtype</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Ticket Description:</label>
+						<textarea type="text" name="fld_description2" rows="4" id="description2" class="form-control" placeholder="Allows 2500 characters only."></textarea>
+						<b><p id="charNum1"> </p></b>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Status:<sup style="color: red">*</sup></label>
+						<select name="fld_status_id2" id="status_id2" class="form-control">
+							<option value="">Select Status</option>
+						</select>
+					</div>
+				</div>
+				
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Severity:</label>
+						<select name="fld_severity2" id="severity_drp2" class="form-control">
+							<option value="">Select Severity</option>
+							<option value="Minor">Minor</option>
+							<option value="Moderate">Moderate</option>
+							<option value="Critical">Critical</option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3 uploadedFile">
+					</div>
+				</div>
+
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Priority:</label>
+						<select name="fld_priority2" id="priority_drp2" class="form-control">
+							<option value="">Select Priority</option>
+							<option value="High">High</option>
+							<option value="Medium">Medium</option>
+							<option value="Low">Low</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Related Product:</label>
+						<select name="fld_product_id2" id="product_id2" class="form-control">
+							<option value="">Select Product</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Related Module:</label>
+						<select name="fld_module_id2" id="module_id2" class="form-control">
+							<option value="">Select Module</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+                    <div class="form-group">
+                        <label>Upload File/Screenshot:</label>
+                        <input type="file" class="form-control" id="fld_pic_path" name="fld_pic_path">
+                    </div>
+                </div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>Assign To:</label>
+						<input type="text" name="fld_assign_to_mbr2" id="assign_to_mbr2" class="form-control">
+						<b><p id="validateAssignTo1"></p></b>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-10">
+					<div class="row text-center" style="margin-left:70px;margin-top: 10px">
+						<button class="btn btn-primary btn-md ticketData" id="createTicketBtn1" style="width:100px">Submit</button>
+						<input type="button"class="btn btn-secondary btn-md" name="closeTicket2" id="closeTicket2" style="width:100px" value="Close">
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div> -->
+</div>
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted][script omitted]
+ <!--
+##################################################################################
+# Copyright - Easylib Software Pvt Ltd
+# This code is a copyright of Easylib Software Pvt Ltd and must be used only at 
+# the site of deployment. Any unauthorized modification or distribution is a
+# violation of copyright law and is subject to prosecution. 
+##################################################################################
+# CHANGE LOG 
+##################################################################################
+# << Date >>>>> << Persons Name >>>> <<<< Changes done >>>>
+# 20-03-2019	Shivashankar	Added Copyright Lines.
+##################################################################################
+-->
+<style>
+.cursor{
+	cursor: pointer;
+	size: 18px;
+	font-weight: bold;
+}
+ul.circle {
+    list-style-type: circle;
+}
+.txtAlign{
+	text-align: right;
+	margin-bottom:-15px;
+}
+.body {
+    background-color: lightblue;
+}
+.marginleftforall{
+	margin-left:-250px;
+	margin-top:-25px;
+}
+.margnForLinkedBooks{
+	margin-left:-230px;
+	margin-top:px;
+}
+.divmrginbttm{
+	margin-top:20px;
+}
+.textSize{
+	font-size:12px;
+}
+.mrgnbttm{
+	margin-bottom:-15px;
+	margin-left:-30px;
+}
+.divmrginbttmm{
+	margin-top:60px;
+	margin-left:-40px;
+}
+.secParent{
+	border:1px solid #f1f1f1;
+	position: relative;
+	min-height:50px;
+	height:auto;
+	font-size:15px;
+	
+}
+.catLinkTitle{
+	color:#0076B2;
+	font-size:17px;
+}
+#reserveBtnPD{
+	bottom: 0;
+	position: absolute;
+	margin-bottom: 5px;
+	margin-left: 82%;
+	float: right;
+}
+.Issued{
+	color:red;
+}
+.Available{
+	color:green;
+}
+.view{
+	margin-left:0px;
+	margin-top:0px;
+	background-color: #F3F3F3;
+    border: 1px solid #C9C9C9;
+    border-radius: 2px;
+    display: inline-block;
+    padding: .1em .4em;
+	cursor:pointer;
+}
+.moreViewsPageDiv{
+	margin-left:20px;
+}
+.firstHrTag{
+	margin-top:5px;
+	margin-bottom:-3px;
+}
+.thinBorderedDiv{
+	overflow: auto;
+	height:auto;
+	background-color: #FFF;
+    border: 1px solid #D2D2CF;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.2);
+    margin-top: .5em;
+    margin-bottom:.5em;
+	
+	 
+}
+
+breadcrumb {
+    background-color: #F2F2EF;
+    font-size: 85%;
+    margin: 10px 20px;
+    padding: 5px 10px;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+	height:auto;
+}
+ul.breadcrumb {
+    display: block;
+    list-style-type: disc;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 40px;
+	margin-left:15px;
+	margin-right:30px;
+	background-color:#f1f1f1;
+	margin-top:5px;
+	
+}
+.thinBorderedDiv{
+	margin:8px;
+	
+}
+
+h1.titleOfBook {
+    font-size: 140%;
+	line-height: 150%;
+    font-family: inherit;
+    font-weight: bold;
+    margin-left:100px;
+	margin-top:-10px;
+    color: inherit;
+    text-rendering: optimizelegibility;
+	//font-family: "Helvetica Neue",serif;
+	display: block;
+    -webkit-margin-start:30px;
+    -webkit-margin-end: 0px;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin: 10px 0;
+    font-family: inherit;
+   // font-weight: bold;
+    line-height: 20px;
+    color: inherit;
+    text-rendering: optimizelegibility;
+	//font-family: "Helvetica Neue",serif;
+	-webkit-margin-start:30px;
+    -webkit-margin-end: 0px;
+}
+.authorClickToSearch{
+	color: #0076B2;
+}
+
+.publisher{
+	font-size:15px;
+	color: #202020;
+}
+#bibliodescriptions{
+	margin-bottom:50px;
+	
+}
+.availableColor{
+	color:red;
+}
+.issuedColor{
+	color:green;
+}
+#tab_holdings{
+	cursor:pointer;
+	
+}
+#newVersionUl li a:hover { 
+    background-color:#f1f1f1;
+	cursor:pointer;
+}
+.homeLink{
+	font-size:15px;
+	color: #0076B2;
+	
+}
+.hrLine{
+	margin-top:-10px;
+	margin-left:20px;
+}
+#reserveBtninNewVersion{
+	margin:5px;
+	
+	//margin-top:-20px;
+}
+.lineGap h6{
+	line-height:80%;
+}
+.allElementsDiv{
+	margin-left:-8%;
+	
+}
+.bookImage{
+	margin-left:-25px;
+	border: 1px solid #f1f1f1;
+	width:143px;
+	margin-right:35px;
+}
+#relatedDigLinks{
+	min-height:30px;
+}
+
+footer{
+margin-top:1000px;
+	
+}
+</style>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Search</title>
+	[script omitted]
+</head>
+<body>
+
+
+	
+<link rel="stylesheet" href="https://sdmmc.easylib.net/assets/css/opacHomeCss.css"> 
+<link rel="stylesheet" href="https://sdmmc.easylib.net/assets/css/OpacCss/BookDetailsCss.css"> 
+<div class="row">
+	<!--
+##################################################################################
+# Copyright - Easylib Software Pvt Ltd
+# This code is a copyright of Easylib Software Pvt Ltd and must be used only at 
+# the site of deployment. Any unauthorized modification or distribution is a
+# violation of copyright law and is subject to prosecution. 
+##################################################################################
+# CHANGE LOG 
+##################################################################################
+# << Date >>>>> << Persons Name >>>> <<<< Changes done >>>>
+# 13-09-2020	Mahantesh Maningol	Added Copyright Lines.
+##################################################################################
+-->
+
+<style>
+    .my-group .input-group-btn {
+        width: 10%;
+        border-bottom: none;
+        border-radius: 0;
+    }
+
+    .searchpage {
+        height: 80px;
+        background-color: #5375aa;
+    }
+
+    .searchBar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 80%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .input-group-btn .btn {
+        border-radius: 0px;
+        width: 100%;
+        /* border-right: 1px solid black; */
+    }
+
+    @media screen and (min-width : 768px) and (max-width : 1023px) {
+        .searchPage {
+            height: 120px;
+            background-size: 100% 100%;
+            background-color: #5375aa;
+            /*#251DA0;  /*#A1227C,#C70039,#A1227C*/
+            z-index: 1;
+            border: 2px solid #f7f7f7;
+        }
+
+        .searchBar {
+            left: 50%;
+            top: 50%;
+            width: 100%;
+            /* -webkit-transform: translate(0%, 0%);
+            transform: translate(0%, 0%); */
+            margin: 0px 5px 0px 5px;
+        }
+
+    }
+
+    @media screen and (min-width : 0px) and (max-width : 767px) {
+        .searchPage {
+            height: 160px;
+            background-size: 100% 100%;
+            background-color: #5375aa;
+            /*#251DA0;  /*#A1227C,#C70039,#A1227C*/
+            z-index: 1;
+            border: 2px solid #f7f7f7;
+        }
+
+        .searchBar {
+            left: 50%;
+            top: 50%;
+            width: 100%;
+            /* -webkit-transform: translate(0%, 0%);
+            transform: translate(0%, 0%); */
+            margin: 0px 5px 0px 5px;
+        }
+
+
+    }
+</style>
+<div class="col-md-12 searchpage">
+    <div class="input-group my-group searchBar">
+        <div class="input-group-btn">
+            <select class="form-control " id="homeBranch" name="Fld_Branch_Code"
+                style="border-top-left-radius: 4px;border-bottom-left-radius:4px">
+                <option value="0">Select Branch</option>
+            </select>
+        </div>
+        <div class="input-group-btn">
+            <select name="keywords" id="keyWordsDropDown" class="form-control dropdown-toggle">
+                
+                 <option value="">All</option>
+                <option value="@Title">@Title</option>
+                
+                <option value="@Author ">@Author</option>
+                <option value="@Publisher ">@Publisher</option>
+                <option value="@Subject ">@Subject</option>
+                <option value="@ISBN ">@ISBN</option>
+                <option value="@Published_Place ">@Published_Place</option>
+                <option value="@Published_Year ">@Published_Year</option>
+                <option value="@Class_No ">@Class_No</option>
+                <option value="@Call_No ">@Call_No</option>
+                <option value="@Accn_No ">@Accn_No</option>
+                <option value="@dept ">@Department</option>
+                <option value="@keyword ">@Keyword</option>
+                <option value="@Location ">@Location</option>
+                <option value="@Editor ">@Editor</option>
+                <option value="@Series ">@Series</option>
+                <option value="@Developer ">@Developer</option>
+                <option value="@Translator ">@Translator</option>
+                <option value="@No_Days ">@No_Days</option>
+            </select>
+        </div>
+        <input type="text" class="form-control" id="advancedSearch" autocomplete="off" placeholder="Search for Books, Author and More..." value="" 
+            aria-label="Search for...">
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-md btn-success" id="adSearchButton">Search</button>
+        </div>
+        <div class="input-group-btn">
+            <button class="btn btn-warning" style="border-top-right-radius: 4px;border-bottom-right-radius:4px"
+                onclick="document.getElementById('advancedSearch').value = ''">Clear</button>
+        </div>
+		<div style="width: 20px; display: inline-block;"></div>
+        <div class="input-group-btn">
+            <a href="https://sdmmc.easylib.net/helpController/index" class="btn btn-info" id="knowMoreButton">Know More</a>
+        </div>
+    </div>
+</div>
+[script omitted]
+[script omitted]	<div class="moreViewsPageDiv">
+		<span class="view" id="NewView">New Version</span>
+		<span class="view" id="normalview">Old Version</span>
+		
+	</div>
+
+</div>
+<hr class="firstHrTag"></hr>	
+<div class="" id="FirstMainDiv" style="display:none">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-4 secParent" >
+				<div class="col-md-12 text-center headerSpan" style="" >Summary</div>
+				<ul>
+									<li class="gray" disabled><a href="#">Unique Things</a></li>
+									<li class="gray" disabled><a href="#">Foreward</a></li>
+									<li class="gray" disabled><a href="#">TOC</a></li>
+									<li class="gray" disabled><a href="#">Authors Words</a></li>
+									<li class="gray" disabled><a href="#">Arpane</a></li>
+									<li class="gray" disabled><a href="#">Sample Page</a></li>
+									<li class="gray" disabled><a href="#">Summary</a></li>
+									<li class="gray" disabled><a href="#">Publishers Words</a></li>
+									<li class="gray" disabled><a href="#">Feedback</a></li>
+									<li class="gray" disabled><a href="#">Awards</a></li>
+									<li class="gray" disabled><a href="#">Acomplishments</a></li>
+									<li class="gray" disabled><a href="#">Librarian Says</a></li>
+									<li class="gray" disabled><a href="#">Easylib Says</a></li>
+									<li class="gray" disabled><a href="#">Catelogue Credits</a></li>
+									<li class="gray" disabled><a href="#">Contraversies</a></li>
+									<li class="gray" disabled><a href="#">Credits</a></li>
+									<li class="gray" disabled><a href="#">Speciality of the Book</a></li>
+								</ul>
+			</div>
+			<div class="col-md-4 secParent" id="parent-div">
+				<div class="text-center headerSpan" style="">Details</div>
+				<div class="bookDetalis">
+					<ul>
+											<li>
+							<label>Title :&nbsp; </label>
+							<span class="labelleft" style="color:#e80800;">Understanding medical physiology: a textbook for medical students</span>
+						</li>
+											<li><label>Title Number :&nbsp; </label><span class="labelleft" style="color:#e80800;">000234</span></li>
+											<li><label>Author :&nbsp; </label><span class="labelleft" style="color:#e80800;">Bijlani, R. L.</span></li>
+											<li><label>Classification Number :&nbsp; </label><span class="labelleft" style="color:#e80800;">612 BIJ3</span></li>
+											<li><label>Subject :&nbsp; </label><span class="labelleft" style="color:#e80800;">Physiology(612)</span></li>
+											<li><label>Department :&nbsp; </label><span class="labelleft" style="color:#e80800;">Physiology</span></li>
+											<li><label>Publisher :&nbsp; </label><span class="labelleft" style="color:#e80800;">Jaypee Brothers Medical Publishers</span></li>
+											<li><label>Published Place :&nbsp; </label><span class="labelleft" style="color:#e80800;">New Delhi</span></li>
+											<li><label>Published Year :&nbsp; </label><span class="labelleft" style="color:#e80800;">2004</span></li>
+											<li><label >Number of Copies :&nbsp; </label><span class="labelleft slideTitleNoCopies" style="color:#e80800;">1</span></li>
+											<li><label >Edition :&nbsp; </label><span class="labelleft slideTitleNoCopies" style="color:#e80800;">3</span></li>
+											<li><label>Language :&nbsp; </label><span class="labelleft" style="color:#e80800;">English</span></li>
+						<li style="display:none;"><label>username :&nbsp; </label><span class="labelleft">
+							</span></li>
+										<li><label>Available(Accn no). :&nbsp; </label><span id="accnNumbers1" class=""></span>
+					<li><label class="publisher" >Not Available(Accn no). :&nbsp;</label> <span id="NotaccnNumbers1" class=""></span></h6></br>
+						<!--<li><label><a href="https://sdmmc.easylib.net/index.php/CatCommentController/catComment?title=Understanding medical physiology: a textbook for medical students&titleNo=000234">Add A Comment</a> :&nbsp; </label><span class="labelleft"></span></li>-->
+					</ul>
+
+					<div class="col-md-12" id="reserveBtnPD">
+						<button class="btn btn-xs btn-primary reserveBtn" id="reserveBtn" data-reserveType="rbt" data-fromPlace="CirItemStatus">Reserve</button>
+					</div>
+
+				</div>
+			</div>
+			<div class="col-md-4 secParent" >
+				<div class="col-md-12 text-center headerSpan" style="">Links</div>
+				<ul>
+							
+				</ul>
+			</div>	
+			<div class="col-md-12">
+				<hr>
+			</div>
+			<div class="col-md-12">		
+				<div class="col-md-12">
+					<div id="slideTitleNoCopies" class="cursor">Total Copies Of This Title_No.</div>
+					<div class="slideTitleNoCopiesDiv mt10" style="display:none; margin-left:0px;">
+						<table class="table table-bordered" id="tableid">
+							<thead>
+								<tr class="textSize">
+									<th>Accn No</th>
+									<th>Department</th>
+									<th>Category</th>
+									<th>Status</th>
+									<th style="width:100px">Due_Date</th>
+									<th>Member_Id</th>
+									<th>Location</th>
+									<th>Home Branch</th>
+									<th>Current Branch</th>
+								</tr>
+							</thead>
+
+							<tbody>
+															<tr class="textSize">
+									<td>000234</td>
+									<td>Physiology</td>
+									<td>Issue Copy</td>
+									<td>Available									</td>
+									<td style="width:100px"></td>
+									<td></td>
+									<td>Archival</td>
+									<td></td>
+									<td></td>
+								</tr>
+															</tbody>
+							<div class="sharethis-inline-share-buttons"></div>
+
+						</table>
+					</div>	
+
+				</div>
+				<div class="col-md-12">
+					<hr>
+				</div>
+				<div class="col-md-12">
+					<div id="slideOtherLinkedItems" class="cursor">Other Linked Books with this Title Number.</div>
+					<div class="slideLinkedBooks divmrginbttm" style="display:none; margin-left:0px;">
+																		<span style="color:red">No Other Items Linked With This Book.</span>										</div>
+				</div>	
+				<div class="col-md-12">
+					<hr>
+				</div>
+				<div class="col-md-12 mb10">
+					<div class="col-md-6 row">
+						<div class="clickLoginn cursor">View Readers Comments On this Book.</div>
+					</div>
+					<div class="col-md-6">
+											<div id="login" class="loginDiv">
+							<li><label><a style="margin-left:-2px;" class="clickLoginhere cursor">Comment Here</a></label></li>
+							<div class="slidedivhere" style="display:none">
+								<label style="margin-left:-6px"><a href="javascript:void(0)" data-toggle="modal" data-target="#myModalLibrarianComment" class="librarianLoginLink link">Librarian</a></label>
+								<label style="margin-left:-6px"><a href="javascript: void(0)" data-toggle="modal" data-target="#myModalMemberComment" class="memeberLoginLink link">Member</a></label>
+							</div>
+						</div>
+										</div>
+					<div class="slidedivv divmrginbttm" style="display:none; margin-left:px;">
+						<strong>No Comments Found</strong> For This Book. Please If You have Read Then Please <strong>Add Comments</strong>.....					</div>
+
+				</div>	
+			</div>
+		</div>
+	</div>
+	<div class="modal fade margin_120" id="myModalMemberComment" role="dialog">
+		<div class="modal-dialog">
+		  <!-- Modal content-->
+		  <div class="modal-content">
+			<form action="https://sdmmc.easylib.net/index.php/LoginController/MemberLoginForCommentOnBooks" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+				<div class="modal-header">
+					<input type="hidden" name="title" value="Understanding medical physiology: a textbook for medical students" />
+					<input type="hidden" name="titleNo" value="000234" />
+					<div class="form_title">
+						<h class="icon-login-1">Login Here</h>
+					</div>               
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="col-md-6 col-sm-12">
+						<div class="input-group">
+						  <span class="input-group-addon asterisk_input" id="basic-addon3">Member Id</span>
+						  [form state omitted]
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="input-group">
+						  <span class="input-group-addon asterisk_input" id="basic-addon3">Password</span>
+						  [form state omitted]
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="col-md-12 col-sm-12">
+						<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</form>		  </div>
+		</div>
+	</div><!-- end modal -->
+	<div class="modal fade margin_120" id="myModalLibrarianComment" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<form action="https://sdmmc.easylib.net/index.php/LoginController/LibrarianLoginForCommentOnBooks" name="Sch_Stud_Sponsor" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+				<div class="modal-header form-inline">
+					<input type="hidden" name="title" value="Understanding medical physiology: a textbook for medical students" />
+					<input type="hidden" name="titleNo" value="000234" />
+					<h class="icon-login-1">Login Here</h>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="col-md-6 col-sm-12">
+						<div class="input-group">
+						<span class="input-group-addon" id="basic-addon3">Username *</span>
+						[form state omitted]
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="input-group">
+						<span class="input-group-addon" id="basic-addon3">Password *</span>
+						[form state omitted]
+						</div>
+					</div>
+					
+				</div><br/><br/>
+				<div class="modal-footer">
+					<div class="col-md-12 col-sm-12">
+						<button type="submit" class="btn btn-primary icon-login-1">Sign in</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+				</form>			</div>
+		</div>
+	</div><!-- end modal -->
+	<div id="copyDetailsModal" title="Copy Details" class="" style="display: none;">
+		<div class="row ptb10" id="bookDetailsTop">
+			<div class="col-md-6">
+				<table class="" id="titleDetailsModalTable">
+					<tr><td>Title No</td><td></td></tr>
+					<tr><td>Item type</td><td></td></tr>
+					<tr><td>Title</td><td></td></tr>
+					<tr><td>Authors</td><td></td></tr>
+					<tr><td>Editor</td><td></td></tr>
+					<tr><td>Subject</td><td></td></tr>
+					<tr><td>Call No</td><td></td></tr>
+					<tr><td>Volume</td><td></td></tr>
+					<tr><td>Language</td><td></td></tr>
+					<tr><td>Publisher</td><td></td></tr>
+					<tr><td>Published Year</td><td></td></tr>
+					<tr><td>No of copies</td><td></td></tr>
+					<tr><td>Series</td><td></td></tr>
+				</table>
+			</div>
+			<div class="col-md-3">
+				<table class="" id="countDetailsTable">
+					<tr><td>No of copies</td><td></td></tr>
+					<tr><td>Binding</td><td></td></tr>
+					<tr><td>Issued</td><td></td></tr>
+					<tr><td>On Hand</td><td></td></tr>
+					<tr><td>Available</td><td></td></tr>
+				</table>
+			</div>
+		</div>
+		<div class="row mt5">
+			<div class="col-md-12" id="buttons">
+				<button class="btn btn-xs btn-primary reserveBtn" id="reserveBtn" data-reserveType="rbc" data-fromPlace="CirItemStatus">Reserve</button>
+				<button class="btn btn-xs btn-warning " id="closeModal">Close</button><!-- rbc=reserve by copy -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="plr10">
+				<div class="header_div">Item Details/status</div>
+				<div class="table table-responsive plr5">
+					<table class="table table-bordered" id="itemStatusTable">
+							<thead>
+							<tr>
+								<th>Accession No</th>
+								<th>Edition</th>
+								<th>Cost(INR)</th>
+									<th>Department</th>
+									<th>Category</th>
+								<th>No of Pages</th>
+									<th>Status</th>
+								<th>Due Date</th>
+								</tr>
+							</thead>
+						<tbody id="itemStatusBody">
+							<tr>
+								<td colspan="8" class="text-center">No data available in table</td>
+								</tr>
+							</tbody>
+						</table>
+				</div>
+			</div>
+			<div class="plr10">
+				<div class="header_div">Reservation Status</div>
+				<div class="table table-responsive plr5">
+					<table class="table table-bordered" id="reserveStatusTable">
+						<thead>
+							<tr>
+								<th>Accession No</th>
+								<th>Reservation Date</th>
+								<th>Reservation Time</th>
+								<th>Member Id</th>
+								<th>Member Name</th>
+								<th>Allotted Date</th>
+								<th>Expiry Date</th>
+								<th>Reservation Status</th>
+							</tr>
+						</thead>
+						<tbody id="reserveStatusBody">
+							<tr>
+								<td colspan="8" class="text-center">No data available in table</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+<div class="" id="newVersionView">
+	<div class="firstChild">
+		<div class="container-fluid thinBorderedDiv">
+			<ul class="breadcrumb">
+				<li ><a class="homeLink" href="https://sdmmc.easylib.net/">Home</a> <span class="divider">›</span></li>
+				<!--<li><a href="#"><span>Details for: </span>Accident prevention: the role of physicians and public health workers</a></li>-->
+			</ul>
+			<hr width="97%" class="hrLine" ></hr>
+			<div class="col-md-12 " >
+				<div class="col-md-12 " >
+				<div class="col-md-8 ">
+									<div class="col-md-10 lineGap allElementsDiv">	
+				<h1 class="titleOfBook" property="name">Understanding medical physiology: a textbook for medical students</h1>
+				<h5 class="author">By&nbsp;:&nbsp;<a class="authorClickToSearch" href="#"><span id="authorNameInNewView">Bijlani, R. L.</span></a></h5>
+									<h6 class="publisher">Title No&nbsp;:&nbsp;<span id="title">000234</h6>
+											<h6 class="publisher">Publisher&nbsp;:&nbsp;<span id="">New Delhi&nbsp;,&nbsp;<span id="publisherInNewView"><a class="authorClickToSearch" href="#">Jaypee Brothers Medical Publishers</a></span>&nbsp;,&nbsp;2004</h6>
+											<h6 class="publisher">Subject&nbsp;:&nbsp;<a class="authorClickToSearch" href="#"><span id="subjectInNewView">Physiology(612)</a></h6>			
+											<h6 class="department publisher">Department&nbsp;:&nbsp;<a class="authorClickToSearch" href="#"><span id="departmentId">Physiology</a></h6>
+
+											<h6 class="publisher">Keyword&nbsp;:&nbsp;<a class="authorClickToSearch" href="#"><span id="keywordId">Textbook;Physiology</a></h6>
+							
+											<h6 class="publisher">Class No&nbsp;:&nbsp;<span id="">612</h6>
+											<h6 class="publisher">Call No&nbsp;:&nbsp;<span id="">612 BIJ3</h6>
+											<h6 class="publisher">Language&nbsp;:&nbsp;<span id="">English</h6>
+											<h6 class="publisher">Edition&nbsp;:&nbsp;<span id="">3</h6>
+											<h6 class="publisher">Total Copies&nbsp;:&nbsp;<span id="">1</h6>
+					  
+					<h6 class="publisher" >Available(Accn no). :&nbsp; <span id="accnNumbers" class=""></span></h6>
+					<h6 class="publisher" >Not Available(Accn no). :&nbsp; <span id="NotaccnNumbers" class=""></span></h6></br>
+				</div>				
+				</div>
+				
+				</div>
+				<button class="btn btn-xs btn-primary" id="forwardOpac" title="Click here to mail OPAC search result" data-reserveType="rbt">Forward Result</button>
+				<button class="btn btn-xs btn-primary reserveBtn" id="reserveBtninNewVersion" data-reserveType="rbt" data-fromPlace="CirItemStatus">Reserve</button>
+				<button class="btn btn-xs btn-primary" type="button"  id="exportExcel" >Export</button>
+				<div id="bibliodescriptions" class="col-md-12 toptabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+					<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist" id="newVersionUl">
+						<li id="tab_holdings" rel="holdings"  class="ui-state-default ui-corner-top ui-tabs-active selectColorForBackground " role="tab" tabindex="0" aria-controls="holdings" aria-labelledby="ui-id-1" aria-selected="true">
+							<a class="ui-tabs-anchor" role="presentation"  id="ui-id-1"><span>Copy Details</span>  (1)</a>
+						</li>
+						<li id="tab_descriptions" rel="descriptions" class="ui-state-default ui-corner-top selectColorForBackground" role="tab" tabindex="-1" aria-controls="descriptions" aria-labelledby="ui-id-2" aria-selected="false">
+							<a  class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-2">Related Physical Materials</a>
+						</li>
+						<li id="tab_Links" rel="relatedDigLinks" class="ui-state-default ui-corner-top selectColorForBackground" role="tab" tabindex="-1" aria-controls="comments" aria-labelledby="ui-id-3" aria-selected="false">
+							<a  class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-4">Related Digital Materials</a>
+						</li>
+						<li id="tab_Links" rel="marcView" class="ui-state-default ui-corner-top selectColorForBackground" role="tab" tabindex="-1" aria-controls="comments" aria-labelledby="ui-id-3" aria-selected="false">
+							<a  class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-4">Marc View</a>
+						</li>
+						<li id="tab_comments" rel="comments" class="ui-state-default ui-corner-top selectColorForBackground" role="tab" tabindex="-1" aria-controls="comments" aria-labelledby="ui-id-3" aria-selected="false">
+							<a  class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-3">Comments</a>
+						</li>
+						
+					</ul>
+					<div id="holdings" aria-labelledby="ui-id-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-expanded="true" aria-hidden="false"> 
+						<div id="holdingst_wrapper" class="dataTables_wrapper no-footer">
+							<table class="table table-bordered table-striped dataTable no-footer" id="holdingst" role="grid">
+								<thead>
+									<tr role="row">
+										<th id=""  class=" sorting"  style="width: 53px;">Accn No</th>
+										<th id=""  class=" sorting"  aria-controls="holdingst"   aria-label="Item type: activate to sort column ascending" style="width:100px;">Department</th>
+										<th id=""  class=" sorting"  aria-controls="holdingst"  aria-label="Current location: activate to sort column ascending" style="width:50px;">Category</th>
+										<!--<th id=""  class=" sorting"  aria-controls="holdingst"  aria-label="Collection: activate to sort column ascending" style="width: 68px;">Collection</th>-->
+										
+										<th id=""  class=" sorting"  aria-controls="holdingst" aria-label="Status: activate to sort column ascending" style="width:50px;">Status</th>
+										<th id="" class=" sorting"   aria-controls="holdingst"  aria-label="Date due: activate to sort column ascending" style="width:40px;">Date due</th>
+										<th id=""  class=" sorting"  aria-controls="holdingst"  aria-label="Call number: activate to sort column ascending" style="width:50px;">Member Id</th>
+										<th id=""  class=" sorting"  aria-controls="holdingst"  aria-label="Call number: activate to sort column ascending" style="width:50px;">Location</th>
+										<th id=""  class=" sorting"  aria-controls="holdingst"  aria-label="Call number: activate to sort column ascending" style="width:50px;">Home Branch</th>
+										<th id=""  class=" sorting"  aria-controls="holdingst"  aria-label="Call number: activate to sort column ascending" style="width:50px;">Current Branch</th>
+										<th id=""  class=" sorting"  aria-controls="holdingst"  aria-label="Call number: activate to sort column ascending" style="width:50px;">Binding Type</th>
+									</tr>
+								</thead>
+								<tbody>
+									
+																		<tr class="textSize">
+										<td>000234</td>
+										<td>Physiology</td>
+										<td>Issue Copy</td>
+										
+										<td>Available										</td>
+										<td style=""></td>
+										<td></td>
+										<td>Archival</td>
+										<td></td>
+									    <td></td>
+									    <td>Hardback</td>
+									</tr>
+																
+									<!--<tr vocab="http://schema.org/" typeof="Offer" role="row" class="odd">
+										<td class="barcode" property="serialNumber">192906</td>
+										<td class="itype sorting_1">Books</td>
+										<td class="location" property="seller">
+											<link property="itemOffered" href="#record">
+											<link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+											<span class="" title="">
+												<span>Vikram Sarabhai Library</span>
+											</span>
+											<div class="branch-info-tooltip"></div>
+												<span class="shelvingloc">General Stacks</span>
+										</td>
+										<td class="collection">Non-fiction</td>
+										<td class="call_no" property="sku">
+											378.1662 P7F4-2015
+													(<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=204604&amp;shelfbrowse_itemnumber=343367#holdings">Browse shelf</a>)
+										</td>
+										<td class="status">
+										<link property="availability" href="http://schema.org/OutOfStock">
+											<span class="item-status checkedout">Checked out to Ankur  Sarin (F20865)</span>
+										</td>
+										<td class="date_due"><span title="2018-08-22 23:59:00">22/08/2018</span></td>
+										
+									</tr>-->
+								</tbody>
+							</table>
+						</div>
+
+						<br style="clear:both;">
+					</div> <!-- / #holdings -->
+
+					<div id="descriptions" aria-labelledby="ui-id-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-expanded="false" aria-hidden="true" style="display: none;">
+						<div id="" class="dataTables_wrapper no-footer">
+							<table class="table table-bordered table-striped dataTable no-footer" id="linkedMaterials" role="grid">
+								<thead>
+									<tr role="row">
+										<th id=""  class=" sorting"  style="width: 53px;">Material Type</th>
+										<th id=""  class=" sorting"  aria-controls="holdingst"   aria-label="Item type: activate to sort column ascending" style="width: 59px;">Title No</th>
+										<th id=""  class=" sorting"  aria-controls="holdingst"  aria-label="Current location: activate to sort column ascending" style="width: 132px;">Title</th>
+									</tr>
+								</thead>
+								<tbody>									
+																	</tbody>
+							</table>
+						</div>
+
+					</div> <!-- / #descriptions -->
+					<div id ="relatedDigLinks" aria-labelledby="ui-id-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom col-md-6 secParent" style="display: none;">
+						<div class="header_div" style="">Related Digital Material</div>
+						<ul>
+						 	
+						</ul>					
+					</div>	
+					
+					<div id ="marcView" aria-labelledby="ui-id-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom col-md-12 secParent" style="display: none;">
+					<br/><table class="table table-bordered"  align="center" id="referListTable">
+						<thead>
+							<tr>
+							  <th>SI NO</th>
+							  <th>Marc Tag No</th>
+							  <th>Sub Field</th>
+							  <th>Marc Title</th>
+							  <th>Easylib Field</th>
+							  <th>Cat Value</th>
+							</tr>
+						</thead>
+						<tbody>
+														<tr>
+							  <td>1</td>
+							  <td>010</td>
+							  <td>$a</td>
+							  <td>Library of Congress control number</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>2</td>
+							  <td>020</td>
+							  <td>$a</td>
+							  <td>International Standard Book Number</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>3</td>
+							  <td>020</td>
+							  <td>$c</td>
+							  <td>Terms of availability</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>4</td>
+							  <td>020</td>
+							  <td>$z</td>
+							  <td>Cancelled/invalid ISBN (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>5</td>
+							  <td>040</td>
+							  <td>$a</td>
+							  <td>Original cataloging agency</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>6</td>
+							  <td>040</td>
+							  <td>$c</td>
+							  <td>Transcribing agency</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>7</td>
+							  <td>040</td>
+							  <td>$d</td>
+							  <td>Modifying agency (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>8</td>
+							  <td>100</td>
+							  <td>$a</td>
+							  <td>Personal name</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>9</td>
+							  <td>100</td>
+							  <td>$b</td>
+							  <td>Numeration</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>10</td>
+							  <td>100</td>
+							  <td>$c</td>
+							  <td>Titles and other words associated with a name (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>11</td>
+							  <td>100</td>
+							  <td>$d</td>
+							  <td>Dates associated with a name (generally, year of birth)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>12</td>
+							  <td>100</td>
+							  <td>$q</td>
+							  <td>Fuller form of name</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>13</td>
+							  <td>130</td>
+							  <td>$a</td>
+							  <td>Uniform title</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>14</td>
+							  <td>130</td>
+							  <td>$f</td>
+							  <td>Date of work</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>15</td>
+							  <td>130</td>
+							  <td>$l</td>
+							  <td>Language of a work</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>16</td>
+							  <td>130</td>
+							  <td>$p</td>
+							  <td>Name of part/section of a work (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>17</td>
+							  <td>130</td>
+							  <td>$s</td>
+							  <td>Version</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>18</td>
+							  <td>240</td>
+							  <td>$a</td>
+							  <td>Uniform title</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>19</td>
+							  <td>240</td>
+							  <td>$f</td>
+							  <td>Date of work</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>20</td>
+							  <td>240</td>
+							  <td>$l</td>
+							  <td>Language of a work</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>21</td>
+							  <td>245</td>
+							  <td>$a</td>
+							  <td>The title proper</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>22</td>
+							  <td>245</td>
+							  <td>$b</td>
+							  <td>Remainder of title (subtitles, etc.)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>23</td>
+							  <td>245</td>
+							  <td>$c</td>
+							  <td>Remainder of title page transcription/Statement of responsibility</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>24</td>
+							  <td>245</td>
+							  <td>$h</td>
+							  <td>Medium</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>25</td>
+							  <td>245</td>
+							  <td>$p</td>
+							  <td>Name of part/section of a work (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>26</td>
+							  <td>246</td>
+							  <td>$a</td>
+							  <td>Title proper</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>27</td>
+							  <td>250</td>
+							  <td>$a</td>
+							  <td>Edition statement</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>28</td>
+							  <td>260</td>
+							  <td>$a</td>
+							  <td>Place of publication, distribution, etc. (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>29</td>
+							  <td>260</td>
+							  <td>$b</td>
+							  <td>Name of publisher, distributor, etc. (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>30</td>
+							  <td>260</td>
+							  <td>$c</td>
+							  <td>Date of publication, distribution, etc. (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>31</td>
+							  <td>300</td>
+							  <td>$a</td>
+							  <td>Extent (number of pages) (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>32</td>
+							  <td>300</td>
+							  <td>$b</td>
+							  <td>Other physical details (usually illustration information)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>33</td>
+							  <td>300</td>
+							  <td>$c</td>
+							  <td>Dimensions (cm.) (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>34</td>
+							  <td>300</td>
+							  <td>$e</td>
+							  <td>Accompanying material</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>35</td>
+							  <td>440</td>
+							  <td>$a</td>
+							  <td>Title</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>36</td>
+							  <td>440</td>
+							  <td>$v</td>
+							  <td>Volume number</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>37</td>
+							  <td>490</td>
+							  <td>$a</td>
+							  <td>Series statement (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>38</td>
+							  <td>490</td>
+							  <td>$v</td>
+							  <td>Volume number (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>39</td>
+							  <td>500</td>
+							  <td>$a</td>
+							  <td>General note</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>40</td>
+							  <td>504</td>
+							  <td>$a</td>
+							  <td>Bibliography, etc. note</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>41</td>
+							  <td>505</td>
+							  <td>$a</td>
+							  <td>Formatted contents note</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>42</td>
+							  <td>520</td>
+							  <td>$a</td>
+							  <td>Summary, abstract, or annotation</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>43</td>
+							  <td>520</td>
+							  <td>$b</td>
+							  <td>Expansion of summary note</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>44</td>
+							  <td>600</td>
+							  <td>$2</td>
+							  <td>Source of heading or term</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>45</td>
+							  <td>600</td>
+							  <td>$a</td>
+							  <td>Personal name (Surname and Forename)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>46</td>
+							  <td>600</td>
+							  <td>$b</td>
+							  <td>Numeration</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>47</td>
+							  <td>600</td>
+							  <td>$c</td>
+							  <td>Titles and other words associated with a name (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>48</td>
+							  <td>600</td>
+							  <td>$d</td>
+							  <td>Dates associated with a name(generally, year of birth)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>49</td>
+							  <td>600</td>
+							  <td>$q</td>
+							  <td>Fuller from of a name</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>50</td>
+							  <td>600</td>
+							  <td>$t</td>
+							  <td>Title of a work</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>51</td>
+							  <td>600</td>
+							  <td>$v</td>
+							  <td>Form subdivision (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>52</td>
+							  <td>600</td>
+							  <td>$x</td>
+							  <td>General subdivision) (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>53</td>
+							  <td>600</td>
+							  <td>$y</td>
+							  <td>Chronological subdivision (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>54</td>
+							  <td>600</td>
+							  <td>$z</td>
+							  <td>Geograhic subdivision (R)</td>
+							  <td></td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>55</td>
+							  <td>245</td>
+							  <td>a</td>
+							  <td>Title Statement</td>
+							  <td>Fld_Title</td>
+							  <td>Understanding medical physiology: a textbook for medical students</td>
+							</tr>
+														<tr>
+							  <td>56</td>
+							  <td>245b</td>
+							  <td>b</td>
+							  <td>Sub Title*</td>
+							  <td>Fld_Sub_Title</td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>57</td>
+							  <td>100</td>
+							  <td>a</td>
+							  <td>Personal name</td>
+							  <td>fld_author</td>
+							  <td>Bijlani, R. L.</td>
+							</tr>
+														<tr>
+							  <td>58</td>
+							  <td>250</td>
+							  <td>a</td>
+							  <td>Edition Statement</td>
+							  <td>Fld_Cat_Edition</td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>59</td>
+							  <td>440v</td>
+							  <td>v</td>
+							  <td>Volume*</td>
+							  <td>Fld_Volume</td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>60</td>
+							  <td>440</td>
+							  <td>a</td>
+							  <td>Series</td>
+							  <td>Fld_series</td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>61</td>
+							  <td>546</td>
+							  <td>a</td>
+							  <td>Language</td>
+							  <td>Fld_Language</td>
+							  <td>English</td>
+							</tr>
+														<tr>
+							  <td>62</td>
+							  <td>20</td>
+							  <td>a</td>
+							  <td>ISBN</td>
+							  <td>Fld_ISBN_No</td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>63</td>
+							  <td>650</td>
+							  <td>a</td>
+							  <td>Subject</td>
+							  <td>Fld_Subject_Code</td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>64</td>
+							  <td>082</td>
+							  <td>a</td>
+							  <td>Class No*</td>
+							  <td>Fld_Class_No</td>
+							  <td>612</td>
+							</tr>
+														<tr>
+							  <td>65</td>
+							  <td>264</td>
+							  <td>a</td>
+							  <td>Publisher</td>
+							  <td>Fld_Publisher_Code</td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>66</td>
+							  <td>260</td>
+							  <td>a</td>
+							  <td>Pub. Place</td>
+							  <td>Fld_Published_Place</td>
+							  <td>New Delhi</td>
+							</tr>
+														<tr>
+							  <td>67</td>
+							  <td>263</td>
+							  <td>a</td>
+							  <td>Year</td>
+							  <td>Fld_Published_Year</td>
+							  <td>2004</td>
+							</tr>
+														<tr>
+							  <td>68</td>
+							  <td>520</td>
+							  <td>a</td>
+							  <td>Abstract</td>
+							  <td>Fld_Abstract</td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>69</td>
+							  <td>942</td>
+							  <td>a</td>
+							  <td>Item Type</td>
+							  <td>Fld_NB_Type_Code</td>
+							  <td></td>
+							</tr>
+														<tr>
+							  <td>70</td>
+							  <td>700</td>
+							  <td>a</td>
+							  <td>Additional Authors</td>
+							  <td>fld_second_author</td>
+							  <td></td>
+							</tr>
+													</tbody>
+					</table>
+					</div>
+					<div id="comments" aria-labelledby="ui-id-3" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-expanded="false" aria-hidden="true" style="display: none;">
+						<div id="newcomment"></div>
+						There are no commemnts for this item. Please If You have Read Then Please Add Comments.....						
+						<div class="afterLoginDiv">
+							
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Trying to access array offset on value of type null</p>
+<p>Filename: Opac/BookDetailsView.php</p>
+<p>Line Number: 891</p>
+
+
+</div>
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Trying to access array offset on value of type null</p>
+<p>Filename: Opac/BookDetailsView.php</p>
+<p>Line Number: 893</p>
+
+
+</div>								<a style="color:#0076B2;" class="afterLogin" href="https://sdmmc.easylib.net/index.php/CatCommentController/catComment?title=Understanding medical physiology: a textbook for medical students&titleNo=000234&username=" style="">Add A Comment</a>
+															<a style="color:#0076B2;" class="afterLogin" href="https://sdmmc.easylib.net/index.php/LoginController/logout" >Logout</a>
+						</div>
+							<!--<p>There are no comments for this item.</p>
+							<div id="addcomment"><a href="/cgi-bin/koha/opac-user.pl">Log in to your account</a> to post a comment.</div> -->   
+					</div> <!-- / #comments -->
+					<div class="sharethis-inline-share-buttons" style="margin-top: -30px;"></div>	
+                </div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<div id="FarwordModal" title="Forward OPAC Search Result" class="dialog" style="display: none;">
+	<div class="form-group">
+      <label for="email">Email:</label>
+      [form state omitted]
+    </div>
+    <button type="submit" class="btn btn-success" id="sendOpac">Send</button>
+    <button type="submit" class="btn btn-default" id="clearOpac">Clear</button>
+</div>
+
+[script omitted]
+[script omitted]
+<style type="text/css">
+footer{
+	background: #333 url(https://sdmmc.easylib.net/assets/img/pattern.png) repeat 0 0;
+	//padding: 10px 0 10px 0;
+}
+
+footer h4{
+	color:white;
+	font-size: 16px;
+}
+footer a{
+	color:white;
+	font-size: 16px;
+
+}
+footer p{
+	color:white;
+}
+footer span{
+	color:white
+}
+.footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
+}
+
+.versionDiv{
+	margin-top:100px;
+	font-size: 16px;
+}
+
+#version{
+	float:right;
+}
+
+.copyright{
+	margin-bottom: 100px;	
+}
+#libPol{
+	margin-top:8px;	
+}
+#libTeam{
+	margin-top:8px;
+}
+
+</style>
+<footer>
+	<div class="container">
+		<div class="row">
+				<div class="col-md-3" id='libPol'>
+				<!-- <a  href="https://sdmmc.easylib.net/index.php/OpacController/libraryPolicies"> Policies</a><br/><br/> -->
+				<!-- <a  href="http://bhadra2.easylib.net/?page_id=200" target="blank"> Policies</a><br/>
+				<a  href="http://bhadra2.easylib.net/?page_id=1893" target="blank"> Pricing</a><br/>
+				<a  href="http://bhadra2.easylib.net/?page_id=8" target="blank"> Contact US</a><br/> -->
+				<a  href="https://sdmmc.easylib.net/index.php/newfooterController/newlibraryaboutus" target="blank">About us</a><br/>
+					<a  href="https://sdmmc.easylib.net/index.php/newfooterController/newlibrarytermsandcondition" target="blank">Terms of service</a><br/>
+				<a  href="https://sdmmc.easylib.net/index.php/newfooterController/newlibraryprivacypolicy" target="blank">Privacy Statement</a><br/>
+				<a  href="https://sdmmc.easylib.net/index.php/newfooterController/newfLibraryPolicies" target="blank"> Refund Policy</a><br/>
+
+				<a  href="https://sdmmc.easylib.net/index.php/newfooterController/newfLibrarycontact" target="blank">Contact US</a><br/>
+					<a  href="https://sdmmc.easylib.net/index.php/newfooterController/newlibrarypricing" target="blank">Products and Pricing</a><br/>
+				<a href="http://easylib.net" class="copyright">© Easylib Software Pvt Ltd</a>
+			
+			</div>
+			<div class="col-md-3">
+							<h4>Contact Info</h4>
+				<a>08362477565	</a>
+				<a>08362477565</a><br/>
+				<a href="mailto:userdata('collegeinfo')['Fld_Email']" id="email_footer">[email omitted]</a>
+						<br>
+			<a class="versionDiv" title="Click here to get version information">
+								</div>
+
+			<div class="col-md-3" id='libTeam'>
+				<a href="https://sdmmc.easylib.net/index.php/OpacController/LibraryTeams">Team</a>
+				<br/><br/>
+				<a href="https://sdmmc.easylib.net/index.php"><img src="https://sdmmc.easylib.net/assets/img/positivessl.png" alt="Logo" data-retina="true" class="logo_normal"></a>
+			</div>
+			<div class="col-md-3">
+				<h4>Need Software Help?</h4>
+				<a href="tel://98440-81710" id="phone">+919844081710</a><br/>
+				<a href="mailto:[email omitted]" id="email_footer">[email omitted]</a></div>
+					<!-- <a  href="https://sdmmc.easylib.net/index.php/Bnmitcodecontroller/index">BNMIT</a>  -->
+			</div>
+		</div>
+
+	</div><!-- End container -->
+</footer><!-- End footer -->
+[script omitted]
+

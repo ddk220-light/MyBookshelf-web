@@ -15,9 +15,18 @@
     "build": "npm run build --workspace=client",
     "typecheck:client": "npm run typecheck --workspace=client",
     "test:client": "npm test --workspace=client",
+    "test:library-connectors": "node --test tools/library-audit/*.test.mjs",
+    "library:audit": "node tools/library-audit/cli.mjs",
     "test:e2e": "npm run test:e2e --workspace=client",
     "start": "node server/index.js",
-    "test:seo": "node --test tools/seo/*.test.mjs"
+    "test:seo": "node --test tools/seo/*.test.mjs",
+    "library:triage": "node tools/library-triage/cli.mjs",
+    "test:library-triage": "node tools/library-triage/audit.test.mjs && node tools/library-triage/structured.test.mjs && node tools/library-triage/supervisor.test.mjs && node tools/library-triage/evidence.test.mjs && node tools/library-triage/egranthalaya-batch.test.mjs && node tools/library-triage/checkpoint-recovery.test.mjs",
+    "library:data": "python3 tools/library-data/library_data.py",
+    "test:library-data": "python3 -m unittest discover -s tools/library-data -p 'test_*.py' && node --test server/services/library-registry.test.js tools/library-data/web/review.test.mjs",
+    "library:registry": "python3 tools/library-data/library_data.py prepare",
+    "library:review": "python3 tools/library-data/review.py",
+    "library:registry:compare": "node tools/library-data/compare-registry.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

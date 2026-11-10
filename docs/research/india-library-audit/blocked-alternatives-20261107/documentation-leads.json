@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "2026-11-07",
+  "verificationScope": "Official documentation and indexed public institutional pages; no live catalog/API queries against the blocked cohort",
+  "verifiedAlternativeApis": 0,
+  "findings": [
+    {
+      "id": "rayat-official-webopac",
+      "origin": "https://opac.rayatlibrarynetwork.org",
+      "affectedEntries": 43,
+      "sourceUrl": "https://www.csc.ac.in/facilities/library/union-catalogue",
+      "retrieval": "official institutional page opened through connected web search",
+      "finding": "The member college publishes a union-catalog entry point and describes title, author, ISBN and subject searches across Rayat colleges.",
+      "capability": "Published user-facing catalog handoff",
+      "unsupportedClaim": "This documentation does not establish an enabled public machine-search endpoint or permission to use the robots-restricted route.",
+      "nextAction": "Retain branch-scoped user links; look for a provider-published SRU target or explicitly available metadata service. No endpoint guessing or port probing."
+    },
+    {
+      "id": "mes-public-catalog-lead",
+      "origin": "https://library.mes.ac.in",
+      "affectedEntries": 29,
+      "sourceUrl": "https://library.mes.ac.in/",
+      "retrieval": "Search-index observation only; the restricted search route was not fetched",
+      "finding": "The indexed institutional catalog advertises search across the Pillai/MES libraries.",
+      "capability": "User-facing catalog discovery",
+      "unsupportedClaim": "A public query API was not verified in this documentation pass.",
+      "nextAction": "Retain member-scoped links and review provider documentation for an enabled public machine interface."
+    },
+    {
+      "id": "somaiya-published-catalog-entry",
+      "origin": "https://koha-opac.somaiya.edu",
+      "affectedEntries": 28,
+      "sourceUrl": "https://sksasc.somaiya.edu.in/en/library/",
+      "retrieval": "Official institutional library page opened through connected web search",
+      "finding": "The institution publishes https://opac.somaiya.edu/ as a union-catalog entry point and separately references its My Account portal.",
+      "capability": "Advertised alternate user-facing entry point",
+      "unsupportedClaim": "An alternate hostname is not evidence of permitted automated access, native-result parity, or an anonymous API. Historical Bookworm/member-login documentation must not be treated as current verification.",
+      "nextAction": "Review current published access and integration documentation before a governed canary; preserve exact institution filters."
+    },
+    {
+      "id": "koha-protocol-capabilities",
+      "affectedEntries": 85,
+      "sourceUrl": "https://koha-community.org/manual/21.05/en/html/webservices.html",
+      "retrieval": "Official software documentation opened through connected web search",
+      "finding": "Koha supports SRU, configurable OAI-PMH, public reports and REST services. These are software capabilities, not evidence that a specific library has published or enabled them.",
+      "candidates": [
+        {"mode":"SRU","requestShape":"GET {provider_published_sru_endpoint}?operation=searchRetrieve&version=1.1&query={provider_supported_cql}&maximumRecords=20&startRecord=1","requirements":"A published target, permitted use, supported query indexes, record IDs, and institution/branch holdings scope."},
+        {"mode":"OAI-PMH","requestShape":"GET {provider_published_oai_endpoint}?verb=Identify; then ListMetadataFormats/ListSets and permitted ListRecords requests","requirements":"Provider enablement and reuse conditions; versioned local metadata import; holdings may be absent by default. This is harvested metadata, not live native website search."},
+        {"mode":"public report","requestShape":"GET {provider_published_public_report_url}","requirements":"The operator must have published the report and its supported parameters. Do not guess report IDs."}
+      ],
+      "unsupportedClaim":"Generic Koha documentation does not qualify any of the 85 library entries. RSS through the same disallowed search path is not a separate permitted route."
+    },
+    {
+      "id": "koha-public-rest-limit",
+      "sourceUrl": "https://api.koha-community.org/",
+      "retrieval": "Official API documentation surfaced in connected web search",
+      "finding": "The public API documents individual bibliographic records and their items, for example /api/v1/public/biblios/{biblio_id} and /api/v1/public/biblios/{biblio_id}/items.",
+      "unsupportedClaim": "A known-ID lookup does not establish public keyword catalog search. Do not invent a public list/search endpoint or substitute an authenticated staff API.",
+      "nextAction": "Verify a provider-published discovery method as well as item-level ownership before qualifying a search connector."
+    },
+    {
+      "id":"librarika-classification-review",
+      "origin":"https://bncollege.librarika.com",
+      "affectedEntries":1,
+      "sourceEvidence":"docs/research/india-library-audit/runs/india-20261107/bodies/636134fdd614fd07f0d1a9e60f36d5745a3bcd6dff340e37778ae93edcf8acd6.txt",
+      "finding":"The saved HTTP 200 page has the normal Catalog Search title and public controls. The original broad challenge detector stopped before demonstrating a refused search.",
+      "nextAction":"At a safe repair checkpoint, review the actual public form/client and detector, retain the old failure and make a governed query test. Stop if there is an actual access challenge.",
+      "capability":"Catalog landing-page handoff only until the supported form is verified."
+    },
+    {
+      "id":"carmel-library-documentation",
+      "origin":"https://opac.carmelcollegemala.ac.in",
+      "affectedEntries":1,
+      "sourceUrl":"https://carmelcollegemala.ac.in/library/",
+      "retrieval":"Official institutional page in connected search results",
+      "finding":"The page describes Koha and also a DSpace repository.",
+      "unsupportedClaim":"A repository is a different collection; it does not establish access to the full physical-library catalog or enablement of Koha APIs.",
+      "nextAction":"Review separately published machine-access documentation; preserve the catalog handoff."
+    },
+    {
+      "id":"japan-foundation-official-opac",
+      "origin":"https://lib.nd.jpf.go.jp",
+      "affectedEntries":1,
+      "sourceUrl":"https://nd.jpf.go.jp/library/web-opac/",
+      "retrieval":"Official institutional page in connected search results",
+      "finding":"The institution advertises a Web OPAC. Other named digital collections are separate resources.",
+      "unsupportedClaim":"No alternative query API for the New Delhi physical collection was verified.",
+      "nextAction":"Keep the user-facing query link; investigate published machine metadata services without conflating digital-resource collections with local holdings."
+    },
+    {
+      "id":"nattika-migration-lead",
+      "origin":"https://sncopac.kohasupport.in",
+      "affectedEntries":1,
+      "sourceUrl":"https://www.sncollegenattika.ac.in/Library",
+      "retrieval":"Official institutional page in connected search results",
+      "finding":"Current institutional material names Koha while older material describes Libsoft and a digital portal at sncndigital.libsoft.org.",
+      "unsupportedClaim":"An old Libsoft portal may be stale or cover separate digital resources; it is not a proven replacement for current physical holdings.",
+      "nextAction":"Review migration/current scope and any published export; do not silently substitute the older portal."
+    }
+  ],
+  "otherHostReview": {
+    "origins": ["https://library.arunachaluniversity.ac.in","https://egyankosh.cvmu.edu.in","https://opacdhemaji.dietlibrary.in","https://sttc.bestbookbuddies.com","https://library.iiserbpr.ac.in","https://library.klh.edu.in","https://opac.iitdh.ac.in","https://opac.nitc.ac.in","https://catalog.otsnagaland.edu.in"],
+    "finding":"Targeted documentation searches did not establish a publicly enabled alternative query API in this pass. This is an open research finding, not a claim that no API exists.",
+    "nextAction":"Investigate provider-published SRU/export/public-report documentation and applicable reuse/access conditions. User-facing catalog links remain separate from verified returned results."
+  },
+  "liveCanaryPrerequisites": ["No other active collector owns provider coordination","A documented permitted interface and exact public request shape","No credentials, account creation, paid service or outreach","Native IDs, book type, institution/branch scope, relevance, pagination and negative observations retained","A link-only fallback never counts as an in-app query result or twenty-book pass"]
+}

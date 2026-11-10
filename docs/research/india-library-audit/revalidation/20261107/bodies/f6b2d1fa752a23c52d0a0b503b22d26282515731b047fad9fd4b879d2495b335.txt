@@ -1,0 +1,68 @@
+# robots.txt — Sindhi Sanchaya Digital Archive
+# https://sindhisanchaya.online
+#
+# Before this file existed there was no crawl guidance at all, and no sitemap.
+# Crawlers were free to walk the entire query-string space of /books — every
+# ?q=, every ?field=, every ?page= combination. On a 41,460-record catalogue
+# that is effectively an infinite surface, and it is a large part of why so
+# little of the actual archive reached the index.
+#
+# ---------------------------------------------------------------------------
+# A NOTE ON WHY SOME THIN PAGES ARE *NOT* LISTED HERE
+#
+# Disallow and noindex do not stack — they cancel out. A page blocked in
+# robots.txt is never fetched, so Google never sees its <meta name="robots">
+# and the URL can linger in the index as a bare, description-less entry.
+#
+# So each thin page gets exactly one mechanism:
+#   /shelf, /reader     -> meta noindex,follow  (set in shelf.php / reader.php)
+#   /books?q=...        -> meta noindex,follow  (set in books.php)
+#   /search.php, /api/  -> Disallow here        (JSON, never renders HTML)
+#
+# "follow" matters: those pages link to real book records, and we still want
+# those links crawled.
+# ---------------------------------------------------------------------------
+
+User-agent: *
+
+# --- Blocked: endpoints that return data, not documents --------------------
+
+Disallow: /search.php
+Disallow: /api/
+Disallow: /data/
+
+# --- Everything else is crawlable ------------------------------------------
+# Assets in particular must stay open: Google renders each page to judge
+# layout and mobile-friendliness, and a blocked stylesheet makes it score a
+# visually broken page.
+
+Allow: /
+
+# --- Crawl pacing ----------------------------------------------------------
+# Googlebot ignores Crawl-delay (use Search Console's crawl rate setting
+# instead), but the smaller crawlers that hammer shared hosting do respect it.
+# This is the same pressure that has been turning MySQL connection limits into
+# 5xx responses.
+
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Crawl-delay: 10
+
+User-agent: DotBot
+Crawl-delay: 10
+
+# --- AI / LLM crawlers -----------------------------------------------------
+# The catalogue is CC BY-SA 4.0 and the project exists to make an under-served
+# literature more visible, so these are left open deliberately.
+# To opt out later, uncomment:
+#   User-agent: GPTBot
+#   Disallow: /
+
+# --- Sitemaps --------------------------------------------------------------
+
+Sitemap: https://sindhisanchaya.online/sitemap.xml

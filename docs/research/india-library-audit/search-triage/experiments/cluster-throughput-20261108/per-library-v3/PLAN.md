@@ -1,0 +1,11 @@
+# Final owner protocol: fifty first, step down if needed
+
+The owner explicitly rejected ascending 1/2/5/10 tests and artificial per-second start limits. The earlier paced reference was stopped safely after preserving 171 unique correct observations (verify actual counts from its journal); operator-aborted requests are not source failures. v1 cross-library outcomes remain excluded. Main audit and hourly watcher stay paused.
+
+Use one Node process and event loop. For the first JNV2 library, fetch one initial form/session, then launch all fifty distinct Title searches together with no artificial start gap. Existing robots/crawl delays, refusals and origin controls still apply. A fifty-request ceiling bounds this one-off experiment; do not test 100. Keep a per-request 45-second transport deadline and bounded HTML. Save all failures and actual peak concurrent requests.
+
+Compare all fifty first-library results with saved reference IDs/titles/totals and verify selected member/query. Every response must retain the same library's session, and every returned title must match its literal Title/LIKE term. Empty recognized searches are valid empty responses, not library failures. If the batch completes correctly, continue the other four libraries sequentially, fetching a separate session for each and reusing it only for that member's fifty concurrent queries. This is 250 distinct pairs, not 250 books or new audited IDs.
+
+If the fifty batch is incomplete for a non-access reason, let requests settle for thirty seconds, initialize a fresh same-library session, then try the same fifty queries with at most twenty-five in flight. Preserve both attempts. Stop rather than bypass genuine access/rate refusals; no blind repeated retries. If both fifty and twenty-five fail, report that boundary rather than continuing an invalid audit.
+
+Known reference pairs across other members receive exact set/count comparison; remaining pairs receive source member/query/relevance validation, explicitly not an independent serial comparison. Report actual wall time including setup, per-library completion time, latency and simultaneous requests; no absolute maximum-capacity claim. Report the previous artificial-rate test separately. Publish the experiment and redesign plan; leave the main audit and its watcher paused.

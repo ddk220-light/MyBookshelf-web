@@ -1,0 +1,761 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Library</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+    <link href="https://www.srms.ac.in/wp-content/uploads/2019/01/favicon.png" rel="icon" type="image/x-icon">
+
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="../assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="../assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="../assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="../assets/css/style.css" rel="stylesheet">
+[script omitted]
+  <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Updated: Mar 09 2023 with Bootstrap v5.2.3
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center" style="background-color:#AED6F1;font-weight:bold;color:black ; border-bottom: 4px solid #2980B9;">
+
+ 
+      
+        
+      <div class="col-sm-1">
+
+           <a href="#" class="logo d-flex align-items-center">
+     <img src="/Library/Content/themes/base/images/srms-logo1.png" alt="" style="max-height: 50%;"/>
+      </a>
+
+
+
+      </div>
+       <div class="col-sm-11">
+
+        <div class="d-flex justify-content-center" style="font-size:inherit">  OPAC (Online Public Access Catalog)</div>
+              </div> 
+     
+     
+
+  </header><!-- End Header -->
+
+
+  
+     <main >
+  
+                
+             
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css" />
+
+<style>    
+   
+
+    .table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border: 1px solid #ddd;
+    }
+
+    #loader
+    {
+        position: fixed;
+        z-index: 999;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background-color: Black;
+        filter: alpha(opacity=60);
+        opacity: 0.6;
+        -moz-opacity: 0.8;
+    }
+    .center
+    {
+        z-index: 1000;
+        margin: 300px auto;
+        padding: 10px;
+        width: 130px;
+        background-color: White;
+        border-radius: 10px;
+        filter: alpha(opacity=100);
+        opacity: 1;
+        -moz-opacity: 1;
+    }
+    .center img
+    {
+        height: 128px;
+        width: 100px;
+    }
+
+    /*#spinner {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 2;
+}*/
+
+      /*.spinner-border {
+    --bs-spinner-width: 11rem;
+    --bs-spinner-height: 11rem;
+    --bs-spinner-vertical-align: -0.125em;
+    --bs-spinner-border-width: 0.25em;
+    --bs-spinner-animation-speed: 0.75s;
+    --bs-spinner-animation-name: spinner-border;
+    border: var(--bs-spinner-border-width) solid currentcolor;
+    border-right-color: transparent;
+    margin-top: 18%;
+}*/
+
+    /*#sec {
+      
+  /*position: fixed;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  height:100%;
+  display: none;
+  background: rgba(0,0,0,0.6);*/
+   /*opacity: 0.4;
+    }*/
+
+</style>
+
+
+
+
+
+    <div class="pagetitle" style="margin-top:4rem;">
+  
+    </div><!-- End Page Title -->
+
+
+
+
+<div class="modal" id="loader" style="display: none">
+         
+    <div class="center">
+
+        <img alt="" src="../Images/loader.gif" />
+    </div>
+</div>
+
+    <section class="section" id="sec">
+
+
+
+
+        
+        <div class="d-flex justify-content-center" %" >            
+              <div class="spinner-grow" style="width: 50px; height: 50px; margin-top:20% ; display:none" role="status" >
+                <span class="visually-hidden">Loading...</span>
+              </div>
+        </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+              
+                 <br />
+               
+                <div class="card-body">                 
+                    <form class="row g-3">
+                        <div class="col-md-6">
+                            <label for="txtcolg" class="form-label">Select College</label>
+                            <select id="txtcolg" class="form-select" style="font-size:14px; font-weight:bold" onchange="clear();"></select>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <label for="txtsearch" class="form-label">Search Book</label>
+                            <input type="text" placeholder="Search" title="Search Book" id="txtsearch" class="form-control" autocomplete="off" style="font-size:0.80rem;">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="txtsearch" class="form-label" style="visibility: hidden;">Book</label><br />
+                          <button type="button" class="btn btn-primary" onclick="search()" style="float:right;width:100% ; height:2.3rem; font-weight:bold"><i class="bi bi-search me-1"></i>Search</button>
+                          
+                        </div>
+                  </form>
+
+            </div>
+               </div>
+            <div class="card"  style="border-top: 4px solid #2980B9;">
+               <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" style="padding: 5px;background-color:#AED6F1; border-bottom: 4px solid #2980B9; display:none">
+                <li class="nav-item" role="presentation" >
+                  <button class="nav-link active" id="booksfound_btn" data-bs-toggle="pill" data-bs-target="#booksfoundtab" type="button" role="tab" aria-controls="booksfoundtab" aria-selected="true">Books Found</button>
+                </li>
+                <li class="nav-item" role="presentation" style="display:none;">
+                  <button class="nav-link" id="step1_btn" data-bs-toggle="pill" data-bs-target="#step1tab" type="button" role="tab" aria-controls="step1tab" aria-selected="false">Step1</button>
+                </li>
+                <li class="nav-item" role="presentation" style="display:none;">
+                  <button class="nav-link" id="step2_btn" data-bs-toggle="pill" data-bs-target="#step2tab" type="button" role="tab" aria-controls="step2tab" aria-selected="false">Step2</button>
+                </li>
+              </ul>
+           
+             <div class="card-body">
+
+              <div class="tab-content pt-2" id="myTabContent">            
+                   <div class="tab-pane fade show active" id="booksfoundtab" role="tabpanel" aria-labelledby="booksfound_btn">              
+               <div class="row g-12">
+                   <div class="form-check col-md-3">
+                      <input class="form-check-input" type="radio" name="radio" id="ALL" value="ALL" checked onclick="getsearchfilterValue()">
+                      <label class="form-check-label" for="ALL">
+                        ALL
+                      </label>
+                       </div>
+                   <div class="form-check col-md-2">
+                        <input class="form-check-input" type="radio" name="radio" id="Publisher" value="Publisher" onclick="getsearchfilterValue()">
+                      <label class="form-check-label" for="Publisher">
+                        Publisher
+                      </label>
+                    </div>
+                     <div class="form-check col-md-2">
+                      <input class="form-check-input" type="radio" name="radio" id="ISBN" value="ISBN" onclick="getsearchfilterValue()">
+                      <label class="form-check-label" for="ISBN">
+                        ISBN
+                      </label>
+                    </div>
+                   <div class="form-check col-md-2">
+                      <input class="form-check-input" type="radio" name="radio" id="Series" value="Series" onclick="getsearchfilterValue()">
+                      <label class="form-check-label" for="Series">
+                        Series
+                      </label>
+                    </div>
+                   <div class="form-check col-md-3">
+                      <input class="form-check-input" type="radio" name="radio" id="Accession_No" value="Accession_No" onclick="getsearchfilterValue()">
+                      <label class="form-check-label" for="Accession_No">
+                        Accession No.
+                      </label>
+                    </div>
+
+                   </div>
+                        <div class="row g-12">
+                   <div class="form-check col-md-3">
+                      <input class="form-check-input" type="radio" name="radio" id="Author" value="Author" onclick="getsearchfilterValue()">
+                      <label class="form-check-label" for="Author">
+                        Author
+                      </label>
+                    </div>
+                   <div class="form-check col-md-2">
+                      <input class="form-check-input" type="radio" name="radio" id="Subject" value="Subject" onclick="getsearchfilterValue()">
+                      <label class="form-check-label" for="Subject">
+                        Subject
+                      </label>
+                    </div>
+                    <div class="form-check col-md-2">
+                      <input class="form-check-input" type="radio" name="radio" id="Title" value="Title" onclick="getsearchfilterValue()">
+                      <label class="form-check-label" for="Title">
+                        Title
+                      </label>
+                    </div>
+                    <div class="form-check col-md-2">
+                      <input class="form-check-input" type="radio" name="radio" id="Topic" value="Topic" onclick="getsearchfilterValue()">
+                      <label class="form-check-label" for="Topic">
+                        Topic
+                      </label>
+                    </div>
+                    <div class="form-check col-md-3">
+                      <input class="form-check-input" type="radio" name="radio" id="Call_No" value="Call_No" onclick="getsearchfilterValue()">
+                      <label class="form-check-label" for="Call_No">
+                        Call No.
+                      </label>
+                    </div>
+            </div><!-- End No Labels Form -->
+                       
+  <hr style="border-bottom: 4px solid #21618C ;"/>
+ <div class="table-responsive">        
+    
+              <table class="table table-bordered" id="booksfoundtbl">
+                <thead>
+                  <tr>
+                    <th>S.no</th>
+                    <th>Attribute</th>
+                    <th>Description</th>
+                    <th>Written By</th>
+                   
+                  </tr>
+                </thead>
+                <tbody id="booksfoundtbody"></tbody>
+              </table>
+     </div>
+  </div>
+
+
+             
+                  <div class="tab-pane fade" id="step1tab" role="tabpanel" aria-labelledby="step1_btn" style="display:none;">
+                  Nesciunt totam et. Consequuntur magnam aliquid eos nulla dolor iure eos quia. Accusantium distinctio omnis et atque fugiat. Itaque doloremque aliquid sint quasi quia distinctio similique. Voluptate nihil recusandae mollitia dolores. Ut laboriosam voluptatum dicta.
+                </div>
+                <div class="tab-pane fade" id="step2tab" role="tabpanel" aria-labelledby="step2_btn" style="display:none;">
+                  Saepe animi et soluta ad odit soluta sunt. Nihil quos omnis animi debitis cumque. Accusantium quibusdam perspiciatis qui qui omnis magnam. Officiis accusamus impedit molestias nostrum veniam. Qui amet ipsum iure. Dignissimos fuga tempore dolor.
+                </div>
+              </div><!-- End Pills Tabs -->
+
+            </div><!-- End card body tab -->
+        </div><!--  card tab -->
+
+          
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+ <!-- Extra Large Modal -----------------------------------------------------------------------------------------------------------------------------      -->
+           
+
+              <div class="modal fade"  id="bookdtl_callnoModal" tabindex="-1" data-bs-backdrop="false" >
+               
+                      <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                  <div class="modal-content">
+            
+                    <div class="modal-body">
+                     
+   <div class="card">
+          <div class="card-header" style="background-color:#AED6F1;font-weight:bold;color:black ; border-bottom: 4px solid #2980B9;">Book Selected
+            <i class="bi bi-exclamation-triangle"  data-bs-dismiss="modal" style="float:right ; font-weight:bold;font-size:larger" id="closemodal"></i>
+             
+          </div><br />
+            <div class="card-body">
+          
+
+                 <div class="table-responsive">           
+              <table class="table table-bordered" id="tabledescmodal">
+                <thead>
+                  <tr>
+                       <th scope="col">Book Title</th>
+                      <td colspan="3"> <span id="txtbooktitle" class="bookselected"></span></td>
+                </tr>
+                  <tr >
+                    <th scope="col">Author Name</th>
+                      <td colspan="3"><span id="authortxtcard" class="bookselected"></span> </td>
+                  </tr>
+                 <tr>
+                    <th scope="col">Book Filtered On</th><td><span id="txtbookfilteron" class="bookselected"></span></td>
+                    <th scope="col">Total Book Found</th><td><span id="txttotalbookfound" class="bookselected"></span> </td>
+                  </tr>
+                   
+                </thead>
+                <tbody id="tbodydescmodal"></tbody>
+              </table>
+         </div>
+
+
+
+
+                <!-- End General Form Elements -->
+        </div>
+        <div class="card-body"><!-- Default Tabs -->
+             <ul class="nav nav-tabs d-flex" id="bookdtlModal" role="tablist" style="padding: 5px;background-color:#AED6F1; border-bottom: 4px solid #2980B9;">
+                <li class="nav-item flex-fill" role="presentation">
+                  <button class="nav-link w-100 active" id="modalstep1tab" data-bs-toggle="tab" data-bs-target="#modalstep1-justified" type="button" role="tab" aria-controls="modalstep1" aria-selected="true">Book Detail With Call No.</button>
+                </li>
+                <li class="nav-item flex-fill" role="presentation" style="display:none;">
+                  <button class="nav-link w-100" id="modalstep2tab" data-bs-toggle="tab" data-bs-target="#modalstep2-justified" type="button" role="tab" aria-controls="modalstep2" aria-selected="false" disabled="disabled" onclick="CopiesDtlTab_enable()">Book Detail</button>
+                </li>
+                <li class="nav-item flex-fill" role="presentation">
+                  <button class="nav-link w-100" id="modalstep3tab" data-bs-toggle="tab" data-bs-target="#modalstep3-justified" type="button" role="tab" aria-controls="modalstep3" aria-selected="false" >Copies Detail</button>
+                </li>
+                <li class="nav-item flex-fill" role="presentation">
+                  <button class="nav-link w-100" id="modalstep4tab" data-bs-toggle="tab" data-bs-target="#modalstep4-justified" type="button" role="tab" aria-controls="modalstep4" aria-selected="false">Issue Detail </button>
+                </li>
+              </ul>
+              <div class="tab-content pt-2" id="modal1Content">
+   <div class="tab-pane fade show active" id="modalstep1-justified" role="tabpanel" aria-labelledby="modalstep1tab">
+
+   <div class="card">
+   <div class="card-body">                                                          
+        
+          <div class="table-responsive">           
+              <table class="table table-bordered" id="modalstep1table">
+                <thead>
+                  <tr>
+                       <th scope="col">Select Book</th>
+                    <th scope="col">S.no</th>
+                    <th scope="col">Call No.</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Author Name</th>
+                  </tr>
+                </thead>
+                <tbody id="modalstep1Tbody"></tbody>
+              </table>
+         </div>
+   
+   </div><!-- End card body tab -->
+    
+
+           <div class="row align-items-top">
+        <div class="col-lg-6">                        
+            <div class="card">
+                <div class="card-body" id="step2form">                 
+                    <form class="row g-3">
+                         <div class="col-md-12">
+                            <label for="modalstep2title" class="form-label">Title</label>
+                               <input type="text"  id="modalstep2title" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="modalstep2author" class="form-label">Author</label>
+                               <input type="text"  id="modalstep2author1" class="form-control" autocomplete="off" readonly="true" ><br />
+                                <input type="text"  id="modalstep2author2" class="form-control" autocomplete="off" readonly="true" ><br/>
+                                <input type="text"  id="modalstep2author3" class="form-control" autocomplete="off" readonly="true" >
+                        </div>
+                         <div class="col-md-6">
+                            <label for="modalstep2Edition" class="form-label">Edition</label>
+                               <input type="text"  id="modalstep2Edition" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+
+                         <div class="col-md-6">
+                            <label for="modalstep2Publisher" class="form-label">Publisher</label>
+                               <input type="text"  id="modalstep2Publisher" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+
+                         <div class="col-md-12">
+                            <label for="modalstep2Topic" class="form-label">Topic</label>
+                               <input type="text"  id="modalstep2Topic" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+                       <div class="col-md-12">
+                            <label for="modalstep2_PhysicalDESC" class="form-label">Physical Description</label>
+                               <input type="text"  id="modalstep2_PhysicalDESC" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+                       
+                  </form>
+            </div>
+          </div>  <!-- card 1 close in step 2 modal --> 
+          </div>
+
+            <div class="col-lg-6"> 
+               <div class="card">             
+                <div class="card-body">                 
+                    <form class="row g-3" id="step2formm">
+                         <div class="col-md-12">
+                           
+                              <label for="modalstep2Available" class="form-label">Copies Available</label>&nbsp;&nbsp;&nbsp;<span id="txt_TotolAvailablecount"></span>&nbsp;Of&nbsp<span id="txt_Availablecount"></span>
+                               
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="modalstep2rackno" class="form-label">Rack No</label>
+                               <input type="text"  id="modalstep2rackno" class="form-control" autocomplete="off" readonly="true">                         
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modalstep2shelfno" class="form-label">Shelf No</label>
+                               <input type="text"  id="modalstep2shelfno" class="form-control" autocomplete="off" readonly="true">                         
+                        </div>
+                         
+                         <div class="col-md-12">
+                            <label for="modalstep2CntryOrigin" class="form-label">Country Of Origin</label>
+                               <input type="text"  id="modalstep2CntryOrigin" class="form-control" autocomplete="off" readonly="true">                         
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modalstep2CntryEditionyr" class="form-label">Edition Year</label>
+                               <input type="text"  id="modalstep2CntryEditionyr" class="form-control" autocomplete="off" readonly="true">                         
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modalstep2Controlno" class="form-label">Control No</label>
+                               <input type="text"  id="modalstep2Controlno" class="form-control" autocomplete="off" readonly="true">                         
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modalstep2ISBN" class="form-label">ISBN</label>
+                               <input type="text"  id="modalstep2ISBN" class="form-control" autocomplete="off" readonly="true">                         
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modalstep2Dept" class="form-label">Department</label>
+                               <input type="text"  id="modalstep2Dept" class="form-control" autocomplete="off" readonly="true">                         
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modalstep2Series" class="form-label">Series</label>
+                               <input type="text"  id="modalstep2Series" class="form-control" autocomplete="off" readonly="true">                         
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modalstep2Subject" class="form-label">Subjects</label>
+                               <input type="text"  id="modalstep2Subject" class="form-control" autocomplete="off" readonly="true">                         
+                        </div>
+                        <div class="col-md-12">
+                            <label for="modalstep2_Curr_area" class="form-label">Curriculum Area</label>
+                               <input type="text"  id="modalstep2_Curr_area" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+
+                  </form>
+            </div>
+          </div>  <!-- card 2 close in step 2 modal --> 
+            
+              
+            </div>
+             
+
+       </div>
+  </div>
+  </div> <!--step1tabclose-->
+             
+                  
+
+
+  <div class="tab-pane fade" id="modalstep3-justified" role="tabpanel" aria-labelledby="modalstep3tab">   <!--COPIES TAB -->                 
+       <div class="card">
+              <div class="card-body">                        
+          <div class="table-responsive">           
+              <table class="table table-bordered" id="modalCOPIESTABLE">
+                <thead>
+                  <tr>
+                     <th scope="col">Select Book</th>
+                    <th scope="col">S.no</th>
+                     <th scope="col">Availability</th>
+                    <th scope="col">Call No.</th>
+                    <th scope="col">Accession no.</th>
+                  </tr>
+                </thead>
+                <tbody id="modalCOPIESTABLETbody"></tbody>
+              </table>
+         </div>
+   
+   </div>
+ </div>
+
+      <div class="row align-items-top">
+        <div class="col-lg-6">
+
+        <div class="card">
+        <div class="card-body">                        
+          
+             <form class="row g-3" id="copiesform">
+                         <div class="col-md-6" style="display:none">
+                            <label for="totalcopies" class="form-label" >Total Copies</label>
+                               <input type="text"  id="totalcopies" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="Barcode" class="form-label">Accession No.</label>
+                               <input type="text"  id="Barcode" class="form-control" autocomplete="off" readonly="true" >                            
+                        </div>
+                         <div class="col-md-6">
+                            <label for="Accession_step3" class="form-label">Accession Date</label>
+                               <input type="text"  id="Accession_step3" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+
+                         <div class="col-md-6">
+                            <label for="loancategory" class="form-label">Loan Category</label>
+                               <input type="text"  id="loancategory" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+
+                         <div class="col-md-6">
+                            <label for="Copy_hash" class="form-label">Copy No.#</label>
+                               <input type="text"  id="Copy_hash" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="step3_Cost" class="form-label">Cost</label>
+                               <input type="text"  id="step3_Cost" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+                        <div class="col-md-12">
+                            <label for="Comments" class="form-label">Comments</label>
+                               <input type="text"  id="Comments" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+            
+                 
+                  
+
+                  </form>
+   
+   </div>
+ </div><!-- End step3  Card -->
+        </div>
+
+            <div class="col-lg-6">
+
+            <div class="card">
+            <div class="card-body">
+              <form class="row g-3" id="copiesform2">
+                    <div class="col-md-12">
+                            <label for="Suppliername" class="form-label">Supplier Name</label>
+                               <input type="text"  id="Suppliername" class="form-control" autocomplete="off" readonly="true" style="font-size:small">
+                        </div>
+                  <div class="col-md-4">
+                            <label for="copiesdtl_rackno" class="form-label">Rack No.</label>
+                               <input type="text"  id="copiesdtl_rackno" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+                  <div class="col-md-4">
+                            <label for="copiesdtl_shelfno" class="form-label">Shelf No.</label>
+                               <input type="text"  id="copiesdtl_shelfno" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+                  <div class="col-md-4">
+                            <label for="Volume" class="form-label">Volume</label>
+                               <input type="text"  id="Volume" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+                  <div class="col-md-6">
+                            <label for="copies_detail_Edition" class="form-label">Edition</label>
+                               <input type="text"  id="copies_detail_Edition" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+                  <div class="col-md-6">
+                            <label for="copies_dtlStatus" class="form-label">Status</label>
+                               <input type="text"  id="copies_dtlStatus" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+                  <div class="col-md-12" style="display:none;">
+                            <label for="copiesdtl_accessiondt" class="form-label" >Accession Date</label>
+                               <input type="text"  id="copiesdtl_accessiondt" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+
+                       <div class="col-md-12">
+                            <label for="Missing_disposed" class="form-label">Missing / Disposed</label>
+                               <input type="text"  id="Missing_disposed" class="form-control" autocomplete="off" readonly="true">
+                        </div>
+
+              </form>
+
+            </div>
+          </div><!-- End step3 Card -->
+        </div>
+
+
+    </div>
+
+
+        </div><!--tab 3  close -->
+
+  <div class="tab-pane fade" id="modalstep4-justified" role="tabpanel" aria-labelledby="modalstep4tab">   <!--ISSUE TAB -->
+
+       <div class="card">
+         <div class="card-body">                        
+          <div class="table-responsive">           
+              <table class="table table-bordered" id="modalISSUETABLE">
+                <thead>
+                  <tr>
+                     
+                    <th scope="col">S.no</th>
+                     <th scope="col">Accession No.</th>
+                    <th scope="col">Availability</th>
+                    <th scope="col">Borrower's Name</th>
+                   <th scope="col">Borrower's Department</th>
+                   <th scope="col">Due Date</th>
+                   <th scope="col">Reg No.</th>
+                  </tr>
+                </thead>
+                <tbody id="modalISSUETbody"></tbody>
+              </table>
+         </div>
+   
+   </div>
+ </div>
+</div> <!--tab 4 close -->
+
+
+
+  </div><!-- End Default Tabs -->
+
+
+
+
+ 
+
+            </div>
+          </div>
+     </div>
+
+                  
+
+                   
+                  </div>
+                </div>
+              </div><!-- End Extra Large Modal-->
+
+
+
+[script omitted]
+
+[script omitted]
+
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+
+
+
+[script omitted]
+
+ <style>
+     .bookselected , label,li , .trr, span
+     { font-weight:bold;
+     }
+
+    .bookselected {
+         color:red;
+     }
+     span { color:teal
+     }
+  
+     input[type="text"] , td , textarea , span , label{
+    font-size:14px;
+}
+
+  
+
+ 
+ </style>
+
+
+  </main><!-- End #main -->
+
+
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  [script omitted]
+  [script omitted]
+  [script omitted]
+  [script omitted]
+  [script omitted]
+  [script omitted]
+  [script omitted]
+  [script omitted]
+
+  <!-- Template Main JS File -->
+  [script omitted]
+     
+    
+
+    [script omitted]
+
+
+
+</body>
+
+</html>

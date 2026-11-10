@@ -26,7 +26,7 @@ test('only skips documentation-only commits since the last successful web deploy
   const docs = commit('docs/release.md', 'documentation change');
   const run = (previous, current) => spawnSync(process.execPath, [script], {
     cwd: join(directory, 'server'),
-    env: { ...process.env, VERCEL_GIT_PREVIOUS_SHA: previous, VERCEL_GIT_COMMIT_SHA: current },
+    env: { ...process.env, VERCEL_GIT_COMMIT_REF: 'main', VERCEL_GIT_PREVIOUS_SHA: previous, VERCEL_GIT_COMMIT_SHA: current },
     stdio: 'pipe',
   }).status;
 
@@ -41,4 +41,23 @@ test('only skips documentation-only commits since the last successful web deploy
   assert.equal(run(api, directoryReview), 1, 'runtime directory corrections require a deployment');
   assert.equal(run('', api), 1, 'first deployments always build');
   assert.equal(run('a'.repeat(40), api), 1, 'unavailable shallow history builds safely');
+});
+
+test('analysis branches skip before Git history or repository access', () => {
+  for (const branch of ['feat/library-connector-audit', 'research/free-content-discovery-expansion', 'research/nested/audit']) {
+    const result = spawnSync(process.execPath, [script], {
+      cwd: tmpdir(),
+      env: { ...process.env, VERCEL_GIT_COMMIT_REF: branch, VERCEL_GIT_PREVIOUS_SHA: '', VERCEL_GIT_COMMIT_SHA: '' },
+      stdio: 'pipe',
+    });
+    assert.equal(result.status, 0, branch);
+  }
+  for (const branch of ['main', 'feat/product-change', 'researcher-feature']) {
+    const result = spawnSync(process.execPath, [script], {
+      cwd: tmpdir(),
+      env: { ...process.env, VERCEL_GIT_COMMIT_REF: branch, VERCEL_GIT_PREVIOUS_SHA: '', VERCEL_GIT_COMMIT_SHA: '' },
+      stdio: 'pipe',
+    });
+    assert.equal(result.status, 1, branch);
+  }
 });

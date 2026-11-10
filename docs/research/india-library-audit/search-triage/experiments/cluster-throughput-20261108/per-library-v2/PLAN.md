@@ -1,0 +1,13 @@
+# Owner amendment: one session per library
+
+The owner clarified that each library should initialize independently and reuse that session only for its own 50 distinct titles. The main audit and its hourly watcher remain paused. One Node process and event loop can overlap HTTP requests without worker threads.
+
+The earlier cross-library throughput experiment found wrong native result sets despite correct selected-library echoes. Its 31 provisionally completed unique jobs are NOT credited here. All raw errors and partial observations remain in the parent directory. The earlier successful five-library reuse probe was insufficient to establish repeated cross-library correctness; no production/audit changes were made from it.
+
+Freeze the same five JNV2 members and first 50 titles from the saved 80-title pack (250 unique pairs). Start one fresh cookie/form session per member. Within that member, send independent POST bodies using the initial form values with the query changed. Never share that session with another member. No item-detail lookups.
+
+For the first member, measure ten serial queries as controls, then repeat them at concurrency 2, 5, and 10 while correctness, latency and throughput justify increasing. Compare scope, query, exact native record sets and counts. Stop ramping on mismatch, any error, p95 above max(20s, 2.5x baseline), or less than 10% throughput improvement. Stop all requests on genuine refusal/access controls; retain original evidence. No blind retries.
+
+Queue all 50 searches per library. If the ramp through 10 is healthy and improves, test up to 50 configured slots for the first full 50-title batch. Rate-limit starts to at most two per second, rather than an instantaneous 50-request burst. Actual simultaneous requests may be much lower and must be reported. Otherwise use the fastest correct measured smaller setting. Continue the other four libraries sequentially, each with its own initial GET/session and all 50 distinct searches. Configured concurrency is not proof of actual concurrency or provider capacity. Do not test 100.
+
+Save every request/response, all returned IDs/titles/counts, exact query, source hashes, timing, peak actual concurrency and negative tests. Report empty recognized searches separately from failures; no guarantee of 20 books. Report all 250 unique outcomes plus pilot repeats, actual matrix time and pilot/setup time separately, and label serial projections as estimates. The 50-query and ten-query workloads differ; speed comparisons are descriptive outside the paired canaries. The main audit and watcher remain paused after this benchmark.

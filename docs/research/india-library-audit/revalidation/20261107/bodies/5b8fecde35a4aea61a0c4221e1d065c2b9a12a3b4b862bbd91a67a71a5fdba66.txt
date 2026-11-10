@@ -1,0 +1,583 @@
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: errorpage.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title>An error has occurred &rsaquo; Koha online catalog</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 22.1109000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="/opac-tmpl/bootstrap/lib/jquery/responsive.dataTables.min_22.1109000.css" type="text/css" rel="stylesheet">
+
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac_22.1109000.css" type="text/css">
+
+
+    
+    
+        <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/colors.css" />
+    
+
+
+
+    <link type="text/css" href="/opac-tmpl/bootstrap/css/print_22.1109000.css" media="print" rel="stylesheet">
+
+
+
+
+
+[script omitted]
+
+[script omitted]
+[script omitted]
+
+<link href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min_22.1109000.css" type="text/css" rel="stylesheet">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link id='flipster-css' href='/api/v1/contrib/coverflow/static/jquery-flipster/jquery.flipster.min.css' type='text/css' rel='stylesheet' />
+<style>
+    /* CSS for Koha CoverFlow Plugin 
+       This CSS was added automatically by installing the CoverFlow plugin
+       Please do not modify */
+    .coverflow {
+        height:160px;
+        margin-left:25px;
+        width:850px;
+    }
+
+    .coverflow img,.coverflow .item {
+        -moz-border-radius:10px;
+        -moz-box-shadow:0 5px 5px #777;
+        -o-border-radius:10px;
+        -webkit-border-radius:10px;
+        -webkit-box-shadow:0 5px 5px #777;
+        border-radius:10px;
+        box-shadow:0 5px 5px #777;
+        height:100%;
+        width:100%;
+    }
+
+    .itemTitle {
+        padding-top:30px;
+    }
+
+    .coverflow .selectedItem {
+        -moz-box-shadow:0 4px 10px #0071BC;
+        -webkit-box-shadow:0 4px 10px #0071BC;
+        border:1px solid #0071BC;
+        box-shadow:0 4px 10px #0071BC;
+    }
+    /* End of CSS for Koha CoverFlow Plugin */
+</style>
+    
+
+
+</head>
+<body id="error404" class="error">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<div id="wrapper">
+    <div id="header-region" class="noprint">
+        <nav class="navbar navbar-expand">
+            <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    Koha online
+                
+            </a>
+            </div>
+            
+                <div id="cartDetails" class="cart-message">Your cart is empty.</div>
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                    <li class="nav-item js-show">
+                        <a href="#" class="nav-link" title="Collect items you are interested in" id="cartmenulink" role="button">
+                            <i id="carticon" class="fa fa-shopping-cart fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Cart</span> <span id="basketcount"></span>
+                        </a>
+                    </li>
+                
+                <li class="divider-vertical"></li>
+                
+                    <li class="nav-item dropdown">
+                        <a href="/cgi-bin/koha/opac-shelves.pl" title="Show lists" class="nav-link dropdown-toggle" id="listsmenu" data-toggle="dropdown" role="button" aria-label="Show dropdown with detailed list information" aria-haspopup="true" aria-expanded="false"
+                            ><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                        </a>
+                        <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                            
+                            
+                            
+                                <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="-1" role="menuitem"><strong>Your lists</strong></a>
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Log in to create your own lists</a>
+                                
+                            
+                        </div> <!-- / .dropdown-menu -->
+                    </li> <!-- / .nav-item.dropdown -->
+                
+            </ul> <!-- / .navbar-nav -->
+
+            
+                
+                <ul id="members" class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        
+                            
+                                
+                                    <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger"><i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a>
+                                
+                            
+                        
+
+                        
+                    </li>
+                    
+                        
+                            <li class="nav-item search_history">
+                                <a class="nav-link login-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">Search history</a>
+                            </li>
+                            <li class="divider-vertical"></li>
+                            <li class="nav-item">
+                                <a class="nav-link logout clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Delete your search history"><i class="fa fa-trash" aria-hidden="true"></i> Clear</a>
+                            </li>
+                        
+                    
+                </ul>
+            
+        </nav> <!-- /navbar -->
+
+        
+
+    </div> <!-- / header-region -->
+
+    
+        <div class="container-fluid">
+            
+                <div class="row">
+                    <div class="col">
+                            <div id="opac-main-search" class="mastheadsearch">
+                                
+                                    <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+                                        <div class="form-row align-items-center">
+                                            <div class="col-sm-auto order-2 order-sm-2">
+                                                <select name="idx" id="masthead_search" class="form-control">
+                                                    
+                                                        <option value="">Library catalog</option>
+                                                    
+                                                    
+                                                        <option value="ti">Title</option>
+                                                    
+                                                    
+                                                        <option value="au">Author</option>
+                                                    
+                                                    
+                                                        <option value="su">Subject</option>
+                                                    
+                                                    
+                                                        <option value="nb">ISBN</option>
+                                                    
+                                                    
+                                                        <option value="ns">ISSN</option>
+                                                    
+                                                    
+                                                        <option value="se">Series</option>
+                                                    
+                                                    
+                                                        
+                                                            <option value="callnum">Call number</option>
+                                                        
+                                                    
+                                                </select>
+                                            </div> <!-- /.col-sm-auto -->
+
+                                            <div class="col order-4 order-sm-3">
+                                                
+                                                    <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" /><span id="translControl"></span>
+                                                
+                                            </div> <!-- /.col -->
+
+                                            
+                                                
+                                                    
+                                                
+                                            
+
+                                            <div class="order-5 col-sm-auto">
+                                                <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+
+                                        </div> <!-- /.form-row -->
+                                        <input type="hidden" name="weight_search" value="1">
+                                    </form>
+                                
+                            </div><!-- /#opac-main-search -->
+                    </div> <!-- /.col -->
+                </div> <!-- /.row -->
+            
+
+            <div class="row">
+                <ul class="nav" id="moresearches">
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                    </li>
+                    
+                    
+                    
+                        <li class="nav-item">
+                            <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                        </li>
+                    
+                    
+                    
+                        <li class="nav-item">
+                            <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                        </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Library</span>
+                            
+                        </a>
+                    </li>
+                    
+    
+
+                </ul> <!-- /.nav#moresearches -->
+            </div> <!-- /.row -->
+        </div> <!-- /.container-fluid -->
+    
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalLoginLabel">Log in to your account</h2>
+                    <button type="button" class="closebtn" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            
+                            
+                            [form state omitted]
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    <label for="muserid">Login:</label>[form state omitted]
+                                    <label for="mpassword">Password:</label>[form state omitted]
+                                    <fieldset class="action">
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form> <!-- /#auth -->
+            </div> <!-- /.modal-content -->
+        </div> <!-- /.modal-dialog -->
+    </div>  <!-- /#modalAuth  -->
+
+
+    <div class="main">
+        <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/cgi-bin/koha/opac-main.pl">Home</a>
+                </li>
+                <li class="breadcrumb-item active">
+                    <a href="#" aria-current="page">Error 404</a>
+                </li>
+            </ol>
+        </nav> <!-- /#breadcrumbs -->
+
+        <div class="container-fluid">
+            <div class="row">
+                
+                    <div class="col-lg-2">
+                        <div id="navigation">
+                            
+
+
+
+
+
+
+    
+    
+        <div id="OpacNavBottom">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body">Important links here.</div>
+                </div>
+            
+        </div>
+    
+
+
+
+                        </div>
+                    </div>
+                   <div class="col-10 order-first order-md-first order-lg-2">
+                
+                    <div id="errormsg404">
+                        <h1>Sorry, the requested page is not available</h1>
+                        <h2>Error 404</h2>
+                        <p><strong>This message can have the following reason(s):</strong></p>
+                        <ul>
+                            
+
+                            
+
+                            
+
+                            
+
+                            
+                                <li>You made use of an external link to a catalog item that is no longer available.</li>
+                                <li>You followed an outdated link e.g. from a search engine or a bookmark.</li>
+                                <li>You tried to access a page that needs authentication.</li>
+                                <li>An internal link in our catalog home page is broken and the page does not exist.</li>
+                            
+                            
+                        </ul>
+                        <h2>What's next?</h2>
+                        <ul>
+                            
+                            <li>You can use the menu and links at the top of the page</li>
+                            <li>You can search our catalog using the search form at the top of this page.</li>
+                            <li><a href="/cgi-bin/koha/opac-main.pl">Return to the catalog home page.</a></li>
+                        </ul>
+                        <h2>Report issues and broken links</h2>
+                        <ul>
+                            <li>To report this error, please contact the Koha Administrator.
+                                    <a href="mailto:root%40localhost">Send email</a>.</li>
+                        </ul>
+                    </div> <!-- / #errormsg404 -->
+                </div> <!-- / .col-lg10/12 -->
+            </div> <!-- / .row -->
+        </div> <!-- / .container-fluid -->
+    </div> <!-- / .main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+
+        
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        <div id="report-koha-url">
+                            <div class="row justify-content-between">
+                                
+                                
+                                    <div class="col">
+                                        <div id="koha_url" class="clearfix noprint">
+                                            <p>Powered by
+                                            
+                                                <a class="koha_url" rel="nofollow" href="http://koha-community.org">Koha</a>
+                                            </p>
+                                        </div> <!-- /#koha_url -->
+                                    </div> <!-- /.col -->
+                                
+                            </div> <!-- /.row.justify-content-between -->
+                        </div> <!-- /#report-koha-url -->
+                    </div> <!-- /.col -->
+                </div> <!-- /.row -->
+            </div> <!-- /.container-fluid -->
+        
+    </div> <!-- / #wrapper in masthead.inc -->
+
+    
+        
+    
+
+
+<!-- JavaScript includes -->
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+
+    [script omitted]
+    [script omitted]
+
+
+[script omitted]
+
+
+    [script omitted]
+
+
+[script omitted]
+
+    [script omitted]
+    [script omitted]
+
+
+
+
+    [script omitted]
+    [script omitted]
+
+
+
+
+
+
+[script omitted]
+[script omitted]
+
+
+
+
+
+        [script omitted]
+        [script omitted]
+    
+</body>
+</html>
+
+

@@ -5,7 +5,7 @@ import { validateAndNormalize } from '../isbn.js';
 import { publicCatalogOrigin } from './publicCatalogOrigin.js';
 import ISBN from 'isbn3';
 import { kohaCatalogOrigin } from './kohaOrigin.js';
-import { firstIsbn } from './catalogMarkup.js';
+import { firstIsbn, bibliographicMaterialType } from './catalogMarkup.js';
 
 export function parseBiblioNumber(response) {
   const location = response.headers?.get?.('location') || response.url || '';
@@ -223,7 +223,13 @@ function parseHoldings(markup, identity, scope = {}) {
 }
 
 function configuration(library) {
-  const base = kohaCatalogOrigin(library) || publicCatalogOrigin(library);
+  // Older directory rows retain only the public catalog link. Derive a base
+  // from that configured link, while keeping HTTP pins and origin checks.
+  let configured = library;
+  if (!library.baseUrl && library.catalogUrl) {
+    try { configured = { ...library, baseUrl: new URL(library.catalogUrl).origin }; } catch { /* Reject invalid configuration below. */ }
+  }
+  const base = kohaCatalogOrigin(configured) || publicCatalogOrigin(configured);
   if (!base) throw publicError('CATALOG_CONFIGURATION_REQUIRED', 'Koha requires a reviewed public catalog origin');
   return base;
 }
@@ -252,19 +258,50 @@ export function scopeSearch(url, library) {
 
 
 
-export function parseExpandedKohaCatalogSearch(html, searchUrl) {
+export function parseExpandedKohaCatalogSearch(html, searchUrl, limit = 10, { preserveEmptyTitles = false } = {}) {
   const clean = markupOnly(html), books = new Map();
   const isResults = [...clean.matchAll(/<body\b([^>]*)>/gi)].some(m => attrs(m[1]).id === 'results');
   if (!isResults) throw publicError('CATALOG_UNRECOGNIZED', 'Unrecognized catalog search');
   for (const m of clean.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
     const a = attrs(m[1]);
-    if (!(a.class || '').split(/\s+/).includes('title') || !a.href?.includes('opac-detail.pl')) continue;
-    const url = detailUrl(a.href, searchUrl), recordId = url.searchParams.get('biblionumber');
+    if (!(a.class || '').split(/\s+/).includes('title') || !/opac-(?:MARC)?detail\.pl/i.test(a.href || '')) continue;
+    // Some public catalogs select their MARC display as the native result
+    // link. The same scoped biblionumber remains the bibliographic identity.
+    const nativeUrl = new URL(decode(a.href), searchUrl);
+    if (!['/cgi-bin/koha/opac-detail.pl','/cgi-bin/koha/opac-MARCdetail.pl'].includes(nativeUrl.pathname)) throw publicError('CATALOG_UNRECOGNIZED', 'Koha returned an unrecognized record display');
+    const canonical = new URL(nativeUrl);canonical.pathname = '/cgi-bin/koha/opac-detail.pl';
+    const url = detailUrl(canonical.toString(), searchUrl), recordId = url.searchParams.get('biblionumber');
     const title = text(m[2]).slice(0, 500);
-    if (title) books.set(recordId, { recordId, title, authors: [] });
+    // Audit pages retain an explicitly untitled native row for fidelity and
+    // rejection evidence. Ordinary app search continues to omit untitled rows.
+    if (title || preserveEmptyTitles) books.set(recordId, { recordId, title, authors: [], ...(!title ? { metadataWarnings: ['missing_title'] } : {}) });
   }
   if (!books.size && !/No results found!/i.test(text(clean))) throw publicError('CATALOG_UNRECOGNIZED', 'Missing catalog search results');
-  return [...books.values()].slice(0, 10);
+  return [...books.values()].slice(0, limit);
+}
+
+export async function searchNativeCatalog(library, query, { offset = 0 } = {}) {
+  const url = scopeSearch(new URL('/cgi-bin/koha/opac-search.pl', configuration(library)), library);
+  url.searchParams.set('idx', 'kw'); url.searchParams.set('q', query);
+  if (offset) url.searchParams.set('offset', String(offset));
+  const response = await publicRead(url, catalogDeadline(library), { allowRecordSelection: true });
+  if (response.status === 302) {
+    const target = detailUrl(response.headers.get('location'), url);
+    return { records: [await resolveCatalogRecord(library, target.searchParams.get('biblionumber'))], total: 1, hasMore: false };
+  }
+  const records = parseExpandedKohaCatalogSearch(response.text, url, Infinity, { preserveEmptyTitles: true });
+  const plain = text(markupOnly(response.text));
+  const totalMatch = plain.match(/Your search returned\s+([\d,]+)\s+results?/i);
+  const total = totalMatch ? Number(totalMatch[1].replaceAll(',', '')) : !records.length ? 0 : null;
+  let nextOffset;
+  for (const m of response.text.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+    const a = attrs(m[1]); if (!a.href || !(/\bnext\b/i.test(`${a.rel || ''} ${a.title || ''} ${text(m[2])}`))) continue;
+    const next = new URL(a.href, url);
+    const n = Number(next.searchParams.get('offset'));
+    if (next.origin === url.origin && next.pathname === url.pathname && Number.isSafeInteger(n) && n > offset) nextOffset = n;
+  }
+  const hasMore = nextOffset != null ? true : total == null ? null : total > offset + records.length;
+  return { records, total, hasMore, nextOffset, continuationUnsupported: hasMore === true && nextOffset == null };
 }
 
 export async function searchCatalog(library, query) {
@@ -314,8 +351,10 @@ export async function resolveCatalogRecord(library, recordId, options = {}) {
     }).filter(Boolean))];
     const observation = parseHoldings(clean, { matchKind: 'verified_work', recognizedExact: true }, library);
     if (!title || !observation || (library.kohaBranchCode && !observation.totalCopies)) throw publicError('CATALOG_UNRECOGNIZED', 'Catalog did not confirm this branch’s record');
-    return { recordId, title, authors, isbn, catalogUrl: url.toString(), observation: {
+    const materialType = bibliographicMaterialType(clean);
+    return { recordId, title, authors, isbn, ...(materialType ? { materialType } : {}), catalogUrl: url.toString(), observation: {
       ...observation, outcome: observation.outcome === 'unknown' && observation.totalCopies > 0 ? 'in_catalog' : observation.outcome,
+      ...(materialType ? { materialType } : {}),
       matchKind: 'verified_work', catalogUrl: url.toString() } };
   }, { deadlineAt });
 }
@@ -515,7 +554,7 @@ function partialRecords(records, library) {
 }
 
 function requestFailure(error) {
-  if (/^CATALOG_/.test(error?.code || '')) return error;
+  if (/^(?:CATALOG_|ROBOTS_|SOURCE_|PROVIDER_|UPSTREAM_|ORIGIN_)/.test(error?.code || '')) return error;
   const code = error?.name === 'AbortError' || /timeout|deadline/i.test(error?.message || '') ? 'CATALOG_TIMEOUT' : 'CATALOG_UNAVAILABLE';
   return publicError(code, 'Koha could not complete the public catalog request');
 }

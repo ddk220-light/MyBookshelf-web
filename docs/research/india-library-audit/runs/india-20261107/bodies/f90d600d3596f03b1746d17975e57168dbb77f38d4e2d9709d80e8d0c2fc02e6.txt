@@ -1,0 +1,2261 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<!-- begin::Head -->
+<head>
+    <meta charset="utf-8" />
+    <title>
+    DLIB OPAC (Online Public Access Catalogue)
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+
+    <!--begin::Page Vendors Styles(used by this page) -->
+    <link href="/Contents/m/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+    <!--begin::Global Theme Styles(used by all pages) -->
+    <link href="/Contents/m/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="/Contents/m/css/style.bundle.css" rel="stylesheet" type="text/css" />
+
+
+    <!--begin::Layout Skins(used by all pages) -->
+    <link href="/Contents/m/css/skins/header/base/dark.css" rel="stylesheet" type="text/css" />
+    <link href="/Contents/m/css/skins/header/menu/light.css" rel="stylesheet" type="text/css" />
+    <link href="/Contents/m/css/skins/brand/dark.css" rel="stylesheet" type="text/css" />
+    <link href="/Contents/m/css/skins/aside/dark.css" rel="stylesheet" type="text/css" />
+
+    <link rel="shortcut icon" href="/Contents/media/favicon2.svg" />
+
+    <link href="/Contents/m/css/custom/custom.css?v=03-10-2024" rel="stylesheet" />
+    <link href="/Contents/m/css/custom/kt-globals.css" rel="stylesheet" />
+
+    <style type="text/css">
+        .btn-xsm {
+            padding: .25rem .2rem;
+            font-size: .875rem;
+            line-height: .5;
+            border-radius: .2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .kt-header--fixed.kt-subheader--fixed.kt-subheader-mobile--fixed .kt-subheader {
+                position: fixed;
+                height: 54px;
+                top: 50px;
+                left: 0;
+                right: 0;
+                -webkit-transition: all 0.3s ease;
+                transition: all 0.3s ease;
+                z-index: 94;
+                background-color: #fff;
+                -webkit-box-shadow: 0px 10px 30px 0px rgba(82, 63, 105, 0.08);
+                box-shadow: 0px 10px 30px 0px rgba(82, 63, 105, 0.08);
+                margin: 0;
+            }
+
+            .kt-subheader--enabled .kt-content {
+                padding-top: 75px;
+            }
+        }
+
+        .j-logo-skew {
+            width: 220px;
+            height: 65px;
+            margin: 0 0 0 -20px;
+            /*-webkit-transform: skew(-30deg);
+        -moz-transform: skew(-30deg);
+        -o-transform: skew(-30deg);*/
+            transform: skew(-30deg);
+            /*background: #4caf50;*/
+            background: #009688;
+            overflow: hidden;
+            position: relative;
+            padding: 0px 20px 0px 40px;
+            font-size: 28px;
+            color: white;
+            line-height: 65px;
+            display: block;
+        }
+
+        .j-logo-unskew {
+            transform: skew(30deg);
+        }
+    </style>
+    
+</head>
+
+<!-- end::Head -->
+<!-- begin::Body -->
+<body class="kt-quick-panel--right kt-demo-panel--left kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--fixed kt-subheader--solid kt-subheader-mobile--fixed kt-page--loading" style="background-color: #E0E0E0">
+    <!-- begin:: Page -->
+    <!-- begin:: Header Mobile -->
+    
+<div id="kt_header_mobile" class="kt-header-mobile kt-header-mobile--fixed " style="padding-left: 0;">
+    <div class="kt-header-mobile__logo">
+        <a href="/">
+            <div class="j-logo-skew" style="height: 50px; line-height: 50px; padding-left: 30px;">
+                <div class="j-logo-unskew">
+                    <b>DLIB OPAC</b> <small class="g-font-weight-100">(Online Public Access Catalogue)</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="kt-header-mobile__toolbar">
+        <button class="kt-header-mobile__toggler" id="kt_header_mobile_toggler"><span></span></button>
+        <button class="kt-header-mobile__topbar-toggler" id="kt_header_mobile_topbar_toggler"><i class="flaticon-more"></i></button>
+    </div>
+</div>
+    <!-- end:: Header Mobile -->
+    <div class="kt-grid kt-grid--hor kt-grid--root">
+        <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page">
+            <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
+                <!-- begin:: Header -->
+                <div id="kt_header" class="kt-header kt-grid__item  kt-header--fixed ">
+                    <!-- begin:: Header Menu -->
+                    <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper">
+    <div class="kt-header-logo" style="padding-left: 0;">
+        <a href="/">
+            <div class="j-logo-skew">
+                <div class="j-logo-unskew">
+                    <b>DLIB OPAC</b> 
+                </div>
+            </div>
+        </a>
+    </div>
+    <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile  kt-header-menu--layout-default ">
+        <ul class="kt-menu__nav ">
+            <li class="kt-menu__item" aria-haspopup="true">
+                <a href="/" class="kt-menu__link">
+                    <i class="kt-menu__link-icon la la-home"></i>
+                    <span class="kt-menu__link-text">Home</span>
+                </a>
+            </li>
+            <li class="kt-menu__item" aria-haspopup="true">
+                <a href="/MemberStatus" class="kt-menu__link">
+                    <i class="kt-menu__link-icon la la-users"></i>
+                    <span class="kt-menu__link-text">Member Status</span>
+                </a>
+            </li>
+            <li class="kt-menu__item" aria-haspopup="true">
+                <a href="/BookRecommendation" class="kt-menu__link">
+                    <i class="kt-menu__link-icon la la-book"></i>
+                    <span class="kt-menu__link-text">Book Recommendation</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+                    <!-- end:: Header Menu -->
+                    <!-- begin:: Header Topbar -->
+                    
+                    <!--begin: User Bar -->
+                    
+                    <!--end: User Bar -->
+                    
+                    <!-- end:: Header Topbar -->
+                </div>
+                <!-- end:: Header -->
+                <div class="kt-content kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <!-- begin:: Subheader -->
+
+                    <div class="kt-subheader kt-grid__item" id="kt_subheader">
+    <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+            <h3 class="kt-subheader__title g-color-black g-font-size-20">
+                
+    DLIB OPAC (Online Public Access Catalogue)
+
+            </h3>
+        </div>
+        <div class="kt-subheader__toolbar">
+            <div class="kt-subheader__wrapper">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+                    <!-- end:: Subheader -->
+                    <!-- begin:: Content -->
+                    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid g-color-black">
+                        <!--Begin::Main Content-->
+                        
+
+
+
+<style>
+    .dataTables_length + .dt-buttons {
+        margin-left: 20px;
+    }
+
+    .dataTables_length{
+        margin-top: 5px;
+    }
+</style>
+
+<div class="kt-portlet kt-portlet--head-sm kt-portlet-list">
+
+    <div class="kt-portlet__body">
+
+        <ul class="nav nav-tabs nav-success">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" id="kt_tab_pane_1-tab" role="tab" href="#kt_tab_pane_1"><b>Basic Search</b></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" id="kt_tab_pane_2-tab" role="tab" href="#kt_tab_pane_2"><b>Advance Search</b></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" id="kt_tab_pane_3-tab" role="tab" href="#kt_tab_pane_3"><b>Search Material Content</b></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" id="new-arrivals-tab" role="tab" href="#new-arrivals"><b>New Arrivals</b></a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="kt_tab_pane_1" role="tabpanel" aria-labelledby="kt_tab_pane_1-tab">
+                <form action="/Home/_SearchResult" class="kt-form" data-ajax="true" data-ajax-failure="OnFailure(xhr, status, error);" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-success="OnSuccess(this.id,data, status, xhr);" data-ajax-update="#SearchResult" id="filterForm" method="post">    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">Search On</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <select class="form-control form-control-sm" data-val="true" data-val-required="The Field Name field is required." id="F_FieldName" name="F_FieldName"><option value="Title">Title</option>
+<option value="Author">Author</option>
+<option value="Title or Author">Title or Author</option>
+<option value="Subject">Subject</option>
+<option value="Publication">Publication</option>
+<option value="Department">Department</option>
+<option value="Language">Language</option>
+<option value="ISBN">ISBN</option>
+<option value="Class No.">Class No.</option>
+<option value="Accession No.">Accession No.</option>
+</select>
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_FieldName" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="required">Search Text</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <input class="form-control" data-val="true" data-val-length="Minimum 3 characters" data-val-length-max="99999" data-val-length-min="3" data-val-required="The Field Value field is required." id="F_FieldValue" name="F_FieldValue" placeholder="Enter Value" type="text" value="" />
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_FieldValue" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="required">Material Type</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <select class="form-control form-control-sm" data-val="true" data-val-number="The field Material Type must be a number." data-val-required="The Material Type field is required." id="F_MaterialTypeID" name="F_MaterialTypeID"><option value="">--</option>
+<option value="1">B-Book</option>
+<option value="5">Q-Question Papers</option>
+<option value="6">M-Magazine</option>
+<option value="15">L-Magazine Bound Volumes</option>
+<option value="14">K-Journal Bound Volumes</option>
+<option value="4">C-CD-DVD-FLOPPY</option>
+<option value="13">N-News Paper Clippings</option>
+<option value="16">R-Amazon Kindle E-reader</option>
+<option value="2">T-Thesis</option>
+</select>
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_MaterialTypeID" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">&nbsp;</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <input class="btn btn-brand btn-sm" type="submit" value="Search" name="btnShow" id="btnShow" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+                <hr class="mt-0" />
+                <div id="SearchResult" class="mt-3"></div>
+            </div>
+            <div class="tab-pane fade" id="kt_tab_pane_2" role="tabpanel" aria-labelledby="kt_tab_pane_2-tab">
+                <form action="/Home/_SearchResult_AdvanceSearch" class="kt-form" data-ajax="true" data-ajax-failure="OnFailure(xhr, status, error);" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-success="OnSuccess(this.id,data, status, xhr);" data-ajax-update="#SearchResult_AdvanceSearch" id="filterForm_AdvanceSearch" method="post">    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">Title</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <input class="form-control" data-val="true" data-val-length="Minimum 3 characters" data-val-length-max="99999" data-val-length-min="3" id="F_Title" name="F_Title" placeholder="Enter Title" type="text" value="" />
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_Title" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">Author Name</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <input class="form-control" id="F_AuthorName" name="F_AuthorName" placeholder="Enter Author Name" type="text" value="" />
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_AuthorName" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">Subject Name</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <input class="form-control" id="F_SubjectName" name="F_SubjectName" placeholder="Enter Subject Name" type="text" value="" />
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_SubjectName" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">Language</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <select class="form-control form-control-sm" data-val="true" data-val-number="The field Language must be a number." id="F_LanguageID" name="F_LanguageID"><option value="">--</option>
+<option value=""></option>
+<option value="11">ENG-HINDI</option>
+<option value="1">English</option>
+<option value="9">English-Gujarati</option>
+<option value="14">English-Hindi-Gujarati</option>
+<option value="13">English-Sanskrit</option>
+<option value="2">Gujarati</option>
+<option value="4">Gujarati,Hindi,English</option>
+<option value="3">Hindi</option>
+<option value="7">Hindi-English</option>
+<option value="16">Hindi-Gujarati</option>
+<option value="15">Hindi-Sanskrut</option>
+<option value="12">Italian</option>
+<option value="10">SANSKRIT</option>
+<option value="17">Sanskrut-Gujrati</option>
+</select>
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_LanguageID" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">Publication Name</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <input class="form-control" id="F_PublicationName" name="F_PublicationName" placeholder="Enter Publication Name" type="text" value="" />
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_PublicationName" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">Edition</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <input class="form-control" id="F_Edition" name="F_Edition" placeholder="Enter Edition" type="text" value="" />
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_Edition" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">Indian ISBN</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <input class="form-control" id="F_IndianISBN" name="F_IndianISBN" placeholder="Enter Indian ISBN" type="text" value="" />
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_IndianISBN" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">International ISBN</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <input class="form-control" id="F_InternationalISBN" name="F_InternationalISBN" placeholder="Enter International ISBN" type="text" value="" />
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_InternationalISBN" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">Institute</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <select class="form-control form-control-sm" data-val="true" data-val-number="The field Institute must be a number." id="F_InstituteID" name="F_InstituteID" onchange="fn_OnChange_InstituteID(this.value);"><option value="">--</option>
+<option value="4">DU-DU</option>
+<option value="7">DU-DU-DICA</option>
+<option value="5">DU-DU-DIET</option>
+<option value="6">DU-DU-DIETDS</option>
+<option value="11">DU-DU-DIH</option>
+<option value="8">DU-DU-DIM</option>
+<option value="10">DU-DU-DIR</option>
+<option value="9">DU-DU-DIS</option>
+<option value="1">GTU-DIET</option>
+<option value="2">GTU-DIETDS</option>
+<option value="3">GTU-DIETME</option>
+</select>
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_InstituteID" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">Department</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <select class="form-control form-control-sm" data-val="true" data-val-number="The field Department must be a number." id="F_DepartmentID" name="F_DepartmentID"><option value="">--</option>
+</select>
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_DepartmentID" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="required">Material Type</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="flaticon2-search-1"></i></span>
+                    </div>
+                    <select class="form-control form-control-sm" data-val="true" data-val-number="The field Material Type must be a number." data-val-required="The Material Type field is required." id="F_MaterialTypeID" name="F_MaterialTypeID"><option value="">--</option>
+<option value="1">B-Book</option>
+<option value="5">Q-Question Papers</option>
+<option value="6">M-Magazine</option>
+<option value="15">L-Magazine Bound Volumes</option>
+<option value="14">K-Journal Bound Volumes</option>
+<option value="4">C-CD-DVD-FLOPPY</option>
+<option value="13">N-News Paper Clippings</option>
+<option value="16">R-Amazon Kindle E-reader</option>
+<option value="2">T-Thesis</option>
+</select>
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_MaterialTypeID" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">&nbsp;</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <input class="btn btn-brand btn-sm" type="submit" value="Search" name="btnShow" id="btnShow" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+[script omitted]
+                <hr class="mt-0" />
+                <div id="SearchResult_AdvanceSearch" class="mt-3"></div>
+            </div>
+            <div class="tab-pane fade" id="kt_tab_pane_3" role="tabpanel" aria-labelledby="kt_tab_pane_3-tab">
+                <form action="/Home/_SearchResult_ContentSearch" class="kt-form" data-ajax="true" data-ajax-failure="OnFailure(xhr, status, error);" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-success="OnSuccess(this.id,data, status, xhr);" data-ajax-update="#SearchResult_ContentSearch" id="filterForm_ContentSearch" method="post">    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="required">Content</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    
+                    <textarea class="form-control" cols="20" data-val="true" data-val-required="The Material Content field is required." id="F_MaterialContent" name="F_MaterialContent" placeholder="Enter Content" rows="3">
+</textarea>
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_MaterialContent" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="required">Material Type</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    
+                    <select class="form-control form-control-sm" data-val="true" data-val-number="The field Material Type must be a number." data-val-required="The Material Type field is required." id="F_MaterialTypeID" name="F_MaterialTypeID"><option value="">--</option>
+<option value="1">B-Book</option>
+<option value="5">Q-Question Papers</option>
+<option value="6">M-Magazine</option>
+<option value="15">L-Magazine Bound Volumes</option>
+<option value="14">K-Journal Bound Volumes</option>
+<option value="4">C-CD-DVD-FLOPPY</option>
+<option value="13">N-News Paper Clippings</option>
+<option value="16">R-Amazon Kindle E-reader</option>
+<option value="2">T-Thesis</option>
+</select>
+                </div>
+                <span class="field-validation-valid form-text text-danger" data-valmsg-for="F_MaterialTypeID" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="">&nbsp;</label>
+                <div class="input-group input-group-sm flex-nowrap">
+                    <input class="btn btn-brand btn-sm" type="submit" value="Search" name="btnShow" id="btnShow" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+                <hr class="mt-0" />
+                <div id="SearchResult_ContentSearch" class="mt-3"></div>
+            </div>
+            <div class="tab-pane fade" id="new-arrivals" role="tabpanel" aria-labelledby="new-arrivals-tab">
+                <table class="table table-bordered table-hover" id="tblList_NewArrivals" cellspacing="0" width="100%">
+    <thead class="thead-light">
+        <tr>
+            <th class="">Type</th>
+            <th class="">Title</th>
+            <th class="g-max-width-190">Author</th>
+            <th class="g-max-width-190">Publication</th>
+            <th class="">Subject</th>
+            <th class="text-center" data-sorting="false">Ed.</th>
+            <th class="text-center" data-sorting="false">Dept.</th>
+            <th class="text-center" data-sorting="false">Status</th>
+            <th class="text-center" data-sorting="false">Entry Date</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=NJxL1gNbeEo%3D" target="_blank">
+                        Sadhana-Gujarati 71-2 31.10.2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">SNG,</td>
+                <td class="g-max-width-190">Sadhan - Sanidya Complex, A&#39;Bad</td>
+                <td class="">General Serials Publications</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">05-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=-9L7chJh8M0%3D" target="_blank">
+                        World Inbox 14-7 April 2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">WIB,</td>
+                <td class="g-max-width-190">World Inbox</td>
+                <td class="">GK-General Knowledge</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">05-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine Bound Volumes</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=Ykah--xZ5n8%3D" target="_blank">
+                        World Inbox Apr-May 2026=2
+                    </a>
+                </td>
+                <td class="g-max-width-190">WIB,</td>
+                <td class="g-max-width-190">World Inbox</td>
+                <td class="">GK-General Knowledge</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">05-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine Bound Volumes</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=kd1vBoFCY7w%3D" target="_blank">
+                        World Inbox Jun-Jul 2026=2
+                    </a>
+                </td>
+                <td class="g-max-width-190">WIB,</td>
+                <td class="g-max-width-190">World Inbox</td>
+                <td class="">GK-General Knowledge</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">05-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=kDrEGNw29Z0%3D" target="_blank">
+                        Anti-Hacker Tool Kit
+                    </a>
+                </td>
+                <td class="g-max-width-190">Shema,Mike</td>
+                <td class="g-max-width-190">Mcgraw Hill Education (India) Private Limited</td>
+                <td class=""></td>
+                <td class="text-center">4</td>
+                <td class="text-center">CE</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">04-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=z4pBAdb8Wnw%3D" target="_blank">
+                        Brand Management:Text And Cases:An Indian Perspective
+                    </a>
+                </td>
+                <td class="g-max-width-190">Gupta,S. L.</td>
+                <td class="g-max-width-190">Himalaya Publishing House</td>
+                <td class="">Brand Management</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">04-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=raCGYoNN%24HA%3D" target="_blank">
+                        Cyber Security : Understanding Cyber Crimes, Computer Forensics and Legal Perspectives
+                    </a>
+                </td>
+                <td class="g-max-width-190">Godbole,Nina</td>
+                <td class="g-max-width-190">Wiley Publishing, Inc.</td>
+                <td class="">Cyber Security</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">04-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=gBSCjz-5QJo%3D" target="_blank">
+                        Partners in Success:Strategic HR and Entrepreneurship
+                    </a>
+                </td>
+                <td class="g-max-width-190">Muncherji,Nina </td>
+                <td class="g-max-width-190">Excel Books</td>
+                <td class="">Human Resources</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">04-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=bP7AvU9t5O4%3D" target="_blank">
+                        Projects:Planning Analysis Selection Implementation &amp; Review
+                    </a>
+                </td>
+                <td class="g-max-width-190">Chandra,Prasanna</td>
+                <td class="g-max-width-190">Tata Mac-Graw Hill Education Private Limited</td>
+                <td class="">Project Management</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">04-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=Hn5tzDiHuJ4%3D" target="_blank">
+                        Research Methodology and Statistical Tools
+                    </a>
+                </td>
+                <td class="g-max-width-190">Krishnaswamy,O. R.</td>
+                <td class="g-max-width-190">Himalaya Publishing House</td>
+                <td class="">Research Methodology</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">04-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=n8So7Kq0l8I%3D" target="_blank">
+                        Statistics For Management
+                    </a>
+                </td>
+                <td class="g-max-width-190">Levin,Richard I.</td>
+                <td class="g-max-width-190">Pearson Education</td>
+                <td class="">Statistics For Management</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">04-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=Y6uPo6HA50M%3D" target="_blank">
+                        Yugnayak Vivekananda:Dwitiya Bhag:Vol.II:Swami Vivekananda 
+                    </a>
+                </td>
+                <td class="g-max-width-190">Gabhiranand,Swami </td>
+                <td class="g-max-width-190">Shree Ramkrishna Ashram-Rajkot</td>
+                <td class="">Men Biography</td>
+                <td class="text-center">4</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">04-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=wkr2QPgCZJA%3D" target="_blank">
+                        Yugnayak Vivekananda:Pratham Bhag:Vol.I:Swami Vivekananda
+                    </a>
+                </td>
+                <td class="g-max-width-190">Gabhiranand,Swami </td>
+                <td class="g-max-width-190">SHRI RAMKRISHNA AASHRAM RAJKOT</td>
+                <td class="">Men Biography</td>
+                <td class="text-center">4</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">04-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=iQRlcNii6og%3D" target="_blank">
+                        Distributed Computing
+                    </a>
+                </td>
+                <td class="g-max-width-190">Mahajan,Sunita</td>
+                <td class="g-max-width-190">Oxford University Press</td>
+                <td class="">Distributed Computing</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">03-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=kDsUc5lc1Ek%3D" target="_blank">
+                        Learn Object Oriened Programming Using Java: An UML Based
+                    </a>
+                </td>
+                <td class="g-max-width-190">Venkateswarlu,N B</td>
+                <td class="g-max-width-190">S. Chand &amp; Company Pvt. Ltd.</td>
+                <td class="">JAVA Program</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">03-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=-JdVe8Z48g8%3D" target="_blank">
+                        Mobile Computing
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sharma,Sanjay</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class="">Mobile Computing</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">03-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=zAghwfEolC4%3D" target="_blank">
+                        Introduction to the Design and Analysis of Algorithms:A Strategic Approach
+                    </a>
+                </td>
+                <td class="g-max-width-190">Lee,R.C.T. </td>
+                <td class="g-max-width-190">Tata Mac-Graw Hill Education Private Limited</td>
+                <td class="">System Design</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">02-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=JJaCgJpsWo0%3D" target="_blank">
+                        Mobile Computing and Wireless Communication
+                    </a>
+                </td>
+                <td class="g-max-width-190">Bagad,Vilas S.</td>
+                <td class="g-max-width-190">Technical Publications Pune</td>
+                <td class="">Mobile Computing</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">02-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=zXsirO%24mkac%3D" target="_blank">
+                        Reader&#39;s Digest:V;67/I:10:October&#39;2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">Rea,</td>
+                <td class="g-max-width-190">Reader&#39;s Digest Asia limited</td>
+                <td class="">PERSONALITY DEVLOPMENT</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Issued</td>
+                <td class="text-center text-nowrap">02-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=D1fHVpnRJRg%3D" target="_blank">
+                        Wireless Communication And Mobile Programming
+                    </a>
+                </td>
+                <td class="g-max-width-190">Jain,Parita </td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Wireless Communications</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">02-11-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Journal Bound Volumes</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=2d4Wp-TxRhc%3D" target="_blank">
+                        International Journal of AI and Machine Learning Innovations in Electronics and Communication Technology 2-1 Jan-Jun 2026=1
+                    </a>
+                </td>
+                <td class="g-max-width-190">Kale,Archana Pritam</td>
+                <td class="g-max-width-190">MAT JOURNALS</td>
+                <td class="">Artficial Intelligence-Machine Learning</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">30-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine Bound Volumes</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=V1lEhTxXOA4%3D" target="_blank">
+                        World Inbox Jan-Feb-Mar 2026=3
+                    </a>
+                </td>
+                <td class="g-max-width-190">WIB,</td>
+                <td class="g-max-width-190">World Inbox</td>
+                <td class="">GK-General Knowledge</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">30-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=JEtOnc1ZPUA%3D" target="_blank">
+                        Image Processing
+                    </a>
+                </td>
+                <td class="g-max-width-190">Theckedath,Dhananjay K.</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Digital Image Processing</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">29-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=DK9o7f2%24cn4%3D" target="_blank">
+                        The Black Swan: The Impact of the Highly Improbable
+                    </a>
+                </td>
+                <td class="g-max-width-190">Taleb,Nassim Nicholas</td>
+                <td class="g-max-width-190">Penguin Books</td>
+                <td class="">English Literature</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">29-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=iRujkn9K4Jc%3D" target="_blank">
+                        Advance Computer Networks
+                    </a>
+                </td>
+                <td class="g-max-width-190">Bagad,Vilas S.</td>
+                <td class="g-max-width-190">Technical Publications Pune</td>
+                <td class="">Computer Network</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">28-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=QqMXtvVI8MM%3D" target="_blank">
+                        House of Leaves
+                    </a>
+                </td>
+                <td class="g-max-width-190">Danielewski,Mark Z.</td>
+                <td class="g-max-width-190">Pantheon Books</td>
+                <td class="">American fiction in English</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Issued</td>
+                <td class="text-center text-nowrap">28-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=wiwL8rMVU6Q%3D" target="_blank">
+                        SSC CHSL: 2026 — 50 Sets Solved Papers with Detailed Explanation
+                    </a>
+                </td>
+                <td class="g-max-width-190">Pinnacle Publications, </td>
+                <td class="g-max-width-190">Pinnacle Publications</td>
+                <td class="">Civil Services Examinations-UPSC-GPSC-Staff Selection Commission</td>
+                <td class="text-center">5</td>
+                <td class="text-center"></td>
+                <td class="text-center">Issued</td>
+                <td class="text-center text-nowrap">28-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=9%24YELHW-560%3D" target="_blank">
+                        Ultimate Guide for SSC CHSL: Combined Higher Secondary Level, Tier I &amp; II Exam, Year 2026–2027 with Previous Year Question Pattern
+                    </a>
+                </td>
+                <td class="g-max-width-190">Pinnacle Publications, </td>
+                <td class="g-max-width-190">Pinnacle Publications</td>
+                <td class="">Civil Services Examinations-UPSC-GPSC-Staff Selection Commission</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Issued</td>
+                <td class="text-center text-nowrap">28-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=oGM%24BF%246s2g%3D" target="_blank">
+                        Advanced Computer Architecture
+                    </a>
+                </td>
+                <td class="g-max-width-190">Mishra,Amit  Kumar</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class="">Computer Architecture</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=FfXvC9INZRA%3D" target="_blank">
+                        An Introduction to Automata Theory and Formal Languages
+                    </a>
+                </td>
+                <td class="g-max-width-190">Pandey,Adesh Kumar</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class=""></td>
+                <td class="text-center">5</td>
+                <td class="text-center">CE</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=70F6wRLnY6I%3D" target="_blank">
+                        Analysis and Design of Information Systems
+                    </a>
+                </td>
+                <td class="g-max-width-190">Senn,James A.</td>
+                <td class="g-max-width-190">Tata Mac-Graw Hill Education Private Limited</td>
+                <td class="">Information Systems</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=PDUX8zlLkzU%3D" target="_blank">
+                        Computer Fundamentals
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sinha,Pradeep K.</td>
+                <td class="g-max-width-190">BPB Publications</td>
+                <td class="">Computers-Fundamentals</td>
+                <td class="text-center">4</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=d-p42kntPB8%3D" target="_blank">
+                        Dokkodo: The Way of Walking Alone
+                    </a>
+                </td>
+                <td class="g-max-width-190">Musashi,Miyamoto </td>
+                <td class="g-max-width-190"></td>
+                <td class="">Philosophy</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=GWrxHH0LT2Y%3D" target="_blank">
+                        e-Commerce:Strategy,Technologies and Applications
+                    </a>
+                </td>
+                <td class="g-max-width-190">Whiteley,David </td>
+                <td class="g-max-width-190">Tata Mac-Graw Hill Education Private Limited</td>
+                <td class="">E-Commerce</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=OTQboyMEfCo%3D" target="_blank">
+                        Internetworking With TCP/IP  Volume I:Principles,Protocols and Architecture
+                    </a>
+                </td>
+                <td class="g-max-width-190">Comer,Douglas E</td>
+                <td class="g-max-width-190">PHI Learing Private Limited</td>
+                <td class="">TCP/IP</td>
+                <td class="text-center">5</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=gHPIIlpmanU%3D" target="_blank">
+                        Question Bank in Computer Science
+                    </a>
+                </td>
+                <td class="g-max-width-190">Upadhyay,Nitin</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class="">Computer Science</td>
+                <td class="text-center">5</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=L%244gf5X8wMU%3D" target="_blank">
+                        Sadhana-Gujarati 70-50 19.9.2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">SNG,</td>
+                <td class="g-max-width-190">Sadhan - Sanidya Complex, A&#39;Bad</td>
+                <td class="">General Serials Publications</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=DiEQTMWykSQ%3D" target="_blank">
+                        Sadhana-Gujarati 70-51 26.9.2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">SNG,</td>
+                <td class="g-max-width-190">Sadhan - Sanidya Complex, A&#39;Bad</td>
+                <td class="">General Serials Publications</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=ZkNNxsen1is%3D" target="_blank">
+                        Sadhana-Gujarati 70-52 3.10.2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">SNG,</td>
+                <td class="g-max-width-190">Sadhan - Sanidya Complex, A&#39;Bad</td>
+                <td class="">General Serials Publications</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=PHZCtJsd0-M%3D" target="_blank">
+                        Sadhana-Gujarati 70-53 10.10.2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">SNG,</td>
+                <td class="g-max-width-190">Sadhan - Sanidya Complex, A&#39;Bad</td>
+                <td class="">General Serials Publications</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=WFC73GCGJng%3D" target="_blank">
+                        Sadhana-Gujarati 70-54 17.10.2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">SNG,</td>
+                <td class="g-max-width-190">Sadhan - Sanidya Complex, A&#39;Bad</td>
+                <td class="">General Serials Publications</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=4zaokrWl-wI%3D" target="_blank">
+                        Sadhana-Gujarati 71-1 24.10.2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">SNG,</td>
+                <td class="g-max-width-190">Sadhan - Sanidya Complex, A&#39;Bad</td>
+                <td class="">General Serials Publications</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">27-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=wyV%24ztB7G8Y%3D" target="_blank">
+                        Compiler Design
+                    </a>
+                </td>
+                <td class="g-max-width-190">Puntambekar,Anuradha A.</td>
+                <td class="g-max-width-190">Technical Publications Pune</td>
+                <td class="">Compilers</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">26-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=v7kVXlJy6kc%3D" target="_blank">
+                        Compiler Design Semester-VII GTU
+                    </a>
+                </td>
+                <td class="g-max-width-190">Puntambekar,Anuradha A.</td>
+                <td class="g-max-width-190">Technical Publications Pune</td>
+                <td class=""></td>
+                <td class="text-center">1</td>
+                <td class="text-center">CE</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">26-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=R0gQI66QbZE%3D" target="_blank">
+                        Fundamentals of Neural Networks:Architectures,Algorithms and Applications
+                    </a>
+                </td>
+                <td class="g-max-width-190">Fausett,Laurene </td>
+                <td class="g-max-width-190">Pearson Education</td>
+                <td class="">Neural Network</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">26-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=-1hEVhIa1co%3D" target="_blank">
+                        Latest Facts in General Knowledge 40-11 November 2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">LGK,</td>
+                <td class="g-max-width-190">Liberty Publication</td>
+                <td class="">GK-General Knowledge</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">26-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=k5jf6OqvVxw%3D" target="_blank">
+                        Sadhana-Gujarati 70-49 12.9.2026
+                    </a>
+                </td>
+                <td class="g-max-width-190">SNG,</td>
+                <td class="g-max-width-190">Sadhan - Sanidya Complex, A&#39;Bad</td>
+                <td class="">General Serials Publications</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">26-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">CD-DVD-FLOPPY</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=pQWOB1C2kPs%3D" target="_blank">
+                        System Programming
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sultania,Dilip Kumar</td>
+                <td class="g-max-width-190"></td>
+                <td class="">Systems Programming</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">26-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=PxM4AdUlYEw%3D" target="_blank">
+                        A Course in Computer Networks
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sharma,Sanjay</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class="">Computer Network</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">24-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=hHursjThqA8%3D" target="_blank">
+                        Buy Back Your Time: Get Unstuck, Reclaim Your Freedom, and Build Your Empire
+                    </a>
+                </td>
+                <td class="g-max-width-190">Martell,Dan </td>
+                <td class="g-max-width-190">Portfolio-Imprint of Penguin Random House</td>
+                <td class="">Executive Management</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Issued</td>
+                <td class="text-center text-nowrap">24-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=VQXbss38BkA%3D" target="_blank">
+                        Compiler Design
+                    </a>
+                </td>
+                <td class="g-max-width-190">Maurya,Rajesh K.</td>
+                <td class="g-max-width-190">Dreamtech Press</td>
+                <td class="">Compilers</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">24-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=pZetgoqsXnQ%3D" target="_blank">
+                        Compiler Design
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sultanpure,Kavita A.</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Compilers</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">24-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=kb6CJ77r37w%3D" target="_blank">
+                        Computer Network
+                    </a>
+                </td>
+                <td class="g-max-width-190">Trivedi,Bhushan </td>
+                <td class="g-max-width-190">Oxford University Press</td>
+                <td class="">Computer Network</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">24-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=-J8Y0rVW1Po%3D" target="_blank">
+                        The Inner Game of Tennis: The Classic Guide to the Mental Side of Peak Performance
+                    </a>
+                </td>
+                <td class="g-max-width-190">Gallwey,W. Timothy </td>
+                <td class="g-max-width-190">Pan Books</td>
+                <td class="">Tennis</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Issued</td>
+                <td class="text-center text-nowrap">24-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=U4pZsebPDJg%3D" target="_blank">
+                        The Soul Recovery: A Journey of Healing, Self-love and New Beginnings
+                    </a>
+                </td>
+                <td class="g-max-width-190">Pal,Adarsh  </td>
+                <td class="g-max-width-190">Writer’s Pocket</td>
+                <td class="">Happiness/personal development</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">24-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=xOFOYcQydGo%3D" target="_blank">
+                        Theory of Computation (With Formal Languages)
+                    </a>
+                </td>
+                <td class="g-max-width-190">Patel,R B</td>
+                <td class="g-max-width-190">Khanna Book Publishing Co. (P) Ltd.</td>
+                <td class="">Computers</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">24-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=8UHSFIylUKg%3D" target="_blank">
+                        A Course in Computer Networks (Principles, Technologies and Protocols)
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sharma,Sanjay</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class=""></td>
+                <td class="text-center">2</td>
+                <td class="text-center">CE</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">23-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=x65RCa%24gtbM%3D" target="_blank">
+                        Advance Computer Networks
+                    </a>
+                </td>
+                <td class="g-max-width-190">Bagad,Vilas S.</td>
+                <td class="g-max-width-190">Technical Publications Pune</td>
+                <td class="">Computer Network</td>
+                <td class="text-center">5</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">23-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=%24g5OaUBR7s4%3D" target="_blank">
+                        An Introduction to Compiler Design
+                    </a>
+                </td>
+                <td class="g-max-width-190">Agarwal,Udit</td>
+                <td class="g-max-width-190">Dhanpat Rai &amp; Co (P) Ltd.</td>
+                <td class="">Compilers</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">23-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=ttj1wugteFc%3D" target="_blank">
+                        Computer Networks
+                    </a>
+                </td>
+                <td class="g-max-width-190">Katre,J S</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Computer Network</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">23-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">CD-DVD-FLOPPY</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=xT2V%24C5s8wY%3D" target="_blank">
+                        Computer Programming and Utilization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Diwanji,Hiteishi </td>
+                <td class="g-max-width-190">Books India Publication</td>
+                <td class="">Computer Programming &amp; Utilization</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">23-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=F8-SDEICKmM%3D" target="_blank">
+                        Concepts of Compiler Design
+                    </a>
+                </td>
+                <td class="g-max-width-190">Pandey,Adesh Kumar</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class="">Compilers</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">23-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=P5HeOGV3SQI%3D" target="_blank">
+                        Cryptography and Network Security
+                    </a>
+                </td>
+                <td class="g-max-width-190">Forouzan,Behrouz A</td>
+                <td class="g-max-width-190">Tata Mac-Graw Hill Education Private Limited</td>
+                <td class="">Cryptography</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">23-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=64aBuhAm5rs%3D" target="_blank">
+                        Data Communication and Computer Networks
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sharma,Sanjay</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class="">Data communications and Networking.</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">23-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">CD-DVD-FLOPPY</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=DXLF0k3BzPw%3D" target="_blank">
+                        Expert Data Structures with C++
+                    </a>
+                </td>
+                <td class="g-max-width-190">Patel,R B</td>
+                <td class="g-max-width-190">Khanna Book Publishing Co. (P) Ltd.</td>
+                <td class="">Data Structures  C ++</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">23-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=iTZW8pyxJik%3D" target="_blank">
+                        Problem Solving And Programming In C:Theory,Problems and Applications
+                    </a>
+                </td>
+                <td class="g-max-width-190">Salaria,R S</td>
+                <td class="g-max-width-190">Khanna Book Publishing Co. (P) Ltd.</td>
+                <td class="">Computer and Programming in C</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">23-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=0oFIPTK3U3M%3D" target="_blank">
+                        Expert Data Structures With C++
+                    </a>
+                </td>
+                <td class="g-max-width-190">Patel,R B</td>
+                <td class="g-max-width-190">Khanna Book Publishing Co. (P) Ltd.</td>
+                <td class=""></td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">22-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=9tWKSXM0qAw%3D" target="_blank">
+                        Java 2 In Record Time
+                    </a>
+                </td>
+                <td class="g-max-width-190">Holzner,Steven</td>
+                <td class="g-max-width-190">BPB Publications</td>
+                <td class="">JAVA Program</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">22-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=euJvR99%24Ttc%3D" target="_blank">
+                        Object-Oriented Programming with Java
+                    </a>
+                </td>
+                <td class="g-max-width-190">Buyya,Rajkumar</td>
+                <td class="g-max-width-190">Tata Mac-Graw Hill Education Private Limited</td>
+                <td class="">JAVA Program</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">22-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=b78thpQjIkk%3D" target="_blank">
+                        Programming in Java 2
+                    </a>
+                </td>
+                <td class="g-max-width-190">Somasundaram,K</td>
+                <td class="g-max-width-190">Jaico Publishing House</td>
+                <td class="">JAVA Program</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">22-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=egipGX47ZVQ%3D" target="_blank">
+                        Software Engineering Principles and Practice
+                    </a>
+                </td>
+                <td class="g-max-width-190">Jawadekar,Waman S</td>
+                <td class="g-max-width-190">Tata Mac-Graw Hill Education Private Limited</td>
+                <td class=""></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">22-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=IVEtQ%24MAluM%3D" target="_blank">
+                        Software Engineering: A Practitioner&#39;s Approach
+                    </a>
+                </td>
+                <td class="g-max-width-190">Pressman,Roger S</td>
+                <td class="g-max-width-190">MacGraw Hill Education (India) Private Limited</td>
+                <td class=""></td>
+                <td class="text-center">6</td>
+                <td class="text-center">CE</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">22-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=J3vKkXw80iI%3D" target="_blank">
+                        Data and File Structures using C for GTU
+                    </a>
+                </td>
+                <td class="g-max-width-190">Thareja,Reema</td>
+                <td class="g-max-width-190">Oxford University Press</td>
+                <td class=""></td>
+                <td class="text-center"></td>
+                <td class="text-center">CE</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">21-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=gBaiiujhVhM%3D" target="_blank">
+                        Numerical &amp; Statistical Methods for Computer Engineering
+                    </a>
+                </td>
+                <td class="g-max-width-190">Auti,A B</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Numerical and Statistical Methods for Computer Engineering</td>
+                <td class="text-center">3</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">21-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=y6zm%243yQz%24Y%3D" target="_blank">
+                        Operating Systems:A Concept Based Approach
+                    </a>
+                </td>
+                <td class="g-max-width-190">Dhamdhere,Dhananjay M.</td>
+                <td class="g-max-width-190">McGrawHill Higher Education</td>
+                <td class="">Operating System</td>
+                <td class="text-center">3</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">21-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=LpRwG0g%24k2U%3D" target="_blank">
+                        Speech and Language Processing
+                    </a>
+                </td>
+                <td class="g-max-width-190">Jurafsky,Daniel </td>
+                <td class="g-max-width-190">Pearson Education</td>
+                <td class="">Natural Language Processing</td>
+                <td class="text-center">3</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">21-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=Mmus22xQALA%3D" target="_blank">
+                        The Complete PC Upgrade &amp; Maintenance Guide 621.391 6
+                    </a>
+                </td>
+                <td class="g-max-width-190">Minasi,Mark</td>
+                <td class="g-max-width-190">SYBEX Publication</td>
+                <td class="">PC Upgrade AND Repair</td>
+                <td class="text-center">4</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">21-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=BFwzxfYKEMU%3D" target="_blank">
+                        Data and File Structures
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sultania,Dilip Kumar</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Data Strructures</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=8fGppWurdrE%3D" target="_blank">
+                        Data Mining and Business Intelligence
+                    </a>
+                </td>
+                <td class="g-max-width-190">Deshpande,Arti </td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Data Mining:</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=8rovJD6ZHNM%3D" target="_blank">
+                        Data Mining and Data Warehousing
+                    </a>
+                </td>
+                <td class="g-max-width-190">Agarwal,Udit</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class="">Data Mining:</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=vmKO8Sg3GS4%3D" target="_blank">
+                        Data Mining and Data Warehousing
+                    </a>
+                </td>
+                <td class="g-max-width-190">Agarwal,Udit</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class="">Data Mining:</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=IukSvua6U6g%3D" target="_blank">
+                        Data Mining,Data Warehousing and OLAP
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sharma,Gajendra</td>
+                <td class="g-max-width-190">S K Kataria &amp; Sons</td>
+                <td class="">Data Mining:</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=5TqAws035y8%3D" target="_blank">
+                        Data Structures
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sultania,Dilip Kumar</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Data Strructures</td>
+                <td class="text-center">4</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=BIB08G6vLJw%3D" target="_blank">
+                        Data Warehousing And Data Mining
+                    </a>
+                </td>
+                <td class="g-max-width-190">Deshpande,Arti </td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Data Warehousing</td>
+                <td class="text-center">3</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=-W1w7Z4xN8I%3D" target="_blank">
+                        Embedded Systems Architecture,Programming and Design
+                    </a>
+                </td>
+                <td class="g-max-width-190">Kamal,Raj</td>
+                <td class="g-max-width-190">Tata Mac-Graw Hill Education Private Limited</td>
+                <td class=""></td>
+                <td class="text-center">2</td>
+                <td class="text-center">EC</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=2huiT58J58A%3D" target="_blank">
+                        Microprocessors And Interfacing
+                    </a>
+                </td>
+                <td class="g-max-width-190">Hall,Douglas V</td>
+                <td class="g-max-width-190">Tata Mac-Graw Hill Education Private Limited</td>
+                <td class="">Microprocessors</td>
+                <td class="text-center">3</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=lg8dqyKUWD4%3D" target="_blank">
+                        System Programming
+                    </a>
+                </td>
+                <td class="g-max-width-190">Loonkar,Shweta A.</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Systems Programming</td>
+                <td class="text-center">3</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=2-hjFOYGFN0%3D" target="_blank">
+                        System Programming Semester-V GTU
+                    </a>
+                </td>
+                <td class="g-max-width-190">Puntambekar,Anuradha A.</td>
+                <td class="g-max-width-190">Technical Publications Pune</td>
+                <td class=""></td>
+                <td class="text-center">1</td>
+                <td class="text-center">CE</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=driBobQM0wY%3D" target="_blank">
+                        System Programming:With Free DVD
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sultania,Dilip Kumar</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Systems Programming</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">19-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=jM5qhU-PX3o%3D" target="_blank">
+                        Computer Organization and Architecture
+                    </a>
+                </td>
+                <td class="g-max-width-190">Jain,Satish</td>
+                <td class="g-max-width-190">BPB Publications</td>
+                <td class="">Computer Organization</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">17-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=gAU1eGcVvwU%3D" target="_blank">
+                        Computer Programming &amp; Utilization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Kanetkar,Yashavant P</td>
+                <td class="g-max-width-190">BPB Publications</td>
+                <td class=""></td>
+                <td class="text-center">1</td>
+                <td class="text-center">CE</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">17-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=oPQQ7Xa0uHY%3D" target="_blank">
+                        Computer Programming &amp; Utilization A Practical Approach
+                    </a>
+                </td>
+                <td class="g-max-width-190">Kotecha,Bansi N.</td>
+                <td class="g-max-width-190">Ekta Prakashan &amp; Co.</td>
+                <td class=""></td>
+                <td class="text-center">1</td>
+                <td class="text-center">CE</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">17-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=VDkRSGOlJiY%3D" target="_blank">
+                        Computer Programming And Utilization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Balagurusamy,E</td>
+                <td class="g-max-width-190">Mcgraw Hill Education (India) Private Limited</td>
+                <td class="">Computer Programming &amp; Utilization</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">17-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=-jgUfaVnnvg%3D" target="_blank">
+                        Computer Programming and Utilization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Balagurusamy,E</td>
+                <td class="g-max-width-190">Mcgraw Hill Education (India) Private Limited</td>
+                <td class="">Computer Programming &amp; Utilization</td>
+                <td class="text-center">3</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">17-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=qqfe7MS4TEI%3D" target="_blank">
+                        Computer Programming and Utilization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Balagurusamy,E</td>
+                <td class="g-max-width-190">Mcgraw Hill Education (India) Private Limited</td>
+                <td class="">Computer Programming &amp; Utilization</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">17-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=Id3bdQCKeXM%3D" target="_blank">
+                        Computer Programming and Utilization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Khandare,S S</td>
+                <td class="g-max-width-190">S. Chand &amp; Company Pvt. Ltd.</td>
+                <td class=""></td>
+                <td class="text-center">1</td>
+                <td class="text-center">CE</td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">16-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=SRq4Xy5whxo%3D" target="_blank">
+                        Computer Programming and Utilization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Diwanji,Hiteishi </td>
+                <td class="g-max-width-190">Books India Publication</td>
+                <td class="">Computer Programming &amp; Utilization</td>
+                <td class="text-center">3</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">16-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=LCbQT7DUyGw%3D" target="_blank">
+                        Computer Programming and Utilization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Shah,S M</td>
+                <td class="g-max-width-190">Mahajan Publishing House</td>
+                <td class="">Computer Programming &amp; Utilization</td>
+                <td class="text-center">6</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">16-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=LmJ3uNHKY0U%3D" target="_blank">
+                        Computer Programming and Utilization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Shah,S M</td>
+                <td class="g-max-width-190">Mahajan Publishing House</td>
+                <td class="">Computer Programming &amp; Utilization</td>
+                <td class="text-center">9</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">16-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=GLDIF6efJx0%3D" target="_blank">
+                        Computer Programming And Utilization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Diwanji,Hiteishi </td>
+                <td class="g-max-width-190">Books India Publication</td>
+                <td class="">Computer Programming &amp; Utilization</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">16-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=VUVL%24fcu6MM%3D" target="_blank">
+                        Computer Programming and Utilization:Paper Solutions
+                    </a>
+                </td>
+                <td class="g-max-width-190">Patel,J B</td>
+                <td class="g-max-width-190">Atul Prakashan</td>
+                <td class="">Computer Programming &amp; Utilization</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">16-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=Zm2PsDzH0yk%3D" target="_blank">
+                        Digit:V:26/I:10:October&#39;2026:CYBX Stay Safe This Diwali-Protect Yourself From Online Scams
+                    </a>
+                </td>
+                <td class="g-max-width-190">Dig,</td>
+                <td class="g-max-width-190">Digit Nine Dot Nine Interactive Pvt. Ltd.</td>
+                <td class="">digit</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">16-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Magazine</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=dXODFfjx0Ic%3D" target="_blank">
+                        Fast Track:V:21/I:10:October&#39;2026:Run Your Own AI
+                    </a>
+                </td>
+                <td class="g-max-width-190">Fas,</td>
+                <td class="g-max-width-190">Digit Nine Dot Nine Interactive Pvt. Ltd.</td>
+                <td class="">Fast Track</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">16-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=P7q%24Dji8jfU%3D" target="_blank">
+                        Computer Organization
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sultania,Dilip Kumar</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Computer Organization</td>
+                <td class="text-center">2</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">15-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=z9jN0tJtX%24A%3D" target="_blank">
+                        Computer Programming and Utilization:Group-I &amp; II
+                    </a>
+                </td>
+                <td class="g-max-width-190">Padmawar,Neelima</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Computer Programming &amp; Utilization</td>
+                <td class="text-center">4</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">15-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=vevZuJPnOVM%3D" target="_blank">
+                        Advance Processors
+                    </a>
+                </td>
+                <td class="g-max-width-190">Narula,Harish G.</td>
+                <td class="g-max-width-190">Tech-Max Publications</td>
+                <td class="">Microprocessor</td>
+                <td class="text-center">4</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">13-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=66-zY2Ztpfk%3D" target="_blank">
+                        Compiler Design
+                    </a>
+                </td>
+                <td class="g-max-width-190">Sultanpure,Kavita A.</td>
+                <td class="g-max-width-190">TechKnowledge Publications</td>
+                <td class="">Compilers</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">13-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=eZ%24Av-AKbx8%3D" target="_blank">
+                        Programming For Problem Solving 
+                    </a>
+                </td>
+                <td class="g-max-width-190">Shah,S M</td>
+                <td class="g-max-width-190">Mahajan Publishing House</td>
+                <td class="">Computer Programming.</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">13-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">Book</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=XT0fOnTaLtY%3D" target="_blank">
+                        Sanshipt Aatmakatha-Gandhiji
+                    </a>
+                </td>
+                <td class="g-max-width-190">Gandhi,Mohandas Karamchand</td>
+                <td class="g-max-width-190">Navjivan Prakashan Mandir-Ahmedabad</td>
+                <td class="">Men Biography</td>
+                <td class="text-center">1</td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">13-10-2026</td>
+            </tr>
+            <tr class="">
+                <td class="">CD-DVD-FLOPPY</td>
+                <td class="">
+                    <a href="/Home/BookInformation?Enc_MaterialID=jiPyLHlBhQo%3D" target="_blank">
+                        Core Java
+                    </a>
+                </td>
+                <td class="g-max-width-190">Alam,Tanweer </td>
+                <td class="g-max-width-190">Khanna Publishers</td>
+                <td class="">JAVA Program</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">Available</td>
+                <td class="text-center text-nowrap">10-10-2026</td>
+            </tr>
+    </tbody>
+</table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+                        <!--End::Main Content-->
+                    </div>
+                    <!-- end:: Content -->
+                </div>
+                <!-- begin:: Footer -->
+                <div class="kt-footer  kt-grid__item kt-grid kt-grid--desktop kt-grid--ver-desktop" id="kt_footer">
+    <div class="kt-container  kt-container--fluid ">
+        <div class="kt-footer__copyright">
+            2026&nbsp;&copy;&nbsp;<a href="http://darshan.ac.in/" target="_blank" class="kt-link">Darshan University</a>
+        </div>
+    </div>
+</div>
+
+                <!-- end:: Footer -->
+            </div>
+        </div>
+    </div>
+    <!-- end:: Page -->
+    <!-- begin::Scrolltop -->
+    <div id="kt_scrolltop" class="kt-scrolltop">
+        <i class="fa fa-arrow-up"></i>
+    </div>
+    <div id="modal-placeholder"></div>
+    <!-- end::Scrolltop -->
+    <!-- begin::Global Config(global config for global JS sciprts) -->
+    [script omitted]
+    <!-- end::Global Config -->
+    <!--begin::Global Theme Bundle(used by all pages) -->
+    [script omitted]
+    [script omitted]
+
+
+    <!--begin::Page Vendors(used by this page) -->
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    
+
+    <!--begin::Custom JS -->
+    
+    
+
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+
+
+    <!--begin::Page Scripts(used by this page) -->
+    [script omitted]
+    
+    [script omitted]
+
+</body>
+<!-- end::Body -->
+</html>

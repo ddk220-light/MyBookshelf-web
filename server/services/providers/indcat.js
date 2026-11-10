@@ -2,6 +2,7 @@ import { cachedTask, enqueueTask, getText } from './http.js';
 import { attributes, text, firstIsbn, catalogError } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
 import ISBN from 'isbn3';
+import { connectorContext } from '../catalog-connectors/context.js';
 
 const ORIGIN = 'https://indcat.inflibnet.ac.in';
 const PATH = '/index.php/search/checkuniv';
@@ -34,7 +35,7 @@ function inputs(html) {
 }
 function markup(html) { return html.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, ''); }
 
-export function parseIndcatSearch(html, code) {
+export function parseIndcatSearch(html, code, limit = 10) {
   const clean = markup(html), fields = inputs(clean);
   if (fields.part_uni !== code) throw catalogError('Catalog search scope changed');
   const total = text(clean).match(/Total\s+(\d+)\s+Records? found/i);
@@ -49,10 +50,10 @@ export function parseIndcatSearch(html, code) {
     try { data = JSON.parse(Buffer.from(url.searchParams.get('getDetails') || '', 'base64').toString()); } catch { throw catalogError('Invalid record link'); }
     if ((data.singleclg || data.university) !== code || !/^\d{1,20}$/.test(data.book_detail || '')) throw catalogError('Record belongs to a different institution');
     const title = text(m[2]).slice(0, 500);
-    if (title) records.set(data.book_detail, { recordId: data.book_detail, title, authors: [] });
+    if (title) records.set(data.book_detail, { recordId: data.book_detail, title, authors: [], catalogUrl:url.toString(), linkKind:'record' });
   }
   if (Number(total[1]) > 0 && !records.size) throw catalogError('Missing catalog records');
-  return { total: Number(total[1]), records: [...records.values()].slice(0, 10) };
+  return { total: Number(total[1]), records: [...records.values()].slice(0, limit) };
 }
 
 export function parseIndcatRecord(html, library, recordId, expectedIsbn = null, { confirmedMemberRecord = false } = {}) {
@@ -88,9 +89,15 @@ export function parseIndcatRecord(html, library, recordId, expectedIsbn = null, 
   // A member's own bibliographic record may have no accessioned copies. It can
   // prove catalog presence after a scoped search, never borrowing availability.
   if (!owned && !ownBibliographicRecord) return null;
+  // This parser accepts the Books database only: both the native record
+  // identity and institution holding must use its explicit bk_ record kind.
+  // A generic title, ISBN or page count is never used to infer material type.
+  const bookKind = identity.control_no === `bk_${recordId}` || owned;
   return { recordId, title: fields.title.replace(/\s*\/\s*(?:by|edited by)\s+.+$/i, ''), authors: fields.author ? [fields.author] : [], isbn,
+    ...(bookKind ? { materialType: 'Book', materialTypeProof: 'indcat_books_bk_record_kind' } : {}),
     catalogUrl: recordUrl(code, recordId),
     observation: { outcome: 'in_catalog', matchKind: expectedIsbn ? 'exact_isbn' : 'verified_work', recognizedExact: true,
+      ...(bookKind ? { materialType: 'Book' } : {}),
       catalogUrl: recordUrl(code, recordId), locations: [{ name: library.name, status: 'unknown' }] } };
 }
 
@@ -103,21 +110,26 @@ async function read(url, options = {}) {
   if (!response.ok || response.url !== url) throw catalogError('Catalog request failed', 'CATALOG_UNAVAILABLE');
   return response;
 }
-async function search(library, query, isbn = false, deadlineAt = Date.now() + 60_000) {
+async function search(library, query, isbn = false, deadlineAt = Date.now() + 60_000, native = false, nativeField = 'allfields') {
   const code = config(library);
-  return cachedTask(`indcat:search:${code}:${isbn}:${query}`, () => enqueueTask('indcat', async () => {
+  return cachedTask(`indcat:search:${code}:${isbn}:${query}:${native}:${nativeField}`, () => enqueueTask('indcat', async () => {
     const home = await read(scopeUrl(code), { deadlineAt });
     const fields = inputs(markup(home.text));
     if (fields.part_uni !== code || !/^[a-zA-Z0-9_-]{16,128}$/.test(fields.csrf_test_name || '')) throw catalogError('Catalog search form changed');
     const cookies = (home.headers.getSetCookie?.() || []).map(v => v.split(';')[0]).join('; ');
-    const body = new URLSearchParams({ search_type: 'simple', part_uni: code, title: query, field: isbn ? 'isbn' : 'allfields',
-      opt: isbn ? 'exact' : 'free', submit: 'Search', limits: '10', csrf_test_name: fields.csrf_test_name });
+    const body = new URLSearchParams({ search_type: 'simple', part_uni: code, title: query, field: isbn ? 'isbn' : nativeField,
+      opt: isbn ? 'exact' : 'free', submit: 'Search', limits: '10', ...(native ? {cPageNo:''} : {}), csrf_test_name: fields.csrf_test_name });
     const result = await read(`${ORIGIN}${PATH}`, { deadlineAt, method: 'POST',
       headers: { Cookie: cookies, Referer: scopeUrl(code), 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() });
-    return parseIndcatSearch(result.text, code);
+    return parseIndcatSearch(result.text, code, native ? Infinity : 10);
   }, { deadlineAt }), { deadlineAt });
 }
 export async function searchCatalog(library, query) { return (await search(library, query)).records; }
+export async function searchNativeCatalog(library, query, {field='keyword'}={}) {
+  if(!['keyword','title'].includes(field))throw catalogError('Unsupported native IndCat field','UNSUPPORTED_PROFILE');
+  const nativeField=field==='title'?'title':'allfields',result = await search(library, query, false, connectorContext.getStore()?.deadlineAt??Date.now() + 60_000, true, nativeField);
+  return { ...result, hasMore: result.total > result.records.length, continuationUnsupported: result.total > result.records.length, nativeProfile:{field:nativeField,operator:'free',pageSize:10,query} };
+}
 export async function resolveCatalogRecord(library, recordId, expectedIsbn = null, deadlineAt = Date.now() + 60_000, confirmedMemberRecord = false) {
   const code = config(library);
   const raw = await cachedTask(`indcat:record:${code}:${recordId}`, async () => {
@@ -129,7 +141,8 @@ export async function resolveCatalogRecord(library, recordId, expectedIsbn = nul
         const parsed = candidate.isbn && ISBN.parse(candidate.isbn);
         const queries = candidate.isbn ? [...new Set([candidate.isbn, parsed?.isbn10, parsed?.isbn13h, parsed?.isbn10h].filter(Boolean))] : [candidate.title];
         for (const query of queries) {
-          const scoped = await search(library, query, Boolean(candidate.isbn), deadlineAt);
+          const nativeTitle=Boolean(connectorContext.getStore())&&!candidate.isbn;
+          const scoped = await search(library, query, Boolean(candidate.isbn), deadlineAt,nativeTitle,nativeTitle?'title':'allfields');
           if (scoped.records.some(record => record.recordId === recordId)) { confirmedMemberRecord = true; break; }
         }
       }

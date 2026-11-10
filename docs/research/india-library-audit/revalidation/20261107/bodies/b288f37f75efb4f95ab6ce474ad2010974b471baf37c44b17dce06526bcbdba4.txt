@@ -1,0 +1,2929 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        
+            <meta charset="UTF-8">
+            <title>NMMC Library</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+
+            <!-- Bootstrap CSS (ONLY ONE) -->
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+            <!-- FontAwesome -->
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+            <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+
+            <!-- Add to head section - after Bootstrap CSS -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.css">
+
+            <!-- Your CSS -->
+            <link href="/static/css/library.css" rel="stylesheet">
+            
+            
+            
+        
+
+        <style>
+
+            @media (max-width: 768px) {
+                .employee_login {
+                    display: none !important;
+                }
+            }
+
+            .modal {
+                z-index: 20000 !important;
+            }
+
+            .no-hover-underline,
+            .no-hover-underline:hover,
+            .no-hover-underline:focus,
+            .no-hover-underline:active {
+                text-decoration: none !important;
+                border-bottom: none !important;
+                box-shadow: none !important;
+            }
+
+            .no-hover-underline::after,
+            .no-hover-underline:hover::after,
+            .no-hover-underline:focus::after,
+            .no-hover-underline:active::after {
+                content: none !important;
+            }
+
+            .no-hover-underline::before,
+            .no-hover-underline:hover::before,
+            .no-hover-underline:focus::before,
+            .no-hover-underline:active::before {
+                content: none !important;
+            }
+
+            .no-hover-underline{
+                float:right;
+            }
+
+        </style>
+        <style>
+
+            .member-login-btn {
+                background: #d9b340; /* Primary blue */
+                color: white;
+                border: none;
+                border-radius: 30px;
+                padding: 10px 22px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(30, 64, 175, 0.35);
+                transition: all 0.3s ease;
+                letter-spacing: 0.3px;
+                outline: none;
+            }
+
+
+            .member-login-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 22px rgba(37,99,235,0.45);
+            }
+
+            .member-login-btn:active {
+                transform: translateY(0);
+            }
+
+        </style>
+
+    </head>
+
+    <style>
+        /* ==================== UPDATED HEADER UTILITY ROW ==================== */
+        .headerUtilityRow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 6px 20px;
+            background: #f5f5f5;
+            min-height: 40px;
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            font-size: 13px;
+        }
+
+        /* Utility link items */
+        .utility-link-item {
+            color: #015296;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 6px;
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .utility-link-item:hover {
+            color: #015296;
+            text-decoration: underline;
+        }
+
+        /* Divider separator */
+        .divider {
+            color: #999;
+            font-size: 13px;
+            margin: 0 2px;
+            user-select: none;
+        }
+
+        /* Font buttons group */
+        .font-btns-group {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .font-btn {
+            background: none;
+            border: none;
+            
+            color: #015296;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 4px 8px;
+            transition: color 0.2s ease;
+        }
+
+        .font-btn:hover {
+            color: #015296;
+        }
+
+        /* Language buttons group */
+        .lang-btns-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .lang-btn {
+            background: none;
+            border: 1px solid #ccc;
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 3px 10px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .lang-btn:hover {
+            border-color: #015296;
+            color: #015296;
+        }
+
+        /* Active language button */
+        .lang-btn.active-lang {
+            background: #015296;
+            color: #fff;
+            border-color: #015296;
+        }
+
+        /* NMMC Library link (desktop only) */
+        .nmmc-library-link .library-link {
+            font-size: 13px;
+            padding: 4px 8px;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .headerUtilityRow {
+                padding: 6px 10px;
+                gap: 4px;
+                font-size: 11px;
+            }
+            
+            .utility-link-item {
+                font-size: 11px;
+                padding: 3px 4px;
+            }
+            
+            .divider {
+                font-size: 11px;
+                margin: 0 1px;
+            }
+            
+            .font-btn {
+                font-size: 11px;
+                padding: 3px 5px;
+            }
+            
+            .lang-btn {
+                font-size: 10px;
+                padding: 2px 7px;
+            }
+            
+            .desktop-only {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .headerUtilityRow {
+                gap: 2px;
+                padding: 4px 5px;
+                font-size: 10px;
+            }
+            
+            .utility-link-item {
+                font-size: 10px;
+            }
+            
+            .divider {
+                margin: 0;
+            }
+            
+            .lang-btn {
+                font-size: 9px;
+                padding: 2px 5px;
+            }
+        }
+    </style> 
+
+    <body>
+
+        <!-- Lead Capture Modal -->
+        <div class="modal fade" id="leadModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Stay in Touch</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="leadForm">
+                    <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" name="name" class="form-control"
+                                    placeholder="Enter your name"
+                                    pattern="[A-Za-z\s]+"
+                                    title="Only letters and spaces allowed"
+                                    required>
+
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                            [form state omitted]
+
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                            [form state omitted]
+
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Remark</label>
+                            <input type="text" name="remark" class="form-control"
+                                        placeholder="Any Suggestion">
+
+                            </div>
+
+                        </div>
+
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+
+                </div>
+            </div>
+        </div>
+
+        <header>
+
+                <div class="headerUtilityRow" id="head-english" style="display: none;">
+                    <!-- ========== LEFT GROUP ========== -->
+                    <div class="utility-left-group">
+                        <!-- Skip to main content -->
+                        <a href="#main-content" class="utility-link-item" aria-label="Skip to main content">
+                            Skip to main content
+                        </a>
+                        <span class="divider">|</span>
+                        
+                        <!-- Font Size Buttons: A+ | A | A- -->
+                        <div class="font-btns-group">
+                            <button onclick="increaseFont()" class="font-btn" title="Increase Font Size">A+</button>
+                            <span class="divider">|</span>
+                            <button onclick="resetFont()" class="font-btn" title="Reset Font Size">A</button>
+                            <span class="divider">|</span>
+                            <button onclick="decreaseFont()" class="font-btn" title="Decrease Font Size">A-</button>
+                        </div>
+                        <span class="divider">|</span>
+                        
+                        <!-- Contact Email -->
+                        <a href="mailto:[email omitted]" class="utility-link-item">
+                            [email omitted]
+                        </a>
+                    </div>
+                    
+                    <!-- ========== RIGHT GROUP ========== -->
+                    <div class="utility-right-group">
+                        <!-- Language Toggle - Pill Style -->
+                        <div class="lang-pill-group">
+                            <button onclick="switchToEnglish()" class="lang-pill-btn active-lang" id="lang-btn-english">English</button>
+                            <button onclick="switchToMarathi()" class="lang-pill-btn" id="lang-btn-marathi-top">मराठी</button>
+                        </div>
+                        <span class="divider">|</span>
+                        
+                        <!-- NMMC Official Link -->
+                        <a href="https://www.nmmc.gov.in/" target="_blank" class="utility-link-item">
+                            NMMC Official
+                        </a>
+                        
+                        
+                    </div>
+                </div>
+
+                <div class="headerUtilityRow" id="head-marathi">
+                    <!-- ========== LEFT GROUP ========== -->
+                    <div class="utility-left-group">
+                        <!-- Skip to main content -->
+                        <a href="#main-content" class="utility-link-item" aria-label="मुख्य सामग्रीवर जा">
+                            पृष्ठ सामग्रीवर जा
+                        </a>
+                        <span class="divider">|</span>
+                        
+                        <!-- Font Size Buttons: अ+ | अ | अ- -->
+                        <div class="font-btns-group">
+                            <button onclick="increaseFont()" class="font-btn" title="अक्षर आकार वाढवा">अ+</button>
+                            <span class="divider">|</span>
+                            <button onclick="resetFont()" class="font-btn" title="अक्षर आकार रीसेट करा">अ</button>
+                            <span class="divider">|</span>
+                            <button onclick="decreaseFont()" class="font-btn" title="अक्षर आकार कमी करा">अ-</button>
+                        </div>
+                        <span class="divider">|</span>
+                        
+                        <!-- Contact Email -->
+                        <a href="mailto:[email omitted]" class="utility-link-item">
+                            [email omitted]
+                        </a>
+                    </div>
+                    
+                    <!-- ========== RIGHT GROUP ========== -->
+                    <div class="utility-right-group">
+                        <!-- Language Toggle - Pill Style -->
+                        <div class="lang-pill-group">
+                            <button onclick="switchToEnglish()" class="lang-pill-btn" id="lang-btn-english-top">English</button>
+                            <button onclick="switchToMarathi()" class="lang-pill-btn active-lang" id="lang-btn-marathi">मराठी</button>
+                        </div>
+                        <span class="divider">|</span>
+                        
+                        <!-- NMMC Official Link -->
+                        <a href="https://www.nmmc.gov.in/" target="_blank" class="utility-link-item">
+                            नवी मुंबई महानगरपालिका
+                        </a>
+                        
+                        
+                    </div>
+                </div>
+
+                
+                
+                
+
+                <div class="top-bar">
+                    <!-- Left: logo + title -->
+                    <div class="brand-left" id="brand-english" style="display: none;">
+                        <img src="/static/images/administrative/nmmc-logo.jpeg" alt="नवी मुंबई महानगरपालिका लोगो" class="logo" style="height:55px; width:auto; object-fit:contain;">
+                        <div class="brand-text">
+                            <h3 class="header-title">Navi Mumbai Municipal Corporation</h3>
+                            <h4 class="sub-title">Library | Social Welfare Department</h4>
+                            
+                        </div>
+                    </div>
+
+                    <div class="brand-left" id="brand-marathi">
+                        <img src="/static/images/administrative/nmmc-logo.jpeg" alt="नवी मुंबई महानगरपालिका लोगो" class="logo" style="height:55px; width:auto; object-fit:contain;">
+                        <div class="brand-text">
+                            <h3 class="header-title">नवी मुंबई महानगरपालिका</h3>
+                            <h4 class="sub-title">ग्रंथालय | समाज विकास विभाग</h4>
+                            
+                        </div>
+                    </div>
+
+                    <!-- Right logo -->
+                    <img src="/static/images/administrative/layout_img.png" alt="NMMC Logo" class="logo right-logo" style="height:55px; width:auto; object-fit:contain;">
+                </div>
+
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light" id="navbar-english" style="display: none;">
+                    <div class="container-fluid">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a href="/library_list_login">Home</a></li>
+                            <li class="nav-item dropdown">
+                                <a href="javascript:void(0);" class="dropbtn">About Us ▾</a>
+                                <ul class="dropdown-menu">
+                                    
+                                    <li><a href="/vision-mission/">Vision and Mission</a></li>
+                                    
+                                    
+                                    <li>
+                                        <a href="/static/images/Vishnudas%20bhave%20Library%20PDF.pdf" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer">
+                                            <i class="fas fa-file-pdf text-danger me-2"></i>Library Information Guide
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/static/images/Library%20Staff%20Dashboard%20PDF.pdf" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer">
+                                            <i class="fas fa-file-pdf text-danger me-2"></i>Staff Operations Manual
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/static/images/Membership%20Deshboard%20PDF.pdf" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer">
+                                            <i class="fas fa-file-pdf text-danger me-2"></i>Membership Information Brochure
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/swd-libraries/">Library Information</a>
+                            </li>
+                            
+                            
+
+                            
+
+                            
+
+                            <!-- Add 'ms-auto' to shift login button towards right but not at the extreme end -->
+                            
+
+                            <li class="icon">
+                                <a href="javascript:void(0);" onclick="toggleNavbar('navbar-english')">☰</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <nav class="navbar navbar-expand-lg navbar-light" id="navbar-marathi">
+                    <div class="container-fluid">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a href="/library_list_login">मुख्य पृष्ठ</a></li>
+                            <li class="nav-item dropdown">
+                                <a href="javascript:void(0);" class="dropbtn">आमच्याबद्दल ▾</a>
+                                <ul class="dropdown-menu">
+                                    
+                                    <li><a href="/vision-mission/">दृष्टिकोन आणि ध्येय</a></li>
+                                    
+                                    
+                                    <li>
+                                        <a href="/static/images/Vishnudas%20bhave%20Library%20PDF.pdf" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer">
+                                            <i class="fas fa-file-pdf text-danger me-2"></i>ग्रंथालय माहिती मार्गदर्शिका
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/static/images/Library%20Staff%20Dashboard%20PDF.pdf" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer">
+                                            <i class="fas fa-file-pdf text-danger me-2"></i>कर्मचारी मार्गदर्शक
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/static/images/Membership%20Deshboard%20PDF.pdf" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer">
+                                            <i class="fas fa-file-pdf text-danger me-2"></i>सदस्यता तपशील
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/swd-libraries/">ग्रंथालय माहिती</a>
+                            </li>
+                            
+                            
+
+                             
+
+                            <!-- Add 'ms-auto' to shift login button towards right but not at the extreme end -->
+                            
+
+                            <li class="icon">
+                                <a href="javascript:void(0);" onclick="toggleNavbar('navbar-marathi')">☰</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+        </header>
+
+        <main id="main-content">
+            <!-- Page Content -->
+            
+
+    <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <style>
+        /* ================= SEARCH GUIDE / HELP SECTION ================= */
+        .search-guide-container {
+            padding: 20px;
+            max-width: 100%;
+            animation: fadeInGuide 0.5s ease-out;
+        }
+
+        @keyframes fadeInGuide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Search Guide Card - Icon beside title */
+        .search-guide-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #eef0f7 0%, #e6e9f2 100%);
+            border-radius: 16px;
+        }
+
+        .search-guide-icon {
+            font-size: 40px;
+            color: var(--primary-blue, #015296);
+            flex-shrink: 0;
+        }
+
+        .search-guide-text {
+            text-align: left;
+        }
+
+        .search-guide-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark, #1E2A4F);
+            margin-bottom: 5px;
+        }
+
+        .search-guide-desc {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Steps Grid */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .guide-step {
+            display: flex;
+            gap: 15px;
+            background: white;
+            padding: 18px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .guide-step:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(56, 73, 136, 0.1);
+            border-color: #cbd5e1;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary-blue, #015296) 0%, #2a3a6e 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .highlight-step .step-number {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-icon {
+            font-size: 1.3rem;
+            color: var(--primary-blue, #015296);
+            margin-bottom: 8px;
+        }
+
+        .step-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .step-content p {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 4px;
+            line-height: 1.5;
+        }
+
+        .step-note {
+            font-size: 0.8rem !important;
+            color: #f59e0b !important;
+            font-style: italic;
+        }
+
+        /* Tips Section - Vertical list layout */
+        .search-tips {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tips-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tips-header i {
+            font-size: 1.3rem;
+            color: #f59e0b;
+        }
+
+        .tips-header h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        /* Tips list - VERTICAL layout (not side by side) */
+        .tips-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tips-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #475569;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .tips-list li:hover {
+            background: #f1f5f9;
+            border-color: var(--primary-blue, #015296);
+        }
+
+        .tips-list li i {
+            color: var(--primary-blue, #015296);
+            font-size: 1rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .tips-list strong {
+            color: var(--primary-blue, #015296);
+            font-weight: 700;
+        }
+
+        /* Pro Tip Banner */
+        .pro-tip {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border-radius: 12px;
+            padding: 15px 20px;
+            border-left: 4px solid var(--primary-blue, #015296);
+        }
+
+        .pro-tip i {
+            font-size: 1.5rem;
+            color: #f59e0b;
+        }
+
+        .pro-tip div {
+            font-size: 0.85rem;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        .pro-tip strong {
+            color: var(--primary-blue, #015296);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-guide-container {
+                padding: 15px;
+            }
+            
+            .search-guide-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .search-guide-text {
+                text-align: center;
+            }
+            
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .search-guide-title {
+                font-size: 1.2rem;
+            }
+            
+            .tips-list li {
+                font-size: 0.8rem;
+            }
+            
+            .pro-tip {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: flex-end;
+            margin: 15px 0;
+        }
+
+        .btn-catalogue {
+            background: linear-gradient(135deg, #6f42c1 0%, #6610f2 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .btn-catalogue:hover {
+            background: linear-gradient(135deg, #6610f2 0%, #6f42c1 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(111, 66, 193, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-catalogue i {
+            font-size: 16px;
+        }
+
+        .btn-help {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .btn-help:hover {
+            background: linear-gradient(135deg, #138496 0%, #17a2b8 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(23, 162, 184, 0.3);
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .btn-clear:hover {
+            background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .quick-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .btn-catalogue, .btn-help, .btn-clear {
+                flex: 1 1 auto;
+                justify-content: center;
+            }
+        }
+
+        /* ================= GLOBAL STYLES ================= */
+        :root {
+            --primary-blue: #1e40af;
+            --secondary-blue: #3b82f6;
+            --accent-teal: #0d9488;
+            --light-bg: #f8fafc;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Add Marathi font to all elements */
+        
+
+        /* ================= COMPACT LAYOUT ================= */
+        .main-container {
+            max-width: none;
+            width: 100%;
+            padding: 10px 20px;
+        }
+
+        .search-layout {
+            display: flex;
+            gap: 20px;
+            height: 70vh;          /* FIXED height */
+            max-height: 70vh;
+            overflow: hidden;     /* Prevent expansion */
+        }
+
+
+
+        .search-controls-panel {
+            flex: 0 0 350px;
+            min-width: 350px;
+            max-width: 350px;
+
+            height: 100%;          /* Fill parent */
+            max-height: 100%;
+
+            display: flex;
+            flex-direction: column;
+
+            overflow: hidden;    
+        }
+
+        .search-controls-panel > .tab-content,
+        .search-controls-panel > .tab-content.active {
+            flex: 1;
+            overflow-y: auto;     /* ✅ scroll here */
+        }
+
+
+        /* ================= MODE SELECTION ================= */
+        .mode-selection {
+            margin-bottom: 15px;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 5px;
+            background: var(--light-bg);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: var(--primary-blue);
+            box-shadow: var(--card-shadow);
+        }
+
+        /* ================= SEARCH TYPE SELECTION ================= */
+        .search-type-selection {
+            margin-bottom: 15px;
+        }
+
+        .search-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--light-bg);
+            padding: 3px;
+            border-radius: 8px;
+        }
+
+        .search-tab {
+            flex: 1;
+            padding: 8px 10px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .search-tab.active {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: #ffffff;
+            box-shadow: var(--card-shadow);
+        }
+
+
+        .view-details-btn {
+            margin-top: auto;
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .back-btn,
+        .read-ebook-btn,
+        .details-btn {
+            flex: 1;
+            padding: 7px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+
+        /* ================= LANGUAGE SELECTION ================= */
+        .language-selection {
+            margin-bottom: 15px;
+        }
+
+        .language-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        /* ================= SEARCH CONTENT ================= */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-section {
+            background: var(--light-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            flex: 1 0 auto;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ================= ADVANCED SEARCH ================= */
+        .type-buttons {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .type-btn.active {
+            background: linear-gradient(135deg, var(--accent-teal), #10b981);
+            color: white;
+            border-color: var(--accent-teal);
+        }
+
+        .form-group {
+            margin-bottom: 3px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .search-input-group {
+            position: relative;
+            display: flex;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px 40px 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            color: #1e293b;
+            transition: border 0.3s ease;
+        }
+
+        .input-search-btn {
+            position: absolute;
+            right: 4px;
+            top: 4px;
+            height: 28px;
+            width: 28px;
+            border: none;
+            border-radius: 5px;
+            background: var(--accent-teal);
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 12px;
+        }
+
+        /* ================= KEYBOARD LAYOUTS ================= */
+        .keyboard-container {
+            margin-bottom: 10px;
+            width: 100%;
+            height: 220px;               /* fixed keyboard area */
+            min-height: 220px;
+            max-height: 240px;
+
+            position: relative;        
+            pointer-events: none;
+
+            transition: opacity 0.2s ease;
+        }
+
+        .english-keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 4px;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .keyboard-key {
+            flex: 1;
+            min-width: 0;
+            height: 28px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            background: white;
+            color: #334155;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 2px;
+        }
+
+        /* Special buttons */
+        .keyboard-key.special {
+            flex: 1.5;
+            font-size: 10px;
+        }
+
+        .keyboard-key.backspace-btn {
+            background: #fecaca;
+            color: #dc2626;
+        }
+
+        .keyboard-key.clear-btn, .keyboard-key.space-btn {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        /* Devanagari Keyboards */
+        .marathi-keyboard-grid, .hindi-keyboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(28px, 1fr));
+            gap: 4px;
+            margin-bottom: -6px;
+            width: 100%;
+        }
+
+        .keyboard-key.marathi, .keyboard-key.hindi {
+            font-family: 'Noto Sans Devanagari', 'Mangal', sans-serif;
+            font-size: 13px;
+            height: 22px;
+            min-width: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .keyboard-key.marathi {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            color: #0369a1;
+        }
+
+        .keyboard-key.hindi {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+
+        .keyboard-actions {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+
+        .keyboard-hint {
+            position: absolute;
+            inset: 0;
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+
+            background: #f0fff0;
+            border-radius: 6px;
+
+            font-size: 12px;
+            color: #388E3C;
+            padding: 10px;
+            z-index: 2;
+        }
+
+        .keyboard-hint.active {
+            display: flex;
+        }
+
+        .keyboard-body {
+            height: 100%;
+        }
+
+
+        /* ================= BUTTONS ================= */
+        .btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
+        }
+
+        .btn-help {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-actions button {
+            flex: 1;
+        }
+
+        //* Book Gallery Grid */
+
+        .book-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* Individual Book Item */
+        .book-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 160px;
+            position: relative;
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Book Title Styling */
+        .book-title {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 0.4px;
+            /* Dark brown gradient text (high contrast) */
+            background: linear-gradient(
+                135deg,
+                #3e2723,   /* deep brown */
+                #5d4037,   /* warm brown */
+                #6d4c41    /* soft highlight */
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            padding: 8px 16px;
+            transition:
+                transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                text-shadow 0.35s ease;
+        }
+
+        /* Elegant underline */
+        .book-title::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 32%;
+            height: 3px;
+            background: linear-gradient(
+                90deg,
+                #5d4037,
+                #8d6e63
+            );
+            border-radius: 10px;
+            transform: translateX(-50%);
+            opacity: 0.8;
+            transition: width 0.4s ease, opacity 0.4s ease;
+        }
+
+        /* Hover effect */
+        .book-title:hover {
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .book-title:hover::after {
+            width: 90%;
+            opacity: 1;
+        }
+
+        /* Click feedback */
+        .book-title:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        /* Book Image Container */
+        .book-image-container {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .book-image-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 100%;
+            
+            transition: transform 0.3s ease;
+        }
+
+        .book-cover:hover {
+            transform: scale(1.05);
+        }
+
+        /* Default Ebook Cover */
+        .default-ebook-cover {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .ebook-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .ebook-label {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .default-ebook-title {
+            font-size: 14px;
+            line-height: 1.3;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        /* Modal Styles from index page */
+        .zoom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .zoom-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        .zoom-modal-content-wrapper {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            height: 70vh; /* Increased height */
+            max-height: 800px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .zoom-modal-left {
+            width: 45%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .zoom-modal-right {
+            width: 55%;
+            padding: 30px;
+            overflow-y: auto; /* Scroll only if content overflows */
+        }
+
+        .book-info-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Image Styles */
+        #zoomedImage {
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Thumbnail Styles */
+        .image-preview-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .thumbnail-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            min-width: 80px;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 100px;
+            object-fit: cover;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .thumbnail:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .thumbnail.active {
+            border-color: #007bff;
+            opacity: 1;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+        }
+
+        .thumbnail-wrapper span {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Book Info Styles */
+        .book-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item strong {
+            color: #333;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .info-item span {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        /* Description Section */
+        .book-description-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-grow: 1;
+        }
+
+        .description-item {
+            margin-bottom: 20px;
+        }
+
+        .description-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .description-item strong {
+            display: block;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .description-item span {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            display: block;
+        }
+
+        /* Close Button */
+        .close-zoom {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+            z-index: 1001;
+        }
+
+        .close-zoom:hover {
+            color: #007bff;
+        }
+
+        /* Login Button */
+        .login-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 25px;
+            align-self: flex-start;
+        }
+
+        .login-btn:hover {
+            background: #0056b3;
+        }
+
+        /* Scrollbar Styling */
+        .zoom-modal-right::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .zoom-modal-right::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .zoom-modal-right::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .zoom-modal-right::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Title Styling */
+        #zoomBookTitle {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 24px;
+            line-height: 1.3;
+        }
+
+        #zoomBookSubtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 9px;
+            margin-top: 10px;
+            flex-shrink: 0;
+        }
+
+
+
+        .page-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover {
+            background: #f5f5f5;
+            border-color: #999;
+        }
+
+        .page-btn.active {
+            background: #0066cc;
+            color: white;
+            border-color: #0066cc;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .zoom-modal-content-wrapper {
+                width: 95%;
+                height: 95vh;
+            }
+            
+            .book-info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .book-item {
+                width: 140px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .zoom-modal-content-wrapper {
+                flex-direction: column;
+                height: 95vh;
+                max-height: none;
+            }
+            
+            .zoom-modal-left,
+            .zoom-modal-right {
+                width: 100%;
+                height: auto;
+            }
+            
+            .zoom-modal-left {
+                padding: 20px;
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            #zoomedImage {
+                max-height: 300px;
+            }
+            
+            .thumbnail {
+                width: 70px;
+                height: 90px;
+            }
+            
+            .close-zoom {
+                top: 10px;
+                right: 20px;
+                font-size: 35px;
+            }
+            
+            .book-gallery {
+                gap: 15px;
+            }
+            
+            .book-item {
+                width: 120px;
+            }
+            
+            .book-image-container {
+                height: 180px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .book-item {
+                width: 100px;
+            }
+            
+            .book-image-container {
+                height: 150px;
+            }
+            
+            .book-title {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+        }
+
+        /* Loader Styles */
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 300px;
+        }
+
+        .cube-loader {
+            position: relative;
+            width: 75px;
+            height: 75px;
+            transform-style: preserve-3d;
+            transform: rotateX(-30deg);
+            animation: animate 4s linear infinite;
+        }
+
+        @keyframes animate {
+            0% { transform: rotateX(-30deg) rotateY(0deg); }
+            100% { transform: rotateX(-30deg) rotateY(360deg); }
+        }
+
+        .cube-wrapper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        .cube-span {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(#151515, #2563eb);
+            transform: rotateY(calc(90deg * var(--i))) translateZ(37.5px);
+        }
+
+        .cube-top {
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            background: #222;
+            transform: rotateX(90deg) translateZ(37.5px);
+        }
+
+        .cube-top::before {
+            content: '';
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            background: #2563eb;
+            transform: translateZ(-90px);
+            filter: blur(20px);
+        }
+
+
+        /* ================= TRANSLITERATION STYLES ================= */
+        .transliteration-hint {
+            font-size: 11px;
+            color: #4CAF50;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: #f0fff0;
+            border-radius: 4px;
+            border-left: 3px solid #4CAF50;
+        }
+
+        .transliteration-hint i {
+            font-size: 12px;
+        }
+
+        .transliteration-hint.hindi {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .transliteration-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: -10px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 18px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 11px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .transliteration-active {
+            background-color: #e8f5e9 !important;
+            border-color: #4CAF50 !important;
+        }
+
+        .results-panel {
+            flex: 1;
+            height: 100%;
+            max-height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;     /* prevent expansion */
+        }
+
+        .results-container {
+            flex: 1;
+            overflow-y: auto;     /* ✅ scroll results */
+            overflow-x: hidden;
+        }
+
+
+        .results-container .book-gallery {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr); /* ALWAYS 8 */
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .results-container .book-item {
+            width: 100%;          /* auto scale */
+            min-width: 110px;     /* safety for text */
+        }
+
+        /* ================= MOBILE RESPONSIVE FIX ================= */
+
+        /* Tablet */
+        @media (max-width: 992px) {
+
+            .search-layout {
+                flex-direction: column;
+                height: auto;
+                max-height: none;
+            }
+
+            .search-controls-panel {
+                flex: unset;
+                width: 100%;
+                min-width: 100%;
+                max-width: 100%;
+                height: auto;
+            }
+
+            .results-panel {
+                height: auto;
+                max-height: none;
+            }
+
+            .results-container .book-gallery {
+                grid-template-columns: repeat(4, 1fr); /* 4 per row tablet */
+            }
+        }
+
+
+        /* Mobile */
+        @media (max-width: 768px) {
+
+            .main-container {
+                padding: 10px;
+            }
+
+            .search-layout {
+                flex-direction: column;
+                gap: 15px;
+                height: auto;
+                max-height: none;
+            }
+
+            /* LEFT PANEL FULL WIDTH */
+            .search-controls-panel {
+                width: 100%;
+                min-width: 100%;
+                max-width: 100%;
+                height: auto;
+                overflow: visible;
+            }
+
+            .search-section {
+                padding: 12px;
+            }
+
+            /* REMOVE FIXED KEYBOARD HEIGHT */
+            .keyboard-container {
+                height: auto;
+                min-height: unset;
+                max-height: unset;
+            }
+
+            /* RESULTS */
+            .results-panel {
+                width: 100%;
+                height: auto;
+                overflow: visible;
+            }
+
+            .results-container {
+                overflow: visible;
+            }
+
+            /* BOOK GRID RESPONSIVE */
+            .results-container .book-gallery {
+                grid-template-columns: repeat(2, 1fr); /* 2 per row mobile */
+                gap: 15px;
+                padding: 10px;
+            }
+
+            .book-item {
+                min-width: unset;
+            }
+
+            .book-image-container {
+                height: 160px;
+            }
+
+            .book-title {
+                font-size: 0.9rem;
+            }
+
+            /* BUTTONS FULL WIDTH */
+            .mode-buttons,
+            .search-tabs,
+            .language-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .mode-btn,
+            .search-tab,
+            .lang-btn {
+                width: 100%;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+            }
+
+            .quick-actions button {
+                width: 100%;
+            }
+        }
+
+
+        /* Small Mobile */
+        @media (max-width: 480px) {
+
+            .results-container .book-gallery {
+                grid-template-columns: 1fr; /* 1 per row small screens */
+            }
+
+            .book-image-container {
+                height: 180px;
+            }
+
+            .form-input {
+                font-size: 14px;
+            }
+
+            .btn {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+
+    </style>
+
+    <!-- ================= MAIN CONTAINER ================= -->
+    <div class="main-container">
+        <div class="search-layout">
+            
+            <!-- LEFT PANEL: Compact Search Controls -->
+            <div class="search-controls-panel">
+                <!-- 1. Mode Selection -->
+                <div class="mode-selection">
+                    <div class="mode-buttons">
+                        <button class="mode-btn active" onclick="switchToCatalog()">
+                            <i class="bi bi-book"></i>
+                            Book Catalog
+                        </button>
+                        <button class="mode-btn" onclick="switchToEbook()">
+                            <i class="bi bi-laptop"></i>
+                            eBooks
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 2. Search Type Selection -->
+                <div class="search-type-selection">
+                    <div class="search-tabs">
+                        <button class="search-tab active" onclick="showTab('advanced')">
+                            <i class="bi bi-cogs"></i>
+                            प्रगत शोध/Advanced
+                        </button>
+                        <button class="search-tab" onclick="showTab('index')">
+                            <i class="bi bi-list-ol"></i>
+                            अनुक्रमणिका शोध/Index
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 3. Language Selection -->
+                <div class="language-selection">
+                    <div class="language-buttons">
+                        <button class="lang-btn active" data-lang="english" onclick="setLanguage('english')">
+                            English
+                        </button>
+                        <button class="lang-btn" data-lang="hindi" onclick="setLanguage('hindi')">
+                            हिंदी
+                        </button>
+                        <button class="lang-btn" data-lang="marathi" onclick="setLanguage('marathi')">
+                            मराठी
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Transliteration Toggle -->
+                <div class="transliteration-toggle" id="transliterationToggle" style="display: none;">
+                    <span style="font-size: 12px; font-weight: 600; color: #495057;">
+                        <i class="bi bi-translate"></i> Transliteration:
+                    </span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="transliterationSwitch" onchange="toggleTransliteration(this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span style="font-size: 11px; color: #6c757d;" id="transliterationStatus">
+                        Off
+                    </span>
+                </div>
+                
+                <!-- Advanced Search Content -->
+                <div id="advancedTab" class="tab-content active">
+                    <div class="search-section">
+                        <div class="form-group">
+                            <div class="type-buttons">
+                                <button class="type-btn active" data-type="title" onclick="selectType('title')">शीर्षक/Title</button>
+                                <button class="type-btn" data-type="author" onclick="selectType('author')">लेखक/Author</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Keyboard Container -->
+                        <div class="keyboard-container" id="advancedKeyboard">
+                            <div class="keyboard-hint"></div>
+                            <div class="keyboard-body"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="search-input-group">
+                                <input type="text" class="form-input" id="advancedSearchInput" 
+                                    placeholder="Type search term...">
+                                <button class="input-search-btn" onclick="performAdvancedSearch()">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                            <small class="form-hint">Minimum 3 characters required</small>
+                        </div>
+                        
+                        <button class="btn btn-primary" id="advancedSearchBtn" onclick="performAdvancedSearch()" disabled>
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Index Search Content -->
+                <div id="indexTab" class="tab-content">
+                    <div class="search-section">
+                        <div class="form-group">
+                            <div class="type-buttons">
+                                <button class="type-btn active" data-type="title" onclick="selectIndexType('title')">शीर्षक/Title</button>
+                                <button class="type-btn" data-type="author" onclick="selectIndexType('author')">लेखक/Author</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Transliteration Hint -->
+                        <div class="transliteration-hint hindi" id="indexTransliterationHint" style="display: none;">
+                            <i class="bi bi-info-circle"></i>
+                            <span>Type English letters to get Devanagari characters</span>
+                        </div>
+                        
+                        <!-- Keyboard Container -->
+                        <div class="keyboard-container" id="indexKeyboard">
+                            <div class="keyboard-hint"></div>
+                            <div class="keyboard-body"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="search-input-group">
+                                <input type="text" class="form-input" id="indexSearchInput" 
+                                    placeholder="Type starting letter...">
+                                <button class="input-search-btn" onclick="performManualIndexSearch()">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                            
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="performManualIndexSearch()">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <a href="/public-book-catalogue/" class="btn-catalogue">
+                        <i class="bi bi-book"></i> पुस्तक सूची
+                    </a>
+                    <button class="btn-help" onclick="openHelp()">
+                        <i class="bi bi-question-circle"></i> Help
+                    </button>
+                    <button class="btn-clear" onclick="clearAll()">
+                        <i class="bi bi-eraser"></i> Clear
+                    </button>
+                </div>
+                
+                <div class="search-status" id="indexSearchStatus"></div>
+            </div>
+            
+            <!-- RIGHT PANEL: Search Results -->
+            
+
+            <!-- RIGHT PANEL: Search Results -->
+            <div class="results-panel">
+                <div id="searchResults" class="results-container">
+                    <!-- Educational/Helpful Information instead of empty state -->
+                    <!-- Search Guide Container - Bilingual -->
+                    <div class="search-guide-container">
+                        <!-- Search Guide Card - Bilingual -->
+                        <div id="guide-english" class="search-guide-card" style="display: none;">
+                            <div class="search-guide-icon">
+                                <i class="bi bi-search-heart"></i>
+                            </div>
+                            <div class="search-guide-text">
+                                <h3 class="search-guide-title">Search Guide</h3>
+                                <p class="search-guide-desc">Follow these steps to find books or eBooks</p>
+                            </div>
+                        </div>
+                        
+                        <div id="guide-marathi" class="search-guide-card" style="display: flex;"> 
+                            <div class="search-guide-icon">
+                                <i class="bi bi-search-heart"></i>
+                            </div>
+                            <div class="search-guide-text">
+                                <h3 class="search-guide-title">शोध मार्गदर्शक</h3>
+                                <p class="search-guide-desc">पुस्तके किंवा ई-पुस्तके शोधण्यासाठी या चरणांचे अनुसरण करा</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Steps Grid - English -->
+                        <div id="steps-english" class="steps-grid" style="display: none;">
+                            <!-- Step 1: Mode Selection -->
+                            <div class="guide-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-book"></i></div>
+                                    <h4>Select Mode</h4>
+                                    <p>Choose between <strong>Book Catalog</strong> (physical books) or <strong>eBooks</strong> (digital books)</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 2: Search Type -->
+                            <div class="guide-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-search"></i></div>
+                                    <h4>Choose Search Type</h4>
+                                    <p><strong>Advanced Search:</strong> Search by Title or Author with keywords</p>
+                                    <p><strong>Index Search:</strong> Browse by starting letter (useful for alphabetical lists)</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 3: Language -->
+                            <div class="guide-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-globe2"></i></div>
+                                    <h4>Select Language</h4>
+                                    <p>Choose from English, हिंदी (Hindi), or मराठी (Marathi) for keyboard support</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 4: Transliteration -->
+                            <div class="guide-step highlight-step">
+                                <div class="step-number">✨</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-translate"></i></div>
+                                    <h4>Transliteration Feature</h4>
+                                    <p>Type English letters (e.g., "namaskar") and get Devanagari characters (नमस्कार)</p>
+                                    <p class="step-note">Toggle ON for Hindi/Marathi - no need to learn typing!</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 5: Keyboard -->
+                            <div class="guide-step">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-keyboard"></i></div>
+                                    <h4>On-Screen Keyboard</h4>
+                                    <p>Use the virtual keyboard for easy typing in your chosen language</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 6: View Results -->
+                            <div class="guide-step">
+                                <div class="step-number">6</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-eye"></i></div>
+                                    <h4>View & Access</h4>
+                                    <p>Click on any book/eBook to see full details. Login required to access full content</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Steps Grid - Marathi -->
+                        <div id="steps-marathi" class="steps-grid" style="display: grid;">
+                            <!-- Step 1: Mode Selection -->
+                            <div class="guide-step">
+                                <div class="step-number">१</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-book"></i></div>
+                                    <h4>मोड निवडा</h4>
+                                    <p><strong>पुस्तक सूची</strong> (भौतिक पुस्तके) किंवा <strong>ई-पुस्तके</strong> (डिजिटल पुस्तके) मधून निवडा</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 2: Search Type -->
+                            <div class="guide-step">
+                                <div class="step-number">२</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-search"></i></div>
+                                    <h4>शोध प्रकार निवडा</h4>
+                                    <p><strong>प्रगत शोध:</strong> शीर्षक किंवा लेखकानुसार कीवर्डने शोधा</p>
+                                    <p><strong>अनुक्रमणिका शोध:</strong> सुरुवातीच्या अक्षरानुसार शोधा (वर्णक्रमानुसार)</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 3: Language -->
+                            <div class="guide-step">
+                                <div class="step-number">३</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-globe2"></i></div>
+                                    <h4>भाषा निवडा</h4>
+                                    <p>इंग्रजी, हिंदी किंवा मराठीमधून निवडा</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 4: Transliteration -->
+                            <div class="guide-step highlight-step">
+                                <div class="step-number">✨</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-translate"></i></div>
+                                    <h4>लिप्यंतरण सुविधा</h4>
+                                    <p>इंग्रजी अक्षरे टाइप करा (उदा. "नमस्कार") - देवनागरी अक्षरे मिळतील (नमस्कार)</p>
+                                    <p class="step-note">हिंदी/मराठीसाठी चालू करा - टायपिंग शिकण्याची गरज नाही!</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 5: Keyboard -->
+                            <div class="guide-step">
+                                <div class="step-number">५</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-keyboard"></i></div>
+                                    <h4>स्क्रीन कीबोर्ड</h4>
+                                    <p>तुमच्या निवडलेल्या भाषेत सहज टायपिंगसाठी व्हर्च्युअल कीबोर्ड वापरा</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 6: View Results -->
+                            <div class="guide-step">
+                                <div class="step-number">६</div>
+                                <div class="step-content">
+                                    <div class="step-icon"><i class="bi bi-eye"></i></div>
+                                    <h4>परिणाम पहा व प्रवेश करा</h4>
+                                    <p>तपशील पाहण्यासाठी कोणत्याही पुस्तका/ई-पुस्तकावर क्लिक करा. पूर्ण सामग्रीसाठी लॉगिन आवश्यक</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tips Section - English -->
+                        <div id="tips-english" class="search-tips" style="display: none;">
+                            <div class="tips-header">
+                                <i class="bi bi-lightbulb"></i>
+                                <h4>Quick Tips</h4>
+                            </div>
+                            <ul class="tips-list">
+                                <li><i class="bi bi-check-circle-fill"></i> Minimum <strong>3 characters</strong> required for Advanced Search</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Index Search works with <strong>single letter</strong> or complete word</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Use <strong>Index Search</strong> to browse all books starting with a specific letter</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Click <strong>"Clear"</strong> button to reset all search fields</li>
+                                <li><i class="bi bi-check-circle-fill"></i> For <strong>Help</strong>, click the Help button anytime</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Tips Section - Marathi -->
+                        <div id="tips-marathi" class="search-tips" style="display: block;"> 
+                            <div class="tips-header">
+                                <i class="bi bi-lightbulb"></i>
+                                <h4>त्वरित टिप्स</h4>
+                            </div>
+                            <ul class="tips-list">
+                                <li><i class="bi bi-check-circle-fill"></i> प्रगत शोधासाठी किमान <strong>३ अक्षरे</strong> आवश्यक</li>
+                                <li><i class="bi bi-check-circle-fill"></i> अनुक्रमणिका शोध <strong>एक अक्षर</strong> किंवा पूर्ण शब्दासह कार्य करते</li>
+                                <li><i class="bi bi-check-circle-fill"></i> विशिष्ट अक्षराने सुरू होणारी सर्व पुस्तके ब्राउझ करण्यासाठी <strong>अनुक्रमणिका शोध</strong> वापरा</li>
+                                <li><i class="bi bi-check-circle-fill"></i> सर्व शोध फील्ड रीसेट करण्यासाठी <strong>"Clear"</strong> बटण क्लिक करा</li>
+                                <li><i class="bi bi-check-circle-fill"></i> <strong>मदतीसाठी</strong>, कधीही Help बटण क्लिक करा</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Pro Tip Banner - English -->
+                        <div id="protip-english" class="pro-tip" style="display: none;">
+                            <i class="bi bi-stars"></i>
+                            <div>
+                                <strong>Pro Tip:</strong> Use Index Search with a single letter to browse all books that start with that letter - great for discovering new books!
+                            </div>
+                        </div>
+                        
+                        <!-- Pro Tip Banner - Marathi -->
+                        <div id="protip-marathi" class="pro-tip" style="display: flex;">
+                            <i class="bi bi-stars"></i>
+                            <div>
+                                <strong>विशेष टिप:</strong> एकाच अक्षराने अनुक्रमणिका शोध वापरा - त्या अक्षराने सुरू होणारी सर्व पुस्तके ब्राउझ करण्यासाठी! नवीन पुस्तके शोधण्यासाठी उत्तम!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="paginationContainer" class="pagination"></div>
+            </div>
+            
+            <!-- ================= BOOK MODAL ================= -->
+            <div id="zoomModal" class="zoom-modal" style="display: none;">
+                <span class="close-zoom" onclick="closeZoom()">&times;</span>
+                <div class="zoom-modal-content-wrapper">
+                    <!-- Left: Book Image -->
+                    <div class="zoom-modal-left">
+                        <img id="zoomedImage" src="" alt="Book Image">
+                        
+                        <!-- Image Preview Thumbnails -->
+                        <div class="image-preview-container">
+                            <div class="thumbnail-wrapper">
+                                <img class="thumbnail active" 
+                                    id="frontPageThumb" 
+                                    src="" 
+                                    alt="Front Page" 
+                                    onclick="switchImage(this, 'front')">
+                                <span>Front Cover</span>
+                            </div>
+                            <div class="thumbnail-wrapper">
+                                <img class="thumbnail" 
+                                    id="lastPageThumb" 
+                                    src="" 
+                                    alt="Last Page" 
+                                    onclick="switchImage(this, 'last')">
+                                <span>Back Cover</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Book Info -->
+                    <div class="zoom-modal-right">
+                        <div class="book-info-content">
+                            <h1 id="zoomBookTitle">Book Title</h1>
+                            <p id="zoomBookSubtitle"></p>
+                            
+                            <div class="book-info-grid">
+                                <div class="info-item">
+                                    <strong>Author:</strong> <span id="zoomBookAuthor"></span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Publisher:</strong> <span id="zoomBookPublisher"></span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>ISBN/ISSN:</strong> <span id="zoomBookISBN"></span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Edition:</strong> <span id="zoomBookEdition"></span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Language:</strong> <span id="zoomBookLanguage"></span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Publication Place:</strong> <span id="zoomBookPlace"></span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Year of Publication:</strong> <span id="zoomBookYear"></span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Pages:</strong> <span id="zoomBookPages"></span>
+                                </div>
+                            </div>
+
+                            
+                            <span id="zoomEncryptedEbookId" style="display:none;"></span>
+                            <span id="zoomEncryptedPdfUrl" style="display:none;"></span>
+                            <span id="zoomEncryptedCatRefNum" style="display:none;"></span>
+                            
+                            <button class="login-btn" onclick="zoomRedirectLogin()">Login to Access</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    [script omitted]
+    [script omitted]
+    [script omitted]
+
+    [script omitted]
+
+    [script omitted]
+
+
+        </main>
+
+        <!-- Default Marathi Footer -->
+        <!-- Enhanced Footer HTML -->
+        <footer id="footer-marathi">
+            <div class="footer-container">
+                <!-- Top Section: Quick Links & Info -->
+                <div class="footer-top">
+                    <div class="footer-section">
+                        <h4 class="footer-heading">त्वरित लिंक</h4>
+                        <ul class="footer-links">
+                            
+                            <li><a href="#">मुख्य पृष्ठ</a></li>
+                            
+                            <li><a href="/L01/mpsc_ebooks_index/">MPSC तयारी</a></li>
+                            
+                            <li><a href="/L01/upsc_ebook_index/">UPSC तयारी</a></li>
+                            
+                            <li><a href="/vision-mission/">दृष्टिकोन आणि ध्येय</a></li>
+                            
+                            
+
+                            
+                            
+                            
+                            
+                            <li><a href="/adminLogin/">प्रशासकीय लॉगिन</a></li>
+                            
+                            
+
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4 class="footer-heading">संपर्क माहिती</h4>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                               <span>
+                                    जुहू-वाशी रोड, वाशी बस डेपोसमोर,<br>
+                                    छत्रपती शिवाजी महाराज चौक,<br>
+                                    सेक्टर 16 ए, जुहू नगर, सेक्टर-16,<br>
+                                    वाशी, नवी मुंबई, महाराष्ट्र - 400703
+                                </span>
+
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+९१ ९९६७७ ८१८२०, ९७६९२ ८०८१४, ८३६९३ ०८३२८</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>[email omitted]</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-clock"></i>
+                                <span>सकाळी ९.०० ते रात्री १०.००</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4 class="footer-heading">महत्वाची लिंक</h4>
+                        <ul class="footer-links">
+                            <li><a href="https://www.nmmc.gov.in/" target="_blank">NMMC अधिकृत वेबसाइट</a></li>
+                            <li><a href="https://mahait.org/" target="_blank">महाराष्ट्र IT पोर्टल</a></li>
+                            <li><a href="https://www.mpsc.gov.in/" target="_blank">MPSC अधिकृत वेबसाइट</a></li>
+                            <li><a href="https://upsc.gov.in/" target="_blank">UPSC अधिकृत वेबसाइट</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Middle Section: Social & Newsletter -->
+                <div class="footer-middle">
+                    <div class="social-links">
+                        <h4 class="footer-heading">आमचे अनुसरण करा</h4>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon" title="Facebook" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="Twitter" aria-label="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="YouTube" aria-label="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="Instagram" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="mailto:[email omitted]" class="social-icon" title="Email" aria-label="Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="newsletter">
+                        <h4 class="footer-heading">बातमीपत्रिका सदस्यता</h4>
+                        <p class="newsletter-text">नवीनतम माहिती आणि सूचनांसाठी सदस्य व्हा</p>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="तुमचा ईमेल टाका" required>
+                            <button type="submit">सदस्य व्हा</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Bottom Section: Copyright -->
+                <div class="footer-bottom">
+                    <div class="footer-bottom-content">
+                        <p class="copyright">
+                            &copy; 2025 नवी मुंबई महानगरपालिका. सर्व हक्क राखीव.
+                        </p>
+                        <p class="developer">
+                            डिझाईन आणि विकास: 
+                            <a href="https://technowinitinfra.com/" target="_blank">टेक्नोविन आयटी इन्फ्रा प्रा. लि.</a>
+                        </p>
+                    </div>
+                    <div class="footer-utility">
+                        <a href="#" class="utility-link">साइटमॅप</a>
+                        <span class="separator">|</span>
+                        <a href="#" class="utility-link">सहाय्य</a>
+                        <span class="separator">|</span>
+                        <a href="#" class="utility-link">अस्वीकरण</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="footer-english" style="display: none;">
+            <div class="footer-container">
+                <!-- Top Section: Quick Links & Info -->
+                <div class="footer-top">
+                    <div class="footer-section">
+                        <h4 class="footer-heading">Quick Links</h4>
+                        <ul class="footer-links">
+                            
+                            <li><a href="#">Home</a></li>
+                            
+                            <li><a href="/L01/mpsc_ebooks_index/">MPSC Preparation</a></li>
+                            
+                            <li><a href="/L01/upsc_ebook_index/">UPSC Preparation</a></li>
+                            
+                            <li><a href="/vision-mission/">Vision and Mission</a></li>
+                            
+                            
+
+                            
+
+                            
+
+                            <li><a href="/adminLogin/">Administrative Login</a></li>
+                            
+                            
+
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4 class="footer-heading">Contact Information</h4>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                               <span>
+                                    Juhu-Vashi Road, Opposite Vashi Bus Depot,<br>
+                                    Chhatrapati Shivaji Maharaj Chowk,<br>
+                                    Sector 16A, Juhu Nagar, Sector-16,<br>
+                                    Vashi, Navi Mumbai, Maharashtra - 400703
+                                </span>
+
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+91 99677 81820, 97692 80814, 83693 08328</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>[email omitted]</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Mon-Sat: 9 AM - 10 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4 class="footer-heading">Important Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="https://www.nmmc.gov.in/" target="_blank">Official NMMC Website</a></li>
+                            <li><a href="https://mahait.org/" target="_blank">Maharashtra IT Portal</a></li>
+                            <li><a href="https://www.mpsc.gov.in/" target="_blank">Official MPSC Website</a></li>
+                            <li><a href="https://upsc.gov.in/" target="_blank">Official UPSC Website</a></li>
+                            <li><a href="#">RTI Act</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Middle Section: Social & Newsletter -->
+                <div class="footer-middle">
+                    <div class="social-links">
+                        <h4 class="footer-heading">Follow Us</h4>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon" title="Facebook" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="Twitter" aria-label="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="YouTube" aria-label="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="Instagram" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="mailto:[email omitted]" class="social-icon" title="Email" aria-label="Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="newsletter">
+                        <h4 class="footer-heading">Newsletter Subscription</h4>
+                        <p class="newsletter-text">Subscribe for latest updates and notifications</p>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="Enter your email" required>
+                            <button type="submit">Subscribe</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Bottom Section: Copyright -->
+                <div class="footer-bottom">
+                    <div class="footer-bottom-content">
+                        <p class="copyright">
+                            &copy; 2025 Navi Mumbai Municipal Corporation. All rights reserved.
+                        </p>
+                        <p class="developer">
+                            Designed and Developed by: 
+                            <a href="https://technowinitinfra.com/" target="_blank">Technowin IT Infra Pvt Ltd</a>
+                        </p>
+                    </div>
+                    <div class="footer-utility">
+                        <a href="#" class="utility-link">Sitemap</a>
+                        <span class="separator">|</span>
+                        <a href="#" class="utility-link">Help</a>
+                        <span class="separator">|</span>
+                        <a href="#" class="utility-link">Disclaimer</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        
+        <button onclick="topFunction()" id="myBtn" title="Go to top">
+            <i class="fa fa-arrow-up" aria-hidden="true"></i>
+        </button>
+
+        [script omitted]
+        <!-- Add before closing body tag - after other scripts -->
+        [script omitted]
+        [script omitted]
+    
+
+        [script omitted]
+
+        <!-- Script -->
+        [script omitted]
+
+        [script omitted]
+
+        [script omitted]
+
+        [script omitted]
+
+        [script omitted]
+
+        [script omitted]
+        
+    </body>
+</html>

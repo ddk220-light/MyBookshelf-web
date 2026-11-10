@@ -1,0 +1,197 @@
+#!/usr/bin/env node
+import { readFileSync, existsSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { tmpdir } from "node:os";
+import { randomBytes } from "node:crypto";
+import { EnvHttpProxyAgent, setGlobalDispatcher } from "undici";
+import { EvidenceStore } from "../../server/services/catalog-connectors/evidence.js";
+import { Coordinator } from "../../server/services/catalog-connectors/transport.js";
+import {
+  ConnectorService,
+  implementationHash,
+} from "../../server/services/catalog-connectors/service.js";
+import { readManifest } from "./runner.mjs";
+import {
+  buildLinkQueue,
+  verifyItemLink,
+  saveLinkResult,
+  pendingLinkRetries,
+  linkVerificationReport,
+} from "./link-verification.mjs";
+import { runOriginJobs } from "./origin-jobs.mjs";
+const args = process.argv.slice(2),
+  option = (name, def) => {
+    const i = args.indexOf("--" + name);
+    return i < 0 ? def : args[i + 1];
+  };
+const directory = resolve(
+    option("dir", "docs/research/india-library-audit/revalidation/20261107"),
+  ),
+  limit = Number(option("limit", "100")),
+  concurrency = Number(option("concurrency", "3"));
+if (!Number.isSafeInteger(concurrency) || concurrency < 1 || concurrency > 8)
+  throw Error("Invalid link concurrency");
+if (!Number.isSafeInteger(limit) || limit < 1 || limit > 1000)
+  throw Error("Invalid link verification budget");
+if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY)
+  setGlobalDispatcher(new EnvHttpProxyAgent());
+const store = new EvidenceStore(directory),
+  machine = new EvidenceStore(
+    join(tmpdir(), "mybookshelf-library-connector-coordinator"),
+  ),
+  controller = new AbortController();
+process.once("SIGINT", () => controller.abort());
+process.once("SIGTERM", () => controller.abort());
+let held = false,
+  machineHeld = false,
+  coordinator;
+try {
+  machine.acquire();
+  machineHeld = true;
+  store.acquire();
+  held = true;
+  const manifest = readManifest(store),
+    own = store.events();
+  store.validate();
+  const roots = [
+      ...(manifest.sourceRunDirectory
+        ? [resolve(manifest.sourceRunDirectory)]
+        : []),
+      directory,
+    ],
+    events = [];
+  const ids = new Set(manifest.inventory.libraries.map((l) => l.libraryId));
+  for (const root of roots) {
+    const source = new EvidenceStore(root);
+    source.validate();
+    events.push(...source.events().filter((e) => ids.has(e.libraryId)));
+  }
+  const jobs = buildLinkQueue(events),
+    completed = new Set(
+      own
+        .filter((e) => e.type === "link_verification_completed")
+        .map((e) => e.jobId),
+    );
+  store.save("link-verification-queue.json", {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    inventoryHash: manifest.inventory.inventoryHash,
+    scope:
+      "Every saved returned item and accepted book in this frozen cohort, deduplicated by library/connection/record/URL/kind. Handoffs are never item-link passes.",
+    jobs,
+  });
+  coordinator = new Coordinator({ store });
+  for (const root of roots)
+    if (existsSync(join(root, "origin-state.json"))) {
+      const s = JSON.parse(readFileSync(join(root, "origin-state.json")));
+      for (const [k, v] of s.cooldowns || []) coordinator.cooldowns.set(k, v);
+      for (const [k, v] of s.refusals || []) coordinator.refusals.set(k, v);
+      for (const [k, v] of s.policyFailures || [])
+        coordinator.policyFailures.set(k, v);
+      for (const [k, v] of s.originReadyAt || [])
+        coordinator.originReadyAt.set(k, v);
+    }
+  const service = new ConnectorService({
+    coordinator,
+    secret: randomBytes(32).toString("hex"),
+  });
+  const libraryFilter = option("libraries", null)?.split(",");
+  const retryIds = [
+      ...new Set(option("retry-jobs", "").split(",").filter(Boolean)),
+    ],
+    retryReason = option("retry-reason", "");
+  if (retryIds.length) {
+    if (
+      retryIds.length > 100 ||
+      retryReason.trim().length < 12 ||
+      retryIds.some((id) => !jobs.some((job) => job.jobId === id))
+    )
+      throw Error(
+        "Retry requires known job IDs and a concrete repair/recovery reason",
+      );
+    store.append({
+      type: "link_verification_retry_requested",
+      jobIds: retryIds,
+      reason: retryReason,
+    });
+  }
+  for (const id of pendingLinkRetries(store.events())) completed.delete(id);
+  let processed = 0;
+  const selectedJobs = jobs
+    .filter(
+      (j) =>
+        !completed.has(j.jobId) &&
+        (!retryIds.length || retryIds.includes(j.jobId)) &&
+        (!libraryFilter || libraryFilter.includes(j.libraryId)) &&
+        (!args.includes("--item-only") ||
+          ["record", "metadata_fragment", "metadata_post_lookup"].includes(
+            j.kind,
+          )),
+    )
+    .slice(0, limit);
+  const descriptors = new Map(
+    selectedJobs.map((job) => [
+      job.jobId,
+      service.connection(job.libraryId, job.connectionId).descriptor,
+    ]),
+  );
+  await runOriginJobs(selectedJobs, {
+    concurrency,
+    signal: controller.signal,
+    originFor: (job) => descriptors.get(job.jobId).origins[0] || job.libraryId,
+    run: async (job) => {
+      const descriptor = descriptors.get(job.jobId);
+      const result = await verifyItemLink(job, coordinator, descriptor, {
+        signal: controller.signal,
+      });
+      const complete = saveLinkResult(store, result, {
+        implementationHash,
+        observationKind: coordinator.observationKind,
+      });
+      if (complete) completed.add(job.jobId);
+      processed++;
+      store.save("link-verification-progress.json", {
+        schemaVersion: 1,
+        at: new Date().toISOString(),
+        implementationHash,
+        total: jobs.length,
+        processed: completed.size,
+        remaining: jobs.filter((j) => !completed.has(j.jobId)).length,
+        lastJobId: job.jobId,
+        scope:
+          "Link outcomes do not change library qualification counts; unconfirmed identities remain unresolved",
+      });
+      console.log(
+        JSON.stringify({
+          jobId: job.jobId,
+          libraryId: job.libraryId,
+          outcome: result.outcome,
+          identityConfirmed: result.identityConfirmed,
+        }),
+      );
+    },
+  });
+  const summary = linkVerificationReport(store);
+  store.save("link-verification-last-run.json", {
+    at: new Date().toISOString(),
+    pid: process.pid,
+    interrupted: controller.signal.aborted,
+    attemptedThisInvocation: processed,
+    processed: summary.processed,
+    remaining: summary.remaining,
+  });
+  console.log(
+    JSON.stringify({ attemptedThisInvocation: processed, ...summary }),
+  );
+} finally {
+  if (held && coordinator)
+    store.save("origin-state.json", {
+      at: new Date().toISOString(),
+      cooldowns: [...coordinator.cooldowns],
+      refusals: [...coordinator.refusals],
+      policyFailures: [...coordinator.policyFailures],
+      originReadyAt: [...coordinator.originReadyAt],
+    });
+  if (held) store.release();
+  if (machineHeld) machine.release();
+}

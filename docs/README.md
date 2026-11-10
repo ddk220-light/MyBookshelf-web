@@ -62,6 +62,10 @@ the overview records the provenance and evidence limits.
 
 ## Development and handoff
 
+- [Library connector implementation design](library-connectors/README.md): HTTP-only
+  website-equivalent searches, permanent API/MCP contracts, recurring checks,
+  performance/logging and a story-level backlog. Includes the [India audit scope](plans/2026-11-07-india-library-search-audit.md)
+  and 6,703-entry baseline. The [internal implementation and pilot](library-connectors/IMPLEMENTATION_STATUS.md) are ready for expanded testing; the full-country audit has not started.
 - [Credential setup and verified Projects MCP access](development/credentials.md).
 - [Repository completeness audit](development/2026-10-31-repository-handoff.md).
 - [Root README](../README.md), [agent instructions](../AGENTS.md),

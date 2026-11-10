@@ -1,0 +1,2358 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-results.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title
+    >Results of search for 'Wings of Fire' &rsaquo; Central Library, IIT Bhubaneswar catalog</title
+>
+<meta name="robots" content="noindex" />
+<link rel="stylesheet" href="/opac-tmpl/lib/Chocolat/css/chocolat_25.1106000.css" type="text/css">
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" />
+<!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="16d682943d975a15f4ce89ac772db2ade9cbd450,4c3dfdd3cc7fd6adf18a46523b2c0e9225d99757,1794060926" />
+
+
+<link rel="shortcut icon" href="https://old.iitbbs.ac.in/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="https://old.iitbbs.ac.in/favicon.ico" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac_25.1106000.css" type="text/css">
+
+
+
+
+    <link type="text/css" href="/opac-tmpl/bootstrap/css/print_25.1106000.css" rel="stylesheet" media="print">
+
+
+    <!-- prettier-ignore-start -->
+    <style>/* KOHA OPAC NAVIGATION BAR */
+
+.navbar,
+.navbar-expand,
+.navbar-nav {
+    background-color: #001429 !important; 
+}
+
+.navbar a,
+.navbar-nav .nav-link,
+.navbar-nav > li > a {
+    color: #1377a7 !important;
+}
+
+.navbar a:hover,
+.navbar a:focus,
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+    color: #008000 !important;
+    background-color: transparent !important;
+}
+
+/* Lists */
+#listsmenu,
+#listsmenu a,
+#listsmenu .listslabel {
+    color: #ffffff !important;
+}
+
+/* Logged-in user */
+#user-menu .userlabel,
+#user-menu .fa-user,
+#user-menu::after,
+#user-menu.dropdown-toggle::after {
+    color: #ffffff !important;
+    border-top-color: #ffffff !important;
+}
+
+#loggedinuser-menu a[href*="opac-user.pl"],
+#loggedinuser-menu a[href*="opac-search-history.pl"] {
+    color: #1377a7 !important;
+}
+
+/* Login text + icon */
+#members .login-link,
+#members .login-link .userlabel,
+#members .login-link i {
+    color: #ffffff !important;
+}
+
+/* Search history */
+#members .search_history,
+#members .search_history a,
+#members .search_history,
+#members .search_history i {
+    color: #ffffff !important;
+}
+
+#opacheader {
+    padding: 8px 12px 0;
+    background: linear-gradient(to bottom, #ffffff, #f4f8fb);
+    border-bottom: 2px solid #003366;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+#opacheader ul {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+#opacheader li {
+    display: inline-block;
+    margin: 0 3px;
+}
+
+#opacheader li a {
+    display: inline-block;
+    padding: 9px 18px;
+    color: #003366 !important;
+    background: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid #d2dee8;
+    border-bottom: 1px solid #005b96;
+    border-radius: 7px 7px 0 0;
+    transition: 0.3s ease;
+}
+
+/* Hover */
+#opacheader li a:hover {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #003366, #0077a8);
+    border-color: #003366;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(0, 51, 102, 0.25);
+}
+
+/* Active tab */
+#opacheader li.active a,
+#opacheader li a.active {
+    color: #ffffff !important;
+    background: #003366;
+    border-color: #003366;
+    font-weight: 600;
+}
+
+/* Links */
+
+a,
+a:hover,
+a:focus {
+    color: #1377a7 !important;
+}
+
+/* Navigation Bar */
+
+.navbar-inverse .navbar-inner {
+    background: #1377a7;
+    border-color: #1377a7;
+}
+
+/* Navigation Links */
+
+.navbar-inverse .brand,
+.navbar-inverse .nav > li > a,
+#members a {
+    color: #1377a7 !important;
+}
+
+/* Search Form */
+
+#opac-main-search,
+.mastheadsearch {
+    background: #1377a7;
+}
+
+.mastheadsearch label {
+    color: #fff;
+}
+
+#searchform select {
+    display: inline-block;
+    width: auto;
+    background: #fff;
+    color: #333;
+    border: 1px solid #cfd8dc;
+    transition: .2s;
+}
+
+#searchform select:hover {
+    border-color: #1565c0;
+}
+
+#searchform select:focus {
+    border-color: #1565c0;
+    box-shadow: 0 0 0 .2rem rgba(21,101,192,.2);
+}
+
+/* Buttons */
+
+.btn-primary {
+    color: #000;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+    background: #F2F2EF !important;
+    background-image: none !important;
+}
+
+/* Miscellaneous */
+
+.no-image {
+    display: none !important;
+}
+
+.navbar-inverse .divider-vertical {
+    border-left-color: #1377a7;
+    border-right-color: #1377a7;
+}
+
+body {
+    background: #fff;
+    font-family: sans-serif;
+    font-size: 14px;
+}
+
+/* Library Hours */
+
+.library-hours {
+    max-width: 700px;
+    margin: 20px auto;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    border: 1px solid #d9d9d9;
+}
+
+.library-hours table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.library-hours .heading{
+    background:linear-gradient(90deg,#005b96,#0086b3);
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    text-align:center;
+    padding:12px;
+}
+
+.library-hours td{
+    padding:12px 15px;
+    border-bottom:1px solid #e6e6e6;
+    font-size:15px;
+}
+
+.library-hours tr:nth-child(even){
+    background:#f8fbfd;
+}
+
+.library-hours tr:hover{
+    background:#eef8ff;
+    transition:0.3s;
+}
+
+.library-hours .day{
+    font-weight:bold;
+    color:#003366;
+    width:40%;
+}
+
+.library-hours .time{
+    text-align:center;
+    color:#444;
+    font-weight:600;
+}
+
+.library-hours .section{
+    background:#0077a3;
+    color:#fff;
+    font-size:17px;
+    font-weight:bold;
+    text-align:center;
+}
+
+.library-hours .note{
+    color:#d40000;
+    font-weight:bold;
+}
+
+.library-hours .icon{
+    font-size:18px;
+    margin-right:6px;
+}
+
+/* Library Location Google Map */
+.map-card{
+    max-width:700px;
+    margin:20px auto;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#ffffff;
+    border:1px solid #d6e4ef;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
+}
+
+.map-header{
+    background:linear-gradient(90deg,#005b96,#0086b3);
+    color:#fff;
+    text-align:center;
+    padding:14px;
+    font-size:20px;
+    font-weight:bold;
+    letter-spacing:.5px;
+}
+
+.map-body{
+    padding:15px;
+    background:#f8fbfd;
+}
+
+.map-body p{
+    margin:0 0 12px;
+    text-align:center;
+    color:#444;
+    font-size:15px;
+}
+
+.map-frame{
+    border:4px solid #ffffff;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+.map-frame iframe{
+    width:100%;
+    height:300px;
+    border:0;
+}
+
+.map-footer{
+    text-align:center;
+    padding:15px;
+    background:#ffffff;
+}
+
+.map-btn{
+    display:inline-block;
+    background:#0086b3;
+    color:#ffffff !important;
+    text-decoration:none;
+    padding:10px 22px;
+    border-radius:30px;
+    font-size:15px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.map-btn:hover{
+    background:#005b96;
+    color:#ffffff !important;
+    text-decoration:none;
+}
+
+@media (max-width:768px){
+    .map-header{
+        font-size:18px;
+    }
+
+    .map-frame iframe{
+        height:250px;
+    }
+}
+#login {
+    display: none;
+}</style>
+    <!-- prettier-ignore-end -->
+
+
+
+
+
+[script omitted]
+
+[script omitted]
+[script omitted]
+
+<link type="text/css" href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_25.1106000.css" rel="stylesheet">
+<link rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/brands.min_25.1106000.css" type="text/css">
+<link type="text/css" href="/opac-tmpl/lib/fontawesome/css/solid.min_25.1106000.css" rel="stylesheet">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link
+    rel="alternate"
+    type="application/rss+xml"
+    title="Central Library, IIT Bhubaneswar Search RSS feed"
+    href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Wings%20of%20Fire&amp;count=50&amp;sort_by=acqdate_dsc&amp;format=rss"
+/>
+</head>
+
+
+
+
+    
+
+
+    
+
+
+
+
+    
+
+<body ID="results" class="branch-default scrollto" >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<!-- prettier-ignore-start -->
+<!-- closed in opac-bottom.inc -->
+<div id="wrapper">
+<!-- prettier-ignore-end -->
+<header id="header-region" class="noprint">
+    <nav class="navbar navbar-expand">
+        <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    Central Library, IIT Bhubaneswar
+                
+            </a>
+        </div>
+        
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                <li role="presentation" class="divider-vertical"></li>
+                
+                    
+                        <li class="nav-item dropdown">
+                            <a
+                                href="/cgi-bin/koha/opac-shelves.pl"
+                                title="Show lists"
+                                class="nav-link dropdown-toggle"
+                                id="listsmenu"
+                                data-bs-toggle="dropdown"
+                                role="button"
+                                aria-label="Show dropdown with detailed list information"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                ><i class="fa fa-list fa-fw fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                            </a>
+                            <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="0" role="menuitem"><strong>Public lists</strong></a>
+                                    
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=149&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Newly Arrived Books - 06-11-2026</a
+                                        >
+                                        
+                                        
+                                    
+                                    
+                                
+                                
+                                    <div class="dropdown-divider"></div>
+                                
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="0" role="menuitem"><strong>Your lists</strong></a>
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="0" role="menuitem">Log in to create your own lists</a>
+                                    
+                                
+                            </div>
+                            <!-- / .dropdown-menu -->
+                        </li>
+                        <!-- / .nav-item.dropdown -->
+                    
+                
+                
+            </ul>
+            <!-- / .navbar-nav -->
+        
+        
+            
+            
+            <ul id="members" class="navbar-nav">
+                <li class="nav-item dropdown dropdown-menu-end">
+                    
+                        
+                            
+                                <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger" aria-label="Log in to your account"
+                                    ><i class="fa fa-user fa-fw fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a
+                                >
+                            
+                        
+                    
+
+                    
+                </li>
+                <!-- Cookie consent button for non logged-in users -->
+                
+                    <li role="presentation" style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                    <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                        <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                            <i class="fa fa-cookie-bite fa-fw fa-icon-black" aria-hidden="true"></i>
+                            <span class="cookieconsentlabel">Your cookies</span>
+                        </a>
+                    </li>
+                
+                
+                    
+                        <li role="presentation" class="divider-vertical"></li>
+                        <li class="nav-item search_history">
+                            <a class="nav-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">
+                                <i class="fa fa-calendar-days fa-fw fa-icon-black" aria-hidden="true"></i>
+                                <span class="search_history_label">Search history</span>
+                            </a>
+                        </li>
+                    
+                
+            </ul>
+        
+    </nav>
+    <!-- /navbar -->
+
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opacheader">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><a href="https://koha.iitbbs.ac.in/"><img src="/opac-tmpl/bootstrap/images/opac.svg" /></a>
+<ul>
+<li><a href="https://koha.iitbbs.ac.in/">Catalogue Home</a></li>
+<li><a href="https://library.iitbbs.ac.in/" target="_blank" rel="noopener">Library Website</a></li>
+<li><a href="https://library.iitbbs.ac.in/online-e-resources.php" target="_blank" rel="noopener">E-Resources</a></li>
+<li><a href="https://library.iitbbs.ac.in/e-resources-a2z.php" target="_blank" rel="noopener">E-Journals</a></li>
+<li><a href="https://library.iitbbs.ac.in/publications.php" target="_blank" rel="noopener">Research Publications</a></li>
+<li><a href="https://library.iitbbs.ac.in/phd-thesis.php" target="_blank" rel="noopener">PhD Theses</a></li>
+<li><a href="https://idr.iitbbs.ac.in/" target="_blank" rel="noopener">Digital Repository</a></li>
+<li><a href="https://iitbbs.mapmyaccess.com/" target="_blank" title="MapMyAccess" rel="noopener">MapMyAccess</a></li>
+</ul></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+</header>
+<!-- / header-region -->
+
+
+    <div class="container-fluid">
+        
+            <div class="row">
+                <div class="col">
+                    <div id="opac-main-search" class="mastheadsearch">
+                        
+                            <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" role="search">
+                                <div class="row gx-2">
+                                    <div class="col-sm-auto order-2 order-sm-2">
+                                        <label for="masthead_search" class="visually-hidden">Search the catalog by:</label>
+                                        <select name="idx" id="masthead_search" class="form-select">
+                                            
+                                                <option selected="selected" value="" data-placeholder="Search the catalog">Library catalog</option>
+                                            
+                                            
+                                                <option value="ti" data-placeholder="Search the catalog by title">Title</option>
+                                            
+                                            
+                                                <option value="au" data-placeholder="Search the catalog by author">Author</option>
+                                            
+                                            
+                                                <option value="su" data-placeholder="Search the catalog by subject">Subject</option>
+                                            
+                                            
+                                                <option value="nb" data-placeholder="Search the catalog by ISBN">ISBN</option>
+                                            
+                                            
+                                                <option value="ns" data-placeholder="Search the catalog by ISSN">ISSN</option>
+                                            
+                                            
+                                                <option value="se" data-placeholder="Search the catalog by series">Series</option>
+                                            
+                                            
+                                                
+                                                    <option value="callnum" data-placeholder="Search the catalog by call number">Call number</option>
+                                                
+                                            
+                                        </select>
+                                    </div>
+                                    <!-- /.col-sm-auto -->
+
+                                    <div class="col order-4 order-sm-3">
+                                        
+                                            <label for="translControl1" class="visually-hidden">Search the catalog</label>
+                                            <input type="text" class="transl1 form-control" id="translControl1" name="q" value="Wings of Fire" placeholder="Search the catalog" /><span id="translControl"></span>
+                                        
+                                    </div>
+                                    <!-- /.col -->
+
+                                    
+                                        
+                                            
+                                        
+                                    
+
+                                    <div class="order-5 col-sm-auto">
+                                        <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.form-row -->
+                                <input type="hidden" name="weight_search" value="1" />
+                            </form>
+                         </div
+                    ><!-- /#opac-main-search -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        
+
+        <div class="row">
+            <ul class="nav" id="moresearches">
+                <li class="nav-item">
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                </li>
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-course-reserves.pl">Course reserves</a>
+                    </li>
+                
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                    </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-topissues.pl">Most popular</a>
+                    </li>
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Contact</span>
+                            
+                        </a>
+                    </li>
+                
+                
+    
+
+            </ul>
+            <!-- /.nav#moresearches -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="modalLoginLabel">Log in to your account</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    [form state omitted]
+
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            
+                            
+                            [form state omitted]
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    
+    <label for="muserid">Card number or username:</label>
+[form state omitted] <label for="mpassword">Password:</label
+                                    >[form state omitted]
+                                    <fieldset class="action">
+                                        [form state omitted]
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                
+                                    <div id="forgotpassword-modal" class="forgotpassword">
+                                        <p><a href="/cgi-bin/koha/opac-password-recovery.pl">Forgot your password?</a></p>
+                                    </div>
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form>
+                <!-- /#auth -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /#modalAuth  -->
+
+
+
+
+
+<main class="main">
+    
+    <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumb">
+            
+            
+                
+    
+        <li class="breadcrumb-item"> 
+                    <a href="/cgi-bin/koha/opac-main.pl" title="Home">Home</a>
+                 </li>
+    
+
+                <li class="breadcrumb-item"> 
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                 </li>
+    
+
+            
+            
+    
+        <li class="breadcrumb-item active">
+            <a aria-current="page" aria-disabled="true" tabindex="-1"> 
+                
+                    <span title="You searched for 'kw,wrdl: Wings of Fire'"
+                        >Results of search for 'Wings of Fire'</span
+                    >
+                
+             </a>
+        </li>
+            
+        </ol>
+    </nav>
+
+
+    
+
+    <div class="container-fluid">
+        <div class="row">
+            
+                <div class="col-lg-2">
+                    <div id="facetcontainer">
+                        <!-- FACETS START -->
+                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="search-facets">
+        <h2><a href="#" class="menu-collapse-toggle" aria-expanded="false">Refine your search</a></h2>
+        <ul class="menu-collapse">
+            
+            <li id="availability_facet">
+                <a class="facet-toggle" aria-expanded="true" data-bs-toggle="collapse" data-bs-target="#availability_collapse" id="filter_facets">Availability</a>
+                <div class="facet-collapse collapse show" id="availability_collapse">
+                    <ul>
+                        
+                            <li
+                                ><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Wings%20of%20Fire&amp;sort_by=relevance&amp;limit=available"
+                                    >Limit to records with available items</a
+                                ></li
+                            >
+                        
+                        
+                    </ul>
+                </div>
+            </li>
+
+            
+                
+                    <li id="au_id">
+                        
+                            
+                        
+                        
+                            <a class='facet-toggle' aria-expanded='true' data-bs-toggle='collapse' data-bs-target='#au_id_collapse' id="facet-authors">Authors</a>
+                        
+                        <div class="facet-collapse collapse show" id="au_id_collapse">
+                            <ul>
+                                
+                                
+                                    
+                                
+                                
+                                    
+                                
+                                
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    <li class="" style="">
+                                        
+                                            
+                                            <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Wings%20of%20Fire&amp;sort_by=relevance&amp;count=20&limit=au:Kalam,%20APJ%20Abdul" title="Kalam, APJ Abdul">Kalam, APJ Abdul</a></span>
+                                            
+                                                <span class="badge bg-info-subtle facet-count"> 1</span>
+                                            
+                                        
+                                    </li>
+                                
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    <li class="" style="">
+                                        
+                                            
+                                            <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Wings%20of%20Fire&amp;sort_by=relevance&amp;count=20&limit=au:Tiwari,%20A." title="Tiwari, A.">Tiwari, A.</a></span>
+                                            
+                                                <span class="badge bg-info-subtle facet-count"> 1</span>
+                                            
+                                        
+                                    </li>
+                                
+                                
+                            </ul>
+                        </div>
+                    </li>
+                
+            
+                
+                    <li id="itype_id">
+                        
+                            
+                        
+                        
+                            <a class='facet-static' id="facet-itemtypes">Item types</a>
+                        
+                        <div class="facet-collapse collapse show" id="itype_id_collapse">
+                            <ul>
+                                
+                                
+                                    
+                                
+                                
+                                    
+                                
+                                
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    <li class="" style="">
+                                        
+                                            
+                                            <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Wings%20of%20Fire&amp;sort_by=relevance&amp;count=20&limit=itype:TB" title="TB">Text Book</a></span>
+                                            
+                                                <span class="badge bg-info-subtle facet-count"> 1</span>
+                                            
+                                        
+                                    </li>
+                                
+                                
+                            </ul>
+                        </div>
+                    </li>
+                
+            
+                
+                    <li id="location_id">
+                        
+                            
+                        
+                        
+                            <a class='facet-static' id="facet-locations">Locations</a>
+                        
+                        <div class="facet-collapse collapse show" id="location_id_collapse">
+                            <ul>
+                                
+                                
+                                    
+                                
+                                
+                                    
+                                
+                                
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    <li class="" style="">
+                                        
+                                            
+                                            <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Wings%20of%20Fire&amp;sort_by=relevance&amp;count=20&limit=location:TB" title="TB">Textbook Section</a></span>
+                                            
+                                                <span class="badge bg-info-subtle facet-count"> 1</span>
+                                            
+                                        
+                                    </li>
+                                
+                                
+                            </ul>
+                        </div>
+                    </li>
+                
+            
+                
+                    <li id="su-to_id">
+                        
+                            
+                        
+                        
+                            <a class='facet-static' id="facet-topics">Topics</a>
+                        
+                        <div class="facet-collapse collapse show" id="su-to_id_collapse">
+                            <ul>
+                                
+                                
+                                    
+                                
+                                
+                                    
+                                
+                                
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    <li class="" style="">
+                                        
+                                            
+                                            <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Wings%20of%20Fire&amp;sort_by=relevance&amp;count=20&limit=su-to:Autobiography-%20Indian%20scientist" title="Autobiography- Indian scientist">Autobiography- India...</a></span>
+                                            
+                                                <span class="badge bg-info-subtle facet-count"> 1</span>
+                                            
+                                        
+                                    </li>
+                                
+                                
+                            </ul>
+                        </div>
+                    </li>
+                
+            
+        </ul>
+    </div>
+    <!-- / #search-facets -->
+
+    
+
+
+                        <!-- FACETS END -->
+                    </div>
+                </div>
+            
+
+            
+            
+                
+            
+            <div class="col-lg-10 maincontent">
+                
+                    
+                        <h1 id="numresults">
+                            Your search returned 2 results.
+                            <a
+                                href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Wings%20of%20Fire&amp;count=50&amp;sort_by=acqdate_dsc&amp;format=rss"
+                                class="btn btn-link rsssearchlink noprint"
+                                aria-label="Subscribe to this search"
+                            >
+                                <i class="fa fa-rss rsssearchicon" aria-hidden="true" title="Subscribe to this search"></i>
+                            </a>
+                        </h1>
+                        
+                    
+                
+
+                <div id="userresults">
+                    
+
+                    
+                        
+                    
+                    
+
+                    <!-- Search Results Table -->
+                    
+                        <div class="searchresults">
+                            <form action="/cgi-bin/koha/opac-search.pl" method="get" name="bookbag_form" id="bookbag_form">
+                                <legend class="sr-only">Sort</legend>
+                                
+                                    
+                                        <input type="hidden" name="idx" value="kw" />
+                                    
+                                        <input type="hidden" name="q" value="Wings of Fire" />
+                                    
+                                    
+                                
+
+                                <div id="floating" class="sticky">
+                                    <div id="toolbar" class="toolbar row align-items-center">
+                                        <div id="top-pages" class="col"> 
+
+ </div>
+                                        
+                                            <div class="sort_by col-sm-auto">
+                                                <label for="sort_by">Sort results by:</label>
+                                                <label for="sort_by" class="sr-only">Sort by:</label>
+                                                <select id="sort_by" class="resort form-select form-select-sm" name="sort_by">
+                                                    <option value="relevance">Relevance</option>
+<optgroup label="Popularity">
+    
+        <option value="popularity_dsc">Popularity (most to least)</option>
+    
+    
+        <option value="popularity_asc">Popularity (least to most)</option>
+    
+</optgroup>
+<optgroup label="Author">
+    
+        <option value="author_az">Author (A-Z)</option>
+    
+    
+        <option value="author_za">Author (Z-A)</option>
+    
+</optgroup>
+<optgroup label="Call number">
+    
+        <option value="call_number_asc">Call number (0-9 to A-Z)</option>
+    
+    
+        <option value="call_number_dsc">Call number (Z-A to 9-0)</option>
+    
+</optgroup>
+<optgroup label="Dates">
+    
+        <option value="pubdate_dsc">Publication/Copyright date: Newest to oldest</option>
+    
+    
+        <option value="pubdate_asc">Publication/Copyright date: Oldest to newest</option>
+    
+    
+        <option value="acqdate_dsc">Acquisition date: Newest to oldest</option>
+    
+    
+        <option value="acqdate_asc">Acquisition date: Oldest to newest</option>
+    
+</optgroup>
+<optgroup label="Title">
+    
+        <option value="title_az">Title (A-Z)</option>
+    
+    
+        <option value="title_za">Title (Z-A)</option>
+    
+</optgroup>
+
+                                                </select>
+
+                                                
+                                            </div>
+                                            <!-- /.sort_by -->
+                                            <div id="sortsubmit" class="sort_by col-auto">
+                                                <input type="submit" class="btn btn-primary btn-sm clearfix" value="Go" />
+                                            </div>
+                                            <!-- /.sort_by -->
+                                        
+                                    </div>
+                                    <!-- / #toolbar -->
+
+                                    <div class="selections-toolbar toolbar noprint">
+    
+        <div class="highlight_controls noprint">
+            <a href="#" class="btn btn-link btn-sm highlight_toggle" id="highlight_toggle_off"><i class="fa-fw fa-solid fa-pencil" aria-hidden="true"></i> Unhighlight</a>
+            <a href="#" class="btn btn-link btn-sm highlight_toggle" id="highlight_toggle_on"><i class="fa-fw fa-solid fa-pencil" aria-hidden="true"></i> Highlight</a>
+        </div>
+    
+
+    <div class="check_control">
+        <!-- checkall, clearall are now needed for placehold -->
+        <span class="clearall">
+            <a id="CheckAll" class="btn btn-link btn-sm" href="#">Select all</a>
+        </span>
+        <span class="checkall">
+            <a id="CheckNone" class="btn btn-link btn-sm" href="#">Clear all</a>
+        </span>
+    </div>
+
+    <div class="links">
+        
+            <span class="selections">Select titles to:</span>
+        
+
+        
+
+        
+            <div class="btn-group">
+                <button type="button" class="btn btn-link btn-xs dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-list" aria-hidden="true"></i> Add to list <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu">
+                    
+                    
+                    <div class="dropdown-divider"></div>
+                    
+                    <a href="#" class="dropdown-item addtolist newlist">New list</a>
+                </div>
+            </div>
+            
+        
+
+        
+            <button class="btn btn-link btn-sm hold disabled" type="button"> <i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Place hold </button>
+        
+
+        
+    </div>
+    <!-- / .links -->
+    
+</div>
+<!-- / .selections-toolbar -->
+
+                                </div>
+                                <!-- /#floating -->
+
+                                <!-- TABLE RESULTS START -->
+                                <table class="table table-striped" role="presentation">
+                                    <span class="sr-only">Results</span>
+
+                                    <!-- Actual Search Results -->
+                                    
+                                        <tr>
+                                            
+                                            
+                                                
+                                            
+                                            <td class="selectcol">
+                                                
+                                                    
+                                                        <input
+                                                            type="checkbox"
+                                                            class="cb"
+                                                            id="bib9312"
+                                                            name="biblionumber"
+                                                            value="9312"
+                                                            aria-label="Select search result: Wings of Fire: An Autobiography of Abdul Kalam"
+                                                        />
+                                                        <label for="bib9312"></label>
+                                                    
+                                                
+                                            </td>
+
+                                            
+                                            <td class="numcol">
+                                                
+                                                    1.
+                                                
+                                            </td>
+
+                                            
+                                            
+                                                <td class="covercol"> 
+
+<div
+    class="bookcover"
+    data-itemtype=""
+    data-itemtype_description=""
+    data-biblionumber="9312"
+    data-title="Wings of Fire: An Autobiography of Abdul Kalam"
+    data-subtitle=""
+    data-author="Tiwari, A."
+    data-isbn="8173711461"
+>
+    <div
+        class="cover-slider cover-slides itemtype_"
+        data-biblionumber="9312"
+        data-title="Wings of Fire: An Autobiography of Abdul Kalam"
+        data-isbn="8173711461"
+        data-isbn="8173711461"
+    >
+        
+
+        
+
+        
+
+        
+            <div class="cover-image googlejacket-coverimg">
+                <div class="8173711461" id="gbs-thumbnail-preview" data-use-data-link="1"></div>
+                <div class="hint">Image from Google Jackets</div>
+            </div>
+        
+
+        
+
+        
+
+        
+        
+
+        
+    </div>
+    <!-- /.cover-slider --> </div
+><!-- / .bookcover -->
+ </td>
+                                            
+                                            
+                                            <td class="bibliocol">
+                                                
+                                                <div id="title_summary_9312" class="title_summary">
+                                                    
+
+<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=9312" class="title">Wings of Fire: An Autobiography of Abdul Kalam </a><span class="byAuthor">by</span> <ul class="author resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=au:%22Tiwari%2C%20A.%22">Tiwari, A</a></li></ul><div class="results_summary edition">
+<span class="label">Edition: </span>1st </div><div class="results_summary type"> </div><div class="results_summary publisher">
+<span class="label">Publication details: </span> <span property="name" class="publisher_name">Universities Press</span> <span property="datePublished" class="publisher_date">1999</span>
+</div><div class="results_summary availability">
+<span class="label">Availability: </span><span class="noitems">No items available.</span>
+</div>
+
+
+
+
+                                                    
+
+                                                    
+
+                                                    
+
+                                                    
+
+                                                    
+
+                                                    
+
+
+
+                                                    
+                                                        <span class="sr-only"> star rating </span>
+                                                        <div class="results_summary ratings">
+                                                            
+                                                            
+                                                            <div class="br-wrapper br-theme-fontawesome-stars">
+                                                                <div class="br-widget br-readonly">
+                                                                    
+                                                                        
+                                                                            <span></span>
+                                                                        
+                                                                    
+                                                                        
+                                                                            <span></span>
+                                                                        
+                                                                    
+                                                                        
+                                                                            <span></span>
+                                                                        
+                                                                    
+                                                                        
+                                                                            <span></span>
+                                                                        
+                                                                    
+                                                                        
+                                                                            <span></span>
+                                                                        
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                            <span class="sr-only"> Average : 0.0 out of 5 stars</span>
+                                                            
+                                                                <br />
+                                                            
+                                                        </div>
+                                                        <!-- / .results_summary -->
+                                                    
+
+                                                    <div class="actions-menu noprint">
+    
+        
+    
+
+    
+
+    
+        
+    
+
+    
+
+    
+        
+            <span class="actions"
+                ><a class="addtoshelf btn btn-link btn-sm" href="/cgi-bin/koha/opac-addbybiblionumber.pl?biblionumber=9312"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Save to lists</a></span
+            >
+        
+    
+
+    
+</div>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            
+                                            
+                                                
+                                            
+                                            <td class="selectcol">
+                                                
+                                                    
+                                                        <input
+                                                            type="checkbox"
+                                                            class="cb"
+                                                            id="bib6039"
+                                                            name="biblionumber"
+                                                            value="6039"
+                                                            aria-label="Select search result: Wings of Fire An Autobiography of APJ Abdul Kalam / "
+                                                        />
+                                                        <label for="bib6039"></label>
+                                                    
+                                                
+                                            </td>
+
+                                            
+                                            <td class="numcol">
+                                                
+                                                    2.
+                                                
+                                            </td>
+
+                                            
+                                            
+                                                <td class="covercol"> 
+
+<div
+    class="bookcover"
+    data-itemtype="TB"
+    data-itemtype_description="Text Book"
+    data-biblionumber="6039"
+    data-title="Wings of Fire An Autobiography of APJ Abdul Kalam / "
+    data-subtitle=""
+    data-author="Kalam, APJ Abdul"
+    data-isbn="8173711461"
+>
+    <div
+        class="cover-slider cover-slides itemtype_TB"
+        data-biblionumber="6039"
+        data-title="Wings of Fire An Autobiography of APJ Abdul Kalam / "
+        data-isbn="8173711461"
+        data-isbn="8173711461"
+    >
+        
+
+        
+
+        
+
+        
+            <div class="cover-image googlejacket-coverimg">
+                <div class="8173711461" id="gbs-thumbnail-preview" data-use-data-link="1"></div>
+                <div class="hint">Image from Google Jackets</div>
+            </div>
+        
+
+        
+
+        
+
+        
+        
+
+        
+    </div>
+    <!-- /.cover-slider --> </div
+><!-- / .bookcover -->
+ </td>
+                                            
+                                            
+                                            <td class="bibliocol">
+                                                
+                                                <div id="title_summary_6039" class="title_summary">
+                                                    
+
+<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=6039" class="title">Wings of Fire An Autobiography of APJ Abdul Kalam /   <span class="title_resp_stmt">by APJ Abdul Kalam. </span></a><span class="byAuthor">by</span> <ul class="author resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=au:%22Kalam%2C%20APJ%20Abdul%22">Kalam, APJ Abdul</a></li></ul><div class="results_summary type">
+<span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/BK.png" alt="" class="materialtype mt_icon_BK"> Text</span><span class="results_format"><span class="label">; Format: </span>
+                    print
+                </span><span class="results_contents_literary"><span class="label">; Literary form: </span>
+                    Not fiction
+                </span> </div><div class="results_summary publisher">
+<span class="label">Publication details: </span><span class="publisher_place" property="location">New Delhi : </span> <span property="name" class="publisher_name">University press, </span> <span property="datePublished" class="publisher_date">1999</span>
+</div><div class="results_summary availability">
+<span class="label">Availability: </span><span class="unavailable"><span class="AvailabilityLabel"><strong>Not available: </strong></span><span class="ItemSummary unavailable"><span class="unavailable_Checked out"><span class="ItemBranch">Central Library, IIT Bhubaneswar: Checked out</span> (1). </span></span></span>
+</div>
+
+
+
+
+                                                    
+
+                                                    
+
+                                                    
+
+                                                    
+
+                                                    
+
+                                                    
+
+
+
+                                                    
+                                                        <span class="sr-only"> star rating </span>
+                                                        <div class="results_summary ratings">
+                                                            
+                                                            
+                                                            <div class="br-wrapper br-theme-fontawesome-stars">
+                                                                <div class="br-widget br-readonly">
+                                                                    
+                                                                        
+                                                                            <span></span>
+                                                                        
+                                                                    
+                                                                        
+                                                                            <span></span>
+                                                                        
+                                                                    
+                                                                        
+                                                                            <span></span>
+                                                                        
+                                                                    
+                                                                        
+                                                                            <span></span>
+                                                                        
+                                                                    
+                                                                        
+                                                                            <span></span>
+                                                                        
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                            <span class="sr-only"> Average : 0.0 out of 5 stars</span>
+                                                            
+                                                                <br />
+                                                            
+                                                        </div>
+                                                        <!-- / .results_summary -->
+                                                    
+
+                                                    <div class="actions-menu noprint">
+    
+        
+            
+                <span class="actions"
+                    ><a class="btn btn-link btn-sm" aria-label="Place hold on Wings of Fire An Autobiography of APJ Abdul Kalam / " href="/cgi-bin/koha/opac-reserve.pl?biblionumber=6039"
+                        ><i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Place hold</a
+                    ></span
+                >
+            
+        
+    
+
+    
+
+    
+        
+    
+
+    
+
+    
+        
+            <span class="actions"
+                ><a class="addtoshelf btn btn-link btn-sm" href="/cgi-bin/koha/opac-addbybiblionumber.pl?biblionumber=6039"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Save to lists</a></span
+            >
+        
+    
+
+    
+</div>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                </table>
+                            </form>
+                            <!-- / #bookbag_form -->
+
+                            <form id="hold_form" name="hold_form" method="get" action="/cgi-bin/koha/opac-reserve.pl">
+                                <!-- The value will be set by holdBiblioNums() in basket.js -->
+                                <input id="hold_form_biblios" type="hidden" name="biblionumbers" value="" />
+                            </form>
+                        </div>
+                        <!-- / .searchresults -->
+
+                        <div id="bottom-pages">
+
+</div>
+                    
+
+                    
+                    
+                        <div class="suggestion">
+                            Not finding what you're looking for?
+                            <ul>
+                                
+                                    <li>Make a <a href="/cgi-bin/koha/opac-suggestions.pl?op=add_form">purchase suggestion</a></li>
+                                
+                                
+                            </ul>
+                        </div>
+                    
+                </div>
+                <!-- / #userresults -->
+            </div>
+            <!-- /.span10/12 -->
+        </div>
+        <!-- / .row -->
+    </div>
+    <!-- / .container-fluid --> </main
+><!-- / .main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opaccredits">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><style>
+/*=====================================================
+        IIT BHUBANESWAR KOHA OPAC FOOTER
+=====================================================*/
+.opac-footer{
+    margin-top:20px;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f8fbfd;
+    border:1px solid #d9e4ec;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,91,150,.15);
+}
+
+/* Statistics Header */
+
+.stats-header{
+    background:linear-gradient(90deg,#005b96,#0086b3);
+    color:#ffffff;
+    text-align:center;
+    padding:9px;
+    font-size:20px;
+    font-weight:bold;
+    letter-spacing:.5px;
+}
+
+/* Statistics */
+
+.stats-row{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:15px;
+    padding:20px;
+    background:#f8fbfd;
+}
+
+.stat-box{
+    width:160px;
+    background:#ffffff;
+    border:1px solid #d9e4ec;
+    border-top:4px solid #0086b3;
+    border-bottom:4px solid #0086b3;
+    border-radius:10px;
+    text-align:center;
+    padding:16px;
+    transition:.3s;
+}
+
+.stat-box:hover{
+    transform:translateY(-5px);
+    box-shadow:0 8px 18px rgba(0,91,150,.18);
+}
+
+.stat-icon{
+    font-size:32px;
+    margin-bottom:8px;
+}
+
+.stat-number{
+    font-size:24px;
+    font-weight:bold;
+    color:#005b96;
+}
+
+.stat-title{
+    color:#555;
+    font-size:14px;
+}
+
+/* Contact */
+
+.footer-contact{
+    background:#eaf7ff;
+    margin:0 18px 18px;
+    padding:12px 18px;
+    border-radius:10px;
+    border-left:5px solid #0086b3;
+    border-right:5px solid #0086b3;
+    text-align:center;
+    color:#333;
+    font-size:14px;
+    line-height:1.8;
+}
+
+.footer-contact strong{
+    color:#005b96;
+}
+
+.footer-contact a{
+    color:#005b96;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.footer-contact a:hover{
+    color:#0086b3;
+    text-decoration:underline;
+}
+
+/* Bottom */
+
+.footer-bottom{
+    background:#005b96;
+    color:#ffffff;
+    text-align:center;
+    padding:12px;
+    font-size:14px;
+}
+
+.footer-bottom strong{
+    color:#ffffff;
+}
+
+@media(max-width:768px){
+
+.stats-row{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.stat-box{
+    width:auto;
+}
+
+.footer-contact{
+    font-size:14px;
+    padding:10px;
+}
+
+}
+</style>
+<footer class="opac-footer">
+<div class="stats-header">📊 Library Statistics</div>
+<div class="stats-row">
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">📚</div>
+<div class="stat-number" data-target="28000">0</div>
+</div>
+<div class="stat-title">Books</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">💻</div>
+<div class="stat-number" data-target="65000">0</div>
+</div>
+<div class="stat-title">E-Books</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">📰</div>
+<div class="stat-number" data-target="16000">0</div>
+</div>
+<div class="stat-title">E-Journals</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">🎓</div>
+<div class="stat-number" data-target="428">0</div>
+</div>
+<div class="stat-title">Theses</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">📖</div>
+<div class="stat-number" data-target="680000">0</div>
+</div>
+<div class="stat-title">E-Theses &amp; Dissertations</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">📰</div>
+<div class="stat-number" data-target="7000">0</div>
+</div>
+<div class="stat-title">E-Magazines &amp; Newspapers</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">🗄️</div>
+<div class="stat-number" data-target="60">0</div>
+</div>
+<div class="stat-title">E-Databases</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">👥</div>
+<div class="stat-number" data-target="3800">0</div>
+</div>
+<div class="stat-title">Users</div>
+</div>
+<div class="stat-box">
+<div class="stat-circle">
+<div class="stat-icon">📚</div>
+<div class="stat-number" data-target="8000">0</div>
+</div>
+<div class="stat-title">Publications</div>
+</div>
+</div>
+[script omitted]
+<div class="footer-contact">☎ <strong>Phone:</strong> <a href="tel:+916747138750">+91-674-713-8750</a> &nbsp;&nbsp;|&nbsp;&nbsp; 📖 <strong>Circulation Desk E-mail:</strong> <a href="mailto:[email omitted]"> [email omitted] </a> (Circulation Related Queries) <br />✉ <strong>Help Desk E-mail:</strong> <a href="mailto:[email omitted]"> [email omitted] </a> (General Queries)</div>
+<div class="footer-bottom"><strong>Maintained by</strong> Central Library, IIT Bhubaneswar &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Powered by</strong> Koha Integrated Library System</div>
+</footer><!--Start of Tawk.to Script-->
+[script omitted]
+<!--End of Tawk.to Script--></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+    <!-- prettier-ignore-start -->
+    </div> <!-- / #wrapper in masthead.inc -->
+    <!-- prettier-ignore-end -->
+
+    
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+
+[script omitted]
+
+    [script omitted]
+
+
+[script omitted]
+
+    [script omitted]
+
+
+
+
+    [script omitted]
+
+
+
+
+
+
+[script omitted]
+[script omitted]
+[script omitted]
+
+
+
+
+[script omitted]
+[script omitted]
+[script omitted]
+[script omitted]
+<!-- js-date-format.inc -->
+[script omitted]
+<!-- / js-date-format.inc -->
+
+
+[script omitted]
+
+
+    
+    
+    [script omitted]
+    
+        [script omitted]
+    
+    
+    [script omitted]
+    
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+
+
+    [script omitted]
+
+
+
+
+
+
+</body>
+<!-- prettier-ignore-start -->
+</html>
+<!-- prettier-ignore-end -->
+
+

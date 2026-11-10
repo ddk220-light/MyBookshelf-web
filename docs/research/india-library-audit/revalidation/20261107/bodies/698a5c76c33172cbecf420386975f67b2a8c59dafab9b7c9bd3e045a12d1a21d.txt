@@ -1,0 +1,171 @@
+$(document).ready(function(){
+	//To change the background color of the menu list
+	setUpMenu();
+	
+	$(document).on('click','ul.menuList li',function(){
+	var screen = $(this).data('screen');
+	var link = $(this).attr('href');
+		if(screen){
+			window.location.href="../"+screen;
+		}else if(link){
+			window.location.href=link;
+		}else{
+			return false;
+		}
+	})
+
+	$('.listName').click(function(){
+		var $lists = $(this).parent('ul').children('li');
+		$lists.toggle();
+	})
+	$('head').append(`<title>${$('#topHeader').text().trim()}</title>`);
+});
+
+function setUpMenu(){
+	var pathname = window.location.pathname; // Returns path only
+	var segments = pathname.split('/');
+	var dataSreenOfMenuList = segments[segments.length-2]+'/'+segments[segments.length-1];
+	$('div.menu > ul.menuList li').filter(function(i,li){
+		if($(li).children("ul").length){
+			//$(li).find("ul.menuList li").filter(function(index,list){
+				return;
+			//})
+		}else{
+			var href = $(li).attr('data-screen');
+			var name = $(li).text();
+			$(li).text('');
+			var atag = `<a href="../${href}">${name}</a>`;
+			$(li).children().remove();
+			$(li).append(atag);
+		}
+	})
+
+	$("li[data-screen='"+dataSreenOfMenuList+"']").css({
+			'cssText':'background-color:#5375aa;color:white !important;'
+	});
+	$("li[data-screen='"+dataSreenOfMenuList+"'] > a").css({
+		'cssText':'color:white !important;'
+	})
+	var container = $('div.menu'),
+	    scrollTo = $(`li[data-screen="${dataSreenOfMenuList}"]`);
+	if(scrollTo.length){
+		container.animate({
+		    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop()-50
+		});
+	}
+	
+
+}
+
+$(window).scroll(function() {
+  	if ($(this).scrollTop() > 1){
+		$('header').addClass('sticky');
+		$('header').removeClass('nonsticky');
+		$('.menu').css('margin-top','23px');
+  	}
+  	else{
+		$('header').removeClass('sticky');
+		$('header').addClass('nonsticky');
+		$('.menu').css('margin-top','0px');
+  	}
+});
+
+function databaseError(data){
+	var tag = '';
+	$.each(data,function(key,val){
+		tag += "<p>"+key+" => "+val+"</p>";
+	});
+	$('<div>'+tag+'</div>').dialog({
+		height: "auto",
+     	width: "auto",
+     	modal: true,
+     	title:"Easylib",
+     	buttons: { 
+     		"Ok": function () {
+     		 	$(this).dialog("close"); 
+     		} 
+     	},
+  		close: function (event, ui) {
+  			$(this).remove(); 
+  		}
+	})
+}
+//hide and show side bar
+$(document).on('click','#hideSideBar',function(){
+	$('.menu').hide();
+	$('.container-fluid').find('div.col-md-10:nth-child(3)')
+	.removeClass('col-md-10')
+	.addClass('col-md-12');
+	$('footer').css({
+		'margin-left':'0'
+	});
+	$headerTitle = $('div#topHeader').find('span');
+	$headerTitle.children().remove();
+	$headerTitle.prepend('<i id="showSideBar" class="fa fa-bars"></i>');
+	$('#showSideBar').show();
+})
+
+$(document).on('click','#showSideBar',function(){
+	$('.container-fluid').find('div.col-md-12:nth-child(3)')
+	.removeClass('col-md-12')
+	.addClass('col-md-10');
+	$('footer').css({
+		'margin-left':'16.16%'
+	})
+	$('.menu').show();
+	$('#showSideBar').hide();
+})
+
+function getObjectKeyValues(val,arr){
+	if($.inArray(val,arr) != -1){
+		arr = $.grep(arr,function(value){
+			return value != val;
+		});
+	} else {
+		arr.push(val);
+	}
+	return arr;
+}
+
+function responsiveFn() {
+    width = $( window ).width();
+    height = $( window ).height();
+    console.log(width);   
+  // Executing Both width() and height()   
+ 
+ 
+  // Do a custom code here
+    if(width <= 725){
+  		$headerTitle = $('div#topHeader').find('span');
+		$headerTitle.children().remove();
+		$headerTitle.prepend('<i id="showSideBar" class="fa fa-bars"></i>');
+		$('#showSideBar').show();
+    }
+ }
+ 
+  // load() event and resize() event are combined 
+$(window).ready(responsiveFn).resize(responsiveFn); 
+
+String.prototype.trim = function(charlist) {
+  return this.trimLeft(charlist).trimRight(charlist);
+};
+
+/*$(document).on("mouseenter", ".menu ul li", function() {
+    // hover starts code her
+	if($(this).children().length > 0){
+		$('.menu').css({
+			'overflow-x':'visible',
+			'overflow-y':'hidden'
+		})
+	}
+})
+
+$(document).on("mouseleave", ".menu ul li", function() {
+    // hover starts code her
+	if($(this).children().length > 0){
+		$('.menu').css({
+			'overflow-x':'hidden',
+			'overflow-y':'auto'
+		})
+	}
+})*/

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>iOPAC Home</title>
+    <link href="/iOPAC/Content/bootstrap.css" rel="stylesheet"/>
+<link href="/iOPAC/Content/site.css" rel="stylesheet"/>
+
+    [script omitted]
+
+    <link href="/iOPAC/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="/iOPAC/Content/kaiadmin.min.css" rel="stylesheet" />
+    <link href="/iOPAC/Content/fonts.min.css" rel="stylesheet" />
+    <link href="/iOPAC/Plugins/MultiSelect/css/bootstrap-multiselect.min.css" rel="stylesheet" />
+    <link href="/iOPAC/Content/Theme.min.css?id=2" rel="stylesheet" />
+    <link href="/iOPAC/Content/Master.min.css" rel="stylesheet" />
+</head>
+<body theme-color="gray">
+    <input id="hfCurrentTheme" type="hidden" value="gray" />
+    <div id="Loading">
+        <div id="text">
+            <i class="fas fa-cog fa-spin"></i><br />Processing
+        </div>
+    </div>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebarMenu" class="sidebar" theme-color="gray">
+            
+            <div class="sidebar-logo">
+                <!-- Logo Header -->
+                <div class="logo-header" theme-color="gray">
+                    
+                    <div class="logo">
+                        <a class="navbar-brand col-md-3 col-lg-2 mr-0 navbar-logo" href="/iOPAC/">
+                            <img class="imgClientLogo" src="" alt="logo" style="display:none" />
+                        </a>
+                    </div>
+                    <!--"Manu button" displayed if width is less than 992px -->
+                    <div class="nav-toggle d-lg-block d-xl-none">
+                        <button class="btn btn-toggle toggle-sidebar">
+                            <i class="gg-menu-right"></i>
+                        </button>
+                        <button class="btn btn-toggle sidenav-toggler">
+                            <i class="gg-menu-left"></i>
+                        </button>
+                    </div>
+                    <!--"Borrower logo" displayed if width is less than 992px -->
+                    <div class="more navbar-nav topbar-nav ms-md-auto align-items-center ">
+                        <a href="#/">
+                            <div class="btn btnCommon rounded-circle login-modal" data-bs-toggle="modal" data-bs-target="#loginModal" theme-color="gray">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </a>
+                        <a href="#/">
+                            <div class="btn btnCommon rounded-circle loggedIn-popover spnUserNoImgMobile ps-3 py-2" style="display:none" data-bs-toggle="dropdown" theme-color="gray">
+                                <span class="fas fa-user-check"></span>
+                            </div>
+                            <div class="avatar-sm me-1 loggedIn-popover imgLoggedInUserMobile" data-bs-toggle="dropdown" style="display:none">
+                                <img src=""
+                                     alt="..."
+                                     class="avatar-img rounded-circle userPhoto" />
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <!-- End Logo Header -->
+            </div>
+            <input type="hidden" id="hfBaseURL" value="/iOPAC/" />
+            <input type="hidden" id="hfBaseURLForMaster" value="/iOPAC/" />
+            <div class="sidebar-wrapper scrollbar-inner">
+                <div class="sidebar-content">
+                    <ul id="sideMenu" class="nav nav-secondary">
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="hfControllerName" value="home" />
+        <input type="hidden" id="hfActionName" value="index" />
+        <!-- End Sidebar -->
+
+        <div class="main-panel">
+            <div class="main-header">
+                <div class="main-header-logo">
+                    <!-- Logo Header for Mobile view -->
+                    <div class="logo-header" theme-color="gray">
+                    </div>
+                    <!-- End Logo Header -->
+                    <!--If the screen width is less than 992px then "Search Bar" displayed-->
+                    <div class="input-group align-items-center p-1 border-1" theme-color="gray">
+                        <div class="input-group-prepend">
+                            <div class="btn btnCommon rounded-0 rounded-start" theme-color="gray">
+                                <a class="nav-link BorrPref-modal rounded-start" href="#" data-bs-toggle="modal" data-bs-target="#BorrPrefModal">
+                                    <span class="fas fa-filter fa-sm rounded-start"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <span id="searchIcon" class="fas fa-search d-flex justify-content-center align-items-center ps-3 pe-1" style="color: #000">
+                        </span>
+                        <input id="txtSearch1" type="text"
+                               placeholder="Search"
+                               class="form-control border-0 searchInput" style="color: black;" aria-label="Search" autocomplete="off" />
+                        <div id="divSugg1" class="list-group searchSuggestions shadow"></div>
+                        <div class="input-group-append speech-recog">
+                            <div class="btn btnCommon rounded-0 rounded-end" theme-color="gray">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#SpeechToTextModal">
+                                    <span class="fas fa-microphone fa-lg px-1"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center navbar-header pt-2 d-sm-none d-lg-block" theme-color="gray">
+                    <h1 id="libName" class="libname fw-bold display-5" theme-color="gray"></h1>
+                    <h1 class="phLibname placeholder-glow display-5" aria-hidden="true"><span class="placeholder col-7"></span></h1>
+                </div>
+                <!-- Navbar Header -->
+                <nav class="navbar navbar-header navbar-expand-lg" theme-color="gray">
+                    <div class="container-fluid">
+                        <!--"Search Bar" displayed if the screen width is greater than 992px-->
+                        <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search d-none d-lg-flex" style="width: 100%">
+
+                            <div class="input-group" style="box-shadow: 2px 6px 15px 0 rgba(69, 65, 78, .1);">
+                                <div class="input-group-prepend">
+                                    <div id="LibCollectionicon" class="btn btnCommon pe-4" theme-color="gray" style="margin: 5px" data-bs-toggle="modal" data-bs-target="#BorrPrefModal">
+                                        <a class="nav-link BorrPref-modal" href="#">
+                                            <span class="fas fa-filter fa-sm pe-2"></span><span id="spnFilter" class="font-weight-bold"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <span id="searchIcon" class="fas fa-search d-flex justify-content-center align-items-center ms-3" style="color:black">
+                                </span>
+                                <input id="txtSearch" type="text"
+                                       placeholder="Search here"
+                                       class="form-control searchInput" style="color: black; " aria-label="Search" autocomplete="off" />
+                                <div id="divSugg" class="list-group searchSuggestions shadow"></div>
+                                <div class="input-group-prepend">
+                                    <div id="AdvSrchicon" class="btn btnCommon" theme-color="gray" style="margin: 5px">
+                                        <a class="nav-link BorrPref-modal" href="/iOPAC/Opac/advancedsearch">
+                                            <span class="font-weight-bold">Advanced Search</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="input-group-append speech-recog">
+                                    <div class="btn btnCommon" theme-color="gray" style="margin: 5px">
+                                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#SpeechToTextModal">
+                                            <span class="fas fa-microphone fa-lg px-1"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <div class="btn btnCommon rounded-circle theme-toggler" theme-color="gray" title="Themes">
+                                    <a class="nav-link" href="#/">
+                                        <span class="fas fa-paint-brush"></span>
+                                    </a>
+                                </div>
+                                <!-- Dropdown Content (Initially Hidden) -->
+                                <div class="desktopThemes selectTheme  dropdown-menu">
+                                    <div class="title mb-2 py-2 text-center fw-bold" theme-color="gray">Themes</div>
+                                    <div class="switcher d-flex justify-content-center align-items-center">
+                                        <div class="switch-block">
+                                            <div id="divThemeLg" class="btnSwitch">
+                                                <button type="button" class="btnTheme" theme-color="white" title="LIGHT"></button>
+                                                <button type="button" class="btnTheme" theme-color="black" title="DARK"></button>
+                                                <button type="button" class="btnTheme" theme-color="gray" title="GRAY"></button>
+                                                <hr />
+                                                <button type="button" class="btnTheme" theme-color="red" title="RED"></button>
+                                                <button type="button" class="btnTheme" theme-color="orange" title="ORANGE"></button>
+                                                <button type="button" class="btnTheme" theme-color="olive" title="OLIVE"></button>
+                                                <br />
+                                                <button type="button" class="btnTheme" theme-color="green" title="GREEN"></button>
+                                                <button type="button" class="btnTheme" theme-color="blue" title="BLUE"></button>
+                                                <button type="button" class="btnTheme" theme-color="pink" title="PINK"></button>
+                                                <br />
+                                                <button type="button" class="btnTheme" theme-color="purple" title="PURPLE"></button>
+                                                <button type="button" class="btnTheme" theme-color="brown" title="BROWN"></button>
+                                                <button type="button" class="btnTheme" theme-color="armygreen" title="ARMY"></button>
+                                                <br />
+                                                <button type="button" class="btnTheme" theme-color="mango" title="MANGO"></button>
+                                                <button type="button" class="btnTheme" theme-color="maroon" title="MAROON"></button>
+                                                <button type="button" class="btnTheme" theme-color="skyblue" title="SKY BLUE"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </nav>
+
+                        <!--"Borrower logo" displayed if the screen width is greater than 992px-->
+                        <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                            <li class="nav-item text-nowrap list-inline-item liLogin">
+                                <a href="#/" title="Login">
+                                    <div class="btn btnCommon rounded-circle login-modal mx-2" data-bs-toggle="modal" data-bs-target="#loginModal" theme-color="gray">
+                                        <span class="fas fa-user"></span>
+                                    </div>
+                                </a>
+                                <a href="#/">
+                                    <div id="spnLoggedInUser" class="btn btnCommon rounded-circle loggedIn-popover mx-2 ps-3 py-2" style="display:none" data-bs-toggle="dropdown" theme-color="gray">
+                                        <span class="fas fa-user-check"></span>
+                                    </div>
+                                    <div id="imgLoggedInUser" class="avatar-sm me-1 loggedIn-popover mx-2" data-bs-toggle="dropdown" style="display:none">
+                                        <img src=""
+                                             alt="..."
+                                             class="avatar-img rounded-circle userPhoto" />
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <!-- End Navbar -->
+            </div>
+
+            <div class="container">
+                <div class="page-inner">
+                    
+<link href="/iOPAC/Plugins/Gijgo/css/gijgo.min.css?id=2" rel="stylesheet" />
+<input type="hidden" id="hfShowPageWiseHitCount" value="true" />
+<input type="hidden" id="hfDisplayWelcomeMessageOnOPAC" value="false" />
+<input type="hidden" id="hfLibraryNameOnOPAC" value="KRC HSNC University, Mumbai" />
+<input type="hidden" id="hfOPACHomeLeftTopComponent" value="1" />
+<input type="hidden" id="hfOPACHomeRightTopComponent" value="3" />
+
+<link href="/iOPAC/Plugins/tiny-slider/tiny-slider.css" rel="stylesheet" />
+<link href="/iOPAC/Content/Home.min.css?id=2" rel="stylesheet" />
+
+
+<div class="row" id="divWelcomeMessage" style="display:none;">
+    <div class="col-sm-12 pb-2">
+        <h4 class="welcome-message" theme-color="gray">Welcome, <span id="spnUserName" style="color: #00a54f;"></span><span id="spnLibName"></span></h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xxl-6 topLeftComponent">
+        <div class="card" id="libImages">
+            <div class="card-header">
+                <span id="spnLibImages" class="categoryHeading fs-2 fw-bold" theme-color="gray"></span>
+                <p class="phLibImages placeholder-glow" aria-hidden="true"><span class="placeholder col-7"></span></p>
+            </div>
+            <div class="card-body d-flex justify-content-center align-items-center">
+                <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                    <div id="olIndicators" class="carousel-indicators"></div>
+                    <div id="divInner" class="carousel-inner"></div>
+                </div>
+                <div class="phLibImages" aria-hidden="true">
+                    <img class="d-block w-100 rounded img-fluid imgLibs" src="/iOPAC/Content/Images/default-landscape.png" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-xxl-6 topRightComponent">
+        <div class="card" id="multiChartData">
+            <div class="card-body">
+                <div class="chart-container d-flex align-items-center justify-content-center">
+                    <canvas id="multipleBarChart" style="display: none"></canvas>
+                    <div class="phChart" aria-hidden="true">
+                        <img class="d-block w-100 rounded img-fluid imgLibs" src="/iOPAC/Content/Images/default-landscape.png" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <div>
+        <h3 class="fw-bold categoryHeading" theme-color="gray">Top Catalogues</h3>
+    </div>
+    <div class="row placeholder-glow phTopSix">
+        <div class="col">
+            <div class="card">
+                <div class="card-body p-3 text-center">
+                    <div class="h3 m-0"><span class="placeholder col-6"></span></div>
+                    <div class="text-muted"><span class="placeholder col-12"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body p-3 text-center">
+                    <div class="h3 m-0"><span class="placeholder col-6"></span></div>
+                    <div class="text-muted"><span class="placeholder col-12"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body p-3 text-center">
+                    <div class="h3 m-0"><span class="placeholder col-6"></span></div>
+                    <div class="text-muted"><span class="placeholder col-12"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body p-3 text-center">
+                    <div class="h3 m-0"><span class="placeholder col-6"></span></div>
+                    <div class="text-muted"><span class="placeholder col-12"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body p-3 text-center">
+                    <div class="h3 m-0"><span class="placeholder col-6"></span></div>
+                    <div class="text-muted"><span class="placeholder col-12"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body p-3 text-center">
+                    <div class="h3 m-0"><span class="placeholder col-6"></span></div>
+                    <div class="text-muted"><span class="placeholder col-12"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    [script omitted]
+    <!-- Container for the rendered cards -->
+    <div id="card-container" class="row"></div>
+</div>
+<div>
+    <div class="row">
+        <div id="divBulletin" style="display:none">
+            <div>
+                <h3 class="fw-bold categoryHeading" theme-color="gray">Bulletin</h3>
+            </div>
+            <div class="card divBulletin">
+                <div class="card-body">
+                    <div id="divBulletinTicker" class="myTicker">
+                        <ul>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="divNews" style="display:none">
+            <div>
+                <h3 class="fw-bold categoryHeading" theme-color="gray">Newspapers</h3>
+            </div>
+            <div class="card divBulletin">
+                <div class="card-body">
+                    <div id="divNewsTicker" class="myTicker">
+                        <ul>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    [script omitted]
+</div>
+[script omitted]
+<div id="divCategories">
+    
+</div>
+[script omitted]
+[script omitted]
+[script omitted]
+    <div class="container hcRow" style="display: none">
+        <div class="row mt-4">
+            <div class="four col-md-4 mb-4">
+                <div id="divHitCounter" class="gj-text-align-center">
+                    <i class="fa fa-thumbs-up fa-3x mb-2 hCounters" theme-color="gray" style="opacity:0.7"></i>
+                    <br />
+                    <span class="fw-bold fa-2x mt-5 hCounters" theme-color="gray" id="spnHits">0</span>
+                    <h5 class="hCounters" theme-color="gray">Hits</h5>
+                </div>
+            </div>
+            <div class="four col-md-4 mb-4">
+                <div class="gj-text-align-center">
+                    <i class="fa fa-users fa-3x mb-2 hCounters" theme-color="gray" style="opacity:0.7"></i>
+                    <br />
+                    <span class="fw-bold fa-2x hCounters" theme-color="gray" id="spnActiveUsers">0</span>
+                    <h5 class="hCounters" theme-color="gray">Active Users</h5>
+                </div>
+            </div>
+            <div class="four col-md-4">
+                <div class="gj-text-align-center">
+                    <i class="fa fa-user-check fa-3x mb-2 hCounters" theme-color="gray" style="opacity:0.7"></i>
+                    <br />
+                    <span class="fw-bolder fa-2x hCounters" theme-color="gray" id="spnLoggedInUsers">0</span>
+                    <h5 class="hCounters" theme-color="gray">Logged In Users</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="modal" id="HitCounters">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>OPAC Hits</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="hitsBody" class="table-responsive mb-2" theme-color="gray" style="max-height: 500px; overflow-y: auto;">
+                <table id="gridHitCounters" class="table table-bordered"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+                </div>
+            </div>
+
+            <footer class="footer shadow-lg">
+                <div class="container-fluid d-flex justify-content-between">
+                    <nav class="pull-left">
+                        <ul class="nav">
+                            <li class="nav-item">
+                                <a id="PrivacyPolicyData" data-bs-toggle="modal" data-bs-target="#PrivacyPolicyModal" class="nav-link" target="_blank" href="" theme-color="gray">
+                                    Privacy Policy
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div>
+                        <a target="_blank" href="https://www.slimkm.com/">
+                            <img src="/iOPAC/Content/Images/iSlim.png" style="max-height: 30px" title="version 1.7.6.16099" />
+                        </a>
+                    </div>
+                    <div class="copyright text-center">
+                        <i class="fa fa-copyright justify-content-center"></i> 2016 Algorhythms Consultants Pvt. Ltd. Pune. INDIA.
+                    </div>
+                </div>
+            </footer>
+
+            <div class="modal" id="detailsModal">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header" theme-color="gray">
+                            <h5 class="modal-title" theme-color="gray">Item Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <iframe id="frmItemDetails" frameborder="0" style="width: 100%" src="/iOPAC/Loading"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="PrivacyPolicyModal">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header" theme-color="gray">
+                            <h3 class="modal-title">Privacy Policy</h3>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto;">
+                                <div id="divPrivacyPolicy" class="form-group col-md-12">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="loginModal">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Sign in</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body form-signin">
+                            <label for="txtUserID" class="sr-only">User ID</label>
+                            [form state omitted]
+                            <label for="txtPassword" class="sr-only">Password</label>
+                            [form state omitted]
+                            <div class="checkbox my-2">
+                                <label>
+                                    <input type="checkbox" id="cmbRetainBasket"> Retain the item(s) added in basket
+                                </label>
+                            </div>
+                            <span id="spFailedMsg" class="text-danger font-weight-bold"></span>
+                            <button id="btnLogin" class="btn btn-lg btnCommon btn-block mt-2 w-100" theme-color="gray" type="submit">
+                                <span class="loginButton">Sign in</span>
+                                <span class="spinner-border loginButton" style="display: none"></span>
+                            </button>
+                            <button id="btnForgotPassword" class="btn btn-lg btnReset btn-block mt-2 w-100" theme-color="gray" type="submit" data-bs-toggle="modal" data-bs-target="#ForgotPasswordModal">Forgot Password?</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="ForgotPasswordModal">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Reset Password</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body form-signin">
+                            <label for="txtEmailAddress" class="sr-only">Email</label>
+                            [form state omitted]
+                            <span id="spFailedFPMsg" class="text-danger"></span>
+                            <button id="btnResetFP" class="btn btn-lg btnCommon btn-block mt-2 w-100" theme-color="gray" type="submit">Send mail</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="ChangePasswordModal">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Change Password</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="txtOldPassword" class="sr-only">Current Password</label>
+                            [form state omitted]
+                            <label for="txtNewPassword" class="sr-only">New Password</label>
+                            <span id="spFailedFPMsg" class="text-danger"></span>
+                            [form state omitted]
+                            <label for="txtConfirmPassword" class="sr-only">Confirm Password</label>
+                            [form state omitted]
+                            <span id="spFailed" class="text-danger"></span>
+                            <button id="btnSubmitPass" class="btn btn-lg btnCommon btn-block mt-2 w-100" theme-color="gray" type="submit">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="BorrPrefModal">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Preferences</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-row">
+                                <div id="divSelLibs" class="form-group col-md-12">
+                                    <label for="selectedLibs">Search In Libraries</label>
+                                    <select class="form-control" id="selectedLibs" multiple>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div id="divSelColls" class="form-group col-md-12">
+                                    <label for="selectedLibs">Search In Collections</label>
+                                    <select class="form-control" id="selectedDColls" multiple>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12 text-end">
+                                    <button class="btn btnCommon" id="btnSavePrefs" theme-color="gray">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="SpeechToTextModal">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header p-2 pl-3 pr-3">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <div class="spinner-grow text-primary" role="status">
+                                <span class="sr-only"></span>
+                            </div>
+                            <div class="spinner-grow text-secondary" role="status">
+                                <span class="sr-only"></span>
+                            </div>
+                            <div class="spinner-grow text-success" role="status">
+                                <span class="sr-only"></span>
+                            </div>
+                            <div class="spinner-grow text-danger" role="status">
+                                <span class="sr-only"></span>
+                            </div>
+                            <div class="spinner-grow text-warning" role="status">
+                                <span class="sr-only"></span>
+                            </div>
+                            <div class="spinner-grow text-info" role="status">
+                                <span class="sr-only"></span>
+                            </div>
+                            <div class="spinner-grow text-dark" role="status">
+                                <span class="sr-only"></span>
+                            </div>
+                            <h2 class="my-3">Listening...</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="PlayMediaModal" class="modal">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Media Player</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <div id="playArea">
+                            </div>
+                            <div id="divIFrame" style="display: none; height: 90%;">
+                                <iframe id="viewFrame" width='100%' height='100%' allowfullscreen webkitallowfullscreen frameborder="0" src="/iOPAC/Loading"></iframe>
+                            </div>
+                            <div id="divImage" style="display: none;" class="overflow-auto">
+                                <img id="imgML" />
+                            </div>
+                            <a id="ancMediaDownload" class="btn btn-primary mt-1" style="display: none" href="" role="button" download>Download</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="dlgNotice" title="Notice" style="text-align: center; overflow-y: auto">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <iframe id="ifrmNotice" frameborder="0" src="/iOPAC/Notice.html?id=1" visible="false" style="width: 100%; height: 300px;"></iframe>
+                            <input type="button" id="btnNoticeProceed" value="Read and Proceed" style="margin-top: 10px; text-align:center" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            [script omitted]
+        </div>
+        <div class="custom-template selectTheme">
+            <div class="title" theme-color="gray">Themes</div>
+            <div class="custom-content">
+                <div class="switcher">
+                    <div class="switch-block">
+                        <div id="divTheme" class="btnSwitch">
+                            <button type="button" class="btnTheme" theme-color="white" title="LIGHT"></button>
+                            <button type="button" class="btnTheme" theme-color="black" title="DARK"></button>
+                            <button type="button" class="btnTheme" theme-color="gray" title="GRAY"></button>
+                            <hr />
+                            <button type="button" class="btnTheme" theme-color="red" title="RED"></button>
+                            <button type="button" class="btnTheme" theme-color="orange" title="ORANGE"></button>
+                            <button type="button" class="btnTheme" theme-color="olive" title="OLIVE"></button>
+                            <br />
+                            <button type="button" class="btnTheme" theme-color="green" title="GREEN"></button>
+                            <button type="button" class="btnTheme" theme-color="blue" title="BLUE"></button>
+                            <button type="button" class="btnTheme" theme-color="pink" title="PINK"></button>
+                            <br />
+                            <button type="button" class="btnTheme" theme-color="purple" title="PURPLE"></button>
+                            <button type="button" class="btnTheme" theme-color="brown" title="BROWN"></button>
+                            <button type="button" class="btnTheme" theme-color="armygreen" title="ARMY"></button>
+                            <br />
+                            <button type="button" class="btnTheme" theme-color="mango" title="MANGO"></button>
+                            <button type="button" class="btnTheme" theme-color="maroon" title="MAROON"></button>
+                            <button type="button" class="btnTheme" theme-color="skyblue" title="SKY BLUE"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="custom-toggle" theme-color="gray" title="Themes"> 
+                <span class="fas fa-paint-brush"></span>
+            </div>
+        </div>
+    </div>
+
+    [script omitted]
+
+    [script omitted]
+    [script omitted]
+
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+
+    
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+    [script omitted]
+
+</body>
+</html>

@@ -89,6 +89,7 @@ async function read(field, phrase, deadlineAt) {
     try {
       response = await getText(url.toString(), { deadlineAt, maxResponseBytes: 1024 * 1024, redirect: 'manual', retries: 0 });
     } catch (error) {
+      if (/^(?:CATALOG_|ROBOTS_|SOURCE_|PROVIDER_|UPSTREAM_|ORIGIN_)/.test(error.code||'')) throw error;
       throw failure(error.name === 'AbortError' ? 'CATALOG_TIMEOUT' : 'CATALOG_UNAVAILABLE', 'Public catalog request failed');
     }
     if ([401, 403, 429].includes(response.status) || /cf-chl-|Just a moment|captcha/i.test(response.text)) {
@@ -103,6 +104,18 @@ async function read(field, phrase, deadlineAt) {
 }
 
 const book = row => ({ recordId: row.recordId, title: row.title, authors: [row.author], ...(row.subject ? { subjects: [row.subject] } : {}) });
+
+// Native audit profile: one literal title form, complete first page, no
+// author fallback/merge or app result cap. Unknown continuation stays explicit.
+export async function searchNativeCatalog(library, query) {
+  configure(library);
+  if (typeof query !== 'string' || query.length > 160 || catalogPhrase(query) !== query)
+    throw failure('UNSUPPORTED_PROFILE', 'Use a literal phrase accepted by this website title form');
+  const page = await read('title', query, Date.now() + DEFAULT_TIMEOUT_MS);
+  return { records: page.rows.map(row => ({ ...book(row), materialType: 'Book', materialTypeProof: 'native_public_books_catalog',
+    observation: { outcome:'in_catalog', matchKind:'verified_work', recognizedExact:true, locations:[{name:library.name,status:'unknown'}] } })),
+    total: page.hasMore ? null : page.rows.length, hasMore:page.hasMore, continuationUnsupported:page.hasMore };
+}
 
 export async function searchPublicCatalog(library, query) {
   configure(library);
