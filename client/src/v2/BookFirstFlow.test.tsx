@@ -38,7 +38,7 @@ it('shows a short list of grouped works with an explicit way to see more', async
   expect(screen.getByText('Grouped book 7')).toBeInTheDocument();
 });
 it('lets readers open each version of a title without changing its record key', async () => {
-  // Records without a work ID group by title and author; different works never merge.
+  // Records without a work ID group by title and author.
   const candidates = [
     { bookKey: 'v1:googlebooks:ReasonA2014', title: 'A Modern Approach To Logical Reasoning', authors: ['Dr. R S Aggarwal'], publishedDate: '2014' },
     { bookKey: 'v1:googlebooks:ReasonB2007', title: 'A Modern Approach to Logical Reasoning', authors: ['R. S. Aggarwal'], publishedDate: '2007' },
@@ -53,6 +53,30 @@ it('lets readers open each version of a title without changing its record key', 
   fireEvent.click(screen.getByText('View 3 versions'));
   fireEvent.click(screen.getByRole('link', { name: /Published 2007/ }));
   expect(await screen.findByTestId('destination')).toHaveTextContent('/app/books/v1%3Agooglebooks%3AReasonB2007');
+});
+
+it('shows separate work records of one title as one card, opens each exact record and counts cards for Show more', async () => {
+  const same = [
+    { bookKey: 'v1:openlibrary:OL796465W', workId: 'OL796465W', title: 'The Alchemist', authors: ['Paulo Coelho'], editionCount: 141, publishedDate: '1988' },
+    { bookKey: 'v1:openlibrary:OL24793570W', workId: 'OL24793570W', title: 'The Alchemist', authors: ['Paulo Coello'], editionCount: 1, publishedDate: '2003' },
+    { bookKey: 'v1:openlibrary:OL42974242W', workId: 'OL42974242W', title: 'The Alchemist', authors: ['Paulo Coelho (Author)'], editionCount: 3, publishedDate: '2010' },
+  ];
+  const others = Array.from({ length: 5 }, (_, index) => ({ bookKey: `v1:openlibrary:OL${index + 1}W`, title: `Other book ${index}`, authors: ['Someone Else'] }));
+  vi.mocked(publicApi.searchBooks).mockResolvedValue({ kind: 'candidates', candidates: [...same, ...others] });
+  render(<MemoryRouter initialEntries={['/app/search']}><Routes><Route path="/app/search" element={<ScanPage />} /><Route path="/app/books/:key" element={<Destination />} /></Routes></MemoryRouter>);
+  fireEvent.change(screen.getByLabelText('Title, author or ISBN'), { target: { value: 'the alchemist' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Search books' }));
+  expect(await screen.findByText('View 3 records with this title')).toBeInTheDocument();
+  expect(screen.getAllByText('The Alchemist')).toHaveLength(1);
+  expect(screen.getByText('141 editions', { selector: 'summary small' })).toBeInTheDocument(); // Largest, not the sum.
+  expect(screen.queryByText('145 editions')).toBeNull();
+  // Five cards are shown first: the grouped card and four others.
+  expect(screen.getByText('Other book 3')).toBeInTheDocument();
+  expect(screen.queryByText('Other book 4')).toBeNull();
+  fireEvent.click(screen.getByText('View 3 records with this title'));
+  expect(screen.getByText(/separate records with the same title and author/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('link', { name: /Published 2003/ }));
+  expect(await screen.findByTestId('destination')).toHaveTextContent('/app/books/v1%3Aopenlibrary%3AOL24793570W');
 });
 
 it('labels spelling suggestions and preserves the book identity when opened', async () => {

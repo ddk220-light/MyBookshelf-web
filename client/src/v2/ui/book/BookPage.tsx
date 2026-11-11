@@ -11,7 +11,7 @@ import { DogAnimation } from '../DogAnimation';
 import { useBookScreen } from './useBookScreen';
 import { AlsoFree } from '../content/AlsoFree';
 import {useAccountSession} from '../../auth/AccountSessionProvider';
-import { countOf, formatPublishedDate } from '../../format';
+import { countOf, formatPublishedDate, languageName } from '../../format';
 export { withCatalogTitle } from './useBookScreen';
 
 export function BookPage() {
@@ -94,7 +94,3 @@ export function BookPage() {
   </section>;
 }
 
-function languageName(code: string): string {
-  const names: Record<string, string> = { eng: 'English', hin: 'Hindi', tam: 'Tamil', mal: 'Malayalam', kan: 'Kannada', tel: 'Telugu', ben: 'Bengali', mar: 'Marathi', guj: 'Gujarati', urd: 'Urdu', spa: 'Spanish', fre: 'French', ger: 'German', ita: 'Italian', jpn: 'Japanese', chi: 'Chinese', por: 'Portuguese', rus: 'Russian', ara: 'Arabic' };
-  return names[code] || code.toUpperCase();
-}

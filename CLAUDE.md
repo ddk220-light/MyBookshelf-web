@@ -8,4 +8,5 @@ Use README.md for commands. Run client/server tests, type checking, build, SEO
 checks and browser journeys before releasing. Provider keys stay server-side.
 The full directory remains usable in the app; shared/seo-libraries.json controls
 only public library pages. Never treat failed checks as absence or merge editions
-from similar titles. Respect catalog access restrictions and reduced motion.
+for identity or availability from similar titles (search cards may group
+same-title, same-author records for display only). Respect catalog access restrictions and reduced motion.

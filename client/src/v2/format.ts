@@ -34,3 +34,9 @@ export function formatPublishedDate(value: string): string {
   // 31 February and similar roll over to another month; keep the month only.
   return date.getUTCMonth() === monthNumber - 1 ? fullDate.format(date) : monthDate.format(new Date(Date.UTC(Number(year), monthNumber - 1, 1)));
 }
+
+// Display names for MARC language codes used by book records.
+export function languageName(code: string): string {
+  const names: Record<string, string> = { eng: 'English', hin: 'Hindi', tam: 'Tamil', mal: 'Malayalam', kan: 'Kannada', tel: 'Telugu', ben: 'Bengali', mar: 'Marathi', guj: 'Gujarati', urd: 'Urdu', spa: 'Spanish', fre: 'French', ger: 'German', ita: 'Italian', jpn: 'Japanese', chi: 'Chinese', por: 'Portuguese', rus: 'Russian', ara: 'Arabic' };
+  return names[code] || code.toUpperCase();
+}

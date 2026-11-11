@@ -37,7 +37,7 @@ test('IIT Madras search presents one title and keeps all three versions accessib
   await installPublicV2Fixture(page);
   const library = { ...LINKED_LIBRARY, id: 'chamo:iit-madras', name: 'Indian Institute of Technology Madras' };
   // Google Books volumes carry no work ID, so they group by title and author.
-  // Different Open Library work IDs are never merged (searchGroups.test.ts).
+  // Different work IDs share a card only with the same title and authors (searchGroups.test.ts).
   const candidates = [
     { bookKey: 'v1:googlebooks:ReasonA2014', title: 'A Modern Approach To Logical Reasoning', authors: ['Dr. R S Aggarwal'], publishedDate: '2014', languages: ['eng'] },
     { bookKey: 'v1:googlebooks:ReasonB2007', title: 'A Modern Approach to Logical Reasoning', authors: ['R. S. Aggarwal'], publishedDate: '2007', languages: [] },

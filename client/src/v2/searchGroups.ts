@@ -1,10 +1,16 @@
 import type { PublicBook } from './types';
 import { uiMessages as m } from './uiMessages';
+import { languageName } from './format';
 
 // `key` identifies the presentation group for remembered UI state such as an
 // expanded card. It never equals a record's bookKey ("v1:…"), so a key that
-// was remembered for another grouping cannot open the wrong card.
-export type SearchGroup = { key: string; book: PublicBook; versions: PublicBook[] };
+// was remembered for another grouping cannot open the wrong card. "g2:" keys
+// may span several Open Library work IDs; "g1:" keys (work ID only) are no
+// longer issued, so a remembered g1 key matches nothing.
+// `separateWorks` is true when the card holds records with different work IDs:
+// they are shown as separate records under one title, never as versions of one
+// work. `editionCount` is the largest edition count in the group, not a sum.
+export type SearchGroup = { key: string; book: PublicBook; versions: PublicBook[]; separateWorks: boolean; editionCount?: number };
 
 // Fold Latin accents (é → e) but keep combining marks in other scripts:
 // Devanagari and Tamil vowel signs are marks, and removing them makes
@@ -104,65 +110,151 @@ function canonicalMarker(marker: string) {
   return 'no';
 }
 
-type Entry = { book: PublicBook; index: number; workId: string | null; title: string; author: string; volume: string };
-const fallbackKey = (entry: Entry) => `${entry.title}\u0001${entry.volume}\u0001${entry.author}`;
+// Known record language(s). Work records list the languages of their
+// editions; "und", "mul" and "zxx" say nothing.
+function languagesOf(book: PublicBook): Set<string> {
+  const codes = book.language ? [book.language] : book.languages || [];
+  return new Set(codes.map(code => code.toLowerCase()).filter(code => code && !['und', 'mul', 'zxx'].includes(code)));
+}
+const languagesConflict = (left: Set<string>, right: Set<string>) => left.size > 0 && right.size > 0 && ![...left].some(code => right.has(code));
 
-// Presentation groups only: retain every record's key and availability lookup.
-// 1. Records sharing an Open Library work ID belong together; different work
-//    IDs are never merged, however similar their titles.
-// 2. Records without a work ID group by normalised title, volume statement and
-//    authors. Records with conflicting or missing volume information stay apart.
-// 3. A record without a work ID joins a work only when exactly one work in the
-//    results has the same title, volume and authors; when unsure it stays apart.
+// Titles that many unrelated books share. Author typo tolerance never applies
+// to them (exact title and author matches still share a card).
+const GENERIC_TITLES = new Set(['poems', 'selected poems', 'collected poems', 'complete poems', 'poetry', 'stories', 'short stories',
+  'selected stories', 'collected stories', 'complete stories', 'works', 'collected works', 'complete works', 'selected works',
+  'essays', 'selected essays', 'collected essays', 'letters', 'selected letters', 'plays', 'collected plays', 'novels', 'writings',
+  'selected writings', 'speeches', 'tales', 'fables', 'sermons', 'diaries', 'journals', 'memoirs', 'autobiography']);
+const isGenericTitle = (title: string) => GENERIC_TITLES.has(title.replace(/^(?:the|a|an)\s+/, ''));
+
+function withinOneEdit(left: string, right: string) {
+  if (left === right) return true;
+  if (Math.abs(left.length - right.length) > 1) return false;
+  let i = 0, j = 0, edits = 0;
+  while (i < left.length && j < right.length) {
+    if (left[i] === right[j]) { i++; j++; continue; }
+    if (++edits > 1) return false;
+    if (left.length > right.length) i++;
+    else if (right.length > left.length) j++;
+    else { i++; j++; }
+  }
+  return edits + (left.length - i) + (right.length - j) <= 1;
+}
+// One person's normalised name with an obvious source typo ("paulo coello" vs
+// "paulo coelho"): at least two name tokens, the same number of tokens, every
+// token equal except one, and that one at least 5 letters long in both, with
+// the same first letter and within one edit. Initials and short names never qualify.
+function nameTypo(left: string, right: string) {
+  const a = left.split(' '), b = right.split(' ');
+  if (a.length < 2 || a.length !== b.length) return false;
+  const differing = a.map((token, index) => [token, b[index]]).filter(([x, y]) => x !== y);
+  if (differing.length !== 1) return false;
+  const [x, y] = differing[0];
+  return /^\p{L}{5,}$/u.test(x) && /^\p{L}{5,}$/u.test(y) && x[0] === y[0] && withinOneEdit(x, y);
+}
+// Same number of authors, all equal except one pair that is a name typo.
+function authorsTypo(left: string, right: string) {
+  if (!left || !right || left === right) return false;
+  const a = left.split('|'), b = right.split('|');
+  if (a.length !== b.length) return false;
+  const onlyA = a.filter(name => !b.includes(name)), onlyB = b.filter(name => !a.includes(name));
+  return onlyA.length === 1 && onlyB.length === 1 && nameTypo(onlyA[0], onlyB[0]);
+}
+
+// Titles compare with normalizeText, except that "+" and "#" are kept as
+// words: "Let Us C" and "Let Us C++" (or "C#") are different books.
+const titleText = (title: string) => normalizeText(String(title || '').replace(/\+/g, ' plus ').replace(/#/g, ' sharp '));
+
+type Entry = { book: PublicBook; index: number; workId: string | null; title: string; author: string; volume: string; languages: Set<string> };
+const fallbackKey = (entry: Entry) => `${entry.title}\u0001${entry.volume}\u0001${entry.author}`;
+const titleKey = (entry: Entry) => `${entry.title}\u0001${entry.volume}`;
+
+// Presentation groups only: every record keeps its own key, ISBNs and
+// availability lookup; nothing here is a claim of work equivalence.
+// 1. Records sharing an Open Library work ID belong together.
+// 2. Records with the same normalised title, volume/part statement and
+//    (non-empty) author set share a card, even with different work IDs. Open
+//    Library holds duplicate work records for one book, and series volumes
+//    whose record title is only the series name; the latter are different
+//    books, so a card spanning work IDs is labelled as separate records.
+//    Records without a work ID (Google Books) and without authors still group
+//    with each other by title and volume, as before.
+// 3. An obvious author typo ("Coello" / "Coelho", see nameTypo) is tolerated
+//    only for an identical, non-generic title and volume, and only when the
+//    records' known languages do not conflict. Titles are never fuzzy-matched.
+// 4. A non-catalog record without authors and work ID joins the only
+//    attributed group with the same title and volume; when unsure it stays apart.
 export function groupSearchResults(books: PublicBook[]): SearchGroup[] {
   const entries: Entry[] = [];
   const seen = new Set<string>();
   books.forEach((book, index) => {
     if (seen.has(book.bookKey)) return;
     seen.add(book.bookKey);
-    entries.push({ book, index, workId: workIdOf(book), title: normalizeText(book.title), author: authorKey(book), volume: volumeKey(book) });
+    entries.push({ book, index: entries.length, workId: workIdOf(book), title: titleText(book.title), author: authorKey(book), volume: volumeKey(book), languages: languagesOf(book) });
   });
 
-  const groups = new Map<string, Entry[]>();
-  const add = (key: string, entry: Entry) => { const list = groups.get(key) || []; list.push(entry); groups.set(key, list); };
-  // Work IDs that each title/volume/author key is attributed to.
-  const worksByKey = new Map<string, Set<string>>();
+  // Union-find over entry positions; the root is always the best-ranked entry.
+  const parent = entries.map((_, index) => index);
+  const find = (index: number): number => parent[index] === index ? index : (parent[index] = find(parent[index]));
+  const union = (left: number, right: number) => {
+    const a = find(left), b = find(right);
+    if (a !== b) { if (a < b) parent[b] = a; else parent[a] = b; }
+  };
+  const firstBy = new Map<string, number>();
+  const link = (key: string, index: number) => { const first = firstBy.get(key); if (first === undefined) firstBy.set(key, index); else union(first, index); };
   for (const entry of entries) {
-    if (!entry.workId) continue;
-    add(`g1:work:${entry.workId}`, entry);
-    const works = worksByKey.get(fallbackKey(entry)) || new Set<string>();
-    works.add(entry.workId);
-    worksByKey.set(fallbackKey(entry), works);
+    if (entry.workId) link(`work\u0001${entry.workId}`, entry.index);
+    if (entry.author || !entry.workId) link(`book\u0001${fallbackKey(entry)}`, entry.index);
   }
+  const byTitle = new Map<string, Entry[]>();
   for (const entry of entries) {
-    if (entry.workId) continue;
-    const works = isCatalog(entry.book) || !entry.author ? undefined : worksByKey.get(fallbackKey(entry));
-    add(works?.size === 1 ? `g1:work:${[...works][0]}` : `g1:title:${fallbackKey(entry)}`, entry);
+    if (!entry.author || isGenericTitle(entry.title)) continue;
+    const list = byTitle.get(titleKey(entry)) || [];
+    for (const other of list) {
+      if (find(other.index) !== find(entry.index) && authorsTypo(other.author, entry.author) && !languagesConflict(other.languages, entry.languages)) union(other.index, entry.index);
+    }
+    list.push(entry);
+    byTitle.set(titleKey(entry), list);
   }
 
-  // Records without an author may join the only attributed group with the same
-  // title and volume. They never inherit an author where attribution conflicts,
-  // and catalog records without an author always stay apart.
-  const byTitle = new Map<string, string[]>();
-  for (const [key, list] of groups) {
+  const members = new Map<number, Entry[]>();
+  for (const entry of entries) { const root = find(entry.index); members.set(root, [...(members.get(root) || []), entry]); }
+  // Author-less, work-less records may join the only attributed group with the
+  // same title and volume. Catalog records without an author always stay apart.
+  const attributed = new Map<string, Set<number>>();
+  for (const [root, list] of members) {
     if (!list.some(entry => entry.author)) continue;
-    const titles = new Set(list.map(entry => `${entry.title}\u0001${entry.volume}`));
-    for (const title of titles) byTitle.set(title, [...(byTitle.get(title) || []), key]);
+    for (const entry of list) attributed.set(titleKey(entry), new Set([...(attributed.get(titleKey(entry)) || []), root]));
   }
-  for (const [key, list] of [...groups]) {
-    if (!key.startsWith('g1:title:') || list.some(entry => entry.author || entry.workId)) continue;
-    const title = `${list[0].title}\u0001${list[0].volume}`;
-    const targets = byTitle.get(title) || [];
-    if (targets.length !== 1 || entries.some(entry => isCatalog(entry.book) && `${entry.title}\u0001${entry.volume}` === title)) continue;
-    groups.get(targets[0])!.push(...list);
-    groups.delete(key);
+  for (const [root, list] of [...members]) {
+    if (list.some(entry => entry.author || entry.workId)) continue;
+    const title = titleKey(list[0]);
+    const targets = [...(attributed.get(title) || [])];
+    if (targets.length !== 1 || entries.some(entry => isCatalog(entry.book) && titleKey(entry) === title)) continue;
+    members.get(targets[0])!.push(...list);
+    members.delete(root);
   }
 
-  return [...groups].map(([key, list]) => {
+  return [...members.values()].map(list => {
     list.sort((a, b) => a.index - b.index);
-    return { key, index: list[0].index, book: list.find(({ book }) => book.authors.length)?.book || list[0].book, versions: list.map(({ book }) => book) };
-  }).sort((a, b) => a.index - b.index).map(({ key, book, versions }) => ({ key, book, versions }));
+    // The key names the best-ranked attributed record's work (or its title
+    // key without one), so it stays put when later pages add records.
+    const anchor = list.find(entry => entry.author || entry.workId) || list[0];
+    const key = anchor.workId ? `g2:work:${anchor.workId}` : `g2:title:${fallbackKey(anchor)}`;
+    const works = new Set(list.map(entry => entry.workId).filter(Boolean));
+    const counts = list.map(entry => entry.book.editionCount || 0).filter(count => count > 0);
+    return { key, index: list[0].index, group: { key, book: list.find(({ book }) => book.authors.length)?.book || list[0].book, versions: list.map(({ book }) => book),
+      separateWorks: works.size > 1, ...(counts.length ? { editionCount: Math.max(...counts) } : {}) } };
+  }).sort((a, b) => a.index - b.index).map(({ group }) => group);
 }
+
+// Cover fallbacks for a card: other records of the same work only. A card that
+// spans work IDs may hold different books, so it never borrows their covers.
+export function coverAlternatives(group: SearchGroup): PublicBook[] {
+  if (!group.separateWorks) return group.versions;
+  const work = workIdOf(group.book);
+  return group.versions.filter(version => workIdOf(version) === work);
+}
+
 
 function yearOf(date?: string) {
   if (!date) return '';
@@ -175,20 +267,33 @@ function volumeLabel(book: PublicBook) {
   }).filter(Boolean).join(', ');
 }
 
-export type VersionLabel = { label: string; showsIsbn: boolean };
+export type VersionLabel = { label: string; showsIsbn: boolean; showsEditions: boolean };
+
+// The one known language of a record, if it has exactly one.
+function singleLanguage(book: PublicBook) {
+  const codes = [...languagesOf(book)];
+  return codes.length === 1 ? codes[0] : '';
+}
 
 // Short labels that tell the records in one group apart. Edition statement,
-// publisher and year come first; volume, format and ISBN are added only to rows
-// that would otherwise read the same, and only where the detail differs.
-// "Record n" (catalog) or "Version n" is the last resort.
-export function versionLabels(versions: PublicBook[], catalog = versions.some(isCatalog)): VersionLabel[] {
+// publisher and year come first; the language is added to every row when the
+// rows have different known languages (a translation is an edition a reader
+// may want specifically). Volume, edition count, format and ISBN are added only
+// to rows that would otherwise read the same, and only where the detail
+// differs. "Record n" (catalog records, or records of different works) or
+// "Version n" is the last resort.
+export function versionLabels(versions: PublicBook[], records = versions.some(isCatalog)): VersionLabel[] {
   const parts = versions.map(version => [version.edition, version.publisher, yearOf(version.publishedDate) && m.publishedIn(yearOf(version.publishedDate))]
     .map(part => (part || '').trim()).filter(Boolean));
+  const languages = versions.map(singleLanguage);
+  if (new Set(languages.filter(Boolean)).size > 1) languages.forEach((code, index) => { if (code) parts[index].push(languageName(code)); });
   const showsIsbn = versions.map(() => false);
+  const showsEditions = versions.map(() => false);
   const labels = () => parts.map(list => list.join(' · '));
   const ambiguous = () => { const all = labels(); return all.map(label => !label || all.filter(other => other === label).length > 1); };
   const extras: Array<[string, (version: PublicBook) => string]> = [
-    ['volume', volumeLabel], ['format', version => version.format?.trim() || ''], ['isbn', version => version.isbn13 ? m.isbnVersion(version.isbn13) : ''],
+    ['volume', volumeLabel], ['editions', version => version.editionCount && version.editionCount > 1 ? m.editionsGrouped(version.editionCount) : ''],
+    ['format', version => version.format?.trim() || ''], ['isbn', version => version.isbn13 ? m.isbnVersion(version.isbn13) : ''],
   ];
   for (const [kind, extra] of extras) {
     const unclear = ambiguous();
@@ -197,11 +302,16 @@ export function versionLabels(versions: PublicBook[], catalog = versions.some(is
     const values = versions.map(extra);
     const additions = values.map((value, index) => Boolean(unclear[index] && value && (!current[index]
       || current.some((label, peer) => peer !== index && label === current[index] && values[peer] !== value))));
-    additions.forEach((add, index) => { if (add) { parts[index].push(values[index]); if (kind === 'isbn') showsIsbn[index] = true; } });
+    additions.forEach((add, index) => {
+      if (!add) return;
+      parts[index].push(values[index]);
+      if (kind === 'isbn') showsIsbn[index] = true;
+      if (kind === 'editions') showsEditions[index] = true;
+    });
   }
   const unclear = ambiguous();
   return parts.map((list, index) => {
-    const number = catalog ? m.numberedCatalogRecord(index + 1) : m.numberedVersion(index + 1);
-    return { label: (unclear[index] ? [...list, number] : list).join(' · '), showsIsbn: showsIsbn[index] };
+    const number = records ? m.numberedCatalogRecord(index + 1) : m.numberedVersion(index + 1);
+    return { label: (unclear[index] ? [...list, number] : list).join(' · '), showsIsbn: showsIsbn[index], showsEditions: showsEditions[index] };
   });
 }

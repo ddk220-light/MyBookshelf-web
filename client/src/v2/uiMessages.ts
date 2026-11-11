@@ -27,6 +27,10 @@ export const uiMessages = {
   versionChoiceHint: 'Choose a version to see its details and check your library.',
   viewCatalogRecords: (count: number) => `View ${count} catalog records`,
   catalogRecordChoiceHint: 'Choose a record to check availability.',
+  // Records with different Open Library work IDs under one title and author:
+  // possibly duplicate records, possibly different books (series volumes).
+  viewSameTitleRecords: (count: number) => `View ${new Intl.NumberFormat('en').format(count)} records with this title`,
+  sameTitleRecordsHint: 'These are separate records with the same title and author. They may be different books, such as volumes in a series. Choose one to see its details and check your library.',
   publishedIn: (date: string) => `Published ${date}`,
   numberedVersion: (number: number) => `Version ${number}`,
   numberedCatalogRecord: (number: number) => `Record ${number}`,
