@@ -318,7 +318,7 @@ function CandidateResults({ id, candidates, catalog }: { id: string; candidates:
       <ul className={`book-grid${source ? ' catalog-results' : ''}`}>
         {groups.slice(0, view.visibleCount).map(group => <li key={group.key}><SearchResult group={group}
           open={view.expandedKeys.includes(group.key)} onToggle={open => {
-            // Group keys ("g1:…") are distinct from record keys and stable when
+            // Group keys ("g2:…") are distinct from record keys and stable when
             // later pages add records, so a remembered key opens only its group.
             const keys = new Set(viewForCandidates(id).expandedKeys);
             if (open) keys.add(group.key); else keys.delete(group.key);

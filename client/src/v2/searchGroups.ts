@@ -118,12 +118,18 @@ function languagesOf(book: PublicBook): Set<string> {
 }
 const languagesConflict = (left: Set<string>, right: Set<string>) => left.size > 0 && right.size > 0 && ![...left].some(code => right.has(code));
 
-// Titles that many unrelated books share. Author typo tolerance never applies
-// to them (exact title and author matches still share a card).
+// Titles that many unrelated books share: collections, life writing and
+// school subjects (textbooks by different "R. D. Sharma"s and "S. K. Gupta"s).
+// Author typo tolerance never applies to them (exact title and author matches
+// still share a card).
 const GENERIC_TITLES = new Set(['poems', 'selected poems', 'collected poems', 'complete poems', 'poetry', 'stories', 'short stories',
-  'selected stories', 'collected stories', 'complete stories', 'works', 'collected works', 'complete works', 'selected works',
-  'essays', 'selected essays', 'collected essays', 'letters', 'selected letters', 'plays', 'collected plays', 'novels', 'writings',
-  'selected writings', 'speeches', 'tales', 'fables', 'sermons', 'diaries', 'journals', 'memoirs', 'autobiography']);
+  'selected stories', 'collected stories', 'complete stories', 'selected short stories', 'collected short stories', 'complete short stories',
+  'works', 'collected works', 'complete works', 'selected works', 'poetical works', 'complete poetical works', 'prose', 'selected prose',
+  'essays', 'selected essays', 'collected essays', 'letters', 'selected letters', 'correspondence', 'plays', 'collected plays', 'novels', 'writings',
+  'selected writings', 'speeches', 'lectures', 'tales', 'fables', 'sermons', 'diary', 'diaries', 'journal', 'journals', 'notebooks', 'memoir', 'memoirs',
+  'autobiography', 'my autobiography', 'biography', 'mathematics', 'physics', 'chemistry', 'biology', 'economics', 'history', 'geography',
+  'grammar', 'english grammar', 'accountancy', 'statistics', 'kahaniyan', 'kavitayen', 'कहानियाँ', 'कहानियां', 'कविताएँ', 'कविताएं', 'निबंध',
+  'சிறுகதைகள்', 'கவிதைகள்', 'கட்டுரைகள்'].map(title => normalizeText(title)));
 const isGenericTitle = (title: string) => GENERIC_TITLES.has(title.replace(/^(?:the|a|an)\s+/, ''));
 
 function withinOneEdit(left: string, right: string) {
@@ -142,12 +148,16 @@ function withinOneEdit(left: string, right: string) {
 // One person's normalised name with an obvious source typo ("paulo coello" vs
 // "paulo coelho"): at least two name tokens, the same number of tokens, every
 // token equal except one, and that one at least 5 letters long in both, with
-// the same first letter and within one edit. Initials and short names never qualify.
+// the same first letter and within one edit. Initials and short names never
+// qualify, and the matching part must include a full name of 4+ letters:
+// "R. D. Sharma" / "R. D. Sarma" or "K. Verma" / "K. Varma" match only on
+// initials, which many different people share.
 function nameTypo(left: string, right: string) {
   const a = left.split(' '), b = right.split(' ');
   if (a.length < 2 || a.length !== b.length) return false;
   const differing = a.map((token, index) => [token, b[index]]).filter(([x, y]) => x !== y);
   if (differing.length !== 1) return false;
+  if (!a.some((token, index) => token === b[index] && /^\p{L}{4,}$/u.test(token))) return false;
   const [x, y] = differing[0];
   return /^\p{L}{5,}$/u.test(x) && /^\p{L}{5,}$/u.test(y) && x[0] === y[0] && withinOneEdit(x, y);
 }

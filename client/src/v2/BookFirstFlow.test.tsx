@@ -58,7 +58,7 @@ it('lets readers open each version of a title without changing its record key', 
 it('shows separate work records of one title as one card, opens each exact record and counts cards for Show more', async () => {
   const same = [
     { bookKey: 'v1:openlibrary:OL796465W', workId: 'OL796465W', title: 'The Alchemist', authors: ['Paulo Coelho'], editionCount: 141, publishedDate: '1988' },
-    { bookKey: 'v1:openlibrary:OL24793570W', workId: 'OL24793570W', title: 'The Alchemist', authors: ['Paulo Coello'], editionCount: 1, publishedDate: '2003' },
+    { bookKey: 'v1:openlibrary:OL24793570W', workId: 'OL24793570W', title: 'The Alchemist', authors: ['Paulo Coello'], editionCount: 1, publishedDate: '2003', coverUrl: 'https://covers.openlibrary.org/b/id/1-M.jpg' },
     { bookKey: 'v1:openlibrary:OL42974242W', workId: 'OL42974242W', title: 'The Alchemist', authors: ['Paulo Coelho (Author)'], editionCount: 3, publishedDate: '2010' },
   ];
   const others = Array.from({ length: 5 }, (_, index) => ({ bookKey: `v1:openlibrary:OL${index + 1}W`, title: `Other book ${index}`, authors: ['Someone Else'] }));
@@ -75,7 +75,8 @@ it('shows separate work records of one title as one card, opens each exact recor
   expect(screen.queryByText('Other book 4')).toBeNull();
   fireEvent.click(screen.getByText('View 3 records with this title'));
   expect(screen.getByText(/separate records with the same title and author/)).toBeInTheDocument();
-  fireEvent.click(screen.getByRole('link', { name: /Published 2003/ }));
+  // Row covers are decorative: the row's name starts with what tells records apart.
+  fireEvent.click(screen.getByRole('link', { name: /^Published 2003/ }));
   expect(await screen.findByTestId('destination')).toHaveTextContent('/app/books/v1%3Aopenlibrary%3AOL24793570W');
 });
 

@@ -25,7 +25,8 @@ export function BookCard({
   </Link>;
 }
 
-export function Cover({ book, alternatives = [], fallback }: { book: Pick<PublicBook, 'title' | 'coverUrl' | 'isbn13'>; alternatives?: PublicBook[]; fallback?: ReactNode }) {
+// `decorative` covers sit inside a link or label that already names the book.
+export function Cover({ book, alternatives = [], fallback, decorative }: { book: Pick<PublicBook, 'title' | 'coverUrl' | 'isbn13'>; alternatives?: PublicBook[]; fallback?: ReactNode; decorative?: boolean }) {
   const [failedUrls, setFailedUrls] = useState<string[]>([]);
   const [loadedUrl, setLoadedUrl] = useState<string>();
   const urls = [...new Set([book.coverUrl, book.isbn13 && `https://covers.openlibrary.org/b/isbn/${book.isbn13}-M.jpg?default=false`, ...alternatives.flatMap(candidate => [candidate.coverUrl,
@@ -35,7 +36,7 @@ export function Cover({ book, alternatives = [], fallback }: { book: Pick<Public
   const ready = Boolean(url && url === loadedUrl);
   return <span className={`cover cover-frame${ready ? '' : ' cover-placeholder'}`} aria-busy={Boolean(url && !ready)} data-cover={ready ? 'ready' : url ? 'loading' : 'missing'}>
     {!url && <span className="cover-fallback" aria-hidden="true">{fallback || <span className="typeset-cover" data-title={book.title}><OpenBookIcon /><small className="visually-hidden">{m.noCover}</small></span>}</span>}
-    {url && <img className="cover-image" src={url} alt={`Cover of ${book.title}`} loading="lazy" referrerPolicy="no-referrer" onError={fail}
+    {url && <img className="cover-image" src={url} alt={decorative ? '' : `Cover of ${book.title}`} loading="lazy" referrerPolicy="no-referrer" onError={fail}
       onLoad={event => { if (event.currentTarget.naturalWidth <= 1) fail(); else setLoadedUrl(url); }} />}
   </span>;
 }

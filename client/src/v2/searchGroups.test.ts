@@ -210,6 +210,15 @@ describe('cross-work presentation groups (owner-approved 2026-11-11)', () => {
     expect(pair(['John Brown'], ['John Crown'])).toBe(2); // Different first letter.
     expect(pair(['Paulo Coelho'], ['Paulo Coelho', 'Alan Clarke'])).toBe(2); // Different author count.
     expect(pair(['Paulo Coelho'], ['Paulo Coello'], 'Poems')).toBe(2); // Generic title.
+    // Collections, life writing and school subjects are generic too.
+    for (const title of ['Poetical Works', 'The Complete Poetical Works', 'Selected Short Stories', 'Selected Prose', 'My Autobiography', 'Mathematics', 'Physics', 'Kahaniyan', 'कहानियाँ', 'சிறுகதைகள்'])
+      expect(pair(['James Thomson'], ['James Thompson'], title)).toBe(2);
+    // A match on initials alone is not evidence of one person.
+    expect(pair(['R. D. Sharma'], ['R. D. Sarma'], 'Objective Mathematics')).toBe(2);
+    expect(pair(['S. K. Gupta'], ['S.K. Gupte'], 'Engineering Drawing')).toBe(2);
+    expect(pair(['K. Verma'], ['K. Varma'], 'Indian History')).toBe(2);
+    expect(pair(['Jawaharlal Nehru'], ['Jawaharlal Neharu'], 'The Discovery of India')).toBe(1);
+    expect(pair(['Khushwant Singh'], ['Khuswant Singh'], 'Train to Pakistan')).toBe(1);
     expect(pair(['Paulo Coelho'], ['Paulo Coello'], 'The Alchemist', { languages: ['spa'] })).toBe(1);
     expect(groupSearchResults([work('OL1W', 'The Alchemist', ['Paulo Coelho'], { languages: ['eng'] }), work('OL2W', 'The Alchemist', ['Paulo Coello'], { languages: ['spa'] })])).toHaveLength(2);
     // Symbols that name a different book are kept: "Let Us C" is not "Let Us C++".

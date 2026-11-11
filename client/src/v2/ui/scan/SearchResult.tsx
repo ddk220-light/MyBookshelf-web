@@ -29,7 +29,7 @@ export function SearchResult({ group, open, onToggle }: { group: SearchGroup; op
         <Link className={`book-version-link${separateWorks ? ' with-cover' : ''}`} to={`/app/books/${encodeURIComponent(version.bookKey)}`}
           state={{ from: 'search', source: 'search', book: version, searchState: location.state }}>
           {/* Different works may be different books: each row shows its own cover. */}
-          {separateWorks && <Cover book={version} />}
+          {separateWorks && <Cover book={version} decorative />}
           <span><strong>{labels[index].label}</strong>
             {version.authors.length > 0 && <small>{version.authors.join(', ')}</small>}
             {version.isbn13 && !labels[index].showsIsbn && <small>{m.isbnVersion(version.isbn13)}</small>}
