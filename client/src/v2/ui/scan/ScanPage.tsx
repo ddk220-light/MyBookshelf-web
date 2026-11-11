@@ -316,10 +316,12 @@ function CandidateResults({ id, candidates, catalog }: { id: string; candidates:
     {items.length > 0 && <div className="catalog-drawer">
       <p className="drawer-label">{queryForCandidates(id)}<small>{source?.name || m.allBooks}</small></p>
       <ul className={`book-grid${source ? ' catalog-results' : ''}`}>
-        {groups.slice(0, view.visibleCount).map(group => <li key={group.book.bookKey}><SearchResult group={group}
-          open={view.expandedKeys.includes(group.book.bookKey)} onToggle={open => {
+        {groups.slice(0, view.visibleCount).map(group => <li key={group.key}><SearchResult group={group}
+          open={view.expandedKeys.includes(group.key)} onToggle={open => {
+            // Group keys ("g1:…") are distinct from record keys and stable when
+            // later pages add records, so a remembered key opens only its group.
             const keys = new Set(viewForCandidates(id).expandedKeys);
-            if (open) keys.add(group.book.bookKey); else keys.delete(group.book.bookKey);
+            if (open) keys.add(group.key); else keys.delete(group.key);
             changeView({ expandedKeys: [...keys] });
           }} /></li>)}
       </ul>

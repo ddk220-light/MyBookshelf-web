@@ -36,10 +36,12 @@ test('IIT Madras search presents one title and keeps all three versions accessib
   await page.setViewportSize({ width: 320, height: 844 });
   await installPublicV2Fixture(page);
   const library = { ...LINKED_LIBRARY, id: 'chamo:iit-madras', name: 'Indian Institute of Technology Madras' };
+  // Google Books volumes carry no work ID, so they group by title and author.
+  // Different Open Library work IDs are never merged (searchGroups.test.ts).
   const candidates = [
-    { bookKey: 'v1:openlibrary:OL20774896W', title: 'A Modern Approach To Logical Reasoning', authors: ['Dr. R S Aggarwal'], publishedDate: '2014', languages: ['eng'] },
-    { bookKey: 'v1:openlibrary:OL29062473W', title: 'A Modern Approach to Logical Reasoning', authors: ['R. S. Aggarwal'], publishedDate: '2007', languages: [] },
-    { bookKey: 'v1:openlibrary:OL24612560W', title: 'A Modern Approach to Logical Reasoning', authors: [], publishedDate: '2017', languages: [] },
+    { bookKey: 'v1:googlebooks:ReasonA2014', title: 'A Modern Approach To Logical Reasoning', authors: ['Dr. R S Aggarwal'], publishedDate: '2014', languages: ['eng'] },
+    { bookKey: 'v1:googlebooks:ReasonB2007', title: 'A Modern Approach to Logical Reasoning', authors: ['R. S. Aggarwal'], publishedDate: '2007', languages: [] },
+    { bookKey: 'v1:googlebooks:ReasonC2017', title: 'A Modern Approach to Logical Reasoning', authors: [], publishedDate: '2017', languages: [] },
   ];
   await page.route('**/api/v2/libraries/discover', route => route.fulfill({ json: { libraries: [library], total: 1, nextOffset: null } }));
   await page.route('**/api/v2/libraries/resolve', route => route.fulfill({ json: { library } }));

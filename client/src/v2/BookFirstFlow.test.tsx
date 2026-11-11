@@ -38,10 +38,11 @@ it('shows a short list of grouped works with an explicit way to see more', async
   expect(screen.getByText('Grouped book 7')).toBeInTheDocument();
 });
 it('lets readers open each version of a title without changing its record key', async () => {
+  // Records without a work ID group by title and author; different works never merge.
   const candidates = [
-    { bookKey: 'v1:openlibrary:OL20774896W', title: 'A Modern Approach To Logical Reasoning', authors: ['Dr. R S Aggarwal'], publishedDate: '2014' },
-    { bookKey: 'v1:openlibrary:OL29062473W', title: 'A Modern Approach to Logical Reasoning', authors: ['R. S. Aggarwal'], publishedDate: '2007' },
-    { bookKey: 'v1:openlibrary:OL24612560W', title: 'A Modern Approach to Logical Reasoning', authors: [], publishedDate: '2017' },
+    { bookKey: 'v1:googlebooks:ReasonA2014', title: 'A Modern Approach To Logical Reasoning', authors: ['Dr. R S Aggarwal'], publishedDate: '2014' },
+    { bookKey: 'v1:googlebooks:ReasonB2007', title: 'A Modern Approach to Logical Reasoning', authors: ['R. S. Aggarwal'], publishedDate: '2007' },
+    { bookKey: 'v1:googlebooks:ReasonC2017', title: 'A Modern Approach to Logical Reasoning', authors: [], publishedDate: '2017' },
   ];
   vi.mocked(publicApi.searchBooks).mockResolvedValue({ kind: 'candidates', candidates });
   render(<MemoryRouter initialEntries={['/app/search']}><Routes><Route path="/app/search" element={<ScanPage />} /><Route path="/app/books/:key" element={<Destination />} /></Routes></MemoryRouter>);
@@ -51,7 +52,7 @@ it('lets readers open each version of a title without changing its record key', 
   expect(screen.getAllByText(/A Modern Approach/i)).toHaveLength(1);
   fireEvent.click(screen.getByText('View 3 versions'));
   fireEvent.click(screen.getByRole('link', { name: /Published 2007/ }));
-  expect(await screen.findByTestId('destination')).toHaveTextContent('/app/books/v1%3Aopenlibrary%3AOL29062473W');
+  expect(await screen.findByTestId('destination')).toHaveTextContent('/app/books/v1%3Agooglebooks%3AReasonB2007');
 });
 
 it('labels spelling suggestions and preserves the book identity when opened', async () => {

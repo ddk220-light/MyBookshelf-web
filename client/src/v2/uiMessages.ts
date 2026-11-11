@@ -29,7 +29,7 @@ export const uiMessages = {
   catalogRecordChoiceHint: 'Choose a record to check availability.',
   publishedIn: (date: string) => `Published ${date}`,
   numberedVersion: (number: number) => `Version ${number}`,
-  numberedCatalogRecord: (number: number) => `Catalog record ${number}`,
+  numberedCatalogRecord: (number: number) => `Record ${number}`,
   isbnVersion: (isbn: string) => `ISBN ${isbn}`,
   editionsGrouped: (count: number) => new Intl.NumberFormat('en').format(count) + ' editions',
   editionSearchHint: 'Edition settings',

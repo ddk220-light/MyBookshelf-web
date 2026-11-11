@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import type { SearchGroup } from '../../searchGroups';
+import { versionLabels, type SearchGroup } from '../../searchGroups';
 import { uiMessages as m } from '../../uiMessages';
 import { BookCard, Cover } from '../BookCard';
 import { useCatalogMetadata } from '../../catalogMetadata';
@@ -9,6 +9,7 @@ export function SearchResult({ group: { book: initialBook, versions }, open, onT
   const location = useLocation();
   const catalog = book.bookKey.startsWith('v1:catalog:');
   if (versions.length === 1) return <BookCard book={book} />;
+  const labels = versionLabels(versions, catalog);
   return <details className="book-result-group" open={open}>
     <summary className="book-card" onClick={onToggle ? event => { event.preventDefault(); onToggle(!open); } : undefined}>
       <Cover book={book} alternatives={versions} />
@@ -21,9 +22,9 @@ export function SearchResult({ group: { book: initialBook, versions }, open, onT
       <ul>{versions.map((version, index) => <li key={version.bookKey}>
         <Link className="book-version-link" to={`/app/books/${encodeURIComponent(version.bookKey)}`}
           state={{ from: 'search', source: 'search', book: version, searchState: location.state }}>
-          <span>{catalog && <small className="record-number">{m.numberedCatalogRecord(index + 1)}</small>}<strong>{[version.edition, version.publisher, version.publishedDate && m.publishedIn(version.publishedDate)].filter(Boolean).join(' · ') || m.numberedVersion(index + 1)}</strong>
+          <span><strong>{labels[index].label}</strong>
             {version.authors.length > 0 && <small>{version.authors.join(', ')}</small>}
-            {version.isbn13 && <small>{m.isbnVersion(version.isbn13)}</small>}
+            {version.isbn13 && !labels[index].showsIsbn && <small>{m.isbnVersion(version.isbn13)}</small>}
             {version.editionCount && version.editionCount > 1 && <small>{m.editionsGrouped(version.editionCount)}</small>}
           </span><span aria-hidden="true">→</span>
         </Link>
