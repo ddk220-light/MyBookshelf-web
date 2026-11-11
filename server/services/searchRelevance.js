@@ -88,6 +88,8 @@ const DERIVATIVE = /\b(summary|summaries|study guide|analysis of|workbook|exam p
 // outweigh a clearly better textual match (an exact title plus its author,
 // or an exact title against a title that merely contains the words).
 const POPULARITY_CAP = 220;
+const LITERAL_BONUS = 40;
+const literalText = value => String(value || '').normalize('NFKC').toLowerCase().replace(/\s+/g, ' ').trim();
 const SOURCE_ORDER_BONUS = 40;
 // Reader logs are Open Library's strongest popularity signal; edition counts
 // add a little. Both are log-scaled: 10 readers and 10,000 differ by 135.
@@ -143,8 +145,10 @@ export function rankSearchResults(books, { title, author = '', max = 10, authorI
       // Title words plus the author's name: the strongest evidence for one
       // book. Its margin over a title that merely contains the words exceeds
       // the largest popularity and source-order bonus. Lone initials ("c" in
-      // "let us c") are not evidence of an author.
-      const titleAndAuthor = titleCost > 2 && nameCost > 2
+      // "let us c") are not evidence of an author, and neither is a split that
+      // needs a spelling correction ("harry poter" is not Harry Sidebottom's
+      // "Il prezzo del potere").
+      const titleAndAuthor = mixedCost === 0 && titleCost > 2 && nameCost > 2
         && query.some(word => [...word].length > 1 && !Number.isFinite(coverage([word], words, spelling)));
       const basis = authorQuery.length ? 1200 : byNamedAuthor ? 1400 : titleAndAuthor ? 1380 : sameAuthor && query.length > 1 ? 1350
         : sameTitle ? 1300 : startsWithQuery(query, words, spelling) ? 1250
@@ -152,7 +156,10 @@ export function rankSearchResults(books, { title, author = '', max = 10, authorI
       // Prefer the book itself to long titles that merely contain its name.
       // The title's other words say nothing against an author's own work.
       const excess = byNamedAuthor ? 0 : words.filter(word => !query.some(expected => wordCost(expected, word, spelling) <= 2)).length;
-      const score = basis + (variant === book.title ? 30 : 0) - edits * 90 - Math.min(150, excess * 12);
+      // Words alone cannot tell "Let Us C" from "Let Us C++": a title equal to
+      // the typed text, symbols included, is the closer match.
+      const literal = !authorQuery.length && literalText(variant) === literalText(title) ? LITERAL_BONUS : 0;
+      const score = basis + literal + (variant === book.title ? 30 : 0) - edits * 90 - Math.min(150, excess * 12);
       if (!best || score > best.score) best = { score, edits, variant };
     }
     if (best) ranked.push({ book: { ...book,

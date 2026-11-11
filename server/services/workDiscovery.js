@@ -133,6 +133,18 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
     }
     const editions = await fallback;
     books = rankSearchResults([...exact, ...editions], { ...query, authorIntent: namesAuthor });
+    // A strict match found only through another edition's title (no record
+    // matches on its own title and authors) is weak evidence that the words
+    // were spelt as intended ("harry poter" matching a Latvian "Poters"). On
+    // the first page, also run the bounded spelling pass and rank both sets
+    // together. Its failure leaves the strict matches as they were.
+    if (books.length && !offset && !namesAuthor
+      && ![...exact, ...editions].some(book => book?.title && rankSearchResults([{ ...book, searchTitles: [] }], query).length)) {
+      try {
+        const spelt = await withEditionTitles(await searchWorks('spelling'), true);
+        books = rankSearchResults([...exact, ...editions, ...spelt], query, true);
+      } catch { /* Optional: the strict matches remain. */ }
+    }
     if (books.length) return page(books);
     // Later pages continue the original query, never silently switch to typos.
     if (offset) {

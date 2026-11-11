@@ -247,3 +247,31 @@ test('a search that names an author adds one reader-ordered author request and p
   assert.equal(books.at(-1).workId, 'OL9W');
   assert.equal(new Set(books.map(book => book.workId)).size, books.length);
 });
+
+test('strict matches found only through another edition title also get the spelling pass on the first page', async () => {
+  const paths = [];
+  const goblet = { key: '/works/OL82560W', title: 'Harry Potter and the Goblet of Fire', author_name: ['J. K. Rowling'], readinglog_count: 5060,
+    editions: { docs: [{ title: 'Harijs Poters un uguns biķeris (Latvian) Harry Potter and the Goblet of Fire' }] } };
+  const stone = { key: '/works/OL82563W', title: "Harry Potter and the Philosopher's Stone", author_name: ['J. K. Rowling'], readinglog_count: 24733 };
+  const spelling = path => /~2/.test(new URL(path, 'https://openlibrary.org').searchParams.get('q') || '');
+  const read = async path => { paths.push(path); return spelling(path) ? { docs: [stone], numFound: 1 } : { docs: [goblet], numFound: 1 }; };
+  const first = await createWorkDiscovery({ read, fallbackText: async () => [] }).searchPage({ title: 'harry poter' });
+  assert.equal(paths.filter(spelling).length, 1);
+  assert.deepEqual(first.books.map(item => item.workId).sort(), ['OL82560W', 'OL82563W']);
+  assert.equal(first.books.find(item => item.workId === 'OL82563W').searchMatch, 'spelling');
+  assert.equal(first.books.find(item => item.workId === 'OL82560W').searchMatch, undefined);
+
+  // A later page continues the original words, and a failed optional
+  // spelling request keeps the strict matches.
+  paths.length = 0;
+  await createWorkDiscovery({ read, fallbackText: async () => [] }).searchPage({ title: 'harry poter', offset: 40 });
+  assert.equal(paths.filter(spelling).length, 0);
+  const failing = createWorkDiscovery({ read: async path => { if (spelling(path)) throw new Error('down'); return { docs: [goblet], numFound: 1 }; }, fallbackText: async () => [] });
+  const kept = await failing.searchPage({ title: 'harry poter' });
+  assert.deepEqual(kept.books.map(item => item.workId), ['OL82560W']);
+
+  // A record matching on its own title needs no spelling request.
+  paths.length = 0;
+  await createWorkDiscovery({ read, fallbackText: async () => [] }).searchPage({ title: 'goblet of fire' });
+  assert.equal(paths.filter(spelling).length, 0);
+});

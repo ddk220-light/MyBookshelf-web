@@ -161,3 +161,23 @@ test('study-guide brands are derivative works unless requested', () => {
   assert.deepEqual(find([guide, { ...original, searchTitles: ['1984'] }], '1984').map(result => result.workId), ['orwell']);
   assert.deepEqual(find([guide], 'sparknotes 1984').map(result => result.workId), ['guide']);
 });
+
+test('a title-plus-author split that needs a spelling correction is not the strongest tier', () => {
+  const stone = { ...book("Harry Potter and the Philosopher's Stone", 'J. K. Rowling', 'OL82563W'), popularity: { readers: 24733 }, editionCount: 400 };
+  const other = book('Il prezzo del potere. Il trono di Cesare', 'Harry Sidebottom', 'OL33736414W');
+  assert.deepEqual(find([other, stone], 'harry poter', true).map(item => item.workId), ['OL82563W', 'OL33736414W']);
+  // Exact title plus author words keep the tier.
+  const jonson = book('The Alchemist', 'Ben Jonson', 'OL2W');
+  const coelho = { ...book('The Alchemist', 'Paulo Coelho', 'OL3W'), popularity: { readers: 30000 }, editionCount: 300 };
+  assert.equal(find([coelho, jonson], 'the alchemist ben jonson')[0].workId, 'OL2W');
+});
+
+test('a title equal to the typed text, symbols included, wins a tie of words', () => {
+  const plus = { ...book('Let Us C++', 'Yashavant Kanetkar', 'OL9086929W'), popularity: { readers: 130 }, editionCount: 4, sourceRank: 0 };
+  const plain = { ...book('Let us C', 'Yashavant P. Kanetkar', 'OL17734885W'), popularity: { readers: 167 }, editionCount: 1, sourceRank: 2 };
+  assert.equal(find([plus, plain], 'let us c')[0].workId, 'OL17734885W');
+  assert.equal(find([plain, plus], 'Let Us C++')[0].workId, 'OL9086929W');
+  // It stays below the popularity margin that lifts a famous series book.
+  const stone = { ...book("Harry Potter and the Philosopher's Stone", 'J. K. Rowling', 'OL82563W'), popularity: { readers: 24733 }, editionCount: 400 };
+  assert.equal(find([book('Harry Potter', 'Jody Revenson', 'OL1W'), stone], 'harry potter')[0].workId, 'OL82563W');
+});

@@ -13,9 +13,10 @@ import { evaluateGolden, formatTable, loadGolden, listResponseFiles, summarize, 
 // d62916cee, before popularity, source order and author intent were used.
 const BASELINE = { top1: 37, top3: 41 };
 // Achieved by the blended ranking; raise these when the ranking improves.
-// Remaining misses: "let us c" (Let Us C++ ties: the tokenizer drops "++")
-// and "harry poter" (a strict match on "Poters" stops spelling recovery).
-const REQUIRED = { top1: 50, top3: 51 };
+// Not first: "harry poter" (Goblet of Fire, matched strictly through a
+// Latvian edition title "Poters", stays above the spelling pass's
+// Philosopher's Stone).
+const REQUIRED = { top1: 51, top3: 52 };
 
 test('fixture keys ignore the field list; trimming keeps query-related names; packing round-trips', () => {
   assert.equal(requestKey('/search.json?q=dune&fields=key,title&limit=40'), requestKey('/search.json?limit=40&fields=key&q=dune'));
