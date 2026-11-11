@@ -2,7 +2,11 @@ import { validateAndNormalize } from './isbn.js';
 import { isPrintEdition } from './workDiscovery.js';
 import ISBN from 'isbn3';
 
-const normalize = value => String(value || '').normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+// Fold Latin accents (é → e) but keep combining marks in other scripts.
+// Devanagari and Tamil vowel signs are marks: removing them makes different
+// titles compare equal (राम and रोम, கடல் and கடலை).
+const normalize = value => String(value || '').normalize('NFKD').replace(/(\p{Script=Latin})\p{M}+/gu, '$1').normalize('NFC')
+  .replace(/[\u200c\u200d]/g, '').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim();
 const titleParts = value => String(value || '').split(/\s+\/\s+/)[0].split(/\s*:\s*/);
 const unique = values => [...new Set(values.filter(Boolean))];
 
