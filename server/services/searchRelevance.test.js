@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { rankSearchResults, scopedSearchQuery, prefixSearchQuery, searchWords } from './searchRelevance.js';
+import { rankSearchResults, scopedSearchQuery, prefixSearchQuery, searchWords, authorIntent, popularityScore } from './searchRelevance.js';
 
 const book = (title, author, id = title) => ({ title, authors: [author], workId: id });
 const find = (books, title, spelling = false) => rankSearchResults(books, { title, max: 10 }, spelling);
@@ -112,4 +112,52 @@ test('a broad series alias does not erase volume subtitles or outrank an exact t
   const results = find([novel, autobiography], 'Wings of Fire');
   assert.equal(results[0].workId, 'kalam');
   assert.equal(results[1].title, novel.title);
+});
+
+const popular = (title, author, readers, editionCount, id = title) => ({ ...book(title, author, id), popularity: { readers }, editionCount });
+
+test('reader popularity lifts the famous series book above obscure exact-title records', () => {
+  const stone = popular("Harry Potter and the Philosopher's Stone", 'J. K. Rowling', 24733, 400, 'stone');
+  const guide = popular('Harry Potter', 'Jody Revenson', 18, 1, 'guide');
+  const calendar = popular('Harry Potter', 'Cedco Publishing', 9, 1, 'calendar');
+  const results = find([guide, calendar, stone], 'harry potter');
+  assert.deepEqual(results.map(result => result.workId), ['stone', 'guide', 'calendar']);
+});
+
+test('popularity cannot bury an exact title and author match or admit a non-matching book', () => {
+  const play = book('The Alchemist', 'Ben Jonson', 'play');
+  const famous = { ...popular("Ben Jonson's The Alchemist and Other Plays", 'A Critic', 1_000_000, 5000, 'famous'), sourceRank: 0 };
+  assert.equal(find([famous, play], 'the alchemist ben jonson')[0].workId, 'play');
+  const novel = { ...popular('O Alquimista', 'Paulo Coelho', 10197, 141, 'novel'), searchTitles: ['The Alchemist'] };
+  const jonson = popular('The Alchemist, 1612', 'Ben Jonson', 739, 200, 'jonson');
+  const unrelated = popular('The Pilgrimage', 'Paulo Coelho', 50_000, 300, 'pilgrimage');
+  assert.deepEqual(find([jonson, unrelated, novel], 'the alchemist').map(result => result.workId), ['novel', 'jonson']);
+  assert.ok(popularityScore({ popularity: { readers: 1e9 }, editionCount: 1e9 }) <= 220);
+});
+
+test('records without popularity keep the text order, with the source order as a bounded tie-break', () => {
+  const exact = { title: 'Wings of Fire', author: 'A. P. J. Abdul Kalam', source_id: 'google-2', sourceRank: 2 };
+  const longer = { title: 'Wings of Fire: An Autobiography Study', author: 'A. P. J. Abdul Kalam', source_id: 'google-0', sourceRank: 0 };
+  assert.deepEqual(find([longer, exact], 'wings of fire').map(result => result.source_id), ['google-2', 'google-0']);
+  const catalog = [book('Wings of Fire', 'A. P. J. Abdul Kalam', 'b'), book('Wings of Fire', 'A. P. J. Abdul Kalam', 'a')];
+  assert.deepEqual(find(catalog, 'wings of fire').map(result => result.workId), ['b', 'a']);
+});
+
+test('author intent comes from returned works by one author, not from a list of names', () => {
+  const narayan = ['Malgudi Days', 'Swami and Friends', 'The Guide'].map(title => ({ ...book(title, 'Rasipuram Krishnaswamy Narayan'), searchAuthors: ['R. K. Narayan'] }));
+  const about = book('R. K. Narayan', 'William Walsh', 'about');
+  assert.ok(authorIntent([about, ...narayan], { title: 'r k narayan' }));
+  assert.equal(authorIntent([about, narayan[0]], { title: 'r k narayan' }), null);
+  assert.equal(authorIntent([book('Harry Potter', 'Harry Potter Fan'), ...Array.from({ length: 4 }, (_, index) => book(`Harry Potter ${index}`, 'J. K. Rowling', `hp${index}`))], { title: 'harry potter' }), null);
+  assert.equal(authorIntent(narayan, { title: 'r k narayan', author: 'narayan' }), null);
+  const ranked = rankSearchResults([about, { ...narayan[2], popularity: { readers: 65 } }, { ...narayan[0], popularity: { readers: 199 } }],
+    { title: 'r k narayan', max: 10, authorIntent: true });
+  assert.deepEqual(ranked.map(result => result.title), ['Malgudi Days', 'The Guide', 'R. K. Narayan']);
+});
+
+test('study-guide brands are derivative works unless requested', () => {
+  const original = popular('Nineteen Eighty-Four', 'George Orwell', 9059, 727, 'orwell');
+  const guide = book('SparkNotes for 1984 by George Orwell', 'SparkNotes', 'guide');
+  assert.deepEqual(find([guide, { ...original, searchTitles: ['1984'] }], '1984').map(result => result.workId), ['orwell']);
+  assert.deepEqual(find([guide], 'sparknotes 1984').map(result => result.workId), ['guide']);
 });

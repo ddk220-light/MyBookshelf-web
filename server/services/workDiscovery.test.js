@@ -214,3 +214,36 @@ test('missing language metadata does not prevent a verified work ISBN reaching a
   const filtered = await discovery.profile(book, { language: 'tam' });
   assert.deepEqual(filtered.isbns, []);
 });
+
+test('popularity fields are requested and rank results without reaching the public book shape', async () => {
+  const paths = [];
+  const stone = { key: '/works/OL82563W', title: "Harry Potter and the Philosopher's Stone", author_name: ['J. K. Rowling'], edition_count: 400, readinglog_count: 24733 };
+  const guide = { key: '/works/OL1W', title: 'Harry Potter', author_name: ['Jody Revenson'], edition_count: 1, readinglog_count: 18 };
+  const discovery = createWorkDiscovery({ read: async path => { paths.push(path); return { docs: [guide, stone] }; } });
+  const service = createPublicBookService({ searchByText: discovery.searchPage });
+  const { candidates } = await service.search({ query: 'harry potter' });
+  assert.ok(paths.every(path => new URL(path, 'https://openlibrary.org').searchParams.get('fields').includes('readinglog_count,want_to_read_count,already_read_count,ratings_count')));
+  assert.deepEqual(candidates.map(book => book.workId), ['OL82563W', 'OL1W']);
+  assert.equal('popularity' in candidates[0] || 'sourceRank' in candidates[0], false);
+  assert.equal(paths.length, 3);
+});
+
+test('a search that names an author adds one reader-ordered author request and puts their works first', async () => {
+  const paths = [];
+  const own = (id, title, readers) => ({ key: `/works/OL${id}W`, title, author_name: ['Rasipuram Krishnaswamy Narayan'], author_alternative_name: ['R. K. Narayan'], readinglog_count: readers });
+  const about = { key: '/works/OL9W', title: 'R.K. Narayan', author_name: ['William Walsh'], readinglog_count: 4 };
+  const discovery = createWorkDiscovery({ read: async path => {
+    paths.push(path);
+    const params = new URL(path, 'https://openlibrary.org').searchParams;
+    if (params.get('sort') === 'readinglog') return { docs: [own(1, 'Malgudi Days', 199), own(2, 'Swami and Friends', 92)], numFound: 2 };
+    return { docs: [about, own(3, 'The Guide', 65), own(4, 'The English Teacher', 81), own(5, 'The Painter of Signs', 81)] };
+  } });
+  const books = await discovery.search({ title: 'R. K. Narayan' });
+  const authorPaths = paths.filter(path => new URL(path, 'https://openlibrary.org').searchParams.get('sort') === 'readinglog');
+  assert.equal(authorPaths.length, 1);
+  assert.equal(new URL(authorPaths[0], 'https://openlibrary.org').searchParams.get('author'), 'R K Narayan');
+  assert.equal(paths.length, 4);
+  assert.equal(books[0].title, 'Malgudi Days');
+  assert.equal(books.at(-1).workId, 'OL9W');
+  assert.equal(new Set(books.map(book => book.workId)).size, books.length);
+});
