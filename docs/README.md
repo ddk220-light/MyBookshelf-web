@@ -5,6 +5,14 @@ This repository contains the current web code, tests, runtime inputs, CI,
 deployment configuration and the recent work analysis. Native app source,
 retired authentication and unrelated research archives are outside its scope.
 
+## Adoption readiness review (2026-11-11)
+
+- [Product, infrastructure and adoption review](plans/2026-11-11-adoption-readiness-review.md):
+  what is broken today, search and library-picking findings, the librarian's
+  first impression, library data readiness with a pilot shortlist, public-page
+  scaling, free sources, backend/operations and localization. Planning
+  material; each fix is tracked in its own change.
+
 ## Accounts: implementation and release evidence
 
 - [Current production rollout](accounts/PRODUCTION_ROLLOUT.md): actual resources,
