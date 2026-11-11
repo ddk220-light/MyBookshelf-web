@@ -17,7 +17,8 @@ test.describe('retired source removal',()=>{
   for(const path of ['scope=knowledge&source=core&q=history','scope=free&collection=children&q=rain']){
    await page.goto('/app/search?'+path);await expect(page).toHaveURL(/scope=knowledge/);await expect(page.getByLabel('Search all knowledge',{exact:true})).toBeVisible();
   }
-  expect(calls.length).toBeGreaterThan(0);expect(calls.every(c=>c.sourceIds?.length===1&&c.sourceIds[0]==='librivox'&&!c.collection)).toBe(true);
+  // The search starts after the page is visible; wait for it rather than racing it.
+  await expect.poll(()=>calls.length).toBeGreaterThan(0);expect(calls.every(c=>c.sourceIds?.length===1&&c.sourceIds[0]==='librivox'&&!c.collection)).toBe(true);
   expect((await new AxeBuilder({page}).include('#main-content').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:info.outputPath(`retired-sources-${light}.png`),fullPage:true});
