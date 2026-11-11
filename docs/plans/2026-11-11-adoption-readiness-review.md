@@ -57,6 +57,11 @@ no books for any query [V]**.
 
 ## 3. Broken or misleading today (fix first)
 
+**Status, 2026-11-11:** items 3.1 to 3.8 are fixed on branch
+`claude/nifty-feynman-4qwocr` and not yet released. For 3.1 the evidence window
+for the three bundled catalogs is now 30 days; importing the complete Gutenberg
+catalog (9.2) is still open, so well-known classics remain missing.
+
 | # | Problem | Evidence | Fix |
 |---|---|---|---|
 | 3.1 | **Free to read returns zero books [V].** Every query shows "0 free books shown"; Browse "Classic literature" shows "181 results have unclear access". | API response `freshness: stale`, `items: 0`; `server/services/content/contracts.js:78` treats evidence older than 24 h as unknown; snapshots imported 5 Nov. | Accept bulk-catalog evidence for 30–45 days with a "checked <date>" note; keep a "check at source" link when stale. |
