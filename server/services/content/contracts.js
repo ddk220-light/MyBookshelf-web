@@ -7,6 +7,11 @@ export const CONTENT_KINDS = ['book', 'chapter', 'article', 'preprint', 'thesis'
 export const SOURCE_STATUSES = ['ok', 'not_selected', 'disabled', 'unsupported', 'timeout', 'unavailable', 'throttled', 'quota_exhausted', 'queued'];
 const EPMC_SOURCES = new Set(['MED', 'PMC', 'PPR', 'AGR', 'CBA', 'HIR', 'CTX', 'ETH', 'PAT']);
 const DAY = 86_400_000;
+// A live observation says what a source answered just now, so it expires after
+// a day. A bundled catalog of a source that hosts its own free books changes
+// slowly; the service presenting those records may accept their import
+// evidence for longer, and the interface shows the date the links were checked.
+export const CATALOG_EVIDENCE_MAX_AGE_MS = 30 * DAY;
 
 export class ContentValidationError extends Error {
   constructor(message = 'The content request is invalid.') { super(message); this.code = 'CONTENT_INVALID_REQUEST'; }
@@ -69,13 +74,15 @@ export function safeWebUrl(value) {
   } catch { return null; }
 }
 
-export function observedAccess(location, { country = null, now = Date.now() } = {}) {
+// `policy` is set by the calling service, never taken from a request.
+export function observedAccess(location, { country = null, now = Date.now() } = {}, { maxEvidenceAgeMs = DAY } = {}) {
   if (!location || !safeWebUrl(location.readerUrl || location.landingUrl)) return 'unknown';
   if (['preview', 'borrow', 'registration', 'restricted', 'metadata_only', 'unknown'].includes(location.access)) return location.access;
   if (!isReadableAccess(location.access)) return 'unknown';
   const evidence = location.evidence;
   const observed = Date.parse(evidence?.observedAt);
-  if (!evidence?.sourceId || !evidence?.field || !Number.isFinite(observed) || observed > now + 300_000 || now - observed > DAY) return 'unknown';
+  const maxAge = Number.isFinite(maxEvidenceAgeMs) && maxEvidenceAgeMs > 0 ? maxEvidenceAgeMs : DAY;
+  if (!evidence?.sourceId || !evidence?.field || !Number.isFinite(observed) || observed > now + 300_000 || now - observed > maxAge) return 'unknown';
   if (location.country && location.country !== country) return 'unknown';
   if (location.linkCheck?.outcome === 'broken') return 'unknown';
   return location.access;
@@ -85,13 +92,13 @@ export function isReadableAccess(access) {
   return access === 'free_full_text' || access === 'free_account_required';
 }
 
-export function itemAccess(item, context) {
-  const access = (item.locations || []).map(location => observedAccess(location, context));
+export function itemAccess(item, context, policy) {
+  const access = (item.locations || []).map(location => observedAccess(location, context, policy));
   return access.includes('free_full_text') ? 'free_full_text' : access.includes('free_account_required') ? 'free_account_required' : 'unknown';
 }
 
-export function readingActions(item, context) {
-  return (item.locations || []).filter(location => isReadableAccess(observedAccess(location, context)))
+export function readingActions(item, context, policy) {
+  return (item.locations || []).filter(location => isReadableAccess(observedAccess(location, context, policy)))
     .sort((a,b) => Number(a.access === 'free_account_required') - Number(b.access === 'free_account_required')).map(location => ({
     locationId: location.id, label: `${item.kind==='audiobook'?'Listen':'Read'} at ${location.host || item.provenance?.[0]?.sourceId || 'source'}`,
     url: safeWebUrl(location.readerUrl || location.landingUrl),

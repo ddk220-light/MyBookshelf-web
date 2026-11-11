@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { readChildrenManifest, validateChildrenManifest } from './children.js';
-import { CONTENT_POLICY_REVISION, parseContentSearch, parseContentResolve, parseContentLocate, parseContentKey, readingActions, observedAccess, itemAccess, isReadableAccess } from './contracts.js';
+import { CONTENT_POLICY_REVISION, parseContentSearch, parseContentResolve, parseContentLocate, parseContentKey, readingActions, observedAccess, itemAccess, isReadableAccess, CATALOG_EVIDENCE_MAX_AGE_MS } from './contracts.js';
 
 function failure(code, message, status = 503) { return Object.assign(new Error(message), { code, status }); }
 function folded(value) { return value.normalize('NFKD').replace(/(\p{Script=Latin})\p{M}+/gu, '$1').normalize('NFC').replace(/[\u2018\u2019]/g, "'").toLocaleLowerCase(); }
@@ -46,10 +46,24 @@ function rankedMatch(row, terms, phrase) {
     searchMatch: {field: best.field, value: best.value}};
 }
 
-const LOCAL_SOURCES = { gutenberg: { name: 'Project Gutenberg', kind: 'book' },
-  'open-textbook-library': { name: 'Open Textbook Library', kind: 'learning_resource' },
-  bookdash: { name: 'Book Dash', kind: 'book' },
+// The three public catalogs list public-domain or openly licensed books whose
+// reading links change slowly, so their import evidence is accepted for
+// CATALOG_EVIDENCE_MAX_AGE_MS. The reviewed starter set keeps the one-day rule.
+const LOCAL_SOURCES = { gutenberg: { name: 'Project Gutenberg', kind: 'book', evidenceMaxAgeMs: CATALOG_EVIDENCE_MAX_AGE_MS },
+  'open-textbook-library': { name: 'Open Textbook Library', kind: 'learning_resource', evidenceMaxAgeMs: CATALOG_EVIDENCE_MAX_AGE_MS },
+  bookdash: { name: 'Book Dash', kind: 'book', evidenceMaxAgeMs: CATALOG_EVIDENCE_MAX_AGE_MS },
   storyweaver: { name: 'StoryWeaver reviewed starter set', kind: 'book' } };
+const DAY_MS = 86_400_000;
+function evidencePolicy(item) {
+  const maxEvidenceAgeMs = LOCAL_SOURCES[parseContentKey(item.key)?.sourceId]?.evidenceMaxAgeMs;
+  return maxEvidenceAgeMs ? { maxEvidenceAgeMs } : undefined;
+}
+// fresh: checked within a day. recent: older, but its reading links still
+// count and the interface shows the check date. stale: links read as unclear.
+function snapshotFreshness(sourceId, importedAt, now) {
+  const age = now - Date.parse(importedAt);
+  return age <= DAY_MS ? 'fresh' : age <= (LOCAL_SOURCES[sourceId].evidenceMaxAgeMs || DAY_MS) ? 'recent' : 'stale';
+}
 
 export function readLocalSnapshots({includeChildren = process.env.CONTENT_CHILDREN_ENABLED === 'true', now = Date.now()} = {}) {
   const snapshots = ['gutenberg','open-textbook-library','bookdash'].map(sourceId => {
@@ -104,8 +118,9 @@ export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
     catalog = { snapshots: valid, unavailable, revision: hash(JSON.stringify(['title-relevance-v2',valid.map(s => [s.sourceId, s.revision])])) };
   }
   function present(item, context) {
-    return { ...item, readingActions: readingActions(item, { ...context, now: now() }),
-      access: itemAccess(item, { ...context, now: now() }) };
+    const policy = evidencePolicy(item);
+    return { ...item, readingActions: readingActions(item, { ...context, now: now() }, policy),
+      access: itemAccess(item, { ...context, now: now() }, policy) };
   }
   function signature(value) { return createHmac('sha256', cursorSecret).update(value).digest('base64url'); }
   function cursorState(cursor, binding) {
@@ -141,7 +156,7 @@ export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
       for (const { item, searchMatch } of matching) {
         const value = {...present(item, query),searchMatch};
         if (isReadableAccess(value.access) && (query.access !== 'free_full_text' || value.access === 'free_full_text')) eligible.push(value);
-        else if (item.locations.some(l => ['unknown', 'metadata_only'].includes(observedAccess(l, { ...query, now: now() })))) {
+        else if (item.locations.some(l => ['unknown', 'metadata_only'].includes(observedAccess(l, { ...query, now: now() }, evidencePolicy(item))))) {
           hiddenUnclear++;
           if (query.includeUnclear) eligible.push(value);
         }
@@ -158,7 +173,7 @@ export function createLocalContentService({ loadSnapshot = readLocalSnapshots,
           return { id, name:source.name, status:!chosen.includes(id)?'not_selected':catalog.unavailable.has(id)?'unavailable':snapshot?'ok':'disabled',
             returned:items.filter(item => parseContentKey(item.key).sourceId === id).length,
             ...(snapshot && chosen.includes(id) ? {catalogRecords:snapshot.recordCount,complete:snapshot.complete,importedAt:snapshot.importedAt,
-              freshness:now()-Date.parse(snapshot.importedAt)<=86400_000?'fresh':'stale'} : {}) };
+              freshness:snapshotFreshness(id,snapshot.importedAt,now())} : {}) };
         }), ...['europepmc','doaj','arxiv','openalex'].map(id => ({id,status:'disabled',returned:0}))] };
     },
     resolve(input) {
