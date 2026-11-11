@@ -2,7 +2,7 @@ import {isContentSourceRetired} from '../../../../../shared/content-source-avail
 import { exampleBooks } from '../../exampleBooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
-import { publicApi } from '../../api';
+import { publicApi, PublicApiError } from '../../api';
 import { BrowserIsbnScanner, type IsbnScanner } from '../../camera';
 import { isbnSource, isValidIsbn13, messageFor, useLibrary } from '../../context';
 import { candidatesFor, catalogForCandidates, pageForCandidates, queryForCandidates, rememberCandidates, mergeCandidatePage, markIncompletePage, viewForCandidates, updateSearchView } from '../../searchMemory';
@@ -35,11 +35,15 @@ function LibraryScanPage() {
   const { library, loadingLibrary, libraryError, retryLibrary, state } = useLibrary();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // The selected library's catalog did not answer. This is never "not found".
+  const [catalogDown, setCatalogDown] = useState<{ timedOut: boolean } | null>(null);
   const request = useRef<AbortController | null>(null);
   const candidateId = (location.state as { candidateId?: unknown } | null)?.candidateId;
   const results = candidatesFor(candidateId);
   const catalog = catalogForCandidates(candidateId);
-  const [searchLibrary, setSearchLibrary] = useState(() => candidateId ? Boolean(catalog) : true);
+  // Remembered results decide the scope they were found in. After a reload they
+  // are gone, so keep the selected library rather than switching to All books.
+  const [searchLibrary, setSearchLibrary] = useState(() => results ? Boolean(catalog) : true);
   const [query, setQuery] = useState(() => queryForCandidates(candidateId));
   const titleOnly = searchLibrary && library?.capabilities.titleSearch && library.capabilities.isbnLookup === false;
 
@@ -53,8 +57,9 @@ function LibraryScanPage() {
     if (results) { setQuery(queryForCandidates(candidateId)); setSearchLibrary(Boolean(catalog)); }
   }, [candidateId, results, catalog]);
 
-  const submitSearch = useCallback(async (value: string, source?: RecentSource) => {
+  const submitSearch = useCallback(async (value: string, source?: RecentSource, options?: { allBooks?: boolean }) => {
     const trimmed = value.trim();
+    setCatalogDown(null);
     if (!trimmed) {
       setError(titleOnly ? m.emptyTitleQuery : m.emptyQuery);
       return;
@@ -64,8 +69,8 @@ function LibraryScanPage() {
     request.current = controller;
     setBusy(true);
     setError(null);
+    const libraryId = !options?.allBooks && searchLibrary && library?.capabilities.titleSearch ? library.id : undefined;
     try {
-      const libraryId = searchLibrary && library?.capabilities.titleSearch ? library.id : undefined;
       const response = await publicApi.searchBooks(trimmed, controller.signal, libraryId);
       if (controller.signal.aborted) return;
       if (response.kind === 'exact') {
@@ -76,7 +81,11 @@ function LibraryScanPage() {
         { nextOffset: response.nextOffset, partial: response.partial, libraryId });
       navigate('/app/search', { replace: true, state: { candidateId: id } });
     } catch (failure) {
-      if (!(failure instanceof DOMException && failure.name === 'AbortError')) setError(messageFor(failure, 'We couldn’t find this book. Try again.'));
+      if (failure instanceof DOMException && failure.name === 'AbortError') return;
+      // A catalog that fails or times out has not said the book is missing.
+      // Book-detail outages come from the public book data, not this library.
+      if (libraryId && failure instanceof PublicApiError && failure.status >= 500 && failure.code !== 'METADATA_UNAVAILABLE') setCatalogDown({ timedOut: failure.code === 'CATALOG_TIMEOUT' || failure.status === 504 });
+      else setError(messageFor(failure, m.searchFailure));
     } finally {
       if (request.current === controller) {
         request.current = null;
@@ -107,17 +116,28 @@ function LibraryScanPage() {
     <form className="search-form book-search-form" onSubmit={(event) => { event.preventDefault(); void submitSearch(query); }}>
       <label className="visually-hidden" htmlFor="book-search">{titleOnly ? m.titleLabel : m.searchLabel}</label>
       <div className="book-search-input"><div className="search-input-shell"><input id="book-search" type="search" enterKeyHint="search" spellCheck={false} value={query} onChange={(event) => setQuery(event.target.value)} maxLength={160} autoComplete="off" placeholder={titleOnly ? m.titlePlaceholder : m.searchPlaceholder} />
-        {query && <button type="button" className="icon-button" aria-label="Clear book search" onClick={() => { setQuery(''); navigate('/app/search', { replace: true }); document.getElementById('book-search')?.focus(); }}>×</button>}
+        {query && <button type="button" className="icon-button" aria-label="Clear book search" onClick={() => { setQuery(''); setCatalogDown(null); navigate('/app/search', { replace: true }); document.getElementById('book-search')?.focus(); }}>×</button>}
         {!titleOnly && <CameraLookup compact onScanned={(isbn) => { setQuery(isbn); void submitSearch(isbn, 'camera'); }} />}</div>
         <button className="search-submit" aria-label={busy ? m.searching : m.searchButton} disabled={busy}><span className="search-submit-label">{busy ? m.searching : m.searchButton}</span><span className="search-submit-icon" aria-hidden="true"><SearchIcon /></span></button>{busy && <button type="button" className="button-quiet" onClick={() => request.current?.abort()}>{m.cancel}</button>}
       </div>
-      {library?.capabilities.titleSearch && <div className="search-scope segment-control" role="group" aria-label="Search in"><button type="button" aria-pressed={!searchLibrary} onClick={() => { setSearchLibrary(false); navigate('/app/search', { replace: true }); }} disabled={busy}>All books</button><button type="button" aria-pressed={searchLibrary} onClick={() => { setSearchLibrary(true); navigate('/app/search', { replace: true }); }} disabled={busy} aria-label={library.name}><span className="scope-library-name">{library.name}</span></button></div>}
+      {library?.capabilities.titleSearch && <div className="search-scope segment-control" role="group" aria-label="Search in"><button type="button" aria-pressed={!searchLibrary} onClick={() => { setSearchLibrary(false); setCatalogDown(null); navigate('/app/search', { replace: true }); }} disabled={busy}>All books</button><button type="button" aria-pressed={searchLibrary} onClick={() => { setSearchLibrary(true); setCatalogDown(null); navigate('/app/search', { replace: true }); }} disabled={busy} aria-label={library.name}><span className="scope-library-name">{library.name}</span></button></div>}
     </form>
     {error && <div className="search-error"><Notice tone="error">{error}</Notice></div>}
+    {catalogDown && library && !busy && <section className="search-error catalog-down" role="alert" aria-labelledby="catalog-down-title">
+      <h2 id="catalog-down-title">{m.catalogDownTitle(library.name)}</h2>
+      <p>{catalogDown.timedOut ? m.catalogDownTimedOut : m.catalogDownDetail}</p>
+      <div className="catalog-down-actions">
+        <button type="button" onClick={() => void submitSearch(query)}>{m.retry}</button>
+        {library.catalogUrl && <a className="button-link button-quiet" href={library.catalogUrl} target="_blank" rel="noopener noreferrer">{m.catalogDownWebsite}</a>}
+      </div>
+      <button type="button" className="catalog-down-all" onClick={() => { setSearchLibrary(false); void submitSearch(query, undefined, { allBooks: true }); }}>
+        <strong>{m.catalogDownAllBooks}</strong><span>{m.catalogDownAllBooksHint(library.name)}</span>
+      </button>
+    </section>}
     {busy && !results && <div className="search-skeletons" role="status"><span className="visually-hidden">Searching books…</span>{[0,1,2,3].map(i => <div key={i} className="skeleton" />)}</div>}
-    {results && <CandidateResults key={String(candidateId)} id={String(candidateId)} candidates={results} catalog={catalog} />}
+    {results && !catalogDown && <CandidateResults key={String(candidateId)} id={String(candidateId)} candidates={results} catalog={catalog} />}
     {Boolean(candidateId) && !results && <Notice>Search again to see your results.</Notice>}
-    {!results && !candidateId && !busy && !error && !query.trim() && <>
+    {!results && !candidateId && !busy && !error && !catalogDown && !query.trim() && <>
       {state.recentBooks.length > 0 && <section className="search-recent"><h2>Recently viewed</h2><ul>{state.recentBooks.slice(0, 6).map(book => <li key={book.bookKey}><BookCard book={book} source="direct" /></li>)}</ul></section>}
       <section className="example-books" aria-labelledby="example-books-heading"><h2 id="example-books-heading">Try a book</h2><ul className="example-book-list">{exampleBooks.map(({ book, category, authorLabel }) => <li key={book.bookKey}><Link className="example-book-card" to={`/app/books/${encodeURIComponent(book.bookKey)}`} state={{ from: 'search', source: 'direct', book }} aria-label={m.tryBook(book.title)}><Cover book={book} /><span className="example-book-copy"><small className="example-book-category">{category}</small><strong>{book.title}</strong><span className="example-book-author">{authorLabel}</span></span></Link></li>)}</ul></section>
     </>}
@@ -207,13 +227,25 @@ export function CameraLookup({
     setOpen(false);
     window.setTimeout(() => openButton.current?.focus());
   };
+  const findEdition = () => {
+    const isbn = manualIsbn.replace(/[\s-]/g, '');
+    if (!isValidIsbn13(isbn)) { setError('Enter a valid ISBN.'); return; }
+    close();
+    onScannedRef.current(isbn);
+  };
 
   return <section id="scan" className={`scan-panel${compact ? ' scan-inline' : ''}`} aria-label={m.cameraTitle}>
     {!compact && <div className="camera-intro"><span className="camera-symbol"><ScanIcon /></span><div><h2 id="scan-heading">{m.cameraTitle}</h2><p>{m.cameraHint}</p></div></div>}
     <button type="button" className="button-quiet scanner-trigger" aria-label={m.openCamera} ref={openButton} onClick={() => setOpen(true)}><ScanIcon />{!compact && m.openCamera}</button>
     <Sheet open={open} title="Scan or enter an ISBN" className="scanner-sheet" onClose={close}>
-      <div className="scanner-layout"><div className="scanner-manual"><label htmlFor="scanner-isbn">ISBN<input id="scanner-isbn" inputMode="numeric" value={manualIsbn} onChange={event => setManualIsbn(event.target.value)} placeholder="978…" /></label>
-        <button type="button" onClick={() => { const isbn = manualIsbn.replace(/[\s-]/g, ''); if (!isValidIsbn13(isbn)) { setError('Enter a valid ISBN.'); return; } close(); onScannedRef.current(isbn); }}>Find this edition</button>
+      <div className="scanner-layout"><div className="scanner-manual"><label htmlFor="scanner-isbn">ISBN<input id="scanner-isbn" inputMode="numeric" enterKeyHint="search" autoComplete="off" value={manualIsbn} onChange={event => setManualIsbn(event.target.value)} placeholder="978…"
+          onKeyDown={event => {
+            // The sheet sits inside the page's search form. Enter here looks up
+            // this ISBN; it must not submit the title search behind the sheet.
+            if (event.key !== 'Enter' || event.nativeEvent.isComposing) return;
+            event.preventDefault(); findEdition();
+          }} /></label>
+        <button type="button" onClick={findEdition}>Find this edition</button>
         {error && <Notice tone="error">{error}</Notice>}
       </div><div className="camera-box"><p>{m.scanAlignment}</p><span className="camera-frame"><video ref={video} muted playsInline aria-label={m.cameraPreview} /></span><button type="button" className="button-quiet" onClick={close}>{m.closeCamera}</button></div></div>
     </Sheet>

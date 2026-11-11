@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createPublicBookService, sanitizePublicCoverUrl, toPublicBook } from './metadata.js';
+import { createPublicBookService, sanitizePublicCoverUrl, toPublicBook, plainDescription } from './metadata.js';
 import { createCatalogBookKey, parsePublicBookKey } from './contracts.js';
 
 const rawBook = {
@@ -92,4 +92,19 @@ test('external catalog handoff survives a book metadata outage', async () => {
   assert.equal(result.catalogSearchUrl, 'https://library.example.org/search');
   assert.equal(result.catalogUnavailable, true);
   assert.deepEqual(result.candidates, []);
+});
+
+test('provider descriptions are shown as plain text, never as raw markup', () => {
+  assert.equal(plainDescription('<p>&quot;A boy&rsquo;s journey&quot; &mdash; <b>a fable</b>.</p><p>Second paragraph.<br>Line two</p>'),
+    '"A boy’s journey" — a fable.\nSecond paragraph.\nLine two');
+  assert.equal(plainDescription('Plain text stays exactly as it was.'), 'Plain text stays exactly as it was.');
+  // Comparison signs are text, not tags; escaped markup stays visible as text.
+  assert.equal(plainDescription('Useful when a < b and b > c.'), 'Useful when a < b and b > c.');
+  assert.equal(plainDescription('Write &lt;b&gt; for bold.'), 'Write <b> for bold.');
+  assert.equal(plainDescription('Safe<script>alert(1)</script> text<style>p{}</style>.'), 'Safe text .');
+  assert.equal(plainDescription(undefined), null);
+  const book = toPublicBook({ title: 'The Alchemist', authors: ['Paulo Coelho'], isbn13: '9780061122415',
+    description: '<p>&quot;Follow your dream.&quot;</p>' });
+  assert.equal(book.description, '"Follow your dream."');
+  assert.equal(toPublicBook({ title: 'Empty', authors: [], isbn13: '9780061122415', description: '<p> </p>' }).description, undefined);
 });

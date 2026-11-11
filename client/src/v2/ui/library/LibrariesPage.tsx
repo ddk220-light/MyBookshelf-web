@@ -10,6 +10,7 @@ import { CopyLibraryLink } from './CopyLibraryLink';
 import { distanceLabel } from './libraryPresentation';
 import { LibraryDetail } from './LibraryDetail';
 import { useLibraryDiscovery } from './useLibraryDiscovery';
+import { countOf, formatCount } from '../../format';
 export { resetLibrarySearchSession } from './useLibraryDiscovery';
 
 const countryNames = new Intl.DisplayNames(['en'], { type: 'region' });
@@ -72,7 +73,7 @@ export function LibrariesPage() {
     {placeError && !page?.libraries.length && !busy && <p className="muted">{placeError}</p>}
     {selected && !center && !query && <section className="selected-library-row"><h2>Your library</h2><div><button className="library-row-open" onClick={() => openDetail(selected)}><strong>{selected.name}</strong><small>{selected.city}</small></button><CopyLibraryLink library={selected} bookReturn={bookReturn} /></div></section>}
     {!query && !center && <section className="country-start"><button className="button-quiet" aria-expanded={areaOpen} onClick={() => areaOpen ? patch({ areaOpen: false }) : browse()}>Browse by country</button>
-      {!areaOpen && <div className="country-options">{areas.countries.map(code => <button className="country-option" key={code} onClick={() => browse({ country: code, region: '', district: '' })}><span>{countryNames.of(code) || code}</span>{areas.counts?.countries[code] != null && <small>{areas.counts.countries[code].toLocaleString()} libraries</small>}<span aria-hidden="true">→</span></button>)}</div>}
+      {!areaOpen && <div className="country-options">{areas.countries.map(code => <button className="country-option" key={code} onClick={() => browse({ country: code, region: '', district: '' })}><span>{countryNames.of(code) || code}</span>{areas.counts?.countries[code] != null && <small>{countOf(areas.counts.countries[code], 'library', 'libraries')}</small>}<span aria-hidden="true">→</span></button>)}</div>}
       {areaError && <p role="status">Couldn’t load countries. <button className="text-button" onClick={retryAreas}>Retry</button></p>}
     </section>}
     {!query && !center && <details className="paste-library-link"><summary>Paste a library link</summary><form onSubmit={event => {
@@ -80,7 +81,7 @@ export function LibrariesPage() {
         try { const url = new URL(pastedLink, window.location.origin); if (url.origin !== window.location.origin || !/^\/select\/[^/]+$/.test(url.pathname)) throw Error(); navigate(url.pathname + url.search); }
         catch { setLinkError('Paste a MyBookshelf library selection link.'); }
       }}><label>Library link<input type="url" value={pastedLink} onChange={event => setPastedLink(event.target.value)} /></label><button>Open library</button>{linkError && <p role="alert">{linkError}</p>}</form></details>}
-    <div className="section-heading" hidden={!page && !busy}><h2>{page?.area ? 'In ' + page.area.label.split(',')[0] : 'Results'}</h2>{page && <span className="muted" role="status">{page.libraries.length} of {page.total} libraries</span>}</div>
+    <div className="section-heading" hidden={!page && !busy}><h2>{page?.area ? 'In ' + page.area.label.split(',')[0] : 'Results'}</h2>{page && <span className="muted" role="status">{formatCount(page.libraries.length)} of {countOf(page.total, 'library', 'libraries')}</span>}</div>
     {busy && !page && <div className="library-skeletons" role="status"><span className="visually-hidden">Finding libraries…</span>{[0,1,2].map(i => <div className="skeleton" key={i} />)}</div>}
 
     {page && !page.total && !busy && <div className="discovery-empty"><h3>No libraries found here</h3><p>Try a nearby town or browse by area.</p><button className="button-quiet" onClick={() => browse({ country: page.area?.country || country, region: page.area?.region || region })}>Browse this area</button></div>}
@@ -108,9 +109,9 @@ export function LibrariesPage() {
       </form>
       <div className="discovery-chips"><button className="button-quiet" onClick={nearMe} disabled={locating} aria-pressed={Boolean(center)}>{locating ? 'Locating…' : 'Libraries near me'}</button>{(query || center) && <button className="button-quiet" aria-expanded={areaOpen} onClick={() => browse()}>Browse by country</button>}</div>
       {areaOpen && <div className="library-area">
-        <label>Country<select value={country} onChange={event => browse({ country: event.target.value, region: '', district: '' })}><option value="">All countries</option>{[...new Set([country, ...areas.countries])].filter(Boolean).map(code => <option value={code} key={code}>{countryNames.of(code) || code}{areas.counts?.countries[code] != null ? ' (' + areas.counts.countries[code] + ')' : ''}</option>)}</select></label>
-        <label>State or region<select value={region} onChange={event => browse({ region: event.target.value, district: '' })}><option value="">All states / regions</option>{[...new Set([region, ...areas.regions])].filter(Boolean).map(name => <option value={name} key={name}>{name}{areas.counts?.regions[name] != null ? ' (' + areas.counts.regions[name] + ')' : ''}</option>)}</select></label>
-        <label>District<select value={district} onChange={event => browse({ district: event.target.value })} disabled={!region}><option value="">All districts</option>{areas.districts.map(name => <option value={name} key={name}>{name}{areas.counts?.districts[name] != null ? ' (' + areas.counts.districts[name] + ')' : ''}</option>)}</select></label>
+        <label>Country<select value={country} onChange={event => browse({ country: event.target.value, region: '', district: '' })}><option value="">All countries</option>{[...new Set([country, ...areas.countries])].filter(Boolean).map(code => <option value={code} key={code}>{countryNames.of(code) || code}{areas.counts?.countries[code] != null ? ' (' + formatCount(areas.counts.countries[code]) + ')' : ''}</option>)}</select></label>
+        <label>State or region<select value={region} onChange={event => browse({ region: event.target.value, district: '' })}><option value="">All states / regions</option>{[...new Set([region, ...areas.regions])].filter(Boolean).map(name => <option value={name} key={name}>{name}{areas.counts?.regions[name] != null ? ' (' + formatCount(areas.counts.regions[name]) + ')' : ''}</option>)}</select></label>
+        <label>District<select value={district} onChange={event => browse({ district: event.target.value })} disabled={!region}><option value="">All districts</option>{areas.districts.map(name => <option value={name} key={name}>{name}{areas.counts?.districts[name] != null ? ' (' + formatCount(areas.counts.districts[name]) + ')' : ''}</option>)}</select></label>
       </div>}
       {center && <div className="location-context"><span>{page?.area ? 'In ' + page.area.label : 'Nearest to you'}{page?.area?.expanded && ' · expanded to ' + distanceLabel(page.radiusKm || radius, usDistances ? 'US' : country)}</span>
         <label>Search area<select aria-label="Search distance" value={page?.radiusKm || radius} onChange={event => patch({ radius: Number(event.target.value) })}>{[...new Set([page?.radiusKm || radius, ...(usDistances ? [24.14016,48.28032,80.4672] : [25,50,100])])].sort((a,b) => a-b).map(value => <option value={value} key={value}>Within {distanceLabel(value, usDistances ? 'US' : country)}</option>)}</select></label>

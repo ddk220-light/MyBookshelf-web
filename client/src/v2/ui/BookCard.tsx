@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import type { PublicBook, RecentSource } from '../types';
 import { OpenBookIcon } from './icons';
 import { useCatalogMetadata } from '../catalogMetadata';
+import { formatPublishedDate } from '../format';
 
 export function BookCard({
   book: initialBook,
@@ -20,7 +21,7 @@ export function BookCard({
     <span><strong title={book.title}>{book.title}</strong>{authorLine && <small title={authorLine}>{authorLine}</small>}
       {book.searchMatch === 'spelling' && <small>{m.similarSpelling}</small>}
       {book.editionCount && book.editionCount > 1 && <small>{m.editionsGrouped(book.editionCount)}</small>}
-      {book.bookKey.startsWith('v1:catalog:') && <small>{[book.edition, book.publisher, book.publishedDate].filter(Boolean).join(' · ')}</small>}</span>
+      {book.bookKey.startsWith('v1:catalog:') && <small>{[book.edition, book.publisher, book.publishedDate && formatPublishedDate(book.publishedDate)].filter(Boolean).join(' · ')}</small>}</span>
   </Link>;
 }
 

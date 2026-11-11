@@ -11,6 +11,7 @@ import { DogAnimation } from '../DogAnimation';
 import { useBookScreen } from './useBookScreen';
 import { AlsoFree } from '../content/AlsoFree';
 import {useAccountSession} from '../../auth/AccountSessionProvider';
+import { countOf, formatPublishedDate } from '../../format';
 export { withCatalogTitle } from './useBookScreen';
 
 export function BookPage() {
@@ -53,7 +54,7 @@ export function BookPage() {
       </div>
       <div className="reader-book-main">
         <header className="reader-book-heading"><h1>{book.title}</h1>{book.authors.length > 0 && <p className="authors">{book.authors.join(', ')}</p>}
-          <p className="book-meta">{[book.publishedDate?.replace(/^(\d{4})\?$/, 'c. $1'), book.editionCount && book.editionCount > 1 ? book.editionCount + ' editions' : null].filter(Boolean).join(' · ')}</p>
+          <p className="book-meta">{[book.publishedDate && formatPublishedDate(book.publishedDate), book.editionCount && book.editionCount > 1 ? countOf(book.editionCount, 'edition', 'editions') : null].filter(Boolean).join(' · ')}</p>
         </header>
         {announcement && <p className="book-announcement" role="status">{announcement}</p>}
         <section className="reader-availability" aria-label="At your library">
@@ -65,12 +66,12 @@ export function BookPage() {
         </section>
         {import.meta.env.VITE_CONTENT_DISCOVERY_ENABLED === 'true' && <AlsoFree book={book}/>}
         <section className="reader-book-about"><h2>About this book</h2>
-          <p className="story-text">{description ? fullStory ? description : short : 'No description available.'}</p>
+          <p className={description ? 'story-text' : 'story-text story-empty'}>{description ? fullStory ? description : short : 'No description available.'}</p>
           {short !== description && <button className="inline-disclosure" aria-expanded={fullStory} onClick={() => setFullStory(value => !value)}>{fullStory ? 'Less' : 'More'}</button>}
         </section>
         <section className="reader-book-details"><h2>Details</h2>
           <dl className="book-facts">
-            {book.publishedDate && <><dt>Published</dt><dd>{book.publishedDate}</dd></>}
+            {book.publishedDate && <><dt>Published</dt><dd>{formatPublishedDate(book.publishedDate)}</dd></>}
             {book.editionCount && <><dt>Editions</dt><dd>{book.editionCount}</dd></>}
             {book.edition && <><dt>Edition</dt><dd>{book.edition}</dd></>}
             {book.publisher && <><dt>Publisher</dt><dd>{book.publisher}</dd></>}

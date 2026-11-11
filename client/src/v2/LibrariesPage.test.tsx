@@ -31,7 +31,7 @@ it('searches by name without imposing an India or state filter', async () => {
   vi.mocked(publicApi.discoverLibraries).mockResolvedValue({ libraries: [rows[0]], total: 1, nextOffset: null });
   render(<MemoryRouter><LibrariesPage /></MemoryRouter>);
   fireEvent.change(screen.getByLabelText('Library, city or postcode'), { target: { value: 'Library 1' } });
-  expect(await screen.findByText('1 of 1 libraries')).toBeInTheDocument();
+  expect(await screen.findByText('1 of 1 library')).toBeInTheDocument();
   expect(publicApi.discoverLibraries).toHaveBeenLastCalledWith({ query: 'Library 1' }, expect.any(AbortSignal));
 });
 
