@@ -22,8 +22,8 @@ test('every imported inline library has search, durable reopening, and availabil
       assert.equal(dto.capabilities.publicAvailability, false);
     }
   }
-  assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 6700);
-  assert.equal(createDiscoveryService().search({}).total, 7085);
+  assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 6701);
+  assert.equal(createDiscoveryService().search({}).total, 7086);
   assert.equal(new Set(getAllLibraries().map(r => r.id)).size, getAllLibraries().length);
 });
 

@@ -6,10 +6,10 @@ import manifest from '../../shared/seo-libraries.json' with { type: 'json' };
 import { getAllLibraries } from '../../server/services/directory.js';
 import { toPublicLibrary } from '../../server/public-v2/directory.js';
 
-test('publication is exactly six India, four US, one Japan; remaining directory stays usable', () => {
+test('publication is exactly seven India, four US, one Japan; remaining directory stays usable', () => {
   const pages=publishedLibraries(), counts={};
   for(const p of pages) counts[p.library.country]=(counts[p.library.country] || 0)+1;
-  assert.deepEqual(counts,{IN:6,US:4,JP:1});
+  assert.deepEqual(counts,{IN:7,US:4,JP:1});
   assert.ok(getAllLibraries().length > pages.length);
   for(const page of pages) assert.deepEqual(page.library,toPublicLibrary(getAllLibraries().find(r=>r.id===page.id)));
   assert.deepEqual(pages.map(p=>p.path),publishedLibraries(getAllLibraries().toReversed()).map(p=>p.path));
@@ -24,8 +24,8 @@ test('HTML and JSON-LD cannot escape into executable markup', () => {
 });
 test('built output contains only published library pages and indexable canonical sitemap URLs', () => {
   const report=JSON.parse(readFileSync('client/dist/seo-report.json'));
-  assert.equal(report.libraryPages.length,11);
-  assert.equal(report.indexablePages.length,18);
+  assert.equal(report.libraryPages.length,12);
+  assert.equal(report.indexablePages.length,19);
   for(const path of report.indexablePages) {
     const html=readFileSync('client/dist/'+(path==='/'?'index':path.slice(1))+'.html','utf8');
     assert.ok(html.includes('content="index, follow"'),path);
@@ -43,7 +43,7 @@ test('built output contains only published library pages and indexable canonical
 });
 test('new South Indian guides are published with HTTPS official sites and honest counts in the copy', () => {
   const pages=publishedLibraries();
-  for (const id of ['koha:kalaignar-centenary-library','koha:ernakulam-public-library']) {
+  for (const id of ['koha:kalaignar-centenary-library','koha:ernakulam-public-library','egranthalaya:pylib-rrlpy']) {
     const page=pages.find(p=>p.id===id);
     assert.ok(page,id);
     assert.equal(new URL(page.officialUrl).protocol,'https:');

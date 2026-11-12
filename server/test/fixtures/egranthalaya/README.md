@@ -29,3 +29,22 @@ Harekrushna Mahtab State Library is a reference/research library, and its offici
 Odisha government description says lending is not permitted:
 https://rtiodisha.gov.in/Pages/printManual/section_id%3A2/office_id%3A301/lang
 The seed and returned format preserve that restriction.
+
+## Romain Rolland Library, Puducherry (PYLIB:RRLPY)
+
+Saved 2026-11-12 from `https://eg4.nic.in/OPAC/Default.aspx?CL_NAME=PYLIB&LIB_CODE=RRLPY`
+and its public `Details.aspx` record pages, one anonymous request at a time. Scripts,
+styles, images, presentation attributes and every opaque hidden value were removed
+(`fixture-state`); form controls, result rows and holdings tables are as served.
+
+- `rrlpy-form.html`: the member landing page and anonymous search form (16.4 s).
+- `rrlpy-search-wings-of-fire.html`: ALL/LIKE search, 5 records (11.0 s).
+- `rrlpy-search-ponniyin-selvan-tamil.html`: பொன்னியின் செல்வன், 124 records, first 20 rows (23.1 s).
+- `rrlpy-search-ponniyin-selvan-latin.html`: "ponniyin selvan", 8 records (13.2 s).
+- `rrlpy-record-79863.html`: *Wings of Fire: An Autobiography*, one RRLPY copy,
+  Available, class/book number V2,1Y7N31P3 (1.8 s). It was the second read of this
+  record; the first read, 9 s earlier, was `rrlpy-record-79863-empty.html`.
+- `rrlpy-record-79863-empty.html`, `rrlpy-record-101722-empty.html`: the empty record
+  page (right form action, blank fields, no holdings table). Record 101722 came back
+  empty on all three reads in three sessions. Across three PYLIB/PUBLICLIBRARIES
+  libraries 10 of 13 record reads were empty; the cause is not known.

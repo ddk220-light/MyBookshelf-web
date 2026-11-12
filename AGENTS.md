@@ -12,7 +12,7 @@ Keep the handoff accurate when completing substantial work.
   client/server tests, type checking, build, SEO and browser journeys.
 - Keep provider credentials server-side. Never commit secrets, local environment
   values, account data or browser state. `.env.example` contains names only.
-- `shared/seo-libraries.json` controls public SEO publication: six India, four
+- `shared/seo-libraries.json` controls public SEO publication: seven India, four
   US and one Japan guide. The full directory remains available inside the app.
 - Preserve edition/catalog identities. Do not merge works or editions from
   similar titles for identity, ISBNs or availability (search cards may show

@@ -5,7 +5,7 @@ Find a book, check a supported library catalog, and save your next read.
 [Use MyBookshelf](https://mybookshelf.cloud) · [Featured libraries](https://mybookshelf.cloud/libraries) · [Privacy](https://mybookshelf.cloud/privacy)
 
 The web app requires no account. Shelves and preferences stay in your browser.
-The full library directory is available inside the app; eleven reviewed public
+The full library directory is available inside the app; twelve reviewed public
 library guides form the SEO launch. A failed catalog lookup means unknown,
 not that a library lacks a book. Membership and borrowing rules belong to libraries.
 
