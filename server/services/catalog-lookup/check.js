@@ -12,7 +12,7 @@ const coded = (message, code) => Object.assign(new Error(message), { code });
 //
 // `budget` is null for the old path (today's behaviour: title-first searches
 // capped by searchLibraryBook, single provider calls uncapped). The lookup
-// layer passes `{ maxRequests, deadlineAt, signal, robots, minIntervalMs }`: the
+// layer passes `{ maxRequests, deadlineAt, signal, robots, minIntervalMs, gate, noRetries }`: the
 // whole check, including single provider calls, then runs inside one catalog
 // operation with that request cap, deadline, pacing and robots policy, and
 // the deadline or the caller's signal cancels any request still in flight.
@@ -51,7 +51,7 @@ async function withBudget(budget, run, lookupKind) {
   });
   try {
     const work = withCatalogOperation({ maxRequests: budget.maxRequests, signal: controller.signal,
-      robots: budget.robots || null, minIntervalMs: budget.minIntervalMs || 0 }, async operation => {
+      robots: budget.robots || null, minIntervalMs: budget.minIntervalMs || 0, gate: budget.gate || null, noRetries: Boolean(budget.noRetries) }, async operation => {
       const result = await run();
       return { ...result, requests: operation.requests };
     });

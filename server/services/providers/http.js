@@ -26,10 +26,17 @@ const operations = new AsyncLocalStorage();
 //   the operation (the larger of this and the adapter's own value applies);
 // - `robots`: an async `(url) => ({ allowed, delayMs })` policy check run before
 //   each request; a disallowed path is refused without contacting the host.
-export function withCatalogOperation({ maxRequests = Infinity, signal = null, minIntervalMs = 0, robots = null } = {}, task) {
+// - `gate`: an async `(host, { spacingMs, deadlineAt, signal })` check run
+//   before each request, after robots and this operation's own pacing. It
+//   enforces per-host spacing (Crawl-delay) and per-minute caps across every
+//   reader (catalog-store/hostGate.js); it waits for the host's next slot or
+//   throws when that slot is past the deadline.
+// - `noRetries`: every request is sent once, with no transport retry (used
+//   while a host's circuit is open: the book page tries once).
+export function withCatalogOperation({ maxRequests = Infinity, signal = null, minIntervalMs = 0, robots = null, gate = null, noRetries = false } = {}, task) {
   const current = operations.getStore();
   if (current) return task(current);
-  const store = { maxRequests, requests: 0, lastByHost: new Map(), signal, minIntervalMs, robots };
+  const store = { maxRequests, requests: 0, lastByHost: new Map(), signal, minIntervalMs, robots, gate, noRetries };
   return operations.run(store, () => task(store));
 }
 
@@ -247,7 +254,7 @@ function retryableError(error) {
 // Retry only idempotent upstream reads by default. The original deadline is
 // shared by every attempt, so retries cannot turn into an unbounded wait.
 export async function request(url, options = {}) {
-  const configuredRetries = options.retries;
+  const configuredRetries = operations.getStore()?.noRetries ? 0 : options.retries;
   const method = String(options.method || 'GET').toUpperCase();
   const retries = Number.isInteger(configuredRetries)
     ? Math.max(0, Math.min(configuredRetries, 2))
@@ -300,6 +307,11 @@ async function requestOnce(url, options = {}) {
     await paceRequest(operation, hostOf(url), spacing, deadlineAt);
     if (operation.signal?.aborted) throw abortedError();
     if (operation.requests >= operation.maxRequests) throw budgetError();
+    if (operation.gate) {
+      await operation.gate(hostOf(url), { spacingMs: spacing || 0, deadlineAt, signal: operation.signal });
+      if (operation.signal?.aborted) throw abortedError();
+      if (operation.requests >= operation.maxRequests) throw budgetError();
+    }
     operation.requests += 1;
   }
   const settled = () => { if (operation && spacing > 0) operation.lastByHost.set(hostOf(url), Date.now()); };

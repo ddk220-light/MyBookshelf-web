@@ -4,13 +4,15 @@
 //
 // - Circuit: three failures for a host within 10 minutes open a 10-minute
 //   circuit. While open, result marking skips the host and the book page
-//   still tries once.
+//   tries once: index.js runs one book check at a time for that host and sends
+//   each request once (no transport retry); a success closes the circuit.
 // - Concurrency: at most `limit` lookups at once per host; a lookup waits for
 //   a slot until its deadline, then gives up (couldn't check, never absence).
 // - Result marking: at most one marking run per host at a time; a second one
 //   is not queued.
 //
-// Phase 2 adds the cross-instance counter (`host_request_windows`).
+// Spacing and per-minute caps across readers and instances are the host gate
+// (catalog-store/hostGate.js, `host_request_windows` and `host_request_slots`).
 
 export const CIRCUIT_FAILURES = 3;
 export const CIRCUIT_WINDOW_MS = 10 * 60 * 1000;

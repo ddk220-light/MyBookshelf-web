@@ -9,6 +9,9 @@ function timestamp(now) {
 }
 
 function catalogErrorCode(error) {
+  // Our own cross-reader pacing could not fit the check in time: to the
+  // reader this is a catalog that took too long (try again), never absence.
+  if (error?.code === 'CATALOG_HOST_BUSY') return 'CATALOG_TIMEOUT';
   if (error?.code && /^CATALOG_/.test(error.code)) return error.code;
   if (error?.name === 'AbortError' || /timeout|deadline/i.test(error?.message || '')) return 'CATALOG_TIMEOUT';
   return 'CATALOG_UNAVAILABLE';

@@ -99,10 +99,26 @@ test('outages stay explicit and bounded; only successful empty sources mean no m
   const discovery = createWorkDiscovery({ read: async () => { calls++; throw new Error('offline'); }, fallbackText: async () => { throw new Error('offline'); } });
   await assert.rejects(discovery.search({ title: 'Wings of Fire' }), { code: 'BOOK_METADATA_UNAVAILABLE' });
   assert.equal(calls, 6);
-  const incomplete = createWorkDiscovery({ read: async () => ({ docs: [] }), fallbackText: async () => { throw new Error('offline'); } });
-  await assert.rejects(incomplete.search({ title: 'Unlisted book' }), { code: 'BOOK_METADATA_UNAVAILABLE' });
+  // The primary source failing is an outage even when the fallback answers empty.
+  const primaryDown = createWorkDiscovery({ read: async () => { throw new Error('offline'); }, fallbackText: async () => [] });
+  await assert.rejects(primaryDown.search({ title: 'Unlisted book' }), { code: 'BOOK_METADATA_UNAVAILABLE' });
   const empty = createWorkDiscovery({ read: async () => ({ docs: [] }), fallbackText: async () => [] });
   assert.deepEqual(await empty.search({ title: 'Unlisted book' }), []);
+});
+
+test('a successful empty primary answer stays a definite "no books" when the fallback source fails', async () => {
+  // Open Library answers every mode (strict, spelling and prefix) with nothing;
+  // Google Books is down or not configured. Misspelled query from staging.
+  for (const fallbackText of [async () => { throw new Error('offline'); }, async () => { throw Object.assign(new Error('no key'), { code: 'BOOK_METADATA_UNAVAILABLE' }); }]) {
+    const discovery = createWorkDiscovery({ read: async () => ({ docs: [], numFound: 0 }), fallbackText });
+    assert.deepEqual(await discovery.searchPage({ title: 'wngs fyre kalmx qzv' }), { books: [], nextOffset: null });
+    assert.deepEqual(await discovery.searchPage({ title: 'wngs fyre kalmx qzv', offset: 40 }), { books: [], nextOffset: null });
+    // Through the public book service the client gets an empty candidates
+    // answer (shown as "No books found"), not METADATA_UNAVAILABLE.
+    const service = createPublicBookService({ searchByText: discovery.searchPage });
+    const result = await service.search({ query: 'wngs fyre kalmx qzv' });
+    assert.deepEqual([result.kind, result.candidates, result.partial], ['candidates', [], undefined]);
+  }
 });
 
 test('fallback sources cannot reintroduce unrelated keyword matches', async () => {

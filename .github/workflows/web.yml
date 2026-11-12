@@ -17,12 +17,16 @@ jobs:
           --health-interval 2s --health-timeout 2s --health-retries 20
     env:
       ACCOUNT_TEST_DATABASE_URL: postgres://postgres:local-account-tests@127.0.0.1:55432/accounts_test
+      # The catalog store's tests use their own database in the same service.
+      CATALOG_TEST_DATABASE_URL: postgres://postgres:local-account-tests@127.0.0.1:55432/catalog_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+      - name: Create the disposable catalog test database
+        run: psql "postgres://postgres:local-account-tests@127.0.0.1:55432/accounts_test" -c "CREATE DATABASE catalog_test"
       - run: npm ci
       - run: node tools/deployment/check-client-service-build.mjs
       - run: python -m unittest discover -s tools/content -v

@@ -146,10 +146,16 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
       } catch { /* Optional: the strict matches remain. */ }
     }
     if (books.length) return page(books);
+    // Open Library is the primary source. When it answered every request
+    // and found nothing, that is a definite "no books", even if the
+    // independent fallback source failed or is not configured: the fallback
+    // can add books, but its outage must not turn a successful empty answer
+    // into an error. Only a failure of the primary source is an outage.
+    const definitelyEmpty = () => ({ books: [], nextOffset: hasMore ? offset + PAGE_SIZE : null });
     // Later pages continue the original query, never silently switch to typos.
     if (offset) {
-      if (failedModes.length || fallbackFailed) throw unavailable();
-      return page([]);
+      if (failedModes.length) throw unavailable();
+      return fallbackFailed ? definitelyEmpty() : page([]);
     }
     let spellingFailed = false;
     for (const mode of ['spelling', 'prefix']) {
@@ -169,8 +175,8 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
       } catch { /* Report the outage below. */ }
       if (books.length) return page(books);
     }
-    if (failedModes.length || spellingFailed || fallbackFailed) throw unavailable();
-    return page(books);
+    if (failedModes.length || spellingFailed) throw unavailable();
+    return fallbackFailed ? definitelyEmpty() : page(books);
   }
 
   async function search(query) { return (await searchPage(query)).books; }

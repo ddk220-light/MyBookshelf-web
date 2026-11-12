@@ -10,6 +10,7 @@ import { answerFromCheck, answerFromResponse, couldntCheck, isHealthFailure, rea
 import { PLATFORMS, platformFor, hostFor, bookDeadlineMs, lookupV2Enabled } from './platforms.js';
 import { createHostGuard } from './budget.js';
 import { createLookupRecorder, createMemoryHealthRecord, identitiesFor, askedIdentity, storedAnswer } from './record.js';
+import { createMemoryHostGate } from '../../catalog-store/hostGate.js';
 
 // The catalog lookup layer (plan section 5). Two entry points:
 //
@@ -54,6 +55,9 @@ export function createCatalogLookup({
   providerFor = getProvider,
   recorder = createLookupRecorder({ health: createMemoryHealthRecord() }),
   guard = createHostGuard(),
+  // Per-host spacing and per-minute caps across readers (and, with the
+  // catalog store, across instances). See catalog-store/hostGate.js.
+  hostGate = createMemoryHostGate(),
   robots = createRobotsPolicy(),
   now = () => Date.now(),
   env = process.env,
@@ -65,6 +69,15 @@ export function createCatalogLookup({
   function settings(entry) {
     const platform = platformFor(entry, platforms);
     return { platform, host: hostFor(entry), platformName: platform?.id || String(entry?.platform || 'unknown') };
+  }
+
+  // The gate for one operation on this platform: every request waits for its
+  // host's next slot (spacing: the larger of the platform's, the adapter's and
+  // the robots Crawl-delay; plus the platform's per-minute cap).
+  function gateFor(platform) {
+    if (!hostGate) return null;
+    return (requestHost, { spacingMs = 0, deadlineAt, signal } = {}) => hostGate.reserve(requestHost,
+      { spacingMs: Math.max(spacingMs || 0, platform?.minIntervalMs || 0), perMinute: platform?.perMinute || 0, deadlineAt, signal });
   }
 
   function noteHost(host, answer) {
@@ -88,7 +101,7 @@ export function createCatalogLookup({
       // failure: it neither opens the circuit nor counts in the health record.
       if (!result.notCatalogFailure) noteHost(host, answer);
       recorder.record({ entry, platform: platformName, host, book: ownRecord ? { ...book, recordId: parsed?.recordId, recordLibraryId: entry.id } : book,
-        profile, answer, kind: 'book', durationMs: now() - startedAt, live: !result.notCatalogFailure });
+        profile, answer, kind: 'book', durationMs: now() - startedAt, requests: result.requests || 0, live: !result.notCatalogFailure });
       return { ...result, answer, durationMs: now() - startedAt, requests: result.requests || 0 };
     };
     if (!platform || !provider?.checkAvailability) return finish({ error: coded('Catalog lookups are not available for this library', 'CATALOG_UNSUPPORTED'), lookupKind });
@@ -102,28 +115,40 @@ export function createCatalogLookup({
       catch (error) { return finish({ error, lookupKind, notCatalogFailure: true }); }
       books = { searchProfile: async () => profile };
     }
+    // While the host's circuit is open (plan 5.4) result marking skips the
+    // host, and the book page tries once: one check at a time for that host
+    // on this instance, and each catalog request is sent once, with no
+    // transport retry. The circuit closes on that check's success.
+    const tryOnce = guard.circuitOpen(host);
     let release;
-    try { release = await guard.acquire(host, platform.hostConcurrency, { deadlineAt: deadline, signal }); }
+    try { release = await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: deadline, signal }); }
     catch (error) { return finish({ error, lookupKind, notCatalogFailure: true }); }
     try {
-      // While the circuit is open the book page still tries once, with no
-      // transport retries beyond the adapter's own.
       const result = await runBookCheck({ entry, library: view, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language, books, attemptedAt,
-        budget: { maxRequests: platform.book.maxRequests, deadlineAt: deadline, signal, robots: robotsCheck, minIntervalMs: platform.minIntervalMs } });
+        budget: { maxRequests: platform.book.maxRequests, deadlineAt: deadline, signal, robots: robotsCheck, minIntervalMs: platform.minIntervalMs,
+          gate: gateFor(platform), noRetries: tryOnce } });
       return finish(result, result.profile);
     } finally {
       release();
     }
   }
 
-  async function lookupBook({ library: entry, publicLibrary, book = {}, profile, editionScope = 'work', signal, deadlineAt }) {
-    const startedAt = now();
+  // Stored answer for one book, or null. The book page reads this first and
+  // resolves the edition profile only when a live check is needed.
+  async function storedFor({ library: entry, book = {}, editionScope = 'work' }) {
     const libraryId = entry?.id || entry?.slug;
-    const own = book.recordId && (!book.recordLibraryId || book.recordLibraryId === libraryId);
     // An exact-edition lookup is answered only by that edition (or this
     // library's own record), never by a work-level answer from another ISBN.
     const identities = identitiesFor(libraryId, book).filter(id => editionScope !== 'exact' || id.kind !== 'ol_work');
-    const stored = storedAnswer(await recorder.readAnswers(libraryId, identities), askedIdentity(libraryId, book, editionScope));
+    return storedAnswer(await recorder.readAnswers(libraryId, identities), askedIdentity(libraryId, book, editionScope));
+  }
+
+  // `storedChecked`: the caller already read the stored answer (storedFor).
+  async function lookupBook({ library: entry, publicLibrary, book = {}, profile, editionScope = 'work', signal, deadlineAt, storedChecked = false }) {
+    const startedAt = now();
+    const libraryId = entry?.id || entry?.slug;
+    const own = book.recordId && (!book.recordLibraryId || book.recordLibraryId === libraryId);
+    const stored = storedChecked ? null : await storedFor({ library: entry, book, editionScope });
     if (stored) return { ...stored, requests: 0, durationMs: now() - startedAt, source: 'stored' };
     const isbn13 = validateAndNormalize(book.isbn13 || '');
     const parsed = own ? { kind: 'catalog', libraryId, recordId: book.recordId } : parsePublicBookKey(book.bookKey || '');
@@ -159,7 +184,7 @@ export function createCatalogLookup({
     });
     try {
       const work = withCatalogOperation({ maxRequests: platform.results.maxRequests, signal: controller.signal, robots: robotsCheck,
-        minIntervalMs: platform.minIntervalMs }, operation => task(operation, controller.signal));
+        minIntervalMs: platform.minIntervalMs, gate: gateFor(platform) }, operation => task(operation, controller.signal));
       work.catch(() => {});
       return await Promise.race([work, expired]);
     } finally {
@@ -177,9 +202,15 @@ export function createCatalogLookup({
     const pending = new Map(list.map(book => [book.bookKey, book]));
     const unmatched = [];
 
-    // Stored answers first: every book with an unexpired answer is done.
+    // Stored answers first, in one read for every book: each book with an
+    // unexpired answer is done.
+    const identityKey = id => `${id.kind}\u0000${id.value}`;
+    const identitiesOf = new Map(list.map(book => [book.bookKey, identitiesFor(libraryId, book)]));
+    const allIdentities = [...new Map([...identitiesOf.values()].flat().map(id => [identityKey(id), id])).values()];
+    const storedRows = allIdentities.length ? await recorder.readAnswers(libraryId, allIdentities) : [];
     for (const book of list) {
-      const stored = storedAnswer(await recorder.readAnswers(libraryId, identitiesFor(libraryId, book)), askedIdentity(libraryId, book, 'work'));
+      const own = new Set(identitiesOf.get(book.bookKey).map(identityKey));
+      const stored = storedAnswer(storedRows.filter(row => own.has(identityKey(row))), askedIdentity(libraryId, book, 'work'));
       if (!stored) continue;
       pending.delete(book.bookKey);
       yield { bookKey: book.bookKey, ...stored, source: 'stored' };
@@ -357,7 +388,7 @@ export function createCatalogLookup({
     }
   }
 
-  return Object.freeze({ lookupBook, markResults, checkBook,
+  return Object.freeze({ lookupBook, storedFor, markResults, checkBook,
     enabledFor: entry => lookupV2Enabled(entry, env) });
 }
 

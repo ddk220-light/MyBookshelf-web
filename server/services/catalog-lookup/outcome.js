@@ -14,12 +14,13 @@ import { validateAndNormalize } from '../isbn.js';
 // A failure is never "not found".
 
 export const OUTCOMES = Object.freeze(['found', 'not_found', 'couldnt_check']);
-export const REASONS = Object.freeze(['unconfirmed', 'timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'unsupported', 'configuration', 'cancelled']);
+export const REASONS = Object.freeze(['unconfirmed', 'timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'unsupported', 'configuration', 'cancelled', 'busy']);
 
 // `unconfirmed` and `unsupported` say nothing about the catalog's health. A
 // check the reader cancelled (`cancelled`, an addition to the plan's list) is
-// not the catalog's failure either.
-const NOT_HEALTH_FAILURES = new Set(['unconfirmed', 'unsupported', 'cancelled']);
+// not the catalog's failure either, nor is a check our own cross-reader host
+// pacing could not fit before its deadline (`busy`, catalog-store/hostGate.js).
+const NOT_HEALTH_FAILURES = new Set(['unconfirmed', 'unsupported', 'cancelled', 'busy']);
 export function isHealthFailure(reason) {
   return Boolean(reason) && !NOT_HEALTH_FAILURES.has(reason);
 }
@@ -28,6 +29,7 @@ export function reasonForError(error) {
   const code = error?.code || error?.errorCode || '';
   switch (code) {
     case 'CATALOG_ABORTED': return 'cancelled';
+    case 'CATALOG_HOST_BUSY': return 'busy';
     case 'CATALOG_TIMEOUT': return 'timeout';
     case 'CATALOG_REQUEST_BUDGET':
     case 'CATALOG_INCOMPLETE': return 'budget';

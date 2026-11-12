@@ -9,7 +9,9 @@ import { createPlaceSearch } from './places.js';
 import { createRedactedTelemetrySink } from './telemetry.js';
 import { mountContentRoutes } from './content.js';
 import { createCatalogLookup } from '../services/catalog-lookup/index.js';
-import { createLookupRecorder, createMemoryHealthRecord } from '../services/catalog-lookup/record.js';
+import { createLookupRecorder } from '../services/catalog-lookup/record.js';
+import { createCatalogStore } from '../catalog-store/index.js';
+import { createHoldingsRoutes } from './holdings.js';
 import {
   PublicV2ValidationError,
   parseAvailability,
@@ -84,6 +86,19 @@ function route(telemetry, operation, handler) {
   };
 }
 
+// The operational log (catalog-store/usageLog.js) is written after the
+// response is sent, only when USAGE_LOG_ENABLED is on. It is the only place
+// search text is stored; telemetry and platform logs never carry it.
+function afterResponse(res, store, event) {
+  if (!store.usage.enabled) return;
+  res.once('finish', () => {
+    try { const value = event(); if (value) store.usage.record(value); } catch { /* The log never alters a response. */ }
+  });
+}
+
+// `/api/v2` neither reads nor creates identity state. It uses the anonymous
+// catalog store (stored answers, library health, the anonymous log and
+// submissions), never the account database.
 export function createPublicV2Router({
   directory = createPublicDirectoryService(),
   discovery = createDiscoveryService(),
@@ -93,14 +108,21 @@ export function createPublicV2Router({
   rateLimit = {},
   telemetry = createRedactedTelemetrySink(),
   content,
+  catalogStore = null,
   lookup = null,
+  holdingsOptions = {},
 } = {}) {
   const router = Router();
   const bookService = books || createPublicBookService({ catalogs: createPublicCatalogBookService({ directory }) });
-  // The lookup layer's Phase 1 record: health counters in memory and the
-  // allowlisted telemetry sink; no stored answers until the Phase 2 store.
-  const availabilityService = availability || createPublicAvailabilityService({ directory, books: bookService,
-    lookup: lookup || createCatalogLookup({ recorder: createLookupRecorder({ health: createMemoryHealthRecord(), telemetry }) }) });
+  // Without a configured database the store keeps answers and health in this
+  // instance's memory, drops the log and holds submissions in memory.
+  const store = catalogStore || createCatalogStore();
+  const catalogLookup = lookup || createCatalogLookup({
+    recorder: createLookupRecorder({ answers: store.answers, health: store.health, telemetry, policyFor: store.policyFor, defer: store.defer }),
+    hostGate: store.hostGate,
+  });
+  const availabilityService = availability || createPublicAvailabilityService({ directory, books: bookService, lookup: catalogLookup });
+  const holdings = createHoldingsRoutes({ directory, books: bookService, lookup: catalogLookup, store, ...holdingsOptions });
 
   router.use((req, res, next) => {
     // This boundary neither reads nor creates identity state. These headers also
@@ -113,11 +135,25 @@ export function createPublicV2Router({
   mountContentRoutes(router, content);
 
   router.post('/places/search', route(telemetry, 'place_search', async (req, res) => {
-    res.json({ places: await places(parsePlaceSearch(req.body)) });
+    const startedAt = Date.now();
+    const parsed = parsePlaceSearch(req.body);
+    const found = await places(parsed);
+    afterResponse(res, store, () => ({ kind: 'library_finder', queryText: parsed.query, outcome: found.length ? 'results' : 'none',
+      resultCount: found.length, durationMs: Date.now() - startedAt }));
+    res.json({ places: found });
   }));
 
   router.post('/libraries/discover', route(telemetry, 'directory_search', async (req, res) => {
-    res.json(discovery.search(parseDiscovery(req.body)));
+    const startedAt = Date.now();
+    const parsed = parseDiscovery(req.body);
+    const result = discovery.search(parsed);
+    // "Near me" is a count only: never the coordinates or any text.
+    const nearMe = parsed.lat !== undefined;
+    if (nearMe || parsed.query) {
+      afterResponse(res, store, () => ({ kind: nearMe ? 'near_me' : 'library_finder', ...(nearMe ? {} : { queryText: parsed.query }),
+        outcome: result.total ? 'results' : 'none', resultCount: result.total || 0, durationMs: Date.now() - startedAt }));
+    }
+    res.json(result);
   }));
   router.post('/libraries/areas', route(telemetry, 'directory_browse', async (req, res) => {
     res.json(discovery.areas(parseDiscovery(req.body)));
@@ -147,9 +183,20 @@ export function createPublicV2Router({
   }));
 
   router.post('/books/search', route(telemetry, 'book_search', async (req, res) => {
+    const startedAt = Date.now();
     const parsed = parseBookSearch(req.body);
     if (parsed.libraryId && !directory.resolve(parsed.libraryId)) return res.status(404).json(publicError('LIBRARY_NOT_FOUND', 'This library is not in the directory.'));
+    // Logged after the response, success or failure (only the first page).
+    if (!parsed.offset) {
+      afterResponse(res, store, () => {
+        const count = res.locals.bookResults;
+        return { kind: 'book_search', queryText: parsed.query, ...(parsed.libraryId ? { libraryId: parsed.libraryId } : {}),
+          outcome: res.statusCode >= 500 ? 'error' : count ? 'results' : 'none', ...(Number.isInteger(count) ? { resultCount: count } : {}),
+          source: parsed.libraryId ? 'live' : 'public_data', durationMs: Date.now() - startedAt };
+      });
+    }
     const result = await bookService.search(parsed);
+    res.locals.bookResults = result.kind === 'exact' ? 1 : Array.isArray(result.candidates) ? result.candidates.length : 0;
     if (result.kind === 'invalid') return res.status(400).json(publicError('INVALID_REQUEST', 'Enter a valid ISBN or search by title or author.'));
     if (result.kind === 'not_found') return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
     return res.json(result);
@@ -178,12 +225,23 @@ export function createPublicV2Router({
     const controller = new AbortController();
     const abandon = () => { if (!res.writableEnded) controller.abort(); };
     res.on('close', abandon);
+    const startedAt = Date.now();
     const result = await availabilityService.check({ libraryId, bookKey, ...(editionScope ? { editionScope } : {}), ...(language ? { language } : {}), signal: controller.signal })
       .finally(() => res.off('close', abandon));
+    if (result.kind === 'result') {
+      afterResponse(res, store, () => ({ kind: 'book_check', libraryId, bookKey, outcome: String(result.response?.outcome || 'unknown'),
+        source: 'live', durationMs: Date.now() - startedAt }));
+    }
     if (result.kind === 'library_not_found') return res.status(404).json(publicError('LIBRARY_NOT_FOUND', 'This library is not in the directory.'));
     if (result.kind === 'book_not_found') return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
     return res.json(result.response);
   }));
+
+  router.post('/holdings/lookup', route(telemetry, 'holdings_lookup', holdings.holdingsLookup));
+  router.post('/holdings/check', route(telemetry, 'holdings_check', holdings.holdingsCheck));
+  router.post('/holdings/search', route(telemetry, 'holdings_search', holdings.holdingsSearch));
+  router.post('/library-requests', route(telemetry, 'library_request', holdings.libraryRequest));
+  router.post('/problem-reports', route(telemetry, 'problem_report', holdings.problemReport));
 
   return router;
 }

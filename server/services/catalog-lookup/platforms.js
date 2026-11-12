@@ -13,7 +13,13 @@ import { MAX_CHECK_MS } from '../libraryBookSearch.js';
 //            'none'         no result marking: answers come when a book opens.
 // hostConcurrency: lookups allowed at once per catalog host on one instance.
 //   (providers/http.js already sends one request at a time per host.)
-// minIntervalMs: spacing between successive requests of one lookup.
+// minIntervalMs: spacing between successive requests to the host. Enforced
+//   within one lookup by providers/http.js and across all readers and
+//   instances by the host gate (catalog-store/hostGate.js), together with any
+//   robots Crawl-delay.
+// perMinute: requests per minute to the host across all readers and instances
+//   (plan 5.4, "Across instances"), through the same host gate. Shared hosts
+//   (e-Granthalaya, LIBMAN, IndCat, BiblioCommons, Calil) share one limit.
 //
 // `fewRequests` records whether nine results are covered in at most three
 // catalog requests (plan 5.3, column 3), as confirmed against the adapters.
@@ -25,13 +31,13 @@ export const PLATFORMS = Object.freeze({
     // and are scoped to the member library.
     book: { maxRequests: 12, deadlineMs: 25 * S, configuredDeadline: true },
     results: { strategy: 'search_rows', maxRequests: 2, deadlineMs: 20 * S, fewRequests: 2 },
-    hostConcurrency: 4, minIntervalMs: 1 * S,
+    hostConcurrency: 4, minIntervalMs: 1 * S, perMinute: 60,
   },
   libman: {
     // One TITLE search (JSON), tenant-scoped; rows carry ISBNs.
     book: { maxRequests: 8, deadlineMs: 20 * S },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 1 },
-    hostConcurrency: 4, minIntervalMs: 0,
+    hostConcurrency: 4, minIntervalMs: 0, perMinute: 60,
   },
   indcat: {
     // Corrected from the plan: IndCat's institution-scoped search page lists
@@ -39,7 +45,7 @@ export const PLATFORMS = Object.freeze({
     // two requests (scope page + CSRF POST). Rows cannot prove an edition.
     book: { maxRequests: 8, deadlineMs: 20 * S },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
-    hostConcurrency: 2, minIntervalMs: 0,
+    hostConcurrency: 2, minIntervalMs: 0, perMinute: 30,
   },
   koha: {
     // Keyword search page (count=40); rows carry an ISBN where the OPAC
@@ -50,69 +56,69 @@ export const PLATFORMS = Object.freeze({
     // mark results: their rows do not prove this library's holding.
     book: { maxRequests: 12, deadlineMs: 20 * S, configuredDeadline: true },
     results: { strategy: 'search_rows', maxRequests: 3, deadlineMs: 15 * S, fewRequests: 1 },
-    hostConcurrency: 2, minIntervalMs: 0,
+    hostConcurrency: 2, minIntervalMs: 0, perMinute: 20,
   },
   bc: {
     // Gateway keyword search; rows carry `briefInfo.isbns`.
     book: { maxRequests: 4, deadlineMs: 15 * S },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 10 * S, fewRequests: 1 },
-    hostConcurrency: 4, minIntervalMs: 0,
+    hostConcurrency: 4, minIntervalMs: 0, perMinute: 60,
   },
   vufind: {
     // Title search; rows carry COinS ISBNs.
     book: { maxRequests: 8, deadlineMs: 20 * S },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 1 },
-    hostConcurrency: 2, minIntervalMs: 0,
+    hostConcurrency: 2, minIntervalMs: 0, perMinute: 20,
   },
   'discovery-community': {
     // Per site family; some rows carry ISBNs, session-based sites need more
     // than one request and therefore mark nothing within this budget.
     book: { maxRequests: 6, deadlineMs: 20 * S },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 'partly' },
-    hostConcurrency: 1, minIntervalMs: 0,
+    hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   'discovery-academic': {
     book: { maxRequests: 6, deadlineMs: 20 * S },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 'partly' },
-    hostConcurrency: 1, minIntervalMs: 0,
+    hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   calil: {
     // One /check call for every result ISBN, then polls every 2 s.
     book: { maxRequests: 15, deadlineMs: 30 * S },
     results: { strategy: 'batch_isbn', maxRequests: 15, deadlineMs: 30 * S, fewRequests: 1, isbnsPerBook: 3 },
-    hostConcurrency: 2, minIntervalMs: 0,
+    hostConcurrency: 2, minIntervalMs: 0, perMinute: 60,
   },
   vega: {
     book: { maxRequests: 2, deadlineMs: 10 * S },
     results: { strategy: 'per_isbn', maxRequests: 9, deadlineMs: 10 * S, fewRequests: false, topBooks: 9, concurrency: 2 },
-    hostConcurrency: 2, minIntervalMs: 0,
+    hostConcurrency: 2, minIntervalMs: 0, perMinute: 30,
   },
   evergreen: {
     book: { maxRequests: 3, deadlineMs: 15 * S },
     results: { strategy: 'per_isbn', maxRequests: 9, deadlineMs: 15 * S, fewRequests: false, topBooks: 3, concurrency: 1 },
-    hostConcurrency: 1, minIntervalMs: 0,
+    hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   chamo: {
     book: { maxRequests: 4, deadlineMs: 60 * S },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
-    hostConcurrency: 1, minIntervalMs: 0,
+    hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   libsys: {
     book: { maxRequests: 4, deadlineMs: 30 * S },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
-    hostConcurrency: 1, minIntervalMs: 0,
+    hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   aspen: {
     book: { maxRequests: 4, deadlineMs: 30 * S },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
-    hostConcurrency: 1, minIntervalMs: 0,
+    hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   vpl: {
     // Title search only; rows never prove an edition. robots Crawl-Delay 20 s
     // is applied by the adapter.
     book: { maxRequests: 2, deadlineMs: 45 * S },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
-    hostConcurrency: 1, minIntervalMs: 20 * S,
+    hostConcurrency: 1, minIntervalMs: 20 * S, perMinute: 3,
   },
 });
 

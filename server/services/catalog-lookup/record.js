@@ -1,17 +1,18 @@
 import { validateAndNormalize } from '../isbn.js';
 import { isHealthFailure } from './outcome.js';
 
-// What the lookup layer remembers (plan 4.3, 5.5). Three ports, each
-// replaceable by the Phase 2 catalog store:
+// What the lookup layer remembers (plan 4.3, 5.5). Three ports; the in-memory
+// versions below are used without a database, and server/catalog-store/
+// implements the same calls against Postgres:
 //
 //   answers: readAnswers(libraryId, identities) -> rows
 //            writeAnswers(rows)
-//   health:  recordOutcome({ libraryId, platform, host, ok, reason, at })
+//   health:  recordOutcome({ libraryId, platform, host, ok, reason, at, operation, durationMs, requests })
 //   telemetry: emit(event)   allowlisted counters only (public-v2/telemetry.js)
 //
 // Every call fails open: a port that throws or is missing never changes what
 // the reader sees, and writes are dropped, not retried. Writes run after the
-// answer is returned (`defer`; Phase 2 passes Vercel's waitUntil).
+// answer is returned (`defer`; the server passes catalog-store/waitUntil.js).
 //
 // Identities are a library's own record, an ISBN-13, or an Open Library work
 // ID. Never a title, author or normalised title.
@@ -78,8 +79,8 @@ export function answerRows({ libraryId, book = {}, answer, profile, now = Date.n
   return rows;
 }
 
-// In-memory answer store for Phase 1 and tests. Per instance and bounded; the
-// Phase 2 store implements the same two calls against Postgres.
+// In-memory answer store, used without a database and in tests. Per instance and bounded; the
+// catalog store (catalog-store/holdings.js) implements the same two calls against Postgres.
 export function createMemoryAnswerStore({ now = () => Date.now(), maxEntries = 20_000 } = {}) {
   const rows = new Map();
   const key = (libraryId, kind, value) => `${libraryId}\u0000${kind}\u0000${value}`;
@@ -113,6 +114,8 @@ export function createMemoryAnswerStore({ now = () => Date.now(), maxEntries = 2
 // library after 3 or more failed attempts, at least 30 minutes apart, on at
 // least 2 different days, within 7 days, with no success since the first of
 // those failures. Clear on the next success.
+// "Different days" are UTC calendar days (toISOString below), on every
+// instance and in the database-backed record alike.
 export const FLAG_MIN_ATTEMPTS = 3;
 export const FLAG_MIN_DAYS = 2;
 export const FLAG_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
@@ -195,13 +198,16 @@ export function createLookupRecorder({ answers = null, health = null, telemetry 
   const safely = fn => async (...args) => { try { return await fn(...args); } catch { return undefined; } };
 
   // A store that is down or slow reads as "nothing stored": the live check runs.
-  const read = safely(async (libraryId, identities) => (answers && identities.length ? answers.readAnswers(libraryId, identities) : []));
+  // A library that asked us not to store answers is never answered from the
+  // store, even before the daily job has purged its rows.
+  const read = safely(async (libraryId, identities) => (answers && identities.length && policyFor(libraryId)?.storeAnswers !== false
+    ? answers.readAnswers(libraryId, identities) : []));
   const readAnswers = async (libraryId, identities) => {
     const rows = await read(libraryId, identities);
     return Array.isArray(rows) ? rows : [];
   };
 
-  function record({ entry, platform, host, book, profile, answer, kind = 'book', durationMs = 0, live = true, writeAnswers = true }) {
+  function record({ entry, platform, host, book, profile, answer, kind = 'book', durationMs = 0, requests = 0, live = true, writeAnswers = true }) {
     const libraryId = entry?.id || entry?.slug;
     defer(async () => {
       if (writeAnswers && answers && libraryId && policyFor(libraryId)?.storeAnswers !== false) {
@@ -213,7 +219,8 @@ export function createLookupRecorder({ answers = null, health = null, telemetry 
         // nor a failure for the health record.
         const ok = answer.outcome !== 'couldnt_check';
         if (ok || isHealthFailure(answer.reason)) {
-          await safely(() => health.recordOutcome({ libraryId, platform, host, ok, reason: answer.reason, at: now() }))();
+          await safely(() => health.recordOutcome({ libraryId, platform, host, ok, reason: answer.reason, at: now(),
+            operation: kind === 'results' ? 'marks' : 'book_check', durationMs: Math.max(0, Math.round(durationMs)), requests }))();
         }
       }
       if (live && telemetry && answer) {
