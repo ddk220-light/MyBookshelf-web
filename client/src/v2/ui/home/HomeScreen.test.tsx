@@ -166,7 +166,7 @@ describe('one-shelf home', () => {
     expect(within(panel).getByRole('link', { name: 'Create account' })).toHaveAttribute('href', '/app/account/sign-up');
     expect(within(panel).getByRole('link', { name: 'Log in' })).toHaveAttribute('href', '/app/account/sign-in');
     expect(await within(panel).findByText('Anna Centenary Library')).toBeInTheDocument();
-    expect(within(panel).getByRole('link', { name: 'Change library' })).toHaveAttribute('href', '/app/libraries');
+    expect(within(panel).getByRole('button', { name: 'Change library' })).toHaveAttribute('aria-haspopup', 'dialog');
     expect(within(panel).getByRole('button', { name: 'Daylight' })).toHaveAttribute('aria-pressed', 'true');
     fireEvent.click(within(panel).getByRole('button', { name: 'Ink' }));
     expect(document.documentElement.dataset.readingLight).toBe('ink');

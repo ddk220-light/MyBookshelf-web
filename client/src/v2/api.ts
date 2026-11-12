@@ -128,4 +128,26 @@ export const publicApi = Object.freeze({
         if (answer === 'found' || answer === 'not_found') answers[bookKey] = answer;
     return answers;
   },
+
+  // One-shelf book page (plan 3.5): the stored answer, else one live check.
+  // Anything the client does not recognise is "unknown" (couldn't check),
+  // never "not found". catalogUrl is kept only when it is an http(s) link.
+  async holdingsCheck(libraryId: string, bookKey: string, signal?: AbortSignal): Promise<HoldingsCheck> {
+    const data = await post<{ answer?: unknown; catalogUrl?: unknown }>('/holdings/check', { libraryId, bookKey }, signal);
+    const answer = data.answer === 'found' || data.answer === 'not_found' || data.answer === 'unconfirmed' ? data.answer : 'unknown';
+    const catalogUrl = webLink(data.catalogUrl);
+    return { answer, ...(catalogUrl ? { catalogUrl } : {}) };
+  },
+
+  // One-tap "Request to add" from the library pop-up: the typed text only.
+  async libraryRequest(text: string): Promise<void> {
+    await post('/library-requests', { text });
+  },
 });
+
+export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; catalogUrl?: string };
+
+export function webLink(value: unknown): string | undefined {
+  if (typeof value !== 'string' || value.length > 2000) return undefined;
+  try { return ['http:', 'https:'].includes(new URL(value).protocol) ? value : undefined; } catch { return undefined; }
+}

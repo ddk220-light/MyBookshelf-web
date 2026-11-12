@@ -1,0 +1,105 @@
+/* One-shelf book page (VITE_ONE_SHELF), from docs/design/2026-11-one-shelf
+   Book, BookChecked and BookStates boards at 390 x 844 in Daylight. Scoped to
+   .one-shelf-frame like home.css. Lamplight and Ink are not designed yet:
+   their card colours are derived, with state borders at 3:1 or more. */
+:root {
+  --answer-found-bg: #e3ecdf; --answer-found-line: #b7ccb0; --answer-found-icon: #2f5340;
+  --answer-none-bg: #fff; --answer-none-line: #e7e0d5; --answer-none-icon: #6b6259;
+  --answer-grey-bg: #ebe8e3; --answer-grey-line: #d3cec6; --answer-grey-icon: #4a423b;
+  --toast-link: #b9e0c4; --stand-shadow: rgb(31 26 23 / .32);
+}
+:root[data-reading-light='lamplight'] {
+  --answer-found-bg: #1f3427; --answer-found-line: #5c9a70; --answer-found-icon: #9fd0ae;
+  --answer-none-bg: #1f1b17; --answer-none-line: #7a6d5e; --answer-none-icon: #b4a995;
+  --answer-grey-bg: #2b2621; --answer-grey-line: #7a6d5e; --answer-grey-icon: #d3c8b8;
+  --toast-link: #1f5a36; --stand-shadow: rgb(0 0 0 / .55);
+}
+:root[data-reading-light='ink'] {
+  --answer-found-bg: #e3efe6; --answer-found-line: #4a8a5e; --answer-found-icon: #1f5a36;
+  --answer-none-bg: #fff; --answer-none-line: #8a94a3; --answer-none-icon: #5a6474;
+  --answer-grey-bg: #e6e9ee; --answer-grey-line: #8a94a3; --answer-grey-icon: #344054;
+  --toast-link: #b9e0c4; --stand-shadow: rgb(16 24 40 / .28);
+}
+
+.one-shelf-frame.book-mode .app-screen { background: var(--reader-bg); }
+.one-shelf-frame .shelf-book { box-sizing: border-box; width: 100%; max-width: 480px; margin: 0 auto; padding: 8px 16px 96px; display: flex; flex-direction: column; color: var(--reader-ink); font-size: 1rem; line-height: 1.5; }
+.one-shelf-frame .shelf-book-back { align-self: flex-start; height: 44px; min-height: 44px; display: inline-flex; align-items: center; gap: 4px; margin: 0 0 0 -4px; padding: 0 4px; color: var(--reader-accent); font-weight: 600; font-size: .9375rem; text-decoration: none; }
+.one-shelf-frame .shelf-book-back:hover:not(:focus-visible) { text-decoration: underline; text-underline-offset: 3px; }
+
+.one-shelf-frame .shelf-book-head { margin-top: 8px; display: flex; gap: 16px; align-items: flex-end; }
+.one-shelf-frame .book-stand { width: 108px; height: 162px; margin: 9px 12px 0 0; filter: drop-shadow(8px 6px 8px var(--stand-shadow)); }
+.one-shelf-frame .book-stand .cover3d-top { height: 9px; }
+.one-shelf-frame .book-stand .cover3d-side { width: 9px; box-shadow: none; }
+.one-shelf-frame .book-stand .cover3d-face { box-shadow: none; border-radius: 1px 3px 3px 1px; }
+.one-shelf-frame .book-stand .cover3d-type { padding: 10px 9px 10px 15px; gap: 9px; }
+.one-shelf-frame .book-stand .cover3d-title { font-size: 1rem; -webkit-line-clamp: 5; }
+.one-shelf-frame .book-stand .cover3d-rule { width: 22px; }
+.one-shelf-frame .book-stand .cover3d-author { font-size: .8125rem; -webkit-line-clamp: 3; }
+.one-shelf-frame .book-stand .cover3d-type.title-sm .cover3d-title { font-size: .9375rem; }
+.one-shelf-frame .book-stand .cover3d-type.title-xs .cover3d-title { font-size: .8125rem; }
+.one-shelf-frame .book-stand .cover3d-type.author-sm .cover3d-author { font-size: .75rem; }
+.one-shelf-frame .book-stand-ghost { flex: 0 0 auto; background: var(--reader-fill); border-radius: 2px; filter: none; }
+.one-shelf-frame .shelf-book-ghost-lines { flex: 1 1 auto; display: flex; flex-direction: column; gap: 10px; }
+.one-shelf-frame .shelf-book-ghost-lines span { height: 22px; width: 90%; border-radius: 6px; background: var(--reader-fill); }
+.one-shelf-frame .shelf-book-ghost-lines span + span { height: 14px; width: 60%; }
+
+.one-shelf-frame .shelf-book-heading { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.one-shelf-frame .shelf-book-title { margin: 0; font: 500 1.625rem/1.15 var(--serif); letter-spacing: -.025em; color: var(--reader-ink); overflow-wrap: anywhere; }
+.one-shelf-frame .shelf-book-author { margin: 0; color: var(--reader-secondary); overflow-wrap: anywhere; }
+.one-shelf-frame .shelf-book-meta { margin: 0; font-size: .8125rem; line-height: 1.5; color: var(--reader-muted); }
+.one-shelf-frame .shelf-book-line { margin: 8px 0 0; color: var(--reader-secondary); font-size: .9375rem; }
+
+/* Add to my shelf / On my shelf */
+.one-shelf-frame .save-button { margin-top: 20px; height: 54px; min-height: 54px; border-width: 1.5px; }
+.one-shelf-frame .save-button.is-saved { background: var(--pressed-bg); color: var(--pressed-ink); }
+.one-shelf-frame .save-button:disabled { opacity: .55; cursor: not-allowed; }
+.one-shelf-frame .save-tick { display: inline-flex; }
+.one-shelf-frame .save-tick.tick-pop { animation: tick-pop 320ms cubic-bezier(.3, .7, .4, 1.3) both; }
+@keyframes tick-pop { 0% { transform: scale(0); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+/* Library card: before a library is chosen */
+.one-shelf-frame .library-ask { margin-top: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--reader-surface); border: 1px solid var(--reader-line); border-radius: 14px; }
+.one-shelf-frame .library-ask h2 { margin: 0; font: 500 1.25rem/1.3 var(--serif); letter-spacing: -.02em; }
+.one-shelf-frame .library-ask-button { height: 48px; min-height: 48px; gap: 8px; }
+
+/* Library card: one row with the answer */
+.one-shelf-frame .library-answer { margin-top: 16px; min-height: 56px; box-sizing: border-box; padding: 6px 4px 6px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--answer-grey-line); border-radius: 14px; background: var(--answer-grey-bg); color: var(--reader-ink); }
+.one-shelf-frame .library-answer:focus-visible { outline: 2px solid var(--reader-accent); outline-offset: 2px; }
+.one-shelf-frame .library-answer-found { background: var(--answer-found-bg); border-color: var(--answer-found-line); }
+.one-shelf-frame .library-answer-not-found { background: var(--answer-none-bg); border-color: var(--answer-none-line); }
+.one-shelf-frame .library-answer-icon { flex: 0 0 auto; display: inline-flex; color: var(--answer-grey-icon); }
+.one-shelf-frame .library-answer-found .library-answer-icon { color: var(--answer-found-icon); }
+.one-shelf-frame .library-answer-not-found .library-answer-icon { color: var(--answer-none-icon); }
+.one-shelf-frame .library-answer-spin { display: inline-flex; animation: check-spin 1.1s linear infinite; }
+@keyframes check-spin { to { transform: rotate(360deg); } }
+.one-shelf-frame .library-answer-retry { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; margin: 0 -10px 0 -12px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--reader-accent); display: inline-flex; align-items: center; justify-content: center; }
+.one-shelf-frame .library-answer-name { flex: 1 1 auto; min-width: 0; font-weight: 600; font-size: .9375rem; line-height: 1.25; overflow-wrap: anywhere; }
+.one-shelf-frame .library-answer-pending { display: inline-flex; color: var(--answer-grey-icon); }
+.one-shelf-frame .library-answer-catalog { flex: 0 0 auto; min-height: 44px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--reader-accent); font-size: .875rem; font-weight: 600; text-decoration: none; border-radius: 10px; }
+.one-shelf-frame .library-answer-catalog:hover:not(:focus-visible) { text-decoration: underline; text-underline-offset: 3px; }
+
+/* About and elsewhere */
+.one-shelf-frame .shelf-book-section { margin-top: 20px; display: flex; flex-direction: column; gap: 6px; }
+.one-shelf-frame .shelf-book-section + .shelf-book-section { margin-top: 16px; }
+.one-shelf-frame .shelf-book-section h2 { margin: 0; font-weight: 600; font-size: .8125rem; line-height: 1.5; font-family: inherit; letter-spacing: .06em; text-transform: uppercase; color: var(--reader-muted); }
+.one-shelf-frame .shelf-book-about { margin: 0; font-size: .9375rem; white-space: pre-line; overflow-wrap: anywhere; }
+.one-shelf-frame .shelf-book-more { align-self: flex-start; margin-left: -4px; }
+.one-shelf-frame .shelf-book-elsewhere { gap: 0; }
+.one-shelf-frame .shelf-book-elsewhere h2 { margin-bottom: 2px; }
+.one-shelf-frame .shelf-book-elsewhere a { min-height: 46px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--reader-accent); font-weight: 500; text-decoration: none; }
+.one-shelf-frame .shelf-book-elsewhere a + a { border-top: 1px solid var(--reader-line); }
+.one-shelf-frame .shelf-book-elsewhere a:focus-visible { outline-offset: -2px; }
+
+/* "Added to your shelf · See my shelf" */
+.one-shelf-frame .shelf-book-toast { position: fixed; bottom: calc(20px + env(safe-area-inset-bottom)); min-height: 52px; box-sizing: border-box; padding: 4px 6px 4px 16px; border-radius: 12px; justify-content: space-between; }
+.one-shelf-frame .shelf-book-toast span { font-size: .9375rem; }
+.one-shelf-frame .shelf-book-toast a { flex: 0 0 auto; min-height: 44px; padding: 0 12px; display: inline-flex; align-items: center; color: var(--toast-link); font-weight: 600; font-size: .9375rem; text-decoration: none; }
+.one-shelf-frame .shelf-book-toast a:focus-visible { outline: 2px solid var(--toast-link); outline-offset: -2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .one-shelf-frame .save-tick.tick-pop, .one-shelf-frame .library-answer-spin { animation: none; }
+}
+@media (forced-colors: active) {
+  .one-shelf-frame .library-answer { border: 2px solid CanvasText; }
+  .one-shelf-frame .library-answer-found { border-style: double; border-width: 4px; }
+}

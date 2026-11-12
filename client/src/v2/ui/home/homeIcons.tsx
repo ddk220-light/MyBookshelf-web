@@ -36,6 +36,36 @@ export function BackGlyph({ size = 18, strokeWidth = 2 }: IconProps) {
 export function CameraOffGlyph({ size = 30, strokeWidth = 1.8 }: IconProps) {
   return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M4 8h3l2-3h6l2 3h3v11H4zM3 3l18 18" /><circle cx="12" cy="13" r="3.5" /></svg>;
 }
+export function LocateGlyph({ size = 20, strokeWidth = 2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><circle cx="12" cy="12" r="3" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4" /></svg>;
+}
+export function PinGlyph({ size = 20, strokeWidth = 1.8 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>;
+}
+export function TickGlyph({ size = 20, strokeWidth = 2.4 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>;
+}
+export function PlusGlyph({ size = 20, strokeWidth = 2.2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M12 5v14M5 12h14" /></svg>;
+}
+export function ExternalGlyph({ size = 18, strokeWidth = 1.8 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M14 5h5v5M19 5l-8 8M11 7H6v11h11v-5" /></svg>;
+}
+export function FoundGlyph({ size = 18, strokeWidth = 2.4 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.8 2.8L16.5 9.5" /></svg>;
+}
+export function DashGlyph({ size = 18, strokeWidth = 2.4 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M7 12h10" /></svg>;
+}
+export function UnsureGlyph({ size = 18, strokeWidth = 2.2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><circle cx="12" cy="12" r="9" /><path d="M9.6 9.4a2.5 2.5 0 014.8.9c0 1.7-2.4 2.2-2.4 3.7M12 17h.01" /></svg>;
+}
+export function RetryGlyph({ size = 20, strokeWidth = 2.2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M20 12a8 8 0 11-2.34-5.66" /><path d="M20 4v4.5h-4.5" /></svg>;
+}
+export function SpinnerGlyph({ size = 18, strokeWidth = 2.6 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><circle cx="12" cy="12" r="8" strokeOpacity=".25" /><path d="M12 4a8 8 0 018 8" /></svg>;
+}
 export function WarningGlyph({ size = 20, strokeWidth = 2 }: IconProps) {
   return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M12 4l9 16H3zM12 10v4M12 17h.01" /></svg>;
 }

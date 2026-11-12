@@ -12,9 +12,9 @@ const LIGHTS = [['daylight', 'Daylight'], ['lamplight', 'Lamplight'], ['ink', 'I
  * The left side panel (account, library, reading light, help). A modal
  * dialog: focus stays inside, Escape and the backdrop close it, and focus
  * returns to the control that opened it. Back closes it too (the home screen
- * opens it as a history entry).
+ * opens it as a history entry). "Change" hands over to the library pop-up.
  */
-export function SidePanel({ open, onClose, returnFocus }: { open: boolean; onClose: () => void; returnFocus?: () => HTMLElement | null }) {
+export function SidePanel({ open, onClose, returnFocus, onChangeLibrary }: { open: boolean; onClose: () => void; returnFocus?: () => HTMLElement | null; onChangeLibrary: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
   const { session, signOut } = useAccountSession();
   const { library, loadingLibrary } = useLibrary();
@@ -67,7 +67,7 @@ export function SidePanel({ open, onClose, returnFocus }: { open: boolean; onClo
         <div className="panel-library">
           <span className="panel-library-icon" aria-hidden="true"><LibraryGlyph size={20} strokeWidth={1.8} /></span>
           <span className="panel-library-name">{library ? <><strong>{library.name}</strong>{library.city && <span>{library.city}</span>}</> : <strong>{loadingLibrary ? 'Loading…' : 'None chosen'}</strong>}</span>
-          <Link className="home-text-button" to="/app/libraries" state={{ after: '/app/shelf' }} aria-label={library ? 'Change library' : 'Choose a library'}>{library ? 'Change' : 'Choose'}</Link>
+          <button type="button" className="home-text-button" aria-haspopup="dialog" aria-label={library ? 'Change library' : 'Choose a library'} onClick={onChangeLibrary}>{library ? 'Change' : 'Choose'}</button>
         </div>
       </section>
 

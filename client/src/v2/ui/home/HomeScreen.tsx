@@ -9,6 +9,8 @@ import { ResultsShelf } from '../search/ResultsShelf';
 import { resultEntries } from '../search/searchResults';
 import { runBookSearch, useBookSearch } from '../search/useBookSearch';
 import { ScanDialog, type ScanAnswer, type ScanSource } from '../scan/ScanDialog';
+import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
+import { libraryLinkMessage, type LibraryLinkNotice } from '../library/SelectLibraryLink';
 import { AccountInvite } from '../shelf/AccountInvite';
 import { Bookcase } from '../shelf/Bookcase';
 import { EmptyBays, EmptyShelf } from '../shelf/EmptyShelf';
@@ -28,7 +30,8 @@ import './home.css';
  * Back closes them. `search.candidateId` is the opaque key of results held in
  * same-tab memory (searchMemory); the search text itself is never here.
  */
-type HomeState = { overlay?: 'panel' | 'scan'; panelPushed?: boolean; scanPushed?: boolean; search?: { candidateId?: string; pushed?: boolean } };
+type HomeState = { overlay?: 'panel' | 'scan' | 'library'; panelPushed?: boolean; scanPushed?: boolean; libraryPushed?: boolean;
+  search?: { candidateId?: string; pushed?: boolean }; libraryLink?: LibraryLinkNotice };
 
 /**
  * The one-shelf home (VITE_ONE_SHELF): top bar with the search bar, then the
@@ -63,6 +66,29 @@ export function HomeScreen() {
     else navigate(location.pathname, { replace: true, state: Object.keys(rest).length ? rest : null });
   }, [navigate, location.pathname, routeState]);
   const returnFocus = useCallback(() => personButton.current, []);
+
+  // Library pop-up (plan Phase 7). "Change" in the side panel swaps the
+  // panel's history entry for the pop-up's, so closing it returns to what
+  // was under the panel, with focus on the person icon.
+  const libraryOpen = routeState?.overlay === 'library';
+  const changeLibrary = () => {
+    const { overlay: _overlay, panelPushed, ...rest } = latestState.current || {};
+    navigate(location.pathname, { replace: true, state: { ...rest, overlay: 'library', libraryPushed: Boolean(panelPushed) } });
+  };
+  const closeLibrary = useCallback(() => {
+    const { overlay: _overlay, libraryPushed, ...rest } = latestState.current || {};
+    if (libraryPushed) navigate(-1);
+    else navigate(location.pathname, { replace: true, state: Object.keys(rest).length ? rest : null });
+  }, [navigate, location.pathname]);
+
+  // A shared library link that did not resolve lands here with a notice. It
+  // is shown for this visit only, so it is taken out of the history entry.
+  const [linkNotice] = useState(() => routeState?.libraryLink || null);
+  useEffect(() => {
+    if (!latestState.current?.libraryLink) return;
+    const { libraryLink: _notice, ...rest } = latestState.current;
+    navigate(location.pathname, { replace: true, state: Object.keys(rest).length ? rest : null });
+  }, [navigate, location.pathname]);
 
   // Search on the shelf (plan Phase 5).
   const search = useBookSearch();
@@ -232,6 +258,7 @@ export function HomeScreen() {
     onRetry={() => { void submit(search.query || query); }} onScan={goScan} />;
 
   return <div className="home">
+    {linkNotice && <p className="home-notice" role="status">{libraryLinkMessage(linkNotice)}</p>}
     <TopBar ref={personButton} panelOpen={panelOpen} onOpenPanel={openPanel} libraryName={libraryName}
       search={{ value: query, onChange: changeQuery, onSubmit: text => { void submit(text); }, onClear: clearQuery, onScan: goScan, active: showResults }}
       leading={showResults ? <button type="button" className="home-text-button results-back" onClick={() => closeSearch('shelf')}><BackGlyph />Back to my shelf</button> : undefined}
@@ -241,7 +268,8 @@ export function HomeScreen() {
     <p className="visually-hidden" role="status" aria-live="polite">{announcement}</p>
     {cleared && <div className="undo-notice home-undo" role="status"><span>Viewed before cleared</span>
       {restoreRecentBooks && <button type="button" onClick={async () => { if (await restoreRecentBooks(cleared)) setCleared(null); }}>Undo</button>}</div>}
-    <SidePanel open={panelOpen} onClose={closePanel} returnFocus={returnFocus} />
+    <SidePanel open={panelOpen} onClose={closePanel} returnFocus={returnFocus} onChangeLibrary={changeLibrary} />
+    <LibraryPickerDialog open={libraryOpen} onClose={closeLibrary} returnFocus={returnFocus} />
     <ScanDialog open={scanOpen} onClose={closeScan} onIsbn={lookUpIsbn} onSearchByTitle={searchByTitle} returnFocus={scanReturnFocus} />
   </div>;
 }

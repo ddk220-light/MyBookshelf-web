@@ -22,6 +22,8 @@ import { ContentDetailPage } from './ui/content/ContentDetailPage';
 import { oneShelfEnabled } from './featureFlags';
 import { OneShelfRoot } from './OneShelfRoot';
 import { HomeScreen } from './ui/home/HomeScreen';
+import { ShelfBookPage } from './ui/book/ShelfBookPage';
+import { SelectLibraryLink } from './ui/library/SelectLibraryLink';
 
 export { LibrariesPage } from './ui/library/LibrariesPage';
 
@@ -56,19 +58,22 @@ function IdentityApp({oneShelf}:{oneShelf:boolean}){
 }
 
 // The one-shelf home replaces the shelf; Settings is now the side panel on it.
+// The book page is rewritten, and a library link chooses its library silently.
 const oneShelfScreens = {
   shelf: <HomeScreen />,
   settings: <Navigate to="/app/shelf" replace state={{ overlay: 'panel' }} />,
+  book: <ShelfBookPage />,
+  select: <SelectLibraryLink />,
 };
 
 // Today's route table. Called as a function (not rendered as a component) so
 // <Routes> sees the <Route> elements directly. The flag-on tree swaps in its
 // own shelf and settings screens; everything else is shared.
-function currentRoutes(screens: { shelf?: JSX.Element; settings?: JSX.Element } = {}) {
+function currentRoutes(screens: { shelf?: JSX.Element; settings?: JSX.Element; book?: JSX.Element; select?: JSX.Element } = {}) {
   return <>
     <Route path="/app/libraries" element={<LibrariesPage />} />
-    <Route path="/select/:slug" element={<SelectLibraryPage />} />
-    <Route path="/select" element={<SelectLibraryPage />} />
+    <Route path="/select/:slug" element={screens.select ?? <SelectLibraryPage />} />
+    <Route path="/select" element={screens.select ?? <SelectLibraryPage />} />
     <Route path="/app" element={<Navigate to="/app/shelf" replace />} />
     <Route path="/app/shelf" element={screens.shelf ?? <ShelfPage />} />
     <Route path="/app/search" element={<ScanPage />} />
@@ -84,7 +89,7 @@ function currentRoutes(screens: { shelf?: JSX.Element; settings?: JSX.Element } 
     <Route path="/app/account/complete-profile" element={<CompleteProfilePage/>}/>
     <Route path="/app/account/deletion" element={<DeletionStatusPage/>}/>
     <Route path="/app/account/import" element={<ImportPage/>}/>
-    <Route path="/app/books/:bookKey" element={<BookPage />} />
+    <Route path="/app/books/:bookKey" element={screens.book ?? <BookPage />} />
     <Route path="/app/read/:contentKey" element={<ContentDetailPage />} />
     <Route path="/find" element={<Navigate to="/app/search" replace />} />
     <Route path="/privacy" element={<Navigate to="/settings#privacy" replace />} />

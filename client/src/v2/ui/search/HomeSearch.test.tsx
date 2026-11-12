@@ -153,7 +153,7 @@ describe('search on the shelf', () => {
     fireEvent.click(within(results).getByRole('link', { name: 'Wings of Fire by Dale Brown' }));
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/'));
     // The book page's own back link returns to the results too.
-    const back = await screen.findByRole('link', { name: 'Back to search' });
+    const back = await screen.findByRole('link', { name: 'Back' });
     expect(back).toHaveAttribute('href', '/app/shelf');
     navigateRef!(-1);
     const again = await screen.findByRole('region', { name: 'Search results' });
@@ -162,7 +162,7 @@ describe('search on the shelf', () => {
     expect(searches).toHaveLength(1);
 
     fireEvent.click(within(again).getByRole('link', { name: 'The Dragonet Prophecy by Tui T. Sutherland' }));
-    fireEvent.click(await screen.findByRole('link', { name: 'Back to search' }));
+    fireEvent.click(await screen.findByRole('link', { name: 'Back' }));
     expect(await screen.findByRole('region', { name: 'Search results' })).toBeInTheDocument();
     expect(searches).toHaveLength(1);
   });
