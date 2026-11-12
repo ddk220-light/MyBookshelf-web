@@ -97,19 +97,19 @@ own policies.
 | Account, saved books, chosen library, Viewed before | Until you delete them or your account |
 | Data in your browser (no account) | Until you clear it or your browser's site data |
 | Anonymous search and library-check log | 12 months, then only totals (for example, searches per day) |
-| Anonymous visit counts | [ANALYTICS RETENTION] |
+| Anonymous visit counts | 12 months |
 | Library answers | Six months |
 | Library requests | Until handled, then 12 months; spam is deleted after 90 days |
 | Problem reports | Up to 12 months; 90 days after they are resolved |
 | Abuse-limit codes | Up to one day |
-| Database backups | Up to [BACKUP DAYS] days |
+| Database backups | Up to 7 days |
 
 ## Deleting your account
 
 Go to the side panel, then **Account settings**, then **Delete account**.
 This deletes your email, password, saved books, chosen library and Viewed
 before list. Live data is removed within 24 hours; backup copies expire within
-[BACKUP DAYS] days. A short record that holds no email or reading data is kept
+7 days. A short record that holds no email or reading data is kept
 for 35 days so that a backup restore cannot bring a deleted account back.
 
 Deleting your account does not clear books saved in a browser without an

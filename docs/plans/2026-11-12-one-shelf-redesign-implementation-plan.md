@@ -1597,7 +1597,9 @@ CI must run it).
 - There are no existing accounts, so nothing has to be migrated or announced for account history. Viewed before is simply on for every account from the start.
 - A library is flagged as failing after 3 failed attempts on 2 different days within 7 days, and the flag clears on the next success.
 - The service is run by Deepak Ravikumar, India; the contact address in the policy texts is the owner's. `docs/policy/` no longer has placeholders for these.
-- Still to fill before publishing the policy texts: the effective date, how long backups are kept (depends on the database plan), and how long the analytics tool keeps data.
+- Costs stay low for now: the accounts database stays on Neon's Free plan (restore history 6 hours, one manual snapshot) and moves to the Launch plan (pay as you go, restore history up to 7 days) before a pilot with real accounts. Take a manual snapshot before each release until then.
+- Vercel is on the Pro plan. Web Analytics there keeps 12 months of data, has no free event allowance and bills $0.03 per 1,000 events, so it is used for page visits only. Counts such as searches per day come from our own anonymous log, not from analytics custom events.
+- Still to fill before publishing the policy texts: the effective date and the version number, both set at release.
 
 
 Each item has a recommended answer for the owner to confirm. Items settled by
