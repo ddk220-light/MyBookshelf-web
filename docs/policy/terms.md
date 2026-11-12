@@ -2,7 +2,7 @@
 
 # Terms
 
-Effective [EFFECTIVE DATE]. MyBookshelf is run by [LEGAL ENTITY NAME], [COUNTRY].
+Effective [EFFECTIVE DATE]. MyBookshelf is run by Deepak Ravikumar, India.
 
 ## Who may use MyBookshelf
 
@@ -54,4 +54,4 @@ If you keep using MyBookshelf after that, the new terms apply.
 
 ## Contact
 
-[CONTACT EMAIL]
+deepakdhanavel@gmail.com

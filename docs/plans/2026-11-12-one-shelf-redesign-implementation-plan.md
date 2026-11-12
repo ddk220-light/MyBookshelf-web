@@ -1591,6 +1591,15 @@ CI must run it).
 
 ## 9. Open questions and risks
 
+**Owner decisions recorded after this section was written (they override any conflicting row below):**
+
+- The connector audit agent is no longer active. Phase 1 builds on the current adapters and takes whatever is useful from `feat/library-connector-audit` by reading it; there is no one to wait for.
+- There are no existing accounts, so nothing has to be migrated or announced for account history. Viewed before is simply on for every account from the start.
+- A library is flagged as failing after 3 failed attempts on 2 different days within 7 days, and the flag clears on the next success.
+- The service is run by Deepak Ravikumar, India; the contact address in the policy texts is the owner's. `docs/policy/` no longer has placeholders for these.
+- Still to fill before publishing the policy texts: the effective date, how long backups are kept (depends on the database plan), and how long the analytics tool keeps data.
+
+
 Each item has a recommended answer for the owner to confirm. Items settled by
 the owner decisions (storing "not found", library request text, desktop
 layout, Lamplight and Ink, Viewed before for accounts, accounts and age, the

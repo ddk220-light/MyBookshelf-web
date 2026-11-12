@@ -2,7 +2,7 @@
 
 # Privacy
 
-Effective [EFFECTIVE DATE]. MyBookshelf is run by [LEGAL ENTITY NAME], [COUNTRY].
+Effective [EFFECTIVE DATE]. MyBookshelf is run by Deepak Ravikumar, India.
 
 This covers the MyBookshelf website and web app at mybookshelf.cloud.
 
@@ -12,7 +12,7 @@ Until [EFFECTIVE DATE], MyBookshelf did not store the words you searched for.
 From [EFFECTIVE DATE], we keep searches and library checks in an anonymous log,
 without your account, IP address or any device identifier. We use it to find
 what is broken or slow. If you have an account, your **Viewed before** list is
-now saved to it automatically; before, this was off unless you turned it on.
+saved to it automatically.
 We also count visits with a cookie-free analytics tool.
 
 ## What we collect and why
@@ -26,12 +26,12 @@ is never needed to search or to check a library.
 kept in your own browser. We do not receive them.
 
 **Viewed before.** When you are signed in, each book you open is added to your
-Viewed before list in your account, newest first, [up to 50 books]. You can
+Viewed before list in your account, newest first, up to 50 books. You can
 clear it at any time. It is deleted with your account.
 
 **Anonymous visit counts.** We count page visits, which site sent you, the
 type of device and browser, the country, and totals such as how many searches
-happen each day. This uses [ANALYTICS SERVICE, e.g. Vercel Web Analytics],
+happen each day. This uses Vercel Web Analytics,
 which sets no cookies. It is never linked to an account or a person.
 
 **Anonymous search and library-check log.** When you search, we record the
@@ -76,7 +76,7 @@ address.
 
 | Service | What for |
 |---|---|
-| Vercel | Hosting the website and server, scheduled jobs, a small storage area used when deleting accounts, and visit counts [if Vercel Web Analytics is chosen] |
+| Vercel | Hosting the website and server, scheduled jobs, a small storage area used when deleting accounts, and visit counts |
 | Neon | Databases: one for accounts, one for library answers, requests, reports and the anonymous log |
 | Resend | Sending account email (verification, password reset, security notices) |
 | Open Library and Internet Archive | Book details and covers |
@@ -99,7 +99,7 @@ own policies.
 | Anonymous search and library-check log | 12 months, then only totals (for example, searches per day) |
 | Anonymous visit counts | [ANALYTICS RETENTION] |
 | Library answers | Six months |
-| Library requests | Until handled, then [12 months]; spam is deleted after 90 days |
+| Library requests | Until handled, then 12 months; spam is deleted after 90 days |
 | Problem reports | Up to 12 months; 90 days after they are resolved |
 | Abuse-limit codes | Up to one day |
 | Database backups | Up to [BACKUP DAYS] days |
@@ -110,7 +110,7 @@ Go to the side panel, then **Account settings**, then **Delete account**.
 This deletes your email, password, saved books, chosen library and Viewed
 before list. Live data is removed within 24 hours; backup copies expire within
 [BACKUP DAYS] days. A short record that holds no email or reading data is kept
-for [35] days so that a backup restore cannot bring a deleted account back.
+for 35 days so that a backup restore cannot bring a deleted account back.
 
 Deleting your account does not clear books saved in a browser without an
 account. Clear those in your browser's site data.
@@ -130,4 +130,4 @@ collect, we will say so plainly at the top of this page.
 
 ## Contact
 
-[CONTACT EMAIL]
+deepakdhanavel@gmail.com

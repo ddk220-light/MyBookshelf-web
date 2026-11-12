@@ -10,4 +10,4 @@ any library.
 
 Version: [VERSION]
 
-Contact: [CONTACT EMAIL]
+Contact: deepakdhanavel@gmail.com
