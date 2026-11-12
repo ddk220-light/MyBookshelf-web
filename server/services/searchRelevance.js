@@ -169,8 +169,11 @@ export function rankSearchResults(books, { title, author = '', max = 10, authorI
       // "Hobiṭ"). Otherwise it is presented under the matched alternate or
       // edition title, in the reader's words ("The Alchemist" for Coelho's
       // "O Alquimista"); see presentTitles for series names.
-      const own = /\b(adaptation|abridged|graphic novel)\b/i.test(book.title)
-        || coverage(query, [...searchWords(book.title), ...authorTokens], true) <= 2;
+      // A tolerant match of a marked transliteration does not displace an
+      // exact plain-Latin title: "godan" shows "Godan", not "Godāna".
+      const ownCost = coverage(query, [...searchWords(book.title), ...authorTokens], true);
+      const own = /\b(adaptation|abridged|graphic novel)\b/i.test(book.title) || ownCost === 0
+        || (ownCost <= 2 && !(best.edits === 0 && latinMarks(book.title) && !latinMarks(best.variant)));
       ranked.push({ book: { ...book, title: own ? book.title : best.variant,
         ...(best.edits ? { searchMatch: 'spelling' } : {}) }, ownTitle: book.title, score: best.score + popularityScore(book) + sourceOrderScore(book) });
     }
@@ -185,6 +188,9 @@ export function rankSearchResults(books, { title, author = '', max = 10, authorI
     return true;
   }), title).slice(0, max).map(({ book }) => book);
 }
+
+// Diacritics and modifier letters used in romanised titles ("Godāna", "Goʼdān").
+const latinMarks = value => /[̀-ͯʰ-˿]/.test(String(value || '').normalize('NFKD'));
 
 // Letters' scripts, for telling a reader's-language alias from a title in
 // another script ("鋼の錬金術師 1" for "Fullmetal Alchemist 1").

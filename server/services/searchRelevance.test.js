@@ -206,4 +206,15 @@ test('a work title within the spelling tolerance is shown instead of a translite
   // A record whose own title is far from the query still shows the matched title.
   const orwell = { ...book('Nineteen Eighty-Four', 'George Orwell', 'OL1168083W'), searchTitles: ['1984'] };
   assert.equal(find([orwell], '1984')[0].title, '1984');
+  // Hobiṭ alone: the plain own title still wins over a marked alias.
+  const marked = { ...hobbit, searchTitles: ['Hobiṭ'] };
+  assert.equal(find([marked], 'the hobit', true)[0].title, 'The Hobbit');
+});
+
+test('an exact plain-Latin title is shown instead of a marked transliteration within the tolerance', () => {
+  const godana = { ...book('Godāna', 'Munshi Premchand', 'OL332076W'), searchTitles: ['Godan', 'गोदान'] };
+  assert.equal(find([godana], 'godan')[0].title, 'Godan');
+  assert.equal(find([godana], 'godan', true)[0].title, 'Godan');
+  assert.equal(find([godana], 'godāna')[0].title, 'Godāna');
+  assert.equal(find([godana], 'गोदान')[0].title, 'गोदान');
 });
