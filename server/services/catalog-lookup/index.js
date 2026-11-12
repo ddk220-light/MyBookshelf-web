@@ -27,6 +27,20 @@ import { createLookupRecorder, createMemoryHealthRecord, identitiesFor, askedIde
 const RESULTS_CACHE_MS = 10 * 60 * 1000;
 const MAX_RESULT_BOOKS = 12;
 const coded = (message, code) => Object.assign(new Error(message), { code });
+// Resolves to `promise`'s value, or rejects at the deadline (CATALOG_TIMEOUT)
+// or when the signal aborts (CATALOG_ABORTED), whichever comes first.
+function settleBy(promise, deadlineAt, signal, clock = Date.now) {
+  return new Promise((resolve, reject) => {
+    let timer;
+    const done = (fn, value) => { clearTimeout(timer); signal?.removeEventListener?.('abort', onAbort); fn(value); };
+    const onAbort = () => done(reject, coded('Catalog check was cancelled', 'CATALOG_ABORTED'));
+    if (signal?.aborted) return onAbort();
+    signal?.addEventListener?.('abort', onAbort, { once: true });
+    if (Number.isFinite(deadlineAt)) timer = setTimeout(() => done(reject, coded('Edition details took too long', 'CATALOG_TIMEOUT')), Math.max(0, deadlineAt - clock()));
+    Promise.resolve(promise).then(value => done(resolve, value), error => done(reject, error));
+  });
+}
+
 const normalQuery = value => String(value || '').normalize('NFKC').toLowerCase().replace(/\s+/g, ' ').trim();
 
 function publicView(entry, library) {
@@ -69,16 +83,28 @@ export function createCatalogLookup({
     const view = publicView(entry, library);
     const finish = (result, profile) => {
       const answer = answerFromCheck(result, { profile, recordId: ownRecord ? parsed?.recordId : undefined });
-      noteHost(host, answer);
+      // An edition profile (Open Library) that failed or was too slow, or a
+      // wait for one of this instance's own host slots, is not the catalog's
+      // failure: it neither opens the circuit nor counts in the health record.
+      if (!result.notCatalogFailure) noteHost(host, answer);
       recorder.record({ entry, platform: platformName, host, book: ownRecord ? { ...book, recordId: parsed?.recordId, recordLibraryId: entry.id } : book,
-        profile, answer, kind: 'book', durationMs: now() - startedAt });
+        profile, answer, kind: 'book', durationMs: now() - startedAt, live: !result.notCatalogFailure });
       return { ...result, answer, durationMs: now() - startedAt, requests: result.requests || 0 };
     };
     if (!platform || !provider?.checkAvailability) return finish({ error: coded('Catalog lookups are not available for this library', 'CATALOG_UNSUPPORTED'), lookupKind });
     const deadline = Math.min(deadlineAt ?? Infinity, startedAt + bookDeadlineMs(entry, platform));
+    // Resolve the edition profile before taking a host slot, and only within
+    // the check's deadline: waiting on Open Library must not hold a catalog
+    // slot or use up the catalog's time.
+    if (!ownRecord && editionScope === 'work' && typeof books?.searchProfile === 'function') {
+      let profile;
+      try { profile = await settleBy(books.searchProfile(bookKey, { editionScope, language }), deadline, signal, now); }
+      catch (error) { return finish({ error, lookupKind, notCatalogFailure: true }); }
+      books = { searchProfile: async () => profile };
+    }
     let release;
     try { release = await guard.acquire(host, platform.hostConcurrency, { deadlineAt: deadline, signal }); }
-    catch (error) { return finish({ error, lookupKind }); }
+    catch (error) { return finish({ error, lookupKind, notCatalogFailure: true }); }
     try {
       // While the circuit is open the book page still tries once, with no
       // transport retries beyond the adapter's own.
@@ -94,7 +120,10 @@ export function createCatalogLookup({
     const startedAt = now();
     const libraryId = entry?.id || entry?.slug;
     const own = book.recordId && (!book.recordLibraryId || book.recordLibraryId === libraryId);
-    const stored = storedAnswer(await recorder.readAnswers(libraryId, identitiesFor(libraryId, book)), askedIdentity(libraryId, book, editionScope));
+    // An exact-edition lookup is answered only by that edition (or this
+    // library's own record), never by a work-level answer from another ISBN.
+    const identities = identitiesFor(libraryId, book).filter(id => editionScope !== 'exact' || id.kind !== 'ol_work');
+    const stored = storedAnswer(await recorder.readAnswers(libraryId, identities), askedIdentity(libraryId, book, editionScope));
     if (stored) return { ...stored, requests: 0, durationMs: now() - startedAt, source: 'stored' };
     const isbn13 = validateAndNormalize(book.isbn13 || '');
     const parsed = own ? { kind: 'catalog', libraryId, recordId: book.recordId } : parsePublicBookKey(book.bookKey || '');
@@ -169,16 +198,32 @@ export function createCatalogLookup({
     const deadline = Math.min(deadlineAt ?? Infinity, startedAt + platform.results.deadlineMs);
     const view = publicView(entry, publicLibrary);
     const attemptedAt = new Date(startedAt).toISOString();
-    const profileOf = async book => { try { return await book.profile; } catch { return null; } };
+    // A profile that fails, or is not ready by the deadline, means that book
+    // cannot be matched (no badge), never "not found".
+    const profileOf = async book => { try { return await settleBy(book.profile, deadline, signal, now); } catch { return null; } };
     // Profiles are Open Library reads: start them outside the catalog
     // operation so they never use the catalog's request budget.
     const profiles = new Map([...pending.values()].map(book => [book.bookKey, profileOf(book)]));
     let runAnswer = null;
+    // Ends the catalog part of the run: frees the host's marking slot and
+    // records the run's health once. Called before any mark is handed out, so
+    // a reader who stops reading the marks never holds the slot.
+    let ended = false;
+    const endRun = () => {
+      if (ended) return;
+      ended = true;
+      finishMarking();
+      if (runAnswer) {
+        noteHost(host, runAnswer);
+        recorder.record({ entry, platform: platformName, host, answer: runAnswer, kind: 'results', durationMs: now() - startedAt, writeAnswers: false });
+      }
+    };
     try {
       if (strategy === 'search_rows') {
         const search = provider.searchResultRows || provider.searchBookCandidates || provider.searchCatalog;
         const text = String(query || '').trim().slice(0, 160);
         if (!search || !text) {
+          endRun();
           yield { done: true, notAttempted: [...pending.keys()], unmatched };
           return;
         }
@@ -193,10 +238,12 @@ export function createCatalogLookup({
             runAnswer = { outcome: 'checked' };
           } catch (error) {
             runAnswer = couldntCheck(signal?.aborted ? 'cancelled' : reasonForError(error));
+            endRun();
             yield { done: true, notAttempted: [...pending.keys()], unmatched };
             return;
           }
         }
+        endRun();
         for (const book of [...pending.values()]) {
           const profile = await profiles.get(book.bookKey);
           if (!profile?.isbns?.length) continue;
@@ -224,16 +271,20 @@ export function createCatalogLookup({
           if (isbns.length) plan.push({ book, profile, isbns });
         }
         const isbns = [...new Set(plan.flatMap(item => item.isbns))];
-        if (!isbns.length) { yield { done: true, notAttempted: [...pending.keys()], unmatched }; return; }
+        // Nothing to ask, or the time went on edition profiles: no catalog
+        // request, and not a catalog failure.
+        if (!isbns.length || signal?.aborted || deadline <= now()) { endRun(); yield { done: true, notAttempted: [...pending.keys()], unmatched }; return; }
         let answers;
         try {
           answers = await withResultsBudget(platform, deadline, signal, () => provider.checkMany(isbns));
           runAnswer = { outcome: 'checked' };
         } catch (error) {
           runAnswer = couldntCheck(signal?.aborted ? 'cancelled' : reasonForError(error));
+          endRun();
           yield { done: true, notAttempted: [...pending.keys()], unmatched };
           return;
         }
+        endRun();
         for (const { book, profile, isbns: asked } of plan) {
           const own = validateAndNormalize(book.isbn13 || '');
           let found = null, ownAbsent = false, complete = true;
@@ -283,7 +334,14 @@ export function createCatalogLookup({
             await Promise.all(Array.from({ length: Math.max(1, platform.results.concurrency || 1) }, worker));
           });
         } catch (error) { failure ||= error; }
-        runAnswer = settled.length ? { outcome: 'checked' } : failure ? couldntCheck(signal?.aborted ? 'cancelled' : reasonForError(failure)) : null;
+        // The run succeeded only if the catalog gave at least one definite
+        // answer; unreadable answers are the catalog's failure, not a success.
+        const definite = settled.find(item => item.answer.outcome !== 'couldnt_check');
+        runAnswer = definite ? { outcome: 'checked' }
+          : signal?.aborted ? couldntCheck('cancelled')
+          : failure ? couldntCheck(reasonForError(failure))
+          : settled[0]?.answer || null;
+        endRun();
         for (const { book, answer } of settled) {
           pending.delete(book.bookKey);
           const profile = await profiles.get(book.bookKey);
@@ -292,13 +350,10 @@ export function createCatalogLookup({
           yield { bookKey: book.bookKey, ...answer, source: 'live' };
         }
       }
+      endRun();
       yield { done: true, notAttempted: [...pending.keys()], unmatched };
     } finally {
-      finishMarking();
-      if (runAnswer) {
-        noteHost(host, runAnswer);
-        recorder.record({ entry, platform: platformName, host, answer: runAnswer, kind: 'results', durationMs: now() - startedAt, writeAnswers: false });
-      }
+      endRun();
     }
   }
 

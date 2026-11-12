@@ -29,7 +29,8 @@ export function robotsRules(text, userAgent = ROBOTS_AGENT_TOKEN) {
         groups.push(group);
         hadRules = false;
       }
-      group.agents.push(value.toLowerCase());
+      // Only the product token counts (`MyBookshelf/1.0` names `mybookshelf`).
+      group.agents.push(value.split('/')[0].trim().toLowerCase());
     } else if (group) {
       hadRules = true;
       if (['allow', 'disallow'].includes(key) && value) group.rules.push({ allow: key === 'allow', path: value });
@@ -37,7 +38,9 @@ export function robotsRules(text, userAgent = ROBOTS_AGENT_TOKEN) {
     }
   }
   const token = userAgent.toLowerCase();
-  const specific = groups.filter(g => g.agents.some(agent => agent !== '*' && token.includes(agent)));
+  // RFC 9309: the group whose agent equals our product token, case-insensitively.
+  // A substring would let `User-agent: b` or `book` stand for this crawler.
+  const specific = groups.filter(g => g.agents.some(agent => agent !== '*' && agent === token));
   const selected = specific.length ? specific : groups.filter(g => g.agents.includes('*'));
   return { rules: selected.flatMap(g => g.rules), delay: Math.max(0, ...selected.map(g => g.delay)) };
 }
@@ -62,7 +65,7 @@ const ALLOW_ALL = Object.freeze({ rules: [], delay: 0 });
 const DISALLOW_ALL = Object.freeze({ rules: [{ allow: false, path: '/' }], delay: 0 });
 
 // `fetchPolicy(url)` returns `{ status, text }` or throws. Following RFC 9309:
-// 4xx means no restrictions; 5xx means the whole site is off limits for a
+// 4xx (except 429) means no restrictions; 5xx or 429 means the whole site is off limits for a
 // while. A network failure reading robots.txt is treated as no restrictions
 // for five minutes, because several Indian catalogs reset connections to
 // /robots.txt while serving their OPAC normally (IIT Bhubaneswar, 12 Nov 2026).
@@ -76,7 +79,9 @@ export function createRobotsPolicy({ fetchPolicy = defaultFetchPolicy, now = () 
       try {
         const response = await fetchPolicy(`${origin}/robots.txt`);
         if (response.status >= 200 && response.status < 300) return { policy: robotsRules(response.text, userAgent), ttl: DAY_MS };
-        if (response.status >= 400 && response.status < 500) return { policy: ALLOW_ALL, ttl: DAY_MS };
+        // 429 asks us to slow down: treat it like a server error (refuse for
+        // a while), not as "no robots.txt" for a whole day.
+        if (response.status >= 400 && response.status < 500 && response.status !== 429) return { policy: ALLOW_ALL, ttl: DAY_MS };
         return { policy: DISALLOW_ALL, ttl: FAILURE_MS };
       } catch {
         return { policy: ALLOW_ALL, ttl: FAILURE_MS };

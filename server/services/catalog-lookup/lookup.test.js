@@ -2,7 +2,7 @@ import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createCatalogLookup, createLookupRecorder, createMemoryAnswerStore, createMemoryHealthRecord, createHostGuard, PLATFORMS } from './index.js';
-import { clearHttpCache, getText } from '../providers/http.js';
+import { cachedTask, clearHttpCache, getText } from '../providers/http.js';
 import { clearEgranthalayaRefusals } from '../providers/egranthalaya.js';
 import { createPublicAvailabilityService } from '../../public-v2/availability.js';
 
@@ -457,4 +457,124 @@ test('without CATALOG_LOOKUP_V2 the new layer is not used', async () => {
   const service = createPublicAvailabilityService({ directory, books: { resolve: async () => publicBook }, providerFor: () => ({ checkAvailability: async () => ({ outcome: 'in_catalog', matchKind: 'exact_isbn', recognizedExact: true }) }), lookup });
   assert.equal((await service.check({ libraryId: publicLibrary.id, bookKey: publicBook.bookKey, editionScope: 'exact' })).response.outcome, 'in_catalog');
   assert.equal(used, false);
+});
+
+// --- Checker findings ---------------------------------------------------------
+
+test('an exact-edition lookup is not answered by a stored work-level found from another ISBN', async () => {
+  const answers = createMemoryAnswerStore();
+  await answers.writeAnswers([{ libraryId: 'vega:exact', kind: 'ol_work', value: 'OL9W', answer: 'found', evidence: 'work_isbn',
+    matchedIsbn13: '9780140328721', expiresAt: Date.now() + 60_000 }]);
+  let calls = 0;
+  const { lookup } = harness({ answers, providerFor: () => ({ checkAvailability: async () => { calls++; return { outcome: 'not_found', matchKind: 'none', recognizedExact: true }; } }) });
+  const library = { id: 'vega:exact', platform: 'vega', catalogUrl: 'https://v.example' };
+  const book = { bookKey: 'k', isbn13: '9788173711466', workId: 'OL9W' };
+  const exact = await lookup.lookupBook({ library, book, editionScope: 'exact' });
+  assert.deepEqual([exact.outcome, exact.source, calls], ['not_found', 'live', 1]);
+  // The work-level question may still use it.
+  assert.deepEqual([(await lookup.lookupBook({ library, book })).source, calls], ['stored', 1]);
+});
+
+test('a reader who leaves does not cancel the request another reader is sharing', async () => {
+  global.fetch = async (url, options) => new Promise((resolve, reject) => {
+    options.signal.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' })));
+    setTimeout(() => resolve(response(url, 'page')), 60);
+  });
+  const provider = { checkAvailability: isbn => cachedTask(`shared:${isbn}`, async () => {
+    await getText('https://k.example/shared', { retries: 0 });
+    return { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true };
+  }) };
+  const { lookup, health, settle } = harness({ providerFor: () => provider });
+  const library = { id: 'koha:shared', platform: 'koha', catalogUrl: 'https://k.example' };
+  const book = { bookKey: 'k', isbn13: '9788173711466' };
+  const leaving = new AbortController();
+  const first = lookup.lookupBook({ library, book, editionScope: 'exact', signal: leaving.signal });
+  await new Promise(resolve => setTimeout(resolve, 5));
+  const second = lookup.lookupBook({ library, book, editionScope: 'exact' });
+  setTimeout(() => leaving.abort(), 15);
+  const [left, stayed] = await Promise.all([first, second]);
+  assert.deepEqual([left.outcome, left.reason], ['couldnt_check', 'cancelled']);
+  assert.equal(stayed.outcome, 'found');
+  await settle();
+  assert.equal((await health.libraryHealth('koha:shared')).failuresSinceSuccess, 0);
+});
+
+test('a per-ISBN marking run whose answers were all unreadable is a failure, not a success', async () => {
+  const guard = createHostGuard();
+  const { lookup, health, settle } = harness({ guard, providerFor: () => ({ checkAvailability: async () => ({ outcome: 'unknown', matchKind: null }) }) });
+  for (let i = 0; i < 3; i++) {
+    await collect(lookup.markResults({ library: { id: 'vega:unread', platform: 'vega', catalogUrl: 'https://unread.example' }, query: 'q',
+      books: [{ bookKey: 'a', isbn13: '9788173711466' }] }));
+  }
+  await settle();
+  const state = await health.libraryHealth('vega:unread');
+  assert.deepEqual([state.lastSuccessAt, state.failuresSinceSuccess], [null, 3]);
+  assert.equal(guard.circuitOpen('unread.example'), true);
+});
+
+test('result marking ends by its deadline when an edition profile never arrives, and frees the host', async () => {
+  let searched = 0;
+  const provider = { checkAvailability: async () => ({}), searchResultRows: async () => { searched++; return []; }, checkMany: async () => assert.fail('no catalog call') };
+  const { lookup, guard, health, settle } = harness({ providerFor: () => provider });
+  for (const [platform, host] of [['vufind', 'slow-profile.example'], ['calil', 'api.calil.jp']]) {
+    const library = { id: `${platform}:slow`, platform, slug: 'S', catalogUrl: `https://${host}` };
+    const run = collect(lookup.markResults({ library, query: 'q', books: [{ bookKey: 'a', profile: new Promise(() => {}) }], deadlineAt: Date.now() + 50 }));
+    const settled = await Promise.race([run, new Promise(resolve => setTimeout(() => resolve('still waiting'), 1_000))]);
+    assert.deepEqual(settled, [{ done: true, notAttempted: ['a'], unmatched: [] }], platform);
+    const slot = guard.tryStartMarking(host);
+    assert.ok(slot, platform);
+    slot();
+  }
+  assert.equal(searched, 1);
+  await settle();
+  // Waiting on Open Library is not the Calil catalog's failure.
+  assert.equal(await health.libraryHealth('calil:slow'), null);
+});
+
+test('a reader who stops reading marks does not hold the host’s marking slot', async () => {
+  const provider = { checkAvailability: async () => ({}), searchResultRows: async () => [{ recordId: '1', title: 'Wings of fire', isbn: '9788173711466' }] };
+  const { lookup, guard } = harness({ providerFor: () => provider });
+  const iterator = lookup.markResults({ library: { id: 'vufind:walk', platform: 'vufind', catalogUrl: 'https://walk.example' }, query: 'wings',
+    books: [{ bookKey: 'a', profile: kalamProfile() }] })[Symbol.asyncIterator]();
+  assert.equal((await iterator.next()).value.outcome, 'found');
+  const slot = guard.tryStartMarking('walk.example');
+  assert.ok(slot);
+  slot();
+});
+
+test('an edition profile that fails or is too slow is not counted against the catalog', async () => {
+  let catalogCalls = 0;
+  const provider = { checkAvailability: async () => { catalogCalls++; return { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }; } };
+  const guard = createHostGuard();
+  const { lookup, health, settle } = harness({ guard, providerFor: () => provider });
+  const entry = { id: 'vega:profile', platform: 'vega', catalogUrl: 'https://profile.example' };
+  const book = { isbn13: '9788173711466', title: 'Wings of fire', authors: [] };
+  const failing = { searchProfile: async () => { throw coded('Open Library is down', 'METADATA_UNAVAILABLE'); } };
+  const slow = { searchProfile: () => new Promise(() => {}) };
+  for (let i = 0; i < 3; i++) {
+    const down = await lookup.checkBook({ entry, book, bookKey: 'k', lookupKind: 'exact_isbn', books: failing, attemptedAt: 'now' });
+    assert.equal(down.answer.outcome, 'couldnt_check');
+    const late = await lookup.checkBook({ entry, book, bookKey: 'k', lookupKind: 'exact_isbn', books: slow, attemptedAt: 'now', deadlineAt: Date.now() + 30 });
+    assert.deepEqual([late.answer.outcome, late.answer.reason], ['couldnt_check', 'timeout']);
+  }
+  await settle();
+  assert.equal(catalogCalls, 0);
+  assert.equal(await health.libraryHealth(entry.id), null);
+  assert.equal(guard.circuitOpen('profile.example'), false);
+  assert.equal(guard.activeCount('profile.example'), 0);
+});
+
+test('waiting for a busy host slot on this instance is couldn’t check, but not the catalog’s failure', async () => {
+  const guard = createHostGuard();
+  const { lookup, health, settle } = harness({ guard, providerFor: () => ({ checkAvailability: async () => assert.fail('no catalog request') }) });
+  const entry = { id: 'evergreen:busy', platform: 'evergreen', catalogUrl: 'https://busy.example' };
+  const release = await guard.acquire('busy.example', 1);
+  for (let i = 0; i < 3; i++) {
+    const answer = await lookup.lookupBook({ library: entry, book: { bookKey: 'k', isbn13: '9788173711466' }, editionScope: 'exact', deadlineAt: Date.now() + 20 });
+    assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'timeout']);
+  }
+  release();
+  await settle();
+  assert.equal(await health.libraryHealth(entry.id), null);
+  assert.equal(guard.circuitOpen('busy.example'), false);
 });

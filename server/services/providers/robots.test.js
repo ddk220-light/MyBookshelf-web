@@ -94,3 +94,17 @@ test('operation spacing applies between successive requests to one host', async 
   assert.ok(times[1] - times[0] >= 55, `spacing ${times[1] - times[0]}`);
   assert.ok(times[2] - times[1] < 55);
 });
+
+test('robots groups match the product token exactly; 429 refuses for a while', async () => {
+  // A short or partial agent name is another crawler, not this one.
+  assert.equal(robotsAllowed(robotsRules('User-agent: b\nDisallow: /\n\nUser-agent: *\nAllow: /\n'), 'https://c.example/x'), true);
+  assert.equal(robotsAllowed(robotsRules('User-agent: book\nDisallow: /\n'), 'https://c.example/x'), true);
+  // A versioned token still names this crawler.
+  assert.equal(robotsAllowed(robotsRules('User-agent: *\nDisallow: /\n\nUser-agent: MyBookshelf/1.0\nAllow: /\n'), 'https://c.example/x'), true);
+  assert.equal(robotsAllowed(robotsRules('﻿User-agent: *\nDisallow: /\n'), 'https://c.example/x'), false);
+  let clock = 0;
+  const policy = createRobotsPolicy({ now: () => clock, fetchPolicy: async () => ({ status: 429, text: '' }) });
+  assert.equal((await policy.check('https://c.example/search')).allowed, false);
+  clock += 5 * 60 * 1000;
+  assert.equal((await policy.check('https://c.example/search')).allowed, false);
+});

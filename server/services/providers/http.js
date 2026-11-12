@@ -137,18 +137,32 @@ function setCachedValue(key, value, ttlMs) {
   while (cache.size > MAX_CACHE_ENTRIES) cache.delete(cache.keys().next().value);
 }
 
-export async function cachedTask(key, task, { ttlMs = CACHE_TTL_MS, deadlineAt, shouldCache = () => true } = {}) {
+export async function cachedTask(key, task, options = {}) {
+  const { ttlMs = CACHE_TTL_MS, deadlineAt, shouldCache = () => true } = options;
   const hit = cachedValue(key);
   if (hit !== undefined) return hit;
-  if (inFlight.has(key)) return raceDeadline(inFlight.get(key), deadlineAt);
-  const promise = Promise.resolve().then(task);
-  inFlight.set(key, promise);
+  const shared = inFlight.get(key);
+  if (shared) {
+    try {
+      return await raceDeadline(shared.promise, deadlineAt);
+    } catch (error) {
+      // The reader who started the shared task left or hit its own deadline,
+      // which cancelled the shared request. That says nothing about this
+      // reader's check: run it again under this reader's own operation.
+      const own = operations.getStore()?.signal;
+      if (!shared.signal?.aborted || own?.aborted || (deadlineAt != null && remaining(deadlineAt) === 0)) throw error;
+      if (inFlight.get(key) === shared) inFlight.delete(key);
+      return cachedTask(key, task, options);
+    }
+  }
+  const entry = { promise: Promise.resolve().then(task), signal: operations.getStore()?.signal || null };
+  inFlight.set(key, entry);
   try {
-    const value = await raceDeadline(promise, deadlineAt);
+    const value = await raceDeadline(entry.promise, deadlineAt);
     if (shouldCache(value)) setCachedValue(key, value, ttlMs);
     return value;
   } finally {
-    if (inFlight.get(key) === promise) inFlight.delete(key);
+    if (inFlight.get(key) === entry) inFlight.delete(key);
   }
 }
 
