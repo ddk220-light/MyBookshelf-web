@@ -14,7 +14,8 @@ export function shouldInviteAccount({ guest, savedCount, emailAccounts, dismisse
 
 export function AccountInvite({ savedCount }: { savedCount: number }) {
   const { session } = useAccountSession();
-  const guest = session.status === 'guest';
+  // Accounts switched off: no invite (and no capabilities request).
+  const guest = session.status === 'guest' && !session.availability;
   const [dismissed, setDismissed] = useState(() => Boolean(readOneShelfState().accountInviteDismissed));
   const [emailAccounts, setEmailAccounts] = useState<boolean | null>(null);
   const wanted = guest && savedCount > 0 && !dismissed;

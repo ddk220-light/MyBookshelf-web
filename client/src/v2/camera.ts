@@ -10,19 +10,29 @@ export type IsbnScanner = {
   stop: () => void;
 };
 
-async function fallbackDecoder(): Promise<FrameDecoder> {
+/**
+ * Which barcodes a scanner reports. `isbn` reads EAN-13 only (ISBNs are
+ * EAN-13). `product` also reads the other retail codes (EAN-8, UPC-A,
+ * UPC-E), so a reader pointing at a price or shop label is told it is not an
+ * ISBN instead of seeing nothing happen. Every decoded value is passed on;
+ * the caller decides whether it is an ISBN.
+ */
+export type ScanFormats = 'isbn' | 'product';
+const NATIVE_FORMATS: Record<ScanFormats, string[]> = { isbn: ['ean_13'], product: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] };
+
+async function fallbackDecoder(formats: ScanFormats): Promise<FrameDecoder> {
   // Load the on-device decoder only when a camera is opened and needs it.
   const { createBarcodeDecoder } = await import('./barcodeDecoder');
-  return createBarcodeDecoder();
+  return createBarcodeDecoder(formats === 'product');
 }
 
-async function createDecoder(): Promise<FrameDecoder> {
+async function createDecoder(wanted: ScanFormats): Promise<FrameDecoder> {
   const Detector = (window as Window & { BarcodeDetector?: BarcodeDetectorConstructor }).BarcodeDetector;
   if (Detector) {
     try {
       const formats = await Detector.getSupportedFormats?.();
       if (!formats || formats.includes('ean_13')) {
-        const detector = new Detector({ formats: ['ean_13'] });
+        const detector = new Detector({ formats: NATIVE_FORMATS[wanted].filter(format => !formats || formats.includes(format)) });
         let fallback: FrameDecoder | null = null;
         return async (video) => {
           if (!fallback) {
@@ -30,7 +40,7 @@ async function createDecoder(): Promise<FrameDecoder> {
               return (await detector.detect(video)).find((item) => item.rawValue)?.rawValue || null;
             } catch {
               // Some browsers expose the API but cannot run this detector.
-              fallback = await fallbackDecoder();
+              fallback = await fallbackDecoder(wanted);
             }
           }
           return fallback(video);
@@ -38,7 +48,7 @@ async function createDecoder(): Promise<FrameDecoder> {
       }
     } catch { /* Unsupported native formats use the same local decoder. */ }
   }
-  return fallbackDecoder();
+  return fallbackDecoder(wanted);
 }
 
 export class BrowserIsbnScanner implements IsbnScanner {
@@ -46,6 +56,8 @@ export class BrowserIsbnScanner implements IsbnScanner {
   private video: HTMLVideoElement | null = null;
   private timer: number | null = null;
   private session = 0;
+
+  constructor(private readonly formats: ScanFormats = 'isbn') {}
 
   async start(video: HTMLVideoElement, onCode: (code: string) => void): Promise<void> {
     this.stop();
@@ -68,7 +80,7 @@ export class BrowserIsbnScanner implements IsbnScanner {
       video.playsInline = true;
       await video.play();
       if (session !== this.session) return;
-      const decode = await createDecoder();
+      const decode = await createDecoder(this.formats);
       if (session !== this.session) return;
       const tick = async () => {
         if (session !== this.session) return;

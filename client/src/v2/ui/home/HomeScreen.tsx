@@ -7,7 +7,8 @@ import type { RecentBook } from '../../types';
 import { SidePanel } from '../panel/SidePanel';
 import { ResultsShelf } from '../search/ResultsShelf';
 import { resultEntries } from '../search/searchResults';
-import { useBookSearch } from '../search/useBookSearch';
+import { runBookSearch, useBookSearch } from '../search/useBookSearch';
+import { ScanDialog, type ScanAnswer, type ScanSource } from '../scan/ScanDialog';
 import { AccountInvite } from '../shelf/AccountInvite';
 import { Bookcase } from '../shelf/Bookcase';
 import { EmptyBays, EmptyShelf } from '../shelf/EmptyShelf';
@@ -27,13 +28,13 @@ import './home.css';
  * Back closes them. `search.candidateId` is the opaque key of results held in
  * same-tab memory (searchMemory); the search text itself is never here.
  */
-type HomeState = { overlay?: 'panel'; panelPushed?: boolean; search?: { candidateId?: string; pushed?: boolean } };
+type HomeState = { overlay?: 'panel' | 'scan'; panelPushed?: boolean; scanPushed?: boolean; search?: { candidateId?: string; pushed?: boolean } };
 
 /**
  * The one-shelf home (VITE_ONE_SHELF): top bar with the search bar, then the
  * reader's shelf (or the empty state), the account invite and "Viewed before".
- * A search shows its results in place of the shelf. The side panel is an
- * overlay with its own history entry, so Back closes it.
+ * A search shows its results in place of the shelf. The side panel and the
+ * scan pop-up are overlays with their own history entry, so Back closes them.
  */
 export function HomeScreen() {
   const { state, library, loadingLibrary, clearRecentBooks, restoreRecentBooks, recoveryMode, reportStorageFailure } = useLibrary();
@@ -143,8 +144,62 @@ export function HomeScreen() {
     input?.focus();
     input?.scrollIntoView?.({ block: 'nearest' });
   };
-  // The scan pop-up arrives in a later phase; until then the existing scanner answers.
-  const goScan = () => navigate('/app/search');
+  // Scan pop-up (plan Phase 6). It opens over whatever is showing (shelf or
+  // results) as its own history entry. Focus goes back to the button that
+  // opened it, or to the search bar after "Search by title".
+  const scanOpen = routeState?.overlay === 'scan';
+  const scanOpener = useRef<HTMLElement | null>(null);
+  const focusAfterScan = useRef<'opener' | 'search'>('opener');
+  const scanLookup = useRef<AbortController | null>(null);
+  const goScan = () => {
+    const active = document.activeElement;
+    scanOpener.current = active instanceof HTMLElement && active !== document.body ? active : null;
+    focusAfterScan.current = 'opener';
+    navigate(location.pathname, { state: { ...(latestState.current || {}), overlay: 'scan', scanPushed: true } });
+  };
+  const closeScan = useCallback(() => {
+    scanLookup.current?.abort();
+    const { overlay: _overlay, scanPushed, ...rest } = latestState.current || {};
+    if (scanPushed) navigate(-1);
+    else navigate(location.pathname, { replace: true, state: Object.keys(rest).length ? rest : null });
+  }, [navigate, location.pathname]);
+  const scanReturnFocus = useCallback(() => {
+    if (focusAfterScan.current === 'search') return document.getElementById(SHELF_SEARCH_ID);
+    const opener = scanOpener.current;
+    return opener?.isConnected ? opener : document.querySelector<HTMLElement>('.search-bar-scan');
+  }, []);
+  const searchByTitle = () => { focusAfterScan.current = 'search'; closeScan(); };
+  useEffect(() => { if (!scanOpen) scanLookup.current?.abort(); }, [scanOpen]);
+  useEffect(() => () => scanLookup.current?.abort(), []);
+  // A scanned or typed ISBN goes through the same public search as the bar.
+  // One book: open it in place of the pop-up's entry, so Back from the book
+  // returns to what was under the pop-up. A placeholder record (no public
+  // book data for this ISBN) is "no known book"; a failed lookup is not.
+  const lookUpIsbn = async (isbn: string, source: ScanSource): Promise<ScanAnswer> => {
+    scanLookup.current?.abort();
+    const controller = new AbortController();
+    scanLookup.current = controller;
+    let answer;
+    try { answer = await runBookSearch(isbn, state.savedBooks, controller.signal); }
+    catch { return 'failed'; }
+    if (controller.signal.aborted || latestState.current?.overlay !== 'scan') return 'failed';
+    const replace = Boolean(latestState.current?.scanPushed);
+    if (answer.kind === 'exact') {
+      if (answer.book.metadataStatus === 'missing') return 'unknown';
+      navigate('/app/books/' + encodeURIComponent(answer.book.bookKey), { replace, state: { from: 'shelf', source, book: answer.book } });
+      return 'opened';
+    }
+    if (answer.kind === 'results') {
+      if (!candidatesFor(answer.id)?.length && !shelfMatchesFor(answer.id).length) return 'unknown';
+      // Several books for one ISBN (rare): show them as search results.
+      const { overlay: _overlay, scanPushed: _pushed, ...rest } = latestState.current || {};
+      search.cancel();
+      setQuery(isbn);
+      navigate(location.pathname, { replace, state: { ...rest, search: { pushed: true, candidateId: answer.id } } });
+      return 'opened';
+    }
+    return 'failed';
+  };
 
   const clearViewed = async () => {
     const books = state.recentBooks;
@@ -187,6 +242,7 @@ export function HomeScreen() {
     {cleared && <div className="undo-notice home-undo" role="status"><span>Viewed before cleared</span>
       {restoreRecentBooks && <button type="button" onClick={async () => { if (await restoreRecentBooks(cleared)) setCleared(null); }}>Undo</button>}</div>}
     <SidePanel open={panelOpen} onClose={closePanel} returnFocus={returnFocus} />
+    <ScanDialog open={scanOpen} onClose={closeScan} onIsbn={lookUpIsbn} onSearchByTitle={searchByTitle} returnFocus={scanReturnFocus} />
   </div>;
 }
 

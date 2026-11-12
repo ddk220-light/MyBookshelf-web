@@ -101,7 +101,7 @@ export function AppFrame({ children, oneShelf = false }: { children: ReactNode; 
         {!oneShelf && <TabBar />}
         <main id="main-content" ref={screen} className="app-screen" tabIndex={-1}>
           {oneShelf && location.pathname !== '/app/shelf' && !location.pathname.startsWith('/app/books/') && <Link className="one-shelf-back" to="/app/shelf"><span aria-hidden="true">‹</span> My shelf</Link>}
-          <AccountNotice/>
+          <AccountNotice oneShelf={oneShelf}/>
           {storageNotice && <div className="site-notice"><Notice tone="error">{storageNotice}</Notice>{recoveryMode && <div className="recovery-actions"><button onClick={reloadShelf}>Reload shelf</button><button className="button-quiet" onClick={() => setResetting(true)}>Start a new shelf</button></div>}</div>}
           {removedLibraryNotice && <div className="site-notice"><Notice>{removedLibraryNotice}</Notice></div>}
           {children}

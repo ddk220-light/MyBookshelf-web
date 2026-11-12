@@ -57,3 +57,25 @@ it('discards a decode finishing after stop and never starts overlapping frame re
   expect(video.srcObject).toBeNull();
   expect(vi.getTimerCount()).toBe(0);
 });
+
+it('reads only EAN-13 by default and, for the scan pop-up, other retail codes it can report as not an ISBN', async () => {
+  vi.useFakeTimers();
+  const requested: string[][] = [];
+  vi.stubGlobal('BarcodeDetector', class {
+    static async getSupportedFormats() { return ['ean_13', 'ean_8', 'upc_a', 'qr_code']; }
+    constructor(options: { formats: string[] }) { requested.push(options.formats); }
+    async detect() { return [{ rawValue: '5012345678900' }]; }
+  });
+  for (const formats of [undefined, 'product'] as const) {
+    const { stream, video } = camera();
+    vi.stubGlobal('navigator', { mediaDevices: { getUserMedia: async () => stream } });
+    const scanner = new BrowserIsbnScanner(formats);
+    const onCode = vi.fn();
+    await scanner.start(video, onCode);
+    await vi.advanceTimersByTimeAsync(10);
+    expect(onCode).toHaveBeenCalledWith('5012345678900');
+    scanner.stop();
+  }
+  // upc_e is not supported here, so it is not asked for.
+  expect(requested).toEqual([['ean_13'], ['ean_13', 'ean_8', 'upc_a']]);
+});

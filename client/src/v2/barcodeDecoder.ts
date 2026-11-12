@@ -1,9 +1,11 @@
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import { BarcodeFormat, DecodeHintType } from '@zxing/library';
 
-export function createBarcodeDecoder() {
+// productCodes: also read EAN-8, UPC-A and UPC-E (same reader family, so
+// little extra work per frame); the caller reports those as "not an ISBN".
+export function createBarcodeDecoder(productCodes = false) {
   const reader = new BrowserMultiFormatReader(new Map<DecodeHintType, unknown>([
-    [DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13]],
+    [DecodeHintType.POSSIBLE_FORMATS, productCodes ? [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E] : [BarcodeFormat.EAN_13]],
     [DecodeHintType.TRY_HARDER, true],
   ]));
   return async (video: HTMLVideoElement): Promise<string | null> => {

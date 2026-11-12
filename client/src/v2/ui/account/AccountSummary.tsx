@@ -70,10 +70,13 @@ export function AccountSummary() {
     </section>
   );
 }
-export function AccountNotice() {
+// oneShelf (VITE_ONE_SHELF): when accounts are switched off the reader just
+// uses the app as a guest; there is nothing to say and nothing to press.
+export function AccountNotice({ oneShelf = false }: { oneShelf?: boolean } = {}) {
   const location = useLocation();
   const { session, refresh, continueGuest, signOut } = useAccountSession(),
     library = useLibrary();
+  if (oneShelf && session.availability === "disabled") return null;
   const entry =
     /^\/app\/account\/(sign-up|sign-in|forgot-password|reset-password|verify)$/.test(
       location.pathname,

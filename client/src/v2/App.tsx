@@ -34,7 +34,7 @@ function NotFoundPage() {
 }
 
 export function AnonymousWebApp({oneShelf=oneShelfEnabled()}:{oneShelf?:boolean}={}) {
-  return <AccountSessionProvider><DeletionReceiptProvider><RecentAuthProvider><LinkTokenProvider><IdentityApp oneShelf={oneShelf}/></LinkTokenProvider></RecentAuthProvider></DeletionReceiptProvider></AccountSessionProvider>;
+  return <AccountSessionProvider disabledMeansGuest={oneShelf}><DeletionReceiptProvider><RecentAuthProvider><LinkTokenProvider><IdentityApp oneShelf={oneShelf}/></LinkTokenProvider></RecentAuthProvider></DeletionReceiptProvider></AccountSessionProvider>;
 }
 function IdentityApp({oneShelf}:{oneShelf:boolean}){
   const {session,continueGuest}=useAccountSession(),navigate=useNavigate(),location=useLocation();

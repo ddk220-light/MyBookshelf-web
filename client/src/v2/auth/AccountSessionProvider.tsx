@@ -103,7 +103,10 @@ const key = (s: Pick<AccountSession, "status" | "user">) =>
     ? s.status + ":" + s.user?.id
     : s.status;
 
-export function AccountSessionProvider({ children }: { children: ReactNode }) {
+// disabledMeansGuest (VITE_ONE_SHELF): when the service answers that accounts
+// are switched off, the reader is a guest on this browser's shelf, not an
+// "unavailable" account. No account can be active while accounts are off.
+export function AccountSessionProvider({ children, disabledMeansGuest = false }: { children: ReactNode; disabledMeansGuest?: boolean }) {
   const [session, setSession] = useState<AccountSession>(() => {
     setReaderIdentityScope("checking");
     return { status: "checking", epoch: 0 };
@@ -225,7 +228,12 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
           publish(reply);
           if (explicitSignin) broadcast(false, tabId.current);
         } catch (failure) {
-          if (version === request.current)
+          const disabled =
+            failure instanceof AccountApiError &&
+            failure.code === "ACCOUNT_DISABLED";
+          if (version === request.current && disabledMeansGuest && disabled && !guestLock.current)
+            publish({ status: "guest", availability: "disabled" });
+          else if (version === request.current)
             publish(
               guestLock.current
                 ? {
@@ -259,7 +267,7 @@ export function AccountSessionProvider({ children }: { children: ReactNode }) {
       }
       return current.current;
     },
-    [publish],
+    [publish, disabledMeansGuest],
   );
   const continueGuest = useCallback(() => {
     identityIntent.current++;

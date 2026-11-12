@@ -33,3 +33,9 @@ export function BookmarkGlyph({ size = 15, strokeWidth = 2.2 }: IconProps) {
 export function BackGlyph({ size = 18, strokeWidth = 2 }: IconProps) {
   return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M15 5l-7 7 7 7" /></svg>;
 }
+export function CameraOffGlyph({ size = 30, strokeWidth = 1.8 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M4 8h3l2-3h6l2 3h3v11H4zM3 3l18 18" /><circle cx="12" cy="13" r="3.5" /></svg>;
+}
+export function WarningGlyph({ size = 20, strokeWidth = 2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M12 4l9 16H3zM12 10v4M12 17h.01" /></svg>;
+}

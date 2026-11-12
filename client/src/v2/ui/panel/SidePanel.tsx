@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAccountSession } from '../../auth/AccountSessionProvider';
 import { useLibrary } from '../../context';
 import { useReadingLight } from '../AppFrame';
+import { trapTab } from '../home/dialogFocus';
 import { ChevronGlyph, CloseGlyph, LibraryGlyph, PersonIcon } from '../home/homeIcons';
 
 const LIGHTS = [['daylight', 'Daylight'], ['lamplight', 'Lamplight'], ['ink', 'Ink']] as const;
-const FOCUSABLE = 'button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 /**
  * The left side panel (account, library, reading light, help). A modal
@@ -20,6 +20,9 @@ export function SidePanel({ open, onClose, returnFocus }: { open: boolean; onClo
   const { library, loadingLibrary } = useLibrary();
   const { light, setLight } = useReadingLight();
   const signedIn = session.status === 'authenticated' && Boolean(session.user);
+  // Accounts switched off or not answering: nothing here could work, so the
+  // reader simply carries on as a guest without account buttons.
+  const accountsAvailable = signedIn || !session.availability;
 
   useEffect(() => {
     const dialog = ref.current;
@@ -34,15 +37,7 @@ export function SidePanel({ open, onClose, returnFocus }: { open: boolean; onClo
     }
   }, [open, returnFocus]);
 
-  const trap = (event: KeyboardEvent<HTMLDialogElement>) => {
-    if (event.key !== 'Tab') return;
-    const dialog = ref.current;
-    const controls = Array.from(dialog?.querySelectorAll<HTMLElement>(FOCUSABLE) || []).filter(element => element.getClientRects().length > 0);
-    const first = controls[0], last = controls[controls.length - 1];
-    if (!first) { event.preventDefault(); return; }
-    if (event.shiftKey && (document.activeElement === first || !dialog?.contains(document.activeElement))) { event.preventDefault(); last.focus(); }
-    else if (!event.shiftKey && (document.activeElement === last || !dialog?.contains(document.activeElement))) { event.preventDefault(); first.focus(); }
-  };
+  const trap = (event: KeyboardEvent<HTMLDialogElement>) => trapTab(event, ref.current);
   // The dialog box is the panel itself, so a click on the dialog element outside its box is the backdrop.
   const backdrop = (event: MouseEvent<HTMLDialogElement>) => {
     if (event.target !== ref.current) return;
@@ -55,7 +50,7 @@ export function SidePanel({ open, onClose, returnFocus }: { open: boolean; onClo
     {open && <>
       <button type="button" className="side-panel-close" aria-label="Close" onClick={onClose}><CloseGlyph /></button>
 
-      <section className="panel-section panel-account" aria-labelledby="panel-account">
+      {accountsAvailable && <section className="panel-section panel-account" aria-labelledby="panel-account">
         <h2 id="panel-account">Account</h2>
         {signedIn ? <>
           <div className="panel-person"><span className="panel-avatar" aria-hidden="true"><PersonIcon size={20} /></span><span className="panel-email">{session.user!.email}</span></div>
@@ -65,7 +60,7 @@ export function SidePanel({ open, onClose, returnFocus }: { open: boolean; onClo
           <Link className="home-button panel-button" to="/app/account/sign-up">Create account</Link>
           <Link className="home-button home-button-outline panel-button" to="/app/account/sign-in">Log in</Link>
         </>}
-      </section>
+      </section>}
 
       <section className="panel-section" aria-labelledby="panel-library">
         <h2 id="panel-library">My library</h2>

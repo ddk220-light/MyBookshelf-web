@@ -1,0 +1,64 @@
+/* Scan pop-up (VITE_ONE_SHELF), from docs/design/2026-11-one-shelf Scan and
+   ScanStates boards at 390 x 844 in Daylight. Scoped to .one-shelf-frame like
+   home.css. The camera box stays dark in every reading light (it shows the
+   camera); Lamplight and Ink get derived field and notice colours. */
+:root {
+  --scan-camera: #2b2420; --scan-camera-ink: #fbf8f1; --scan-line: #9fd0ae; --field-line: #cfc6b8;
+  --scan-notice-bg: #fff6df; --scan-notice-line: #e3c98a; --scan-notice-ink: #5e3f00;
+}
+:root[data-reading-light='lamplight'] {
+  --scan-camera: #0c0a08; --field-line: #6b5f52;
+  --scan-notice-bg: #3a2f17; --scan-notice-line: #8a6d2e; --scan-notice-ink: #f3d9a0;
+}
+:root[data-reading-light='ink'] { --scan-camera: #1b2230; --field-line: #b8c0cc; }
+
+.one-shelf-frame .scan-dialog { position: fixed; inset: auto 0 0 0; margin: 0 auto; width: 100%; max-width: 480px; max-height: calc(100% - 16px); box-sizing: border-box;
+  padding: 12px 20px calc(28px + env(safe-area-inset-bottom)); border: 0; border-radius: 22px 22px 0 0; background: var(--reader-bg); color: var(--reader-ink);
+  box-shadow: 0 -8px 30px var(--panel-shadow); overflow-y: auto; flex-direction: column; gap: 16px; font-size: 1rem; line-height: 1.5; }
+.one-shelf-frame .scan-dialog[open] { display: flex; animation: scan-in 240ms cubic-bezier(.22, .8, .2, 1); }
+.one-shelf-frame .scan-dialog::backdrop { background: var(--scrim); }
+@keyframes scan-in { from { transform: translateY(100%); } to { transform: none; } }
+
+.one-shelf-frame .scan-handle { flex: 0 0 auto; align-self: center; width: 40px; height: 4px; border-radius: 2px; background: var(--control-line); }
+.one-shelf-frame .scan-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.one-shelf-frame .scan-header h2 { margin: 0; font: 500 1.625rem/1.2 var(--serif); letter-spacing: -.025em; }
+.one-shelf-frame .scan-close { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; margin-right: -10px; padding: 0; border: 0; background: transparent; color: var(--reader-secondary); display: inline-flex; align-items: center; justify-content: center; }
+
+/* Camera: the live picture under a frame with corners and a scan line. */
+.one-shelf-frame .scan-camera { position: relative; flex: 0 0 auto; height: 230px; border-radius: 14px; overflow: hidden; background: var(--scan-camera); display: flex; align-items: center; justify-content: center; }
+.one-shelf-frame .scan-camera video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.one-shelf-frame .scan-frame { position: relative; width: min(250px, 80%); height: 110px; pointer-events: none;
+  background:
+    linear-gradient(var(--scan-camera-ink), var(--scan-camera-ink)) left top / 26px 3px, linear-gradient(var(--scan-camera-ink), var(--scan-camera-ink)) left top / 3px 26px,
+    linear-gradient(var(--scan-camera-ink), var(--scan-camera-ink)) right top / 26px 3px, linear-gradient(var(--scan-camera-ink), var(--scan-camera-ink)) right top / 3px 26px,
+    linear-gradient(var(--scan-camera-ink), var(--scan-camera-ink)) left bottom / 26px 3px, linear-gradient(var(--scan-camera-ink), var(--scan-camera-ink)) left bottom / 3px 26px,
+    linear-gradient(var(--scan-camera-ink), var(--scan-camera-ink)) right bottom / 26px 3px, linear-gradient(var(--scan-camera-ink), var(--scan-camera-ink)) right bottom / 3px 26px;
+  background-repeat: no-repeat; border-radius: 6px; }
+.one-shelf-frame .scan-line { position: absolute; left: 18px; right: 18px; top: 54px; height: 2px; background: var(--scan-line); }
+.one-shelf-frame .scan-camera-off { height: 170px; flex-direction: column; gap: 12px; color: var(--scan-camera-ink); }
+.one-shelf-frame .scan-allow { height: 46px; min-height: 46px; padding: 0 22px; border: 0; border-radius: 12px; background: var(--scan-camera-ink); color: #1f1a17; font: inherit; font-weight: 600; }
+.one-shelf-frame .scan-allow:focus-visible { outline: 3px solid var(--scan-line); outline-offset: 3px; }
+
+.one-shelf-frame .scan-hint { margin: 0; text-align: center; color: var(--reader-secondary); font-size: .9375rem; }
+.one-shelf-frame .scan-status:empty { display: none; }
+.one-shelf-frame .scan-notice { margin: 0; padding: 12px 14px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--scan-notice-line); border-radius: 12px; background: var(--scan-notice-bg); color: var(--scan-notice-ink); font-weight: 600; line-height: 1.35; }
+.one-shelf-frame .scan-notice svg { flex: 0 0 auto; }
+.one-shelf-frame .scan-notice-quiet { justify-content: center; border-color: transparent; background: transparent; color: var(--reader-secondary); font-weight: 500; }
+.one-shelf-frame .scan-or { margin: 0; display: flex; align-items: center; gap: 12px; color: var(--reader-muted); font-size: .8125rem; }
+.one-shelf-frame .scan-or::before, .one-shelf-frame .scan-or::after { content: ''; flex: 1 1 auto; height: 1px; background: var(--reader-line); }
+
+.one-shelf-frame .scan-isbn { display: flex; gap: 10px; }
+.one-shelf-frame .scan-isbn input:not([type='checkbox']):not([type='radio']) { flex: 1 1 auto; min-width: 0; width: auto; height: 52px; min-height: 52px; box-sizing: border-box; margin: 0; padding: 0 14px; border: 1px solid var(--field-line); border-radius: 12px; background: var(--reader-surface); color: var(--reader-ink); font: inherit; font-size: 1rem; box-shadow: none; }
+.one-shelf-frame .scan-isbn input::placeholder { color: var(--reader-muted); opacity: 1; }
+.one-shelf-frame .scan-isbn input:not([type='checkbox']):focus-visible { outline: 2px solid var(--reader-accent); outline-offset: 0; border-color: var(--reader-accent); box-shadow: none; }
+.one-shelf-frame .scan-find { flex: 0 0 auto; height: 52px; min-height: 52px; padding: 0 22px; border: 0; border-radius: 12px; background: var(--reader-accent); color: var(--reader-on); font: inherit; font-weight: 600; }
+.one-shelf-frame .scan-find:disabled { opacity: .6; }
+.one-shelf-frame .scan-actions { display: flex; flex-direction: column; gap: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .one-shelf-frame .scan-dialog[open] { animation: none; }
+}
+@media (forced-colors: active) {
+  .one-shelf-frame .scan-camera { border: 1px solid CanvasText; }
+  .one-shelf-frame .scan-frame { outline: 2px solid CanvasText; }
+}
