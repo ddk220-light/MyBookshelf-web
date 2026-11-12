@@ -182,7 +182,7 @@ describe('library pop-up', () => {
 describe('library pop-up helpers', () => {
   it('requests only text the server accepts', () => {
     expect(requestableText('  Tirunelveli  ')).toBe('Tirunelveli');
-    for (const text of ['', 'a', '12345', 'me@example.com', 'https://example.com', 'www.example.org', 'mylibrary.org', 'Call 9876543210', 'x'.repeat(81), 'a!']) expect(requestableText(text)).toBeNull();
+    for (const text of ['', 'a', '12345', 'me@example.com', 'https://example.com', 'www.example.org', 'mylibrary.org', 'Call 9876543210', 'x'.repeat(81), 'a!', 'Tirunel\u0000veli', '\u202ETirunelveli']) expect(requestableText(text)).toBeNull();
     for (const text of ['St. Louis', 'Tirunelveli', 'திருநெல்வேலி', 'Sector 17 Chandigarh']) expect(requestableText(text)).toBe(text);
   });
   it('area line is the place and region only', () => {
