@@ -27,3 +27,9 @@ export function ShelfViewGlyph({ size = 20, strokeWidth = 1.8 }: IconProps) {
 export function ListViewGlyph({ size = 20, strokeWidth = 1.8 }: IconProps) {
   return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01" /></svg>;
 }
+export function BookmarkGlyph({ size = 15, strokeWidth = 2.2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M7 4h10v16l-5-4-5 4z" /></svg>;
+}
+export function BackGlyph({ size = 18, strokeWidth = 2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M15 5l-7 7 7 7" /></svg>;
+}

@@ -63,8 +63,13 @@ export function AppFrame({ children, oneShelf = false }: { children: ReactNode; 
       if (event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && event.code === 'Slash') {
         event.preventDefault();
         const shelfSearch = oneShelf ? document.getElementById('shelf-search') : null;
+        const searchState = (location.state as BookNavigation | null)?.searchState;
         if (shelfSearch) shelfSearch.focus();
-        else if (location.pathname === '/app/search') document.getElementById('book-search')?.focus();
+        else if (oneShelf) {
+          // One shelf: search lives on the home screen; results found there come back with it.
+          navigate('/app/shelf', { state: searchState?.shelf && searchState.candidateId ? { search: { candidateId: searchState.candidateId } } : null });
+          requestAnimationFrame(() => document.getElementById('shelf-search')?.focus());
+        } else if (location.pathname === '/app/search') document.getElementById('book-search')?.focus();
         else navigate('/app/search', { state: { ...(location.state as BookNavigation | null)?.searchState, focusSearch: true } });
       } else if (event.key === 'Escape' && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && location.pathname.startsWith('/app/books/')) {
         event.preventDefault();

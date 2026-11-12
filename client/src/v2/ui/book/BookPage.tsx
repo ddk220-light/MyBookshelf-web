@@ -23,7 +23,9 @@ export function BookPage() {
   const [fullStory, setFullStory] = useState(false);
   const [shareMessage, setShareMessage] = useState('');
   const [shareUrl, setShareUrl] = useState('');
-  const back = <Link className="back-link" aria-label={'Back to ' + (from === 'search' ? 'search' : 'shelf')} to={from === 'search' ? '/app/search' : '/app/shelf'} state={from === 'search' ? backState : undefined}>← {from === 'search' ? 'Search' : 'Shelf'}</Link>;
+  // Results shown on the one-shelf home return there, to the same results.
+  const shelfResults = from === 'search' && backState?.shelf && backState.candidateId ? { search: { candidateId: backState.candidateId } } : null;
+  const back = <Link className="back-link" aria-label={'Back to ' + (from === 'search' ? 'search' : 'shelf')} to={from === 'search' && !shelfResults ? '/app/search' : '/app/shelf'} state={shelfResults || (from === 'search' ? backState : undefined)}>← {from === 'search' ? 'Search' : 'Shelf'}</Link>;
   if (error) return <section className="page-section">{back}<h1>Book unavailable</h1><Notice tone="error">{error}</Notice></section>;
   if (!book) return <section className="page-section">{back}<p role="status">Loading book…</p><div className="book-loading skeleton" /></section>;
   const description = book.description?.trim();

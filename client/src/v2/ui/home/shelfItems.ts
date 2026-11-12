@@ -1,7 +1,7 @@
 // What the one-shelf home shows: saved books and saved free items together,
 // most recently added first (plan 3.4: shelf order is most recent first).
 import type { SavedContent } from '../../contentTypes';
-import type { RecentBook } from '../../types';
+import type { PublicBook, RecentBook } from '../../types';
 
 export type ShelfEntry = {
   /** bookKey for library books, contentKey for saved free items. */
@@ -16,6 +16,10 @@ export type ShelfEntry = {
   state: unknown;
   addedAt: number;
   book?: RecentBook;
+  /** Search results: other records of the same work, tried for a cover. */
+  alternatives?: PublicBook[];
+  /** Search results: year of publication, shown in list view only. */
+  year?: string;
 };
 
 const time = (value: string) => { const parsed = Date.parse(value); return Number.isFinite(parsed) ? parsed : 0; };
@@ -31,8 +35,11 @@ export function shelfEntries(savedBooks: readonly RecentBook[], savedContent: re
   return [...savedBooks.map(bookEntry), ...content].sort((a, b) => b.addedAt - a.addedAt);
 }
 
-/** "Title by Author", plus ", in <library>" when the chosen library has the book. */
-export function entryLabel(entry: Pick<ShelfEntry, 'title' | 'authors'>, libraryName?: string | null): string {
+/**
+ * "Title by Author", plus ", on my shelf" for a search result the reader has
+ * saved and ", in <library>" when the chosen library has the book.
+ */
+export function entryLabel(entry: Pick<ShelfEntry, 'title' | 'authors'>, libraryName?: string | null, mine = false): string {
   const author = entry.authors.filter(Boolean).join(', ');
-  return entry.title + (author ? ' by ' + author : '') + (libraryName ? ', in ' + libraryName : '');
+  return entry.title + (author ? ' by ' + author : '') + (mine ? ', on my shelf' : '') + (libraryName ? ', in ' + libraryName : '');
 }

@@ -3,7 +3,7 @@
 //   VITE_ONE_SHELF=true ONE_SHELF_E2E=true npm run test:e2e --workspace=client -- one-shelf-home.spec.js
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { LINKED_LIBRARY, installPublicV2Fixture } from './public-v2-fixture.js';
+import { BOOK, CANDIDATE_BOOK, LINKED_LIBRARY, installPublicV2Fixture } from './public-v2-fixture.js';
 
 const KEY = 'mybookshelf.anonymous-web.v1';
 const book = (index, extra = {}) => ({ bookKey: 'v1:openlibrary:OL' + index + 'W', title: 'Shelf book ' + index, authors: ['Author ' + index], source: 'direct',
@@ -151,5 +151,146 @@ test.describe('One-shelf home', () => {
     await page.goto('/app/shelf');
     await page.getByRole('button', { name: 'Account and settings' }).click();
     expect(await page.locator('.side-panel').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
+  });
+});
+
+// Search on the shelf (plan Phase 5): Results, SearchStates and Shelf boards.
+test.describe('One-shelf search', () => {
+  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
+  const MINE = book(1, { bookKey: BOOK.bookKey, isbn13: BOOK.isbn13, title: BOOK.title, authors: BOOK.authors });
+  const searchFor = async (page, text) => {
+    const input = page.getByRole('searchbox', { name: 'Search for a book' });
+    await input.fill(text);
+    await input.press('Enter');
+  };
+  const searchRequests = page => {
+    const queries = [];
+    page.on('request', request => { if (request.url().endsWith('/api/v2/books/search')) queries.push(request.postDataJSON()); });
+    return queries;
+  };
+
+  test('results on the shelf: my book first with the bookmark, list view, a book and Back, then the shelf', async ({ page }) => {
+    await setup(page, { saved: [MINE, book(2)], libraryId: LINKED_LIBRARY.id });
+    const queries = searchRequests(page);
+    await page.goto('/app/shelf');
+    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await searchFor(page, 'innovator');
+    const results = page.getByRole('region', { name: 'Search results' });
+    await expect(results.getByRole('link')).toHaveCount(2);
+    await expect(results.getByRole('link').first()).toHaveAttribute('aria-label', BOOK.title + ' by ' + BOOK.authors[0] + ', on my shelf');
+    await expect(results.locator('.cover-badge-mine')).toHaveCount(1);
+    await expect(results.locator('.cover-badge-library')).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'My shelf' })).toHaveCount(0);
+    // Public data only; the text is nowhere but the field.
+    expect(queries).toEqual([{ query: 'innovator' }]);
+    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect(JSON.stringify(await page.evaluate(() => history.state))).not.toContain('innovator');
+    expect(await page.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }))).not.toContain('innovator');
+    expect((await axe(page)).violations).toEqual([]);
+
+    await page.getByRole('button', { name: 'List view' }).click();
+    await expect(results.locator('.shelf-list-item')).toHaveCount(2);
+    await page.getByRole('button', { name: 'Shelf view' }).click();
+
+    await results.getByRole('link', { name: CANDIDATE_BOOK.title + ' by ' + CANDIDATE_BOOK.authors[0] }).click();
+    await expect(page).toHaveURL(/\/app\/books\//);
+    await page.goBack();
+    await expect(results.getByRole('link')).toHaveCount(2);
+    await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toHaveValue('innovator');
+    expect(queries).toHaveLength(1);
+
+    await page.goBack();
+    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toHaveValue('');
+    await searchFor(page, 'innovator');
+    await expect(results.getByRole('link')).toHaveCount(2);
+    await page.getByRole('button', { name: 'Back to my shelf', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await searchFor(page, 'innovator');
+    await page.getByRole('button', { name: 'Clear search and go back to my shelf' }).click();
+    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
+  });
+
+  test('searching, nothing found, failure and offline', async ({ page, context }) => {
+    await setup(page);
+    let answer = 'hold';
+    let release;
+    await page.route('**/api/v2/books/search', async route => {
+      if (answer === 'hold') { await new Promise(resolve => { release = resolve; }); return route.fulfill({ json: { kind: 'candidates', candidates: [] } }).catch(() => {}); }
+      if (answer === 'none') return route.fulfill({ json: { kind: 'candidates', candidates: [], nextOffset: null } });
+      if (answer === 'fail') return route.fulfill({ status: 503, json: { error: { code: 'METADATA_UNAVAILABLE', message: 'Unavailable.' } } });
+      return route.fulfill({ json: { kind: 'candidates', candidates: [BOOK] } });
+    });
+    const queries = searchRequests(page);
+    await page.goto('/app/shelf');
+    await searchFor(page, 'wings of fire');
+    await expect(page.locator('.ghost-book')).toHaveCount(9);
+    expect((await axe(page)).violations).toEqual([]);
+    // A newer search cancels the one still running.
+    answer = 'none';
+    await searchFor(page, 'wngs fyre kalm');
+    await expect(page.getByRole('heading', { name: 'No books found' })).toBeVisible();
+    release?.();
+    await expect(page.getByRole('button', { name: 'Scan the barcode' })).toBeVisible();
+    expect((await axe(page)).violations).toEqual([]);
+
+    answer = 'fail';
+    await searchFor(page, 'wings of fire');
+    await expect(page.getByRole('heading', { name: 'Couldn’t search' })).toBeVisible();
+    await expect(page.getByText('No books found')).toHaveCount(0);
+    expect((await axe(page)).violations).toEqual([]);
+    answer = 'ok';
+    await page.getByRole('button', { name: 'Try again' }).click();
+    await expect(page.getByRole('region', { name: 'Search results' }).getByRole('link')).toHaveCount(1);
+
+    const before = queries.length;
+    await context.setOffline(true);
+    await searchFor(page, 'innovator');
+    await expect(page.getByRole('heading', { name: 'Couldn’t search' })).toBeVisible();
+    expect(queries.length).toBe(before);
+    await context.setOffline(false);
+  });
+
+  test('an ISBN goes straight to its book', async ({ page }) => {
+    await setup(page);
+    await page.goto('/app/shelf');
+    await searchFor(page, '9781625275868');
+    await expect(page).toHaveURL(new RegExp('/app/books/' + encodeURIComponent(BOOK.bookKey).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$'));
+    await page.goBack();
+    await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
+  });
+
+  for (const light of ['lamplight', 'ink']) test(`results stay legible in ${light}`, async ({ page }) => {
+    await setup(page, { saved: [MINE], light });
+    await page.goto('/app/shelf');
+    await searchFor(page, 'innovator');
+    await expect(page.locator('.cover-badge-mine')).toHaveCount(1);
+    expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
+  });
+
+  test('reduced motion: results replace the shelf without a slide', async ({ page }) => {
+    await setup(page, { saved: [book(1)] });
+    await page.goto('/app/shelf');
+    await searchFor(page, 'innovator');
+    await expect(page.getByRole('region', { name: 'Search results' })).toBeVisible();
+    await expect(page.locator('.shelf-stage.is-sliding')).toHaveCount(0);
+    await expect(page.locator('.stage-pane')).toHaveCount(1);
+  });
+
+  test.describe('with motion', () => {
+    test.use({ contextOptions: { reducedMotion: 'no-preference' } });
+    test('the shelf moves down and the results come down from above, then back', async ({ page }) => {
+      await setup(page, { saved: [book(1)] });
+      await page.goto('/app/shelf');
+      await searchFor(page, 'innovator');
+      await expect(page.locator('.shelf-stage.slide-down')).toHaveCount(1);
+      expect(await page.locator('.stage-results').evaluate(element => getComputedStyle(element).animationName)).toBe('stage-from-above');
+      await expect(page.locator('.shelf-stage.is-sliding')).toHaveCount(0);
+      await expect(page.locator('.stage-pane')).toHaveCount(1);
+      await page.getByRole('button', { name: 'Back to my shelf', exact: true }).click();
+      expect(await page.locator('.stage-shelf').evaluate(element => getComputedStyle(element).animationName)).toBe('stage-from-below');
+      await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    });
   });
 });

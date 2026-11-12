@@ -7,8 +7,11 @@ export type SearchPage = { nextOffset?: number | null; partial?: boolean; librar
 const pages = new Map<string, SearchPage>();
 export type SearchView = { visibleCount: number; expandedKeys: string[]; scrollTop: number; visited: boolean };
 const views = new Map<string, SearchView>();
+// One-shelf search (plan Phase 5): the reader's saved books (by bookKey) that
+// matched the query when it ran. They are listed first with the bookmark badge.
+const shelfMatches = new Map<string, string[]>();
 const MAX_CANDIDATE_SETS = 20;
-export function clearSearchMemory(): void { candidates.clear();catalogs.clear();queries.clear();pages.clear();views.clear(); }
+export function clearSearchMemory(): void { candidates.clear();catalogs.clear();queries.clear();pages.clear();views.clear();shelfMatches.clear(); }
 
 function opaqueId(): string {
   const values = new Uint32Array(2);
@@ -30,8 +33,16 @@ export function rememberCandidates(items: PublicBook[], catalog?: { name: string
     queries.delete(first);
     pages.delete(first);
     views.delete(first);
+    shelfMatches.delete(first);
   }
   return id;
+}
+
+export function rememberShelfMatches(id: string, bookKeys: string[]) {
+  if (candidates.has(id)) shelfMatches.set(id, [...bookKeys]);
+}
+export function shelfMatchesFor(id: unknown): string[] {
+  return typeof id === 'string' ? shelfMatches.get(id) || [] : [];
 }
 
 export function pageForCandidates(id: string): SearchPage { return pages.get(id) || {}; }
@@ -85,6 +96,8 @@ export function catalogForCandidates(id: unknown) {
 
 // Search text stays in this bounded, same-tab memory; never in URLs, browser
 // history state or local storage. It is lost when the page is reloaded.
+// History entries carry only the opaque candidate ID. The server keeps an
+// anonymous operational log (usageLog.js; plan 4.6.2).
 export function queryForCandidates(id: unknown): string {
   return typeof id === 'string' ? queries.get(id) || '' : '';
 }
