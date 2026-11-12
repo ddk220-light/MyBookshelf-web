@@ -1,4 +1,5 @@
-import { cachedTask, getText, DEFAULT_TIMEOUT_MS } from './http.js';
+import { cachedTask, getText, withCatalogOperation, DEFAULT_TIMEOUT_MS } from './http.js';
+import { cleanAuthor, cleanTitle } from './catalogText.js';
 import { attrs, contents, markupOnly, text } from './catalogHtml.js';
 import { createTitleAuthorId, parseTitleAuthorId } from '../titleAuthorIdentity.js';
 
@@ -7,6 +8,13 @@ const LIBRARY_ID = 'vpl:visakhapatnam-public-library';
 const HEADERS = ['S.No', 'Title', 'Subject', 'Author', 'Location', 'Status'];
 const failure = (code, message) => Object.assign(new Error(message), { code });
 const canonical = (value) => value.normalize('NFC').replace(/\s+/g, ' ').trim();
+// https://visakhapatnampubliclibrary.org/robots.txt asks for "Crawl-Delay: 20".
+// Successive upstream requests within one reader operation are spaced by this
+// delay, and pages are cached for longer, so a typical search or availability
+// check needs a single request and is never slowed by another reader.
+let crawlDelayMs = 20_000;
+const PAGE_CACHE_MS = 10 * 60 * 1000;
+export function configureVisakhapatnamPacing({ crawlDelayMs: delay }) { crawlDelayMs = delay; }
 
 function configure(library) {
   if (library?.id !== LIBRARY_ID || library.baseUrl !== ORIGIN) {
@@ -21,6 +29,18 @@ export function catalogPhrase(value) {
   if (typeof value !== 'string' || !value.trim() || value.length > 500) return null;
   return value.normalize('NFC').split(/[^\p{L}\p{M}\p{N}\s]/u)
     .map(canonical).filter(Boolean).sort((a, b) => b.length - a.length)[0]?.slice(0, 120).trim() || null;
+}
+
+// The upstream search answers HTTP 500 for Telugu-script text (verified
+// 2026-11-12 with "వేయి పడగలు"), while romanised titles such as "veyi
+// padagalu" work. Report that as an unsupported query, not as an outage, and
+// do not send a request that is known to fail.
+export function supportedPhrase(phrase) {
+  return !/[^\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]/u.test(phrase);
+}
+
+function unsupportedScript() {
+  return failure('CATALOG_QUERY_UNSUPPORTED', 'This catalog searches only in English (Latin) letters');
 }
 
 function searchUrl(field, query) {
@@ -83,12 +103,14 @@ export function parseCatalogPage(html, url) {
 }
 
 async function read(field, phrase, deadlineAt) {
+  if (!supportedPhrase(phrase)) throw unsupportedScript();
   const url = searchUrl(field, phrase);
   return cachedTask(`vpl:${url}`, async () => {
     let response;
     try {
-      response = await getText(url.toString(), { deadlineAt, maxResponseBytes: 1024 * 1024, redirect: 'manual', retries: 0 });
+      response = await getText(url.toString(), { deadlineAt, maxResponseBytes: 1024 * 1024, redirect: 'manual', retries: 0, minIntervalMs: crawlDelayMs });
     } catch (error) {
+      if (/^CATALOG_/.test(error?.code || '')) throw error;
       throw failure(error.name === 'AbortError' ? 'CATALOG_TIMEOUT' : 'CATALOG_UNAVAILABLE', 'Public catalog request failed');
     }
     if ([401, 403, 429].includes(response.status) || /cf-chl-|Just a moment|captcha/i.test(response.text)) {
@@ -99,21 +121,48 @@ async function read(field, phrase, deadlineAt) {
     const page = parseCatalogPage(response.text, url);
     if (!page) throw failure('CATALOG_UNRECOGNIZED', 'Public catalog format was not recognized');
     return { ...page, catalogUrl: url.toString() };
-  }, { deadlineAt });
+  }, { deadlineAt, ttlMs: PAGE_CACHE_MS });
 }
 
-const book = row => ({ recordId: row.recordId, title: row.title, authors: [row.author], ...(row.subject ? { subjects: [row.subject] } : {}) });
+// The record identity keeps the catalog's exact text; only display values
+// are cleaned ("NULL, Abdul Kalam.A.P.J." is shown as "Abdul Kalam.A.P.J.").
+const book = row => {
+  const author = cleanAuthor(row.author);
+  return { recordId: row.recordId, title: cleanTitle(row.title) || row.title, authors: author ? [author] : [], ...(row.subject ? { subjects: [row.subject] } : {}) };
+};
 
 export async function searchPublicCatalog(library, query) {
   configure(library);
   if (typeof query !== 'string' || query.length > 160) throw failure('CATALOG_UNRECOGNIZED', 'Invalid title or author query');
   const phrase = catalogPhrase(query);
   if (!phrase) throw failure('CATALOG_UNRECOGNIZED', 'Enter a title or author');
-  const deadlineAt = Date.now() + DEFAULT_TIMEOUT_MS;
-  const titles = await read('title', phrase, deadlineAt);
-  const authors = titles.rows.length < 12 ? await read('author', phrase, deadlineAt) : { rows: [], hasMore: false };
-  const records = [...new Map([...titles.rows, ...authors.rows].map(row => [row.recordId, book(row)])).values()];
-  return { records: records.slice(0, 12), hasMore: titles.hasMore || authors.hasMore || records.length > 12 };
+  if (!supportedPhrase(phrase)) throw unsupportedScript();
+  return withCatalogOperation({}, async () => {
+    const deadlineAt = Date.now() + DEFAULT_TIMEOUT_MS;
+    const titles = await read('title', phrase, deadlineAt);
+    // The author search is a second, paced request. Run it only when the title
+    // search found nothing, so a typical search stays one request.
+    const authors = titles.rows.length ? { rows: [], hasMore: false } : await read('author', phrase, deadlineAt);
+    const records = [...new Map([...titles.rows, ...authors.rows].map(row => [row.recordId, book(row)])).values()];
+    return { records: records.slice(0, 12), hasMore: titles.hasMore || authors.hasMore || records.length > 12 };
+  });
+}
+
+// Availability checks reuse the search page: each row already states the
+// title, author, shelf and status, so no record needs to be read again.
+export async function searchBookCandidates(library, { title } = {}) {
+  configure(library);
+  const phrase = catalogPhrase(String(title || '').split(/\s+\/\s+|\s*:\s*/)[0]) || catalogPhrase(title);
+  if (!phrase) throw failure('CATALOG_UNRECOGNIZED', 'Enter a title');
+  return withCatalogOperation({}, async () => {
+    const page = await read('title', phrase, Date.now() + DEFAULT_TIMEOUT_MS);
+    const ids = [...new Set(page.rows.map(row => row.recordId))];
+    const records = ids.map(id => {
+      const rows = page.rows.filter(row => row.recordId === id);
+      return { ...book(rows[0]), catalogUrl: page.catalogUrl, observation: observationFor({ ...page, allRows: page.rows, rows }) };
+    });
+    return { records, hasMore: page.hasMore };
+  });
 }
 
 async function resolveRows(library, recordId) {
@@ -131,26 +180,42 @@ async function resolveRows(library, recordId) {
     if (matches.length && (!alternative.hasMore || !rows.length)) { page = alternative; rows = matches; }
   }
   if (!rows.length) throw failure('CATALOG_UNRECOGNIZED', 'This title and author were not found in the current catalog');
-  return { ...page, rows };
+  return { ...page, allRows: page.rows, rows };
 }
 
 export async function resolvePublicCatalogRecord(library, recordId) {
-  return book((await resolveRows(library, recordId)).rows[0]);
+  return withCatalogOperation({}, async () => book((await resolveRows(library, recordId)).rows[0]));
 }
 
-function lendingStatus(row) {
+// Racks of the General Section, as the catalog itself writes them
+// ("GS-1  R11  S222"). A bare "R11 S224" on the same rack is a General
+// Section shelf; so is a bare rack/shelf code whose subject says "GS" or
+// "Biography(G S)".
+function generalRacks(rows) {
+  return new Set(rows.flatMap(row => row.location.match(/^GS(?:-\d+)?\s+(R\d+)\s+S\d+$/i)?.[1].toUpperCase() || []));
+}
+
+export function lendingStatus(row, racks = generalRacks([row])) {
   if (/not for loan|reference only/i.test(row.status) || /reference|textbook|special collection|gandhiana/i.test(row.location)) return 'restricted';
   // Published rules allow loans from General and Children sections. CA and
   // unrecognized shelf codes do not establish whether an item can be borrowed.
-  if (!/^GS(?:-\d+)?(?:\s|$)|^Children(?:'s)? Section$/i.test(row.location)) return 'unknown';
+  const shelf = row.location.match(/^(R\d+)\s+S\d+$/i);
+  const general = /^GS(?:-\d+)?(?:\s|$)|^Children(?:'s)? Section$/i.test(row.location)
+    || (shelf && (racks.has(shelf[1].toUpperCase()) || /(?:^|[\s(])G\s?S(?:$|[\s)])/i.test(row.subject || '')));
+  if (!general) return 'unknown';
   if (row.status === 'Available') return 'available';
   if (row.status === 'Issued') return 'unavailable';
   return 'unknown';
 }
 
 export async function checkPublicRecordAvailability(library, recordId) {
-  const page = await resolveRows(library, recordId);
-  const statuses = page.rows.map(lendingStatus);
+  return withCatalogOperation({}, async () => observationFor(await resolveRows(library, recordId)));
+}
+
+function observationFor(page) {
+  const racks = generalRacks(page.allRows || page.rows);
+  const status = row => lendingStatus(row, racks);
+  const statuses = page.rows.map(status);
   // A displayed row is not a proven unique physical copy. Never invent counts.
   const result = { outcome: 'unknown', matchKind: 'verified_work', recognizedTitleAuthor: true,
     catalogUrl: page.catalogUrl, catalogLinkKind: 'search', locations: [...new Map(page.rows.filter(row => row.location).map(row =>
@@ -161,7 +226,7 @@ export async function checkPublicRecordAvailability(library, recordId) {
   else if (statuses.every(status => status === 'unavailable')) result.outcome = 'none_available';
   // Conflicting rows with no edition/copy identifiers remain uncertain.
   for (const location of result.locations) {
-    const values = page.rows.filter(row => row.location === location.name).map(lendingStatus);
+    const values = page.rows.filter(row => row.location === location.name).map(status);
     if (values.every(status => status === 'available')) location.status = 'available';
     if (values.every(status => status === 'unavailable')) location.status = 'unavailable';
   }

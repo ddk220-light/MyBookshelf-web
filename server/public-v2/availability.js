@@ -2,7 +2,7 @@ import { getProvider } from '../services/providers/index.js';
 import { catalogHandoffFor } from './catalog-handoff.js';
 import { publicAttribution } from './attribution.js';
 import { parsePublicBookKey } from './contracts.js';
-import { searchLibraryBook } from '../services/libraryBookSearch.js';
+import { searchLibraryBook, checkBudgetMs } from '../services/libraryBookSearch.js';
 
 function timestamp(now) {
   return new Date(now()).toISOString();
@@ -198,7 +198,7 @@ export function createPublicAvailabilityService({
       try {
         if (!ownRecord && editionScope === 'work' && books.searchProfile) {
           const profile = await books.searchProfile(bookKey, { editionScope, language });
-          const observation = await searchLibraryBook(provider, profile);
+          const observation = await searchLibraryBook(provider, profile, { timeoutMs: checkBudgetMs(entry) });
           if (observation.outcome === 'unknown' && !observation.matchKind) {
             const result = failed(Object.assign(new Error('Catalog search incomplete'), { code: observation.errorCode }), handoff, 'verified_work');
             result.response.searchSummary = observation.searchSummary;

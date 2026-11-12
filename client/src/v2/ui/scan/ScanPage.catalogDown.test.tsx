@@ -85,3 +85,12 @@ it('still searches the selected library after a reload has dropped the remembere
   search('Wings of Fire');
   await waitFor(() => expect(publicApi.searchBooks).toHaveBeenCalledWith('Wings of Fire', expect.any(AbortSignal), 'koha:example'));
 });
+
+it('explains a native-script search the catalog cannot run, without calling it an outage', async () => {
+  vi.mocked(publicApi.searchBooks).mockRejectedValue(new PublicApiError({ code: 'CATALOG_QUERY_UNSUPPORTED', status: 400 }));
+  open();
+  search('వేయి పడగలు');
+  expect(await screen.findByText(/searches only in English letters. Try a romanised spelling/)).toBeInTheDocument();
+  expect(screen.queryByRole('heading', { name: /catalog isn’t answering/ })).toBeNull();
+  expect(screen.queryByText(/not found/i)).toBeNull();
+});

@@ -100,3 +100,152 @@ test('title matching keeps Hindi and Tamil vowel signs and still folds Latin acc
   assert.equal(matchCatalogRecord({ title: 'LES MISERABLES', authors: ['Hugo, Victor'] }, french).matchKind, 'possible_match');
   assert.equal(matchCatalogRecord({ title: 'Les Misérables', authors: ['Hugo, Victor'] }, french).matchKind, 'possible_match');
 });
+
+// ---- Title-first checks on the South Indian pilot catalogs -------------------
+import fs from 'node:fs';
+import { getAllLibraries } from './directory.js';
+import { getProvider } from './providers/index.js';
+import { clearHttpCache } from './providers/http.js';
+import { configureVisakhapatnamPacing } from './providers/visakhapatnam.js';
+import { checkBudgetMs, TITLE_FIRST_MAX_REQUESTS } from './libraryBookSearch.js';
+
+const kohaPage = name => fs.readFileSync(new URL(`../test/fixtures/koha/${name}.html`, import.meta.url), 'utf8');
+const vplPage = name => fs.readFileSync(new URL(`../test/fixtures/vpl/${name}.html`, import.meta.url), 'utf8');
+const entry = id => getAllLibraries().find(library => library.id === id);
+const kalam = { book: { title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'], isbn13: '9788173711466' },
+  isbns: ['9788173711466', '9788173715181', '9788173715488'], titles: ['Wings of Fire'], authors: ['A. P. J. Abdul Kalam'], language: 'eng', complete: true };
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+// Replays saved catalog pages. `latencyMs` stands in for the catalog's own
+// response time, scaled down 100× (90 ms here = 9 s on Anna Centenary).
+function replay(t, pages, { latencyMs = 0 } = {}) {
+  const requests = [];
+  const original = global.fetch;
+  global.fetch = async url => {
+    requests.push(url);
+    await sleep(latencyMs);
+    const html = pages(new URL(url));
+    return { url, status: html ? 200 : 500, ok: Boolean(html), headers: new Headers(), text: async () => html || '' };
+  };
+  t.after(() => { global.fetch = original; clearHttpCache(); });
+  clearHttpCache();
+  return requests;
+}
+
+test('check budgets follow the directory, bounded at 45 s', () => {
+  assert.equal(checkBudgetMs(entry('koha:anna-centenary-library')), 45_000);
+  assert.equal(checkBudgetMs(entry('koha:kalaignar-centenary-library')), 45_000);
+  assert.equal(checkBudgetMs(entry('koha:ernakulam-public-library')), 45_000);
+  assert.equal(checkBudgetMs(entry('vpl:visakhapatnam-public-library')), 20_000);
+  assert.equal(checkBudgetMs({ publicCatalogTimeoutMs: 60_000 }), 45_000);
+  assert.equal(checkBudgetMs({}), 20_000);
+});
+
+test('title-first: one search, then only rows the search does not rule out, best evidence first', async () => {
+  const calls = [];
+  const rows = [
+    { recordId: 'dragons', title: 'Wings of Fire', authors: ['Sutherland, Tui T'] },
+    { recordId: 'other-isbn', title: 'Wings of fire: an autobiography', authors: ['Abdul Kalam, A. P. J'], isbn13: '9788181900050' },
+    { recordId: 'no-isbn', title: 'Wings of Fire', authors: ['Abdul Kalam, APJ'] },
+    { recordId: 'known', title: 'Wings Of Fire: An Autobiography', authors: ['Kalam, A P J Abdul'], isbn13: '9788173711466' },
+    { recordId: 'study', title: 'Wings of Fire: study guide', authors: ['Kalam'] },
+  ];
+  const result = await searchLibraryBook({
+    findBookCandidates: async search => { calls.push(['search', search]); return { records: rows, hasMore: false }; },
+    resolveCatalogRecord: async id => { calls.push(['read', id]); const row = rows.find(r => r.recordId === id);
+      return { ...row, isbn: row.isbn13, observation: { outcome: 'available', totalCopies: 3, availableCopies: 3 } }; },
+    checkAvailability: async isbn => { calls.push(['isbn', isbn]); return miss; },
+  }, kalam);
+  assert.deepEqual(calls, [['search', { title: 'Wings of Fire', author: 'A. P. J. Abdul Kalam' }], ['read', 'known']]);
+  assert.equal(result.outcome, 'available');
+  assert.equal(result.matchKind, 'exact_isbn');
+  assert.equal(result.searchSummary.recordsChecked, 1);
+});
+
+test('title-first: similar editions are read once, ISBNs are tried only when the search finds nothing', async () => {
+  const reads = [], isbns = [];
+  const similar = await searchLibraryBook({
+    findBookCandidates: async () => [1, 2, 3].map(n => ({ recordId: String(n), title: 'Wings of fire', authors: ['Abdul Kalam, A. P. J'], isbn13: '9788181900050' })),
+    resolveCatalogRecord: async id => { reads.push(id); return { title: 'Wings of fire', authors: ['Abdul Kalam, A. P. J'], isbn: '9788181900050', observation: { outcome: 'available' } }; },
+    checkAvailability: async isbn => { isbns.push(isbn); return miss; },
+  }, kalam);
+  assert.deepEqual(reads, ['1']);
+  assert.deepEqual(isbns, []);
+  assert.equal(similar.matchKind, 'possible_match');
+  assert.equal(similar.outcome, 'in_catalog');
+  const empty = await searchLibraryBook({ findBookCandidates: async () => [], checkAvailability: async isbn => { isbns.push(isbn); return isbn === '9788173715181' ? found : miss; } }, kalam);
+  assert.deepEqual(isbns, ['9788173711466', '9788173715181']);
+  assert.equal(empty.matchKind, 'verified_work');
+  // A search that fails and leaves no evidence is unknown, never "not found".
+  const failed = await searchLibraryBook({ findBookCandidates: async () => { throw Object.assign(new Error('x'), { code: 'CATALOG_TIMEOUT' }); }, isbnLookup: false, checkAvailability: async () => miss }, kalam);
+  assert.equal(failed.outcome, 'unknown');
+  assert.equal(failed.errorCode, 'CATALOG_TIMEOUT');
+});
+
+test('hard cap: a check never sends more upstream requests than its budget, and an exhausted budget is unknown', async (t) => {
+  const library = entry('koha:anna-centenary-library');
+  // Every record reads as another edition without the copy information, so the
+  // check keeps looking until the cap stops it.
+  const requests = replay(t, url => url.pathname.endsWith('opac-search.pl')
+    ? (url.searchParams.get('idx') === 'kw' && url.searchParams.get('q') === 'Wings of Fire Kalam' ? kohaPage('chennai-wings-search') : null)
+    : null);
+  const result = await searchLibraryBook(getProvider(library), kalam, { maxRequests: 3 });
+  assert.ok(requests.length <= 3, `${requests.length} requests`);
+  assert.equal(result.searchSummary.requests, requests.length);
+  assert.equal(result.outcome, 'unknown');
+  assert.notEqual(result.outcome, 'no_match');
+  assert.equal(TITLE_FIRST_MAX_REQUESTS, 6);
+});
+
+test('replay, Anna Centenary: 2 requests at 9 s each finish inside the 45 s budget (old flow timed out at 20 s)', async (t) => {
+  const library = entry('koha:anna-centenary-library');
+  // The saved Anna record 309106 (Universities Press, 1999) carries ISBN
+  // 9788181900050; this profile lists that edition.
+  const universities = { ...kalam, book: { ...kalam.book, isbn13: '9788181900050' }, isbns: ['9788181900050'] };
+  const requests = replay(t, url => {
+    if (url.pathname.endsWith('opac-search.pl')) return url.searchParams.get('q') === 'Wings of Fire Kalam' ? kohaPage('chennai-wings-search') : null;
+    return url.searchParams.get('biblionumber') === '309106' ? kohaPage('anna-wings-309106') : null;
+  }, { latencyMs: 90 });
+  const started = Date.now();
+  const result = await searchLibraryBook(getProvider(library), universities, { timeoutMs: checkBudgetMs(library) / 100 });
+  assert.equal(requests.length, 2);
+  assert.ok(Date.now() - started < checkBudgetMs(library) / 100);
+  assert.equal(result.matchKind, 'exact_isbn');
+  assert.equal(result.outcome, 'available');
+  assert.equal(result.availableCopies, 1);
+  assert.equal(result.searchSummary.requests, 2);
+});
+
+test('replay, Ernakulam: a title-index search and at most three record reads (was 8–11 requests)', async (t) => {
+  const library = entry('koha:ernakulam-public-library');
+  const record = kohaPage('ernakulam-wings-100942');
+  const requests = replay(t, url => {
+    if (url.pathname.endsWith('opac-search.pl')) {
+      assert.equal(url.searchParams.get('idx'), 'ti');
+      assert.equal(url.searchParams.get('q'), 'Wings of Fire');
+      return kohaPage('ernakulam-wings-search');
+    }
+    return record.replaceAll('100942', url.searchParams.get('biblionumber'));
+  });
+  const result = await searchLibraryBook(getProvider(library), kalam, { timeoutMs: checkBudgetMs(library) });
+  assert.ok(requests.length <= 4, `${requests.length} requests`);
+  // The saved Ernakulam record lists no ISBN, so this is a similar edition.
+  assert.equal(result.matchKind, 'possible_match');
+  assert.equal(result.outcome, 'in_catalog');
+  // Tui Sutherland's "Wings of Fire" rows are ruled out from the search page alone.
+  assert.ok(requests.every(url => !/biblionumber=(?:199310|147571|189517)/.test(url)));
+});
+
+test('replay, Visakhapatnam: one paced request answers the check from the search page', async (t) => {
+  configureVisakhapatnamPacing({ crawlDelayMs: 20_000 });
+  t.after(() => configureVisakhapatnamPacing({ crawlDelayMs: 0 }));
+  const library = entry('vpl:visakhapatnam-public-library');
+  const page = vplPage('wings-of-fire').replace('value="wings of fire"', 'value="Wings of Fire"');
+  const requests = replay(t, url => url.searchParams.get('title') === 'Wings of Fire' ? page : null);
+  const started = Date.now();
+  const result = await searchLibraryBook(getProvider(library), kalam, { timeoutMs: checkBudgetMs(library) });
+  assert.equal(requests.length, 1);
+  assert.ok(Date.now() - started < 1000);
+  assert.equal(result.matchKind, 'possible_match');
+  assert.equal(result.outcome, 'in_catalog');
+  assert.equal(result.searchSummary.isbnQueries, 0);
+});

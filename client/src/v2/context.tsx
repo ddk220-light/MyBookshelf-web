@@ -292,6 +292,7 @@ export function messageFor(failure: unknown, fallback: string): string {
   if (failure.code === 'NETWORK_ERROR') return 'Couldn’t connect. Check your connection and try again.';
   if (failure.code === 'INVALID_REQUEST' && failure.message.startsWith('Enter a valid ISBN')) return 'Enter a valid ISBN or search by title or author.';
   if (failure.code === 'INVALID_ISBN') return 'Enter a valid ISBN.';
+  if (failure.code === 'CATALOG_QUERY_UNSUPPORTED') return 'This library’s catalog searches only in English letters. Try a romanised spelling (for example “veyi padagalu”), or search All books.';
   if (failure.code === 'BOOK_NOT_FOUND') return 'Book not found. Try another title or ISBN.';
   if (failure.status === 429) return 'Please wait a moment, then try again.';
   return fallback;

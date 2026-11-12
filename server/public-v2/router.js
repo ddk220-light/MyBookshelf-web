@@ -63,6 +63,13 @@ function route(telemetry, operation, handler) {
         emit(telemetry, { operation, outcome: '400', errorCode: 'CATALOG_UNSUPPORTED', durationMs: Date.now() - startedAt });
         return;
       }
+      if (error?.code === 'CATALOG_QUERY_UNSUPPORTED') {
+        // The catalog answered that it cannot run this search (for example
+        // native-script text); that is not an outage and not an empty result.
+        res.status(400).json(publicError('CATALOG_QUERY_UNSUPPORTED', 'This library’s catalog searches only in English (Latin) letters. Try a romanised spelling, or search All books.'));
+        emit(telemetry, { operation, outcome: '400', errorCode: 'CATALOG_QUERY_UNSUPPORTED', durationMs: Date.now() - startedAt });
+        return;
+      }
       if (error?.code === 'PLACE_SEARCH_UNAVAILABLE') {
         res.status(503).json(publicError(error.code, error.message));
         emit(telemetry, { operation, outcome: '503', errorCode: error.code, durationMs: Date.now() - startedAt });

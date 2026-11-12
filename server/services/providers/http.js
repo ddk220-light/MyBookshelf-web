@@ -1,6 +1,7 @@
 import http from 'node:http';
 import https from 'node:https';
 import { constants as cryptoConstants } from 'node:crypto';
+import { AsyncLocalStorage } from 'node:async_hooks';
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 const CACHE_TTL_MS = 60_000;
@@ -10,6 +11,40 @@ const MAX_QUEUE_DEPTH = 50;
 const MAX_RESPONSE_BYTES = 5 * 1024 * 1024;
 
 const queues = new Map();
+const operations = new AsyncLocalStorage();
+
+// One reader-visible operation (an availability check, a catalog search or a
+// record read) can declare a hard upstream request budget, and a host can ask
+// for spacing between successive requests (robots.txt Crawl-Delay). Both are
+// scoped to the operation, so one reader's check never waits on another's.
+// Nested operations reuse the outermost budget and pacing.
+export function withCatalogOperation({ maxRequests = Infinity } = {}, task) {
+  const current = operations.getStore();
+  if (current) return task(current);
+  const store = { maxRequests, requests: 0, lastByHost: new Map() };
+  return operations.run(store, () => task(store));
+}
+
+export function catalogOperation() {
+  return operations.getStore() || null;
+}
+
+function budgetError() {
+  return Object.assign(new Error('Catalog request budget exhausted'), { code: 'CATALOG_REQUEST_BUDGET' });
+}
+
+const sleep = ms => new Promise(resolve => { setTimeout(resolve, ms); });
+
+async function paceRequest(operation, host, minIntervalMs, deadlineAt) {
+  if (!operation || !(minIntervalMs > 0)) return;
+  const last = operation.lastByHost.get(host);
+  if (last == null) return;
+  const wait = last + minIntervalMs - Date.now();
+  if (wait <= 0) return;
+  // Waiting past the caller's deadline would only produce a late failure.
+  if (deadlineAt != null && Date.now() + wait >= deadlineAt) throw deadlineError();
+  await sleep(wait);
+}
 const queueDepth = new Map();
 const cache = new Map();
 const inFlight = new Map();
@@ -213,12 +248,21 @@ async function requestOnce(url, options = {}) {
     timeoutMs = DEFAULT_TIMEOUT_MS,
     deadlineAt = Date.now() + timeoutMs,
     maxResponseBytes = MAX_RESPONSE_BYTES,
+    minIntervalMs,
     ...fetchOptions
   } = options;
   if (cacheKey) {
     const hit = cachedValue(cacheKey);
     if (hit !== undefined) return hit;
   }
+  const operation = operations.getStore();
+  if (operation) {
+    if (operation.requests >= operation.maxRequests) throw budgetError();
+    await paceRequest(operation, hostOf(url), minIntervalMs, deadlineAt);
+    if (operation.requests >= operation.maxRequests) throw budgetError();
+    operation.requests += 1;
+  }
+  const settled = () => { if (operation && minIntervalMs > 0) operation.lastByHost.set(hostOf(url), Date.now()); };
 
   return enqueueTask(`http:${hostOf(url)}`, async () => {
     if (cacheKey) {
@@ -255,6 +299,7 @@ async function requestOnce(url, options = {}) {
       return value;
     } finally {
       clearTimeout(timer);
+      settled();
     }
   }, { deadlineAt });
 }

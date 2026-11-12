@@ -22,7 +22,8 @@ function primaryProvider(library) {
   const normalize = (check) => async (...args) => normalizeAvailability(await check(...args));
   switch (library.platform) {
     case 'vpl':
-      return { checkAvailability: () => visakhapatnam.checkPublicAvailability(),
+      return { checkAvailability: () => visakhapatnam.checkPublicAvailability(), isbnLookup: false,
+        findBookCandidates: book => visakhapatnam.searchBookCandidates(library, book),
         searchCatalog: query => visakhapatnam.searchPublicCatalog(library, query),
         resolveCatalogRecord: async recordId => ({ ...await visakhapatnam.resolvePublicCatalogRecord(library, recordId), observation: await visakhapatnam.checkPublicRecordAvailability(library, recordId) }),
         checkRecordAvailability: recordId => visakhapatnam.checkPublicRecordAvailability(library, recordId) };
@@ -37,6 +38,7 @@ function primaryProvider(library) {
       if (!library.publicCatalogCapabilities?.titleSearch) return { ...(library.publicCatalogApi ? {} : { searchCatalog: query => koha.searchCatalog(library, query), resolveCatalogRecord: id => koha.resolveCatalogRecord(library, id) }), checkAvailability: isbn => (library.publicCatalogApi === 'iith-opac-v1' ? iithKoha : koha).checkPublicAvailability(library, isbn) };
       return { checkAvailability: (isbn) => koha.checkPublicAvailability(library, isbn),
         searchCatalog: (query, options) => koha.searchPublicCatalog(library, query, options),
+        findBookCandidates: book => koha.searchBookCandidates(library, book),
         resolveCatalogRecord: (recordId) => koha.resolvePublicCatalogRecord(library, recordId),
         checkRecordAvailability: (recordId) => koha.checkPublicRecordAvailability(library, recordId) };
     case 'chamo':
@@ -86,6 +88,8 @@ export function providerWithAlternates(library, providerFor = primaryProvider) {
     ...alternates.filter(r => !r.entry.preferForLookup)].filter(r => r.provider);
   return {
     ...primary,
+    // Structured candidate search covers only the primary route.
+    findBookCandidates: undefined,
     async searchCatalog(query) {
       let error;
       let completed = false;
