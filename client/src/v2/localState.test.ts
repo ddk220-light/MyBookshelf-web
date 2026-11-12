@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   ANONYMOUS_WEB_STORAGE_KEY,
   clearAnonymousWebState,
+  dedupeSavedBooks,
+  emptyState,
   isSaved,
+  readDedupedAnonymousWebStateWithStatus,
   readAnonymousWebState,
   readAnonymousWebStateWithStatus,
   withRecentBook,
@@ -153,5 +156,25 @@ describe('anonymous browser state', () => {
     expect(read.state.savedBooks[0]).toMatchObject({ bookKey: BOOK.bookKey, title: BOOK.title });
     expect(read.state.recentBooks).toHaveLength(1);
     expect(read.state.recentBooks[0]).toMatchObject({ bookKey: book.bookKey, title: book.title });
+  });
+});
+
+describe('one-shelf de-duplication', () => {
+  const saved = (title: string, viewedAt: string, bookKey = book.bookKey) => ({ ...book, bookKey, title, source: 'direct' as const, viewedAt });
+  it('collapses saved books with the same key to the newest, in place', () => {
+    const state = { ...emptyState(), savedBooks: [saved('Old', '2026-01-01T00:00:00.000Z'), saved('Other', '2026-01-02T00:00:00.000Z', 'v1:isbn:9780140449136'), saved('New', '2026-01-03T00:00:00.000Z')] };
+    expect(dedupeSavedBooks(state).savedBooks.map(item => item.title)).toEqual(['Other', 'New']);
+    const clean = { ...emptyState(), savedBooks: [saved('Only', '2026-01-01T00:00:00.000Z')] };
+    expect(dedupeSavedBooks(clean)).toBe(clean);
+  });
+  it('reads de-duplicated only when the record is healthy', () => {
+    const storage = new MemoryStorage();
+    storage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: null, recentBooks: [], savedContent: [],
+      savedBooks: [saved('Old', '2026-01-01T00:00:00.000Z'), saved('New', '2026-01-03T00:00:00.000Z')] }));
+    const read = readDedupedAnonymousWebStateWithStatus(storage);
+    expect(read.status).toBe('ok');
+    expect(read.state.savedBooks.map(item => item.title)).toEqual(['New']);
+    // The plain reader (used with the flag off and by older bundles) is unchanged.
+    expect(readAnonymousWebStateWithStatus(storage).state.savedBooks).toHaveLength(2);
   });
 });

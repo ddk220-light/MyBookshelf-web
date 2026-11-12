@@ -43,6 +43,11 @@ Optional server environment variables: `GOOGLE_BOOKS_API_KEY`, `CALIL_APP_KEY`.
 Keep these in local `.env` or hosting configuration, never in `VITE_` variables.
 See [.env.example](.env.example) and [credential setup](docs/development/credentials.md).
 
+The one-shelf redesign is built behind a build-time flag, off by default.
+Turn it on with `VITE_ONE_SHELF=true npm run dev` (or `VITE_ONE_SHELF=true npm run build`,
+or `VITE_ONE_SHELF=true` in `client/.env.local`). See
+[the plan](docs/plans/2026-11-12-one-shelf-redesign-implementation-plan.md).
+
 ## Verify
 
 ```sh

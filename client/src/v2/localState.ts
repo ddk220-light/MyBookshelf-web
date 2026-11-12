@@ -174,3 +174,26 @@ export function withSavedContent(state: AnonymousWebState, item: ContentItem, sa
     host: item.locations.find(location => location.id === item.readingActions[0]?.locationId)?.host || item.locations[0]?.host || item.provenance[0]?.sourceId || 'Source', savedAt };
   return isSavedContent(entry) ? { ...state, savedContent: [normalizeSavedContent(entry), ...state.savedContent] } : state;
 }
+
+// One-shelf redesign (plan 3.4). The stored record keeps its version and shape
+// so an older bundle can still read it; duplicate saved books (same bookKey)
+// collapse to the most recently saved entry, which keeps its place in the list.
+export function dedupeSavedBooks(state: AnonymousWebState): AnonymousWebState {
+  const newest = new Map<string, RecentBook>();
+  for (const book of state.savedBooks) {
+    const kept = newest.get(book.bookKey);
+    if (!kept || Date.parse(book.viewedAt) > Date.parse(kept.viewedAt)) newest.set(book.bookKey, book);
+  }
+  if (newest.size === state.savedBooks.length) return state;
+  const placed = new Set<string>();
+  return { ...state, savedBooks: state.savedBooks.filter((book) => {
+    if (newest.get(book.bookKey) !== book || placed.has(book.bookKey)) return false;
+    placed.add(book.bookKey);
+    return true;
+  }) };
+}
+
+export function readDedupedAnonymousWebStateWithStatus(storage: StorageLike | null = browserStorage()): AnonymousWebStateRead {
+  const read = readAnonymousWebStateWithStatus(storage);
+  return read.status === 'ok' ? { ...read, state: dedupeSavedBooks(read.state) } : read;
+}

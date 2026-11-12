@@ -123,3 +123,13 @@ export function clearReaderState(): void {
     try { browserStorage()?.removeItem(key); } catch { /* Session has already been cleared. */ }
   }
 }
+// One-shelf migration (plan 3.4): the availability summaries and per-book
+// edition settings are no longer shown, so they are removed once. Reader
+// preferences (shelf view, library display name) are kept.
+export const RETIRED_READER_KEYS = [AVAILABILITY_CACHE_KEY, LOOKUP_PREFERENCES_KEY] as const;
+export function removeRetiredReaderCaches(): void {
+  for (const key of RETIRED_READER_KEYS) {
+    session.delete(key);
+    try { browserStorage()?.removeItem(key); } catch { /* Nothing more to remove. */ }
+  }
+}

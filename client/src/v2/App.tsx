@@ -19,6 +19,8 @@ import { ScanPage } from './ui/scan/ScanPage';
 import { uiMessages as m } from './uiMessages';
 import { SelectLibraryPage } from './ui/library/SelectLibraryPage';
 import { ContentDetailPage } from './ui/content/ContentDetailPage';
+import { oneShelfEnabled } from './featureFlags';
+import { OneShelfRoot } from './OneShelfRoot';
 
 export { LibrariesPage } from './ui/library/LibrariesPage';
 
@@ -30,10 +32,10 @@ function NotFoundPage() {
   return <section className="page-section prose"><h1>Page not found</h1><Link className="button-link" to="/app/search">{m.backToSearch}</Link></section>;
 }
 
-export function AnonymousWebApp() {
-  return <AccountSessionProvider><DeletionReceiptProvider><RecentAuthProvider><LinkTokenProvider><IdentityApp/></LinkTokenProvider></RecentAuthProvider></DeletionReceiptProvider></AccountSessionProvider>;
+export function AnonymousWebApp({oneShelf=oneShelfEnabled()}:{oneShelf?:boolean}={}) {
+  return <AccountSessionProvider><DeletionReceiptProvider><RecentAuthProvider><LinkTokenProvider><IdentityApp oneShelf={oneShelf}/></LinkTokenProvider></RecentAuthProvider></DeletionReceiptProvider></AccountSessionProvider>;
 }
-function IdentityApp(){
+function IdentityApp({oneShelf}:{oneShelf:boolean}){
   const {session,continueGuest}=useAccountSession(),navigate=useNavigate(),location=useLocation();
   const prior=useRef<string|null>(null),current=session.status==='authenticated'?session.user?.id||null:null;
   const entryMode=/^\/app\/account\/(sign-in|sign-up|verify|forgot-password|reset-password|email-change|return|complete-profile|deletion)$/.test(location.pathname);
@@ -44,7 +46,17 @@ function IdentityApp(){
   // Mount forms only after bootstrap selects their repository, so a typed
   // public search is not replaced by the checking→guest transition.
   if(session.status==='checking'&&!entryMode)return <section className="page-section"><p role="status">Checking your account…</p><button type="button" onClick={continueGuest}>Continue using this browser</button></section>;
-  return <LibraryStateProvider key={entryMode?'account-entry':session.epoch} entryMode={entryMode}><AppFrame><Routes>
+  const key=entryMode?'account-entry':session.epoch;
+  // VITE_ONE_SHELF off (the default): exactly today's tree. On: the one-shelf
+  // tree, which for now serves the same routes over the new browser state.
+  if(oneShelf)return <LibraryStateProvider key={key} entryMode={entryMode} oneShelf><OneShelfRoot><AppFrame><Routes>{currentRoutes()}</Routes></AppFrame></OneShelfRoot></LibraryStateProvider>;
+  return <LibraryStateProvider key={key} entryMode={entryMode}><AppFrame><Routes>{currentRoutes()}</Routes></AppFrame></LibraryStateProvider>;
+}
+
+// Today's route table. Called as a function (not rendered as a component) so
+// <Routes> sees the <Route> elements directly.
+function currentRoutes() {
+  return <>
     <Route path="/app/libraries" element={<LibrariesPage />} />
     <Route path="/select/:slug" element={<SelectLibraryPage />} />
     <Route path="/select" element={<SelectLibraryPage />} />
@@ -70,5 +82,5 @@ function IdentityApp(){
     <Route path="/login" element={<NativeAppNotice />} />
     <Route path="/connect" element={<NativeAppNotice />} />
     <Route path="*" element={<NotFoundPage />} />
-  </Routes></AppFrame></LibraryStateProvider>;
+  </>;
 }
