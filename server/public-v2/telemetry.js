@@ -5,6 +5,10 @@ const ALLOWED_EVENT_KEYS = new Set([
   'durationMs',
   'errorCode',
   'parserConfidence',
+  // Catalog lookup health counters (catalog-lookup/record.js): which library
+  // and platform a check concerned, never the book or the search text.
+  'libraryId',
+  'platform',
 ]);
 
 const BLOCKED_KEY = /(query|search|credential|password|pin|card|cookie|history|recent|ip|address|location|url|path|header)/i;

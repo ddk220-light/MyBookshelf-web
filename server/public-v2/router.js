@@ -8,6 +8,8 @@ import { createDiscoveryService } from './discovery.js';
 import { createPlaceSearch } from './places.js';
 import { createRedactedTelemetrySink } from './telemetry.js';
 import { mountContentRoutes } from './content.js';
+import { createCatalogLookup } from '../services/catalog-lookup/index.js';
+import { createLookupRecorder, createMemoryHealthRecord } from '../services/catalog-lookup/record.js';
 import {
   PublicV2ValidationError,
   parseAvailability,
@@ -91,10 +93,14 @@ export function createPublicV2Router({
   rateLimit = {},
   telemetry = createRedactedTelemetrySink(),
   content,
+  lookup = null,
 } = {}) {
   const router = Router();
   const bookService = books || createPublicBookService({ catalogs: createPublicCatalogBookService({ directory }) });
-  const availabilityService = availability || createPublicAvailabilityService({ directory, books: bookService });
+  // The lookup layer's Phase 1 record: health counters in memory and the
+  // allowlisted telemetry sink; no stored answers until the Phase 2 store.
+  const availabilityService = availability || createPublicAvailabilityService({ directory, books: bookService,
+    lookup: lookup || createCatalogLookup({ recorder: createLookupRecorder({ health: createMemoryHealthRecord(), telemetry }) }) });
 
   router.use((req, res, next) => {
     // This boundary neither reads nor creates identity state. These headers also
@@ -168,7 +174,12 @@ export function createPublicV2Router({
   router.post('/availability', route(telemetry, 'availability', async (req, res) => {
     const { libraryId, bookKey, editionScope, language } = parseAvailability(req.body);
     if (!bookKey) return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
-    const result = await availabilityService.check({ libraryId, bookKey, ...(editionScope ? { editionScope } : {}), ...(language ? { language } : {}) });
+    // A reader who leaves stops the lookup layer's remaining catalog requests.
+    const controller = new AbortController();
+    const abandon = () => { if (!res.writableEnded) controller.abort(); };
+    res.on('close', abandon);
+    const result = await availabilityService.check({ libraryId, bookKey, ...(editionScope ? { editionScope } : {}), ...(language ? { language } : {}), signal: controller.signal })
+      .finally(() => res.off('close', abandon));
     if (result.kind === 'library_not_found') return res.status(404).json(publicError('LIBRARY_NOT_FOUND', 'This library is not in the directory.'));
     if (result.kind === 'book_not_found') return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
     return res.json(result.response);

@@ -18,11 +18,27 @@ const operations = new AsyncLocalStorage();
 // for spacing between successive requests (robots.txt Crawl-Delay). Both are
 // scoped to the operation, so one reader's check never waits on another's.
 // Nested operations reuse the outermost budget and pacing.
-export function withCatalogOperation({ maxRequests = Infinity } = {}, task) {
+//
+// The catalog lookup layer also passes:
+// - `signal`: once aborted, no further request is scheduled and an in-flight
+//   request is cancelled (a request already answered cannot be recalled);
+// - `minIntervalMs`: spacing between successive requests to one host within
+//   the operation (the larger of this and the adapter's own value applies);
+// - `robots`: an async `(url) => ({ allowed, delayMs })` policy check run before
+//   each request; a disallowed path is refused without contacting the host.
+export function withCatalogOperation({ maxRequests = Infinity, signal = null, minIntervalMs = 0, robots = null } = {}, task) {
   const current = operations.getStore();
   if (current) return task(current);
-  const store = { maxRequests, requests: 0, lastByHost: new Map() };
+  const store = { maxRequests, requests: 0, lastByHost: new Map(), signal, minIntervalMs, robots };
   return operations.run(store, () => task(store));
+}
+
+function abortedError() {
+  return Object.assign(new Error('Catalog operation was cancelled'), { name: 'AbortError', code: 'CATALOG_ABORTED' });
+}
+
+function robotsError() {
+  return Object.assign(new Error('The catalog’s robots rules do not allow this request'), { code: 'CATALOG_PROVIDER_BLOCKED', robots: true });
 }
 
 export function catalogOperation() {
@@ -228,12 +244,13 @@ export async function request(url, options = {}) {
     deadlineAt: withoutRetries.deadlineAt ?? Date.now() + (withoutRetries.timeoutMs ?? DEFAULT_TIMEOUT_MS),
   };
   let attempt = 0;
+  const signal = operations.getStore()?.signal;
   while (true) {
     try {
       const response = await requestOnce(url, requestOptions);
-      if (response.ok || response.status < 500 || attempt >= retries) return response;
+      if (response.ok || response.status < 500 || attempt >= retries || signal?.aborted) return response;
     } catch (error) {
-      if (attempt >= retries || !retryableError(error)) throw error;
+      if (attempt >= retries || !retryableError(error) || signal?.aborted) throw error;
     }
     attempt += 1;
   }
@@ -256,24 +273,37 @@ async function requestOnce(url, options = {}) {
     if (hit !== undefined) return hit;
   }
   const operation = operations.getStore();
+  let spacing = minIntervalMs;
   if (operation) {
+    if (operation.signal?.aborted) throw abortedError();
     if (operation.requests >= operation.maxRequests) throw budgetError();
-    await paceRequest(operation, hostOf(url), minIntervalMs, deadlineAt);
+    if (operation.robots) {
+      const policy = await operation.robots(url);
+      if (!policy?.allowed) throw robotsError();
+      spacing = Math.max(spacing || 0, policy.delayMs || 0);
+    }
+    spacing = Math.max(spacing || 0, operation.minIntervalMs || 0);
+    await paceRequest(operation, hostOf(url), spacing, deadlineAt);
+    if (operation.signal?.aborted) throw abortedError();
     if (operation.requests >= operation.maxRequests) throw budgetError();
     operation.requests += 1;
   }
-  const settled = () => { if (operation && minIntervalMs > 0) operation.lastByHost.set(hostOf(url), Date.now()); };
+  const settled = () => { if (operation && spacing > 0) operation.lastByHost.set(hostOf(url), Date.now()); };
 
   return enqueueTask(`http:${hostOf(url)}`, async () => {
     if (cacheKey) {
       const hit = cachedValue(cacheKey);
       if (hit !== undefined) return hit;
     }
+    // A cancelled lookup must not reach the catalog after waiting in the queue.
+    if (operation?.signal?.aborted) throw abortedError();
     const requestTimeout = remaining(deadlineAt, timeoutMs);
     if (requestTimeout === 0) throw deadlineError();
     const headers = { 'User-Agent': USER_AGENT, ...(fetchOptions.headers || {}) };
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), requestTimeout);
+    const cancel = () => controller.abort();
+    operation?.signal?.addEventListener?.('abort', cancel, { once: true });
     try {
       let response;
       try {
@@ -299,6 +329,7 @@ async function requestOnce(url, options = {}) {
       return value;
     } finally {
       clearTimeout(timer);
+      operation?.signal?.removeEventListener?.('abort', cancel);
       settled();
     }
   }, { deadlineAt });
