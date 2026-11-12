@@ -21,9 +21,20 @@ import './book.css';
 
 const SHORT_ABOUT = 450;
 
-/** Year of first publication from the public record ("1999", "1999-05-01", "May 1999"). */
+/** The year from the public record's date ("1999", "1999-05-01", "May 1999"). */
 export function firstPublishedYear(value?: string): string | null {
   return /\b(\d{4})\b/.exec(value || '')?.[1] || null;
+}
+
+/**
+ * "First published 1999" only for an Open Library work, whose date is the
+ * work's first publication. Any other record (an ISBN, a catalog record) is
+ * one edition, and its date is that edition's: "Published 2002".
+ */
+export function publishedLine(book: Pick<PublicBook, 'bookKey' | 'publishedDate'>): string | null {
+  const year = firstPublishedYear(book.publishedDate);
+  if (!year) return null;
+  return (/^v1:openlibrary:OL\d+W$/.test(book.bookKey) ? 'First published ' : 'Published ') + year;
 }
 
 /** Open Library: the work page when the work is known, else the ISBN page, else nothing. */
@@ -145,7 +156,7 @@ export function ShelfBookPage() {
 
   const placeholder = book.metadataStatus === 'missing';
   const authors = book.authors.filter(Boolean).join(', ');
-  const year = firstPublishedYear(book.publishedDate);
+  const published = publishedLine(book);
   const description = placeholder ? '' : book.description?.trim() || '';
   const shortAbout = description.length > SHORT_ABOUT ? description.slice(0, SHORT_ABOUT).replace(/\s+\S*$/, '') + '…' : description;
   const olUrl = openLibraryUrl(book);
@@ -158,7 +169,7 @@ export function ShelfBookPage() {
       <div className="shelf-book-heading">
         <h1 className="shelf-book-title">{book.title}</h1>
         {authors && <p className="shelf-book-author">{authors}</p>}
-        {year && <p className="shelf-book-meta">First published {year}</p>}
+        {published && <p className="shelf-book-meta">{published}</p>}
         {showIsbn && <p className="shelf-book-meta">ISBN {book.isbn13}</p>}
       </div>
     </div>

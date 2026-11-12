@@ -143,6 +143,20 @@ describe('library pop-up', () => {
     expect(await within(dialog).findByText('Received your request, thank you.', { selector: 'p:not([role])' })).toBeInTheDocument();
   });
 
+  it('text the server refuses gets no thank-you and no misleading line; the button stays', async () => {
+    const calls = stubApi({ request: () => Promise.resolve(json({ error: { code: 'INVALID_REQUEST', message: 'The request is invalid.' } }, 400)) });
+    renderShelf();
+    const dialog = await openFromPanel();
+    fireEvent.change(within(dialog).getByLabelText('City, town or library name'), { target: { value: 'Tirunelveli' } });
+    const button = await within(dialog).findByRole('button', { name: 'Request to add “Tirunelveli”' });
+    fireEvent.click(button);
+    await waitFor(() => expect(calls.filter(call => call.path.endsWith('/library-requests'))).toHaveLength(1));
+    await waitFor(() => expect(button).not.toBeDisabled());
+    expect(within(dialog).queryByText(/Received your request/)).not.toBeInTheDocument();
+    expect(within(dialog).queryByText(/Couldn’t send/)).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Request to add “Tirunelveli”' })).toBeInTheDocument();
+  });
+
   it('"My library isn’t listed" shows the request button with the current text', async () => {
     stubApi();
     renderShelf();
@@ -168,7 +182,8 @@ describe('library pop-up', () => {
 describe('library pop-up helpers', () => {
   it('requests only text the server accepts', () => {
     expect(requestableText('  Tirunelveli  ')).toBe('Tirunelveli');
-    for (const text of ['', 'a', '12345', 'me@example.com', 'https://example.com', 'www.example.org', 'Call 9876543210', 'x'.repeat(81)]) expect(requestableText(text)).toBeNull();
+    for (const text of ['', 'a', '12345', 'me@example.com', 'https://example.com', 'www.example.org', 'mylibrary.org', 'Call 9876543210', 'x'.repeat(81), 'a!']) expect(requestableText(text)).toBeNull();
+    for (const text of ['St. Louis', 'Tirunelveli', 'திருநெல்வேலி', 'Sector 17 Chandigarh']) expect(requestableText(text)).toBe(text);
   });
   it('area line is the place and region only', () => {
     expect(libraryArea(ANNA as never)).toBe('Kotturpuram · Tamil Nadu');

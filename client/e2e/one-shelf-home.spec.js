@@ -470,7 +470,7 @@ test.describe('One-shelf scan', () => {
     await setup(page);
     await page.goto('/app/shelf');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
-    expect(await page.locator('.scan-dialog').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
+    expect(await page.locator('.scan-dialog[open]').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   });
 
   test.describe('with motion', () => {
@@ -480,7 +480,7 @@ test.describe('One-shelf scan', () => {
       await setup(page);
       await page.goto('/app/shelf');
       await page.getByRole('button', { name: 'Scan a barcode' }).click();
-      expect(await page.locator('.scan-dialog').evaluate(element => getComputedStyle(element).animationName)).toBe('scan-in');
+      expect(await page.locator('.scan-dialog[open]').evaluate(element => getComputedStyle(element).animationName)).toBe('scan-in');
     });
   });
 });

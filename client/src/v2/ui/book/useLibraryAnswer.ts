@@ -4,8 +4,12 @@ import { useLibrary } from '../../context';
 import { useHoldingsStore } from '../../holdings';
 import { readReaderPreferences } from '../../readerState';
 
-/** The longest the book page waits for one check before saying it couldn't check. */
-export const CHECK_TIMEOUT_MS = 50_000;
+/**
+ * The longest the book page waits for one check before saying it couldn't
+ * check. The server's slowest live check ends at about 55 s, so the page
+ * waits a little longer than that rather than cutting off a real answer.
+ */
+export const CHECK_TIMEOUT_MS = 60_000;
 
 export type CardAnswer = 'checking' | 'found' | 'not_found' | 'unconfirmed' | 'unknown' | 'unsupported';
 export type LibraryCardModel =
@@ -33,8 +37,11 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
   const [result, setResult] = useState<Result | null>(null);
   const retry = useCallback(() => setAttempt(value => value + 1), []);
 
+  // A library whose catalog the app cannot read is still asked: the server
+  // answers at once from what it has stored, else "unknown", with a link
+  // that searches its catalog for this book.
   useEffect(() => {
-    if (!bookKey || !libraryId || !checkable) return;
+    if (!bookKey || !libraryId || !ready) return;
     let active = true;
     let timedOut = false;
     const controller = new AbortController();
@@ -48,7 +55,7 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
       .then(reply => settle(reply.answer, reply.catalogUrl))
       .catch(() => { if (timedOut || !controller.signal.aborted) settle('unknown'); });
     return () => { active = false; clearTimeout(timer); controller.abort(); };
-  }, [bookKey, libraryId, checkable, attempt, store]);
+  }, [bookKey, libraryId, ready, attempt, store]);
 
   if (!libraryId) return { kind: 'none' };
   const cached = readReaderPreferences().selectedLibrary;
@@ -58,10 +65,12 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
     if (libraryError && !loadingLibrary) return { kind: 'library', answer: 'unknown', name: name || 'Your library', retry: retryLibrary };
     return { kind: 'library', answer: 'checking', name };
   }
-  // A library whose catalog the app cannot read: couldn't check, and trying again would not help.
-  if (!checkable) return { kind: 'library', answer: 'unsupported', name, ...(homeUrl ? { catalogUrl: homeUrl } : {}) };
   const current = result && result.libraryId === libraryId && result.bookKey === bookKey && result.attempt === attempt ? result : null;
-  if (!current) return { kind: 'library', answer: 'checking', name, ...(homeUrl ? { catalogUrl: homeUrl } : {}) };
-  const catalogUrl = current.catalogUrl || homeUrl;
-  return { kind: 'library', answer: current.answer, name, ...(catalogUrl ? { catalogUrl } : {}), ...(current.answer === 'unknown' ? { retry } : {}) };
+  const catalogUrl = current?.catalogUrl || homeUrl;
+  const link = catalogUrl ? { catalogUrl } : {};
+  // A library whose catalog the app cannot read: couldn't check (unless an
+  // answer was stored), and trying again would not help.
+  if (!checkable && current?.answer !== 'found' && current?.answer !== 'not_found') return { kind: 'library', answer: 'unsupported', name, ...link };
+  if (!current) return { kind: 'library', answer: 'checking', name, ...link };
+  return { kind: 'library', answer: current.answer, name, ...link, ...(current.answer === 'unknown' ? { retry } : {}) };
 }

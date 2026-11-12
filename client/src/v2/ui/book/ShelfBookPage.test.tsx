@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import { AnonymousWebApp } from '../../App';
 import { ANONYMOUS_WEB_STORAGE_KEY, SAVED_BOOKS_CAP } from '../../localState';
-import { firstPublishedYear, openLibraryUrl } from './ShelfBookPage';
+import { firstPublishedYear, openLibraryUrl, publishedLine } from './ShelfBookPage';
 import { CHECK_TIMEOUT_MS } from './useLibraryAnswer';
 
 const LIBRARY = { id: 'koha:anna', name: 'Anna Centenary Library', city: 'Chennai', region: 'Tamil Nadu', country: 'IN', health: 'operational', catalogUrl: 'https://catalog.example.test/',
@@ -47,7 +47,7 @@ describe('one-shelf book page', () => {
     renderBook();
     expect(await screen.findByRole('heading', { level: 1, name: 'Wings of Fire' })).toBeInTheDocument();
     expect(screen.getByText('A. P. J. Abdul Kalam', { selector: 'p' })).toBeInTheDocument();
-    expect(screen.getByText('First published 1999')).toBeInTheDocument();
+    expect(screen.getByText('Published 1999')).toBeInTheDocument();
     expect(screen.getByText('ISBN 9788173711466')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Add to my shelf' })).toHaveAttribute('aria-pressed', 'false');
     expect(screen.getByRole('heading', { name: 'Is it in your library?' })).toBeInTheDocument();
@@ -133,15 +133,21 @@ describe('one-shelf book page', () => {
     expect(attempts).toBe(2);
   });
 
-  it('a library whose catalog cannot be read is "couldn’t check" with only its catalog, and no request', async () => {
+  it('a library whose catalog cannot be read is "couldn’t check" with no Try again, linking its catalog search for this book', async () => {
     const closed = { ...LIBRARY, capabilities: { ...LIBRARY.capabilities, publicAvailability: false } };
-    const calls = stubApi({ libraries: [closed] });
+    const search = 'https://catalog.example.test/search?q=9788173711466';
+    let release: (response: Response) => void = () => {};
+    stubApi({ libraries: [closed], check: () => new Promise(resolve => { release = resolve; }) });
     seed({ libraryId: LIBRARY.id });
     renderBook();
-    const group = await screen.findByRole('group', { name: 'Couldn’t check Anna Centenary Library' });
-    expect(within(group).queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+    // While the server is asked, the card already says it couldn't check, with the catalog's home page.
+    let group = await screen.findByRole('group', { name: 'Couldn’t check Anna Centenary Library' });
     expect(within(group).getByRole('link', { name: /^Catalog/ })).toHaveAttribute('href', LIBRARY.catalogUrl);
-    expect(calls.some(call => call.path.endsWith('/holdings/check'))).toBe(false);
+    await act(async () => { release(json({ answer: 'unknown', catalogUrl: search })); });
+    group = await screen.findByRole('group', { name: 'Couldn’t check Anna Centenary Library' });
+    await waitFor(() => expect(within(group).getByRole('link', { name: /^Catalog/ })).toHaveAttribute('href', search));
+    expect(within(group).queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+    expect(group).toHaveClass('library-answer-grey');
   });
 
   it('never shows one edition’s answer for another, and drops answers that arrive after the book changes', async () => {
@@ -208,7 +214,7 @@ describe('one-shelf book page', () => {
     renderBook(placeholder.bookKey);
     expect(await screen.findByRole('heading', { level: 1, name: 'ISBN 9780306406157' })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'About this book' })).not.toBeInTheDocument();
-    expect(screen.queryByText(/First published/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Published/)).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: /All editions on Open Library/ })).toHaveAttribute('href', 'https://openlibrary.org/isbn/9780306406157');
     expect(screen.getByRole('button', { name: 'Add to my shelf' })).toBeEnabled();
   });
@@ -244,6 +250,10 @@ describe('book page helpers', () => {
     expect(firstPublishedYear('2016-10-04')).toBe('2016');
     expect(firstPublishedYear('May 1999')).toBe('1999');
     expect(firstPublishedYear(undefined)).toBeNull();
+    // Only a work's date is its first publication; an edition's is just when that edition came out.
+    expect(publishedLine({ bookKey: 'v1:openlibrary:OL1037811W', publishedDate: '1999' })).toBe('First published 1999');
+    expect(publishedLine({ bookKey: 'v1:isbn:9788173711466', publishedDate: '2002' })).toBe('Published 2002');
+    expect(publishedLine({ bookKey: 'v1:isbn:9788173711466' })).toBeNull();
   });
   it('Open Library: the work page, else the ISBN page, else nothing', () => {
     expect(openLibraryUrl({ bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1W' })).toBe('https://openlibrary.org/works/OL1W');

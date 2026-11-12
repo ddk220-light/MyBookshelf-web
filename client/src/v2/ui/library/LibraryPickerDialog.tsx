@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react';
-import { publicApi } from '../../api';
+import { publicApi, PublicApiError } from '../../api';
 import { useLibrary } from '../../context';
 import type { PublicLibrary } from '../../types';
 import { trapTab } from '../home/dialogFocus';
@@ -9,11 +9,17 @@ import { useLibraryDiscovery } from './useLibraryDiscovery';
 import '../scan/scan.css';
 import './libraryPicker.css';
 
-/** What the server accepts as a request (catalog-store/requests.js): 2–80 characters with a letter, no email, link or phone number. */
+// The same rules as the server (server/catalog-store/requests.js), so the
+// button is offered only for text the server will take.
+const EMAIL = /[^\s@]+@[^\s@]+\.[^\s@]+/;
+const URLISH = /(?:https?:\/\/|www\.)|\b[\p{L}\p{N}-]+\.(?:com|org|net|in|io|co|gov|edu|info|me|app|dev|uk|us|jp)\b/iu;
+
+/** What the server accepts as a request: 2–80 characters with a letter, no email, link or phone number. */
 export function requestableText(value: string): string | null {
-  const text = value.normalize('NFC').replace(/\s+/g, ' ').trim();
+  const text = value.normalize('NFKC').replace(/\s+/g, ' ').trim();
   if (text.length < 2 || text.length > 80 || !/\p{L}/u.test(text)) return null;
-  if (/@/.test(text) || /(https?:\/\/|www\.|\.[a-z]{2,}\/)/i.test(text) || (text.match(/\d/g) || []).length >= 7) return null;
+  if (/@/.test(text) || EMAIL.test(text) || URLISH.test(text) || (text.match(/\d/g) || []).length >= 7) return null;
+  if (text.toLowerCase().replace(/[^\p{L}\p{M}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim().length < 2) return null;
   return text;
 }
 
@@ -22,7 +28,9 @@ export function libraryArea(library: PublicLibrary): string {
   return [...new Set([library.city || library.district, library.region].filter((part): part is string => Boolean(part)))].join(' · ');
 }
 
-type RequestState = 'idle' | 'sending' | 'sent' | 'failed';
+// 'refused': the server would not take this text (400). Nothing is said and the
+// button stays; there is no thank-you for a request that was not received.
+type RequestState = 'idle' | 'sending' | 'sent' | 'failed' | 'refused';
 
 /**
  * The library pop-up (LibraryPicker and LibraryStates boards): a bottom sheet
@@ -103,11 +111,13 @@ function PickerBody({ titleId, listId, onClose, onChosen }: { titleId: string; l
     if (!requestText || request === 'sending' || request === 'sent') return;
     setRequest('sending');
     try { await publicApi.libraryRequest(requestText); setRequest('sent'); }
-    catch { setRequest('failed'); }
+    catch (failure) { setRequest(failure instanceof PublicApiError && failure.status === 400 ? 'refused' : 'failed'); }
   };
   const retry = () => { if (nearby) nearMe(); else void model.retry(); };
 
-  const label = nearby ? 'Nearest first' : page?.area ? 'Libraries in ' + page.area.label.split(',')[0] : 'Libraries';
+  // "Nearest first" only when the server gave distances; without them the order is not known to be by distance.
+  const hasDistances = libraries.some(item => item.distanceKm != null);
+  const label = nearby ? (hasDistances ? 'Nearest first' : 'Libraries near you') : page?.area ? 'Libraries in ' + page.area.label.split(',')[0] : 'Libraries';
   const status = request === 'sent' ? 'Received your request, thank you.' : request === 'failed' ? 'Couldn’t send. Try again.' : locating ?'Finding libraries near you' : busy ? 'Finding libraries' : errorKind === 'location' ? 'Location unavailable'
     : errorKind === 'load' ? 'Couldn’t load libraries' : nothing ? 'No libraries here yet'
       : page && showList ? (libraries.length === 1 ? '1 library' : libraries.length + ' libraries') : '';
@@ -119,7 +129,7 @@ function PickerBody({ titleId, listId, onClose, onChosen }: { titleId: string; l
       <button type="button" className="scan-close" aria-label="Close" onClick={onClose}><CloseGlyph /></button>
     </div>
 
-    <button type="button" className={'home-button library-near' + (nearby ? ' is-on' : '')} aria-pressed={nearby || false} aria-busy={locating || undefined}
+    <button type="button" className={'home-button home-button-outline library-near' + (nearby ? ' is-on' : '')} aria-pressed={nearby || false} aria-busy={locating || undefined}
       disabled={locating} onClick={() => { setRequest('idle'); setAsking(false); nearMe(); }}>
       <LocateGlyph />Libraries near me
     </button>
