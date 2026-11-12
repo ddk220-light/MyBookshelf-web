@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Book page with library answer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2f5340}a:hover{color:#1f3a2c}
+@keyframes tick-pop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.tick-pop{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; background: #faf7f1; color: #1f1a17; font-family: 'Work Sans', sans-serif; font-size: 16px; line-height: 1.5; padding: 8px 16px 16px; display: flex; flex-direction: column; overflow: hidden">
+
+<a href="FirstBook.dc.html" style="height: 44px; align-self: flex-start; display: flex; align-items: center; gap: 4px; font-weight: 600; font-size: 15px; text-decoration: none">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+Back
+</a>
+
+<div style="margin-top: 8px; display: flex; gap: 16px; align-items: flex-end">
+<div aria-hidden="true" style="flex-shrink: 0; position: relative; width: 108px; height: 162px; margin: 10px 12px 0 0; filter: drop-shadow(8px 6px 8px rgba(31,26,23,.32))">
+<span style="position: absolute; left: 0; bottom: 100%; width: 100%; height: 9px; transform: skewX(-45deg); transform-origin: 0 100%; background: repeating-linear-gradient(0deg, #f6efe0 0 1px, #ddd2bc 1px 2px)"></span>
+<span style="position: absolute; left: 100%; top: 0; width: 9px; height: 100%; transform: skewY(-45deg); transform-origin: 0 0; background: repeating-linear-gradient(90deg, #e9dfca 0 1px, #cdbfa5 1px 2px)"></span>
+<span style="position: absolute; inset: 0; box-sizing: border-box; padding: 10px 9px 10px 15px; border-radius: 1px 3px 3px 1px; background: linear-gradient(90deg, rgba(0,0,0,.3) 0, rgba(255,255,255,.16) 4px, rgba(0,0,0,.14) 8px, rgba(0,0,0,0) 14px), linear-gradient(115deg, rgba(255,255,255,.16), rgba(255,255,255,0) 45%), #7a2e2e; color: #fbf3e4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; text-align: center; font-family: Newsreader, serif; font-size: 16px; line-height: 1.2">
+<span>Wings of Fire</span>
+<span style="width: 22px; height: 1px; background: rgba(251,243,228,.65)"></span>
+<span style="font-family: 'Work Sans', sans-serif; font-size: 13px; line-height: 1.25">A. P. J. Abdul Kalam</span>
+</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<h1 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 26px; line-height: 1.15; letter-spacing: -0.025em">Wings of Fire: An Autobiography</h1>
+<div style="color: #4a423b">A. P. J. Abdul Kalam</div>
+<div style="font-size: 13px; color: #6b6259">First published 1999</div>
+<div style="font-size: 13px; color: #6b6259">ISBN 9788173711466</div>
+</div>
+</div>
+
+<sc-if value="{{saved}}" hint-placeholder-val="{{true}}">
+<button aria-pressed="true" onClick="{{toggle}}" style="margin-top: 20px; height: 54px; border: 1.500px solid #2f5340; border-radius: 12px; background: #e3ecdf; color: #1f3a2c; display: flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 600">
+<svg class="tick-pop" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round" style="animation: {{tickAnim}}"><path d="M5 12.500l4.500 4.500L19 7.500"></path></svg>
+On my shelf
+</button>
+</sc-if>
+<sc-if value="{{unsaved}}" hint-placeholder-val="{{false}}">
+<button aria-pressed="false" onClick="{{toggle}}" style="margin-top: 20px; height: 54px; border: 1.500px solid #2f5340; border-radius: 12px; background: #2f5340; color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 600">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+Add to my shelf
+</button>
+</sc-if>
+
+<div role="group" aria-label="Found in Anna Centenary Library" style="margin-top: 16px; min-height: 56px; box-sizing: border-box; background: #e3ecdf; border: 1px solid #b7ccb0; border-radius: 14px; padding: 6px 4px 6px 12px; display: flex; align-items: center; gap: 8px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f5340" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.500l2.800 2.800L16.500 9.500"></path></svg>
+<span aria-hidden="true" style="flex-shrink: 0; width: 28px; height: 28px; box-sizing: border-box; border-radius: 6px; background: #efe9df; border: 1px solid #d6cdbf; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4a423b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 20V9l6-4 6 4v11M10 20v-5h4v5"></path></svg>
+</span>
+<div style="flex-grow: 1; min-width: 0; font-weight: 600; font-size: 15px; line-height: 1.25; color: #1f1a17">Anna Centenary Library</div>
+<a href="https://www.annacentenarylibrary.org/" style="flex-shrink: 0; min-height: 44px; padding: 0 8px; display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; text-decoration: none">
+Catalog
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M11 7H6v11h11v-5"></path></svg>
+</a>
+</div>
+
+<div style="margin-top: 18px; display: flex; flex-direction: column; gap: 6px">
+<h2 style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6259">About this book</h2>
+<p style="margin: 0; font-size: 15px">Kalam’s own account of his life, from a boyhood in Rameswaram to his years leading India’s space and missile programmes.</p>
+</div>
+
+<div style="margin-top: 16px; display: flex; flex-direction: column">
+<h2 style="margin: 0 0 2px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6259">Read more elsewhere</h2>
+<a href="https://www.goodreads.com/search?q=9788173711466" style="height: 46px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e7e0d5; text-decoration: none; font-weight: 500">
+Reviews on Goodreads
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M11 7H6v11h11v-5"></path></svg>
+</a>
+<a href="https://openlibrary.org/isbn/9788173711466" style="height: 46px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; font-weight: 500">
+All editions on Open Library
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M11 7H6v11h11v-5"></path></svg>
+</a>
+</div>
+
+<sc-if value="{{saved}}" hint-placeholder-val="{{true}}">
+<div role="status" style="position: absolute; left: 16px; right: 16px; bottom: 20px; min-height: 52px; box-sizing: border-box; border-radius: 12px; background: #2b2420; color: #fbf8f1; padding: 4px 6px 4px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 10px 24px -8px rgba(31,26,23,.5)">
+<div style="font-size: 15px">Added to your shelf</div>
+<a href="FirstBook.dc.html" style="min-height: 44px; padding: 0 12px; display: flex; align-items: center; color: #b9e0c4; font-weight: 600; font-size: 15px; text-decoration: none">See my shelf</a>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { saved: true, popped: false };
+}
+renderVals() {
+const saved = this.state.saved;
+return {
+saved,
+unsaved: !saved,
+tickAnim: this.state.popped ? 'tick-pop 250ms cubic-bezier(.3,1.5,.5,1)' : 'none',
+toggle: () => this.setState({ saved: !saved, popped: !saved })
+};
+}
+}
+</script>
+</body>
+</html>

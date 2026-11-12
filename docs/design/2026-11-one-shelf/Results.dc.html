@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Search results on the shelf</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2f5340}a:hover{color:#1f3a2c}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #faf7f1; color: #1f1a17; font-family: 'Work Sans', sans-serif; font-size: 16px; line-height: 1.5; padding: 16px; display: flex; flex-direction: column; overflow: hidden">
+
+<div style="display: flex; align-items: center; gap: 2px; height: 44px">
+<a href="AccountPanel.dc.html" aria-label="Account and settings" style="width: 44px; height: 44px; margin-left: -10px; color: #4a423b; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c1.500-4 5-5 8-5s6.500 1 8 5"></path></svg>
+</a>
+<div style="font-family: Newsreader, serif; font-size: 24px; font-weight: 500; letter-spacing: -0.02em">MyBookshelf</div>
+</div>
+
+<div style="margin-top: 12px; height: 52px; display: flex; align-items: center; background: #ffffff; border: 1.500px solid #2f5340; border-radius: 14px; padding-left: 14px; gap: 10px; box-sizing: border-box">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2f5340" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.500-3.500"></path></svg>
+<input aria-label="Search for a book" type="search" value="wings of fire" style="flex-grow: 1; min-width: 0; height: 46px; border: 0; background: transparent; font: inherit; color: #1f1a17; outline: none">
+<a href="Main.dc.html" aria-label="Clear search and go back to my shelf" style="width: 44px; height: 44px; color: #6b6259; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</a>
+<a href="Scan.dc.html" aria-label="Scan a barcode" style="width: 52px; height: 48px; border-left: 1px solid #e7e0d5; display: flex; align-items: center; justify-content: center; color: #2f5340">
+<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h3M17 5h3v2M4 17v2h3M17 19h3v-2M8 9v6M10.500 9v6M13.500 9v6M16 9v6"></path></svg>
+</a>
+</div>
+
+<div style="margin-top: 10px; height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<a href="Main.dc.html" style="font-size: 14px; font-weight: 600; min-height: 44px; display: flex; align-items: center; gap: 4px; text-decoration: none">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+Back to my shelf
+</a>
+<div role="group" aria-label="View" style="display: flex; border: 1px solid #d6cdbf; border-radius: 10px; overflow: hidden">
+<button aria-label="Shelf view" aria-pressed="{{shelfPressed}}" onClick="{{showShelf}}" style="width: 46px; height: 42px; border: 0; padding: 0; background: {{shelfBg}}; color: #2f5340; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19h18M6 19V7h4v12M10 19V5h3v14M14.500 19l-1-11 3-.500L18 19"></path></svg>
+</button>
+<button aria-label="List view" aria-pressed="{{listPressed}}" onClick="{{showList}}" style="width: 46px; height: 42px; border: 0; border-left: 1px solid #d6cdbf; padding: 0; background: {{listBg}}; color: #2f5340; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 7h12M8 12h12M8 17h12M4 7h.010M4 12h.010M4 17h.010"></path></svg>
+</button>
+</div>
+</div>
+
+<sc-if value="{{isShelf}}" hint-placeholder-val="{{true}}">
+<sc-for list="{{rows}}" as="row" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; margin-bottom: 6px">
+<div style="margin-inline: -16px; padding: 14px 16px 0; background: linear-gradient(180deg, rgba(31,26,23,.13), rgba(31,26,23,0) 16px), repeating-linear-gradient(90deg, rgba(120,84,48,.04) 0 2px, rgba(120,84,48,0) 2px 9px), #efe5d3">
+<div style="position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: end; height: 150px">
+<sc-for list="{{row.books}}" as="book" hint-placeholder-count="3">
+<div style="display: flex; justify-content: center">
+<a href="{{book.href}}" aria-label="{{book.label}}" style="position: relative; display: block; width: 96px; height: 144px; text-decoration: none; filter: drop-shadow(5px 2px 4px rgba(31,26,23,.3))">
+<span aria-hidden="true" style="position: absolute; left: 0; bottom: 100%; width: 100%; height: 6px; transform: skewX(-45deg); transform-origin: 0 100%; background: repeating-linear-gradient(0deg, #f6efe0 0 1px, #ddd2bc 1px 2px)"></span>
+<span aria-hidden="true" style="position: absolute; left: 100%; top: 0; width: 6px; height: 100%; transform: skewY(-45deg); transform-origin: 0 0; background: repeating-linear-gradient(90deg, #e9dfca 0 1px, #cdbfa5 1px 2px)"></span>
+<span style="position: absolute; inset: 0; box-sizing: border-box; padding: 8px 7px 8px 12px; border-radius: 1px 2px 2px 1px; background: linear-gradient(90deg, rgba(0,0,0,.3) 0, rgba(255,255,255,.16) 3px, rgba(0,0,0,.14) 6px, rgba(0,0,0,0) 11px), linear-gradient(115deg, rgba(255,255,255,.16), rgba(255,255,255,0) 45%), {{book.bg}}; color: #fbf3e4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; text-align: center; font-family: Newsreader, serif; font-size: 15px; line-height: 1.2">
+<span>{{book.cover}}</span>
+<span aria-hidden="true" style="width: 18px; height: 1px; background: rgba(251,243,228,.65)"></span>
+<span style="font-family: 'Work Sans', sans-serif; font-size: 11px; line-height: 1.25">{{book.author}}</span>
+</span>
+</a>
+</div>
+</sc-for>
+</div>
+<div aria-hidden="true" style="height: 12px; margin: -12px -16px 0; background: linear-gradient(180deg, #b88959, #d6ab7c)"></div>
+</div>
+<div aria-hidden="true" style="height: 14px; margin-inline: -16px; box-sizing: border-box; border-top: 1px solid #e9c59b; background: linear-gradient(180deg, #cb9a66 0, #b9854f 55%, #a47340 100%)"></div>
+<div aria-hidden="true" style="height: 8px; margin-inline: -16px; background: linear-gradient(180deg, rgba(31,26,23,.22), rgba(31,26,23,0))"></div>
+</div>
+</sc-for>
+</sc-if>
+
+<sc-if value="{{isList}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column">
+<sc-for list="{{list}}" as="book" hint-placeholder-count="9">
+<a href="{{book.href}}" style="height: 70px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #e7e0d5; text-decoration: none; color: #1f1a17">
+<div aria-hidden="true" style="flex-shrink: 0; width: 36px; height: 54px; border-radius: 1px 2px 2px 1px; background: linear-gradient(90deg, rgba(0,0,0,.3) 0, rgba(255,255,255,.16) 2px, rgba(0,0,0,0) 6px), {{book.bg}}; box-shadow: 2px 2px 4px rgba(31,26,23,.25)"></div>
+<div style="display: flex; flex-direction: column; min-width: 0">
+<div style="font-family: Newsreader, serif; font-size: 17px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{book.title}}</div>
+<div style="font-size: 13px; color: #6b6259">{{book.byline}}</div>
+</div>
+</a>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { view: 'shelf' };
+}
+renderVals() {
+const b = (cover, title, author, year, bg, href) => ({ cover, title, author, year, bg, href: href || '#', label: title + ' by ' + author, byline: author + ' · ' + year });
+const rows = [
+{ books: [
+b('Wings of Fire', 'Wings of Fire: An Autobiography', 'A. P. J. Abdul Kalam', '1999', '#7a2e2e', 'Book.dc.html'),
+b('The Dragonet Prophecy', 'The Dragonet Prophecy', 'Tui T. Sutherland', '2012', '#274b6d'),
+b('Wings of Fire', 'Wings of Fire', 'Dale Brown', '2002', '#3b3b3b')
+] },
+{ books: [
+b('The Lost Heir', 'The Lost Heir', 'Tui T. Sutherland', '2013', '#1f5a57'),
+b('Wings of Fire', 'Wings of Fire', 'Charles Todd', '1998', '#5a4a2a'),
+b('The Hidden Kingdom', 'The Hidden Kingdom', 'Tui T. Sutherland', '2013', '#3f5a2a')
+] },
+{ books: [
+b('Ignited Minds', 'Ignited Minds', 'A. P. J. Abdul Kalam', '2002', '#8a4a1f'),
+b('The Dark Secret', 'The Dark Secret', 'Tui T. Sutherland', '2013', '#4a2f5e'),
+b('The Brightest Night', 'The Brightest Night', 'Tui T. Sutherland', '2014', '#6d2742')
+] }
+];
+const shelf = this.state.view === 'shelf';
+return {
+rows,
+list: rows.reduce((all, row) => all.concat(row.books), []),
+isShelf: shelf,
+isList: !shelf,
+shelfPressed: shelf ? 'true' : 'false',
+listPressed: shelf ? 'false' : 'true',
+shelfBg: shelf ? '#e3ecdf' : '#ffffff',
+listBg: shelf ? '#ffffff' : '#e3ecdf',
+showShelf: () => this.setState({ view: 'shelf' }),
+showList: () => this.setState({ view: 'list' })
+};
+}
+}
+</script>
+</body>
+</html>
