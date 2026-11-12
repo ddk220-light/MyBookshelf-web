@@ -162,20 +162,63 @@ export function rankSearchResults(books, { title, author = '', max = 10, authorI
       const score = basis + literal + (variant === book.title ? 30 : 0) - edits * 90 - Math.min(150, excess * 12);
       if (!best || score > best.score) best = { score, edits, variant };
     }
-    if (best) ranked.push({ book: { ...book,
-      title: /\b(adaptation|abridged|graphic novel)\b/i.test(book.title)
-        || coverage(query, [...searchWords(book.title), ...authorTokens], spelling) <= 2 ? book.title : best.variant,
-      ...(best.edits ? { searchMatch: 'spelling' } : {}) }, score: best.score + popularityScore(book) + sourceOrderScore(book) });
+    if (best) {
+      // The record keeps its own title when that title matches the query by
+      // itself, within the bounded spelling tolerance even on the strict pass
+      // ("the hobit" shows "The Hobbit", not the transliterated alias
+      // "Hobiṭ"). Otherwise it is presented under the matched alternate or
+      // edition title, in the reader's words ("The Alchemist" for Coelho's
+      // "O Alquimista"); see presentTitles for series names.
+      const own = /\b(adaptation|abridged|graphic novel)\b/i.test(book.title)
+        || coverage(query, [...searchWords(book.title), ...authorTokens], true) <= 2;
+      ranked.push({ book: { ...book, title: own ? book.title : best.variant,
+        ...(best.edits ? { searchMatch: 'spelling' } : {}) }, ownTitle: book.title, score: best.score + popularityScore(book) + sourceOrderScore(book) });
+    }
   }
   ranked.sort((a, b) => b.score - a.score || (b.book.editionCount || 0) - (a.book.editionCount || 0));
   // Deduplication is by an authoritative identity, never by fuzzy title text.
   const seen = new Set();
-  return ranked.filter(({ book }) => {
+  return presentTitles(ranked.filter(({ book }) => {
     const key = book.bookKey || book.workId || book.isbn || book.isbn13 || book.source_id;
     if (key && seen.has(key)) return false;
     if (key) seen.add(key);
     return true;
-  }).slice(0, max).map(({ book }) => book);
+  }), title).slice(0, max).map(({ book }) => book);
+}
+
+// Letters' scripts, for telling a reader's-language alias from a title in
+// another script ("鋼の錬金術師 1" for "Fullmetal Alchemist 1").
+const SCRIPTS = ['Latin', 'Cyrillic', 'Greek', 'Arabic', 'Hebrew', 'Devanagari', 'Bengali', 'Gurmukhi', 'Gujarati', 'Oriya', 'Tamil',
+  'Telugu', 'Kannada', 'Malayalam', 'Sinhala', 'Thai', 'Hangul', 'Han', 'Hiragana', 'Katakana', 'Georgian', 'Armenian', 'Ethiopic']
+  .map(name => [name, new RegExp(`\\p{Script=${name}}`, 'u')]);
+function scriptsOf(value) {
+  const text = String(value || '');
+  return new Set(SCRIPTS.filter(([, pattern]) => pattern.test(text)).map(([name]) => name));
+}
+const sharesScript = (left, right) => [...left].some(name => right.has(name));
+
+// A matched title that stands in for several works with different own titles
+// is a series or collective name, not each book's title: Open Library lists
+// "Wings of Fire" as an alternate title of "The Dragonet Prophecy", "The Lost
+// Heir", "Darkstalker"… Those records show their own titles again, so they
+// are distinguishable and are not displayed as one book. An alias used for a
+// single work (or for duplicate records of one title, such as Coelho's "O
+// Alquimista") stays: it is the title readers search for. Own titles in
+// another script than the query keep the alias.
+function presentTitles(ranked, query) {
+  const key = value => searchWords(value).join(' ');
+  const owners = new Map();
+  for (const entry of ranked) {
+    if (entry.book.title === entry.ownTitle) continue;
+    const alias = key(entry.book.title);
+    owners.set(alias, new Set([...(owners.get(alias) || []), key(entry.ownTitle)]));
+  }
+  const reference = scriptsOf(query).size ? scriptsOf(query) : null;
+  return ranked.map(entry => {
+    if (entry.book.title === entry.ownTitle || (owners.get(key(entry.book.title))?.size || 0) < 2) return entry;
+    if (!sharesScript(scriptsOf(entry.ownTitle), reference || scriptsOf(entry.book.title))) return entry;
+    return { ...entry, book: { ...entry.book, title: entry.ownTitle } };
+  });
 }
 
 // Decide from returned records, not from a list of names, whether a free-text

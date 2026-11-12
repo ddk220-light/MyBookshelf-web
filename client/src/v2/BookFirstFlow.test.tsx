@@ -66,15 +66,15 @@ it('shows separate work records of one title as one card, opens each exact recor
   render(<MemoryRouter initialEntries={['/app/search']}><Routes><Route path="/app/search" element={<ScanPage />} /><Route path="/app/books/:key" element={<Destination />} /></Routes></MemoryRouter>);
   fireEvent.change(screen.getByLabelText('Title, author or ISBN'), { target: { value: 'the alchemist' } });
   fireEvent.click(screen.getByRole('button', { name: 'Search books' }));
-  expect(await screen.findByText('View 3 records with this title')).toBeInTheDocument();
+  expect(await screen.findByText('View 3 records')).toBeInTheDocument();
   expect(screen.getAllByText('The Alchemist')).toHaveLength(1);
   expect(screen.getByText('141 editions', { selector: 'summary small' })).toBeInTheDocument(); // Largest, not the sum.
   expect(screen.queryByText('145 editions')).toBeNull();
   // Five cards are shown first: the grouped card and four others.
   expect(screen.getByText('Other book 3')).toBeInTheDocument();
   expect(screen.queryByText('Other book 4')).toBeNull();
-  fireEvent.click(screen.getByText('View 3 records with this title'));
-  expect(screen.getByText(/separate records with the same title and author/)).toBeInTheDocument();
+  fireEvent.click(screen.getByText('View 3 records'));
+  expect(screen.getByText('The source has more than one record with this title and author. Choose one to see its details and check your library.')).toBeInTheDocument();
   // Row covers are decorative: the row's name starts with what tells records apart.
   fireEvent.click(screen.getByRole('link', { name: /^Published 2003/ }));
   expect(await screen.findByTestId('destination')).toHaveTextContent('/app/books/v1%3Aopenlibrary%3AOL24793570W');

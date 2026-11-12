@@ -177,6 +177,15 @@ const titleText = (title: string) => normalizeText(String(title || '').replace(/
 type Entry = { book: PublicBook; index: number; workId: string | null; title: string; author: string; volume: string; languages: Set<string> };
 const fallbackKey = (entry: Entry) => `${entry.title}\u0001${entry.volume}\u0001${entry.author}`;
 const titleKey = (entry: Entry) => `${entry.title}\u0001${entry.volume}`;
+// "The Great Gatsby" and "Great Gatsby": a leading English article is not part
+// of the title for display grouping. Nothing is stripped when the article is
+// the whole title or the rest is another article ("The A").
+const ARTICLE = /^(?:the|a|an) (?=\S)/;
+function articleless(title: string): string | null {
+  if (!ARTICLE.test(title)) return title;
+  const rest = title.replace(ARTICLE, '');
+  return /^(?:the|a|an)$/.test(rest) ? null : rest;
+}
 
 // Presentation groups only: every record keeps its own key, ISBNs and
 // availability lookup; nothing here is a claim of work equivalence.
@@ -188,6 +197,10 @@ const titleKey = (entry: Entry) => `${entry.title}\u0001${entry.volume}`;
 //    books, so a card spanning work IDs is labelled as separate records.
 //    Records without a work ID (Google Books) and without authors still group
 //    with each other by title and volume, as before.
+// 2a. Titles that differ only by a leading English article (the, a, an) share
+//    a card under rule 2's conditions (same volume and the same non-empty
+//    author set, exactly), and only when the records' known languages do not
+//    conflict. The article rule is never combined with the typo rule.
 // 3. An obvious author typo ("Coello" / "Coelho", see nameTypo) is tolerated
 //    only for an identical, non-generic title and volume, and only when the
 //    records' known languages do not conflict. Titles are never fuzzy-matched.
@@ -214,6 +227,18 @@ export function groupSearchResults(books: PublicBook[]): SearchGroup[] {
   for (const entry of entries) {
     if (entry.workId) link(`work\u0001${entry.workId}`, entry.index);
     if (entry.author || !entry.workId) link(`book\u0001${fallbackKey(entry)}`, entry.index);
+  }
+  const byBareTitle = new Map<string, Entry[]>();
+  for (const entry of entries) {
+    const bare = entry.author ? articleless(entry.title) : null;
+    if (!bare) continue;
+    const key = `${bare}\u0001${entry.volume}\u0001${entry.author}`;
+    const list = byBareTitle.get(key) || [];
+    for (const other of list) {
+      if (other.title !== entry.title && find(other.index) !== find(entry.index) && !languagesConflict(other.languages, entry.languages)) union(other.index, entry.index);
+    }
+    list.push(entry);
+    byBareTitle.set(key, list);
   }
   const byTitle = new Map<string, Entry[]>();
   for (const entry of entries) {

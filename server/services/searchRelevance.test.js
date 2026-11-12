@@ -181,3 +181,29 @@ test('a title equal to the typed text, symbols included, wins a tie of words', (
   const stone = { ...book("Harry Potter and the Philosopher's Stone", 'J. K. Rowling', 'OL82563W'), popularity: { readers: 24733 }, editionCount: 400 };
   assert.equal(find([book('Harry Potter', 'Jody Revenson', 'OL1W'), stone], 'harry potter')[0].workId, 'OL82563W');
 });
+
+test('a series name matched for several works gives way to each work’s own title', () => {
+  const kalam = { ...book('Wings of Fire', 'A. P. J. Abdul Kalam', 'OL1037811W'), editionCount: 9 };
+  const volumes = ['The Dragonet Prophecy', 'The Lost Heir', 'Darkstalker'].map((title, index) =>
+    ({ ...book(title, 'Tui T. Sutherland', `OL${index + 10}W`), searchTitles: [index ? 'Wings of Fire' : 'Wings Of Fire'], editionCount: 20 }));
+  const results = find([...volumes, kalam], 'wings of fire');
+  assert.equal(results[0].workId, 'OL1037811W');
+  assert.deepEqual(results.slice(1).map(result => result.title).sort(), ['Darkstalker', 'The Dragonet Prophecy', 'The Lost Heir']);
+  // Duplicate records of one translated work keep the title readers search for.
+  const alquimista = { ...book('O Alquimista', 'Paulo Coelho', 'OL796465W'), searchTitles: ['The Alchemist'], editionCount: 141 };
+  const duplicate = { ...book('The Alchemist', 'Paulo Coelho', 'OL42974242W'), editionCount: 1 };
+  const copy = { ...book('O Alquimista', 'Paulo Coelho', 'OL5W'), searchTitles: ['The Alchemist'], editionCount: 1 };
+  assert.deepEqual(find([alquimista, duplicate, copy], 'the alchemist').map(result => result.title), ['The Alchemist', 'The Alchemist', 'The Alchemist']);
+  // Own titles in another script than the query keep the reader's alias.
+  const manga = [1, 2].map(number => ({ ...book(`鋼の錬金術師 ${number}`, '荒川弘', `OL${number + 20}W`), searchTitles: ['Fullmetal Alchemist'] }));
+  assert.deepEqual(find(manga, 'fullmetal alchemist').map(result => result.title), ['Fullmetal Alchemist', 'Fullmetal Alchemist']);
+});
+
+test('a work title within the spelling tolerance is shown instead of a transliterated alias', () => {
+  const hobbit = { ...book('The Hobbit', 'J.R.R. Tolkien', 'OL262758W'), searchTitles: ['Hobiṭ', 'Hobit'], editionCount: 500 };
+  for (const query of ['the hobit', 'the hobbit']) assert.equal(find([hobbit], query)[0].title, 'The Hobbit');
+  assert.equal(find([hobbit], 'the hobit', true)[0].title, 'The Hobbit');
+  // A record whose own title is far from the query still shows the matched title.
+  const orwell = { ...book('Nineteen Eighty-Four', 'George Orwell', 'OL1168083W'), searchTitles: ['1984'] };
+  assert.equal(find([orwell], '1984')[0].title, '1984');
+});

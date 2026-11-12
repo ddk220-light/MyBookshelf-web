@@ -280,6 +280,37 @@ describe('cross-work presentation groups (owner-approved 2026-11-11)', () => {
     expect(coverAlternatives(groupSearchResults(reasoning)[0])).toEqual(reasoning);
   });
 
+  it('treats a leading English article as part of the same title only for the same authors', () => {
+    const gatsby = work('OL468431W', 'The Great Gatsby', ['F. Scott Fitzgerald'], { editionCount: 1181 });
+    const bare = work('OL34381078W', 'Great Gatsby', ['Fitzgerald, F. Scott'], { editionCount: 14 });
+    const groups = groupSearchResults([gatsby, bare, work('OL3W', 'Great Gatsby', ['Someone Else'])]);
+    expect(keysOf(groups)).toEqual([[gatsby.bookKey, bare.bookKey], ['v1:openlibrary:OL3W']]);
+    expect(groups[0].book).toBe(gatsby);
+    expect(groups[0].separateWorks).toBe(true);
+    expect(groupSearchResults([work('OL11930W', 'A Suitable Boy', ['Vikram Seth']), work('OL9398348W', 'Suitable Boy', ['Vikram Seth'])])).toHaveLength(1);
+    expect(groupSearchResults([work('OL1W', 'An Equal Music', ['Vikram Seth']), work('OL2W', 'Equal Music', ['Vikram Seth'])])).toHaveLength(1);
+    // Different authors stay apart: "The Stand" (King) is not "Stand" (another writer).
+    expect(groupSearchResults([work('OL1W', 'The Stand', ['Stephen King']), work('OL2W', 'Stand', ['Jane Doe'])])).toHaveLength(2);
+    // Never combined with the author-typo allowance.
+    expect(groupSearchResults([gatsby, work('OL5W', 'Great Gatsby', ['F. Scott Fitzgeralt'])])).toHaveLength(2);
+    expect(groupSearchResults([work('OL6W', 'The Alchemist', ['Paulo Coelho']), work('OL7W', 'Alchemist', ['Paulo Coello'])])).toHaveLength(2);
+    // Only a leading English article; the rest must be the same title and volume.
+    expect(groupSearchResults([work('OL1W', 'The Great Gatsby', ['F. Scott Fitzgerald']), work('OL2W', 'Gatsby', ['F. Scott Fitzgerald'])])).toHaveLength(2);
+    expect(groupSearchResults([work('OL1W', 'The Hobbit Vol. 1', ['J.R.R. Tolkien']), work('OL2W', 'Hobbit Vol. 2', ['J.R.R. Tolkien'])])).toHaveLength(2);
+    expect(groupSearchResults([work('OL1W', 'La Peste', ['Albert Camus']), work('OL2W', 'Peste', ['Albert Camus'])])).toHaveLength(2);
+    expect(groupSearchResults([work('OL1W', 'Theory', ['Ann Author']), work('OL2W', 'Ory', ['Ann Author'])])).toHaveLength(2);
+    // An article is never the whole title ("The A" stays apart from "A").
+    expect(groupSearchResults([work('OL1W', 'The A', ['Ann Author']), work('OL2W', 'A', ['Ann Author'])])).toHaveLength(2);
+    // A generic remainder by the same author shares a card, as an exact generic title does.
+    expect(groupSearchResults([work('OL1W', 'The Poems', ['Wilfred Owen']), work('OL2W', 'Poems', ['Wilfred Owen'])])).toHaveLength(1);
+    expect(groupSearchResults([work('OL1W', 'The Poems', ['Wilfred Owen']), work('OL2W', 'Poems', ['Siegfried Sassoon'])])).toHaveLength(2);
+    // Conflicting known languages need the exact title.
+    expect(groupSearchResults([work('OL1W', 'The Great Gatsby', ['F. Scott Fitzgerald'], { language: 'eng' }),
+      work('OL2W', 'Great Gatsby', ['F. Scott Fitzgerald'], { language: 'ita' })])).toHaveLength(2);
+    // Author-less records do not use the article rule.
+    expect(groupSearchResults([{ bookKey: 'v1:googlebooks:A', title: 'The Great Gatsby', authors: [] }, { bookKey: 'v1:googlebooks:B', title: 'Great Gatsby', authors: [] }])).toHaveLength(2);
+  });
+
   it('keeps group keys distinct from record keys, stable as later pages arrive, and never reuses g1 keys', () => {
     const first = groupSearchResults(alchemist.slice(0, 3));
     const later = groupSearchResults([...alchemist, work('OL9W', 'The Alchemist', ['Paulo Coelho'])]);
