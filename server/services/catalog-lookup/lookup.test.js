@@ -95,6 +95,72 @@ test('every platform’s book-page check stops at its request cap and reports co
   }
 });
 
+test('running out of our own request budget is couldn’t check but never counts against the library’s health', async () => {
+  const guard = createHostGuard();
+  const health = createMemoryHealthRecord();
+  // Every response is a page the adapter keeps reading past: the cap stops it.
+  global.fetch = async url => response(url, 'page');
+  const provider = { checkAvailability: async () => { for (let i = 0; ; i++) await getText(`https://capped.example/${i}`, { retries: 0 }); } };
+  const library = { id: 'koha:capped', platform: 'koha', catalogUrl: 'https://capped.example' };
+  for (let i = 0; i < 4; i++) {
+    // A fresh instance each time, so the per-minute host cap is not reached.
+    const { lookup, settle } = harness({ providerFor: () => provider, guard, health });
+    const answer = await lookup.lookupBook({ library, book: { bookKey: 'k', isbn13: '9788173711466' }, editionScope: 'exact' });
+    assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'budget']);
+    await settle();
+  }
+  assert.equal(await health.libraryHealth(library.id), null);
+  assert.equal(guard.circuitOpen('capped.example'), false);
+
+  // A title-first catalog whose candidate rows need more record reads than the
+  // budget allows: our cap, not the library's failure.
+  const rows = Array.from({ length: 12 }, (_, i) => ({ recordId: String(i), title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] }));
+  const titleFirst = { findBookCandidates: async () => { await getText('https://rows.example/search', { retries: 0 }); return rows; },
+    resolveCatalogRecord: async id => { await getText(`https://rows.example/${id}`, { retries: 0 }); return { recordId: id, title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'], observation: { outcome: 'available' } }; },
+    checkAvailability: async () => { await getText('https://rows.example/isbn', { retries: 0 }); return { outcome: 'not_found', recognizedExact: true }; } };
+  const second = harness({ providerFor: () => titleFirst, guard, health, platforms: { ...UNPACED, koha: { ...UNPACED.koha, book: { ...UNPACED.koha.book, maxRequests: 2 } } } });
+  const profile = { book: { isbn13: '9780000000002', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] }, isbns: ['9780000000002'],
+    titles: ['Wings of Fire'], authors: ['A. P. J. Abdul Kalam'], language: '', complete: true, expansionFailed: false };
+  const rowsLibrary = { id: 'koha:rows', platform: 'koha', catalogUrl: 'https://rows.example' };
+  const capped = await second.lookup.lookupBook({ library: rowsLibrary, book: { bookKey: 'v1:openlibrary:OL9W', workId: 'OL9W', title: 'Wings of Fire' }, profile });
+  assert.equal(capped.outcome, 'couldnt_check');
+  await second.settle();
+  assert.equal(await health.libraryHealth(rowsLibrary.id), null);
+
+  // A catalog that answers with something unreadable within the budget is
+  // still the catalog's failure.
+  const unreadable = harness({ providerFor: () => ({ checkAvailability: async () => ({ outcome: 'unknown', matchKind: 'none' }) }), health });
+  const multi = { ...profile, isbns: ['9788173711466', '9780140328721'] };
+  const answer = await unreadable.lookup.lookupBook({ library: { id: 'vega:odd', platform: 'vega', catalogUrl: 'https://odd.example' },
+    book: { bookKey: 'v1:openlibrary:OL8W', workId: 'OL8W' }, profile: multi });
+  assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'unrecognized']);
+  await unreadable.settle();
+  assert.equal((await health.libraryHealth('vega:odd')).failuresSinceSuccess, 1);
+});
+
+test('a Vega book page spends its two requests on two editions, not on both ISBN forms of one', async () => {
+  const held = '9780062316110';
+  const asked = [];
+  global.fetch = async (url, options) => {
+    const { searchText } = JSON.parse(options.body);
+    asked.push(searchText);
+    return response(url, searchText === held
+      ? { totalResults: 1, data: [{ identifiers: { isbn: held }, materialTabs: [{ name: 'Book', type: 'physical', availability: { status: { general: 'Available' } } }] }] }
+      : { totalResults: 0, data: [] });
+  };
+  const { getProvider } = await import('../providers/index.js');
+  // DC Public Library's directory entry; every request goes to the fixture.
+  const libraries = JSON.parse(fs.readFileSync(new URL('../../data/libraries.json', import.meta.url), 'utf8'));
+  const library = { id: 'vega:dc', ...(Array.isArray(libraries) ? libraries : libraries.libraries || Object.values(libraries))
+    .find(entry => entry.platform === 'vega' && /DC Public/.test(entry.name)) };
+  const { lookup } = harness({ providerFor: getProvider });
+  const isbns = ['9780062316097', held, '9781846558238'];
+  const answer = await lookup.lookupBook({ library, book: { bookKey: 'v1:openlibrary:OL7W', workId: 'OL7W', isbn13: isbns[0] },
+    profile: { book: { isbn13: isbns[0], title: 'Sapiens', authors: [] }, isbns, titles: ['Sapiens'], authors: [], language: '', complete: true, expansionFailed: false } });
+  assert.deepEqual(asked, [isbns[0], held], JSON.stringify(answer));
+  assert.deepEqual([answer.outcome, answer.matchedIsbn13], ['found', held]);
+});
+
 test('the work search finds another edition by ISBN within the budget, and a stored answer then needs no request', async () => {
   const alternate = '9788173711466';
   let calls = 0;
@@ -342,7 +408,7 @@ test('platforms without a results strategy, an open circuit, or a second run on 
   finish();
 });
 
-test('result marking never exceeds the platform’s results budget, and a failed search marks nothing and is a health event', async () => {
+test('result marking never exceeds the platform’s results budget, and a failed search marks nothing and is a health event (running out of budget is not)', async () => {
   for (const [id, platform] of Object.entries(PLATFORMS).filter(([, value]) => value.results.strategy === 'search_rows')) {
     let fetches = 0;
     global.fetch = async url => { fetches++; return response(url, 'page'); };
@@ -352,7 +418,17 @@ test('result marking never exceeds the platform’s results budget, and a failed
     assert.equal(fetches, platform.results.maxRequests, id);
     assert.deepEqual(items, [{ done: true, notAttempted: ['k'], unmatched: [] }], id);
     await settle();
-    assert.equal((await health.libraryHealth(`${id}:b`)).failuresSinceSuccess, 1, id);
+    // Our own request cap ran out: not the library's failure.
+    assert.equal(await health.libraryHealth(`${id}:b`), null, id);
+    // A catalog that fails is.
+    const failing = harness({ providerFor: () => {
+      const fail = async () => { throw coded('Catalog down', 'CATALOG_UNAVAILABLE'); };
+      return { checkAvailability: async () => ({}), searchResultRows: fail, searchBookCandidates: fail, searchCatalog: fail };
+    } });
+    const failed = await collect(failing.lookup.markResults({ library: { id: `${id}:f`, platform: id, catalogUrl: 'https://f.example' }, query: 'wings', books: [{ bookKey: 'k', profile: kalamProfile() }] }));
+    assert.deepEqual(failed, [{ done: true, notAttempted: ['k'], unmatched: [] }], id);
+    await failing.settle();
+    assert.equal((await failing.health.libraryHealth(`${id}:f`)).failuresSinceSuccess, 1, id);
     clearHttpCache();
   }
 });

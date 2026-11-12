@@ -189,7 +189,13 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     try {
       // Identities come from the server's resolution of each key (the search
       // that produced these results has usually cached them).
-      const resolutions = new Map(keys.map(key => [key, settleWithin(books.resolve(key), Math.min(PROFILE_WAIT_MS, deadlineAt - now()))]));
+      // A library catalog record key is never resolved here: resolving it reads
+      // that library's catalog outside every request budget, host gate and
+      // circuit, and twelve keys per request would let anyone hammer a
+      // catalog. Such a book is answered from the store by its own record, or
+      // when it is opened.
+      const resolutions = new Map(keys.map(key => [key, parsePublicBookKey(key)?.kind === 'catalog' ? Promise.resolve(null)
+        : settleWithin(books.resolve(key), Math.min(PROFILE_WAIT_MS, deadlineAt - now()))]));
       const list = await Promise.all(items.map(async item => {
         const resolved = await resolutions.get(item.bookKey);
         const identity = trustedIdentity(libraryId, item.bookKey, resolved);

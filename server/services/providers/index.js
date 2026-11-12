@@ -53,7 +53,9 @@ function primaryProvider(library) {
     case 'libsys':
       return { checkAvailability: normalize((isbn) => libsys.checkAvailability(library, isbn)) };
     case 'vega':
-      return { checkAvailability: (isbn) => vega.checkAvailability(library, isbn) };
+      // Vega's search finds an edition by either ISBN form (checked against
+      // DC Public Library on 2026-11-12), so the ISBN-10 form is not asked.
+      return { checkAvailability: (isbn) => vega.checkAvailability(library, isbn), isbn10Lookup: false };
     case 'aspen':
       return { checkAvailability: (isbn) => aspen.checkAvailability(library, isbn) };
     case 'calil':

@@ -20,7 +20,11 @@ export const REASONS = Object.freeze(['unconfirmed', 'timeout', 'unavailable', '
 // check the reader cancelled (`cancelled`, an addition to the plan's list) is
 // not the catalog's failure either, nor is a check our own cross-reader host
 // pacing could not fit before its deadline (`busy`, catalog-store/hostGate.js).
-const NOT_HEALTH_FAILURES = new Set(['unconfirmed', 'unsupported', 'cancelled', 'busy']);
+// Running out of our own request budget (`budget`: the platform's cap in
+// platforms.js, or rows left unread under it) is our limit, not the library's
+// failure: it neither counts in the health record nor opens the circuit. A
+// catalog that answered with something unreadable is `unrecognized`.
+const NOT_HEALTH_FAILURES = new Set(['unconfirmed', 'unsupported', 'cancelled', 'busy', 'budget']);
 export function isHealthFailure(reason) {
   return Boolean(reason) && !NOT_HEALTH_FAILURES.has(reason);
 }

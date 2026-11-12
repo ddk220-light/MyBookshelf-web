@@ -57,6 +57,7 @@ test('failures are couldn’t check with a class, never not found', () => {
 });
 
 test('only real failures count against a library’s health', () => {
-  for (const reason of ['timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'configuration']) assert.equal(isHealthFailure(reason), true, reason);
-  for (const reason of ['unconfirmed', 'unsupported', 'cancelled', undefined]) assert.equal(isHealthFailure(reason), false, String(reason));
+  for (const reason of ['timeout', 'unavailable', 'blocked', 'unrecognized', 'configuration']) assert.equal(isHealthFailure(reason), true, reason);
+  // Our own request cap and our own cross-reader pacing are not the library's failures.
+  for (const reason of ['unconfirmed', 'unsupported', 'cancelled', 'busy', 'budget', undefined]) assert.equal(isHealthFailure(reason), false, String(reason));
 });

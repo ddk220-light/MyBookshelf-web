@@ -46,3 +46,18 @@ DO $$ BEGIN
     GRANT UPDATE (acknowledged_at, owner_note, updated_at) ON library_health TO catalog_admin;
   END IF;
 END $$;
+
+-- Server-side statement limits per role. A pooled (transaction-mode)
+-- connection cannot set statement_timeout at connect time, so it is set on the
+-- role (pool.js omits it for `-pooler` hosts). Skipped with a notice if this
+-- role may not alter the others.
+DO $$ BEGIN
+  IF EXISTS (SELECT FROM pg_roles WHERE rolname = 'catalog_runtime') THEN
+    ALTER ROLE catalog_runtime SET statement_timeout = '1500ms';
+  END IF;
+  IF EXISTS (SELECT FROM pg_roles WHERE rolname = 'catalog_worker') THEN
+    ALTER ROLE catalog_worker SET statement_timeout = '30s';
+  END IF;
+EXCEPTION WHEN insufficient_privilege THEN
+  RAISE NOTICE 'Set statement_timeout for catalog_runtime (1500ms) and catalog_worker (30s) in the provider console.';
+END $$;

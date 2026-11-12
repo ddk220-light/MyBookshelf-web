@@ -30,6 +30,12 @@ export const LIMITS = Object.freeze({
 });
 
 const collapse = value => value.normalize('NFKC').replace(/\s+/g, ' ').trim();
+// Control characters (NUL cannot be stored as text at all, so a report would
+// be accepted and then silently lost) and bidirectional overrides (which can
+// disguise text in the admin view) are refused. Zero-width joiners used by
+// Indian scripts are kept.
+const CONTROL = /[\p{Cc}\u202A-\u202E\u2066-\u2069]/u;
+const REPORT_CONTROL = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u202A-\u202E\u2066-\u2069]/u;
 
 // Text for "Request to add <text>": 2–80 characters with at least one letter;
 // emails, phone numbers and URLs are rejected. The key merges duplicates
@@ -37,6 +43,7 @@ const collapse = value => value.normalize('NFKC').replace(/\s+/g, ' ').trim();
 export function parseLibraryRequest(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body) || typeof body.text !== 'string') throw new SubmissionError();
   for (const key of Object.keys(body)) if (key !== 'text') throw new SubmissionError();
+  if (CONTROL.test(body.text.replace(/[\t\n\r]/g, ' '))) throw new SubmissionError();
   const displayText = collapse(body.text);
   if (displayText.length < 2 || displayText.length > 80) throw new SubmissionError();
   if (!/\p{L}/u.test(displayText) || EMAIL.test(displayText) || URLISH.test(displayText)) throw new SubmissionError();
@@ -50,6 +57,7 @@ export function parseProblemReport(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body) || typeof body.text !== 'string') throw new SubmissionError();
   const allowed = new Set(['text', 'screen', 'libraryId', 'bookKey', 'appVersion']);
   for (const key of Object.keys(body)) if (!allowed.has(key)) throw new SubmissionError();
+  if (REPORT_CONTROL.test(body.text)) throw new SubmissionError();
   const text = body.text.normalize('NFC').trim();
   if (!text || text.length > 2000) throw new SubmissionError();
   const report = { body: text };

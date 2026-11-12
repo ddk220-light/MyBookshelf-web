@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import request from 'supertest';
 import { makeTestApp } from '../test/helpers.js';
+import { createCatalogBookKey } from './contracts.js';
 import { createPublicV2Router } from './router.js';
 import { createCatalogStore } from '../catalog-store/index.js';
 import { readCatalogStoreConfig } from '../catalog-store/config.js';
@@ -174,11 +175,28 @@ test('holdings routes validate input and unknown libraries', async () => {
   assert.deepEqual([unknownBook.status, unknownBook.body.error.code], [404, 'BOOK_NOT_FOUND']);
 });
 
+test('result marking never resolves catalog record keys (no catalog read outside the budget and host gate)', async () => {
+  const { app } = harness();
+  const resolved = [];
+  const original = books.resolve;
+  books.resolve = async key => { resolved.push(key); return original(key); };
+  try {
+    const catalogKeys = Array.from({ length: 11 }, (_, index) => createCatalogBookKey('koha:other', String(index + 1))).concat(createCatalogBookKey(vega.id, '7'));
+    const response = await request(app).post('/api/v2/holdings/search')
+      .send({ libraryId: vega.id, query: 'wings', books: catalogKeys.map(bookKey => ({ bookKey })) });
+    assert.equal(response.status, 200);
+    assert.deepEqual(lines(response.text).at(-1), { type: 'done', unchecked: catalogKeys });
+    assert.deepEqual(resolved, []);
+  } finally {
+    books.resolve = original;
+  }
+});
+
 test('library requests and problem reports: text and a count, validation and per-address limits', async () => {
   const { app, store, settle } = harness();
   const send = (body, ip = '203.0.113.7') => request(app).post('/api/v2/library-requests').set('X-Forwarded-For', ip).send(body);
   assert.deepEqual([(await send({ text: '  Anna  Centenary Library ' })).status, (await send({ text: 'anna centenary library!' })).status], [202, 202]);
-  for (const text of ['me@example.com', 'call 98765 43210', 'https://lib.example.org', '12345', 'x', 'a'.repeat(81)]) {
+  for (const text of ['me@example.com', 'call 98765 43210', 'https://lib.example.org', '12345', 'x', 'a'.repeat(81), 'Anna\u0000Library', 'Anna \u202Eyrarbil']) {
     assert.equal((await send({ text })).status, 400, text);
   }
   assert.equal((await send({ text: 'Valid', country: 'IN' })).status, 400, 'no other fields are stored');
@@ -192,7 +210,9 @@ test('library requests and problem reports: text and a count, validation and per
 
   const report = body => request(app).post('/api/v2/problem-reports').set('X-Forwarded-For', '192.0.2.1').send(body);
   assert.equal((await report({ text: 'The library badge is wrong', screen: 'book', libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}`, appVersion: '1.2.3' })).status, 202);
-  for (const body of [{ text: '' }, { text: 'x'.repeat(2001) }, { text: 'ok', screen: 'elsewhere' }, { text: 'ok', email: 'a@b.c' }]) {
+  // A NUL cannot be stored: refused rather than accepted and silently lost.
+  for (const body of [{ text: '' }, { text: 'x'.repeat(2001) }, { text: 'ok', screen: 'elsewhere' }, { text: 'ok', email: 'a@b.c' },
+    { text: 'broken\u0000page' }, { text: 'see \u202Ethis' }]) {
     assert.equal((await report(body)).status, 400);
   }
   for (let i = 0; i < 4; i += 1) assert.equal((await report({ text: `report ${i}` })).status, 202);

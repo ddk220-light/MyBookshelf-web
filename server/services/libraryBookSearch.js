@@ -106,11 +106,14 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
   const searchCandidates = provider.searchBookCandidates || provider.searchCatalog;
   let failures = profile.expansionFailed ? 1 : 0;
   let failureCode;
+  // A catalog's own failure code wins over CATALOG_INCOMPLETE, which only
+  // means our request cap or row limit ran out (not the catalog's failure).
+  const noteFailure = code => { if (!failureCode || failureCode === 'CATALOG_INCOMPLETE') failureCode = code; };
   let completed = 0;
   const budgetLeft = () => operation.requests < operation.maxRequests;
   const confident = () => positives.some(item => item.outcome === 'available' && item.matchKind !== 'possible_match');
   const attempt = async task => {
-    if (Date.now() >= deadline) { failures++; failureCode ||= 'CATALOG_TIMEOUT'; return null; }
+    if (Date.now() >= deadline) { failures++; noteFailure('CATALOG_TIMEOUT'); return null; }
     let timer;
     try {
       const value = await Promise.race([Promise.resolve().then(task), new Promise((_, reject) => {
@@ -122,9 +125,9 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
       // A catalog that cannot run this kind of lookup has not failed.
       if (['CATALOG_TITLE_SEARCH_REQUIRED', 'CATALOG_QUERY_UNSUPPORTED'].includes(error?.code)) { summary.partial = true; return null; }
       failures++;
-      failureCode ||= error?.code === 'CATALOG_REQUEST_BUDGET' ? 'CATALOG_INCOMPLETE'
-        : /^CATALOG_[A-Z_]+$/.test(error?.code || '') ? error.code
-        : /deadline|timeout/i.test(error?.message || '') || error?.name === 'AbortError' ? 'CATALOG_TIMEOUT' : 'CATALOG_UNAVAILABLE';
+      if (['CATALOG_REQUEST_BUDGET', 'CATALOG_INCOMPLETE'].includes(error?.code)) failureCode ||= 'CATALOG_INCOMPLETE';
+      else noteFailure(/^CATALOG_[A-Z_]+$/.test(error?.code || '') ? error.code
+        : /deadline|timeout/i.test(error?.message || '') || error?.name === 'AbortError' ? 'CATALOG_TIMEOUT' : 'CATALOG_UNAVAILABLE');
       return null;
     }
     finally { clearTimeout(timer); }
@@ -154,7 +157,7 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
       positives.push({ ...result, ...(legacyPositive ? { outcome: result.status === 'available' ? 'available' : 'none_available',
         totalCopies: result.copies, catalogUrl: result.url } : {}), matchKind: kind, lookupKind: kind,
         matchedBook: { title: profile.book.title, isbn13: canonical } });
-    } else if (result && !(result.outcome === 'not_found' && result.recognizedExact)) failures++;
+    } else if (result && !(result.outcome === 'not_found' && result.recognizedExact)) { failures++; noteFailure('CATALOG_UNRECOGNIZED'); }
   }
   async function readRecords(candidates) {
     for (const candidate of candidates) {
@@ -168,14 +171,14 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
         // A row left unread is not evidence of absence. Title-first rows
         // already agree with the work by title and author, and running out of
         // time is never a completed search.
-        if (late || titleFirst) { failures++; failureCode ||= late ? 'CATALOG_TIMEOUT' : 'CATALOG_INCOMPLETE'; }
+        if (late) { failures++; noteFailure('CATALOG_TIMEOUT'); } else if (titleFirst) { failures++; failureCode ||= 'CATALOG_INCOMPLETE'; }
         break;
       }
       seen.add(candidate.recordId); summary.recordsChecked++;
       const before = failures;
       const record = await attempt(() => provider.resolveCatalogRecord?.(candidate.recordId));
       if (record) addRecord(record);
-      else if (failures === before) failures++;
+      else if (failures === before) { failures++; noteFailure('CATALOG_UNRECOGNIZED'); }
     }
   }
   async function byTitle(query) {
@@ -188,7 +191,10 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
     if (records.length > maxRecords) summary.partial = true;
     await readRecords(records);
   }
-  const identifiers = unique(profile.isbns.flatMap(isbn => [isbn, ISBN.parse(isbn)?.isbn10]));
+  // A catalog whose ISBN search already matches both forms of an edition
+  // (`isbn10Lookup: false`) is not asked again for the ISBN-10 form: within a
+  // small request cap that second request would never reach another edition.
+  const identifiers = unique(profile.isbns.flatMap(isbn => [isbn, provider.isbn10Lookup === false ? null : ISBN.parse(isbn)?.isbn10]));
   if (titleFirst) {
     // Title first: on these catalogs one search shows every candidate's title,
     // authors and often its ISBN, while an ISBN search only succeeds when the
@@ -225,7 +231,7 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
       if (positives.length || provider.isbnLookup === false || !provider.checkAvailability) break;
       if (tried >= isbnLimit || !budgetLeft()) { summary.partial = true; break; }
       if (tried && failures) break;
-      if (Date.now() >= deadline) { failures++; failureCode ||= 'CATALOG_TIMEOUT'; break; }
+      if (Date.now() >= deadline) { failures++; noteFailure('CATALOG_TIMEOUT'); break; }
       tried++;
       await byIsbn(isbn);
     }

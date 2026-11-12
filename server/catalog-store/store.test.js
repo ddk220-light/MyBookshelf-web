@@ -9,6 +9,7 @@ import { createCatalogPolicy, parseCatalogPolicies } from './policy.js';
 import { createMemoryHostGate, createPgHostGate } from './hostGate.js';
 import { createCatalogStore } from './index.js';
 import { createCatalogMaintenanceMiddleware } from './cron.js';
+import { poolSettings } from './pool.js';
 import { createCatalogLookup, createLookupRecorder, createMemoryAnswerStore, createMemoryHealthRecord, PLATFORMS } from '../services/catalog-lookup/index.js';
 import { withCatalogOperation, request as httpRequest } from '../services/providers/http.js';
 
@@ -60,6 +61,9 @@ test('query text is scrubbed of emails, URLs and long digit runs, and keeps vali
   for (const [input, expected] of cases) assert.equal(scrubQueryText(input), expected, input);
   assert.equal(scrubQueryText('x'.repeat(500)).length, 200);
   assert.equal(scrubQueryText('   '), null);
+  // NUL cannot be stored in a text column (the row would be lost); control
+  // characters and bidirectional overrides become spaces.
+  assert.equal(scrubQueryText('wings\u0000of\u0007fire\u202E'), 'wings of fire');
 });
 
 test('a disabled or failing log never throws to the route and writes nothing', async () => {
@@ -222,4 +226,13 @@ test('the maintenance route is private and needs the worker database', async () 
   assert.deepEqual([unavailable.status, unavailable.body.error.code, unavailable.headers['cache-control']], [503, 'MAINTENANCE_UNAVAILABLE', 'private, no-store']);
   const noSecret = express().use(createCatalogMaintenanceMiddleware({ env: {} }));
   assert.equal((await request(noSecret).get('/api/internal/catalog-maintenance').set('Authorization', 'Bearer ')).status, 403);
+});
+
+test('a pooled (PgBouncer) connection gets no statement_timeout startup parameter; a direct one does', () => {
+  // Neon's pooler refuses unsupported startup parameters, which would make every store call fail.
+  const pooled = poolSettings('postgres://catalog_runtime:x@ep-quiet-sky-123456-pooler.us-east-1.aws.neon.tech/catalog?sslmode=require');
+  assert.equal('statement_timeout' in pooled, false);
+  assert.equal(pooled.max, 3);
+  const direct = poolSettings('postgres://catalog_runtime:x@ep-quiet-sky-123456.us-east-1.aws.neon.tech/catalog?sslmode=require');
+  assert.equal(direct.statement_timeout, 1500);
 });

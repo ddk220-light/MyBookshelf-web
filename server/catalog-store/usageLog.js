@@ -39,7 +39,8 @@ const isIsbn = token => {
 // are not a valid ISBN with [removed], then cut to 200 characters.
 export function scrubQueryText(value) {
   if (typeof value !== 'string') return null;
-  let text = value.normalize('NFC').slice(0, 1000).replace(/\s+/g, ' ').trim();
+  // Control characters (NUL cannot be stored) and bidirectional overrides become spaces.
+  let text = value.normalize('NFC').slice(0, 1000).replace(/[\p{Cc}\u202A-\u202E\u2066-\u2069]/gu, ' ').replace(/\s+/g, ' ').trim();
   if (!text) return null;
   text = text.replace(EMAIL_PATTERN, REMOVED).replace(URL_PATTERN, REMOVED);
   text = text.replace(DIGIT_RUN, run => {

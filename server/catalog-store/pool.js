@@ -15,12 +15,26 @@ export function withTimeout(promise, ms) {
   ]).finally(() => clearTimeout(timer));
 }
 
+// A transaction-mode pooler (Neon's `-pooler` host, PgBouncer) refuses a
+// connection whose startup packet carries `statement_timeout` ("unsupported
+// startup parameter"), which would turn every catalog query into a store
+// failure. There the server-side limit comes from the role
+// (runtime-grants.sql: ALTER ROLE ... SET statement_timeout) and the
+// client-side `query_timeout` below still bounds each call.
+export function isPoolerConnection(connectionString) {
+  try { return /-pooler\./i.test(new URL(connectionString).hostname); } catch { return false; }
+}
+
+export function poolSettings(connectionString, { max = 3, statementTimeoutMs = 1500 } = {}) {
+  return { connectionString, max, idleTimeoutMillis: 10_000, connectionTimeoutMillis: 3_000,
+    ...(isPoolerConnection(connectionString) ? {} : { statement_timeout: statementTimeoutMs }), application_name: 'mybookshelf-catalog' };
+}
+
 export function createCatalogDatabase(connectionString, { max = 3, statementTimeoutMs = 1500, PoolClass = Pool } = {}) {
   let pool = null;
   const get = () => {
     if (!pool) {
-      pool = new PoolClass({ connectionString, max, idleTimeoutMillis: 10_000, connectionTimeoutMillis: 3_000,
-        statement_timeout: statementTimeoutMs, application_name: 'mybookshelf-catalog' });
+      pool = new PoolClass(poolSettings(connectionString, { max, statementTimeoutMs }));
       // An idle client that drops must never crash the process.
       pool.on('error', () => {});
     }
