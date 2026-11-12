@@ -249,3 +249,32 @@ test('replay, Visakhapatnam: one paced request answers the check from the search
   assert.equal(result.outcome, 'in_catalog');
   assert.equal(result.searchSummary.isbnQueries, 0);
 });
+
+// ---- Independent check: stopping early never reads as "not held" -------------
+test('title-first: candidate rows left unread by the record limit, request cap or deadline make the check unknown, not no_match', async () => {
+  const { catalogOperation } = await import('./providers/http.js');
+  const rows = [1, 2, 3, 4].map(n => ({ recordId: String(n), title: 'Wings of Fire', authors: ['Abdul Kalam, A. P. J'] }));
+  // Each record turns out to be in another language, so none matches; the
+  // fourth row is never read.
+  const otherLanguage = id => ({ title: 'Wings of Fire', authors: ['Abdul Kalam, A. P. J'], language: 'hin', observation: { outcome: 'available' }, recordId: id });
+  const limited = await searchLibraryBook({ findBookCandidates: async () => rows, resolveCatalogRecord: async id => otherLanguage(id), isbnLookup: false, checkAvailability: async () => miss }, kalam);
+  assert.equal(limited.searchSummary.recordsChecked, 3);
+  assert.equal(limited.outcome, 'unknown');
+  // The request cap stops reads before the second row.
+  const capped = await searchLibraryBook({
+    findBookCandidates: async () => { catalogOperation().requests += 1; return rows; },
+    resolveCatalogRecord: async id => { catalogOperation().requests += 1; return otherLanguage(id); },
+    isbnLookup: false, checkAvailability: async () => miss }, kalam, { maxRequests: 2 });
+  assert.equal(capped.searchSummary.recordsChecked, 1);
+  assert.equal(capped.outcome, 'unknown');
+  // The deadline passes between two record reads.
+  const late = await searchLibraryBook({ findBookCandidates: async () => rows,
+    resolveCatalogRecord: async id => { await sleep(30); return otherLanguage(id); }, isbnLookup: false, checkAvailability: async () => miss }, kalam, { timeoutMs: 40 });
+  assert.equal(late.outcome, 'unknown');
+  // A record read that answers nothing is a failure, not a miss.
+  const empty = await searchLibraryBook({ findBookCandidates: async () => rows.slice(0, 1), resolveCatalogRecord: async () => null, isbnLookup: false, checkAvailability: async () => miss }, kalam);
+  assert.equal(empty.outcome, 'unknown');
+  // Reading every candidate and finding none is still a completed miss.
+  const done = await searchLibraryBook({ findBookCandidates: async () => rows.slice(0, 2), resolveCatalogRecord: async id => otherLanguage(id), isbnLookup: false, checkAvailability: async () => miss }, kalam);
+  assert.equal(done.outcome, 'no_match');
+});

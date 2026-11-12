@@ -17,6 +17,11 @@ test('all-capital Latin titles are title-cased conservatively; other scripts and
   assert.equal(titleCaseShouting('WINGS OF FIRE: AN AUTOBIOGRAPHY'), 'Wings of Fire: An Autobiography');
   assert.equal(titleCaseShouting('RANDAMOOZHAM'), 'Randamoozham');
   assert.equal(titleCaseShouting('HISTORY OF INDIA VOLUME II'), 'History of India Volume II');
+  // Initials are names, not the article "a".
+  assert.equal(titleCaseShouting('WINGS OF FIRE BY A.P.J. ABDUL KALAM'), 'Wings of Fire by A.P.J. Abdul Kalam');
+  assert.equal(titleCaseShouting('LIFE OF A. K. GOPALAN'), 'Life of A. K. Gopalan');
+  assert.equal(titleCaseShouting('THE U.S.A. AND INDIA'), 'The U.S.A. and India');
+  assert.equal(titleCaseShouting('A HISTORY OF KERALA. A NEW EDITION'), 'A History of Kerala. A New Edition');
   assert.equal(titleCaseShouting('SAMAADHAANA JEEVITHA SASTHRAM - NATURIST SOCIALIST MANIFESTO ജീവിതം സന്തോഷകരവും'),
     'Samaadhaana Jeevitha Sasthram - Naturist Socialist Manifesto ജീവിതം സന്തോഷകരവും');
   assert.equal(titleCaseShouting('WINGS OF FIRE: Darkness Of Dragons Book 10'), 'WINGS OF FIRE: Darkness Of Dragons Book 10');

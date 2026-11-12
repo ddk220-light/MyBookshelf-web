@@ -27,8 +27,11 @@ export function titleCaseShouting(value) {
   let first = true;
   return title.replace(/\p{Script=Latin}[\p{Script=Latin}\p{M}'’]*/gu, (word, offset) => {
     const before = title.slice(0, offset);
-    const startsClause = first || /[:.!?(\-–—]\s*$/.test(before);
+    // A period after an initial ("A.P.J.", "U.S.A.") does not end a clause.
+    const startsClause = first || /[:!?(\-–—]\s*$/.test(before) || /(?:\p{L}{2,}|\d)\.\s*$/u.test(before);
     first = false;
+    // Initials keep their capital: "BY A. P. J. ABDUL KALAM" -> "by A. P. J. Abdul Kalam".
+    if (word.length === 1 && title[offset + 1] === '.') return word;
     if (ROMAN.test(word) && word.length > 1) return word;
     if (/\d/.test(word)) return word;
     const lower = word.toLowerCase();

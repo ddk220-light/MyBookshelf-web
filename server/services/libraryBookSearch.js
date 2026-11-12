@@ -162,10 +162,20 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
       if (seen.has(candidate.recordId)) continue;
       if (candidate.observation) { seen.add(candidate.recordId); addRecord(candidate); continue; }
       if (titleFirst && candidate.tier === 3 && positives.length) continue;
-      if (summary.recordsChecked >= maxRecords || Date.now() >= deadline || !budgetLeft()) { summary.partial = true; break; }
+      const late = Date.now() >= deadline;
+      if (late || summary.recordsChecked >= maxRecords || !budgetLeft()) {
+        summary.partial = true;
+        // A row left unread is not evidence of absence. Title-first rows
+        // already agree with the work by title and author, and running out of
+        // time is never a completed search.
+        if (late || titleFirst) { failures++; failureCode ||= late ? 'CATALOG_TIMEOUT' : 'CATALOG_INCOMPLETE'; }
+        break;
+      }
       seen.add(candidate.recordId); summary.recordsChecked++;
+      const before = failures;
       const record = await attempt(() => provider.resolveCatalogRecord?.(candidate.recordId));
       if (record) addRecord(record);
+      else if (failures === before) failures++;
     }
   }
   async function byTitle(query) {

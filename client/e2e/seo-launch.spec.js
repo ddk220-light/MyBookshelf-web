@@ -1,16 +1,20 @@
 import { test, expect } from '@playwright/test';
+import fs from 'node:fs';
+
+// The publication manifest decides which guides exist; the page must list each one.
+const publishedGuides = JSON.parse(fs.readFileSync(new URL('../../shared/seo-libraries.json', import.meta.url), 'utf8')).length;
 
 test.beforeEach(async ({page}) => {
   await page.route('https://covers.openlibrary.org/**', route => route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>'}));
 });
 
-test('public pages work without JavaScript and publish exactly nine libraries', async ({browser,baseURL}) => {
+test('public pages work without JavaScript and publish exactly the manifest libraries', async ({browser,baseURL}) => {
   const context=await browser.newContext({javaScriptEnabled:false});
   const page=await context.newPage();
   const response=await page.goto(baseURL+'/libraries');
   expect(response.status()).toBe(200);
   await expect(page.locator('h1')).toHaveText('Explore the libraries');
-  expect(await page.locator('.library-grid > li').count()).toBe(9);
+  expect(await page.locator('.library-grid > li').count()).toBe(publishedGuides);
   await page.getByRole('link',{name:'Anna Centenary Library',exact:true}).click();
   await expect(page.locator('h1')).toHaveText('Anna Centenary Library');
   await expect(page.getByRole('heading',{name:'What MyBookshelf can check here'})).toBeVisible();
