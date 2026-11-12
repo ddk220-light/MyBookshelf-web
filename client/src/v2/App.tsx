@@ -21,6 +21,7 @@ import { SelectLibraryPage } from './ui/library/SelectLibraryPage';
 import { ContentDetailPage } from './ui/content/ContentDetailPage';
 import { oneShelfEnabled } from './featureFlags';
 import { OneShelfRoot } from './OneShelfRoot';
+import { HomeScreen } from './ui/home/HomeScreen';
 
 export { LibrariesPage } from './ui/library/LibrariesPage';
 
@@ -48,22 +49,30 @@ function IdentityApp({oneShelf}:{oneShelf:boolean}){
   if(session.status==='checking'&&!entryMode)return <section className="page-section"><p role="status">Checking your account…</p><button type="button" onClick={continueGuest}>Continue using this browser</button></section>;
   const key=entryMode?'account-entry':session.epoch;
   // VITE_ONE_SHELF off (the default): exactly today's tree. On: the one-shelf
-  // tree, which for now serves the same routes over the new browser state.
-  if(oneShelf)return <LibraryStateProvider key={key} entryMode={entryMode} oneShelf><OneShelfRoot><AppFrame><Routes>{currentRoutes()}</Routes></AppFrame></OneShelfRoot></LibraryStateProvider>;
+  // tree: the new home screen and side panel, other screens as today until
+  // their phases replace them.
+  if(oneShelf)return <LibraryStateProvider key={key} entryMode={entryMode} oneShelf><OneShelfRoot><AppFrame oneShelf><Routes>{currentRoutes(oneShelfScreens)}</Routes></AppFrame></OneShelfRoot></LibraryStateProvider>;
   return <LibraryStateProvider key={key} entryMode={entryMode}><AppFrame><Routes>{currentRoutes()}</Routes></AppFrame></LibraryStateProvider>;
 }
 
+// The one-shelf home replaces the shelf; Settings is now the side panel on it.
+const oneShelfScreens = {
+  shelf: <HomeScreen />,
+  settings: <Navigate to="/app/shelf" replace state={{ overlay: 'panel' }} />,
+};
+
 // Today's route table. Called as a function (not rendered as a component) so
-// <Routes> sees the <Route> elements directly.
-function currentRoutes() {
+// <Routes> sees the <Route> elements directly. The flag-on tree swaps in its
+// own shelf and settings screens; everything else is shared.
+function currentRoutes(screens: { shelf?: JSX.Element; settings?: JSX.Element } = {}) {
   return <>
     <Route path="/app/libraries" element={<LibrariesPage />} />
     <Route path="/select/:slug" element={<SelectLibraryPage />} />
     <Route path="/select" element={<SelectLibraryPage />} />
     <Route path="/app" element={<Navigate to="/app/shelf" replace />} />
-    <Route path="/app/shelf" element={<ShelfPage />} />
+    <Route path="/app/shelf" element={screens.shelf ?? <ShelfPage />} />
     <Route path="/app/search" element={<ScanPage />} />
-    <Route path="/app/settings" element={<SettingsPage />} />
+    <Route path="/app/settings" element={screens.settings ?? <SettingsPage />} />
     <Route path="/app/settings/account" element={<AccountSettingsPage/>}/>
     <Route path="/app/account/sign-in" element={<AccountEntryGate key="signin"><SignInPage/></AccountEntryGate>}/>
     <Route path="/app/account/sign-up" element={<AccountEntryGate key="signup" needsEmail allowProviders><SignInPage signup/></AccountEntryGate>}/>

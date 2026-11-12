@@ -56,14 +56,16 @@ describe('VITE_ONE_SHELF flag', () => {
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/search'));
   });
 
-  it('flag on serves the same routes over the migrated browser state', async () => {
+  it('flag on serves the one-shelf home over the migrated browser state', async () => {
     guestSession();
     localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, record);
     localStorage.setItem(AVAILABILITY_CACHE_KEY, JSON.stringify({ version: 1, entries: [] }));
     render(<MemoryRouter initialEntries={['/app']}><AnonymousWebApp oneShelf /><Location /></MemoryRouter>);
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/shelf'));
-    expect(await screen.findAllByRole('link', { name: 'Newer copy' })).not.toHaveLength(0);
-    expect(screen.queryByRole('link', { name: 'Older copy' })).not.toBeInTheDocument();
+    // The one-shelf home, with the duplicate collapsed to the newer copy.
+    expect(await screen.findAllByRole('link', { name: 'Newer copy by Synthetic author' })).toHaveLength(1);
+    expect(screen.queryByRole('link', { name: /Older copy/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Primary navigation' })).not.toBeInTheDocument();
     await startOneShelfMigration();
     expect(JSON.parse(localStorage.getItem(ONE_SHELF_STORAGE_KEY)!)).toMatchObject({ version: 1 });
     expect(localStorage.getItem(AVAILABILITY_CACHE_KEY)).toBeNull();

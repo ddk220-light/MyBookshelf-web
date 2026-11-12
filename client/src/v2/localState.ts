@@ -7,7 +7,7 @@ import type { ContentItem, SavedContent } from './contentTypes';
 
 export const ANONYMOUS_WEB_STORAGE_KEY = 'mybookshelf.anonymous-web.v1';
 const VERSION = 2;
-const HISTORY_LIMIT = 50;
+export const HISTORY_LIMIT = 50;
 export const SAVED_BOOKS_CAP = 100;
 const SOURCES: ReadonlySet<string> = new Set(['camera', 'isbn', 'search', 'direct']);
 

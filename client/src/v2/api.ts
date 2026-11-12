@@ -117,4 +117,15 @@ export const publicApi = Object.freeze({
   async availability(libraryId: string, bookKey: string, options?: { editionScope: 'work' | 'exact'; language?: string }): Promise<Availability> {
     return post('/availability', { libraryId, bookKey, ...options });
   },
+
+  // One-shelf (plan 3.5): stored answers only, no catalog request. At most 100
+  // books per call. Anything other than "found" or "not_found" is dropped.
+  async holdingsLookup(libraryId: string, books: Array<{ bookKey: string; isbn13?: string }>, signal?: AbortSignal): Promise<Record<string, 'found' | 'not_found'>> {
+    const data = await post<{ answers?: unknown }>('/holdings/lookup', { libraryId, books: books.slice(0, 100) }, signal);
+    const answers: Record<string, 'found' | 'not_found'> = {};
+    if (data.answers && typeof data.answers === 'object' && !Array.isArray(data.answers))
+      for (const [bookKey, answer] of Object.entries(data.answers as Record<string, unknown>))
+        if (answer === 'found' || answer === 'not_found') answers[bookKey] = answer;
+    return answers;
+  },
 });

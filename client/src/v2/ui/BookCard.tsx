@@ -1,5 +1,5 @@
 import { uiMessages as m } from '../uiMessages';
-import { useState, type ReactNode } from 'react';
+import { useState, type ReactNode, type SyntheticEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import type { PublicBook, RecentSource } from '../types';
 import { OpenBookIcon } from './icons';
@@ -25,8 +25,9 @@ export function BookCard({
   </Link>;
 }
 
-// `decorative` covers sit inside a link or label that already names the book.
-export function Cover({ book, alternatives = [], fallback, decorative }: { book: Pick<PublicBook, 'title' | 'coverUrl' | 'isbn13'>; alternatives?: PublicBook[]; fallback?: ReactNode; decorative?: boolean }) {
+// Candidate cover URLs in order, skipping any that failed to load. Open Library
+// is asked with ?default=false so a missing cover fails instead of drawing a blank.
+export function useCoverImage(book: Pick<PublicBook, 'coverUrl' | 'isbn13'>, alternatives: PublicBook[] = []) {
   const [failedUrls, setFailedUrls] = useState<string[]>([]);
   const [loadedUrl, setLoadedUrl] = useState<string>();
   const urls = [...new Set([book.coverUrl, book.isbn13 && `https://covers.openlibrary.org/b/isbn/${book.isbn13}-M.jpg?default=false`, ...alternatives.flatMap(candidate => [candidate.coverUrl,
@@ -34,9 +35,16 @@ export function Cover({ book, alternatives = [], fallback, decorative }: { book:
   const url = urls.find(candidate => !failedUrls.includes(candidate));
   const fail = () => { if (url) setFailedUrls(values => [...values, url]); };
   const ready = Boolean(url && url === loadedUrl);
+  const onLoad = (event: SyntheticEvent<HTMLImageElement>) => { if (event.currentTarget.naturalWidth <= 1) fail(); else setLoadedUrl(url); };
+  return { url, ready, fail, onLoad };
+}
+
+// `decorative` covers sit inside a link or label that already names the book.
+export function Cover({ book, alternatives = [], fallback, decorative }: { book: Pick<PublicBook, 'title' | 'coverUrl' | 'isbn13'>; alternatives?: PublicBook[]; fallback?: ReactNode; decorative?: boolean }) {
+  const { url, ready, fail, onLoad } = useCoverImage(book, alternatives);
   return <span className={`cover cover-frame${ready ? '' : ' cover-placeholder'}`} aria-busy={Boolean(url && !ready)} data-cover={ready ? 'ready' : url ? 'loading' : 'missing'}>
     {!url && <span className="cover-fallback" aria-hidden="true">{fallback || <span className="typeset-cover" data-title={book.title}><OpenBookIcon /><small className="visually-hidden">{m.noCover}</small></span>}</span>}
     {url && <img className="cover-image" src={url} alt={decorative ? '' : `Cover of ${book.title}`} loading="lazy" referrerPolicy="no-referrer" onError={fail}
-      onLoad={event => { if (event.currentTarget.naturalWidth <= 1) fail(); else setLoadedUrl(url); }} />}
+      onLoad={onLoad} />}
   </span>;
 }
