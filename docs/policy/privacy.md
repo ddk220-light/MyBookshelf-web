@@ -102,14 +102,14 @@ own policies.
 | Library requests | Until handled, then 12 months; spam is deleted after 90 days |
 | Problem reports | Up to 12 months; 90 days after they are resolved |
 | Abuse-limit codes | Up to one day |
-| Database backups | Up to 7 days |
+| Database backups | Up to 30 days |
 
 ## Deleting your account
 
 Go to the side panel, then **Account settings**, then **Delete account**.
 This deletes your email, password, saved books, chosen library and Viewed
 before list. Live data is removed within 24 hours; backup copies expire within
-7 days. A short record that holds no email or reading data is kept
+30 days. A short record that holds no email or reading data is kept
 for 35 days so that a backup restore cannot bring a deleted account back.
 
 Deleting your account does not clear books saved in a browser without an
