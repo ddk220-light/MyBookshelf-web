@@ -100,12 +100,13 @@ test(
     };
     const imported = await imports.importGuest(payload, identity);
     assert.equal(imported.savedAdded, 1);
-    assert.equal(imported.historyAccepted, 1);
-    assert.equal(imported.historyExpired, 1);
-    assert.equal(imported.historyEnabled, false);
+    // Guest Viewed before comes over whatever its age (plan 4.7).
+    assert.equal(imported.historyAccepted, 2);
+    assert.equal(imported.historyExpired, 0);
+    assert.equal(imported.historyEnabled, true);
     assert.deepEqual(await imports.importGuest(payload, identity), imported);
     assert.equal((await reading.state(identity)).selectedLibraryId, "bc:smcl");
-    assert.equal((await history.history({}, identity)).books.length, 1);
+    assert.equal((await history.history({}, identity)).books.length, 2);
     assert.ok(
       Date.parse((await shelf.books({}, identity)).books[0].savedAt) >
         Date.parse(shared.viewedAt) - 1000,

@@ -13,7 +13,8 @@ import {
 import { useAccountSession } from "../auth/AccountSessionProvider";
 import { AccountApiError } from "../auth/accountClient";
 import { AccountRepository, type ReadingSnapshot } from "./AccountRepository";
-import { emptyState } from "../localState";
+import { emptyState, HISTORY_LIMIT } from "../localState";
+import { isOnShelf } from "../oneShelfState";
 import type { AnonymousWebState } from "../localState";
 import type {
   PublicBook,
@@ -22,10 +23,18 @@ import type {
   RecentSource,
 } from "../types";
 
+/**
+ * oneShelf (VITE_ONE_SHELF, plan 3.3 and 4.7): a book whose bookKey or ISBN-13
+ * is already saved counts as saved without a request; every book open is
+ * recorded in the account's Viewed before quietly, with no history setting;
+ * and clearing Viewed before can be undone. Off, behaviour is as before.
+ */
 export function AccountLibraryStateProvider({
   children,
+  oneShelf = false,
 }: {
   children: ReactNode;
+  oneShelf?: boolean;
 }) {
   const account = useAccountSession(),
     sessionRef = useRef(account.session);
@@ -118,20 +127,22 @@ export function AccountLibraryStateProvider({
       label: string,
       action: (repo: AccountRepository) => Promise<T>,
       after?: (value: T) => void,
+      quiet = false,
     ): Promise<T | null> => {
       const repo = repository.current;
       if (!repo || busy.current || !snapshotRef.current) return null;
       busy.current = true;
       setPending(true);
       setMutationError(null);
-      setNotice(label + "…");
+      // A quiet change (a Viewed before entry) shows no "Saving…" line.
+      if (!quiet) setNotice(label + "…");
       onRetrySuccess.current = after as ((value: unknown) => void) | undefined;
       try {
         const result = await action(repo);
         if (!active.current || repository.current !== repo) return null;
         setUndo(null);
         after?.(result);
-        setNotice("Saved");
+        if (!quiet) setNotice("Saved");
         onRetrySuccess.current = undefined;
         try {
           const next = await repo.loadSnapshot();
@@ -182,10 +193,12 @@ export function AccountLibraryStateProvider({
   );
   const saveBook = useCallback(
     async (book: PublicBook): Promise<SaveResult> => {
+      if (oneShelf && snapshotRef.current && isOnShelf(snapshotRef.current.books, book))
+        return "already-saved";
       const result = await run("Saving book", (r) => r.saveBook(book));
       return result?.status ?? "failed";
     },
-    [run],
+    [run, oneShelf],
   );
   const unsaveBook = useCallback(
     async (key: string) => {
@@ -228,19 +241,23 @@ export function AccountLibraryStateProvider({
   const rememberBook = useCallback(
     async (book: PublicBook, source: RecentSource) => {
       if (
-        !snapshotRef.current?.summary.historyEnabled ||
+        !snapshotRef.current ||
+        (!oneShelf && !snapshotRef.current.summary.historyEnabled) ||
         document.visibilityState !== "visible" ||
         busy.current ||
         repository.current?.pending
       )
         return false;
       return (
-        (await run("Updating recently viewed", (r) =>
-          r.recordView(book, source),
+        (await run(
+          "Updating recently viewed",
+          (r) => r.recordView(book, source),
+          undefined,
+          oneShelf,
         )) !== null
       );
     },
-    [run],
+    [run, oneShelf],
   );
   const removeRecentBook = useCallback(
     async (key: string) =>
@@ -250,8 +267,36 @@ export function AccountLibraryStateProvider({
   );
   const clearRecentBooks = useCallback(
     async () =>
-      (await run("Clearing recently viewed books", (r) => r.clearHistory())) !==
-      null,
+      (await run(
+        "Clearing recently viewed books",
+        (r) => r.clearHistory(),
+        undefined,
+        oneShelf, // the home screen's "Viewed before cleared" toast says it
+      )) !== null,
+    [run, oneShelf],
+  );
+  // Undo after "Clear" (one-shelf): the cleared books go back with their
+  // original times through the existing import step (Viewed before only).
+  const restoreRecentBooks = useCallback(
+    async (books: RecentBook[]) =>
+      (await run(
+        "Restoring Viewed before",
+        (r) =>
+          r.importGuest(
+            crypto.randomUUID(),
+            {
+              version: 2,
+              selectedLibraryId: null,
+              savedBooks: [],
+              savedContent: [],
+              recentBooks: books.slice(0, HISTORY_LIMIT),
+            },
+            true,
+            "keep-account",
+          ),
+        undefined,
+        true,
+      )) !== null,
     [run],
   );
   const clearSavedBooks = useCallback(
@@ -304,6 +349,7 @@ export function AccountLibraryStateProvider({
     rememberBook,
     removeRecentBook,
     clearRecentBooks,
+    ...(oneShelf ? { restoreRecentBooks } : {}),
     clearSavedBooks,
     saveBook,
     unsaveBook,

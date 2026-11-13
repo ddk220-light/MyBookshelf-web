@@ -35,7 +35,7 @@ export function createExportActions({ owned, pool, config }) {
             ).rows;
             const recentlyViewed = (
               await client.query(
-                'SELECT r.book_key AS "bookKey",v.viewed_at AS "viewedAt",v.display_snapshot AS display FROM recent_book_views v JOIN book_refs r ON r.id=v.reference_id WHERE v.user_id=$1 AND v.viewed_at>now()-interval \'30 days\' ORDER BY v.viewed_at DESC,v.reference_id DESC LIMIT 50',
+                'SELECT r.book_key AS "bookKey",v.viewed_at AS "viewedAt",v.display_snapshot AS display FROM recent_book_views v JOIN book_refs r ON r.id=v.reference_id WHERE v.user_id=$1 ORDER BY v.viewed_at DESC,v.reference_id DESC LIMIT 50',
                 [owner],
               )
             ).rows;

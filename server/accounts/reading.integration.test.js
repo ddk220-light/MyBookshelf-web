@@ -21,7 +21,7 @@ test('owner-private library/shelf API: conflicts, receipts, exact keys, cursors,
  const [a,b]=ids.map(id=>({sessionId:randomUUID(),authUserId:id,user:{id,name:'Synthetic reader',email:id+'@example.test'}}));
  let sessionActive=true;
  const reading=createReadingActions({pool,sessionActive:async()=>sessionActive});const shelf=createShelfActions({owned:reading.owned,secret:'a synthetic signing secret longer than 32 characters'});
- assert.equal((await reading.state(a)).historyEnabled,false);
+ assert.equal((await reading.state(a)).historyEnabled,true);
  const library={libraryId:'bc:smcl',settingsRevision:0,operationId:randomUUID()};
  const selected=await reading.selectLibrary(library,a);assert.deepEqual(await reading.selectLibrary(library,a),selected);
  await assert.rejects(reading.selectLibrary({...library,libraryId:'bc:sfpl'},a),e=>e.code==='OPERATION_CONFLICT');
@@ -52,24 +52,23 @@ test('owner-private library/shelf API: conflicts, receipts, exact keys, cursors,
  assert.equal((await shelf.books({},a)).books[0].bookKey,longKey);assert.equal((await shelf.books({},a)).books[0].coverUrl,undefined);
  assert.deepEqual((await admin.query('SELECT provider_metadata FROM book_refs WHERE id=$1',[long.referenceId])).rows[0].provider_metadata,{});
  const history=createHistoryActions({owned:reading.owned});
- const paused={book,source:'direct',historyGeneration:0,operationId:randomUUID()};
- await assert.rejects(history.view(paused,a),e=>e.code==='HISTORY_PAUSED');
- assert.equal((await history.history({},a)).books.length,0);
- const enabled=await history.historySettings({enabled:true,settingsRevision:2,operationId:randomUUID()},a);assert.equal(enabled.historyGeneration,1);
- await assert.rejects(history.view({...paused,operationId:randomUUID()},a),e=>e.code==='VERSION_CONFLICT');
- const live={book,source:'direct',historyGeneration:1,operationId:randomUUID()};const viewed=await history.view(live,a);assert.deepEqual(await history.view(live,a),viewed);
+ // Viewed before (plan 4.7): a signed-in open is recorded without any setting,
+ // newest 50 kept, no expiry; the old setting no longer stops recording.
+ const live={book,source:'direct',historyGeneration:0,operationId:randomUUID()};const viewed=await history.view(live,a);assert.deepEqual(await history.view(live,a),viewed);
+ assert.equal((await history.history({},a)).books.length,1);
  assert.equal((await history.history({},b)).books.length,0);
  await assert.rejects(history.view({...live,source:'prefetch',operationId:randomUUID()},a),e=>e.code==='INVALID_INPUT');
- for(let n=0;n<51;n++)await history.view({book:makeBook(),source:'search',historyGeneration:1,operationId:randomUUID()},a);
+ for(let n=0;n<51;n++)await history.view({book:makeBook(),source:'search',historyGeneration:0,operationId:randomUUID()},a);
  assert.equal((await history.history({},a)).books.length,50);
- const pausedAgain=await history.historySettings({enabled:false,settingsRevision:3,operationId:randomUUID()},a);assert.equal(pausedAgain.historyGeneration,2);
- assert.equal((await history.history({},a)).books.length,50);
+ const pausedAgain=await history.historySettings({enabled:false,settingsRevision:2,operationId:randomUUID()},a);assert.equal(pausedAgain.historyGeneration,1);
  await assert.rejects(history.view({...live,operationId:randomUUID()},a),e=>e.code==='VERSION_CONFLICT');
- const priorHistory=await history.history({},a);
+ const newest=makeBook();assert.equal((await history.view({book:newest,source:'direct',historyGeneration:1,operationId:randomUUID()},a)).status,'recorded');
+ const priorHistory=await history.history({},a);assert.equal(priorHistory.books.length,50);assert.equal(priorHistory.books[0].bookKey,newest.bookKey);
  await admin.query("UPDATE recent_book_views SET viewed_at=now()-interval '31 days' WHERE user_id=$1 AND reference_id=$2",[a.user.id,priorHistory.books[0].referenceId]);
- assert.equal((await history.history({},a)).books.length,49);
- const historyClear=await history.clearHistory({historyGeneration:2,operationId:randomUUID()},a);assert.equal(historyClear.historyGeneration,3);
- await assert.rejects(history.removeHistory({historyGeneration:2,operationId:randomUUID()},a,priorHistory.books[1].referenceId),e=>e.code==='VERSION_CONFLICT');
+ assert.equal((await history.history({},a)).books.length,50);
+ assert.equal((await reading.state(a)).counts.recent,50);
+ const historyClear=await history.clearHistory({historyGeneration:1,operationId:randomUUID()},a);assert.equal(historyClear.historyGeneration,2);
+ await assert.rejects(history.removeHistory({historyGeneration:1,operationId:randomUUID()},a,priorHistory.books[1].referenceId),e=>e.code==='VERSION_CONFLICT');
  assert.equal((await history.history({},a)).books.length,0);
  // Seed the quota boundary without sending 999 serial requests.
  const quotaBooks=Array.from({length:999},makeBook);

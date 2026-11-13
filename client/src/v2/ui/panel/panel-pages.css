@@ -1,0 +1,102 @@
+/* The side panel's pages and the account screens (VITE_ONE_SHELF), from
+   docs/design/2026-11-one-shelf: ReportProblem, Privacy, About,
+   AccountSettings and AccountStates at 390 x 844 in Daylight. Every rule is
+   scoped to .one-shelf-frame, which only the flag-on tree renders. Lamplight
+   and Ink are not designed yet; their warning and danger colours below are
+   derived and keep text at 4.5:1 or more. */
+:root { --warn-ink: #8a5a00; --danger-bg: #8a5a00; --danger-ink: #fff; }
+:root[data-reading-light='lamplight'] { --warn-ink: #f0c36a; --danger-bg: #f0c36a; --danger-ink: #1f1a17; }
+:root[data-reading-light='ink'] { --warn-ink: #8a4b00; --danger-bg: #8a4b00; --danger-ink: #fff; }
+
+.one-shelf-frame .panel-page { box-sizing: border-box; width: 100%; max-width: 480px; margin: 0 auto; padding: 8px 16px 32px; display: flex; flex-direction: column; color: var(--reader-ink); font-size: 1rem; line-height: 1.5; }
+.one-shelf-frame .page-back { align-self: flex-start; min-height: 44px; display: inline-flex; align-items: center; gap: 4px; margin-left: -2px; color: var(--reader-accent); font-weight: 600; font-size: .9375rem; text-decoration: none; }
+.one-shelf-frame .panel-page h1 { margin: 12px 0 0; font: 500 2rem/1.15 var(--serif); letter-spacing: -.025em; color: var(--reader-ink); }
+.one-shelf-frame .panel-page h1:focus { outline: none; }
+.one-shelf-frame .panel-page a:not([class]) { color: var(--reader-accent); font-weight: 600; }
+
+/* Buttons on these pages: the home screen's .home-button plus a done state. */
+.one-shelf-frame .panel-page .home-button { margin-top: 4px; }
+.one-shelf-frame .panel-page .home-button:disabled { opacity: .65; cursor: progress; }
+.one-shelf-frame .sent-button, .one-shelf-frame .sent-button:hover { background: var(--pressed-bg); color: var(--pressed-ink); border: 1.5px solid var(--reader-accent); filter: none; box-shadow: none; cursor: default; }
+.one-shelf-frame .tick-pop { display: inline-flex; animation: tick-pop 320ms cubic-bezier(.3, .7, .4, 1.3) both; }
+.one-shelf-frame .home-button.danger-button { background: var(--danger-bg); border-color: var(--danger-bg); color: var(--danger-ink); }
+
+/* One-line errors with an icon (AccountStates). */
+.one-shelf-frame .form-alert { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 24px; color: var(--warn-ink); font-size: .875rem; font-weight: 600; line-height: 1.35; }
+.one-shelf-frame .form-alert-text { display: inline-flex; align-items: center; gap: 6px; }
+.one-shelf-frame .form-alert-text svg { flex: 0 0 auto; }
+.one-shelf-frame .form-alert .home-text-button { flex: 0 0 auto; padding: 0; font-size: .9375rem; }
+.one-shelf-frame .form-alert-done { display: inline-flex; align-items: center; gap: 6px; color: var(--pressed-ink); }
+
+/* Report a problem. */
+.one-shelf-frame textarea.report-text { margin-top: 20px; width: 100%; height: 180px; box-sizing: border-box; padding: 12px 14px; border: 1.5px solid var(--field-line, #cfc6b8); border-radius: 12px; background: var(--reader-surface); color: var(--reader-ink); font: inherit; font-size: 1rem; line-height: 1.5; resize: none; }
+.one-shelf-frame .report-text:focus-visible { outline: 2px solid var(--reader-accent); outline-offset: 0; border-color: var(--reader-accent); box-shadow: none; }
+.one-shelf-frame .report-page .form-alert { margin-top: 10px; }
+.one-shelf-frame .report-page .home-button { margin-top: 14px; height: 54px; min-height: 54px; }
+
+/* Privacy and Terms: the Privacy board's labelled rows. */
+.one-shelf-frame .policy-intro { margin-top: 6px; color: var(--reader-secondary); }
+.one-shelf-frame .policy-intro p { margin: 6px 0 0; }
+.one-shelf-frame .policy-sections { margin-top: 20px; border-bottom: 1px solid var(--reader-line); }
+.one-shelf-frame .policy-section { padding: 12px 0; border-top: 1px solid var(--reader-line); display: flex; flex-direction: column; gap: 4px; }
+.one-shelf-frame .policy-section h2 { margin: 0; font-family: inherit; font-size: .8125rem; font-weight: 600; line-height: 1.5; letter-spacing: .06em; text-transform: uppercase; color: var(--reader-muted); }
+.one-shelf-frame .policy-section p { margin: 0; }
+.one-shelf-frame .policy-section p + p, .one-shelf-frame .policy-section p + ul, .one-shelf-frame .policy-section ul + p { margin-top: 8px; }
+.one-shelf-frame .policy-section ul { margin: 0; padding-left: 20px; }
+.one-shelf-frame .policy-section li + li { margin-top: 4px; }
+.one-shelf-frame .policy-section table { width: 100%; margin-top: 4px; border-collapse: collapse; font-size: .9375rem; line-height: 1.45; }
+.one-shelf-frame .policy-section th, .one-shelf-frame .policy-section td { padding: 8px 10px 8px 0; border-top: 1px solid var(--reader-line); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.one-shelf-frame .policy-section thead th { border-top: 0; padding-top: 2px; font-size: .8125rem; font-weight: 600; color: var(--reader-muted); }
+.one-shelf-frame .policy-section tbody th { width: 38%; font-weight: 600; }
+.one-shelf-frame .policy-section td { color: var(--reader-secondary); }
+
+/* About. */
+.one-shelf-frame .about-page .policy-intro { color: var(--reader-secondary); }
+.one-shelf-frame .about-facts { margin: 20px 0 0; border-bottom: 1px solid var(--reader-line); }
+.one-shelf-frame .about-facts div { min-height: 52px; border-top: 1px solid var(--reader-line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.one-shelf-frame .about-facts dt { color: var(--reader-secondary); }
+.one-shelf-frame .about-facts dd { margin: 0; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+
+/* Account settings. */
+.one-shelf-frame .account-person { margin-top: 16px; display: flex; align-items: center; gap: 10px; min-width: 0; }
+.one-shelf-frame .account-settings-small h1 { margin: 0; }
+.one-shelf-frame .settings-rows { margin-top: 20px; display: flex; flex-direction: column; border-bottom: 1px solid var(--reader-line); }
+.one-shelf-frame .panel-page button.settings-row { width: 100%; min-height: 52px; margin: 0; padding: 0; border: 0; border-top: 1px solid var(--reader-line); border-radius: 0; background: transparent; color: var(--reader-accent);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; font-family: inherit; font-size: 1rem; font-weight: 600; font-style: normal; line-height: 1.5; text-align: left; box-shadow: none; filter: none; }
+.one-shelf-frame .panel-page button.settings-row:focus-visible { outline: 3px solid var(--reader-accent); outline-offset: -3px; box-shadow: none; }
+.one-shelf-frame .panel-page button.settings-row[aria-disabled='true'] { cursor: default; }
+.one-shelf-frame .settings-row-done { display: inline-flex; align-items: center; gap: 8px; color: var(--pressed-ink); }
+.one-shelf-frame .account-settings-small .form-alert { margin-top: 10px; }
+.one-shelf-frame .settings-more { align-self: flex-start; margin-top: 12px; min-height: 44px; display: inline-flex; align-items: center; color: var(--reader-accent); font-weight: 600; font-size: .9375rem; text-decoration: none; }
+
+/* The delete confirmation, a bottom sheet like the scan pop-up. */
+.one-shelf-frame .confirm-sheet-form { display: flex; flex-direction: column; gap: 14px; }
+.one-shelf-frame .confirm-sheet h2 { margin: 4px 0 0; font: 500 1.625rem/1.2 var(--serif); letter-spacing: -.025em; color: var(--reader-ink); }
+.one-shelf-frame .confirm-sheet .home-button { margin: 0; }
+
+/* Account forms (AccountStates). */
+.one-shelf-frame .account-v2-form { margin-top: 12px; display: flex; flex-direction: column; gap: 14px; }
+.one-shelf-frame .account-v2-form h1 { margin: 0; font: 500 1.625rem/1.2 var(--serif); letter-spacing: -.025em; }
+.one-shelf-frame .account-v2-form h1:focus { outline: none; }
+.one-shelf-frame .account-v2-field, .one-shelf-frame .account-v2-form .account-field { display: flex; flex-direction: column; gap: 6px; }
+.one-shelf-frame .account-v2-field label, .one-shelf-frame .account-v2-form .account-field label { font-size: .875rem; font-weight: 500; color: var(--reader-secondary); }
+.one-shelf-frame .account-v2-field input:not([type='checkbox']):not([type='radio']), .one-shelf-frame .account-v2-form .account-field input:not([type='checkbox']):not([type='radio']) { width: 100%; height: 52px; min-height: 52px; box-sizing: border-box; margin: 0; padding: 0 14px; border: 1.5px solid var(--field-line, #cfc6b8); border-radius: 12px; background: var(--reader-surface); color: var(--reader-ink); font: inherit; font-size: 1rem; box-shadow: none; }
+.one-shelf-frame .account-v2-field input:not([type='checkbox']):focus-visible, .one-shelf-frame .account-v2-form .account-field input:not([type='checkbox']):focus-visible { outline: 2px solid var(--reader-accent); outline-offset: 0; border-color: var(--reader-accent); box-shadow: none; }
+.one-shelf-frame .account-v2-field input:not([type='checkbox'])[aria-invalid='true'] { border-color: var(--warn-ink); }
+.one-shelf-frame .account-v2-form .home-text-button { align-self: center; }
+.one-shelf-frame .account-v2-form .form-alert .home-text-button { align-self: auto; margin-left: auto; }
+.one-shelf-frame .account-terms { margin: 0; text-align: center; font-size: .875rem; line-height: 1.45; color: var(--reader-secondary); }
+.one-shelf-frame .account-terms a { color: var(--reader-accent); font-weight: 600; }
+.one-shelf-frame .account-v2-email { margin: 0; overflow-wrap: anywhere; }
+/* Older account screens shown in this layout (import, profile, email change). */
+.one-shelf-frame .account-v2-form > p { margin: 0; color: var(--reader-secondary); }
+.one-shelf-frame .account-v2-form > button:not(.home-button):not(.home-text-button), .one-shelf-frame .account-v2-form > .button-link {
+  box-sizing: border-box; width: 100%; height: 52px; min-height: 52px; padding: 0 16px; border: 1px solid var(--reader-accent); border-radius: 12px; background: var(--reader-accent); color: var(--reader-on);
+  display: flex; align-items: center; justify-content: center; font-family: inherit; font-size: 1rem; font-weight: 600; font-style: normal; line-height: 1.25; text-decoration: none; box-shadow: none; filter: none; }
+.one-shelf-frame .account-v2-form > button.button-quiet, .one-shelf-frame .account-v2-form > button.text-button { background: transparent; color: var(--reader-accent); }
+.one-shelf-frame .account-v2-form > a:not([class]) { align-self: center; min-height: 44px; display: inline-flex; align-items: center; color: var(--reader-accent); font-weight: 600; font-size: .9375rem; text-decoration: none; }
+.one-shelf-frame .account-v2-form .account-check { display: flex; align-items: flex-start; gap: 10px; color: var(--reader-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .one-shelf-frame .tick-pop { animation: none; }
+}

@@ -46,7 +46,7 @@ export type LibraryState = {
   updateRecentDisplay?: (book: PublicBook) => Promise<boolean>;
   removeRecentBook: (bookKey: string) => Promise<boolean>;
   clearRecentBooks: () => Promise<boolean>;
-  /** Puts cleared Viewed before books back (Undo). Guests only; newer views stay first. */
+  /** Puts cleared Viewed before books back (Undo); newer views stay first. Guests, and accounts in the one-shelf build. */
   restoreRecentBooks?: (books: RecentBook[]) => Promise<boolean>;
   clearSavedBooks: () => Promise<boolean>;
   saveBook: (book: PublicBook) => Promise<SaveResult>;
@@ -81,7 +81,7 @@ export function LibraryStateProvider({children,entryMode=false,oneShelf=false}:{
   const {session}=useAccountSession();
   if(entryMode)return <UnavailableLibraryStateProvider>{children}</UnavailableLibraryStateProvider>;
   if(session.status==='guest')return <GuestLibraryStateProvider oneShelf={oneShelf}>{children}</GuestLibraryStateProvider>;
-  if(session.status==='authenticated')return <AccountLibraryStateProvider>{children}</AccountLibraryStateProvider>;
+  if(session.status==='authenticated')return <AccountLibraryStateProvider oneShelf={oneShelf}>{children}</AccountLibraryStateProvider>;
   return <UnavailableLibraryStateProvider>{children}</UnavailableLibraryStateProvider>;
 }
 function GuestLibraryStateProvider({ children, oneShelf = false }: { children: ReactNode; oneShelf?: boolean }) {

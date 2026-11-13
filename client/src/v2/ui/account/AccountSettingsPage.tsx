@@ -21,6 +21,7 @@ import {
 } from "../../auth/RecentAuthProvider";
 import type { AccountCapabilities } from "./ProviderEntry";
 import { useDeletionReceipt } from "../../auth/DeletionReceiptProvider";
+import { useOneShelf } from "../../featureFlags";
 
 type Profile = {
   name: string;
@@ -47,6 +48,9 @@ type Sensitive = {
 type Proof = { proof: string; csrfToken: string };
 export function AccountSettingsPage() {
   const recent = useRecentAuth();
+  // One-shelf build (plan 4.7): Viewed before is always saved to the account,
+  // so the history switch is not shown here (reached from Account settings → More).
+  const oneShelf = useOneShelf();
   const deletion = useDeletionReceipt(),
     exportRequest = useRef<string | null>(null);
   const account = useAccountSession(),
@@ -436,8 +440,8 @@ export function AccountSettingsPage() {
     );
   return (
     <section className="page-section account-settings-page">
-      <Link className="back-link" to="/app/settings">
-        ← Settings
+      <Link className="back-link" to={oneShelf ? "/app/settings/account" : "/app/settings"}>
+        ← {oneShelf ? "Account settings" : "Settings"}
       </Link>
       <header className="page-heading">
         <h1>Your account</h1>
@@ -700,7 +704,7 @@ export function AccountSettingsPage() {
             <h2 id="history-controls" className="settings-label">
               Recently viewed
             </h2>
-            <div className="account-row account-history-row">
+            {!oneShelf && <div className="account-row account-history-row">
               <div className="account-stack">
                 <strong>Save recently viewed books to my account</strong>
                 <p className="form-hint">
@@ -722,7 +726,7 @@ export function AccountSettingsPage() {
               >
                 <span aria-hidden="true" />
               </button>
-            </div>
+            </div>}
             <div className="account-row">
               <span className="form-hint">
                 {library.state.recentBooks.length} recent books

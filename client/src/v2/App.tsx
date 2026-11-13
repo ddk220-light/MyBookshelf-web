@@ -24,6 +24,11 @@ import { OneShelfRoot } from './OneShelfRoot';
 import { HomeScreen } from './ui/home/HomeScreen';
 import { ShelfBookPage } from './ui/book/ShelfBookPage';
 import { SelectLibraryLink } from './ui/library/SelectLibraryLink';
+import { OneShelfContext } from './featureFlags';
+import { AccountSettingsSmall } from './ui/account/AccountSettingsSmall';
+import { CreateAccountPage, DeletionDonePage, LogInPage, NewPasswordPage, ResetRequestPage, VerifyEmailPage } from './ui/account/OneShelfAccountPages';
+import { ReportProblemPage } from './ui/panel/ReportProblemPage';
+import { AboutPage, PrivacyPage, TermsPage } from './ui/panel/PolicyPages';
 
 export { LibrariesPage } from './ui/library/LibrariesPage';
 
@@ -36,7 +41,7 @@ function NotFoundPage() {
 }
 
 export function AnonymousWebApp({oneShelf=oneShelfEnabled()}:{oneShelf?:boolean}={}) {
-  return <AccountSessionProvider disabledMeansGuest={oneShelf}><DeletionReceiptProvider><RecentAuthProvider><LinkTokenProvider><IdentityApp oneShelf={oneShelf}/></LinkTokenProvider></RecentAuthProvider></DeletionReceiptProvider></AccountSessionProvider>;
+  return <OneShelfContext.Provider value={oneShelf}><AccountSessionProvider disabledMeansGuest={oneShelf}><DeletionReceiptProvider><RecentAuthProvider><LinkTokenProvider><IdentityApp oneShelf={oneShelf}/></LinkTokenProvider></RecentAuthProvider></DeletionReceiptProvider></AccountSessionProvider></OneShelfContext.Provider>;
 }
 function IdentityApp({oneShelf}:{oneShelf:boolean}){
   const {session,continueGuest}=useAccountSession(),navigate=useNavigate(),location=useLocation();
@@ -59,17 +64,37 @@ function IdentityApp({oneShelf}:{oneShelf:boolean}){
 
 // The one-shelf home replaces the shelf; Settings is now the side panel on it.
 // The book page is rewritten, and a library link chooses its library silently.
-const oneShelfScreens = {
+// The panel's pages (plan 3.1, Phase 9): Report a problem, Privacy, Terms,
+// About and the small Account settings; the account forms in the
+// AccountStates layout. The older full account settings stay reachable at
+// /app/settings/account/more.
+const oneShelfScreens: Screens = {
   shelf: <HomeScreen />,
   settings: <Navigate to="/app/shelf" replace state={{ overlay: 'panel' }} />,
   book: <ShelfBookPage />,
   select: <SelectLibraryLink />,
+  accountSettings: <AccountSettingsSmall />,
+  signIn: <AccountEntryGate key="signin"><LogInPage /></AccountEntryGate>,
+  signUp: <AccountEntryGate key="signup" needsEmail><CreateAccountPage /></AccountEntryGate>,
+  verify: <AccountEntryGate key="verify"><VerifyEmailPage /></AccountEntryGate>,
+  forgot: <AccountEntryGate key="forgot" needsEmail><ResetRequestPage /></AccountEntryGate>,
+  reset: <AccountEntryGate key="reset"><NewPasswordPage /></AccountEntryGate>,
+  deletion: <DeletionDonePage />,
+  extra: <>
+    <Route path="/app/settings/account/more" element={<AccountSettingsPage />} />
+    <Route path="/app/report" element={<ReportProblemPage />} />
+    <Route path="/app/privacy" element={<PrivacyPage />} />
+    <Route path="/app/terms" element={<TermsPage />} />
+    <Route path="/app/about" element={<AboutPage />} />
+  </>,
 };
+type Screens = { shelf?: JSX.Element; settings?: JSX.Element; book?: JSX.Element; select?: JSX.Element; accountSettings?: JSX.Element;
+  signIn?: JSX.Element; signUp?: JSX.Element; verify?: JSX.Element; forgot?: JSX.Element; reset?: JSX.Element; deletion?: JSX.Element; extra?: JSX.Element };
 
 // Today's route table. Called as a function (not rendered as a component) so
 // <Routes> sees the <Route> elements directly. The flag-on tree swaps in its
 // own shelf and settings screens; everything else is shared.
-function currentRoutes(screens: { shelf?: JSX.Element; settings?: JSX.Element; book?: JSX.Element; select?: JSX.Element } = {}) {
+function currentRoutes(screens: Screens = {}) {
   return <>
     <Route path="/app/libraries" element={<LibrariesPage />} />
     <Route path="/select/:slug" element={screens.select ?? <SelectLibraryPage />} />
@@ -78,21 +103,22 @@ function currentRoutes(screens: { shelf?: JSX.Element; settings?: JSX.Element; b
     <Route path="/app/shelf" element={screens.shelf ?? <ShelfPage />} />
     <Route path="/app/search" element={<ScanPage />} />
     <Route path="/app/settings" element={screens.settings ?? <SettingsPage />} />
-    <Route path="/app/settings/account" element={<AccountSettingsPage/>}/>
-    <Route path="/app/account/sign-in" element={<AccountEntryGate key="signin"><SignInPage/></AccountEntryGate>}/>
-    <Route path="/app/account/sign-up" element={<AccountEntryGate key="signup" needsEmail allowProviders><SignInPage signup/></AccountEntryGate>}/>
-    <Route path="/app/account/verify" element={<AccountEntryGate key="verify"><VerifyPage/></AccountEntryGate>}/>
-    <Route path="/app/account/forgot-password" element={<AccountEntryGate key="forgot" needsEmail><RecoveryPage/></AccountEntryGate>}/>
-    <Route path="/app/account/reset-password" element={<AccountEntryGate key="reset"><RecoveryPage reset/></AccountEntryGate>}/>
+    <Route path="/app/settings/account" element={screens.accountSettings ?? <AccountSettingsPage/>}/>
+    <Route path="/app/account/sign-in" element={screens.signIn ?? <AccountEntryGate key="signin"><SignInPage/></AccountEntryGate>}/>
+    <Route path="/app/account/sign-up" element={screens.signUp ?? <AccountEntryGate key="signup" needsEmail allowProviders><SignInPage signup/></AccountEntryGate>}/>
+    <Route path="/app/account/verify" element={screens.verify ?? <AccountEntryGate key="verify"><VerifyPage/></AccountEntryGate>}/>
+    <Route path="/app/account/forgot-password" element={screens.forgot ?? <AccountEntryGate key="forgot" needsEmail><RecoveryPage/></AccountEntryGate>}/>
+    <Route path="/app/account/reset-password" element={screens.reset ?? <AccountEntryGate key="reset"><RecoveryPage reset/></AccountEntryGate>}/>
     <Route path="/app/account/email-change" element={<EmailChangePage/>}/>
     <Route path="/app/account/return" element={<ProviderReturnPage/>}/>
     <Route path="/app/account/complete-profile" element={<CompleteProfilePage/>}/>
-    <Route path="/app/account/deletion" element={<DeletionStatusPage/>}/>
+    <Route path="/app/account/deletion" element={screens.deletion ?? <DeletionStatusPage/>}/>
     <Route path="/app/account/import" element={<ImportPage/>}/>
     <Route path="/app/books/:bookKey" element={screens.book ?? <BookPage />} />
     <Route path="/app/read/:contentKey" element={<ContentDetailPage />} />
     <Route path="/find" element={<Navigate to="/app/search" replace />} />
     <Route path="/privacy" element={<Navigate to="/settings#privacy" replace />} />
+    {screens.extra}
     <Route path="/login" element={<NativeAppNotice />} />
     <Route path="/connect" element={<NativeAppNotice />} />
     <Route path="*" element={<NotFoundPage />} />

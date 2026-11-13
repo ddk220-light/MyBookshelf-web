@@ -137,14 +137,12 @@ export function createImportActions({ owned, validateLibrary }) {
             [id, ref, book.snapshot],
           );
         }
-        let historyExpired = 0,
-          historyAccepted = 0;
+        const historyExpired = 0;
+        let historyAccepted = 0;
         if (body.includeHistory) {
+          // Viewed before has no time limit (plan 4.7); historyExpired stays
+          // in the reply for older clients and is always 0.
           for (const book of snapshot.recent) {
-            if (Date.parse(book.viewedAt) <= now - 30 * 86400000) {
-              historyExpired++;
-              continue;
-            }
             historyAccepted++;
             const ref = await reference(client, book.bookKey);
             await client.query(

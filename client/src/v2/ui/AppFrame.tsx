@@ -12,6 +12,10 @@ import { DogAnimationProvider } from './DogAnimation';
 import { ConfirmDialog } from './ConfirmDialog';
 import {AccountNotice} from './account/AccountSummary';
 
+// One-shelf pages that carry their own "Back" and set their own title: the
+// side panel's pages and the account screens (plan Phase 9).
+const PANEL_PAGE = /^\/app\/(report|privacy|terms|about|settings\/account(\/more)?|account\/[a-z-]+)$/;
+
 const ReadingLightContext = createContext<{ light: ReadingLight; preference: ReadingLightPreference; setLight: (l: ReadingLightPreference) => void }>({ light: 'daylight', preference: 'system', setLight: () => {} });
 
 export function useReadingLight() {
@@ -81,6 +85,7 @@ export function AppFrame({ children, oneShelf = false }: { children: ReactNode; 
   }, [location, navigate, oneShelf]);
 
   useEffect(() => {
+    if (oneShelf && PANEL_PAGE.test(location.pathname) && !location.pathname.endsWith('/more')) return;
     const route = location.pathname.split('/')[2];
     const names: Record<string, string> = { shelf: 'Your bookshelf', search: 'Search books', libraries: 'Choose a library', settings: 'Settings', books: 'Book details', read: 'Free reading details' };
     const accountNames: Record<string, string> = {
@@ -92,7 +97,7 @@ export function AppFrame({ children, oneShelf = false }: { children: ReactNode; 
     const title = location.pathname === '/app/settings/account' ? 'Your account'
       : route === 'account' ? accountNames[location.pathname.split('/')[3]] : names[route];
     document.title = (title || 'Choose a library') + ' — MyBookshelf';
-  }, [location.pathname]);
+  }, [location.pathname, oneShelf]);
 
   const frame = <ReadingLightContext.Provider value={{ light, preference, setLight }}>
     <div className="app-backdrop">
@@ -100,7 +105,7 @@ export function AppFrame({ children, oneShelf = false }: { children: ReactNode; 
         <a className="desktop-skip" href="#main-content">{m.skipToContent}</a>
         {!oneShelf && <TabBar />}
         <main id="main-content" ref={screen} className="app-screen" tabIndex={-1}>
-          {oneShelf && location.pathname !== '/app/shelf' && !location.pathname.startsWith('/app/books/') && <Link className="one-shelf-back" to="/app/shelf"><span aria-hidden="true">‹</span> My shelf</Link>}
+          {oneShelf && location.pathname !== '/app/shelf' && !location.pathname.startsWith('/app/books/') && !PANEL_PAGE.test(location.pathname) && <Link className="one-shelf-back" to="/app/shelf"><span aria-hidden="true">‹</span> My shelf</Link>}
           <AccountNotice oneShelf={oneShelf}/>
           {storageNotice && <div className="site-notice"><Notice tone="error">{storageNotice}</Notice>{recoveryMode && <div className="recovery-actions"><button onClick={reloadShelf}>Reload shelf</button><button className="button-quiet" onClick={() => setResetting(true)}>Start a new shelf</button></div>}</div>}
           {removedLibraryNotice && <div className="site-notice"><Notice>{removedLibraryNotice}</Notice></div>}

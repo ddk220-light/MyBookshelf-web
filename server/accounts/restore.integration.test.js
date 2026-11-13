@@ -193,7 +193,12 @@ test(
     );
     const expiredMail=randomUUID();
     await admin.query(`INSERT INTO account_mail_jobs(id,kind,payload,status,attempts,"availableAt","expiresAt","createdAt") VALUES($1,'verify',$2,'queued',0,now(),now()-interval '1 minute',now())`,[expiredMail,'synthetic-expired-ciphertext']);
+    // Viewed before has no time limit (migration 012): retention keeps an
+    // entry older than 30 days.
+    const oldView = (await admin.query("SELECT reference_id FROM user_books WHERE user_id=$1", [other.appUserId])).rows[0].reference_id;
+    await admin.query("INSERT INTO recent_book_views(user_id,reference_id,viewed_at) VALUES($1,$2,now()-interval '40 days')", [other.appUserId, oldView]);
     await worker.query("SELECT public.account_retention()");
+    assert.equal((await admin.query("SELECT 1 FROM recent_book_views WHERE user_id=$1", [other.appUserId])).rowCount, 1);
     const expired=(await admin.query('SELECT status,payload FROM account_mail_jobs WHERE id=$1',[expiredMail])).rows[0];assert.deepEqual(expired,{status:'expired',payload:''},'retention clears expired ciphertext without any mail credential');
     assert.equal((await admin.query('SELECT 1 FROM "session"')).rowCount, 0);
   },

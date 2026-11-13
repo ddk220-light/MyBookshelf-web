@@ -4,7 +4,9 @@ import {
   useRef,
   useState,
   type FormEvent,
+  type MouseEvent,
   type ReactNode,
+  type RefObject,
 } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAccountSession } from "../../auth/AccountSessionProvider";
@@ -23,6 +25,8 @@ import {
   useRecentAuth,
   type RecentResult,
 } from "../../auth/RecentAuthProvider";
+import { useOneShelf } from "../../featureFlags";
+import { BackLink, FormAlert } from "../panel/PanelPage";
 
 export function AccountForm({
   title,
@@ -33,6 +37,7 @@ export function AccountForm({
   noValidate = false,
   backTo = "/app/settings",
   backLabel = "Settings",
+  formRef,
 }: {
   title: string;
   children: ReactNode;
@@ -42,8 +47,12 @@ export function AccountForm({
   noValidate?: boolean;
   backTo?: string;
   backLabel?: string;
+  formRef?: RefObject<HTMLFormElement>;
 }) {
   const entryPending = useAccountEntryPending();
+  // One-shelf build: the same form in the AccountStates board's layout
+  // (Back, serif heading, one-line errors). Off, exactly as before.
+  const oneShelf = useOneShelf();
   const heading = useId(),
     errorRef = useRef<HTMLParagraphElement>(null),
     headingRef = useRef<HTMLHeadingElement>(null),
@@ -61,6 +70,44 @@ export function AccountForm({
     if (message && message !== previousError.current) errorRef.current?.focus();
     previousError.current = message;
   }, [error]);
+  const guardDoubleTap = (event: MouseEvent<HTMLFormElement>) => {
+    // A submit can collapse the mobile keyboard or replace this form.
+    // Ignore the second tap of that gesture if another action moves
+    // beneath the pointer. Keyboard activation still has detail 0.
+    if (
+      event.detail > 1 &&
+      event.target instanceof Element &&
+      event.target.closest("button, a")
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+  if (oneShelf)
+    return (
+      <section className="panel-page account-v2">
+        <BackLink />
+        <form
+          ref={formRef}
+          className="account-v2-form"
+          aria-labelledby={heading}
+          onClickCapture={guardDoubleTap}
+          onSubmit={(event) => {
+            if (entryPending) event.preventDefault();
+            else if (onSubmit) onSubmit(event);
+            else event.preventDefault();
+          }}
+          aria-busy={busy || entryPending}
+          noValidate={noValidate}
+        >
+          <h1 id={heading} ref={headingRef} tabIndex={-1}>
+            {title}
+          </h1>
+          {error && <FormAlert>{error}</FormAlert>}
+          {children}
+        </form>
+      </section>
+    );
   return (
     <section className="page-section account-page">
       <Link className="back-link" to={backTo}>
@@ -597,7 +644,10 @@ export function ImportPage() {
       structuredClone(readAnonymousWebStateWithStatus()),
     ),
     [id] = useState(() => crypto.randomUUID());
-  const [history, setHistory] = useState(false),
+  // One-shelf (plan 4.7, section 9 row 5): guest Viewed before comes over
+  // with the saved books; there is no separate history checkbox.
+  const oneShelf = useOneShelf();
+  const [history, setHistory] = useState(oneShelf),
     [deviceLibrary, setDeviceLibrary] = useState(false),
     [remove, setRemove] = useState(false),
     [busy, setBusy] = useState(false),
@@ -712,18 +762,22 @@ export function ImportPage() {
               here is unchanged.
             </p>
           )}
-          <label className="account-check">
-            <input
-              type="checkbox"
-              checked={history}
-              disabled={busy || library.pendingImportId === id}
-              onChange={(event) => setHistory(event.target.checked)}
-            />
-            Include recently viewed books from the last 30 days
-          </label>
-          <p className="form-hint">
-            This does not turn on future reading history.
-          </p>
+          {!oneShelf && (
+            <>
+              <label className="account-check">
+                <input
+                  type="checkbox"
+                  checked={history}
+                  disabled={busy || library.pendingImportId === id}
+                  onChange={(event) => setHistory(event.target.checked)}
+                />
+                Include recently viewed books from the last 30 days
+              </label>
+              <p className="form-hint">
+                This does not turn on future reading history.
+              </p>
+            </>
+          )}
           {frozen.state.selectedLibraryId && (
             <label className="account-check">
               <input
@@ -842,7 +896,8 @@ export function EmailChangePage() {
   );
 }
 
-function afterProviderSignIn(returnTo: string) {
+/** Where a fresh sign-in goes: the import step when this browser holds guest data, else returnTo. */
+export function afterProviderSignIn(returnTo: string) {
   const guest = readAnonymousWebStateWithStatus().state;
   return guest.savedBooks.length ||
     guest.recentBooks.length ||

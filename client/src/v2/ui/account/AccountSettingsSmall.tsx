@@ -24,6 +24,12 @@ export function AccountSettingsSmall() {
   const deleteButton = useRef<HTMLButtonElement>(null);
   const alive = useRef(true);
   useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  // Focus returns to "Delete account" once the confirmation has gone.
+  const wasConfirming = useRef(false);
+  useEffect(() => {
+    if (wasConfirming.current && !confirming) deleteButton.current?.focus();
+    wasConfirming.current = confirming;
+  }, [confirming]);
   if (session.status !== 'authenticated' || !session.user) {
     if (session.status === 'checking') return <p role="status" className="panel-page">Checking your account…</p>;
     return <Navigate to="/app/account/sign-in" replace />;
@@ -53,7 +59,7 @@ export function AccountSettingsSmall() {
     {link === 'offline' && <FormAlert offline action={<button type="button" className="home-text-button" onClick={() => { setLink('idle'); void sendLink(); }}>Try again</button>}>Couldn’t connect</FormAlert>}
     {link === 'limited' && <FormAlert>Too many tries. Try later</FormAlert>}
     <Link className="settings-more" to="/app/settings/account/more">More</Link>
-    {confirming && <DeleteAccountDialog onCancel={() => { setConfirming(false); deleteButton.current?.focus(); }} />}
+    {confirming && <DeleteAccountDialog onCancel={() => setConfirming(false)} />}
   </PanelPage>;
 }
 
