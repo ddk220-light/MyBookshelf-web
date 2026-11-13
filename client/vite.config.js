@@ -2,7 +2,19 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { HTML_SECURITY_POLICY } from '../shared/security-policy.mjs';
+
+// Short commit SHA for the About page and problem reports: Vercel's build
+// variable, else the local checkout, else empty (About then shows [VERSION]).
+function buildVersion() {
+  const sha = process.env.VERCEL_GIT_COMMIT_SHA;
+  if (sha && /^[0-9a-f]{7,40}$/i.test(sha)) return sha.slice(0, 7);
+  try {
+    const local = execFileSync('git', ['rev-parse', '--short=7', 'HEAD'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    return /^[0-9a-f]{7}$/.test(local) ? local : '';
+  } catch { return ''; }
+}
 
 export default defineConfig({
   appType: 'mpa',
@@ -10,14 +22,14 @@ export default defineConfig({
     name: 'public-pages-preview',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (/^\/(app|select)(\/|\?|$)/.test(req.url || '')) req.url = '/index.html';
+        if (/^\/(app|select|find)(\/|\?|$)/.test(req.url || '')) req.url = '/index.html';
         next();
       });
     },
     configurePreviewServer(server) {
       server.middlewares.use((req, res, next) => {
         const path = new URL(req.url || '/', 'http://localhost').pathname;
-        if (/^\/(app|select)(\/|$)/.test(path)) {
+        if (/^\/(app|select|find)(\/|$)/.test(path)) {
           res.setHeader('X-Robots-Tag', 'noindex, follow');
           req.url = '/app/index.html';
           return next();
@@ -39,6 +51,7 @@ export default defineConfig({
     // still sends no credentials to the anonymous catalog API.
     'import.meta.env.VITE_SOURCE_URL': JSON.stringify('https://github.com/ddk220-light/MyBookshelf-web/tree/' + (process.env.VERCEL_GIT_COMMIT_SHA || 'main')),
     'import.meta.env.VITE_DEPLOYMENT_ENV': JSON.stringify(process.env.VERCEL_ENV || 'development'),
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify(buildVersion()),
   },
   // Only the current native-app policy/support assets are published. The former
   // account site's public directory remains excluded from the anonymous app.

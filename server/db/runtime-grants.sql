@@ -47,3 +47,27 @@ DO $$ BEGIN
   GRANT EXECUTE ON FUNCTION public.account_retention() TO mybookshelf_worker;
  END IF;
 END $$;
+-- Server-side statement limits per role, used when a runtime connects through
+-- the provider's pooled (`-pooler`) endpoint, which cannot take
+-- statement_timeout at connect time (server/db/pool-options.js leaves it out
+-- there). A direct connection still sends its own limit, which takes
+-- precedence, so direct connections behave exactly as before. Skipped with a
+-- notice if the migration administrator may not alter these roles.
+DO $$ BEGIN
+  IF EXISTS (SELECT FROM pg_roles WHERE rolname='mybookshelf_auth') THEN ALTER ROLE mybookshelf_auth SET statement_timeout='5s'; END IF;
+  IF EXISTS (SELECT FROM pg_roles WHERE rolname='mybookshelf_reading') THEN ALTER ROLE mybookshelf_reading SET statement_timeout='5s'; END IF;
+  IF EXISTS (SELECT FROM pg_roles WHERE rolname='mybookshelf_worker') THEN ALTER ROLE mybookshelf_worker SET statement_timeout='5s'; END IF;
+EXCEPTION WHEN insufficient_privilege THEN
+  RAISE NOTICE 'Set statement_timeout (5s) for mybookshelf_auth, mybookshelf_reading and mybookshelf_worker in the provider console.';
+END $$;
+-- Optional read-only role for the nightly backup (docs/accounts/OPERATIONS.md,
+-- "Nightly backup"): LOGIN, BYPASSRLS, NOSUPERUSER, no other grants. Re-applying
+-- this file after a migration keeps it able to read new tables; without it the
+-- backup fails loudly rather than leaving a table out.
+DO $$ BEGIN
+  IF EXISTS (SELECT FROM pg_roles WHERE rolname='mybookshelf_backup') THEN
+    GRANT USAGE ON SCHEMA public TO mybookshelf_backup;
+    GRANT SELECT ON ALL TABLES IN SCHEMA public TO mybookshelf_backup;
+    GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO mybookshelf_backup;
+  END IF;
+END $$;

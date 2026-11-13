@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Account: sign in and its errors</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2f5340}a:hover{color:#1f3a2c}
+</style>
+</helmet>
+<div style="width: 1594px; height: 1020px; box-sizing: border-box; background: #f3eee4; color: #1f1a17; font-family: 'Work Sans', sans-serif; font-size: 16px; line-height: 1.5; padding: 36px; display: grid; grid-template-columns: repeat(4, 358px); gap: 40px 30px; align-content: start">
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6259">Log in</div>
+<form style="margin: 0; height: 420px; box-sizing: border-box; background: #faf7f1; border: 1px solid #e0d7c8; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 26px; letter-spacing: -0.025em">Log in</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a1-email" style="font-size: 14px; font-weight: 500; color: #4a423b">Email</label>
+<input id="a1-email" type="email" autocomplete="email" style="height: 52px; box-sizing: border-box; border: 1.500px solid #cfc6b8; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a1-pass" style="font-size: 14px; font-weight: 500; color: #4a423b">Password</label>
+<input id="a1-pass" type="password" autocomplete="current-password" style="height: 52px; box-sizing: border-box; border: 1.500px solid #cfc6b8; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<button type="button" style="margin-top: 4px; height: 52px; border: 0; border-radius: 12px; background: #2f5340; color: #ffffff; font: inherit; font-weight: 600">Log in</button>
+<a href="#" style="align-self: center; min-height: 44px; display: flex; align-items: center; font-size: 15px; font-weight: 600; text-decoration: none">Forgot password?</a>
+</form>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6259">Wrong email or password</div>
+<form style="margin: 0; height: 420px; box-sizing: border-box; background: #faf7f1; border: 1px solid #e0d7c8; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 26px; letter-spacing: -0.025em">Log in</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a2-email" style="font-size: 14px; font-weight: 500; color: #4a423b">Email</label>
+<input id="a2-email" type="email" value="reader@example.com" aria-invalid="true" aria-describedby="a2-err" style="height: 52px; box-sizing: border-box; border: 1.500px solid #8a5a00; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a2-pass" style="font-size: 14px; font-weight: 500; color: #4a423b">Password</label>
+<input id="a2-pass" type="password" value="password" aria-invalid="true" aria-describedby="a2-err" style="height: 52px; box-sizing: border-box; border: 1.500px solid #8a5a00; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<div id="a2-err" role="alert" style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #8a5a00">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.500v5M12 16h.010"></path></svg>
+Wrong email or password
+</div>
+<button type="button" style="height: 52px; border: 0; border-radius: 12px; background: #2f5340; color: #ffffff; font: inherit; font-weight: 600">Log in</button>
+<a href="#" style="align-self: center; min-height: 44px; display: flex; align-items: center; font-size: 15px; font-weight: 600; text-decoration: none">Forgot password?</a>
+</form>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6259">Couldn’t connect</div>
+<form style="margin: 0; height: 420px; box-sizing: border-box; background: #faf7f1; border: 1px solid #e0d7c8; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 26px; letter-spacing: -0.025em">Log in</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a3-email" style="font-size: 14px; font-weight: 500; color: #4a423b">Email</label>
+<input id="a3-email" type="email" value="reader@example.com" style="height: 52px; box-sizing: border-box; border: 1.500px solid #cfc6b8; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a3-pass" style="font-size: 14px; font-weight: 500; color: #4a423b">Password</label>
+<input id="a3-pass" type="password" value="password" style="height: 52px; box-sizing: border-box; border: 1.500px solid #cfc6b8; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<div role="alert" style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<div style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #8a5a00">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.500a15 15 0 0120 0M5.500 12a10 10 0 0113 0M9 15.500a5 5 0 016 0M12 19h.010M3 3l18 18"></path></svg>
+Couldn’t connect
+</div>
+<button type="button" style="min-height: 44px; border: 0; background: transparent; padding: 0; font: inherit; font-size: 15px; font-weight: 600; color: #2f5340">Try again</button>
+</div>
+<button type="button" style="height: 52px; border: 0; border-radius: 12px; background: #2f5340; color: #ffffff; font: inherit; font-weight: 600">Log in</button>
+</form>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6259">Forgot password</div>
+<form style="margin: 0; height: 420px; box-sizing: border-box; background: #faf7f1; border: 1px solid #e0d7c8; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 26px; letter-spacing: -0.025em">Reset password</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a4-email" style="font-size: 14px; font-weight: 500; color: #4a423b">Email</label>
+<input id="a4-email" type="email" value="reader@example.com" style="height: 52px; box-sizing: border-box; border: 1.500px solid #cfc6b8; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<sc-if value="{{unsent}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{sendLink}}" style="margin-top: 4px; height: 52px; border: 1.500px solid #2f5340; border-radius: 12px; background: #2f5340; color: #ffffff; font: inherit; font-weight: 600">Send reset link</button>
+</sc-if>
+<sc-if value="{{sent}}" hint-placeholder-val="{{false}}">
+<button type="button" aria-disabled="true" aria-live="polite" style="margin-top: 4px; height: 52px; border: 1.500px solid #2f5340; border-radius: 12px; background: #e3ecdf; color: #1f3a2c; display: flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 600">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.500l4.500 4.500L19 7.500"></path></svg>
+Link sent
+</button>
+</sc-if>
+</form>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6259">Create account</div>
+<form style="margin: 0; height: 420px; box-sizing: border-box; background: #faf7f1; border: 1px solid #e0d7c8; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 26px; letter-spacing: -0.025em">Create account</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a5-email" style="font-size: 14px; font-weight: 500; color: #4a423b">Email</label>
+<input id="a5-email" type="email" autocomplete="email" style="height: 52px; box-sizing: border-box; border: 1.500px solid #cfc6b8; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a5-pass" style="font-size: 14px; font-weight: 500; color: #4a423b">Password</label>
+<input id="a5-pass" type="password" autocomplete="new-password" style="height: 52px; box-sizing: border-box; border: 1.500px solid #cfc6b8; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<button type="button" style="margin-top: 4px; height: 52px; border: 0; border-radius: 12px; background: #2f5340; color: #ffffff; font: inherit; font-weight: 600">Create account</button>
+</form>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6259">Email already used</div>
+<form style="margin: 0; height: 420px; box-sizing: border-box; background: #faf7f1; border: 1px solid #e0d7c8; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 26px; letter-spacing: -0.025em">Create account</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a6-email" style="font-size: 14px; font-weight: 500; color: #4a423b">Email</label>
+<input id="a6-email" type="email" value="reader@example.com" aria-invalid="true" aria-describedby="a6-err" style="height: 52px; box-sizing: border-box; border: 1.500px solid #8a5a00; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+<div id="a6-err" role="alert" style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #8a5a00">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.500v5M12 16h.010"></path></svg>
+Email already used
+<a href="#" style="margin-left: auto; min-height: 44px; display: flex; align-items: center; font-size: 15px; font-weight: 600; text-decoration: none">Log in</a>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a6-pass" style="font-size: 14px; font-weight: 500; color: #4a423b">Password</label>
+<input id="a6-pass" type="password" value="password" style="height: 52px; box-sizing: border-box; border: 1.500px solid #cfc6b8; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<button type="button" style="margin-top: 4px; height: 52px; border: 0; border-radius: 12px; background: #2f5340; color: #ffffff; font: inherit; font-weight: 600">Create account</button>
+</form>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6259">Password too short</div>
+<form style="margin: 0; height: 420px; box-sizing: border-box; background: #faf7f1; border: 1px solid #e0d7c8; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 26px; letter-spacing: -0.025em">Create account</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a7-email" style="font-size: 14px; font-weight: 500; color: #4a423b">Email</label>
+<input id="a7-email" type="email" value="reader@example.com" style="height: 52px; box-sizing: border-box; border: 1.500px solid #cfc6b8; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="a7-pass" style="font-size: 14px; font-weight: 500; color: #4a423b">Password</label>
+<input id="a7-pass" type="password" value="abc" aria-invalid="true" aria-describedby="a7-err" style="height: 52px; box-sizing: border-box; border: 1.500px solid #8a5a00; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+<div id="a7-err" role="alert" style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #8a5a00">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.500v5M12 16h.010"></path></svg>
+Too short: [MIN] characters or more
+</div>
+</div>
+<button type="button" style="margin-top: 4px; height: 52px; border: 0; border-radius: 12px; background: #2f5340; color: #ffffff; font: inherit; font-weight: 600">Create account</button>
+</form>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6259">Delete account</div>
+<div role="alertdialog" aria-labelledby="a8-title" style="height: 420px; box-sizing: border-box; background: #faf7f1; border: 1px solid #e0d7c8; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 id="a8-title" style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 26px; letter-spacing: -0.025em">Delete account and shelf?</h2>
+<button type="button" style="margin-top: 4px; height: 52px; border: 0; border-radius: 12px; background: #8a5a00; color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 8px; font: inherit; font-weight: 600">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"></path></svg>
+Delete
+</button>
+<a href="AccountSignedIn.dc.html" style="height: 52px; box-sizing: border-box; border: 1px solid #2f5340; border-radius: 12px; color: #2f5340; display: flex; align-items: center; justify-content: center; font-weight: 600; text-decoration: none">Cancel</a>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1594,"height":1020}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { sent: false };
+}
+renderVals() {
+const sent = this.state.sent;
+return {
+sent,
+unsent: !sent,
+sendLink: () => this.setState({ sent: true })
+};
+}
+}
+</script>
+</body>
+</html>

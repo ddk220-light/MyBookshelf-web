@@ -15,3 +15,26 @@ it('keeps deterministic geometry and fills a row without dropping an oversize bo
   expect(layoutShelves([book], 2)).toEqual([[book]]);
   expect(layoutShelves([], 20)).toEqual([]);
 });
+
+import { bayRows, initialBayCount, viewedSpineSize, EAGER_SHELF_ITEMS } from './shelfLayout';
+it('stands books three to a bay in order, the last bay partly empty', () => {
+  const items = Array.from({ length: 8 }, (_, index) => index);
+  expect(bayRows(items)).toEqual([[0, 1, 2], [3, 4, 5], [6, 7]]);
+  expect(bayRows([])).toEqual([]);
+  expect(bayRows(items, 0).flat()).toEqual(items);
+});
+it('renders every bay up to 200 books, then adds bays on demand', () => {
+  expect(initialBayCount(8)).toBe(3);
+  expect(initialBayCount(EAGER_SHELF_ITEMS)).toBe(67);
+  expect(initialBayCount(1000)).toBe(67);
+});
+it('keeps viewed spines at least 44 px wide and stable per book', () => {
+  for (let index = 0; index < 200; index += 1) {
+    const size = viewedSpineSize('v1:openlibrary:OL' + index + 'W');
+    expect(size.width).toBeGreaterThanOrEqual(44);
+    expect(size.width).toBeLessThanOrEqual(52);
+    expect(size.height).toBeGreaterThanOrEqual(120);
+    expect(size.height).toBeLessThanOrEqual(132);
+  }
+  expect(viewedSpineSize('stable')).toEqual(viewedSpineSize('stable'));
+});

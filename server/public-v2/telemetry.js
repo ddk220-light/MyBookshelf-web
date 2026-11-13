@@ -5,8 +5,14 @@ const ALLOWED_EVENT_KEYS = new Set([
   'durationMs',
   'errorCode',
   'parserConfidence',
+  // Catalog lookup health counters (catalog-lookup/record.js): which library
+  // and platform a check concerned, never the book or the search text.
+  'libraryId',
+  'platform',
 ]);
 
+// Telemetry never carries search text. The only place search text is written
+// is the anonymous operational log, catalog-store/usageLog.js.
 const BLOCKED_KEY = /(query|search|credential|password|pin|card|cookie|history|recent|ip|address|location|url|path|header)/i;
 
 function assertSafeEvent(event) {

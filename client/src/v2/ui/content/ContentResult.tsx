@@ -37,8 +37,3 @@ export function ContentResult({ item, to, returnTo, selected = false }: { item: 
     </div>
   </article>;
 }
-export function SavedContentCard({ item, editing, disabled, onRemove }: { item: SavedContent; editing: boolean; disabled: boolean; onRemove:(key:string)=>void }) {
-  return <article className="saved-content-card"><Link to={'/app/read/'+encodeURIComponent(item.contentKey)} state={{returnTo:'/app/shelf'}}>
-    <ContentCover title={item.title} kind={item.itemKind}/><span><strong>{item.title}</strong><small>{item.authors.join(', ')}</small><small>{kindLabel(item.itemKind)} · {item.host}</small></span>
-  </Link>{editing && <button className="text-button" disabled={disabled} onClick={()=>onRemove(item.contentKey)} aria-label={`Remove ${item.title} from shelf`}>Remove</button>}</article>;
-}

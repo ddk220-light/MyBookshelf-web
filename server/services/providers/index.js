@@ -22,7 +22,8 @@ function primaryProvider(library) {
   const normalize = (check) => async (...args) => normalizeAvailability(await check(...args));
   switch (library.platform) {
     case 'vpl':
-      return { checkAvailability: () => visakhapatnam.checkPublicAvailability(),
+      return { checkAvailability: () => visakhapatnam.checkPublicAvailability(), isbnLookup: false,
+        findBookCandidates: book => visakhapatnam.searchBookCandidates(library, book),
         searchCatalog: query => visakhapatnam.searchPublicCatalog(library, query),
         resolveCatalogRecord: async recordId => ({ ...await visakhapatnam.resolvePublicCatalogRecord(library, recordId), observation: await visakhapatnam.checkPublicRecordAvailability(library, recordId) }),
         checkRecordAvailability: recordId => visakhapatnam.checkPublicRecordAvailability(library, recordId) };
@@ -32,23 +33,34 @@ function primaryProvider(library) {
       // observation, including match confidence and provider failures. Legacy
       // routes are retired; their compatibility function remains exported by
       // the adapter for source-level consumers.
-      return { checkAvailability: (isbn, title, author) => bibliocommons.checkPublicAvailability(library.slug, isbn, title, author), searchBookCandidates: query => bibliocommons.searchBookCandidates(library.slug, query), login: (card, pin) => bibliocommons.login(library.slug, card, pin) };
-    case 'koha':
-      if (!library.publicCatalogCapabilities?.titleSearch) return { ...(library.publicCatalogApi ? {} : { searchCatalog: query => koha.searchCatalog(library, query), resolveCatalogRecord: id => koha.resolveCatalogRecord(library, id) }), checkAvailability: isbn => (library.publicCatalogApi === 'iith-opac-v1' ? iithKoha : koha).checkPublicAvailability(library, isbn) };
-      return { checkAvailability: (isbn) => koha.checkPublicAvailability(library, isbn),
+      return { checkAvailability: (isbn, title, author) => bibliocommons.checkPublicAvailability(library.slug, isbn, title, author), searchBookCandidates: query => bibliocommons.searchBookCandidates(library.slug, query),
+        searchResultRows: query => bibliocommons.searchResultRows(library.slug, query), login: (card, pin) => bibliocommons.login(library.slug, card, pin) };
+    case 'koha': {
+      // Result marking (catalog-lookup) reads one keyword search page whose
+      // rows may show ISBNs, or the RSS form for libraries that opt in. Rows
+      // of an unscoped shared catalog do not prove this branch's holding.
+      const markable = !library.publicCatalogApi && !(library.kohaSearchUnscoped && library.kohaBranchCode);
+      const marking = markable ? { searchResultRows: query => (library.kohaRssRows === true
+        ? koha.searchRssRows(library, query) : koha.searchPublicCatalog(library, query)) } : {};
+      if (!library.publicCatalogCapabilities?.titleSearch) return { ...(library.publicCatalogApi ? {} : { searchCatalog: query => koha.searchCatalog(library, query), resolveCatalogRecord: id => koha.resolveCatalogRecord(library, id) }), ...marking, checkAvailability: isbn => (library.publicCatalogApi === 'iith-opac-v1' ? iithKoha : koha).checkPublicAvailability(library, isbn) };
+      return { ...marking, checkAvailability: (isbn) => koha.checkPublicAvailability(library, isbn),
         searchCatalog: (query, options) => koha.searchPublicCatalog(library, query, options),
+        findBookCandidates: book => koha.searchBookCandidates(library, book),
         resolveCatalogRecord: (recordId) => koha.resolvePublicCatalogRecord(library, recordId),
         checkRecordAvailability: (recordId) => koha.checkPublicRecordAvailability(library, recordId) };
+    }
     case 'chamo':
       return { checkAvailability: (isbn) => chamo.checkPublicAvailability(library, isbn) };
     case 'libsys':
       return { checkAvailability: normalize((isbn) => libsys.checkAvailability(library, isbn)) };
     case 'vega':
-      return { checkAvailability: (isbn) => vega.checkAvailability(library, isbn) };
+      // Vega's search finds an edition by either ISBN form (checked against
+      // DC Public Library on 2026-11-12), so the ISBN-10 form is not asked.
+      return { checkAvailability: (isbn) => vega.checkAvailability(library, isbn), isbn10Lookup: false };
     case 'aspen':
       return { checkAvailability: (isbn) => aspen.checkAvailability(library, isbn) };
     case 'calil':
-      return { checkAvailability: (isbn) => calil.checkAvailability(library, isbn) };
+      return { checkAvailability: (isbn) => calil.checkAvailability(library, isbn), checkMany: isbns => calil.checkMany(library, isbns) };
     case 'evergreen':
       return { checkAvailability: (isbn) => evergreen.checkAvailability(library, isbn) };
     case 'egranthalaya':
@@ -86,6 +98,8 @@ export function providerWithAlternates(library, providerFor = primaryProvider) {
     ...alternates.filter(r => !r.entry.preferForLookup)].filter(r => r.provider);
   return {
     ...primary,
+    // Structured candidate search covers only the primary route.
+    findBookCandidates: undefined,
     async searchCatalog(query) {
       let error;
       let completed = false;

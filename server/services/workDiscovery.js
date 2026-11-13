@@ -2,16 +2,20 @@ import { cachedTask, enqueueTask, getJson } from './providers/http.js';
 import { validateAndNormalize } from './isbn.js';
 import { lookupBookMetadata } from './bookMetadata.js';
 import { searchGoogleBooksByQuery } from './googleBooks.js';
-import { rankSearchResults, scopedSearchQuery, prefixSearchQuery, searchWords } from './searchRelevance.js';
+import { rankSearchResults, scopedSearchQuery, prefixSearchQuery, searchWords, authorIntent } from './searchRelevance.js';
 
 const WORK_ID = /^OL\d+W$/;
-const FIELDS = 'key,title,author_name,author_key,cover_i,first_publish_year,edition_count,language';
+// Reader-log and rating counts come free with the same search request. They
+// order relevant results; they never decide which works match or are merged.
+const POPULARITY_FIELDS = 'readinglog_count,want_to_read_count,already_read_count,ratings_count';
+const FIELDS = `key,title,author_name,author_key,cover_i,first_publish_year,edition_count,language,${POPULARITY_FIELDS}`;
 // Field-scoped queries must not use nested edition filtering: author terms
 // have no equivalent edition field. Plain-text queries can return editions.
 const SEARCH_FIELDS = `${FIELDS},subtitle,alternative_title,author_alternative_name`;
 const PAGE_SIZE = 40;
 const unique = values => [...new Set(values.filter(Boolean))];
 const workId = key => String(key || '').replace('/works/', '');
+const count = value => (Number.isFinite(Number(value)) && Number(value) > 0 ? Math.floor(Number(value)) : 0);
 const languageOf = edition => edition.languages?.map(item => item.key?.split('/').pop()).filter(Boolean) || [];
 
 function unavailable() {
@@ -47,6 +51,9 @@ function fromSearch(doc) {
     coverUrl: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg` : undefined,
     searchTitles: [doc.subtitle && `${doc.title}: ${doc.subtitle}`, ...(Array.isArray(doc.alternative_title) ? doc.alternative_title : []), ...(doc.editions?.docs || []).map(edition => edition.title)].filter(value => typeof value === 'string'),
     searchAuthors: Array.isArray(doc.author_alternative_name) ? doc.author_alternative_name : [],
+    // Ranking-only signals; the public book shape does not include them.
+    popularity: { readers: count(doc.readinglog_count) || count(doc.want_to_read_count) + count(doc.already_read_count),
+      ratings: count(doc.ratings_count) },
   };
 }
 
@@ -57,7 +64,14 @@ export function isPrintEdition(edition) {
 const searchOtherSource = query => cachedTask(`work-discovery:google:${JSON.stringify(query)}`,
   () => searchGoogleBooksByQuery(query), { deadlineAt: Date.now() + 9000, ttlMs: 6 * 60 * 60 * 1000 });
 
-export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookMetadata, fallbackText = searchOtherSource } = {}) {
+// A work's editions are read 100 at a time. Widely published books have
+// hundreds, so up to three pages are read; a further page starts only while
+// the profile is young, so the paced reads stay within a check's budget.
+export const EDITION_PAGE_SIZE = 100;
+export const EDITION_PAGES = 3;
+export const EDITION_PAGE_WINDOW_MS = 5000;
+
+export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookMetadata, fallbackText = searchOtherSource, clock = Date.now } = {}) {
   async function searchPage({ title, author = '', max = 160, offset = 0 }) {
     const query = { title, author, max };
     if (!scopedSearchQuery(query)) return { books: [], nextOffset: null };
@@ -67,7 +81,9 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
     const searchWorks = async (mode = 'fields') => {
       const params = new URLSearchParams(mode === 'title'
         ? { title: String(title).replace(/[^\p{L}\p{M}\p{N}\s]/gu, ' '), ...(author ? { author } : {}), fields: SEARCH_FIELDS }
-        : mode === 'text'
+        : mode === 'author'
+          ? { author: String(title).replace(/[^\p{L}\p{M}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim(), sort: 'readinglog', fields: SEARCH_FIELDS }
+          : mode === 'text'
           ? { q: [...searchWords(title), ...searchWords(author)].join(' '), fields: `${SEARCH_FIELDS},editions,editions.title` }
           : { q: mode === 'prefix' ? prefixSearchQuery(query) : scopedSearchQuery(query, mode === 'spelling'), fields: SEARCH_FIELDS });
       params.set('limit', String(PAGE_SIZE));
@@ -76,7 +92,8 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
       if (!Array.isArray(result?.docs)) throw unavailable();
       hasMore ||= Number(result.numFound ?? result.num_found) > offset + result.docs.length
         || (result.numFound === undefined && result.num_found === undefined && result.docs.length === PAGE_SIZE);
-      return result.docs.map(fromSearch).filter(Boolean);
+      // The provider's own order is one ranking signal (per mode and page).
+      return result.docs.map(fromSearch).filter(Boolean).map((book, index) => ({ ...book, sourceRank: index }));
     };
     let editionReads = 0;
     const checkedWorks = new Set();
@@ -103,7 +120,7 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
     })).then(editions => {
       if (!Array.isArray(editions)) throw unavailable();
       hasMore ||= editions.length === PAGE_SIZE;
-      return editions;
+      return editions.map((edition, index) => (edition && typeof edition === 'object' ? { ...edition, sourceRank: index } : edition));
     }).catch(() => { fallbackFailed = true; return []; });
     // Combine matching edition titles with bibliographic-field matches, then
     // require every significant input word locally. Broad topic hits are not
@@ -115,13 +132,37 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
         exact.push(...(modes[index] === 'fields' ? await withEditionTitles(response.value) : response.value));
       } else failedModes.push(modes[index]);
     }
+    // When the returned works show that the words name an author, add that
+    // author's works ordered by readers: one extra paced request at most.
+    const namesAuthor = Boolean(authorIntent(exact, query));
+    if (namesAuthor) {
+      try { exact.push(...await searchWorks('author')); } catch { /* Optional: the text results remain. */ }
+    }
     const editions = await fallback;
-    books = rankSearchResults([...exact, ...editions], query);
+    books = rankSearchResults([...exact, ...editions], { ...query, authorIntent: namesAuthor });
+    // A strict match found only through another edition's title (no record
+    // matches on its own title and authors) is weak evidence that the words
+    // were spelt as intended ("harry poter" matching a Latvian "Poters"). On
+    // the first page, also run the bounded spelling pass and rank both sets
+    // together. Its failure leaves the strict matches as they were.
+    if (books.length && !offset && !namesAuthor
+      && ![...exact, ...editions].some(book => book?.title && rankSearchResults([{ ...book, searchTitles: [] }], query).length)) {
+      try {
+        const spelt = await withEditionTitles(await searchWorks('spelling'), true);
+        books = rankSearchResults([...exact, ...editions, ...spelt], query, true);
+      } catch { /* Optional: the strict matches remain. */ }
+    }
     if (books.length) return page(books);
+    // Open Library is the primary source. When it answered every request
+    // and found nothing, that is a definite "no books", even if the
+    // independent fallback source failed or is not configured: the fallback
+    // can add books, but its outage must not turn a successful empty answer
+    // into an error. Only a failure of the primary source is an outage.
+    const definitelyEmpty = () => ({ books: [], nextOffset: hasMore ? offset + PAGE_SIZE : null });
     // Later pages continue the original query, never silently switch to typos.
     if (offset) {
-      if (failedModes.length || fallbackFailed) throw unavailable();
-      return page([]);
+      if (failedModes.length) throw unavailable();
+      return fallbackFailed ? definitelyEmpty() : page([]);
     }
     let spellingFailed = false;
     for (const mode of ['spelling', 'prefix']) {
@@ -141,8 +182,8 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
       } catch { /* Report the outage below. */ }
       if (books.length) return page(books);
     }
-    if (failedModes.length || spellingFailed || fallbackFailed) throw unavailable();
-    return page(books);
+    if (failedModes.length || spellingFailed) throw unavailable();
+    return fallbackFailed ? definitelyEmpty() : page(books);
   }
 
   async function search(query) { return (await searchPage(query)).books; }
@@ -193,19 +234,34 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
       authors: book.authors || [], language: language || book.language || (book.languages?.includes('eng') ? 'eng' : book.languages?.[0]) || '', complete: true, expansionFailed: false };
     if (editionScope === 'exact') return base;
     if (!WORK_ID.test(book.workId || '')) return { ...base, complete: false };
+    const started = clock();
+    const entries = [];
+    let size = null;
     try {
-      // One page bounds latency for works with hundreds of editions. Title
-      // searches still run, so missing or unenumerated ISBNs aren't a dead end.
-      const result = await read(`/works/${book.workId}/editions.json?limit=100`);
-      if (!Array.isArray(result?.entries)) throw unavailable();
+      // The first page is required; later pages add editions while time allows.
+      // Title searches still run, so missing or unenumerated ISBNs aren't a dead end.
+      for (let page = 0; page < EDITION_PAGES; page += 1) {
+        if (page > 0 && (clock() - started >= EDITION_PAGE_WINDOW_MS || (size !== null && entries.length >= size))) break;
+        let result;
+        try {
+          result = await read(`/works/${book.workId}/editions.json?limit=${EDITION_PAGE_SIZE}${page ? `&offset=${page * EDITION_PAGE_SIZE}` : ''}`);
+          if (!Array.isArray(result?.entries)) throw unavailable();
+        } catch (error) {
+          if (page === 0) throw error;
+          break; // Keep the editions already read; the profile is incomplete.
+        }
+        if (Number.isFinite(result.size)) size = result.size;
+        entries.push(...result.entries);
+        if (result.entries.length < EDITION_PAGE_SIZE) break;
+      }
       // Do not invent an English filter for records with no language metadata.
       // An explicit or known language still requires positive edition evidence.
-      const compatible = result.entries.filter(edition => isPrintEdition(edition)
+      const compatible = entries.filter(edition => isPrintEdition(edition)
         && (!base.language || languageOf(edition).includes(base.language)));
       return { ...base,
         isbns: unique([...base.isbns, ...compatible.flatMap(edition => [...(edition.isbn_13 || []), ...(edition.isbn_10 || [])].map(validateAndNormalize))]),
         titles: unique([book.title, ...compatible.map(edition => edition.title)]).slice(0, 5),
-        complete: Number.isFinite(result.size) && result.entries.length >= result.size };
+        complete: size !== null && entries.length >= size };
     } catch {
       return { ...base, complete: false, expansionFailed: true };
     }

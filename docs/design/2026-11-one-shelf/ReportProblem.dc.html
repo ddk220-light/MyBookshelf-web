@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Report a problem</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2f5340}a:hover{color:#1f3a2c}
+@keyframes tick-pop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.tick-pop{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #faf7f1; color: #1f1a17; font-family: 'Work Sans', sans-serif; font-size: 16px; line-height: 1.5; padding: 8px 16px 16px; display: flex; flex-direction: column; overflow: hidden">
+
+<a href="AccountPanel.dc.html" style="height: 44px; align-self: flex-start; display: flex; align-items: center; gap: 4px; font-weight: 600; font-size: 15px; text-decoration: none">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+Back
+</a>
+
+<h1 id="report-title" style="margin: 12px 0 0; font-family: Newsreader, serif; font-weight: 500; font-size: 32px; line-height: 1.15; letter-spacing: -0.025em">Report a problem</h1>
+
+<textarea aria-labelledby="report-title" rows="6" style="margin-top: 20px; height: 180px; box-sizing: border-box; border: 1.500px solid #cfc6b8; border-radius: 12px; background: #ffffff; padding: 12px 14px; font: inherit; color: #1f1a17; resize: none"></textarea>
+
+<sc-if value="{{unsent}}" hint-placeholder-val="{{true}}">
+<button onClick="{{send}}" style="margin-top: 14px; height: 54px; border: 1.500px solid #2f5340; border-radius: 12px; background: #2f5340; color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 600">Send</button>
+</sc-if>
+<sc-if value="{{sent}}" hint-placeholder-val="{{false}}">
+<button aria-disabled="true" aria-live="polite" style="margin-top: 14px; height: 54px; border: 1.500px solid #2f5340; border-radius: 12px; background: #e3ecdf; color: #1f3a2c; display: flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 600">
+<svg class="tick-pop" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round" style="animation: tick-pop 250ms cubic-bezier(.3,1.5,.5,1)"><path d="M5 12.500l4.500 4.500L19 7.500"></path></svg>
+Sent
+</button>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { sent: false };
+}
+renderVals() {
+const sent = this.state.sent;
+return {
+sent,
+unsent: !sent,
+send: () => this.setState({ sent: true })
+};
+}
+}
+</script>
+</body>
+</html>

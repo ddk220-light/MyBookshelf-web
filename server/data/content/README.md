@@ -27,9 +27,19 @@ The importer never extracts archive paths into the filesystem.
 Observed in this workspace on Node 22.23.4: 1,973,916 bytes, first search about
 29 ms, process RSS about 48 MB. These are local measurements, not deployment SLAs.
 The first source must stay behind `CONTENT_DISCOVERY_ENABLED` until refresh,
-deployment size and final UI/source checks are complete. Positive access evidence
-expires after 24 hours and is downgraded to unknown; an overdue refresh must not
-be presented as fresh free-reading evidence.
+deployment size and final UI/source checks are complete.
+
+**Evidence age (changed 2026-11-11).** A live source observation still expires
+after 24 hours. The three bundled public catalogs here (Project Gutenberg, Open
+Textbook Library, Book Dash) list public-domain or openly licensed books whose
+reading links change slowly, so their import evidence is accepted for **30
+days** (`CATALOG_EVIDENCE_MAX_AGE_MS`). Between one and thirty days the API
+reports `freshness: "recent"` with `importedAt`, and the search page shows
+"Reading links last checked <date>"; the detail page already shows the check
+date. After 30 days the links are downgraded to unknown, exactly as before. The
+earlier 24-hour rule for these catalogs depended on a refresh being merged and
+deployed every day; when the refresh failed, every free book disappeared from
+search. An overdue refresh is still never presented as freshly checked.
 
 ## Open Textbook Library
 

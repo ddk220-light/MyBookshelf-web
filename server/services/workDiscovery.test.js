@@ -99,10 +99,26 @@ test('outages stay explicit and bounded; only successful empty sources mean no m
   const discovery = createWorkDiscovery({ read: async () => { calls++; throw new Error('offline'); }, fallbackText: async () => { throw new Error('offline'); } });
   await assert.rejects(discovery.search({ title: 'Wings of Fire' }), { code: 'BOOK_METADATA_UNAVAILABLE' });
   assert.equal(calls, 6);
-  const incomplete = createWorkDiscovery({ read: async () => ({ docs: [] }), fallbackText: async () => { throw new Error('offline'); } });
-  await assert.rejects(incomplete.search({ title: 'Unlisted book' }), { code: 'BOOK_METADATA_UNAVAILABLE' });
+  // The primary source failing is an outage even when the fallback answers empty.
+  const primaryDown = createWorkDiscovery({ read: async () => { throw new Error('offline'); }, fallbackText: async () => [] });
+  await assert.rejects(primaryDown.search({ title: 'Unlisted book' }), { code: 'BOOK_METADATA_UNAVAILABLE' });
   const empty = createWorkDiscovery({ read: async () => ({ docs: [] }), fallbackText: async () => [] });
   assert.deepEqual(await empty.search({ title: 'Unlisted book' }), []);
+});
+
+test('a successful empty primary answer stays a definite "no books" when the fallback source fails', async () => {
+  // Open Library answers every mode (strict, spelling and prefix) with nothing;
+  // Google Books is down or not configured. Misspelled query from staging.
+  for (const fallbackText of [async () => { throw new Error('offline'); }, async () => { throw Object.assign(new Error('no key'), { code: 'BOOK_METADATA_UNAVAILABLE' }); }]) {
+    const discovery = createWorkDiscovery({ read: async () => ({ docs: [], numFound: 0 }), fallbackText });
+    assert.deepEqual(await discovery.searchPage({ title: 'wngs fyre kalmx qzv' }), { books: [], nextOffset: null });
+    assert.deepEqual(await discovery.searchPage({ title: 'wngs fyre kalmx qzv', offset: 40 }), { books: [], nextOffset: null });
+    // Through the public book service the client gets an empty candidates
+    // answer (shown as "No books found"), not METADATA_UNAVAILABLE.
+    const service = createPublicBookService({ searchByText: discovery.searchPage });
+    const result = await service.search({ query: 'wngs fyre kalmx qzv' });
+    assert.deepEqual([result.kind, result.candidates, result.partial], ['candidates', [], undefined]);
+  }
 });
 
 test('fallback sources cannot reintroduce unrelated keyword matches', async () => {
@@ -213,4 +229,101 @@ test('missing language metadata does not prevent a verified work ISBN reaching a
 
   const filtered = await discovery.profile(book, { language: 'tam' });
   assert.deepEqual(filtered.isbns, []);
+});
+
+test('popularity fields are requested and rank results without reaching the public book shape', async () => {
+  const paths = [];
+  const stone = { key: '/works/OL82563W', title: "Harry Potter and the Philosopher's Stone", author_name: ['J. K. Rowling'], edition_count: 400, readinglog_count: 24733 };
+  const guide = { key: '/works/OL1W', title: 'Harry Potter', author_name: ['Jody Revenson'], edition_count: 1, readinglog_count: 18 };
+  const discovery = createWorkDiscovery({ read: async path => { paths.push(path); return { docs: [guide, stone] }; } });
+  const service = createPublicBookService({ searchByText: discovery.searchPage });
+  const { candidates } = await service.search({ query: 'harry potter' });
+  assert.ok(paths.every(path => new URL(path, 'https://openlibrary.org').searchParams.get('fields').includes('readinglog_count,want_to_read_count,already_read_count,ratings_count')));
+  assert.deepEqual(candidates.map(book => book.workId), ['OL82563W', 'OL1W']);
+  assert.equal('popularity' in candidates[0] || 'sourceRank' in candidates[0], false);
+  assert.equal(paths.length, 3);
+});
+
+test('a search that names an author adds one reader-ordered author request and puts their works first', async () => {
+  const paths = [];
+  const own = (id, title, readers) => ({ key: `/works/OL${id}W`, title, author_name: ['Rasipuram Krishnaswamy Narayan'], author_alternative_name: ['R. K. Narayan'], readinglog_count: readers });
+  const about = { key: '/works/OL9W', title: 'R.K. Narayan', author_name: ['William Walsh'], readinglog_count: 4 };
+  const discovery = createWorkDiscovery({ read: async path => {
+    paths.push(path);
+    const params = new URL(path, 'https://openlibrary.org').searchParams;
+    if (params.get('sort') === 'readinglog') return { docs: [own(1, 'Malgudi Days', 199), own(2, 'Swami and Friends', 92)], numFound: 2 };
+    return { docs: [about, own(3, 'The Guide', 65), own(4, 'The English Teacher', 81), own(5, 'The Painter of Signs', 81)] };
+  } });
+  const books = await discovery.search({ title: 'R. K. Narayan' });
+  const authorPaths = paths.filter(path => new URL(path, 'https://openlibrary.org').searchParams.get('sort') === 'readinglog');
+  assert.equal(authorPaths.length, 1);
+  assert.equal(new URL(authorPaths[0], 'https://openlibrary.org').searchParams.get('author'), 'R K Narayan');
+  assert.equal(paths.length, 4);
+  assert.equal(books[0].title, 'Malgudi Days');
+  assert.equal(books.at(-1).workId, 'OL9W');
+  assert.equal(new Set(books.map(book => book.workId)).size, books.length);
+});
+
+test('strict matches found only through another edition title also get the spelling pass on the first page', async () => {
+  const paths = [];
+  const goblet = { key: '/works/OL82560W', title: 'Harry Potter and the Goblet of Fire', author_name: ['J. K. Rowling'], readinglog_count: 5060,
+    editions: { docs: [{ title: 'Harijs Poters un uguns biķeris (Latvian) Harry Potter and the Goblet of Fire' }] } };
+  const stone = { key: '/works/OL82563W', title: "Harry Potter and the Philosopher's Stone", author_name: ['J. K. Rowling'], readinglog_count: 24733 };
+  const spelling = path => /~2/.test(new URL(path, 'https://openlibrary.org').searchParams.get('q') || '');
+  const read = async path => { paths.push(path); return spelling(path) ? { docs: [stone], numFound: 1 } : { docs: [goblet], numFound: 1 }; };
+  const first = await createWorkDiscovery({ read, fallbackText: async () => [] }).searchPage({ title: 'harry poter' });
+  assert.equal(paths.filter(spelling).length, 1);
+  assert.deepEqual(first.books.map(item => item.workId).sort(), ['OL82560W', 'OL82563W']);
+  assert.equal(first.books.find(item => item.workId === 'OL82563W').searchMatch, 'spelling');
+  assert.equal(first.books.find(item => item.workId === 'OL82560W').searchMatch, undefined);
+
+  // A later page continues the original words, and a failed optional
+  // spelling request keeps the strict matches.
+  paths.length = 0;
+  await createWorkDiscovery({ read, fallbackText: async () => [] }).searchPage({ title: 'harry poter', offset: 40 });
+  assert.equal(paths.filter(spelling).length, 0);
+  const failing = createWorkDiscovery({ read: async path => { if (spelling(path)) throw new Error('down'); return { docs: [goblet], numFound: 1 }; }, fallbackText: async () => [] });
+  const kept = await failing.searchPage({ title: 'harry poter' });
+  assert.deepEqual(kept.books.map(item => item.workId), ['OL82560W']);
+
+  // A record matching on its own title needs no spelling request.
+  paths.length = 0;
+  await createWorkDiscovery({ read, fallbackText: async () => [] }).searchPage({ title: 'goblet of fire' });
+  assert.equal(paths.filter(spelling).length, 0);
+});
+
+test('edition profiles read up to three pages of a widely published work, and stop early when time runs out', async () => {
+  const isbn = n => {
+    const body = '978' + String(100000000 + n).padStart(9, '0');
+    const sum = [...body].reduce((total, digit, index) => total + Number(digit) * (index % 2 ? 3 : 1), 0);
+    return body + ((10 - (sum % 10)) % 10);
+  };
+  const page = offset => Array.from({ length: 100 }, (_, i) => ({ title: 'Wings of Fire', physical_format: 'Paperback', languages: [{ key: '/languages/eng' }], isbn_13: [isbn(offset + i)] }));
+  const paths = [];
+  const read = async path => { paths.push(path); const offset = Number(path.match(/offset=(\d+)/)?.[1] || 0); return { size: 450, entries: page(offset) }; };
+  const book = { workId: 'OL1037811W', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'], language: 'eng' };
+  const profile = await createWorkDiscovery({ read }).profile(book);
+  assert.deepEqual(paths, ['/works/OL1037811W/editions.json?limit=100', '/works/OL1037811W/editions.json?limit=100&offset=100', '/works/OL1037811W/editions.json?limit=100&offset=200']);
+  // An edition first listed past the first hundred is now part of the work.
+  assert.ok(profile.isbns.includes(isbn(250)));
+  assert.equal(profile.isbns.length, 300);
+  assert.equal(profile.complete, false);
+
+  // A short last page ends the reading; the work is complete.
+  paths.length = 0;
+  const short = await createWorkDiscovery({ read: async path => { paths.push(path); return path.includes('offset=100') ? { size: 130, entries: page(100).slice(0, 30) } : { size: 130, entries: page(0) }; } }).profile(book);
+  assert.equal(paths.length, 2);
+  assert.equal(short.isbns.length, 130);
+  assert.equal(short.complete, true);
+
+  // No later page once the profile is older than its window; a failed later page keeps what was read.
+  let time = 0;
+  paths.length = 0;
+  const slow = await createWorkDiscovery({ clock: () => time, read: async path => { paths.push(path); time += 6000; return { size: 450, entries: page(0) }; } }).profile(book);
+  assert.equal(paths.length, 1);
+  assert.equal(slow.isbns.length, 100);
+  const failing = await createWorkDiscovery({ read: async path => { if (path.includes('offset')) throw new Error('offline'); return { size: 450, entries: page(0) }; } }).profile(book);
+  assert.equal(failing.isbns.length, 100);
+  assert.equal(failing.expansionFailed, false);
+  assert.equal(failing.complete, false);
 });

@@ -57,7 +57,7 @@ export function createReadingActions({
         const counts = (
           await client.query(
             `SELECT (SELECT count(*)::int FROM user_books WHERE user_id=$1) AS saved,
-          (SELECT count(*)::int FROM recent_book_views WHERE user_id=$1 AND viewed_at>now()-interval '30 days') AS recent`,
+          (SELECT count(*)::int FROM recent_book_views WHERE user_id=$1) AS recent`,
             [id],
           )
         ).rows[0];

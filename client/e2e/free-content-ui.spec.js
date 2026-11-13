@@ -62,7 +62,7 @@ test.describe('approved free-content UI behavior',()=>{
     await expect(page.getByRole('link',{name:'PDF (opens arxiv.org)'})).toHaveAttribute('href',reviewPreprint().readingActions[0].downloads[0].url);
     const related=page.locator('.content-relations');await expect(related).toContainText('Its text, access and licence may differ.');
     await expect(related.getByRole('link',{name:/Published version/})).toHaveAttribute('target','_blank');
-    await page.getByRole('link',{name:'Shelf',exact:true}).click();await page.reload();
+    await page.goto('/app/shelf');
     await page.getByRole('link',{name:new RegExp(reviewPreprint().title)}).click();await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
   });
   test('source dialog exposes unsearched sources and preserves the query',async({page,baseURL})=>{

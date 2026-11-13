@@ -148,15 +148,12 @@ test(
       { libraryId: "bc:smcl", settingsRevision: 0, operationId: randomUUID() },
       a.identity,
     );
-    await service.reading.historySettings(
-      { enabled: true, settingsRevision: 1, operationId: randomUUID() },
-      a.identity,
-    );
+    // Viewed before is recorded without any setting and kept past 30 days.
     await service.reading.view(
       {
         book: own,
         source: "direct",
-        historyGeneration: 1,
+        historyGeneration: 0,
         operationId: randomUUID(),
       },
       a.identity,
@@ -177,7 +174,8 @@ test(
     assert.deepEqual(data.profile.signInMethods, ["password"]);
     assert.equal(data.savedBooks.length, 1);
     assert.equal(data.savedBooks[0].bookKey, own.bookKey);
-    assert.equal(data.recentlyViewed.length, 0);
+    assert.equal(data.recentlyViewed.length, 1);
+    assert.equal(data.recentlyViewed[0].bookKey, own.bookKey);
     assert.deepEqual(data.libraries, [
       { directoryId: "bc:smcl", selected: true },
     ]);
@@ -303,6 +301,15 @@ test(
     assert.equal(
       (
         await admin.query("SELECT 1 FROM user_books WHERE user_id=$1", [
+          a.identity.user.id,
+        ])
+      ).rowCount,
+      0,
+    );
+    // Viewed before goes with the account.
+    assert.equal(
+      (
+        await admin.query("SELECT 1 FROM recent_book_views WHERE user_id=$1", [
           a.identity.user.id,
         ])
       ).rowCount,

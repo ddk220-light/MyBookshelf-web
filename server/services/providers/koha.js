@@ -6,6 +6,7 @@ import { publicCatalogOrigin } from './publicCatalogOrigin.js';
 import ISBN from 'isbn3';
 import { kohaCatalogOrigin } from './kohaOrigin.js';
 import { firstIsbn } from './catalogMarkup.js';
+import { cleanTitle, cleanAuthor, cleanPublisher, cleanPublishedDate, cleanEdition, cleanFormat, cleanCallNumber } from './catalogText.js';
 
 export function parseBiblioNumber(response) {
   const location = response.headers?.get?.('location') || response.url || '';
@@ -183,11 +184,11 @@ function parseHoldings(markup, identity, scope = {}) {
     }
     const shelf = text(cell('shelving location'));
     const name = locationColumn === 'home library' ? `${libraryName} (home library)` : shelf && !libraryName.includes(shelf) ? `${libraryName} · ${shelf}` : libraryName;
-    const format = text(cell('item type'));
+    const format = cleanFormat(text(cell('item type')));
     // Some reviewed union catalogs publish ownership, but omit current location.
     // The home-library row proves a holding, not where a borrowable copy is now.
     const ownershipOnly = library.kohaBranchCode && locationColumn === 'home library';
-    rows.push({ name, status: ownershipOnly ? 'unknown' : statusOf(text(cell('status')), format, text(cell('shelving location'))), callNumber: callNumber(cell('call number')), format });
+    rows.push({ name, status: ownershipOnly ? 'unknown' : statusOf(text(cell('status')), text(cell('item type')), text(cell('shelving location'))), callNumber: cleanCallNumber(callNumber(cell('call number'))), format });
   }
   if (!rows.length) return unconfirmed();
   const status = rollup(rows);
@@ -664,7 +665,7 @@ function catalogTitle(markup) {
     const inside = contents(value, span, 'span');
     if (inside !== null) value = value.slice(0, span.index) + value.slice(span.index + span[0].length + inside.length).replace(/^<\/span\s*>/i, '');
   }
-  return text(value).replace(/\s+([:;,])/g, '$1').replace(/:\s*/g, ': ');
+  return cleanTitle(text(value).replace(/\s+([:;,])/g, '$1').replace(/:\s*/g, ': '));
 }
 
 function catalogAuthors(markup) {
@@ -679,7 +680,7 @@ function catalogAuthors(markup) {
         if (query && /^au:\s*["']*\s*$/.test(query)) return [];
       } catch { /* Use the visible author when the link cannot be parsed. */ }
     }
-    return text(li[1]).replace(/^by\s+/i, '').replace(/^["“]+|["”]+$/g, '').trim();
+    return cleanAuthor(text(li[1]).replace(/^by\s+/i, '').replace(/^["“]+|["”]+$/g, '').trim());
   }).filter(Boolean))].slice(0, 20);
 }
 
@@ -689,8 +690,8 @@ function catalogPublication(markup) {
     const fields = [...markup.matchAll(/<(span|div)\b([^>]*)>/gi)].filter((tag) => (attrs(tag[2]).class || '').split(/\s+/).includes(className));
     const values = [...new Set(fields.map(tag => text(contents(markup, tag, tag[1])).replace(/^Edition:\s*/i, '')).filter(Boolean))];
     if (values.length !== 1) continue;
-    const value = values[0].replace(/^["“]+|["”]+$/g, '');
-    if (field === 'edition' && /^\d+[\s,]*(?:pages\b|p[.;:])/i.test(value)) continue;
+    const raw = values[0].replace(/^["“]+|["”]+$/g, '');
+    const value = field === 'edition' ? cleanEdition(raw) : field === 'publishedDate' ? cleanPublishedDate(raw) : cleanPublisher(raw);
     if (value) result[field] = value;
   }
   return result;
@@ -813,6 +814,45 @@ async function searchPilotCatalog(library, query, base, deadlineAt, offset) {
   return { records: [], hasMore: false };
 }
 
+// One bounded search for an availability check. Catalogs that prefer their
+// title index (Ernakulam) get a title-only query; others get the main title
+// plus the author's surname as Koha keywords, which every word must match.
+// The results page already carries each record's title, authors and often
+// its ISBN, so the caller can decide which records are worth opening.
+export function bookCandidateQuery(library, { title, author } = {}) {
+  const main = String(title || '').split(/\s+\/\s+|\s*:\s*/)[0].replace(/[^\p{L}\p{M}\p{N}'’\s-]+/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, 120);
+  if (!main) return null;
+  if (library.kohaTitleSearchFirst) return { index: 'ti', query: main };
+  const name = String(author || '').includes(',') ? String(author).split(',')[0] : String(author || '');
+  const words = name.replace(/[^\p{L}\p{M}\s]+/gu, ' ').trim().split(/\s+/).filter(word => [...word].length >= 3);
+  const surname = String(author || '').includes(',') ? words[0] : words.at(-1);
+  return { index: 'kw', query: surname && !main.toLowerCase().includes(surname.toLowerCase()) ? `${main} ${surname}` : main };
+}
+
+export async function searchBookCandidates(library, book) {
+  const plan = bookCandidateQuery(library, book);
+  if (!plan) throw publicError('CATALOG_UNRECOGNIZED', 'Invalid catalog search');
+  const base = configuration(library);
+  const scope = branchScope(library);
+  const deadlineAt = catalogDeadline(library);
+  return cachedTask(`koha:candidates:${base.origin}:${library.kohaBranchCode || ''}:${scope.libraryName || ''}:${plan.index}:${plan.query}`, async () => {
+    const url = new URL('/cgi-bin/koha/opac-search.pl', base);
+    url.searchParams.set('idx', plan.index);
+    url.searchParams.set('q', plan.query);
+    scopeSearch(url, library);
+    url.searchParams.set('count', '40');
+    const response = await publicRead(url, deadlineAt, { allowRecordSelection: true });
+    if (response.status === 302) {
+      const selected = detailUrl(response.headers.get('location'), url);
+      const record = await readCatalogRecord(library, selected.searchParams.get('biblionumber'), deadlineAt);
+      return { records: [{ ...record.book, catalogUrl: record.availability.catalogUrl, observation: record.availability }], hasMore: false };
+    }
+    const results = parseKohaCatalogSearch(response.text, url);
+    if (!results) throw publicError('CATALOG_UNRECOGNIZED', 'Koha returned an unrecognized title search');
+    return results;
+  }, { deadlineAt });
+}
+
 export async function resolvePublicCatalogRecord(library, recordId) {
   const record = await readCatalogRecord(library, recordId);
   return { ...record.book, catalogUrl: record.availability.catalogUrl, observation: record.availability };
@@ -820,4 +860,54 @@ export async function resolvePublicCatalogRecord(library, recordId) {
 
 export async function checkPublicRecordAvailability(library, recordId) {
   return (await readCatalogRecord(library, recordId)).availability;
+}
+
+// Koha's search page also answers as RSS (`format=rss`, the OpenSearch
+// template). Each <item> carries a record link and, where the record has one,
+// `<dc:identifier>ISBN:…</dc:identifier>`, so one request shows ISBNs for the
+// first 20 results without opening any record. Verified live on IIT
+// Bhubaneswar (12 November 2026, saved as test/fixtures/koha/iitbbs-rss-wings.xml).
+// Result marking uses it only for libraries that opt in (`kohaRssRows`), until
+// a second catalog has been checked.
+export function parseKohaRssSearch(xml, searchUrl) {
+  const body = String(xml || '');
+  if (!/<rss\b[^>]*>/i.test(body) || !/<channel\b/i.test(body)) return null;
+  const total = body.match(/<opensearch:totalResults>\s*(\d+)\s*<\/opensearch:totalResults>/i);
+  if (!total) return null;
+  const records = [];
+  for (const item of body.matchAll(/<item\b[^>]*>([\s\S]*?)<\/item>/gi)) {
+    const field = name => item[1].match(new RegExp(`<${name}\\b[^>]*>([\\s\\S]*?)<\\/${name}>`, 'i'))?.[1] || '';
+    const unwrap = value => value.replace(/<!--[\s\S]*?-->/g, '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1');
+    const link = text(unwrap(field('link')));
+    let url;
+    try { url = detailUrl(link, searchUrl); } catch { return null; }
+    const recordId = url.searchParams.get('biblionumber');
+    const title = cleanTitle(text(unwrap(field('title'))).replace(/\s*[/:;,]\s*$/, ''));
+    if (!recordId || !title || records.some(record => record.recordId === recordId)) return null;
+    const isbns = [...item[1].matchAll(/<dc:identifier>\s*ISBN:?\s*([^<]+)<\/dc:identifier>/gi)]
+      .map(match => validateAndNormalize(firstIsbn(match[1]) || match[1])).filter(Boolean);
+    const by = text(unwrap(field('description'))).match(/^By\s+(.+?)(?:\.\s|\.$)/);
+    records.push({ recordId, title, authors: by ? [cleanAuthor(by[1])].filter(Boolean) : [], isbns: [...new Set(isbns)],
+      catalogUrl: url.toString() });
+  }
+  if (Number(total[1]) > 0 && !records.length) return null;
+  return { records, hasMore: Number(total[1]) > records.length };
+}
+
+export async function searchRssRows(library, query) {
+  if (typeof query !== 'string' || !query.trim() || query.length > 160) throw publicError('CATALOG_UNRECOGNIZED', 'Invalid catalog search');
+  const base = configuration(library);
+  branchScope(library);
+  const deadlineAt = catalogDeadline(library);
+  const url = new URL('/cgi-bin/koha/opac-search.pl', base);
+  url.searchParams.set('idx', 'kw');
+  url.searchParams.set('q', query.trim());
+  scopeSearch(url, library);
+  url.searchParams.set('format', 'rss');
+  return cachedTask(`koha:rss:${url}`, async () => {
+    const response = await publicRead(url, deadlineAt);
+    const result = parseKohaRssSearch(response.text, url);
+    if (!result) throw publicError('CATALOG_UNRECOGNIZED', 'Koha returned an unrecognized RSS search');
+    return result;
+  }, { deadlineAt });
 }

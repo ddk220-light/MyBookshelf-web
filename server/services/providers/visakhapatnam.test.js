@@ -1,7 +1,7 @@
 import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseCatalogPage, checkPublicRecordAvailability, searchPublicCatalog, catalogPhrase } from './visakhapatnam.js';
+import { parseCatalogPage, checkPublicRecordAvailability, searchPublicCatalog, searchBookCandidates, catalogPhrase, configureVisakhapatnamPacing, lendingStatus } from './visakhapatnam.js';
 import { createTitleAuthorId, parseTitleAuthorId } from '../titleAuthorIdentity.js';
 import { clearHttpCache } from './http.js';
 import { createCatalogBookKey, parsePublicBookKey } from '../../public-v2/contracts.js';
@@ -15,6 +15,8 @@ const urlFor = (query, field = 'title') => {
   return url;
 };
 const originalFetch = global.fetch;
+// The production crawl delay is 20 s; tests that do not measure it use none.
+configureVisakhapatnamPacing({ crawlDelayMs: 0 });
 afterEach(() => { global.fetch = originalFetch; clearHttpCache(); });
 const response = (url, html, status = 200) => ({ url, text: async () => html, status, ok: status === 200, headers: new Headers() });
 const title = 'Premante enti ? - nee drustilo';
@@ -104,4 +106,78 @@ test('mismatched authors, missing records, redirects and access restrictions fai
   global.fetch = async url => response(url, '', 403);
   await assert.rejects(checkPublicRecordAvailability(library, id), { code: 'CATALOG_PROVIDER_BLOCKED' });
   await assert.rejects(checkPublicRecordAvailability({ ...library, baseUrl: 'http://127.0.0.1' }, id), { code: 'CATALOG_CONFIGURATION_REQUIRED' });
+});
+
+// Saved from https://visakhapatnampubliclibrary.org/books?title=wings+of+fire on
+// 12 November 2026; only the echoed query is adjusted to the adapter's phrase.
+const wings = fixture('wings-of-fire').replace('value="wings of fire"', 'value="Wings of Fire"');
+
+test('rack and shelf codes on General Section racks count as lendable shelves, as the library shows them', async () => {
+  const id = createTitleAuthorId('Wings of Fire', 'Kalam APJ Abdul.');
+  let calls = 0;
+  global.fetch = async url => { calls++; return response(url, wings); };
+  const result = await checkPublicRecordAvailability(library, id);
+  assert.equal(result.outcome, 'available');
+  assert.deepEqual(result.locations.map(location => [location.name, location.status]),
+    [['R11 S224', 'available'], ['R11 S223', 'available'], ['R241 S3', 'available']]);
+  assert.equal(result.availableCopies, undefined);
+  assert.equal(calls, 1);
+  // Evidence comes from the page: subject "GS"/"(G S)" or the same rack written as "GS-1 R11 …".
+  const racks = new Set(['R11']);
+  assert.equal(lendingStatus({ location: 'R11 S229', subject: 'Biography', status: 'Available' }, racks), 'available');
+  assert.equal(lendingStatus({ location: 'R241 S4', subject: 'Biography', status: 'Issued' }, racks), 'unknown');
+  assert.equal(lendingStatus({ location: 'R241 S4', subject: 'Biography(G S)', status: 'Issued' }, racks), 'unavailable');
+  assert.equal(lendingStatus({ location: 'R63 S4', subject: 'Autobiography / History', status: 'Available' }, racks), 'unknown');
+  assert.equal(lendingStatus({ location: 'R', subject: 'GS', status: 'Available' }, racks), 'unknown');
+  assert.equal(lendingStatus({ location: 'R11 S224', subject: 'GS', status: 'Lost' }, racks), 'unknown');
+});
+
+test('search rows are shown with clean authors while the record identity keeps the catalog text', async () => {
+  global.fetch = async url => response(url, wings);
+  const result = await searchPublicCatalog(library, 'Wings of Fire');
+  const nulled = result.records.find(record => parseTitleAuthorId(record.recordId).author === 'NULL, Abdul Kalam.A.P.J.');
+  assert.deepEqual(nulled.authors, ['Abdul Kalam.A.P.J.']);
+  assert.ok(result.records.every(record => record.authors.every(author => !/NULL/.test(author))));
+});
+
+test('availability candidates reuse the search page: one request, observations from its rows', async () => {
+  let calls = 0;
+  global.fetch = async url => { calls++; return response(url, wings); };
+  const { records } = await searchBookCandidates(library, { title: 'Wings of Fire', author: 'A. P. J. Abdul Kalam' });
+  assert.equal(calls, 1);
+  const kalam = records.find(record => record.recordId === createTitleAuthorId('Wings of Fire', 'Kalam APJ Abdul.'));
+  assert.equal(kalam.observation.outcome, 'available');
+  assert.ok(records.every(record => record.observation?.recognizedTitleAuthor));
+});
+
+test('Telugu-script searches are reported as unsupported without sending a request that the catalog fails', async () => {
+  let calls = 0;
+  global.fetch = async url => { calls++; return response(url, '', 500); };
+  await assert.rejects(searchPublicCatalog(library, 'వేయి పడగలు'), { code: 'CATALOG_QUERY_UNSUPPORTED' });
+  await assert.rejects(searchBookCandidates(library, { title: 'వేయి పడగలు' }), { code: 'CATALOG_QUERY_UNSUPPORTED' });
+  assert.equal(calls, 0);
+  // A romanised search is still sent, and a real upstream failure is still an outage.
+  await assert.rejects(searchPublicCatalog(library, 'veyi padagalu'), { code: 'CATALOG_UNAVAILABLE' });
+  assert.equal(calls, 1);
+});
+
+test('the robots.txt crawl delay spaces successive requests within one search, not separate searches', async () => {
+  configureVisakhapatnamPacing({ crawlDelayMs: 120 });
+  try {
+    const times = [];
+    global.fetch = async url => {
+      times.push(Date.now());
+      const parsed = new URL(url);
+      if (parsed.searchParams.get('title')) return response(url, fixture('empty-search').replace('MyBookshelfNoSuchTitle263729', 'Candy Lorriane'));
+      return response(url, fixture('fallback-author-41'));
+    };
+    await searchPublicCatalog(library, 'Candy Lorriane');
+    assert.equal(times.length, 2);
+    assert.ok(times[1] - times[0] >= 115, `second request after ${times[1] - times[0]} ms`);
+    clearHttpCache();
+    const started = Date.now();
+    global.fetch = async url => response(url, wings);
+    await searchPublicCatalog(library, 'Wings of Fire');
+    assert.ok(Date.now() - started < 100);
+  } finally { configureVisakhapatnamPacing({ crawlDelayMs: 0 }); }
 });

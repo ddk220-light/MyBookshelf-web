@@ -86,7 +86,11 @@ arXiv result therefore uses the shared record cache instead of immediately makin
 another paced request. Licences remain attached to locations; a related journal
 DOI is an access-unknown reference, never a substitute free copy.
 
-Refresh bundled catalogs before the 24-hour positive-evidence expiry. Commands
+Refresh bundled catalogs before their positive evidence expires: 30 days for
+the Gutenberg, Open Textbook Library and Book Dash catalogs (since 2026-11-11;
+live observations still expire after 24 hours). Merge a refresh proposal at
+least every few weeks; search shows "Reading links last checked <date>" once a
+catalog is more than a day old. Commands
 and provenance are in [the snapshot notes](../../../server/data/content/README.md).
 Offline reimports retain original observation times. Check removals, schema,
 shrink protection, source permissions, host-link samples, bundle inclusion and
@@ -137,6 +141,8 @@ The three reviewed StoryWeaver books require `CONTENT_CHILDREN_ENABLED=true`
 (and the normal discovery flag); the children's browse tile additionally uses
 `VITE_CHILDREN_PILOT_ENABLED=true`. No source account or reader credentials are
 stored by MyBookshelf. Source review/refresh instructions are in
-[CHILDREN_REVIEW.md](CHILDREN_REVIEW.md). The refresh workflow checks these records
-in a browser and refuses changed credits/levels, unknown charges or failed policy
-checks. It proposes metadata; it never promotes production.
+[CHILDREN_REVIEW.md](CHILDREN_REVIEW.md). StoryWeaver was retired on 7 November
+2026, and from 11 November the refresh workflow no longer rechecks these records:
+that browser step failed on every scheduled run and stopped the three public
+catalogs from being proposed at all. `tools/content/refresh_children.mjs`
+remains for a manual recheck if the source is reconnected.

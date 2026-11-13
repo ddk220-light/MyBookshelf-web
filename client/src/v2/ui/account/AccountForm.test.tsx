@@ -6,7 +6,8 @@ afterEach(() => {
   cleanup();
   document.title = "";
 });
-it("preserves field focus across equivalent error rerenders and focuses a new result heading", () => {
+// The error is announced (role="alert"); focus stays where the reader is.
+it("keeps field focus across error rerenders and focuses a new result heading", () => {
   const content = (title: string, message?: string) => (
     <MemoryRouter>
       <AccountForm
@@ -23,12 +24,12 @@ it("preserves field focus across equivalent error rerenders and focuses a new re
   const { rerender } = render(
     content("Create account", "Check your email address."),
   );
-  expect(screen.getByRole("alert")).toHaveFocus();
+  expect(screen.getByRole("alert")).toHaveTextContent("Check your email address.");
   screen.getByRole("textbox", { name: "Email" }).focus();
   rerender(content("Create account", "Check your email address."));
   expect(screen.getByRole("textbox", { name: "Email" })).toHaveFocus();
   rerender(content("Create account", "Enter a name."));
-  expect(screen.getByRole("alert")).toHaveFocus();
+  expect(screen.getByRole("textbox", { name: "Email" })).toHaveFocus();
   rerender(content("Check your email"));
   expect(
     screen.getByRole("heading", { name: "Check your email" }),

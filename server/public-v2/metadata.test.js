@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createPublicBookService, sanitizePublicCoverUrl, toPublicBook } from './metadata.js';
+import { createPublicBookService, sanitizePublicCoverUrl, toPublicBook, plainDescription } from './metadata.js';
 import { createCatalogBookKey, parsePublicBookKey } from './contracts.js';
 
 const rawBook = {
@@ -92,4 +92,39 @@ test('external catalog handoff survives a book metadata outage', async () => {
   assert.equal(result.catalogSearchUrl, 'https://library.example.org/search');
   assert.equal(result.catalogUnavailable, true);
   assert.deepEqual(result.candidates, []);
+});
+
+test('provider descriptions are shown as plain text, never as raw markup', () => {
+  assert.equal(plainDescription('<p>&quot;A boy&rsquo;s journey&quot; &mdash; <b>a fable</b>.</p><p>Second paragraph.<br>Line two</p>'),
+    '"A boy’s journey" — a fable.\nSecond paragraph.\nLine two');
+  assert.equal(plainDescription('Plain text stays exactly as it was.'), 'Plain text stays exactly as it was.');
+  // Comparison signs are text, not tags; escaped markup stays visible as text.
+  assert.equal(plainDescription('Useful when a < b and b > c.'), 'Useful when a < b and b > c.');
+  assert.equal(plainDescription('Write &lt;b&gt; for bold.'), 'Write <b> for bold.');
+  assert.equal(plainDescription('Safe<script>alert(1)</script> text<style>p{}</style>.'), 'Safe text .');
+  assert.equal(plainDescription(undefined), null);
+  const book = toPublicBook({ title: 'The Alchemist', authors: ['Paulo Coelho'], isbn13: '9780061122415',
+    description: '<p>&quot;Follow your dream.&quot;</p>' });
+  assert.equal(book.description, '"Follow your dream."');
+  assert.equal(toPublicBook({ title: 'Empty', authors: [], isbn13: '9780061122415', description: '<p> </p>' }).description, undefined);
+});
+
+test('an edition profile for a search result uses that result, without resolving the work again', async () => {
+  let resolutions = 0;
+  const profiled = [];
+  const service = createPublicBookService({
+    searchByText: async () => ({ books: [{ source: 'openlibrary', source_id: 'OL27482W', workId: 'OL27482W', title: 'The Hobbit', authors: ['J.R.R. Tolkien'], languages: ['eng'] }], nextOffset: null }),
+    resolveOpenLibraryWork: async () => { resolutions++; return null; },
+    expandWork: async book => { profiled.push(book); return { book, isbns: [], titles: [book.title], authors: book.authors, language: 'eng', complete: false, expansionFailed: false }; },
+  });
+  const result = await service.search({ query: 'the hobbit' });
+  const bookKey = result.candidates[0].bookKey;
+  assert.equal(bookKey, 'v1:openlibrary:OL27482W');
+  assert.deepEqual((await service.summary(bookKey)).workId, 'OL27482W');
+  await service.searchProfile(bookKey, { editionScope: 'work' });
+  assert.equal(resolutions, 0);
+  assert.deepEqual(profiled.map(book => [book.workId, book.title, book.authors]), [['OL27482W', 'The Hobbit', ['J.R.R. Tolkien']]]);
+  // A key this service has not seen is still resolved.
+  assert.equal(await service.summary('v1:openlibrary:OL1W'), null);
+  assert.equal(resolutions, 1);
 });

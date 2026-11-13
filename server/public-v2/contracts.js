@@ -130,6 +130,7 @@ export const PUBLIC_V2_ERROR_CODES = Object.freeze([
   'CATALOG_CONFIGURATION_REQUIRED',
   'CATALOG_EXACT_ISBN_REQUIRED',
   'CATALOG_TITLE_SEARCH_REQUIRED',
+  'CATALOG_QUERY_UNSUPPORTED',
 ]);
 
 export function publicError(code, message) {

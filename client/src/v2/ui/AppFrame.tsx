@@ -1,16 +1,17 @@
 // client/src/v2/ui/AppFrame.tsx
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import type { BookNavigation } from '../bookNavigation';
 import { readReadingLightPreference, writeReadingLight, APPEARANCE_STORAGE_KEY, READING_LIGHT_STORAGE_KEY, type ReadingLight, type ReadingLightPreference } from '../readingLight';
-import { useMediaQuery } from '../useMediaQuery';
 import { useLibrary } from '../context';
 import { Notice } from './Notice';
 import { uiMessages as m } from '../uiMessages';
-import { TabBar } from './TabBar';
-import { DogAnimationProvider } from './DogAnimation';
 import { ConfirmDialog } from './ConfirmDialog';
 import {AccountNotice} from './account/AccountSummary';
+
+// One-shelf pages that carry their own "Back" and set their own title: the
+// side panel's pages and the account screens (plan Phase 9).
+const PANEL_PAGE = /^\/app\/(report|privacy|terms|about|settings\/account(\/more)?|account\/[a-z-]+)$/;
 
 const ReadingLightContext = createContext<{ light: ReadingLight; preference: ReadingLightPreference; setLight: (l: ReadingLightPreference) => void }>({ light: 'daylight', preference: 'system', setLight: () => {} });
 
@@ -18,6 +19,8 @@ export function useReadingLight() {
   return useContext(ReadingLightContext);
 }
 
+// The home screen's side panel is the navigation (no tab bar). Other screens
+// get a link back to the shelf.
 export function AppFrame({ children }: { children: ReactNode }) {
   const { storageNotice, recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removedBook, undoRemoval, reportStorageFailure } = useLibrary();
   const [resetting, setResetting] = useState(false);
@@ -33,8 +36,9 @@ export function AppFrame({ children }: { children: ReactNode }) {
     window.addEventListener('storage', update);
     return () => window.removeEventListener('storage', update);
   }, []);
-  const dark = useMediaQuery('(prefers-color-scheme: dark)');
-  const light = preference === 'system' ? dark ? 'lamplight' : 'daylight' : preference;
+  // Plan section 9, row 16: until Lamplight is designed, a reader with no
+  // explicit choice gets Daylight rather than following the device.
+  const light = preference === 'system' ? 'daylight' : preference;
   const setLight = useCallback((next: ReadingLightPreference) => {
     setLightState(next);
     if (!writeReadingLight(next)) reportStorageFailure();
@@ -58,8 +62,14 @@ export function AppFrame({ children }: { children: ReactNode }) {
         || (event.target instanceof Element && event.target.closest('input,textarea,select,[contenteditable="true"]'))) return;
       if (event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && event.code === 'Slash') {
         event.preventDefault();
-        if (location.pathname === '/app/search') document.getElementById('book-search')?.focus();
-        else navigate('/app/search', { state: { ...(location.state as BookNavigation | null)?.searchState, focusSearch: true } });
+        const shelfSearch = document.getElementById('shelf-search');
+        const searchState = (location.state as BookNavigation | null)?.searchState;
+        if (shelfSearch) shelfSearch.focus();
+        else {
+          // Search lives on the home screen; results found there come back with it.
+          navigate('/app/shelf', { state: searchState?.shelf && searchState.candidateId ? { search: { candidateId: searchState.candidateId } } : null });
+          requestAnimationFrame(() => document.getElementById('shelf-search')?.focus());
+        }
       } else if (event.key === 'Escape' && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && location.pathname.startsWith('/app/books/')) {
         event.preventDefault();
         screen.current?.querySelector<HTMLAnchorElement>('.back-link')?.click();
@@ -70,8 +80,9 @@ export function AppFrame({ children }: { children: ReactNode }) {
   }, [location, navigate]);
 
   useEffect(() => {
+    if (PANEL_PAGE.test(location.pathname) && !location.pathname.endsWith('/more')) return;
     const route = location.pathname.split('/')[2];
-    const names: Record<string, string> = { shelf: 'Your bookshelf', search: 'Search books', libraries: 'Choose a library', settings: 'Settings', books: 'Book details', read: 'Free reading details' };
+    const names: Record<string, string> = { shelf: 'Your bookshelf', search: 'Search books', books: 'Book details', read: 'Free reading details' };
     const accountNames: Record<string, string> = {
       'sign-in': 'Sign in', 'sign-up': 'Create account', verify: 'Verify your email',
       'forgot-password': 'Reset your password', 'reset-password': 'Choose a new password',
@@ -83,13 +94,13 @@ export function AppFrame({ children }: { children: ReactNode }) {
     document.title = (title || 'Choose a library') + ' — MyBookshelf';
   }, [location.pathname]);
 
-  return <DogAnimationProvider><ReadingLightContext.Provider value={{ light, preference, setLight }}>
+  const frame = <ReadingLightContext.Provider value={{ light, preference, setLight }}>
     <div className="app-backdrop">
-      <div className={`app-frame${location.pathname.startsWith('/app/books/') ? ' book-mode' : ''}${location.pathname.startsWith('/app/account/') ? ' account-entry-mode' : ''}`}>
+      <div className={`app-frame one-shelf-frame${location.pathname.startsWith('/app/books/') ? ' book-mode' : ''}${location.pathname.startsWith('/app/account/') ? ' account-entry-mode' : ''}`}>
         <a className="desktop-skip" href="#main-content">{m.skipToContent}</a>
-        <TabBar />
         <main id="main-content" ref={screen} className="app-screen" tabIndex={-1}>
-          <AccountNotice/>
+          {location.pathname !== '/app/shelf' && !location.pathname.startsWith('/app/books/') && !PANEL_PAGE.test(location.pathname) && <Link className="one-shelf-back" to="/app/shelf"><span aria-hidden="true">‹</span> My shelf</Link>}
+          <AccountNotice />
           {storageNotice && <div className="site-notice"><Notice tone="error">{storageNotice}</Notice>{recoveryMode && <div className="recovery-actions"><button onClick={reloadShelf}>Reload shelf</button><button className="button-quiet" onClick={() => setResetting(true)}>Start a new shelf</button></div>}</div>}
           {removedLibraryNotice && <div className="site-notice"><Notice>{removedLibraryNotice}</Notice></div>}
           {children}
@@ -98,5 +109,6 @@ export function AppFrame({ children }: { children: ReactNode }) {
         <ConfirmDialog open={resetting} title="Start a new shelf?" body={<p>This replaces the saved shelf in this browser. The original contents cannot be recovered after this.</p>} confirmLabel="Start a new shelf" onConfirm={async() => { await startNewShelf(); setResetting(false); }} onCancel={() => setResetting(false)} />
       </div>
     </div>
-  </ReadingLightContext.Provider></DogAnimationProvider>;
+  </ReadingLightContext.Provider>;
+  return frame;
 }

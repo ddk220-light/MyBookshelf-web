@@ -84,7 +84,7 @@ export type Availability = {
   attemptedAt: string;
   errorCode?: string;
   matchedBook?: { title: string; isbn13?: string };
-  searchSummary?: { isbnQueries: number; titleQueries: number; recordsChecked: number; partial: boolean; editionsComplete: boolean };
+  searchSummary?: { isbnQueries: number; titleQueries: number; recordsChecked: number; requests?: number; maxRequests?: number; partial: boolean; editionsComplete: boolean };
   availableCopies?: number;
   notForLoanCopies?: number;
   totalCopies?: number;

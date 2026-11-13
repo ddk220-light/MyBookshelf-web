@@ -15,7 +15,8 @@ function run(args){
 }
 try{
   for(const file of ['package.json','package-lock.json'])copyFileSync(join(root,file),join(target,file));
-  for(const directory of ['client','server','shared','tools','data'])cpSync(join(root,directory),join(target,directory),{
+  // docs/policy: the app and the public /privacy and /terms pages render the policy texts at build time.
+  for(const directory of ['client','server','shared','tools','data','docs/policy'])cpSync(join(root,directory),join(target,directory),{
     recursive:true,filter:source=>!excluded.has(basename(source))&&!/^\.env(?:\.|$)/.test(basename(source)),
   });
   run(['ci','--workspace=client','--ignore-scripts','--include=dev']);

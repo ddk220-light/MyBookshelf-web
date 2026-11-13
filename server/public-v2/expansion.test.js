@@ -4,7 +4,8 @@ import { createPublicDirectoryService } from './directory.js';
 import { createPublicAvailabilityService } from './availability.js';
 import { getProvider } from '../services/providers/index.js';
 import { readFileSync } from 'node:fs';
-import { parseHoldings } from '../services/providers/egranthalaya.js';
+import { parseHoldings, setEmptyRecordRetryDelayForTests } from '../services/providers/egranthalaya.js';
+import { createPublicCatalogBookService } from './catalogBooks.js';
 import { createPublicBookService } from './metadata.js';
 import { clearHttpCache } from '../services/providers/http.js';
 
@@ -195,6 +196,73 @@ test('India pilot keeps reference restrictions and scoped holdings through the p
   assert.match(response.catalogUrl, /CL_NAME=PUBLICLIBRARIES/);
 });
 
+
+test('Romain Rolland Library is a borrowing e-Granthalaya member with title search, record reads and honest fallbacks', async () => {
+  const directory = createPublicDirectoryService();
+  for (const query of ['RRLPY', 'Romain Rolland', 'Pondicherry']) assert.ok(directory.search(query, 25).some(l => l.id === 'egranthalaya:pylib-rrlpy'), query);
+  const library = directory.search('RRLPY', 25)[0];
+  assert.equal(library.id, 'egranthalaya:pylib-rrlpy');
+  assert.equal(library.health, 'degraded');
+  assert.equal(library.city, 'Puducherry');
+  assert.equal(library.selectionPath, '/select/romain-rolland-library');
+  assert.doesNotMatch(library.accessNote, /cannot be borrowed|reference/);
+  assert.match(library.accessNote, /Tamil script or English letters/);
+  assert.equal(library.capabilities.titleSearch, true);
+  assert.equal(library.capabilities.publicAvailability, true);
+  assert.equal(library.egranthalayaLibraryCode, undefined);
+  assert.equal(library.baseUrl, undefined);
+  const entry = directory.entry(library.id);
+  assert.equal(entry.publicCatalogTimeoutMs, 45_000);
+  const provider = getProvider(entry);
+  for (const method of ['searchCatalog', 'resolveCatalogRecord', 'checkAvailability']) assert.equal(typeof provider[method], 'function', method);
+
+  // Search, open and check through the public services, replaying saved pages.
+  const page = name => readFileSync(new URL(`../test/fixtures/egranthalaya/${name}.html`, import.meta.url), 'utf8');
+  const searches = { 'wings of fire': 'rrlpy-search-wings-of-fire', 'பொன்னியின் செல்வன்': 'rrlpy-search-ponniyin-selvan-tamil' };
+  const records = { 79863: ['rrlpy-record-79863-empty', 'rrlpy-record-79863'], 101722: ['rrlpy-record-101722-empty'] };
+  const reads = new Map(), requests = [];
+  const originalFetch = global.fetch;
+  setEmptyRecordRetryDelayForTests(0);
+  global.fetch = async (url, options = {}) => {
+    requests.push(url);
+    const reply = (body, headers = {}) => ({ ok: true, status: 200, url, headers: new Headers(headers), text: async () => body });
+    if (url.includes('Details.aspx')) {
+      const id = new URL(url).searchParams.get('ctr'), count = reads.get(id) || 0;
+      reads.set(id, count + 1);
+      return reply(page(records[id][Math.min(count, records[id].length - 1)]));
+    }
+    if (options.method === 'POST') return reply(page(searches[new URLSearchParams(options.body).get('txt_Search')]));
+    return reply(page('rrlpy-form'), { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture; path=/' });
+  };
+  try {
+    const books = createPublicBookService({ catalogs: createPublicCatalogBookService({ directory }) });
+    const availability = createPublicAvailabilityService({ directory, books });
+    const wings = await books.search({ query: 'wings of fire', libraryId: library.id });
+    assert.equal(wings.candidates.length, 5);
+    const autobiography = wings.candidates.find(book => /Autobiography\.$/.test(book.title));
+    assert.equal((await books.resolve(autobiography.bookKey)).title, 'Wings of Fire : An Autobiography.');
+    const found = await availability.check({ libraryId: library.id, bookKey: autobiography.bookKey });
+    assert.equal(found.response.outcome, 'available');
+    assert.equal(found.response.availableCopies, 1);
+    assert.equal(found.response.callNumber, 'V2,1Y7N31P3');
+
+    const tamil = await books.search({ query: 'பொன்னியின் செல்வன்', libraryId: library.id });
+    const ponniyin = tamil.candidates.find(book => book.title === 'பொன்னியின் செல்வன்' && book.authors[0] === 'KALKI'); // record 101722
+    assert.ok(ponniyin, 'Tamil-script record is offered');
+    assert.equal((await books.resolve(ponniyin.bookKey)).title, 'பொன்னியின் செல்வன்');
+    const listed = await availability.check({ libraryId: library.id, bookKey: ponniyin.bookKey });
+    assert.equal(listed.response.outcome, 'in_catalog');
+    assert.equal(listed.response.errorCode, undefined);
+    assert.equal(listed.response.availableCopies, undefined);
+    assert.deepEqual(listed.response.locations, [{ name: 'Romain Rolland Library', status: 'unknown' }]);
+    assert.equal(reads.get('101722'), 2, 'one retry, then the search row');
+    assert.ok(requests.every(url => url.startsWith('https://eg4.nic.in/OPAC/')));
+  } finally {
+    global.fetch = originalFetch;
+    setEmptyRecordRetryDelayForTests(2_000);
+    clearHttpCache();
+  }
+});
 
 test('new Koha libraries are discoverable, while unverified cloud catalogs remain manual', async () => {
   const directory = createPublicDirectoryService();

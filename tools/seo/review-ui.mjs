@@ -49,7 +49,7 @@ try {
     };
     for (const theme of ['daylight','lamplight','ink']) {
       await page.evaluate(theme => localStorage.setItem('mybookshelf.appearance.v1', JSON.stringify({version:1,preference:theme})), theme);
-      for (const [screen,path] of [['shelf','/app/shelf'],['search','/app/search'],['book','/app/books/'+encodeURIComponent(BOOK.bookKey)],['libraries','/app/libraries'],['settings','/app/settings']]) await capture(screen,path,theme);
+      for (const [screen,path] of [['shelf','/app/shelf'],['book','/app/books/'+encodeURIComponent(BOOK.bookKey)],['library-picker','/app/libraries'],['side-panel','/app/settings'],['privacy','/app/privacy']]) await capture(screen,path,theme);
     }
     await page.goto('/about', {waitUntil:'domcontentloaded'});
     await page.evaluate(() => localStorage.clear());

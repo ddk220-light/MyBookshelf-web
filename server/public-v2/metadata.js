@@ -6,6 +6,7 @@ import { getProvider } from '../services/providers/index.js';
 import { getLibraryById } from '../services/directory.js';
 import { catalogHandoffFor } from './catalog-handoff.js';
 import { catalogMetadata } from '../services/catalogMetadata.js';
+import { decodeHTML } from 'entities';
 
 const MAX_DESCRIPTION_LENGTH = 8_000;
 const COVER_HOSTS = new Set([
@@ -19,6 +20,19 @@ function boundedString(value, maximum = 500) {
   if (typeof value !== 'string') return null;
   const result = value.trim();
   return result ? result.slice(0, maximum) : null;
+}
+
+// Descriptions come from several providers and some send HTML (Google Books
+// uses <p>, <b>, <br> and entities such as &quot;). The app shows plain text,
+// so markup is removed and entities are decoded once, here. Only real tags are
+// removed: a literal "a < b" in the text is kept.
+export function plainDescription(value) {
+  if (typeof value !== 'string') return null;
+  if (!/[<&]/.test(value)) return value;
+  const text = value.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, ' ')
+    .replace(/<\s*(?:br\s*\/?|\/p|\/div|\/li|\/h[1-6])\s*>/gi, '\n')
+    .replace(/<\/?[a-zA-Z][^<>]*>/g, '');
+  return decodeHTML(text).replace(/[ \t\u00a0]+/g, ' ').replace(/ *\n\s*/g, '\n').trim();
 }
 
 function authors(value) {
@@ -80,7 +94,7 @@ export function toPublicBook(raw, { keyOverride = null } = {}) {
   const coverUrl = sanitizePublicCoverUrl(raw.coverUrl ?? raw.cover_image_url);
   if (coverUrl) book.coverUrl = coverUrl;
   else if (isbn13 && bookKey.startsWith('v1:catalog:')) book.coverUrl = `https://covers.openlibrary.org/b/isbn/${isbn13}-M.jpg?default=false`;
-  const description = boundedString(raw.description, MAX_DESCRIPTION_LENGTH);
+  const description = boundedString(plainDescription(raw.description), MAX_DESCRIPTION_LENGTH);
   if (description) book.description = description;
   const publisher = boundedString(raw.publisher);
   if (publisher) book.publisher = publisher;
@@ -242,8 +256,17 @@ export function createPublicBookService({
         return remember(toPublicBook(merged, { keyOverride: bookKey }), cacheTtlMs, cache.get(bookKey)?.detailsResolved ?? true);
       } catch { return book; } // Optional metadata cannot hide a catalog result.
     },
+    // Identity for matching: a book this service already returned (a search
+    // result, whose title, authors and work ID come with its key) is used as
+    // it is; anything else is resolved. Result marking needs nothing more, and
+    // resolving nine works in full first costs about two paced Open Library
+    // reads each before any edition list can be read.
+    async summary(bookKey) {
+      if (parsePublicBookKey(bookKey)?.kind === 'catalog') return service.resolve(bookKey);
+      return cached(bookKey) || service.resolve(bookKey);
+    },
     async searchProfile(bookKey, options) {
-      const book = await service.resolve(bookKey);
+      const book = await service.summary(bookKey);
       return book ? expandWork(book, options) : null;
     },
   };

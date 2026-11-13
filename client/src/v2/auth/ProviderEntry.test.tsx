@@ -5,21 +5,6 @@ import {AnonymousWebApp} from '../App';
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status});
 afterEach(()=>{cleanup();vi.unstubAllGlobals();localStorage.clear();sessionStorage.clear();});
 function Location(){const value=useLocation();return <span data-testid="location">{value.pathname+value.search}</span>;}
-it('offers configured providers and preserves entered details when provider start fails',async()=>{
- const posts:Array<{path:string;body:unknown}>=[];
- vi.stubGlobal('fetch',vi.fn(async(path:string,options:RequestInit)=>{
-  if(path.endsWith('/capabilities'))return json({google:true,apple:false,canonicalOrigin:window.location.origin});
-  if(path.endsWith('/session'))return json({status:'guest'});
-  posts.push({path,body:JSON.parse(String(options.body))});return json({error:{code:'PROVIDER_UNAVAILABLE',message:'Google is temporarily unavailable.'}},503);
- }));
- render(<MemoryRouter initialEntries={['/app/account/sign-in?returnTo=%2F%2Foutside.test']}><AnonymousWebApp/></MemoryRouter>);
- fireEvent.change(screen.getByLabelText('Email',{exact:true}),{target:{value:'private@example.test'}});
- fireEvent.click(await screen.findByRole('button',{name:'Sign in with Google'}));
- expect(await screen.findByRole('alert')).toHaveTextContent('Google is temporarily unavailable.');
- expect(screen.getByLabelText('Email',{exact:true})).toHaveValue('private@example.test');
- expect(screen.queryByRole('button',{name:'Sign in with Apple'})).toBeNull();
- expect(posts).toEqual([{path:'/api/account/sign-in/social',body:{provider:'google',returnTo:'/app/shelf'}}]);
-});
 it('provider cancellation offers recovery without exchanging or performing an account action',async()=>{
  const fetch=vi.fn(async(_path:string,_options:RequestInit)=>json({status:'guest'}));vi.stubGlobal('fetch',fetch);
  render(<MemoryRouter initialEntries={['/app/account/return?error=access_denied']}><AnonymousWebApp/></MemoryRouter>);

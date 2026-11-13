@@ -13,7 +13,7 @@ import {
   DeletionReceiptProvider,
   useDeletionReceipt,
 } from "./DeletionReceiptProvider";
-import { DeletionStatusPage } from "../ui/account/DeletionStatusPage";
+import { DeletionDonePage } from "../ui/account/OneShelfAccountPages";
 const json = (data: unknown) =>
   new Response(JSON.stringify(data), { status: 200 });
 afterEach(() => {
@@ -24,7 +24,7 @@ afterEach(() => {
   sessionStorage.clear();
 });
 
-it("bounds automatic status checks while preserving a manual check for delayed cleanup", async () => {
+it("bounds automatic status checks to twelve while the deletion is accepted", async () => {
   vi.useFakeTimers();
   let statusChecks = 0;
   vi.stubGlobal(
@@ -43,7 +43,7 @@ it("bounds automatic status checks while preserving a manual check for delayed c
             <Route path="/submit" element={<Submit />} />
             <Route
               path="/app/account/deletion"
-              element={<DeletionStatusPage />}
+              element={<DeletionDonePage />}
             />
           </Routes>
         </DeletionReceiptProvider>
@@ -62,12 +62,7 @@ it("bounds automatic status checks while preserving a manual check for delayed c
     await vi.advanceTimersByTimeAsync(60000);
   });
   expect(statusChecks).toBe(12);
-  await act(async () => {
-    fireEvent.click(
-      screen.getByRole("button", { name: "Check deletion status" }),
-    );
-  });
-  expect(statusChecks).toBe(13);
+  expect(screen.getByRole("heading", { name: "Account deleted" })).toBeInTheDocument();
 });
 
 it("does not replace a newer deletion receipt with an older account response", async () => {
@@ -186,7 +181,7 @@ it("keeps the nonce only in memory and checks a lost response without submitting
             <Route path="/submit" element={<Submit />} />
             <Route
               path="/app/account/deletion"
-              element={<DeletionStatusPage />}
+              element={<DeletionDonePage />}
             />
           </Routes>
         </DeletionReceiptProvider>
@@ -194,35 +189,21 @@ it("keeps the nonce only in memory and checks a lost response without submitting
     </MemoryRouter>,
   );
   fireEvent.click(screen.getByRole("button", { name: "Confirm deletion" }));
-  expect(await screen.findByRole("alert")).toHaveTextContent(
-    "Couldn’t confirm the response",
-  );
+  expect(await screen.findByRole("heading", { name: "Couldn’t confirm" })).toBeInTheDocument();
   const nonce = String(posts[0].body.receiptNonce);
   expect(nonce).toHaveLength(43);
   expect(JSON.stringify({ ...localStorage, ...sessionStorage })).not.toContain(
     nonce,
   );
-  fireEvent.click(
-    screen.getByRole("button", { name: "Check deletion status" }),
-  );
-  await waitFor(() =>
-    expect(
-      screen.getByText(/Your deletion request is durably recorded/),
-    ).toBeInTheDocument(),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Check again" }));
+  expect(
+    await screen.findByRole("heading", { name: "Account deleted" }),
+  ).toBeInTheDocument();
   expect(posts.filter((p) => p.path.endsWith("/deletion"))).toHaveLength(1);
   expect(posts[1].body).toEqual({
     operationId: posts[0].body.operationId,
     receiptNonce: nonce,
   });
-  cleaned = true;
-  fireEvent.click(
-    screen.getByRole("button", { name: "Check deletion status" }),
-  );
-  expect(
-    await screen.findByRole("heading", { name: "Account cleanup complete" }),
-  ).toBeInTheDocument();
-  expect(posts.filter((p) => p.path.endsWith("/deletion"))).toHaveLength(1);
 });
 
 const authenticated = (id = "synthetic-owner") => ({

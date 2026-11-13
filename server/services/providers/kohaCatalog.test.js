@@ -193,3 +193,45 @@ test('record identifiers cannot supply paths, hosts, queries or account routes',
   }
   assert.equal(calls, 0);
 });
+
+// Pages saved from the libraries' own catalogs on 12 November 2026.
+test('saved Kalaignar and Anna records reach readers without catalog leftovers', () => {
+  const kalaignar = parseKohaCatalogRecord(fixture('kalaignar-wings-214193'), '214193', {});
+  assert.equal(kalaignar.book.title, 'Wings of fire: an autobiography');
+  assert.equal(kalaignar.book.publishedDate, '2019');
+  assert.equal(kalaignar.book.publisher, 'Universities Press Private Limited');
+  assert.equal(kalaignar.book.edition, '23rd ed');
+  assert.equal(kalaignar.book.isbn13, '9788173715488');
+  // "GRATIS" is how the copy was acquired, not a book format; the copy is
+  // still reported, and still not for loan.
+  assert.equal(kalaignar.availability.format, undefined);
+  assert.equal(kalaignar.availability.loanRestriction, 'not_for_loan');
+  assert.equal(kalaignar.availability.totalCopies, 1);
+  assert.equal(kalaignar.availability.callNumber, '623.092 ABD');
+  const anna = parseKohaCatalogRecord(fixture('anna-wings-309106'), '309106', {});
+  assert.equal(anna.book.title, 'Wings of fire: an autobiography');
+  assert.deepEqual(anna.book.authors, ['Abdul Kalam, A. P. J']);
+  assert.equal(anna.availability.outcome, 'available');
+  assert.equal(anna.availability.availableCopies, 1);
+});
+
+test('saved Ernakulam search and record: capitals, placeholder editions and one-letter call numbers are cleaned', () => {
+  const url = new URL('http://opac.ernakulampubliclibrary.com/cgi-bin/koha/opac-search.pl?idx=ti&q=Wings+of+Fire&limit=branch%3AMAIN&count=40');
+  const result = parseKohaCatalogSearch(fixture('ernakulam-wings-search'), url);
+  assert.equal(result.records.length, 23);
+  const byId = id => result.records.find(record => record.recordId === id);
+  assert.equal(byId('100942').title, 'Wings of Fire: An Autobiography');
+  assert.equal(byId('100942').edition, undefined);
+  assert.equal(byId('100942').publishedDate, '1999');
+  assert.equal(byId('197354').title, 'WINGS OF FIRE: Autobiography'); // partly capitalised: left as catalogued
+  assert.equal(byId('119903').edition, '1');
+  // Mixed-case titles are the catalog's own casing and stay as written.
+  assert.equal(byId('199310').title, 'WINGS OF FIRE: Darkness Of Dragons Book 10');
+  assert.ok(result.records.every(record => !/\/$|^NULL$/.test(record.title) && !(record.authors || []).includes('NULL')));
+  const record = parseKohaCatalogRecord(fixture('ernakulam-wings-100942'), '100942', { libraryName: 'Ernakulam Public Library' });
+  assert.equal(record.availability.outcome, 'available');
+  assert.equal(record.availability.callNumber, '923');
+  const shelfLetter = parseKohaCatalogRecord(fixture('ernakulam-wings-100942').replace(/(<td class="call_no"[^>]*>)\s*923/, '$1 A'), '100942', { libraryName: 'Ernakulam Public Library' });
+  assert.equal(shelfLetter.availability.callNumber, undefined);
+  assert.equal(shelfLetter.availability.outcome, 'available');
+});

@@ -5,6 +5,26 @@ This repository contains the current web code, tests, runtime inputs, CI,
 deployment configuration and the recent work analysis. Native app source,
 retired authentication and unrelated research archives are outside its scope.
 
+## One-shelf redesign (2026-11-12, the current app)
+
+- [Implementation plan](plans/2026-11-12-one-shelf-redesign-implementation-plan.md):
+  owner decisions, target architecture, catalog lookup layer, catalog store and
+  anonymous log, privacy model, phases 0–13, redirects, testing and release,
+  open questions and backlog. Phases 0–12 are built; phase 13 is the release.
+- [Approved screens](design/2026-11-one-shelf/README.md): the HTML boards
+  (`canvas.json` lists them) and how the owner decisions override them.
+- [Policy texts](policy/): `privacy.md`, `terms.md` and `about.md`, rendered
+  in the app at `/app/privacy`, `/app/terms` and `/app/about`. The effective
+  date and version are filled at release; legal review is a release item.
+
+## Adoption readiness review (2026-11-11)
+
+- [Product, infrastructure and adoption review](plans/2026-11-11-adoption-readiness-review.md):
+  what is broken today, search and library-picking findings, the librarian's
+  first impression, library data readiness with a pilot shortlist, public-page
+  scaling, free sources, backend/operations and localization. Planning
+  material; each fix is tracked in its own change.
+
 ## Accounts: implementation and release evidence
 
 - [Current production rollout](accounts/PRODUCTION_ROLLOUT.md): actual resources,

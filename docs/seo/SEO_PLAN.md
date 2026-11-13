@@ -69,7 +69,8 @@ mybookshelf.cloud
 │  │  │  └─ /libraries/in/tamil-nadu/chennai   district: libraries        index (?page=2 self-canonical)
 │  └─ /libraries/<library-slug>        one library (flat, never nested)   index or noindex,follow
 ├─ /libraries/search?q=…               results for the landing form       noindex
-├─ /app/shelf  /app/search  /app/books/…  /app/libraries  /app/settings   noindex
+├─ /app/shelf  /app/books/…  /app/privacy  /app/terms  /app/about   noindex
+│    (old /app/search, /app/libraries, /app/settings redirect to the shelf)
 ├─ /select/<library-slug>?next=…&q=…   choose a library, then open the app   noindex
 ├─ /robots.txt   /sitemap.xml   /sitemaps/*.xml
 └─ anything else → 404 page, status 404
@@ -161,9 +162,11 @@ search engines. Each is built into a template, not left to copy:
   prefilled public GitHub issue.
 - **A real person and a contact** on About, and libraries can ask for a
   correction or removal.
-- **Privacy in plain words:** no account, no ads, a shelf in your browser,
-  searches not stored, location only for Near me. Any analytics on public pages
-  has no cookies and stores no IP addresses.
+- **Privacy in plain words:** no account needed, no ads, a shelf in your browser
+  (or in an optional account), search text kept only in an anonymous log with no
+  account, IP or device identifier (12 months, then totals), location used once
+  for Near me and not stored. Analytics count page visits only, with no cookies
+  and no IP addresses (docs/policy/privacy.md).
 - **Security basics:** HTTPS only, strict CSP, catalog links that aren't secure
   are labelled ("not a secure link"), and a `SECURITY.md` in the repository.
 
@@ -412,9 +415,9 @@ Every page also has:
 - **Move under `/app/…`:** update React Router paths and internal links, the
   share-link builders, and the e2e tests. Today's paths redirect (A5).
 - **Deep links:**
-  - `/select/<slug>?next=/app/search`: choose the library (showing the
-    existing confirmation if it replaces a different library), then open
-    Search with the library scope on and the field focused.
+  - `/select/<slug>?next=/app/shelf`: choose the library silently (it
+    replaces any earlier choice; the library name under the search bar shows
+    it), then open the shelf. Old `?next=/app/search` links do the same.
   - `&q=<title>` also runs the search.
   - `next` must be a local `/app/` path, as for book returns today.
 - **Returning visitors:** `/` is the landing page for everyone. A small

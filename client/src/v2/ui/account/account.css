@@ -7,26 +7,9 @@
   max-width: 28rem;
   margin: 1.5rem auto 3rem;
 }
-.app-frame .account-page,
 .app-frame .account-settings-page {
   font-size: 1rem;
   line-height: 1.5;
-}
-.app-frame .account-page {
-  max-width: calc(28rem + 32px);
-  padding: 28px 16px 48px;
-}
-.account-page > .back-link {
-  margin-bottom: 16px;
-  font-size: 1rem;
-}
-.account-page .account-form {
-  margin: 0;
-  max-width: none;
-}
-.account-page .account-form h1 {
-  margin: 0;
-  font: 500 2rem/1.15 var(--serif);
 }
 .account-form p {
   margin: 0;
@@ -41,10 +24,6 @@
 .account-form .text-link {
   min-height: 44px;
 }
-.account-page .account-form > .text-link {
-  align-self: center;
-  text-align: center;
-}
 .account-field {
   display: flex;
   flex-direction: column;
@@ -54,7 +33,6 @@
   font-size: 0.9375rem;
   font-weight: 600;
 }
-.account-page .account-field input,
 .account-settings-page .account-field input {
   width: 100%;
   min-width: 0;
@@ -85,7 +63,6 @@
   align-items: center;
   position: relative;
 }
-.account-page .account-password input,
 .account-settings-page .account-password input {
   flex: 1;
   padding-right: 4.75rem;
@@ -125,23 +102,6 @@
   width: 22px;
   height: 22px;
   margin: 2px 0 0;
-}
-.account-entry-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9375rem;
-}
-.account-entry-footer a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  text-decoration: underline;
-}
-.account-entry-footer button {
-  font: inherit;
-  padding-inline: 4px;
 }
 
 /* Provider controls use their approved brand variants, conditional on capability. */
@@ -225,14 +185,12 @@
   font-size: 2rem;
   line-height: 1.15;
 }
-.account-settings-page .account-card,
-.settings-page > .account-card {
+.account-settings-page .account-card {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-.account-settings-page .settings-label,
-.settings-page > .account-card h2 {
+.account-settings-page .settings-label {
   margin: 0;
   font: 600 1.0625rem/1.3 var(--sans);
   color: var(--reader-ink);
@@ -242,18 +200,9 @@
   margin: 0;
   gap: 12px;
 }
-.account-settings-page p,
-.settings-page > .account-card p {
+.account-settings-page p {
   margin: 0;
   line-height: 1.5;
-}
-.settings-page > .account-card {
-  order: -2;
-  padding: 18px;
-  border-radius: 14px;
-}
-.settings-page > .account-card p {
-  font-size: 1rem;
 }
 .account-settings-page .account-card > button {
   align-self: flex-start;
@@ -315,44 +264,6 @@
 .account-devices li:first-child {
   padding-top: 0;
 }
-.account-history-row {
-  flex-wrap: nowrap;
-}
-.account-history-switch {
-  flex: 0 0 52px;
-  width: 52px;
-  min-width: 52px;
-  min-height: 44px;
-  padding: 6px 0;
-  background: transparent;
-  border: 0;
-}
-.account-history-switch span {
-  display: block;
-  position: relative;
-  width: 52px;
-  height: 32px;
-  border-radius: 16px;
-  background: var(--reader-muted);
-}
-.account-history-switch span::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: var(--reader-surface);
-  transition: transform 0.15s;
-}
-.account-history-switch[aria-checked="true"] span {
-  background: var(--reader-accent);
-}
-.account-history-switch[aria-checked="true"] span::after {
-  transform: translateX(20px);
-  background: var(--reader-on);
-}
 .account-settings-footnote {
   color: var(--reader-muted);
   font-size: 0.875rem;
@@ -366,8 +277,7 @@
   border-left: 4px solid var(--reader-out);
   border-radius: 12px;
 }
-.account-settings-page .cream-dialog,
-.account-page .cream-dialog {
+.account-settings-page .cream-dialog {
   width: min(440px, calc(100% - 32px));
   padding: 22px;
   border-radius: 16px;
@@ -400,61 +310,16 @@
 .account-sync-notice button {
   min-height: 44px;
 }
-.desktop-account {
-  display: none;
-  overflow-wrap: anywhere;
-}
-.tab-label {
-  min-width: 0;
-  max-width: 100%;
-  overflow-wrap: anywhere;
-  white-space: normal;
-  text-align: center;
-}
-@media (max-width: 1023px) {
-  .account-entry-mode .app-navigation .tab-bar {
-    display: none;
-  }
-}
 @media (min-width: 1024px) {
-  .app-frame .account-page {
-    max-width: calc(28rem + 96px);
-    padding: 44px 48px 64px;
-  }
   .app-frame .account-settings-page {
     max-width: calc(48rem + 96px);
     padding: 44px 48px 64px;
     margin-left: 0;
   }
-  .desktop-account {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin: auto 12px 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--reader-line);
-    font-size: 0.875rem;
-  }
-  .desktop-account strong {
-    font-size: 0.9375rem;
-  }
-  .app-navigation .desktop-support {
-    margin-top: 0;
-  }
-  .tab-label {
-    text-align: left;
-  }
 }
 @media (max-width: 480px) {
-  .account-page .account-form h1,
   .account-settings-page h1 {
     font-size: 1.75rem;
-  }
-  .app-frame .account-page {
-    padding-top: 20px;
-  }
-  .account-page > .back-link {
-    margin-bottom: 12px;
   }
   .account-settings-page .account-card {
     padding: 16px;
@@ -464,11 +329,6 @@
   }
   .app-frame .account-settings-page {
     gap: 16px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .account-history-switch span::after {
-    transition: none;
   }
 }
 @media (forced-colors: active) {
@@ -483,19 +343,6 @@
   }
   .account-field .account-field-error {
     color: CanvasText;
-  }
-  .account-history-switch span {
-    border: 1px solid ButtonText;
-    background: Canvas;
-  }
-  .account-history-switch span::after {
-    background: ButtonText;
-  }
-  .account-history-switch[aria-checked="true"] span {
-    background: Highlight;
-  }
-  .account-history-switch[aria-checked="true"] span::after {
-    background: HighlightText;
   }
   :root[data-reading-light]
     .account-settings-page

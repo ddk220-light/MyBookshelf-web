@@ -4,7 +4,9 @@ import {
   useRef,
   useState,
   type FormEvent,
+  type MouseEvent,
   type ReactNode,
+  type RefObject,
 } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAccountSession } from "../../auth/AccountSessionProvider";
@@ -23,6 +25,7 @@ import {
   useRecentAuth,
   type RecentResult,
 } from "../../auth/RecentAuthProvider";
+import { BackLink, FormAlert } from "../panel/PanelPage";
 
 export function AccountForm({
   title,
@@ -31,8 +34,7 @@ export function AccountForm({
   busy,
   error,
   noValidate = false,
-  backTo = "/app/settings",
-  backLabel = "Settings",
+  formRef,
 }: {
   title: string;
   children: ReactNode;
@@ -40,12 +42,11 @@ export function AccountForm({
   busy?: boolean;
   error?: ReactNode;
   noValidate?: boolean;
-  backTo?: string;
-  backLabel?: string;
+  formRef?: RefObject<HTMLFormElement>;
 }) {
   const entryPending = useAccountEntryPending();
+  // The AccountStates board's layout: Back, serif heading, one-line errors.
   const heading = useId(),
-    errorRef = useRef<HTMLParagraphElement>(null),
     headingRef = useRef<HTMLHeadingElement>(null),
     previousTitle = useRef(title);
   useEffect(() => {
@@ -55,58 +56,43 @@ export function AccountForm({
       headingRef.current?.focus();
     }
   }, [title]);
-  const previousError = useRef("");
-  useEffect(() => {
-    const message = errorRef.current?.textContent || "";
-    if (message && message !== previousError.current) errorRef.current?.focus();
-    previousError.current = message;
-  }, [error]);
+  const guardDoubleTap = (event: MouseEvent<HTMLFormElement>) => {
+    // A submit can collapse the mobile keyboard or replace this form.
+    // Ignore the second tap of that gesture if another action moves
+    // beneath the pointer. Keyboard activation still has detail 0.
+    if (
+      event.detail > 1 &&
+      event.target instanceof Element &&
+      event.target.closest("button, a")
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
   return (
-    <section className="page-section account-page">
-      <Link className="back-link" to={backTo}>
-        ← {backLabel}
-      </Link>
-      <form
-        className="account-form"
-        aria-labelledby={heading}
-        onClickCapture={(event) => {
-          // A submit can collapse the mobile keyboard or replace this form.
-          // Ignore the second tap of that gesture if another action moves
-          // beneath the pointer. Keyboard activation still has detail 0.
-          if (
-            event.detail > 1 &&
-            event.target instanceof Element &&
-            event.target.closest("button, a")
-          ) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-        }}
-        onSubmit={(event) => {
-          if (entryPending) event.preventDefault();
-          else if (onSubmit) onSubmit(event);
-          else event.preventDefault();
-        }}
-        aria-busy={busy || entryPending}
-        noValidate={noValidate}
-      >
-        <h1 id={heading} ref={headingRef} tabIndex={-1}>
-          {title}
-        </h1>
-        {error && (
-          <p
-            className="account-error"
-            ref={errorRef}
-            tabIndex={-1}
-            role="alert"
-          >
-            {error}
-          </p>
-        )}
-        {children}
-      </form>
-    </section>
-  );
+      <section className="panel-page account-v2">
+        <BackLink />
+        <form
+          ref={formRef}
+          className="account-v2-form"
+          aria-labelledby={heading}
+          onClickCapture={guardDoubleTap}
+          onSubmit={(event) => {
+            if (entryPending) event.preventDefault();
+            else if (onSubmit) onSubmit(event);
+            else event.preventDefault();
+          }}
+          aria-busy={busy || entryPending}
+          noValidate={noValidate}
+        >
+          <h1 id={heading} ref={headingRef} tabIndex={-1}>
+            {title}
+          </h1>
+          {error && <FormAlert>{error}</FormAlert>}
+          {children}
+        </form>
+      </section>
+    );
 }
 export function PasswordField({
   label = "Password",
@@ -188,407 +174,6 @@ export function EmailField({
     </div>
   );
 }
-export function SignInPage({ signup = false }: { signup?: boolean }) {
-  const entryPending = useAccountEntryPending();
-  const { refresh, continueGuest, prepareSignIn } = useAccountSession(),
-    navigate = useNavigate(),
-    location = useLocation();
-  const [busy, setBusy] = useState(false),
-    [error, setError] = useState(""),
-    [errorCode, setErrorCode] = useState(""),
-    [sent, setSent] = useState(false),
-    [email, setEmail] = useState("");
-  const [fields, setFields] = useState<Record<string, string>>({});
-  const alive = useRef(true);
-  useEffect(() => {
-    alive.current = true;
-    return () => {
-      alive.current = false;
-    };
-  }, []);
-  const submit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (busy || entryPending) return;
-    const data = new FormData(event.currentTarget),
-      address = String(data.get("email") || "");
-    if (signup) {
-      const next: Record<string, string> = {},
-        name = String(data.get("name") || "").trim(),
-        password = String(data.get("password") || "");
-      if (!name || [...name].length > 80 || /[\u0000-\u001f\u007f]/.test(name))
-        next["account-private-name"] =
-          "Enter a name between 1 and 80 characters.";
-      if (
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address.trim()) ||
-        address.length > 254
-      )
-        next["account-email"] = "Enter a valid email address.";
-      if ([...password].length < 15 || [...password].length > 128)
-        next["account-password"] = "Use between 15 and 128 characters.";
-      setFields(next);
-      if (Object.keys(next).length) {
-        setError("");
-        return;
-      }
-    }
-    setBusy(true);
-    setError("");
-    setEmail(address);
-    if (!signup) prepareSignIn();
-    try {
-      const result = await accountRequest<{ returnTo?: string }>(
-        signup ? "/sign-up" : "/sign-in",
-        {
-          method: "POST",
-          body: {
-            email: address,
-            password: String(data.get("password") || ""),
-            ...(signup
-              ? { name: String(data.get("name") || "") }
-              : {
-                  returnTo: safeAccountReturn(
-                    new URLSearchParams(location.search).get("returnTo"),
-                  ),
-                }),
-          },
-        },
-      );
-      if (!alive.current) return;
-      if (signup) {
-        setSent(true);
-        return;
-      }
-      // Session publication deliberately remounts private screens. No email is put in history state.
-      const checked = await refresh(true);
-      if (!alive.current) return;
-      if (checked.status !== "authenticated")
-        throw new AccountApiError(
-          "ACCOUNT_UNAVAILABLE",
-          "Couldn’t check your account. Try again or continue using this browser.",
-        );
-      const destination = safeAccountReturn(result.returnTo || null),
-        guest = readAnonymousWebStateWithStatus().state;
-      navigate(
-        guest.savedBooks.length ||
-          guest.recentBooks.length ||
-          guest.selectedLibraryId
-          ? "/app/account/import"
-          : destination,
-        { replace: true, state: null },
-      );
-    } catch (failure) {
-      if (alive.current) {
-        setError(
-          failure instanceof Error
-            ? failure.message
-            : "Could not finish. Try again.",
-        );
-        setErrorCode(failure instanceof AccountApiError ? failure.code : "");
-      }
-    } finally {
-      if (alive.current) setBusy(false);
-    }
-  };
-  const resend = async () => {
-    if (!email || busy) return;
-    setBusy(true);
-    setError("");
-    try {
-      await accountRequest("/resend-verification", {
-        method: "POST",
-        body: { email },
-      });
-      if (alive.current) setSent(true);
-    } catch (failure) {
-      if (alive.current)
-        setError(
-          failure instanceof Error ? failure.message : "Could not send a link.",
-        );
-    } finally {
-      if (alive.current) setBusy(false);
-    }
-  };
-  if (sent)
-    return (
-      <AccountForm title="Check your email" busy={busy} error={error}>
-        <p>
-          Check <strong>{email}</strong> for the next step. Verification links
-          work for 24 hours.
-        </p>
-        <p>Check your spam folder if the email hasn’t arrived.</p>
-        <button type="button" disabled={busy} onClick={() => void resend()}>
-          {busy ? "Sending…" : "Send a new link"}
-        </button>
-        <Link to="/app/account/sign-in">Sign in after verifying</Link>
-        <button
-          type="button"
-          className="button-quiet"
-          onClick={() => setSent(false)}
-        >
-          Use a different email
-        </button>
-      </AccountForm>
-    );
-  return (
-    <AccountForm
-      title={signup ? "Create account" : "Sign in"}
-      onSubmit={(event) => void submit(event)}
-      busy={busy}
-      noValidate={signup}
-      error={
-        Object.keys(fields).length ? (
-          <>
-            <strong>
-              Check {Object.keys(fields).length}{" "}
-              {Object.keys(fields).length === 1 ? "field" : "fields"}
-            </strong>
-            {Object.entries(fields).map(([id, message]) => (
-              <span key={id}>
-                {" "}
-                ·{" "}
-                <a
-                  href={"#" + id}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    document.getElementById(id)?.focus();
-                  }}
-                >
-                  {message}
-                </a>
-              </span>
-            ))}
-          </>
-        ) : (
-          error
-        )
-      }
-    >
-      {signup && (
-        <>
-          <p>Keep your shelf across devices.</p>
-          <div className="account-field">
-            <label htmlFor="account-private-name">Your name</label>
-            <input
-              id="account-private-name"
-              name="name"
-              autoComplete="name"
-              required
-              maxLength={160}
-              aria-invalid={
-                Boolean(fields["account-private-name"]) || undefined
-              }
-              aria-describedby={
-                fields["account-private-name"]
-                  ? "account-name-error"
-                  : "account-name-hint"
-              }
-            />
-            <small id="account-name-hint">Private. Only you see it.</small>
-            {fields["account-private-name"] && (
-              <small className="account-field-error" id="account-name-error">
-                {fields["account-private-name"]}
-              </small>
-            )}
-          </div>
-        </>
-      )}
-      <EmailField id="account-email" error={fields["account-email"]} />
-      <PasswordField
-        autoComplete={signup ? "new-password" : "current-password"}
-        id="account-password"
-        error={fields["account-password"]}
-        hint={
-          signup
-            ? "Use 15–128 characters. Spaces and paste are welcome."
-            : undefined
-        }
-      />
-      {!signup && (
-        <Link className="text-link" to="/app/account/forgot-password">
-          Forgot password?
-        </Link>
-      )}
-      <button disabled={busy || entryPending} type="submit">
-        {busy
-          ? signup
-            ? "Creating account…"
-            : "Signing in…"
-          : signup
-            ? "Create account"
-            : "Sign in"}
-      </button>
-      <ProviderEntry disabled={busy || entryPending} onError={setError} />
-      {errorCode === "VERIFY_EMAIL_REQUIRED" && (
-        <button
-          type="button"
-          className="button-quiet"
-          disabled={busy}
-          onClick={() => void resend()}
-        >
-          Send verification link
-        </button>
-      )}
-      <Link
-        className="text-link"
-        to={signup ? "/app/account/sign-in" : "/app/account/sign-up"}
-      >
-        {signup
-          ? "Already have an account? Sign in"
-          : "New here? Create account"}
-      </Link>
-      <p className="account-entry-footer">
-        <a href="/privacy#website">Privacy</a>
-        <span aria-hidden="true">·</span>
-        <button
-          type="button"
-          className="text-button"
-          onClick={() => {
-            continueGuest();
-            navigate("/app/shelf", { replace: true, state: null });
-          }}
-        >
-          Continue using this browser
-        </button>
-      </p>
-    </AccountForm>
-  );
-}
-export function VerifyPage() {
-  const entryPending = useAccountEntryPending();
-  const token = useLinkToken(),
-    [busy, setBusy] = useState(false),
-    [done, setDone] = useState(false),
-    [error, setError] = useState("");
-  return (
-    <AccountForm
-      title={done ? "Email verified" : "Verify your email"}
-      busy={busy}
-      error={error}
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (busy || entryPending) return;
-        setBusy(true);
-        setError("");
-        void accountRequest("/verify-email", {
-          method: "POST",
-          body: { token },
-        })
-          .then(() => setDone(true))
-          .catch((failure) =>
-            setError(
-              failure instanceof Error
-                ? failure.message
-                : "Could not verify this link.",
-            ),
-          )
-          .finally(() => setBusy(false));
-      }}
-    >
-      {done ? (
-        <>
-          <p>Your email is verified. Sign in to continue.</p>
-          <Link className="button-link" to="/app/account/sign-in">
-            Sign in
-          </Link>
-        </>
-      ) : token ? (
-        <>
-          <p>
-            Continue to confirm this email address. Opening this page does not
-            use the link.
-          </p>
-          <button disabled={busy || entryPending}>
-            {busy ? "Verifying…" : "Verify email"}
-          </button>
-        </>
-      ) : (
-        <p>
-          This link is missing or was already opened here. Request a new link
-          from sign in.
-        </p>
-      )}
-      <Link to="/app/account/sign-in">Back to sign in</Link>
-    </AccountForm>
-  );
-}
-export function RecoveryPage({ reset = false }: { reset?: boolean }) {
-  const entryPending = useAccountEntryPending();
-  const token = useLinkToken(),
-    [busy, setBusy] = useState(false),
-    [done, setDone] = useState(false),
-    [error, setError] = useState("");
-  const submit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (busy || entryPending) return;
-    const data = new FormData(event.currentTarget);
-    setBusy(true);
-    setError("");
-    try {
-      await accountRequest(reset ? "/reset-password" : "/forgot-password", {
-        method: "POST",
-        body: reset
-          ? { token, password: String(data.get("password") || "") }
-          : { email: String(data.get("email") || "") },
-      });
-      setDone(true);
-    } catch (failure) {
-      setError(
-        failure instanceof Error
-          ? failure.message
-          : "Could not finish. Try again.",
-      );
-    } finally {
-      setBusy(false);
-    }
-  };
-  return (
-    <AccountForm
-      title={
-        done
-          ? reset
-            ? "Password updated"
-            : "Check your email"
-          : reset
-            ? "Choose a new password"
-            : "Reset your password"
-      }
-      busy={busy}
-      error={error}
-      backTo="/app/account/sign-in"
-      backLabel="Sign in"
-      onSubmit={(event) => void submit(event)}
-    >
-      {done ? (
-        <p>
-          {reset
-            ? "Sign in again. Existing devices were signed out."
-            : "If this address can receive a reset link, we’ll send one. Reset links work for 30 minutes."}
-        </p>
-      ) : reset ? (
-        <>
-          <PasswordField
-            label="New password"
-            autoComplete="new-password"
-            hint="Use 15–128 characters."
-          />
-          <button disabled={busy || entryPending || !token}>
-            {busy ? "Updating…" : "Update password"}
-          </button>
-          {!token && <p>This link is missing. Request a new reset link.</p>}
-        </>
-      ) : (
-        <>
-          <p>We’ll email the next step if this address can receive it.</p>
-          <EmailField />
-          <button disabled={busy || entryPending}>
-            {busy ? "Sending…" : "Send reset link"}
-          </button>
-        </>
-      )}
-      <Link to="/app/account/sign-in">Back to sign in</Link>
-    </AccountForm>
-  );
-}
 export function ImportPage() {
   const { session } = useAccountSession(),
     library = useLibrary(),
@@ -597,8 +182,10 @@ export function ImportPage() {
       structuredClone(readAnonymousWebStateWithStatus()),
     ),
     [id] = useState(() => crypto.randomUUID());
-  const [history, setHistory] = useState(false),
-    [deviceLibrary, setDeviceLibrary] = useState(false),
+  // One-shelf (plan 4.7, section 9 row 5): guest Viewed before comes over
+  // with the saved books; there is no separate history checkbox.
+  const history = true;
+  const [deviceLibrary, setDeviceLibrary] = useState(false),
     [remove, setRemove] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
@@ -712,18 +299,6 @@ export function ImportPage() {
               here is unchanged.
             </p>
           )}
-          <label className="account-check">
-            <input
-              type="checkbox"
-              checked={history}
-              disabled={busy || library.pendingImportId === id}
-              onChange={(event) => setHistory(event.target.checked)}
-            />
-            Include recently viewed books from the last 30 days
-          </label>
-          <p className="form-hint">
-            This does not turn on future reading history.
-          </p>
           {frozen.state.selectedLibraryId && (
             <label className="account-check">
               <input
@@ -842,7 +417,8 @@ export function EmailChangePage() {
   );
 }
 
-function afterProviderSignIn(returnTo: string) {
+/** Where a fresh sign-in goes: the import step when this browser holds guest data, else returnTo. */
+export function afterProviderSignIn(returnTo: string) {
   const guest = readAnonymousWebStateWithStatus().state;
   return guest.savedBooks.length ||
     guest.recentBooks.length ||

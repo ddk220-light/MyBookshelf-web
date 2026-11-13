@@ -1,8 +1,8 @@
 import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { checkAvailability, checkClusterAvailability, clearEgranthalayaRefusals, clusterIsbnQuery, hyphenatedIsbn, parseHoldings, parseSearch, searchForm } from './egranthalaya.js';
-import { clearHttpCache, USER_AGENT } from './http.js';
+import { checkAvailability, checkClusterAvailability, clearEgranthalayaRefusals, clusterIsbnQuery, hyphenatedIsbn, isEmptyRecordPage, parseCatalogSearch, parseHoldings, parseSearch, resolveCatalogRecord, searchCatalog, searchForm, setEmptyRecordRetryDelayForTests } from './egranthalaya.js';
+import { clearHttpCache, USER_AGENT, withCatalogOperation } from './http.js';
 
 const fixture = (name) => fs.readFileSync(new URL(`../../test/fixtures/egranthalaya/${name}.html`, import.meta.url), 'utf8');
 const isbn = '9788131313459';
@@ -758,4 +758,150 @@ test('after shared queries complete, a retry can spend its remaining budget conf
     assert.equal((await checkAvailability(selected, upIsbn)).outcome, 'not_found');
     assert.equal(calls.filter(c => c.options.method === 'POST' && new URLSearchParams(c.options.body).get('DDL_Library') === 'All Libraries').length, 2, 'completed shared variants are reused');
   } finally { Date.now = originalNow; }
+});
+
+// Romain Rolland Library, Puducherry (PYLIB cluster). Fixtures are public
+// pages saved on 12 November 2026; see the fixture README.
+const rrl = {
+  id: 'egranthalaya:pylib-rrlpy', name: 'Romain Rolland Library', baseUrl: 'https://eg4.nic.in',
+  egranthalayaCluster: 'PYLIB', egranthalayaLibraryCode: 'RRLPY', egranthalayaReferenceOnly: false, egranthalayaSearchScope: 'cluster',
+};
+const rrlSearches = { 'wings of fire': 'rrlpy-search-wings-of-fire', 'பொன்னியின் செல்வன்': 'rrlpy-search-ponniyin-selvan-tamil', 'ponniyin selvan': 'rrlpy-search-ponniyin-selvan-latin' };
+// `records` maps a record ID to the pages its successive reads return.
+function rrlFetch(calls, records = {}) {
+  const reads = new Map();
+  return async (url, options = {}) => {
+    calls.push({ url, options });
+    if (url.includes('Details.aspx')) {
+      const id = new URL(url).searchParams.get('ctr'), pages = records[id] || [];
+      const count = reads.get(id) || 0; reads.set(id, count + 1);
+      return response(fixture(pages[Math.min(count, pages.length - 1)]), url);
+    }
+    if (options.method === 'POST') return response(fixture(rrlSearches[new URLSearchParams(options.body).get('txt_Search')]), url);
+    return response(fixture('rrlpy-form'), url, { headers: { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture; path=/' } });
+  };
+}
+const detailReads = calls => calls.filter(call => call.url.includes('Details.aspx')).length;
+
+test('Romain Rolland title search reads Latin rows with authors, copy totals and the member scope', async () => {
+  setEmptyRecordRetryDelayForTests(0);
+  const calls = [];
+  global.fetch = rrlFetch(calls);
+  const books = await searchCatalog(rrl, 'wings of fire');
+  assert.equal(calls.length, 2);
+  const body = new URLSearchParams(calls[1].options.body);
+  assert.equal(body.get('DDL_Library'), 'RRLPY');
+  assert.equal(body.get('txt_Search'), 'wings of fire');
+  assert.equal(calls[1].options.headers.Cookie, 'ASP.NET_SessionId=anonymous-fixture');
+  assert.equal(books.length, 5);
+  assert.deepEqual(books[0], { recordId: '165629', title: 'Wings of Fire', authors: ['APJ ABDUL KALAM'], isbn: null, totalCopies: 1 });
+  assert.deepEqual(books.find(book => book.recordId === '79863'), { recordId: '79863', title: 'Wings of Fire : An Autobiography.', authors: ['Abdul Kalam (APJ)'], isbn: null, totalCopies: 1 });
+  // Each catalog record stays its own record; same-title rows are not merged.
+  assert.equal(new Set(books.map(book => book.recordId)).size, 5);
+});
+
+test('Romain Rolland finds Ponniyin Selvan in Tamil script and in English letters', async () => {
+  const calls = [];
+  global.fetch = rrlFetch(calls);
+  const tamil = await searchCatalog(rrl, 'பொன்னியின் செல்வன்');
+  assert.equal(new URLSearchParams(calls[1].options.body).get('txt_Search'), 'பொன்னியின் செல்வன்');
+  assert.equal(tamil.length, 10, 'first ten of 124 records');
+  assert.deepEqual(tamil.find(book => book.recordId === '101722'), { recordId: '101722', title: 'பொன்னியின் செல்வன்', authors: ['KALKI'], isbn: null, totalCopies: 3 });
+  assert.equal(tamil.find(book => book.recordId === '108078').isbn, '9788183451536');
+  const latin = await searchCatalog(rrl, 'ponniyin selvan');
+  assert.equal(latin.length, 8);
+  assert.equal(latin[1].title, 'Ponniyin Selvan Muthal Pagam');
+  assert.deepEqual(latin[1].authors, ['KALKI']);
+});
+
+test('a full Romain Rolland record page gives the copy, its status and the call number', async () => {
+  setEmptyRecordRetryDelayForTests(0);
+  const calls = [];
+  global.fetch = rrlFetch(calls, { 79863: ['rrlpy-record-79863'] });
+  const record = await resolveCatalogRecord(rrl, '79863');
+  assert.equal(calls.length, 2);
+  assert.equal(record.title, 'Wings of Fire : An Autobiography.');
+  assert.deepEqual(record.authors, ['Abdul Kalam (APJ)']);
+  assert.equal(record.observation.outcome, 'available');
+  assert.equal(record.observation.availableCopies, 1);
+  assert.equal(record.observation.totalCopies, 1);
+  assert.equal(record.observation.callNumber, 'V2,1Y7N31P3');
+  assert.deepEqual(record.observation.locations, [{ name: 'Romain Rolland Library', status: 'available' }]);
+});
+
+test('empty record pages are recognised only for the requested record and never for full pages', () => {
+  assert.equal(isEmptyRecordPage(fixture('rrlpy-record-79863-empty'), '79863'), true);
+  assert.equal(isEmptyRecordPage(fixture('rrlpy-record-101722-empty'), '101722'), true);
+  assert.equal(isEmptyRecordPage(fixture('rrlpy-record-101722-empty'), '79863'), false);
+  assert.equal(isEmptyRecordPage(fixture('rrlpy-record-79863'), '79863'), false);
+  assert.equal(isEmptyRecordPage(fixture('holdings-available'), '519750'), false);
+  assert.equal(isEmptyRecordPage(fixture('rrlpy-form'), '79863'), false);
+});
+
+test('an empty record page is read once more and the second, full page is used', async () => {
+  setEmptyRecordRetryDelayForTests(0);
+  const calls = [];
+  global.fetch = rrlFetch(calls, { 79863: ['rrlpy-record-79863-empty', 'rrlpy-record-79863'] });
+  const record = await resolveCatalogRecord(rrl, '79863');
+  assert.equal(detailReads(calls), 2);
+  assert.equal(calls.length, 3);
+  assert.equal(record.observation.outcome, 'available');
+  assert.equal(record.observation.availableCopies, 1);
+});
+
+test('a record page that stays empty falls back to this library\'s search row with copy status unconfirmed', async () => {
+  setEmptyRecordRetryDelayForTests(0);
+  const calls = [];
+  global.fetch = rrlFetch(calls, { 101722: ['rrlpy-record-101722-empty'] });
+  await searchCatalog(rrl, 'பொன்னியின் செல்வன்');
+  const record = await resolveCatalogRecord(rrl, '101722');
+  assert.equal(detailReads(calls), 2, 'one retry, no more');
+  assert.equal(calls.length, 5);
+  assert.equal(record.title, 'பொன்னியின் செல்வன்');
+  assert.deepEqual(record.authors, ['KALKI']);
+  assert.deepEqual(record.observation, { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, totalCopies: 3,
+    locations: [{ name: 'Romain Rolland Library', status: 'unknown' }] });
+  assert.notEqual(record.observation.outcome, 'not_found');
+  assert.equal(record.observation.availableCopies, undefined);
+});
+
+test('without a search row an empty record page is an unavailable catalog, not a missing title or absence', async () => {
+  setEmptyRecordRetryDelayForTests(0);
+  const calls = [];
+  global.fetch = rrlFetch(calls, { 101722: ['rrlpy-record-101722-empty'] });
+  await assert.rejects(resolveCatalogRecord(rrl, '101722'), error => error.code === 'CATALOG_UNAVAILABLE' && !/Missing record title/.test(error.message));
+  assert.equal(detailReads(calls), 2);
+  // A search row from another member never vouches for this one.
+  clearHttpCache(); calls.length = 0;
+  await searchCatalog(rrl, 'பொன்னியின் செல்வன்');
+  await assert.rejects(resolveCatalogRecord({ ...rrl, egranthalayaLibraryCode: 'SRGPLKKL' }, '101722'), { code: 'CATALOG_UNAVAILABLE' });
+});
+
+test('the empty-page retry stays inside a check\'s request cap', async () => {
+  setEmptyRecordRetryDelayForTests(0);
+  const calls = [];
+  global.fetch = rrlFetch(calls, { 101722: ['rrlpy-record-101722-empty', 'rrlpy-record-101722-empty'] });
+  await searchCatalog(rrl, 'பொன்னியின் செல்வன்');
+  calls.length = 0;
+  const record = await withCatalogOperation({ maxRequests: 2 }, () => resolveCatalogRecord(rrl, '101722'));
+  assert.equal(calls.length, 2, 'no retry once the cap is spent');
+  assert.equal(record.observation.outcome, 'in_catalog');
+});
+
+test('an ISBN check retries an empty member record page before reporting copy status', async () => {
+  setEmptyRecordRetryDelayForTests(0);
+  const calls = [];
+  const hit = fixture('search-hit');
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url, options });
+    if (url.includes('Details.aspx')) {
+      const empty = fixture('rrlpy-record-101722-empty').replaceAll('101722', '519750');
+      return response(detailReads(calls) === 1 ? empty : fixture('holdings-available'), url);
+    }
+    return response(options.method === 'POST' ? hit : fixture('form'), url, { headers: { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture;' } });
+  };
+  const result = await checkAvailability({ ...library, egranthalayaSearchScope: 'cluster' }, isbn);
+  assert.equal(detailReads(calls), 2);
+  assert.equal(result.outcome, 'available');
+  assert.match(result.format, /reference use only/);
 });

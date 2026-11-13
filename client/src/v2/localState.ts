@@ -1,13 +1,15 @@
 import { browserStorage, type StorageLike } from './browserStorage';
 import { APPEARANCE_STORAGE_KEY, READING_LIGHT_STORAGE_KEY } from './readingLight';
-import { DOG_ANIMATION_STORAGE_KEY } from './dogAnimation';
 import { clearReaderState } from './readerState';
 import type { PublicBook, RecentBook, RecentSource } from './types';
 import type { ContentItem, SavedContent } from './contentTypes';
 
+/** The retired companion's on/off setting (plan 3.4): only ever removed now. */
+export const DOG_ANIMATION_STORAGE_KEY = 'mybookshelf.anonymous-web.dog-animation';
+
 export const ANONYMOUS_WEB_STORAGE_KEY = 'mybookshelf.anonymous-web.v1';
 const VERSION = 2;
-const HISTORY_LIMIT = 50;
+export const HISTORY_LIMIT = 50;
 export const SAVED_BOOKS_CAP = 100;
 const SOURCES: ReadonlySet<string> = new Set(['camera', 'isbn', 'search', 'direct']);
 
@@ -173,4 +175,27 @@ export function withSavedContent(state: AnonymousWebState, item: ContentItem, sa
     authors: item.contributors.filter(c => c.role === 'author').map(c => c.name).slice(0,20),
     host: item.locations.find(location => location.id === item.readingActions[0]?.locationId)?.host || item.locations[0]?.host || item.provenance[0]?.sourceId || 'Source', savedAt };
   return isSavedContent(entry) ? { ...state, savedContent: [normalizeSavedContent(entry), ...state.savedContent] } : state;
+}
+
+// One-shelf redesign (plan 3.4). The stored record keeps its version and shape
+// so an older bundle can still read it; duplicate saved books (same bookKey)
+// collapse to the most recently saved entry, which keeps its place in the list.
+export function dedupeSavedBooks(state: AnonymousWebState): AnonymousWebState {
+  const newest = new Map<string, RecentBook>();
+  for (const book of state.savedBooks) {
+    const kept = newest.get(book.bookKey);
+    if (!kept || Date.parse(book.viewedAt) > Date.parse(kept.viewedAt)) newest.set(book.bookKey, book);
+  }
+  if (newest.size === state.savedBooks.length) return state;
+  const placed = new Set<string>();
+  return { ...state, savedBooks: state.savedBooks.filter((book) => {
+    if (newest.get(book.bookKey) !== book || placed.has(book.bookKey)) return false;
+    placed.add(book.bookKey);
+    return true;
+  }) };
+}
+
+export function readDedupedAnonymousWebStateWithStatus(storage: StorageLike | null = browserStorage()): AnonymousWebStateRead {
+  const read = readAnonymousWebStateWithStatus(storage);
+  return read.status === 'ok' ? { ...read, state: dedupeSavedBooks(read.state) } : read;
 }

@@ -98,7 +98,7 @@ export function AccountEntryGate({
         <button type="button" className="button-quiet" onClick={continueGuest}>
           Continue using this browser
         </button>
-        <a href="/privacy#website">Privacy</a>
+        <a href="/app/privacy">Privacy</a>
       </AccountForm>
     );
   if (needsEmail && capabilities?.email === false && allowProviders)

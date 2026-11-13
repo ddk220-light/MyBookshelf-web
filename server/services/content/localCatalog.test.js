@@ -30,7 +30,11 @@ test('cursor binding rejects changed query, country, index, tampering and expiry
 });
 test('deep-link resolution survives restart; stale access is unknown rather than free', () => {
   assert.equal(service().resolve({key:'fcd:v1:gutenberg:1',country:'IN'}).item.readingActions.length,1);
-  const stale=service({now:()=>now+86400_001}).resolve({key:'fcd:v1:gutenberg:1'}).item;
+  // A public catalog's import evidence is accepted for 30 days, never longer.
+  const recent=service({now:()=>now+86400_001}).resolve({key:'fcd:v1:gutenberg:1'}).item;
+  assert.equal(recent.access,'free_full_text');
+  assert.equal(recent.readingActions.length,1);
+  const stale=service({now:()=>now+30*86400_000+1}).resolve({key:'fcd:v1:gutenberg:1'}).item;
   assert.equal(stale.access,'unknown');
   assert.deepEqual(stale.readingActions,[]);
   assert.throws(()=>service().resolve({key:'fcd:v1:gutenberg:99'}), /not in/);
@@ -49,7 +53,24 @@ test('library link-back uses exact identifier evidence and never title similarit
   assert.equal(found.items.length,1);assert.deepEqual(found.items[0].match,{scheme:'isbn13',value:'9780140328721'});
   assert.equal(api.locate({isbn13:'9780142410363'}).items.length,0);
   assert.throws(()=>api.locate({title:'Fixture title 1'}));
-  assert.equal(service({loadSnapshot:()=>mapped,now:()=>now+86400_001}).locate({isbn13:'9780140328721'}).items.length,0);
+  assert.equal(service({loadSnapshot:()=>mapped,now:()=>now+86400_001}).locate({isbn13:'9780140328721'}).items.length,1);
+  assert.equal(service({loadSnapshot:()=>mapped,now:()=>now+30*86400_000+1}).locate({isbn13:'9780140328721'}).items.length,0);
+});
+
+test('a public catalog stays searchable between refreshes and reports how old its check is', () => {
+  const at=offset=>service({now:()=>now+offset}).search({query:'Fixture'});
+  const fresh=at(0), recent=at(6*86400_000), stale=at(30*86400_000+1);
+  assert.equal(fresh.sources[0].freshness,'fresh');
+  assert.equal(recent.sources[0].freshness,'recent');
+  assert.equal(recent.items.length,3);
+  assert.equal(recent.hiddenUnclear,0);
+  assert.equal(recent.sources[0].importedAt,observedAt);
+  assert.equal(stale.sources[0].freshness,'stale');
+  assert.equal(stale.items.length,0);
+  assert.equal(stale.hiddenUnclear,3);
+  // Evidence dated in the future is never accepted, whatever the window.
+  const future=structuredClone(data);for(const record of future.records)record.locations[0].evidence.observedAt=new Date(now+3600_000).toISOString();
+  assert.equal(service({loadSnapshot:()=>future}).search({query:'Fixture'}).items.length,0);
 });
 
 test('search folds Latin accents without erasing Tamil or Hindi vowel signs',()=>{

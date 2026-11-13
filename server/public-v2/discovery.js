@@ -1,7 +1,7 @@
 import { getAllLibraries, haversineKm } from '../services/directory.js';
 import { toPublicLibrary } from './directory.js';
 import { searchableCatalog } from './catalog-method.js';
-import { libraryLocations } from './locations.js';
+import { libraryLocations, libraryPoint } from './locations.js';
 import { canonicalDistrict, canonicalRegion, normalizePlaceName as normalized } from './geography.js';
 import { indiaLibraryPlace, indiaPlaceById, indiaPlaceAttribution, libraryArea, libraryMatchesPostcode, nearestIndiaPlace, publicPlace } from './indiaPlaces.js';
 import { PublicV2ValidationError } from './validation.js';
@@ -44,19 +44,28 @@ export function createDiscoveryService({ entries = getAllLibraries } = {}) {
         if (bounds) locations = locations.filter(point => inBounds(point, bounds));
         else if (nearby) locations = locations.filter(point => haversineKm(lat, lon, point.lat, point.lon) <= distance);
         if (nearby) locations.sort((a, b) => haversineKm(lat, lon, a.lat, a.lon) - haversineKm(lat, lon, b.lat, b.lon));
-        const reviewed = locations.filter(point => point.reviewed && ['branch', 'library', 'campus'].includes(point.precision));
         const locality = indiaArea && entry.country === 'IN' ? indiaLibraryPlace(entry) : null;
         const localityDistance = locality ? haversineKm(lat, lon, locality.lat, locality.lon) : Infinity;
         const localMatch = locality && (bounds ? inBounds(locality, bounds) : localityDistance <= distance);
         const postalMatch = libraryMatchesPostcode(entry, place);
         if ((nearby || bounds) && !locations.length && !localMatch && !postalMatch) return [];
-        const point = reviewed[0];
-        const distanceKm = nearby && point ? haversineKm(lat, lon, point.lat, point.lon) : undefined;
+        // Distance: to the nearest point that places the library itself, its
+        // own directory point or a reviewed branch, campus or library point.
+        // Unreviewed branch points still decide what is in range, but they
+        // were geocoded from branch names and can sit in another city, so
+        // they never give a distance or the order. Approximate unless that
+        // point is a reviewed branch or library address.
+        const placed = nearby ? [libraryPoint(entry), ...locations.filter(item => item.reviewed && ['branch', 'library', 'campus'].includes(item.precision))]
+          .filter(Boolean).map(item => ({ item, km: haversineKm(lat, lon, item.lat, item.lon) })).sort((a, b) => a.km - b.km)[0] : undefined;
+        const distanceKm = placed?.km;
+        const exact = placed?.item.reviewed === true && ['branch', 'library'].includes(placed.item.precision);
+        const point = locations.find(item => item.reviewed && ['branch', 'library', 'campus'].includes(item.precision));
         const match = (nearby || bounds) ? point ? { scope: point.precision === 'campus' ? 'campus' : 'point', label: point.name }
           : localMatch ? { scope: locality.areaType === 'postcode' ? 'postcode' : 'locality', placeId: locality.id, label: (locality.areaType === 'postcode' ? 'Around ' : 'In ') + locality.name, city: locality.name }
           : postalMatch ? { scope: 'postcode', placeId: place.id, label: 'In ' + place.postcode }
           : { scope: 'area', label: area.city ? 'Around ' + area.city : area.region ? 'In ' + area.region : 'In this area' } : undefined;
-        return [{ entry, locations, distanceKm, approximate: point?.precision === 'campus', match, rank: point ? 0 : 1,
+        // Nearest first by that distance; libraries without one come after.
+        return [{ entry, locations, distanceKm, approximate: !exact, match, rank: placed ? 0 : 1,
           sortDistance: distanceKm ?? (localMatch ? localityDistance : locations.length && nearby ? haversineKm(lat, lon, locations[0].lat, locations[0].lon) : Infinity),
           score: name === normalized(query) ? 3 : name.startsWith(normalized(query)) ? 2 : 1 }];
       });

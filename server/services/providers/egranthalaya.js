@@ -1,5 +1,6 @@
-import { cachedTask, enqueueTask, getText, peekCachedTask } from './http.js';
+import { cachedTask, catalogOperation, enqueueTask, getText, peekCachedTask } from './http.js';
 import { firstIsbn } from './catalogMarkup.js';
+import { cleanAuthor, cleanTitle } from './catalogText.js';
 import { validateAndNormalize } from '../isbn.js';
 import isbnRanges from './egranthalaya-isbn-ranges.json' with { type: 'json' };
 
@@ -7,6 +8,10 @@ const ORIGIN = 'https://eg4.nic.in';
 const TIMEOUT_MS = 100_000;
 const MEMBER_PROBE_MS = 15_000;
 const MAX_RESPONSE_BYTES = 4 * 1024 * 1024;
+// Search rows let a book open when its record page comes back empty. They hold
+// only the row's own bibliographic fields, keyed by member and record ID.
+const SEARCH_ROW_TTL_MS = 30 * 60_000;
+let emptyRecordRetryMs = 2_000;
 const BLOCKED_STATUSES = new Set([401, 403, 429]);
 const refusedOrigins = new Set();
 const AVAILABLE = new Set(['available']);
@@ -277,6 +282,64 @@ export function parseHoldings(html, context) {
   return scopedHoldingResult(parseHoldingEvidence(html, context), context);
 }
 
+// eG4's Details.aspx often answers with the page frame for the right record
+// but no bibliographic fields and no holdings table (seen on 10 of 13 reads in
+// November 2026, in fresh and reused sessions). That page says nothing about
+// the record: it is neither a changed layout nor evidence of absence.
+export function isEmptyRecordPage(html, recordId) {
+  const markup = withoutScripts(html);
+  const form = markup.match(/<form\b([^>]*)>/i);
+  if (!form) return false;
+  try {
+    const action = new URL(attributes(form[1]).action, `${ORIGIN}/OPAC/`);
+    if (action.origin !== ORIGIN || action.pathname !== '/OPAC/Details.aspx' || action.searchParams.get('ctr') !== String(recordId)) return false;
+  } catch { return false; }
+  return spanById(markup, 'Lbl_TITLE') === '' && !tableById(markup, 'GridView1');
+}
+
+// Exposed for isolated provider tests only.
+export function setEmptyRecordRetryDelayForTests(ms) {
+  emptyRecordRetryMs = ms;
+}
+
+const sleep = ms => new Promise(resolve => { setTimeout(resolve, ms); });
+
+function detailUrlFor(recordId) {
+  const url = new URL('/OPAC/Details.aspx', ORIGIN);
+  for (const [name, value] of Object.entries({ ctr: recordId, isChecked: 'false', cluster: '', library: '' })) url.searchParams.set(name, value);
+  return url.toString();
+}
+
+// Read one record page, asking once more after a short pause when it comes
+// back empty. The second read is skipped when the check's request budget or
+// deadline has no room for it; a still-empty page is reported as `empty`.
+async function readRecordPage(recordId, { url, cookie, options }) {
+  const read = async () => {
+    blocked();
+    const response = await getText(detailUrlFor(recordId), { ...options, headers: { Cookie: cookie, Referer: url } });
+    requireResponse(response, '/OPAC/Details.aspx');
+    cookie = sessionCookie(response.headers, cookie);
+    return response.text;
+  };
+  let html = await read();
+  if (!isEmptyRecordPage(html, recordId)) return { html, cookie, empty: false };
+  const operation = catalogOperation();
+  if ((operation && operation.requests >= operation.maxRequests)
+      || (options.deadlineAt != null && Date.now() + emptyRecordRetryMs + 2_000 >= options.deadlineAt)) return { html, cookie, empty: true };
+  await sleep(emptyRecordRetryMs);
+  try { html = await read(); }
+  catch (error) {
+    // The first read already answered; a failed second read adds nothing.
+    if (error.code === 'CATALOG_PROVIDER_BLOCKED') throw error;
+    return { html, cookie, empty: true };
+  }
+  return { html, cookie, empty: isEmptyRecordPage(html, recordId) };
+}
+
+function searchRowKey(library, libraryCode, recordId) {
+  return `egranthalaya:search-row:${library.egranthalayaCluster}:${libraryCode}:${recordId}`;
+}
+
 function sessionCookie(headers, previous = '') {
   const values = headers?.getSetCookie?.() || [headers?.get?.('set-cookie') || ''];
   for (const value of values) {
@@ -371,12 +434,8 @@ export async function checkAvailability(library, value) {
       page = search.text;
     }
     if (record?.kind !== 'record') throw providerError('CATALOG_UNRECOGNIZED', 'The public catalog did not prove an exact ISBN match');
-    const detailUrl = new URL('/OPAC/Details.aspx', ORIGIN);
-    for (const [name, value] of Object.entries({ ctr: record.recordId, isChecked: 'false', cluster: '', library: '' })) detailUrl.searchParams.set(name, value);
-    blocked();
-    const detail = await getText(detailUrl.toString(), { ...options, headers: { Cookie: cookie, Referer: url } });
-    requireResponse(detail, '/OPAC/Details.aspx');
-    const result = parseHoldings(detail.text, {
+    const detail = await readRecordPage(record.recordId, { url, cookie, options });
+    const result = parseHoldings(detail.html, {
       isbn, libraryCode, libraryName: library.name, recordId: record.recordId,
       referenceOnly: library.egranthalayaReferenceOnly === true, format: record.format,
     });
@@ -403,12 +462,21 @@ export function parseCatalogSearch(html, libraryCode) {
     const a = attributes(m[1]), index = a.id?.match(/^Repeater1_lnkDetails3_(\d+)$/)?.[1];
     if (index === undefined) continue;
     const recordId = a.onclick?.match(/^(?:javascript:)?showValues\((\d+),\s*false\);\s*return false;?$/i)?.[1];
-    const title = spanById(clean, `Repeater1_Lbl_Title_${index}`);
+    const title = cleanTitle(spanById(clean, `Repeater1_Lbl_Title_${index}`));
     if (!recordId || !title) continue;
-    books.push({ recordId, title, authors: [], isbn: firstIsbn(spanById(clean, `Repeater1_ISBNLbl_${index}`)) });
+    const author = rowAuthor(spanById(clean, `Repeater1_Lbl_Authors_${index}`));
+    const copies = spanById(clean, `Repeater1_Lbl_Holding_Info_${index}`)?.match(/^Total Copy\(ies\):\s*(\d{1,5})$/i);
+    books.push({ recordId, title, authors: author ? [author] : [], isbn: firstIsbn(spanById(clean, `Repeater1_ISBNLbl_${index}`)),
+      ...(copies ? { totalCopies: Number(copies[1]) } : {}) });
   }
   if (Number(count[1]) && !books.length) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog records missing');
   return books.slice(0, 10);
+}
+
+// "By  Abdul Kalam (APJ).." -> "Abdul Kalam (APJ)". A final period after an
+// initial ("Kalam A.P.J.") belongs to the name and is kept.
+function rowAuthor(value) {
+  return cleanAuthor(String(value || '').replace(/^By\s+/i, '').replace(/(?<!(?:^|[\s.])\p{Lu})\.+$/u, ''));
 }
 
 // Title/author discovery uses the chosen member's public ALL/LIKE form.
@@ -425,7 +493,10 @@ export async function searchCatalog(library, query) {
     const response = await getText(url, { ...options, method: 'POST', body: fields.toString(),
       headers: { Cookie: cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
     requireResponse(response, '/OPAC/Default.aspx');
-    return parseCatalogSearch(response.text, libraryCode);
+    const books = parseCatalogSearch(response.text, libraryCode);
+    // This member-scoped search confirms each row's record in this library.
+    for (const book of books) await cachedTask(searchRowKey(library, libraryCode, book.recordId), () => book, { ttlMs: SEARCH_ROW_TTL_MS });
+    return books;
   }, { deadlineAt }), { deadlineAt });
 }
 
@@ -438,29 +509,37 @@ export async function resolveCatalogRecord(library, recordId) {
     const home = await getText(url, options); requireResponse(home, '/OPAC/Default.aspx');
     const cookie = sessionCookie(home.headers);
     if (!cookie || !selectedOption(home.text, 'DDL_Library')?.options.some(o => o.value === libraryCode)) throw providerError('CATALOG_UNRECOGNIZED', 'Unknown catalog member');
-    const detail = new URL('/OPAC/Details.aspx', ORIGIN);
-    for (const [k, v] of Object.entries({ ctr: recordId, isChecked: 'false', cluster: '', library: '' })) detail.searchParams.set(k, v);
-    blocked();
-    const response = await getText(detail.toString(), { ...options, headers: { Cookie: cookie, Referer: url } });
-    requireResponse(response, '/OPAC/Details.aspx');
-    const evidence = parseHoldingEvidence(response.text, { recordId, selectedRecord: true });
+    const page = await readRecordPage(recordId, { url, cookie, options });
+    if (page.empty) {
+      // The record page answered without the record. Fall back to the row this
+      // member's own search returned; copy status stays unconfirmed.
+      const row = peekCachedTask(searchRowKey(library, libraryCode, recordId));
+      if (!row) throw providerError('CATALOG_UNAVAILABLE', 'The catalog record page came back empty');
+      return { recordId, title: row.title, authors: row.authors || [], isbn: row.isbn || null,
+        observation: { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true,
+          ...(row.totalCopies > 0 ? { totalCopies: row.totalCopies } : {}),
+          ...(library.egranthalayaReferenceOnly === true ? { format: 'Book (reference use only)' } : {}),
+          locations: [{ name: library.name, status: 'unknown' }] } };
+    }
+    const html = page.html;
+    const evidence = parseHoldingEvidence(html, { recordId, selectedRecord: true });
     const own = evidence?.holdings.filter(r => r.libraryCode === libraryCode);
-    const title = spanById(response.text, 'Lbl_TITLE') || spanById(response.text, 'Lbl_Title');
+    const title = cleanTitle(spanById(html, 'Lbl_TITLE') || spanById(html, 'Lbl_Title'));
     if (!title) throw providerError('CATALOG_UNRECOGNIZED', 'Missing record title');
     if (!own?.length) {
       // Some public records have no accessioned copy. Confirm membership with
       // a fresh member-scoped title search before reporting catalog presence.
-      const fields = searchForm(home.text, { libraryCode, query: firstIsbn(spanById(response.text, 'Lbl_ISBN')) || (title.match(/[\p{L}\p{N}]{3,}/u)?.[0] || title).slice(0, 160) });
+      const fields = searchForm(home.text, { libraryCode, query: firstIsbn(spanById(html, 'Lbl_ISBN')) || (title.match(/[\p{L}\p{N}]{3,}/u)?.[0] || title).slice(0, 160) });
       if (!fields) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog search form changed');
       blocked();
       const confirmation = await getText(url, { ...options, method: 'POST', body: fields.toString(),
-        headers: { Cookie: cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
+        headers: { Cookie: page.cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
       requireResponse(confirmation, '/OPAC/Default.aspx');
       if (!parseCatalogSearch(confirmation.text, libraryCode).some(book => book.recordId === recordId)) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog did not confirm this member’s record');
     }
     const observation = scopedHoldingResult(evidence, { libraryCode, libraryName: library.name, referenceOnly: library.egranthalayaReferenceOnly })
       || { outcome: 'in_catalog', locations: [{ name: library.name, status: 'unknown' }] };
-    return { recordId, title, authors: [spanById(response.text, 'Lbl_AUTHOR')].filter(Boolean), isbn: firstIsbn(spanById(response.text, 'Lbl_ISBN')),
+    return { recordId, title, authors: [rowAuthor(spanById(html, 'Lbl_AUTHOR'))].filter(Boolean), isbn: firstIsbn(spanById(html, 'Lbl_ISBN')),
       observation: { ...observation, matchKind: 'verified_work', recognizedExact: true } };
   }, { deadlineAt }), { deadlineAt });
 }
@@ -520,13 +599,9 @@ async function checkMemberAvailability(library, isbn, { url, libraryCode, deadli
       const results = [];
       for (const record of parsed.records) {
         try {
-          blocked();
-          const detailUrl = new URL('/OPAC/Details.aspx', ORIGIN);
-          for (const [name, value] of Object.entries({ ctr: record.recordId, isChecked: 'false', cluster: '', library: '' })) detailUrl.searchParams.set(name, value);
-          const detail = await getText(detailUrl.toString(), { ...options, headers: { Cookie: cookie, Referer: url } });
-          requireResponse(detail, '/OPAC/Details.aspx');
-          cookie = sessionCookie(detail.headers, cookie);
-          const result = parseHoldings(detail.text, { isbn, recordId: record.recordId, libraryCode, libraryName: library.name,
+          const detail = await readRecordPage(record.recordId, { url, cookie, options });
+          cookie = detail.cookie;
+          const result = parseHoldings(detail.html, { isbn, recordId: record.recordId, libraryCode, libraryName: library.name,
             referenceOnly: library.egranthalayaReferenceOnly === true, format: record.format });
           if (result) results.push(result);
           if (result?.outcome === 'available') return memberObservation(library, results);
@@ -592,13 +667,9 @@ export async function checkClusterAvailability(library, value, { deadlineAt = Da
           for (const record of parsed.records || []) {
             if (unreadable.has(record.recordId)) { value.partial = true; continue; }
             const evidence = await cachedTask(`egranthalaya:cluster-detail:${library.egranthalayaCluster}:${isbn}:${record.recordId}`, async () => {
-              const detailUrl = new URL('/OPAC/Details.aspx', ORIGIN);
-              for (const [name, value] of Object.entries({ ctr: record.recordId, isChecked: 'false', cluster: '', library: '' })) detailUrl.searchParams.set(name, value);
-              blocked();
-              const detail = await getText(detailUrl.toString(), { ...options, headers: { Cookie: cookie, Referer: url } });
-              requireResponse(detail, '/OPAC/Details.aspx');
-              cookie = sessionCookie(detail.headers, cookie);
-              return parseHoldingEvidence(detail.text, { isbn, recordId: record.recordId });
+              const detail = await readRecordPage(record.recordId, { url, cookie, options });
+              cookie = detail.cookie;
+              return parseHoldingEvidence(detail.html, { isbn, recordId: record.recordId });
             }, { deadlineAt: options.deadlineAt, ttlMs: 5 * 60_000, shouldCache: Boolean });
             if (!evidence) { unreadable.add(record.recordId); value.partial = true; continue; }
             value.partial ||= !evidence.complete;

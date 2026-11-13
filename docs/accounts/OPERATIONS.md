@@ -113,6 +113,63 @@ Record these in #147/#133 using safe values, not credentials:
    observed. Existing engineering drill evidence can guide the operator; it does
    not stand in for their independent exercise.
 
+## Nightly backup
+
+Owner decision (one-shelf plan, section 9): stay on the free database plan and
+keep a nightly encrypted export of the accounts database for 30 days.
+`.github/workflows/account-backup.yml` runs at 20:41 UTC. It dumps the
+database with `pg_dump` (`tools/accounts/backup.sh`), compresses and encrypts it
+in one stream with [age](https://age-encryption.org/) to the owner's public key
+(no plain SQL is written to disk or uploaded), stores the file in a private
+Vercel Blob store and deletes stored files older than 29 days
+(`tools/accounts/backup-store.mjs`). Nothing runs until it is configured.
+
+Settings (GitHub → Settings → Environments → `accounts-backup`):
+
+| Name | Kind | Value |
+|---|---|---|
+| `ACCOUNTS_BACKUP_DATABASE_URL` | secret | Direct (not `-pooler`) connection string of a role that reads every table with row security bypassed: preferably `mybookshelf_backup` (LOGIN, BYPASSRLS, NOSUPERUSER; `server/db/runtime-grants.sql` grants it SELECT), else the migration administrator. |
+| `ACCOUNTS_BACKUP_BLOB_READ_WRITE_TOKEN` | secret | Read/write token of a new private Blob store used only for backups (not the deletion ledger's store). |
+| `ACCOUNTS_BACKUP_AGE_RECIPIENT` | variable | The age public key (`age1…`). Create the pair offline with `age-keygen -o mybookshelf-backup-key.txt`; keep the private key file with the owner (password manager or offline), never in GitHub or Vercel. |
+| `ACCOUNTS_BACKUP_ENABLED` | repository variable | `true` turns on the nightly schedule. A manual run works without it. |
+
+A role that is subject to row security makes `pg_dump` stop with an error, so a
+backup is never silently missing rows. Run the workflow once by hand after
+setting it up and check the "List stored backups" step. If the schedule stops
+(GitHub pauses scheduled workflows after 60 days without repository activity),
+the files already stored are no longer pruned: re-enable it or delete them in
+the Blob store.
+
+### Restoring from a nightly backup
+
+Keep account traffic off the destination until the last step.
+
+1. Create an isolated, empty database (a Neon branch or a new database), and
+   the runtime roles if it is in another project.
+2. Download the file: `ACCOUNTS_BACKUP_BLOB_READ_WRITE_TOKEN=… node tools/accounts/backup-store.mjs list`,
+   then `… download accounts-<time>.sql.gz.age backup.age`.
+3. Decrypt and load in one transaction:
+   `age --decrypt --identity mybookshelf-backup-key.txt backup.age | gunzip | psql "$DESTINATION_URL" -v ON_ERROR_STOP=1 --single-transaction`.
+4. Apply `server/db/runtime-grants.sql` as the administrator, then
+   `npm run accounts:migrate --workspace server` (it checks the restored
+   migration checksums and applies anything newer).
+5. Run the reconciliation in [Migrations and restoration](#migrations-and-restoration)
+   with `ACCOUNTS_RESTORE_SNAPSHOT_CREATED_AT` set to the time in the file name
+   (`accounts-20261113T204100Z…` is `2026-11-13T20:41:00Z`). It removes accounts deleted since the backup and ends restored sessions.
+6. Validate, then point the runtime connection strings at the destination.
+
+Dry run, 13 November 2026, on a throwaway local Postgres 16 with migrations
+001–012 and synthetic rows: the script refused to run without its settings, with
+a `-pooler` host and with roles subject to row security (no file left behind);
+with a BYPASSRLS reader it wrote a 6.7 kB encrypted file in under 0.1 s with no
+readable text in it; decrypting and loading it into a second database gave the
+same row counts and content checksum, the same 7 FORCE RLS tables and 9
+policies, and the migration runner accepted all 12 checksums. The Blob upload,
+prune and download paths were exercised with a stand-in store
+(`tools/accounts/backup-store.test.mjs`); the reconciliation step is covered by
+`server/accounts/restore.integration.test.js`. Not yet run: the workflow on
+GitHub against production, and a restore from a real stored file.
+
 ## Maintenance and overdue work
 
 `GET /api/internal/account-jobs` requires the independent, at-least-32-character

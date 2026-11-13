@@ -33,7 +33,9 @@ Create each story's native tasks when reached; implement and verify before closi
   generic country-rules prompt, not turned into a global legal claim.
 - A reading action requires an explicit per-location `free_full_text` claim,
   positive evidence field/source/time, a safe supplied HTTP(S) URL, and an
-  observation no older than 24 hours. Stale, missing, contradictory or
+  observation no older than 24 hours (30 days for the bundled Gutenberg, Open
+  Textbook Library and Book Dash catalogs since 2026-11-11, shown with their
+  check date; see `server/data/content/README.md`). Stale, missing, contradictory or
   country-mismatched observations become unknown; fetch failure is not absence.
   Reuse licence and free reading remain distinct. Missing licence never becomes
   an invented Creative Commons licence.

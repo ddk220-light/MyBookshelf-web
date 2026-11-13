@@ -47,6 +47,8 @@ type Sensitive = {
 type Proof = { proof: string; csrfToken: string };
 export function AccountSettingsPage() {
   const recent = useRecentAuth();
+  // One-shelf build (plan 4.7): Viewed before is always saved to the account,
+  // so the history switch is not shown here (reached from Account settings → More).
   const deletion = useDeletionReceipt(),
     exportRequest = useRef<string | null>(null);
   const account = useAccountSession(),
@@ -436,8 +438,8 @@ export function AccountSettingsPage() {
     );
   return (
     <section className="page-section account-settings-page">
-      <Link className="back-link" to="/app/settings">
-        ← Settings
+      <Link className="back-link" to="/app/settings/account">
+        ← Account settings
       </Link>
       <header className="page-heading">
         <h1>Your account</h1>
@@ -700,29 +702,6 @@ export function AccountSettingsPage() {
             <h2 id="history-controls" className="settings-label">
               Recently viewed
             </h2>
-            <div className="account-row account-history-row">
-              <div className="account-stack">
-                <strong>Save recently viewed books to my account</strong>
-                <p className="form-hint">
-                  {library.historyEnabled
-                    ? "On. Up to 50 books for 30 days."
-                    : "Off. When on, up to 50 books for 30 days. Existing entries still expire."}
-                </p>
-              </div>
-              <button
-                className="account-history-switch"
-                role="switch"
-                aria-label="Save recently viewed books to my account"
-                aria-checked={Boolean(library.historyEnabled)}
-                aria-busy={library.pending}
-                disabled={library.recoveryMode || library.pending}
-                onClick={() =>
-                  void library.setHistoryEnabled?.(!library.historyEnabled)
-                }
-              >
-                <span aria-hidden="true" />
-              </button>
-            </div>
             <div className="account-row">
               <span className="form-hint">
                 {library.state.recentBooks.length} recent books
@@ -809,7 +788,7 @@ export function AccountSettingsPage() {
           </section>
           <p className="account-settings-footnote">
             Reading light and companion settings stay on this device.{" "}
-            <a href="/privacy#website">Privacy policy</a>
+            <a href="/app/privacy">Privacy policy</a>
           </p>
         </>
       )}

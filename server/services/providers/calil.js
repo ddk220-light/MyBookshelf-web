@@ -93,6 +93,33 @@ async function fetchCheck({ appKey, isbn, systemId, session, deadlineAt }) {
   return response.json;
 }
 
+// Calil's documented /check takes a comma-separated ISBN list in one call and
+// is polled with the returned session until `continue` is 0. Each ISBN is
+// parsed on its own: one complete ISBN answer never stands in for another,
+// and an ISBN whose answer is missing or still running is `null` (couldn't
+// check), never "not found".
+export const CALIL_MAX_BATCH_ISBNS = 30;
+
+export async function checkMany(library, isbns, { appKey = process.env.CALIL_APP_KEY, deadlineAt = Date.now() + DEFAULT_TIMEOUT_MS } = {}) {
+  const wanted = [...new Set((isbns || []).map(value => String(value || '').replace(/[^\dX]/gi, '')).filter(Boolean))].slice(0, CALIL_MAX_BATCH_ISBNS);
+  if (!wanted.length) return new Map();
+  if (!appKey) throw providerError('CATALOG_CONFIGURATION_REQUIRED', 'Calil is not configured on this server');
+  const systemId = library?.calilSystemId || library?.slug;
+  if (!systemId) throw providerError('CATALOG_CONFIGURATION_REQUIRED', 'Calil system is not configured');
+  let payload = await fetchCheck({ appKey, isbn: wanted.join(','), systemId, deadlineAt });
+  for (let polls = 0; payload?.continue === 1 && polls < MAX_POLLS; polls += 1) {
+    if (typeof payload.session !== 'string' || !payload.session.trim()) {
+      throw providerError('CATALOG_UNRECOGNIZED', 'Calil did not provide a polling session');
+    }
+    if (deadlineAt - Date.now() <= POLL_INTERVAL_MS) break;
+    await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    payload = await fetchCheck({ appKey, isbn: wanted.join(','), systemId, session: payload.session, deadlineAt });
+  }
+  const answers = new Map();
+  for (const isbn of wanted) answers.set(isbn, parseCalilAvailability(payload, { isbn, systemId }));
+  return answers;
+}
+
 export async function checkAvailability(library, isbn, { appKey = process.env.CALIL_APP_KEY } = {}) {
   if (!isbn) throw providerError('CATALOG_EXACT_ISBN_REQUIRED', 'Calil availability requires an ISBN');
   if (!appKey) throw providerError('CATALOG_CONFIGURATION_REQUIRED', 'Calil is not configured on this server');

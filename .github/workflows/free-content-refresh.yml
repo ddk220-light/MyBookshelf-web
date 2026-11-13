@@ -43,30 +43,16 @@ jobs:
         run: python tools/content/refresh_catalogs.py --output-dir /tmp/free-content-candidates
       - name: Audit candidate API identities and current reading evidence
         run: node tools/content/audit_snapshots.mjs /tmp/free-content-candidates
-      - run: npx playwright install --with-deps chromium
-      - name: Recheck reviewed children without creating a source account
-        run: node tools/content/refresh_children.mjs --output /tmp/free-content-candidates/children-pilot.json
-      - name: Include reviewed-story evidence in the proposal
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          directory = Path('/tmp/free-content-candidates')
-          records = json.loads((directory / 'children-pilot.json').read_text())['records']
-          report = json.loads((directory / 'report.json').read_text())
-          report['childrenReview'] = {'records': len(records), 'observedAt': min(r['review']['reviewedAt'] for r in records), 'postLoginReadingVerified': False, 'sourceAccountsCreated': False}
-          (directory / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
-          with (directory / 'report.md').open('a') as stream:
-              stream.write('\nAlso rechecked the reviewed StoryWeaver set: unchanged metadata, book licence policy and free-account reading offers. No source account was created; post-login reading was not tested.\n')
-          PY
+      # The reviewed StoryWeaver starter set was retired on 7 November 2026
+      # (shared/content-source-availability.mjs). Its recheck is no longer part
+      # of this refresh; the saved manifest stays untouched for old links.
       - name: Propose review and retain production flags
         run: |
           cp /tmp/free-content-candidates/gutenberg.json server/data/content/gutenberg.json
           cp /tmp/free-content-candidates/open-textbook-library.json server/data/content/open-textbook-library.json
           cp /tmp/free-content-candidates/bookdash.json server/data/content/bookdash.json
-          cp /tmp/free-content-candidates/children-pilot.json server/data/content/children-pilot.json
           cp /tmp/free-content-candidates/report.json docs/research/free-content/evidence/latest-refresh.json
-          git add server/data/content/gutenberg.json server/data/content/open-textbook-library.json server/data/content/bookdash.json server/data/content/children-pilot.json docs/research/free-content/evidence/latest-refresh.json
+          git add server/data/content/gutenberg.json server/data/content/open-textbook-library.json server/data/content/bookdash.json docs/research/free-content/evidence/latest-refresh.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'Refresh official free-content metadata observations'
           git push origin "$CATALOG_REFRESH_BRANCH"

@@ -1,5 +1,7 @@
 // Place lookup is separate from library evidence: a geocoded city is a search
-// center, never a newly verified library location. Queries are not logged.
+// center, never a newly verified library location. Queries are not written to
+// platform logs; library-finder text goes only to the anonymous operational
+// log (catalog-store/usageLog.js), when that log is enabled.
 import { searchIndiaPlaces } from './indiaPlaces.js';
 export function createPlaceSearch({ fetcher = fetch, now = Date.now } = {}) {
   const cache = new Map();

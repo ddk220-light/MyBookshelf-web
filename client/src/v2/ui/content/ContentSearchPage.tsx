@@ -11,7 +11,7 @@ import { ContentResult } from './ContentResult';
 import { ContentDetail } from './ContentDetailPage';
 import { SearchIcon, OpenBookIcon, ShelfIcon } from '../icons';
 import { contentMessages as m } from '../../uiMessages';
-import { safeSource, sourceName, sourceStatus } from './presentation';
+import { checkedWhen, lastChecked, safeSource, sourceName, sourceStatus } from './presentation';
 import './content.css';
 
 const memory=new Map<string,{page:ContentPage;expires:number}>();
@@ -114,6 +114,7 @@ export function ContentSearchPage({scope}:{scope:'free'|'papers'}) {
         {interrupted.length>0&&<div className="content-notice"><h2>{interrupted.length===1?`${sourceName(interrupted[0])} ${interrupted[0].status==='timeout'?'didn’t answer in time':'could not answer'}`:'Some sources could not answer'}</h2><p>Other results are shown. These sources may have more matches.</p>{page.sessionCursor&&interrupted.filter(s=>s.retryable).map(source=><button className="text-button" key={source.id} disabled={busy} onClick={()=>void load(page.sessionCursor,source.id)}>Try {sourceName(source)} again</button>)}</div>}
         {page.sources.some(s=>s.id==='openalex'&&s.status==='quota_exhausted')&&<div className="content-notice"><h2>{m.quotaTitle}</h2><p>{m.quotaDetail}</p></div>}
         {page.sources.some(s=>s.freshness==='stale')&&<p className="content-notice">These source details need refreshing. Older reading links are marked unclear.</p>}
+        {!page.sources.some(s=>s.freshness==='stale')&&lastChecked(page.sources)&&<p className="content-coverage">Reading links last checked {checkedWhen(lastChecked(page.sources))}.</p>}
         {(page.items.length>0||failed.length>0||page.hiddenUnclear>0)&&<div className="content-count"><span><span>{free.length+account.length} {scope==='papers'?(free.length+account.length===1?'paper':'papers'):(free.length+account.length===1?'free book':'free books')} shown</span>{answered.length>0&&<> · {failed.length?`${answered.length} of ${searched.length} sources answered`:(answered.some(source=>source.returned>0)?answered.filter(source=>source.returned>0):answered).map(sourceName).join(' · ')}</>}</span><button className="text-button" onClick={()=>setSourcesOpen(true)}>Sources</button></div>}
         {page.sources.some(s=>s.complete===false)&&<p className="content-coverage">Searching limited catalog snapshots{page.sources.some(s=>s.catalogRecords)?` with ${page.sources.reduce((sum,s)=>sum+(s.catalogRecords||0),0).toLocaleString()} records`:''}. Source coverage varies.</p>}
           <div className={children?'content-children-grid':undefined}>{free.map(item=><ContentResult key={item.key} item={item} to={itemLink(item.key)} returnTo={returnTo} selected={selected===item.key}/>)}</div>

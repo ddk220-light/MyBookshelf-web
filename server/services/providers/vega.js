@@ -77,12 +77,16 @@ export function parseVegaAvailability(payload, isbn) {
   if (!tabs.length) return null;
   const statuses = tabs.map(tabStatus);
   const locations = locationsFor(tabs);
+  // The ISBN is listed under this format group. Without a circulation status
+  // for its tab (an eBook or eAudiobook says "CheckAvailability" and leaves
+  // the answer to its vendor), the catalog still holds it: in the catalog,
+  // copy status unknown. Searching an eBook's ISBN returns the whole group
+  // (DC Public Library, captured 2026-11-13).
   const outcome = statuses.includes('available') || locations.some((location) => location.status === 'available')
     ? 'available'
     : statuses.some((status) => status === 'unavailable') || locations.some((location) => location.status === 'unavailable')
       ? 'none_available'
-      : null;
-  if (!outcome) return null;
+      : 'in_catalog';
 
   const physical = tabs.find((tab) => tab.type === 'physical') || tabs[0];
   return {

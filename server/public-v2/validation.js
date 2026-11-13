@@ -125,3 +125,39 @@ export function parseAvailability(body) {
   if (!bookKey || !parsed) return { libraryId, bookKey: null, parsed: null };
   return { libraryId, bookKey, parsed, ...(editionScope ? { editionScope } : {}), ...(language ? { language } : {}) };
 }
+
+// Holdings routes (plan 3.5). Book identities sent by the client are used only
+// to read stored answers; anything written is derived on the server.
+const WORK_ID = /^OL\d+W$/;
+function holdingsBooks(value, maximum) {
+  if (!Array.isArray(value) || !value.length || value.length > maximum) throw new PublicV2ValidationError();
+  const seen = new Set();
+  return value.flatMap((item) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) throw new PublicV2ValidationError();
+    const { bookKey, isbn13, workId } = item;
+    if (typeof bookKey !== 'string' || !parsePublicBookKey(bookKey)) throw new PublicV2ValidationError();
+    if (isbn13 !== undefined && (typeof isbn13 !== 'string' || validateAndNormalize(isbn13) !== isbn13)) throw new PublicV2ValidationError();
+    if (workId !== undefined && (typeof workId !== 'string' || !WORK_ID.test(workId))) throw new PublicV2ValidationError();
+    if (seen.has(bookKey)) return [];
+    seen.add(bookKey);
+    return [{ bookKey, ...(isbn13 ? { isbn13 } : {}), ...(workId ? { workId } : {}) }];
+  });
+}
+
+export function parseHoldingsLookup(body) {
+  const value = bodyObject(body);
+  return { ...parseLibraryResolve(value), books: holdingsBooks(value.books, 100) };
+}
+
+export function parseHoldingsSearch(body) {
+  const value = bodyObject(body);
+  return { ...parseLibraryResolve(value), query: text(value.query, MAX_QUERY_LENGTH), books: holdingsBooks(value.books, 12) };
+}
+
+export function parseHoldingsCheck(body) {
+  const value = bodyObject(body);
+  const { libraryId } = parseLibraryResolve(value);
+  const { bookKey, parsed } = parseBookResolve(value);
+  if (!bookKey) throw new PublicV2ValidationError();
+  return { libraryId, bookKey, parsed };
+}

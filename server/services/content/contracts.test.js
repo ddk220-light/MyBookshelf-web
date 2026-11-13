@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { contentKey, parseContentKey, normalizeDoi, safeWebUrl, observedAccess, readingActions, parseContentSearch, parseContentResolve, itemAccess } from './contracts.js';
+import { contentKey, parseContentKey, normalizeDoi, safeWebUrl, observedAccess, readingActions, parseContentSearch, parseContentResolve, itemAccess, CATALOG_EVIDENCE_MAX_AGE_MS } from './contracts.js';
 
 test('source-native identities survive round trip; DOI does not become content identity', () => {
   assert.equal(contentKey('gutenberg', '1342'), 'fcd:v1:gutenberg:1342');
@@ -48,6 +48,13 @@ test('verified free source accounts remain explicit, fresh and separate from unk
   assert.equal(itemAccess({locations:[account,free]},{now}),'free_full_text');
   assert.equal(readingActions({locations:[account,free]},{now})[0].locationId,free.id);
   assert.equal(observedAccess(account,{now:now+86400001}),'unknown');
+  // Only the presenting service can widen the window; a request field cannot.
+  assert.equal(observedAccess(free,{now:now+86400001,maxEvidenceAgeMs:CATALOG_EVIDENCE_MAX_AGE_MS}),'unknown');
+  assert.equal(observedAccess(free,{now:now+86400001},{maxEvidenceAgeMs:CATALOG_EVIDENCE_MAX_AGE_MS}),'free_full_text');
+  assert.equal(observedAccess(free,{now:now+CATALOG_EVIDENCE_MAX_AGE_MS+1},{maxEvidenceAgeMs:CATALOG_EVIDENCE_MAX_AGE_MS}),'unknown');
+  assert.equal(observedAccess(free,{now:now+86400001},{maxEvidenceAgeMs:Infinity}),'unknown');
+  assert.equal(itemAccess({locations:[free]},{now:now+86400001},{maxEvidenceAgeMs:CATALOG_EVIDENCE_MAX_AGE_MS}),'free_full_text');
+  assert.equal(readingActions({locations:[free]},{now:now+86400001},{maxEvidenceAgeMs:CATALOG_EVIDENCE_MAX_AGE_MS}).length,1);
   assert.deepEqual(readingActions({locations:[{...account,access:'registration'}]},{now}),[]);
   assert.equal(parseContentSearch({query:'x'}).access,'free');
   assert.equal(parseContentSearch({query:'x',access:'free_full_text'}).access,'free_full_text');

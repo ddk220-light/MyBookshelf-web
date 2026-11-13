@@ -4,6 +4,10 @@
     {
       "path": "/api/internal/account-jobs",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/internal/catalog-maintenance",
+      "schedule": "17 21 * * *"
     }
   ],
   "services": {
@@ -18,7 +22,7 @@
           "src": "/(.*)",
           "headers": {
             "Cache-Control": "no-cache",
-            "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://books.google.com https://books.googleusercontent.com https://covers.openlibrary.org https://archive.org/download/ https://*.us.archive.org/view_archive.php https://tile.openstreetmap.org data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+            "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://books.google.com https://books.googleusercontent.com https://covers.openlibrary.org https://archive.org/download/ https://*.us.archive.org/view_archive.php data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
           },
           "continue": true
         },
@@ -66,7 +70,14 @@
           "dest": "/app/index.html"
         },
         {
-          "src": "/(about|how-it-works|open-source|privacy|support|libraries)",
+          "src": "/find",
+          "headers": {
+            "X-Robots-Tag": "noindex, follow"
+          },
+          "dest": "/app/index.html"
+        },
+        {
+          "src": "/(about|how-it-works|open-source|privacy|terms|support|libraries)",
           "dest": "/$1.html"
         },
         {

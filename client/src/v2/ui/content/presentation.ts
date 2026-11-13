@@ -24,11 +24,16 @@ export function sourceStatus(source: ContentSourceStatus) {
     quota_exhausted: 'At today’s limit', unavailable: 'Could not answer', unsupported: 'Filter not supported',
   } as Record<string, string>)[source.status] || 'Could not answer';
 }
+// The oldest check date among catalogs whose reading links were last
+// confirmed more than a day ago; undefined when every source is fresh.
+export function lastChecked(sources: ContentSourceStatus[]) {
+  return sources.filter(source => source.freshness === 'recent' && source.importedAt).map(source => source.importedAt!).sort()[0];
+}
 export function checkedWhen(value?: string) {
   if (!value || !Number.isFinite(Date.parse(value))) return 'time not supplied';
   const hours = Math.max(0, (Date.now() - Date.parse(value)) / 3600000);
   return hours < 1 ? 'just now' : hours < 24 ? `${Math.floor(hours)} ${Math.floor(hours) === 1 ? 'hour' : 'hours'} ago`
-    : new Date(value).toLocaleDateString();
+    : new Date(value).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 }
 export function safeSource(value?: string) {
   try { const url = new URL(value || ''); return ['https:', 'http:'].includes(url.protocol) && !url.username && !url.password ? url.href : undefined; }
