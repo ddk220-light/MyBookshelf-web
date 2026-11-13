@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { publicApi, webLink } from '../../api';
 import { useLibrary } from '../../context';
 import { useHoldingsStore } from '../../holdings';
@@ -25,11 +25,15 @@ type Result = { libraryId: string; bookKey: string; attempt: number; answer: Exc
  * for another book or edition, or after the library changes. Any failure,
  * time-out or unreadable reply is "unknown" (couldn't check), never "not
  * found". Definite answers also go into the in-memory holdings store, so the
- * shelf and results agree with the book page.
+ * shelf and results agree with the book page. A "found" already in that
+ * store for this exact book key (a search result's mark, or the shelf's
+ * stored answer) shows at once while the check runs, and a check that fails
+ * does not take it away.
  */
 export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCardModel {
   const { state, library, loadingLibrary, libraryError, retryLibrary } = useLibrary();
   const store = useHoldingsStore();
+  useSyncExternalStore(store.subscribe, store.version, store.version);
   const libraryId = state.selectedLibraryId;
   const ready = Boolean(libraryId && library?.id === libraryId);
   const checkable = ready && Boolean(library?.capabilities.publicAvailability);
@@ -68,6 +72,8 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
   const current = result && result.libraryId === libraryId && result.bookKey === bookKey && result.attempt === attempt ? result : null;
   const catalogUrl = current?.catalogUrl || homeUrl;
   const link = catalogUrl ? { catalogUrl } : {};
+  const known = bookKey && store.libraryId() === libraryId && store.get(bookKey) === 'found';
+  if (known && (!current || current.answer === 'unknown')) return { kind: 'library', answer: 'found', name, ...link };
   // A library whose catalog the app cannot read: couldn't check (unless an
   // answer was stored), and trying again would not help.
   if (!checkable && current?.answer !== 'found' && current?.answer !== 'not_found') return { kind: 'library', answer: 'unsupported', name, ...link };

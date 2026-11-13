@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isbnSource, useLibrary } from '../../context';
+import { useHoldingsStore } from '../../holdings';
 import { readReaderPreferences, writeReaderPreferences } from '../../readerState';
 import { candidatesFor, queryForCandidates, shelfMatchesFor } from '../../searchMemory';
 import type { RecentBook } from '../../types';
 import { SidePanel } from '../panel/SidePanel';
 import { ResultsShelf } from '../search/ResultsShelf';
-import { resultEntries } from '../search/searchResults';
+import { resultEntries, type ResultEntry } from '../search/searchResults';
 import { runBookSearch, useBookSearch } from '../search/useBookSearch';
+import { isMarked, useLibraryMarks } from '../search/useLibraryMarks';
 import { ScanDialog, type ScanAnswer, type ScanSource } from '../scan/ScanDialog';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { libraryLinkMessage, type LibraryLinkNotice } from '../library/SelectLibraryLink';
@@ -240,8 +242,16 @@ export function HomeScreen() {
   const empty = entries.length === 0;
   const count = entries.length;
   const resultsStatus = search.status === 'searching' ? 'searching' : search.status === 'failed' ? 'failed' : 'results';
+  // The chosen library's background check for these results (plan Phase 8).
+  // Only for a library whose catalog the app can read; none chosen, nothing.
+  const checkable = Boolean(badgeLibrary && library?.capabilities.publicAvailability);
+  const marks = useLibraryMarks({ active: showResults && resultsStatus === 'results' && results.length > 0 && checkable,
+    libraryId: state.selectedLibraryId, candidateId, entries: results, query: queryForCandidates(candidateId) });
+  const markedCount = useMarkedCount(badgeLibrary ? results : []);
+  const books = (total: number) => total === 1 ? '1 book' : total + ' books';
   const announcement = !showResults ? '' : resultsStatus === 'searching' ? 'Searching' : resultsStatus === 'failed' ? 'Couldn’t search'
-    : results.length ? (results.length === 1 ? '1 book' : results.length + ' books') : 'No books found';
+    : !results.length ? 'No books found'
+      : books(results.length) + (marks.checking ? '. Looking in ' + badgeLibrary : markedCount ? '. ' + books(markedCount) + ' in ' + badgeLibrary : '');
   const shelf = <>
     {empty ? <EmptyShelf onSearch={focusSearch} onScan={goScan} showBays={false} /> : <section className="my-shelf" aria-labelledby="my-shelf-heading">
       <div className="my-shelf-heading">
@@ -255,7 +265,7 @@ export function HomeScreen() {
     {empty && !state.recentBooks.length && <EmptyBays />}
   </>;
   const resultsPane = <ResultsShelf ref={resultsHeading} status={resultsStatus} entries={results} view={view}
-    onRetry={() => { void submit(search.query || query); }} onScan={goScan} />;
+    onRetry={() => { void submit(search.query || query); }} onScan={goScan} libraryName={badgeLibrary} checking={marks.checking} reserveLine={checkable} />;
 
   return <div className="home">
     {linkNotice && <p className="home-notice" role="status">{libraryLinkMessage(linkNotice)}</p>}
@@ -274,3 +284,10 @@ export function HomeScreen() {
   </div>;
 }
 
+
+/** How many of these result cards the chosen library has marked. */
+function useMarkedCount(entries: readonly ResultEntry[]): number {
+  const holdings = useHoldingsStore();
+  useSyncExternalStore(holdings.subscribe, holdings.version, holdings.version);
+  return entries.filter(entry => isMarked(holdings, entry)).length;
+}

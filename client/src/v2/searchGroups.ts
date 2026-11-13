@@ -22,7 +22,8 @@ export const normalizeText = (value: string) => String(value || '').normalize('N
 
 const WORK_ID = /^OL\d+W$/;
 // Open Library search results carry their work ID in the key as well.
-function workIdOf(book: PublicBook): string | null {
+/** The record's Open Library work ID, from its data or its key; null without one. */
+export function workIdOf(book: Pick<PublicBook, 'bookKey' | 'workId'>): string | null {
   if (WORK_ID.test(book.workId || '')) return book.workId!;
   return /^v1:openlibrary:(OL\d+W)$/.exec(book.bookKey)?.[1] || null;
 }

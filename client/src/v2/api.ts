@@ -22,53 +22,86 @@ export class PublicApiError extends Error {
   }
 }
 
-export async function post<T>(path: string, body: Record<string, unknown>, signal?: AbortSignal, progress?:(source:ContentSourceStatus)=>void): Promise<T> {
-  let response: Response;
+const NDJSON = 'application/x-ndjson';
+const MAX_STREAM_BYTES = 4 * 1024 * 1024;
+const isAbortError = (error: unknown) => error instanceof DOMException && error.name === 'AbortError';
+
+async function send(path: string, body: Record<string, unknown>, signal?: AbortSignal, stream = false): Promise<Response> {
   try {
-    response = await fetch(`/api/v2${path}`, {
+    return await fetch(`/api/v2${path}`, {
       method: 'POST',
       credentials: import.meta.env.VITE_DEPLOYMENT_ENV === 'preview' ? 'same-origin' : 'omit',
-      headers: { 'Content-Type': 'application/json',...progress?{Accept:'application/x-ndjson'}:{} },
+      headers: { 'Content-Type': 'application/json', ...stream ? { Accept: NDJSON } : {} },
       body: JSON.stringify(body),
       signal,
     });
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'AbortError') throw error;
+    if (isAbortError(error)) throw error;
     throw new PublicApiError({ code: 'NETWORK_ERROR', message: 'Unable to reach the catalog service.' });
   }
+}
 
-  if(progress&&response.headers.get('content-type')?.includes('application/x-ndjson')){
-    const reader=response.body?.getReader();if(!reader)throw new PublicApiError();
-    const decoder=new TextDecoder();let pending='',bytes=0,result:T|undefined;
-    try{
-      while(true){const {value,done}=await reader.read();
-        if(value){bytes+=value.byteLength;if(bytes>4*1024*1024)throw new PublicApiError();pending+=decoder.decode(value,{stream:true});}
-        const lines=pending.split('\n');pending=lines.pop()!;
-        for(const line of lines){if(!line.trim())continue;const event=JSON.parse(line);
-          if(event.type==='source'){
-            if(typeof event.source?.id!=='string'||typeof event.source.status!=='string')throw new PublicApiError();
-            progress(event.source);
-          }
-          else if(event.type==='result')result=event.result as T;
-          else if(event.type==='error')throw new PublicApiError({code:event.error?.code,message:event.error?.message,status:event.status,sources:event.sources});
-        }
-        if(done)break;
+async function failure(response: Response): Promise<PublicApiError> {
+  const data = await response.json().catch(() => ({})) as ApiErrorBody & { sources?: ContentSourceStatus[] };
+  return new PublicApiError({ code: data.error?.code, message: data.error?.message, status: response.status, sources: data.sources });
+}
+
+/**
+ * Reads an NDJSON body line by line, handing each parsed line to `onLine`.
+ * Throws a SyntaxError for an unreadable line or a last line cut off without
+ * its newline, and a PublicApiError for a missing body or one over 4 MB;
+ * `onLine` may throw to stop reading. The reader is always released.
+ */
+export async function readNdjson(response: Response, onLine: (line: unknown) => void): Promise<void> {
+  const reader = response.body?.getReader();
+  if (!reader) throw new PublicApiError();
+  const decoder = new TextDecoder();
+  let pending = '', bytes = 0;
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (value) {
+        bytes += value.byteLength;
+        if (bytes > MAX_STREAM_BYTES) throw new PublicApiError();
+        pending += decoder.decode(value, { stream: true });
       }
-      if(result===undefined||pending.trim())throw new PublicApiError({code:'CONTENT_UNAVAILABLE',message:'The sources could not finish answering. Please try again.'});
+      const lines = pending.split('\n');
+      pending = lines.pop()!;
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        onLine(JSON.parse(line));
+      }
+      if (done) break;
+    }
+    if (pending.trim()) throw new SyntaxError('The stream ended inside a line.');
+  } finally {
+    await reader.cancel().catch(() => {});
+  }
+}
+
+export async function post<T>(path: string, body: Record<string, unknown>, signal?: AbortSignal, progress?:(source:ContentSourceStatus)=>void): Promise<T> {
+  const response = await send(path, body, signal, Boolean(progress));
+  if (progress && response.headers.get('content-type')?.includes(NDJSON)) {
+    let result: T | undefined;
+    try {
+      await readNdjson(response, line => {
+        const event = line as { type?: unknown; source?: { id?: unknown; status?: unknown }; result?: unknown; error?: { code?: string; message?: string }; status?: number; sources?: ContentSourceStatus[] };
+        if (event?.type === 'source') {
+          if (typeof event.source?.id !== 'string' || typeof event.source.status !== 'string') throw new PublicApiError();
+          progress(event.source as ContentSourceStatus);
+        }
+        else if (event?.type === 'result') result = event.result as T;
+        else if (event?.type === 'error') throw new PublicApiError({ code: event.error?.code, message: event.error?.message, status: event.status, sources: event.sources });
+      });
+      if (result === undefined) throw new SyntaxError('The stream ended without a result.');
       return result;
-    }catch(error){if(error instanceof PublicApiError||signal?.aborted)throw error;throw new PublicApiError({code:'CONTENT_UNAVAILABLE',message:'The sources could not finish answering. Please try again.'});}
-    finally{await reader.cancel().catch(()=>{});}
+    } catch (error) {
+      if (error instanceof PublicApiError || signal?.aborted) throw error;
+      throw new PublicApiError({ code: 'CONTENT_UNAVAILABLE', message: 'The sources could not finish answering. Please try again.' });
+    }
   }
-  const data = await response.json().catch(() => ({})) as T & ApiErrorBody & { sources?: ContentSourceStatus[] };
-  if (!response.ok) {
-    throw new PublicApiError({
-      code: data.error?.code,
-      message: data.error?.message,
-      status: response.status,
-      sources: data.sources,
-    });
-  }
-  return data;
+  if (!response.ok) throw await failure(response);
+  return await response.json().catch(() => ({})) as T;
 }
 
 export const publicApi = Object.freeze({
@@ -137,6 +170,33 @@ export const publicApi = Object.freeze({
     const answer = data.answer === 'found' || data.answer === 'not_found' || data.answer === 'unconfirmed' ? data.answer : 'unknown';
     const catalogUrl = webLink(data.catalogUrl);
     return { answer, ...(catalogUrl ? { catalogUrl } : {}) };
+  },
+
+  // One-shelf background check for search results (plan 5.7): NDJSON lines
+  // {type:'mark', bookKey, answer:'found'} as the library's answers arrive,
+  // then exactly one {type:'done', unchecked}. Only "found" is ever passed on,
+  // and only for a book that was asked about: no mark never means "not in the
+  // library". Any failure (network, HTTP error, unreadable or unfinished
+  // stream) rejects; marks already passed on stand. At most 12 books.
+  async holdingsSearch(libraryId: string, query: string, bookKeys: readonly string[], onMark: (bookKey: string) => void, signal?: AbortSignal): Promise<{ unchecked: string[] }> {
+    const asked = [...new Set(bookKeys)].slice(0, 12);
+    const response = await send('/holdings/search', { libraryId, query, books: asked.map(bookKey => ({ bookKey })) }, signal, true);
+    if (!response.ok) throw await failure(response);
+    if (!response.headers.get('content-type')?.includes(NDJSON)) throw new PublicApiError();
+    const wanted = new Set(asked);
+    let unchecked: string[] | null = null;
+    await readNdjson(response, line => {
+      if (unchecked) return;
+      if (!line || typeof line !== 'object' || Array.isArray(line)) throw new PublicApiError();
+      const event = line as { type?: unknown; bookKey?: unknown; answer?: unknown; unchecked?: unknown };
+      if (event.type === 'mark') {
+        if (event.answer === 'found' && typeof event.bookKey === 'string' && wanted.has(event.bookKey)) onMark(event.bookKey);
+      } else if (event.type === 'done') {
+        unchecked = Array.isArray(event.unchecked) ? event.unchecked.filter((key): key is string => typeof key === 'string' && wanted.has(key)) : [];
+      }
+    });
+    if (!unchecked) throw new PublicApiError();
+    return { unchecked };
   },
 
   // One-tap "Request to add" from the library pop-up: the typed text only.

@@ -65,7 +65,7 @@ describe('search on the shelf', () => {
     expect(searches).toHaveLength(1);
     expect(searches[0]).not.toHaveProperty('libraryId');
     // The text is not in the URL, history state or browser storage.
-    expect(screen.getByTestId('location').textContent).toMatch(/^\/app\/shelf\|\{"search":\{"pushed":true,"candidateId":"c[a-z0-9]+"\}\}$/);
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toMatch(/^\/app\/shelf\|\{"search":\{"pushed":true,"candidateId":"c[a-z0-9]+"\}\}$/));
     for (const store of [localStorage, sessionStorage]) for (let index = 0; index < store.length; index += 1)
       expect(store.getItem(store.key(index)!)).not.toContain('wings');
 

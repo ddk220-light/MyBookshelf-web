@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCoverImage } from '../BookCard';
 import { BookmarkGlyph, LibraryGlyph } from '../home/homeIcons';
@@ -12,8 +13,12 @@ import type { CSSProperties } from 'react';
  * library has said it holds the book. A search result the reader has saved
  * carries the bookmark badge top left. Nothing is written under the book; the
  * link's name carries the title, author, "on my shelf" and library answer.
+ * With `pop`, a library badge that arrives after the cover is drawn pops in
+ * (search results; no motion under reduced motion); one already known when
+ * the cover appears is simply there.
  */
-export function BookCover3D({ entry, libraryName, mine = false }: { entry: ShelfEntry; libraryName?: string | null; mine?: boolean }) {
+export function BookCover3D({ entry, libraryName, mine = false, pop = false }: { entry: ShelfEntry; libraryName?: string | null; mine?: boolean; pop?: boolean }) {
+  const badgeAtStart = useRef(Boolean(libraryName));
   const { url, ready, fail, onLoad } = useCoverImage(entry.kind === 'book' ? entry : {}, entry.alternatives);
   const palette = spinePalette(entry.key);
   const author = entry.authors.filter(Boolean).join(', ');
@@ -29,6 +34,6 @@ export function BookCover3D({ entry, libraryName, mine = false }: { entry: Shelf
       {url && <img className="cover3d-image" src={url} alt="" width={84} height={126} loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={fail} onLoad={onLoad} />}
     </span>
     {mine && <span className="cover-badge cover-badge-mine" aria-hidden="true"><BookmarkGlyph /></span>}
-    {libraryName && <span className="cover-badge cover-badge-library" aria-hidden="true"><LibraryGlyph /></span>}
+    {libraryName && <span className={'cover-badge cover-badge-library' + (pop && !badgeAtStart.current ? ' cover-badge-pop' : '')} aria-hidden="true"><LibraryGlyph /></span>}
   </Link>;
 }

@@ -38,6 +38,18 @@
 .one-shelf-frame .cover-badge-mine { top: -12px; left: -13px; }
 .one-shelf-frame .cover-badge-mine.cover-badge-small { top: -6px; left: -8px; right: auto; }
 
+/* The chosen library's background check (Shelf board): one small line above
+   the books, "Looking in <library>…" while it runs and "In <library>" with the
+   badge once a result is marked. The line keeps its height so the books do
+   not move when it changes or empties. Marked covers' badges pop in. */
+.one-shelf-frame .results-library { margin: 0; height: 32px; display: flex; align-items: center; font-size: .8125rem; line-height: 1.3; color: var(--reader-secondary); }
+.one-shelf-frame .results-library > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.one-shelf-frame .results-library-in { display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--pressed-ink); }
+.one-shelf-frame .results-library-badge { flex: 0 0 20px; width: 20px; height: 20px; border-radius: 10px; background: var(--reader-accent); color: var(--reader-on); display: inline-flex; align-items: center; justify-content: center; }
+.one-shelf-frame .search-results .results-library + .results-bookcase .bay:first-child .bay-back { padding-top: 12px; }
+.one-shelf-frame .cover-badge-pop { animation: mark-pop 320ms cubic-bezier(.3, 1.5, .5, 1) both; }
+@keyframes mark-pop { from { transform: scale(0); } to { transform: scale(1); } }
+
 /* Searching: plain book shapes on the bays. */
 .one-shelf-frame .ghost-book { width: 96px; height: 144px; border-radius: 2px; background: rgb(120 84 48 / .16); justify-self: center; animation: ghost-book 1.4s ease-in-out infinite alternate; }
 .one-shelf-frame .ghost-book:nth-child(2) { background: rgb(120 84 48 / .13); animation-delay: .15s; }
@@ -57,4 +69,5 @@
 @media (prefers-reduced-motion: reduce) {
   .one-shelf-frame .stage-pane { animation: none !important; }
   .one-shelf-frame .ghost-book { animation: none; }
+  .one-shelf-frame .cover-badge-pop { animation: none; }
 }
