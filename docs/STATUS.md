@@ -44,6 +44,16 @@ Read the [release acceptance](accounts/RELEASE_ACCEPTANCE.md) and
 snapshot settings and a second operator's restore exercise remain open; the full
 project is not declared complete. Preserve unrelated free-content work.
 
+## 13 November 2026: one-shelf release to production
+
+- Rollback point: Production deployment `dpl_BjQWfUieszCG3iNFJPEL4MsrRivJ` (commit `8337f50a`). Vercel Instant Rollback to it restores the old app; database changes below are not undone and the old app ignores them.
+- Accounts database (production and staging): migration `012-viewed-before.sql` and the grants applied; 12 migrations recorded.
+- Catalog database `mybookshelf-catalog`: schema and grants on the main branch; production uses the main branch with its own role passwords, previews use the `preview` branch.
+- Production settings added: catalog store on, usage log on, policy effective date 13 November 2026, admin owner account, background badges off for the first 48 hours, analytics off until Web Analytics is enabled for the project.
+- Legal review of `docs/policy/` is deferred by the owner's decision to release now; complete it and publish any changes with a new effective date.
+- Not yet set up: the nightly accounts backup (job is off until its secrets exist), Search Console verification.
+- Follow-ups: turn on `HOLDINGS_BACKGROUND_ENABLED` after 48 hours; remove `/availability` on 13 December 2026; restore drill once the backup runs.
+
 ## What is implemented
 
 The anonymous React/Vite app and Express catalog API, work/edition discovery,
