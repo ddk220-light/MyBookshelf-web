@@ -3,7 +3,7 @@ import { Link, Navigate, Route, Routes,useLocation,useNavigate } from 'react-rou
 import {AccountSessionProvider,useAccountSession} from './auth/AccountSessionProvider';
 import {LinkTokenProvider} from './auth/LinkTokenProvider';
 import {RecentAuthProvider} from './auth/RecentAuthProvider';
-import {DeletionReceiptProvider} from './auth/DeletionReceiptProvider';
+import {DeletionReceiptProvider,useDeletionReceipt} from './auth/DeletionReceiptProvider';
 import {safeAccountReturn} from './auth/accountClient';
 import {ImportPage,EmailChangePage,ProviderReturnPage,CompleteProfilePage} from './ui/account/AccountPages';
 import {AccountSettingsPage} from './ui/account/AccountSettingsPage';
@@ -41,9 +41,14 @@ function IdentityApp(){
   const {session,continueGuest}=useAccountSession(),navigate=useNavigate(),location=useLocation();
   const prior=useRef<string|null>(null),current=session.status==='authenticated'?session.user?.id||null:null;
   const entryMode=/^\/app\/account\/(sign-in|sign-up|verify|forgot-password|reset-password|email-change|return|complete-profile|deletion)$/.test(location.pathname);
+  const {receipt}=useDeletionReceipt();
   const redirect=prior.current!==null&&prior.current!==current&&!entryMode;
+  // Navigation renders in a transition, so a fast deletion reply can end the
+  // session before the move to the receipt page has rendered. An identity
+  // ended by its own deletion always lands on the receipt page, never the shelf.
+  const redirectTo=redirect&&receipt?.identity===prior.current?'/app/account/deletion':'/app/shelf';
   const incomplete=session.status==='authenticated'&&session.needsProfileCompletion&&!entryMode;
-  useLayoutEffect(()=>{if(redirect)navigate('/app/shelf',{replace:true,state:null});else if(incomplete)navigate('/app/account/complete-profile?returnTo='+encodeURIComponent(safeAccountReturn(location.pathname+location.search)),{replace:true,state:null});prior.current=current;},[current,redirect,incomplete,navigate,location.pathname,location.search]);
+  useLayoutEffect(()=>{if(redirect)navigate(redirectTo,{replace:true,state:null});else if(incomplete)navigate('/app/account/complete-profile?returnTo='+encodeURIComponent(safeAccountReturn(location.pathname+location.search)),{replace:true,state:null});prior.current=current;},[current,redirect,redirectTo,incomplete,navigate,location.pathname,location.search]);
   if(redirect||incomplete)return <p role="status">Updating your account…</p>;
   // Mount forms only after bootstrap selects their repository, so a typed
   // public search is not replaced by the checking→guest transition.

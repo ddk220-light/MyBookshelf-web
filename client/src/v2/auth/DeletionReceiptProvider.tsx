@@ -19,6 +19,8 @@ type Receipt = {
   status: DeletionStatus;
   busy: boolean;
   error: string;
+  /** The account being deleted, so the end of its session can land on the receipt page. */
+  identity: string;
 };
 type Reply = {
   status: DeletionStatus;
@@ -62,6 +64,7 @@ export function DeletionReceiptProvider({ children }: { children: ReactNode }) {
       status: "unknown",
       busy: true,
       error: "",
+      identity: input.identity,
     };
     const acknowledge = account.captureAccessEnd(input.identity);
     accessEnd.current = {operationId: value.operationId, acknowledge};

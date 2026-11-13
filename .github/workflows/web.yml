@@ -2,7 +2,9 @@ name: Web application
 on: [push, pull_request, workflow_dispatch]
 jobs:
   checks:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moved to 26.04, which the pinned Playwright
+    # (client/package.json) cannot install browsers for. Move together.
+    runs-on: ubuntu-24.04
     services:
       accounts-postgres:
         image: postgres:18

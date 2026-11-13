@@ -552,9 +552,15 @@ test('an exact-edition lookup is not answered by a stored work-level found from 
 });
 
 test('a reader who leaves does not cancel the request another reader is sharing', async () => {
+  // The first catalog request waits until the first reader leaves; any later
+  // one answers at once. No timer decides the order.
+  let fetches = 0, fetched;
+  const requested = new Promise(resolve => { fetched = resolve; });
   global.fetch = async (url, options) => new Promise((resolve, reject) => {
+    fetches++;
     options.signal.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' })));
-    setTimeout(() => resolve(response(url, 'page')), 60);
+    if (fetches > 1) resolve(response(url, 'page'));
+    fetched();
   });
   const provider = { checkAvailability: isbn => cachedTask(`shared:${isbn}`, async () => {
     await getText('https://k.example/shared', { retries: 0 });
@@ -565,9 +571,10 @@ test('a reader who leaves does not cancel the request another reader is sharing'
   const book = { bookKey: 'k', isbn13: '9788173711466' };
   const leaving = new AbortController();
   const first = lookup.lookupBook({ library, book, editionScope: 'exact', signal: leaving.signal });
-  await new Promise(resolve => setTimeout(resolve, 5));
+  await requested;
   const second = lookup.lookupBook({ library, book, editionScope: 'exact' });
-  setTimeout(() => leaving.abort(), 15);
+  await new Promise(resolve => setImmediate(resolve));
+  leaving.abort();
   const [left, stayed] = await Promise.all([first, second]);
   assert.deepEqual([left.outcome, left.reason], ['couldnt_check', 'cancelled']);
   assert.equal(stayed.outcome, 'found');

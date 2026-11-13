@@ -70,6 +70,7 @@ test('catalog timeouts survive search and availability response boundaries', asy
 test('a native-script query a catalog cannot run is a 400 explanation, not a 503 outage', async () => {
   const unsupported = async () => { throw Object.assign(new Error('Latin letters only'), { code: 'CATALOG_QUERY_UNSUPPORTED' }); };
   const target = makeTestApp(app => app.use('/api/v2', createPublicV2Router({ books: { search: unsupported }, availability: { check: unsupported } })));
+  let written = nextRow();
   const response = await request(target).post('/api/v2/books/search').send({ query: 'వేయి పడగలు' });
   assert.equal(response.status, 400);
   assert.equal(response.body.error.code, 'CATALOG_QUERY_UNSUPPORTED');
@@ -81,16 +82,20 @@ test('a native-script query a catalog cannot run is a 400 explanation, not a 503
 test('the anonymous log receives scrubbed search text and never the IP, user agent or coordinates', async () => {
   const { createCatalogStore } = await import('../catalog-store/index.js');
   const rows = [];
-  const catalogStore = createCatalogStore({ env: { USAGE_LOG_ENABLED: 'true' }, db: null, defer: task => task(), usageSink: row => rows.push(row) });
+  // The log is written after the response is sent: wait for each row itself.
+  let rowWritten = () => {};
+  const nextRow = () => new Promise(resolve => { rowWritten = resolve; });
+  const catalogStore = createCatalogStore({ env: { USAGE_LOG_ENABLED: 'true' }, db: null, defer: task => task(), usageSink: row => { rows.push(row); rowWritten(); } });
   const telemetry = createRedactedTelemetrySink();
   const directory = { search: () => [library], resolve: id => id === library.id ? library : null, browse: () => ({ libraries: [], total: 0, nextOffset: null }) };
   const books = { search: async () => ({ kind: 'candidates', candidates: [book] }), resolve: async () => book };
   const target = makeTestApp(expressApp => expressApp.use('/api/v2', createPublicV2Router({ directory, books, telemetry, catalogStore, rateLimit: { limit: 100 } })));
+  let written = nextRow();
   const response = await request(target).post('/api/v2/books/search')
     .set('User-Agent', 'Synthetic-Agent/1.0').set('X-Forwarded-For', '203.0.113.7')
     .send({ query: 'wings of fire reader@example.test 98765432101' });
   assert.equal(response.status, 200);
-  await new Promise(resolve => setTimeout(resolve, 20));
+  await written;
   const search = rows.find(row => row.kind === 'book_search');
   assert.ok(search, 'one book_search row');
   assert.equal(search.queryText, 'wings of fire [removed] [removed]');
@@ -98,7 +103,9 @@ test('the anonymous log receives scrubbed search text and never the IP, user age
   for (const secret of ['203.0.113.7', 'Synthetic-Agent', 'reader@example.test', '98765432101']) assert.ok(!stored.includes(secret), secret);
   // Telemetry never carries the text.
   assert.ok(!JSON.stringify(telemetry.events()).includes('wings'));
+  written = nextRow();
   await request(target).post('/api/v2/libraries/discover').send({ lat: 13.08, lon: 80.27 });
-  await new Promise(resolve => setTimeout(resolve, 20));
+  await written;
+  assert.ok(rows.some(row => row.kind === 'near_me'), 'one near_me row');
   assert.ok(!JSON.stringify(rows).includes('13.08') && !JSON.stringify(rows).includes('80.27'));
 });

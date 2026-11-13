@@ -76,7 +76,8 @@ describe('policy texts', () => {
     expect(screen.getAllByRole('link', { name: 'deepakdhanavel@gmail.com' })[0]).toHaveAttribute('href', 'mailto:deepakdhanavel@gmail.com');
     expect(screen.getByRole('link', { name: 'Back' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /My shelf/ })).toBeNull();
-    expect(document.title).toBe('Privacy — MyBookshelf');
+    // The title is set in an effect, which can run after the heading appears.
+    await waitFor(() => expect(document.title).toBe('Privacy — MyBookshelf'));
     view.unmount();
     app('/app/terms');
     expect(await screen.findByRole('heading', { level: 1, name: 'Terms' })).toBeInTheDocument();
@@ -206,8 +207,9 @@ describe('account screens', () => {
     const calls = network({ signedIn: true, handle: path => {
       if (path.endsWith('/forgot-password')) return json({ status: 'check-email' }, 202);
       if (path.endsWith('/reauth/password')) return json({ proof: 'proof-1', csrfToken: 'csrf-2' });
-      // A real deletion takes a moment; the page change lands before access ends.
-      if (path.endsWith('/api/account/deletion')) return new Promise<Response>(resolve => setTimeout(() => resolve(json({ status: 'accepted', accessEnded: true })), 50));
+      // Answered at once: access can end before the move to the receipt page
+      // has rendered, and the page must still be the receipt, not the shelf.
+      if (path.endsWith('/api/account/deletion')) return json({ status: 'accepted', accessEnded: true });
       return undefined;
     } });
     app('/app/settings/account');
