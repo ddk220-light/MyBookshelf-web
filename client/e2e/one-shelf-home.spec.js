@@ -148,6 +148,22 @@ test.describe('One-shelf home', () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 
+  test('a very long title and author stay inside the typeset cover', async ({ page }) => {
+    const long = book(1, { title: 'The Chronicle of Supercalifragilisticexpialidocious Adventures Across Seventeen Kingdoms',
+      authors: ['Bartholomew Maximilian Featherstonehaugh-Worthington III'] });
+    await setup(page, { saved: [long] });
+    await page.goto('/app/shelf');
+    const inside = locator => locator.evaluate(cover => {
+      const face = cover.querySelector('.cover3d-face').getBoundingClientRect();
+      return [...cover.querySelectorAll('.cover3d-title, .cover3d-author')].every(text => {
+        const box = text.getBoundingClientRect();
+        return box.left >= face.left - 0.5 && box.right <= face.right + 0.5;
+      });
+    });
+    await expect(page.locator('.home-bookcase .cover3d')).toHaveCount(1);
+    expect(await inside(page.locator('.home-bookcase .cover3d'))).toBe(true);
+  });
+
   test('reduced motion: the panel does not slide', async ({ page }) => {
     await setup(page);
     await page.goto('/app/shelf');

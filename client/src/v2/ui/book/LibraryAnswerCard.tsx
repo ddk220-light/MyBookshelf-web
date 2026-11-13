@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { DashGlyph, ExternalGlyph, FoundGlyph, LibraryGlyph, PinGlyph, RetryGlyph, SpinnerGlyph, UnsureGlyph } from '../home/homeIcons';
+import { DashGlyph, ExternalGlyph, FoundGlyph, LibraryGlyph, NotCheckedGlyph, PinGlyph, RetryGlyph, SpinnerGlyph, UnsureGlyph } from '../home/homeIcons';
 import type { CardAnswer, LibraryCardModel } from './useLibraryAnswer';
 
 /** What the card says to assistive technology, in one phrase. */
@@ -23,7 +23,9 @@ const TONE: Record<CardAnswer, string> = { found: 'found', not_found: 'not-found
  * and a Catalog link. The board's library icon tile is drawn only for a
  * library with an icon; the directory has none yet, so there is no tile.
  * Green is found, white is not found, grey is checking, couldn't check (with
- * an icon-only Try again) and couldn't confirm. No copies, due dates, floors
+ * an icon-only Try again, or a broken circle when trying again would not
+ * help) and couldn't confirm. Each state has its own mark, so colour is
+ * never the only difference from "not found". No copies, due dates, floors
  * or shelf numbers.
  */
 export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCardModel; onFindLibrary: () => void }>(
@@ -38,7 +40,7 @@ export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCard
       {retry ? <button type="button" className="library-answer-retry" aria-label="Try again" onClick={retry}><RetryGlyph /></button>
         : <span className="library-answer-icon" aria-hidden="true">
           {answer === 'found' ? <FoundGlyph /> : answer === 'not_found' ? <DashGlyph /> : answer === 'checking' ? <span className="library-answer-spin"><SpinnerGlyph /></span>
-            : answer === 'unconfirmed' ? <UnsureGlyph /> : <DashGlyph />}
+            : answer === 'unconfirmed' ? <UnsureGlyph /> : <NotCheckedGlyph />}
         </span>}
       <span className="library-answer-name">{name || <span className="library-answer-pending" aria-hidden="true"><LibraryGlyph size={16} /></span>}</span>
       {catalogUrl && <a className="library-answer-catalog" href={catalogUrl} target="_blank" rel="noopener noreferrer" aria-label={'Catalog' + (name ? ', ' + name : '') + ', opens in a new tab'}>

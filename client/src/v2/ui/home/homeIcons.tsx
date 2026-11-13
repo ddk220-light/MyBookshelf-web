@@ -57,6 +57,10 @@ export function FoundGlyph({ size = 18, strokeWidth = 2.4 }: IconProps) {
 export function DashGlyph({ size = 18, strokeWidth = 2.4 }: IconProps) {
   return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M7 12h10" /></svg>;
 }
+/** A broken circle: the library was not checked (couldn't check), never read as "not found". */
+export function NotCheckedGlyph({ size = 18, strokeWidth = 2.2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><circle cx="12" cy="12" r="9" strokeDasharray="3.5 3.2" /></svg>;
+}
 export function UnsureGlyph({ size = 18, strokeWidth = 2.2 }: IconProps) {
   return <svg {...base(size)} strokeWidth={strokeWidth}><circle cx="12" cy="12" r="9" /><path d="M9.6 9.4a2.5 2.5 0 014.8.9c0 1.7-2.4 2.2-2.4 3.7M12 17h.01" /></svg>;
 }
