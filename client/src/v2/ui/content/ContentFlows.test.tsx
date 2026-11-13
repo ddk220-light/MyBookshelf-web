@@ -8,7 +8,8 @@ import { ANONYMOUS_WEB_STORAGE_KEY } from '../../localState';
 import type { ContentItem, ContentPage } from '../../contentTypes';
 import { ContentDetail } from './ContentDetailPage';
 import { ContentSearchPage } from './ContentSearchPage';
-import { ShelfPage } from '../shelf/ShelfPage';
+import { HomeScreen } from '../home/HomeScreen';
+import { OneShelfRoot } from '../../OneShelfRoot';
 import { AlsoFree } from './AlsoFree';
 
 const item:ContentItem={key:'fcd:v1:europepmc:MED:123',kind:'article',title:'Synthetic flow fixture',contributors:[{name:'Fixture Author',role:'author'}],
@@ -31,12 +32,15 @@ it('saves a paper, reloads the mixed shelf and removes it without losing a legac
   expect(screen.getByRole('button',{name:'Saved'})).toHaveAttribute('aria-pressed','true');
   let saved=JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!);
   expect(saved.version).toBe(2);expect(saved.savedBooks).toEqual([legacyBook]);expect(saved.savedContent[0].contentKey).toBe(item.key);
-  first.unmount();mount(<ShelfPage/>,'/app/shelf');
-  expect(screen.getByRole('heading',{name:'Free books and papers'})).toBeInTheDocument();
-  expect(screen.getByRole('link',{name:/Synthetic flow fixture/})).toHaveAttribute('href','/app/read/fcd%3Av1%3Aeuropepmc%3AMED%3A123');
-  fireEvent.click(screen.getByRole('button',{name:'Edit'}));fireEvent.click(screen.getByRole('button',{name:`Remove ${item.title} from shelf`}));
-  saved=JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!);expect(saved.savedContent).toEqual([]);expect(saved.savedBooks).toEqual([legacyBook]);
   expect(fetch).not.toHaveBeenCalled();
+  // The one-shelf home shows the saved paper as a cover that opens its reading page, next to the legacy book.
+  first.unmount();const shelf=mount(<OneShelfRoot><HomeScreen/></OneShelfRoot>,'/app/shelf');
+  expect(await screen.findByRole('link',{name:/Synthetic flow fixture/})).toHaveAttribute('href','/app/read/fcd%3Av1%3Aeuropepmc%3AMED%3A123');
+  expect(screen.getByRole('link',{name:/Existing shelf book/})).toBeInTheDocument();
+  // Removing it from its reading page keeps the legacy book.
+  shelf.unmount();mount(<ContentDetail contentKey={item.key}/>);
+  await screen.findByRole('heading',{name:item.title});fireEvent.click(screen.getByRole('button',{name:'Saved'}));
+  saved=JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!);expect(saved.savedContent).toEqual([]);expect(saved.savedBooks).toEqual([legacyBook]);
 });
 
 it('labels absent licence and opens only the supplied source action',async()=>{

@@ -1,7 +1,5 @@
 // One-shelf book page, library card and library pop-up (plan Phase 7):
 // Book, BookChecked, BookStates, LibraryPicker and LibraryStates boards.
-// Runs only against a build made with VITE_ONE_SHELF=true:
-//   VITE_ONE_SHELF=true ONE_SHELF_E2E=true npm run test:e2e --workspace=client -- one-shelf-book.spec.js
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { BOOK, LINKED_LIBRARY, UNLINKED_LIBRARY, installPublicV2Fixture } from './public-v2-fixture.js';
@@ -76,7 +74,6 @@ async function setup(page, { saved = [], libraryId = null, light, check = { answ
 const savedKeys = page => page.evaluate(KEY => JSON.parse(localStorage.getItem(KEY)).savedBooks.map(item => item.bookKey), KEY);
 
 test.describe('One-shelf book page', () => {
-  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
 
   test('before a library: the book, Add to my shelf and Find my library; add, toast, remove, no confirmation', async ({ page }) => {
     const { calls } = await setup(page);
@@ -257,7 +254,6 @@ test.describe('One-shelf book page', () => {
 });
 
 test.describe('One-shelf library pop-up', () => {
-  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
   const openFromPanel = async page => {
     await page.getByRole('button', { name: 'Account and settings' }).click();
     const panel = page.getByRole('dialog', { name: 'Account and settings' });
@@ -359,7 +355,6 @@ test.describe('One-shelf library pop-up', () => {
 });
 
 test.describe('One-shelf library links', () => {
-  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
 
   test('a guide page’s link chooses the library silently and opens the shelf; the shelf stays', async ({ page }) => {
     await setup(page, { saved: [shelfBook(1)], libraryId: OTHER_LIBRARY.id });

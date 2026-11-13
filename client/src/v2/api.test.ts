@@ -72,7 +72,7 @@ describe('public API adapter', () => {
   it('uses the server-provided public error without exposing request data', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: { code: 'BOOK_NOT_FOUND', message: 'No public book details were found.' } }), { status: 404 })));
 
-    await expect(publicApi.searchBooks('Not stored anywhere')).rejects.toMatchObject({
+    await expect(publicApi.searchBooks('Synthetic query text')).rejects.toMatchObject({
       code: 'BOOK_NOT_FOUND',
       status: 404,
       message: 'No public book details were found.',

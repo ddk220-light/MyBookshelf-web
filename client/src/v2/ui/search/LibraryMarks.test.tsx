@@ -63,7 +63,7 @@ function Location() {
   navigateRef = useNavigate();
   return <output data-testid="location">{location.pathname + '|' + JSON.stringify(location.state)}</output>;
 }
-const renderHome = () => render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp oneShelf /><Location /></MemoryRouter>);
+const renderHome = () => render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp /><Location /></MemoryRouter>);
 const searchFor = async (text: string) => {
   const input = await screen.findByRole('searchbox', { name: 'Search for a book' });
   fireEvent.change(input, { target: { value: text } });

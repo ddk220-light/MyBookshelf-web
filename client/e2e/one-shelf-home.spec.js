@@ -1,6 +1,4 @@
-// One-shelf home (plan Phase 4). Runs only against a build made with
-// VITE_ONE_SHELF=true:
-//   VITE_ONE_SHELF=true ONE_SHELF_E2E=true npm run test:e2e --workspace=client -- one-shelf-home.spec.js
+// One-shelf home (plan Phase 4).
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { BOOK, CANDIDATE_BOOK, LINKED_LIBRARY, installPublicV2Fixture } from './public-v2-fixture.js';
@@ -28,7 +26,6 @@ const bookUrl = new RegExp('/app/books/' + encodeURIComponent(BOOK.bookKey).repl
 const axe = page => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
 
 test.describe('One-shelf home', () => {
-  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
 
   test('first open: empty shelf, search bar, no tab bar, accessible', async ({ page }) => {
     await setup(page);
@@ -174,7 +171,6 @@ test.describe('One-shelf home', () => {
 
 // Search on the shelf (plan Phase 5): Results, SearchStates and Shelf boards.
 test.describe('One-shelf search', () => {
-  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
   const MINE = book(1, { bookKey: BOOK.bookKey, isbn13: BOOK.isbn13, title: BOOK.title, authors: BOOK.authors });
   const searchFor = async (page, text) => {
     const input = page.getByRole('searchbox', { name: 'Search for a book' });
@@ -316,7 +312,6 @@ test.describe('One-shelf search', () => {
 // Scan pop-up (plan Phase 6): Scan and ScanStates boards. The camera is a real
 // canvas stream with EAN-13 bars (camera-frames.js); the shipped decoder reads it.
 test.describe('One-shelf scan', () => {
-  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
   const track = page => page.evaluate(() => window.__testCameraTrack?.readyState ?? null);
   const showBarcode = (page, code) => page.evaluate(value => { window.__testBarcode = value; }, code);
 
@@ -503,7 +498,6 @@ test.describe('One-shelf scan', () => {
 
 // Accounts switched off (staging): the reader is simply a guest.
 test.describe('One-shelf with accounts switched off', () => {
-  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
   test('no account notice on the home screen and no account buttons in the side panel', async ({ page }) => {
     await setup(page, { saved: [book(1)] });
     await page.route('**/api/account/session', route => route.fulfill({ status: 503, json: { error: { code: 'ACCOUNT_DISABLED', message: 'Accounts aren’t enabled here yet. You can continue browsing.' } } }));

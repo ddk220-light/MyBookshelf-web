@@ -56,9 +56,6 @@ it("keeps typed account fields when initial session checking finishes", async ()
       <AnonymousWebApp />
     </MemoryRouter>,
   );
-  fireEvent.change(screen.getByLabelText("Your name", { exact: true }), {
-    target: { value: "Typed private reader" },
-  });
   fireEvent.change(screen.getByLabelText("Email", { exact: true }), {
     target: { value: "synthetic@example.test" },
   });
@@ -66,9 +63,6 @@ it("keeps typed account fields when initial session checking finishes", async ()
     target: { value: "a long synthetic test password" },
   });
   await act(async () => finish(response({ status: "guest" })));
-  expect(screen.getByLabelText("Your name", { exact: true })).toHaveValue(
-    "Typed private reader",
-  );
   expect(screen.getByLabelText("Email", { exact: true })).toHaveValue(
     "synthetic@example.test",
   );
@@ -149,7 +143,7 @@ for (const route of [
         .savedBooks,
     ).toEqual(JSON.parse(guest).savedBooks);
     expect(
-      await screen.findByRole("link", { name: "Synthetic browser shelf" }),
+      await screen.findByRole("link", { name: "Synthetic browser shelf by Synthetic author" }),
     ).toBeInTheDocument();
     expect(
       fetch.mock.calls.every(
@@ -185,9 +179,8 @@ it("retries unavailable signup and submits only after session and mail availabil
   });
   healthy = true;
   fireEvent.click(screen.getByRole("button", { name: "Try again" }));
-  const name = await screen.findByLabelText("Your name", { exact: true });
-  fireEvent.change(name, { target: { value: "Synthetic reader" } });
-  fireEvent.change(screen.getByLabelText("Email", { exact: true }), {
+  const email = await screen.findByLabelText("Email", { exact: true });
+  fireEvent.change(email, {
     target: { value: "reader@example.test" },
   });
   fireEvent.change(screen.getByLabelText("Password", { exact: true }), {
@@ -203,7 +196,7 @@ it("retries unavailable signup and submits only after session and mail availabil
       screen.getByRole("button", { name: "Create account" }),
     ).toBeEnabled(),
   );
-  expect(name).toHaveValue("Synthetic reader");
+  expect(email).toHaveValue("reader@example.test");
   fireEvent.submit(screen.getByRole("form", { name: "Create account" }));
   await screen.findByRole("heading", { name: "Check your email" });
   expect(
@@ -238,36 +231,6 @@ for (const route of ["sign-up", "forgot-password"])
       screen.queryByLabelText("Email", { exact: true }),
     ).not.toBeInTheDocument();
   });
-it("offers only configured providers when signup mail is unavailable", async () => {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn((path: string) =>
-      Promise.resolve(
-        response(
-          path.endsWith("/session")
-            ? { status: "guest" }
-            : { ...ready, email: false, google: true },
-        ),
-      ),
-    ),
-  );
-  render(
-    <MemoryRouter initialEntries={["/app/account/sign-up"]}>
-      <AnonymousWebApp />
-    </MemoryRouter>,
-  );
-  await waitFor(() =>
-    expect(
-      screen.getByRole("button", { name: "Continue with Google" }),
-    ).toBeEnabled(),
-  );
-  expect(
-    screen.queryByLabelText("Email", { exact: true }),
-  ).not.toBeInTheDocument();
-  expect(
-    screen.queryByRole("button", { name: "Create account" }),
-  ).not.toBeInTheDocument();
-});
 it("removes a verification token from the URL, preserves it through bootstrap and exchanges only on confirmation", async () => {
   let finish: (value: Response) => void = () => {};
   const posts: string[] = [];
@@ -298,7 +261,7 @@ it("removes a verification token from the URL, preserves it through bootstrap an
   );
   expect(posts).toEqual([]);
   expect(screen.getByRole("button", { name: "Verify email" })).toBeDisabled();
-  fireEvent.submit(screen.getByRole("form", { name: "Verify your email" }));
+  fireEvent.submit(screen.getByRole("form", { name: "Verify email" }));
   expect(posts).toEqual([]);
   await act(async () => finish(response({ status: "guest" })));
   expect(screen.getByRole("button", { name: "Verify email" })).toBeEnabled();

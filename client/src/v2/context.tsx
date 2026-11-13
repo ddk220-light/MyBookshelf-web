@@ -1,7 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { publicApi, PublicApiError } from './api';
 import {
-  readAnonymousWebStateWithStatus,
   readDedupedAnonymousWebStateWithStatus,
   withRecentBook,
   withSavedBook,
@@ -46,7 +45,7 @@ export type LibraryState = {
   updateRecentDisplay?: (book: PublicBook) => Promise<boolean>;
   removeRecentBook: (bookKey: string) => Promise<boolean>;
   clearRecentBooks: () => Promise<boolean>;
-  /** Puts cleared Viewed before books back (Undo); newer views stay first. Guests, and accounts in the one-shelf build. */
+  /** Puts cleared Viewed before books back (Undo); newer views stay first. Guests and accounts. */
   restoreRecentBooks?: (books: RecentBook[]) => Promise<boolean>;
   clearSavedBooks: () => Promise<boolean>;
   saveBook: (book: PublicBook) => Promise<SaveResult>;
@@ -74,19 +73,17 @@ export function useLibrary(): LibraryState {
   return value;
 }
 
-// oneShelf (build flag VITE_ONE_SHELF, plan 3.3/3.4): the guest shelf is read
-// with duplicate saved books collapsed, and a book whose ISBN-13 is already on
-// the shelf counts as saved. Off, behaviour is exactly as before.
-export function LibraryStateProvider({children,entryMode=false,oneShelf=false}:{children:ReactNode;entryMode?:boolean;oneShelf?:boolean}) {
+// Plan 3.3/3.4: the guest shelf is read with duplicate saved books collapsed,
+// and a book whose bookKey or ISBN-13 is already on the shelf counts as saved.
+export function LibraryStateProvider({children,entryMode=false}:{children:ReactNode;entryMode?:boolean}) {
   const {session}=useAccountSession();
   if(entryMode)return <UnavailableLibraryStateProvider>{children}</UnavailableLibraryStateProvider>;
-  if(session.status==='guest')return <GuestLibraryStateProvider oneShelf={oneShelf}>{children}</GuestLibraryStateProvider>;
-  if(session.status==='authenticated')return <AccountLibraryStateProvider oneShelf={oneShelf}>{children}</AccountLibraryStateProvider>;
+  if(session.status==='guest')return <GuestLibraryStateProvider>{children}</GuestLibraryStateProvider>;
+  if(session.status==='authenticated')return <AccountLibraryStateProvider>{children}</AccountLibraryStateProvider>;
   return <UnavailableLibraryStateProvider>{children}</UnavailableLibraryStateProvider>;
 }
-function GuestLibraryStateProvider({ children, oneShelf = false }: { children: ReactNode; oneShelf?: boolean }) {
-  const [readShelf] = useState(() => oneShelf ? readDedupedAnonymousWebStateWithStatus : readAnonymousWebStateWithStatus);
-  const [initialBrowserState] = useState(() => readShelf());
+function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
+  const [initialBrowserState] = useState(() => readDedupedAnonymousWebStateWithStatus());
   const [state, setState] = useState<AnonymousWebState>(initialBrowserState.state);
   const stateRef = useRef(state);
   const alive=useRef(true);
@@ -106,7 +103,7 @@ function GuestLibraryStateProvider({ children, oneShelf = false }: { children: R
   const reportStorageFailure = useCallback(() => setStorageNotice(storageNoticeFor('unavailable')), []);
 
   const reloadShelf = useCallback(() => {
-    const next = readShelf();
+    const next = readDedupedAnonymousWebStateWithStatus();
     if (next.status === 'unavailable') {
       sessionOnly.current = true;
       setStorageNotice(storageNoticeFor(recovery.current ? 'corrupt' : 'unavailable'));
@@ -117,7 +114,7 @@ function GuestLibraryStateProvider({ children, oneShelf = false }: { children: R
     setRecoveryMode(recovery.current);
     setStorageNotice(storageNoticeFor(next.status));
     stateRef.current = next.state; setState(next.state);
-  }, [readShelf]);
+  }, []);
   const startNewShelf = useCallback(() => {
     return withGuestStorageLock(()=>{
     if(!alive.current)return;
@@ -135,7 +132,7 @@ function GuestLibraryStateProvider({ children, oneShelf = false }: { children: R
   const commit = useCallback(async(change: (current: AnonymousWebState) => AnonymousWebState) => {
     try{return await withGuestStorageLock(()=>{
     if(!alive.current)return false;
-    const stored = sessionOnly.current ? null : readShelf();
+    const stored = sessionOnly.current ? null : readDedupedAnonymousWebStateWithStatus();
     if (recovery.current || stored?.status === 'corrupt') {
       recovery.current = true;
       setRecoveryMode(true);
@@ -151,7 +148,7 @@ function GuestLibraryStateProvider({ children, oneShelf = false }: { children: R
     setState(next);
     return true;
     });}catch{if(alive.current)setStorageNotice(storageNoticeFor('unavailable'));return false;}
-  }, [readShelf]);
+  }, []);
 
   useEffect(() => {
     const refresh = (event: StorageEvent) => { if (!sessionOnly.current && (event.key === ANONYMOUS_WEB_STORAGE_KEY || event.key === null)) reloadShelf(); };
@@ -223,11 +220,11 @@ function GuestLibraryStateProvider({ children, oneShelf = false }: { children: R
   const saveBook = useCallback(async(book: PublicBook): Promise<SaveResult> => {
     if (recovery.current) return 'recovery';
     let result:SaveResult='saved';
-    const ok=await commit(saved=>{if(oneShelf?isOnShelf(saved.savedBooks,book):isSaved(saved,book.bookKey)){result='already-saved';return saved;}if(saved.savedBooks.length+saved.savedContent.length>=SAVED_BOOKS_CAP){result='full';return saved;}return withSavedBook(saved,book);});
+    const ok=await commit(saved=>{if(isOnShelf(saved.savedBooks,book)){result='already-saved';return saved;}if(saved.savedBooks.length+saved.savedContent.length>=SAVED_BOOKS_CAP){result='full';return saved;}return withSavedBook(saved,book);});
     // A removed book added back: its "Removed … Undo" notice no longer applies.
     if(ok&&result==='saved'&&alive.current)setRemoved(current=>current&&isOnShelf([current.book],book)?null:current);
     return ok?result:'recovery';
-  }, [commit, oneShelf]);
+  }, [commit]);
   const saveContent = useCallback(async(item: ContentItem): Promise<SaveResult> => {
     if(recovery.current)return 'recovery';
     let result:SaveResult='saved';
@@ -323,11 +320,3 @@ export function storageNoticeFor(status: 'ok' | 'unavailable' | 'corrupt'): stri
   return null;
 }
 
-export function recentSourceLabel(source: RecentSource): string {
-  return source === 'camera' ? 'Camera scan' : source === 'isbn' ? 'ISBN lookup' : source === 'search' ? 'Search result' : 'Direct link';
-}
-
-export function formatDateTime(value: string): string {
-  const date = new Date(value);
-  return Number.isFinite(date.getTime()) ? date.toLocaleString() : 'time unavailable';
-}

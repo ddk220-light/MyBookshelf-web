@@ -1,6 +1,5 @@
 // Privacy, Terms, About and Report a problem from the side panel (plan
-// Phase 9, section 8.2). Runs only against a build made with VITE_ONE_SHELF=true:
-//   VITE_ONE_SHELF=true ONE_SHELF_E2E=true npm run test:e2e --workspace=client -- policy-pages.spec.js
+// Phase 9, section 8.2).
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { LINKED_LIBRARY, installPublicV2Fixture } from './public-v2-fixture.js';
@@ -19,7 +18,6 @@ async function setup(page, { libraryId = LINKED_LIBRARY.id } = {}) {
 }
 
 test.describe('Policy pages and Report a problem', () => {
-  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
 
   test('Privacy, Terms and About open from the side panel, and Back returns to it', async ({ page }) => {
     await setup(page);

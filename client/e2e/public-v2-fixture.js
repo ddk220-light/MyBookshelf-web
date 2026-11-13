@@ -131,27 +131,3 @@ export async function installPublicV2Fixture(target, options = {}) {
   });
   return { calls };
 }
-
-export async function chooseLinkedLibrary(page) {
-  await page.goto('/app/libraries');
-  await page.getByLabel('Library, city or postcode').fill('Chennai');
-  await page.getByRole('button', { name: 'Search', exact: true }).click();
-  await page.getByRole('button', { name: 'Select Anna Centenary Library', exact: true }).click();
-  // Wait for the selection navigation before a caller reloads the document.
-  await page.waitForURL('**/app/search', { waitUntil: 'domcontentloaded' });
-  await page.getByRole('heading', { name: 'Search', exact: true }).waitFor();
-}
-
-export function tab(page, name) {
-  return page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name, exact: true });
-}
-
-// Mobile books have their own page bar. Leave through the contextual Back link
-// before using the primary navigation, just as a reader does.
-export async function goToTab(page, name) {
-  const link = tab(page, name);
-  if (new URL(page.url()).pathname.startsWith('/app/books/') && !await link.isVisible()) {
-    await page.getByRole('link', { name: /Back to (shelf|search)/ }).click();
-  }
-  await link.click();
-}

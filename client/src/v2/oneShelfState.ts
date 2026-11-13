@@ -9,8 +9,7 @@
 //
 // Search text is never stored here or anywhere else in the browser.
 import { browserStorage, type StorageLike } from './browserStorage';
-import { DOG_ANIMATION_STORAGE_KEY } from './dogAnimation';
-import { dedupeSavedBooks, readAnonymousWebStateWithStatus, writeAnonymousWebState } from './localState';
+import { DOG_ANIMATION_STORAGE_KEY, dedupeSavedBooks, readAnonymousWebStateWithStatus, writeAnonymousWebState } from './localState';
 import { removeRetiredReaderCaches } from './readerState';
 import { withGuestStorageLock } from './storage/guestLock';
 import type { RecentBook } from './types';

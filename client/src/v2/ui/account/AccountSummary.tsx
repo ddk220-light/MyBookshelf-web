@@ -70,36 +70,19 @@ export function AccountSummary() {
     </section>
   );
 }
-// oneShelf (VITE_ONE_SHELF): when accounts are switched off the reader just
-// uses the app as a guest; there is nothing to say and nothing to press.
-export function AccountNotice({ oneShelf = false }: { oneShelf?: boolean } = {}) {
+// When accounts are switched off the reader just uses the app as a guest;
+// there is nothing to say and nothing to press.
+export function AccountNotice() {
   const location = useLocation();
   const { session, refresh, continueGuest, signOut } = useAccountSession(),
     library = useLibrary();
-  if (oneShelf && session.availability === "disabled") return null;
+  if (session.availability === "disabled") return null;
   const entry =
     /^\/app\/account\/(sign-up|sign-in|forgot-password|reset-password|verify)$/.test(
       location.pathname,
     );
   if (entry && (session.status === "unavailable" || session.availability))
     return null;
-  if (session.availability === "disabled")
-    return (
-      <div className="account-sync-notice" role="status">
-        <span>
-          Accounts aren’t enabled here yet. You can keep using this browser’s
-          shelf.
-        </span>
-        <button onClick={() => void refresh()}>
-          Check account availability
-        </button>
-        {session.status !== "guest" && (
-          <button className="text-button" onClick={continueGuest}>
-            Continue as guest
-          </button>
-        )}
-      </div>
-    );
   if (session.status === "checking")
     return (
       <div className="account-sync-notice" role="status">

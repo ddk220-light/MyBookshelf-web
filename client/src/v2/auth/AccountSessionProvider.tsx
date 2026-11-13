@@ -103,7 +103,7 @@ const key = (s: Pick<AccountSession, "status" | "user">) =>
     ? s.status + ":" + s.user?.id
     : s.status;
 
-// disabledMeansGuest (VITE_ONE_SHELF): when the service answers that accounts
+// disabledMeansGuest (the app passes it): when the service answers that accounts
 // are switched off, the reader is a guest on this browser's shelf, not an
 // "unavailable" account. No account can be active while accounts are off.
 export function AccountSessionProvider({ children, disabledMeansGuest = false }: { children: ReactNode; disabledMeansGuest?: boolean }) {

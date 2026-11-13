@@ -42,8 +42,10 @@ type RequestState = 'idle' | 'sending' | 'sent' | 'failed' | 'refused';
  * one tap sends it as a request to add a library. The typed text stays in
  * this component's state; the position is used for one request and dropped.
  */
-export function LibraryPickerDialog({ open, onClose, onChosen, returnFocus }: {
+export function LibraryPickerDialog({ open, onClose, onChosen, returnFocus, initialQuery }: {
   open: boolean;
+  /** Text to start the field with (an old /app/libraries?q= link); never stored. */
+  initialQuery?: string;
   onClose: () => void;
   /** Called after a library is chosen (the pop-up then closes). */
   onChosen?: (library: PublicLibrary) => void;
@@ -58,7 +60,7 @@ export function LibraryPickerDialog({ open, onClose, onChosen, returnFocus }: {
     if (!dialog) return;
     if (open && !dialog.open) {
       dialog.showModal();
-      dialog.querySelector<HTMLElement>('.library-near')?.focus();
+      dialog.querySelector<HTMLElement>(initialQuery ? '#library-place' : '.library-near')?.focus();
     }
     if (!open && dialog.open) {
       dialog.close();
@@ -80,13 +82,14 @@ export function LibraryPickerDialog({ open, onClose, onChosen, returnFocus }: {
 
   return <dialog ref={ref} className="scan-dialog library-dialog" aria-labelledby={titleId} onKeyDown={keyDown} onClick={backdrop}
     onCancel={event => { event.preventDefault(); onClose(); }} onClose={() => { if (open) onClose(); }}>
-    {open && <PickerBody key={session} titleId={titleId} listId={listId} onClose={onClose} onChosen={onChosen} />}
+    {open && <PickerBody key={session} titleId={titleId} listId={listId} onClose={onClose} onChosen={onChosen} initialQuery={initialQuery} />}
   </dialog>;
 }
 
-function PickerBody({ titleId, listId, onClose, onChosen }: { titleId: string; listId: string; onClose: () => void; onChosen?: (library: PublicLibrary) => void }) {
+function PickerBody({ titleId, listId, onClose, onChosen, initialQuery }: { titleId: string; listId: string; onClose: () => void; onChosen?: (library: PublicLibrary) => void; initialQuery?: string }) {
   const { selectLibrary, library: selected, recoveryMode } = useLibrary();
-  const model = useLibraryDiscovery({}, { compact: true });
+  const [startQuery] = useState(initialQuery);
+  const model = useLibraryDiscovery({ query: startQuery }, { compact: true });
   const { search, busy, locating, errorKind, nearMe, changeQuery } = model;
   const { query, page, nearby } = search;
   const [request, setRequest] = useState<RequestState>('idle');

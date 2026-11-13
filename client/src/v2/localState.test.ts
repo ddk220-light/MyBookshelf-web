@@ -15,7 +15,7 @@ import {
   writeAnonymousWebState,
 } from './localState';
 import { READING_LIGHT_STORAGE_KEY } from './readingLight';
-import { DOG_ANIMATION_STORAGE_KEY } from './dogAnimation';
+import { DOG_ANIMATION_STORAGE_KEY } from './localState';
 
 class MemoryStorage {
   values = new Map<string, string>();
@@ -174,7 +174,7 @@ describe('one-shelf de-duplication', () => {
     const read = readDedupedAnonymousWebStateWithStatus(storage);
     expect(read.status).toBe('ok');
     expect(read.state.savedBooks.map(item => item.title)).toEqual(['New']);
-    // The plain reader (used with the flag off and by older bundles) is unchanged.
+    // The plain reader (used by older bundles) is unchanged.
     expect(readAnonymousWebStateWithStatus(storage).state.savedBooks).toHaveLength(2);
   });
 });

@@ -26,8 +26,12 @@ export function scrubAnalyticsUrl(value) {
   if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
   var path = url.pathname.replace(/\/+$/, '') || '/';
   if (/^\/app\/admin(?:\/|$)/i.test(path)) return null;
-  var known = ['/app', '/app/shelf', '/app/search', '/app/libraries', '/app/settings', '/app/settings/account', '/app/settings/account/more',
-    '/app/report', '/app/privacy', '/app/terms', '/app/about'];
+  // The one-shelf app's pages (plan 3.1), then the old addresses that now
+  // redirect to the shelf (/app/libraries is still the landing page's "Find
+  // my library" entry). A redirect replaces the address before the next view.
+  var known = ['/app', '/app/shelf', '/app/settings/account', '/app/settings/account/more',
+    '/app/report', '/app/privacy', '/app/terms', '/app/about',
+    '/app/search', '/app/libraries', '/app/settings'];
   if (/^\/app\/books(?:\/|$)/.test(path)) path = '/app/books/[book]';
   else if (/^\/app\/read(?:\/|$)/.test(path)) path = '/app/read/[item]';
   else if (/^\/app\/account(?:\/|$)/.test(path)) path = '/app/account';

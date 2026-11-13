@@ -18,7 +18,7 @@ export function resetLibrarySearchSession() { memory = null; }
 const atPlace = (place: Place, radius: number): LibraryDiscovery => place.id.startsWith('geonames:') ? { placeId: place.id, radiusKm: radius } : { lat: place.lat, lon: place.lon, radiusKm: radius };
 
 export function useLibraryDiscovery(initial: { country?: string; region?: string; query?: string } = {}, { compact = false }: DiscoveryOptions = {}) {
-  const [search, setSearch] = useState<DiscoveryState>(() => compact ? { ...empty } : initial.query ? { ...empty, query: initial.query } : initial.region ? { ...empty, areaOpen: true, country: initial.country || '', region: initial.region } : memory || { ...empty });
+  const [search, setSearch] = useState<DiscoveryState>(() => compact ? { ...empty, query: initial.query || '' } : initial.query ? { ...empty, query: initial.query } : initial.region ? { ...empty, areaOpen: true, country: initial.country || '', region: initial.region } : memory || { ...empty });
   const [areas, setAreas] = useState<LibraryAreas>({ countries: [], regions: [], districts: [] });
   const [places, setPlaces] = useState<Place[]>([]);
   const [busy, setBusy] = useState(false), [locating, setLocating] = useState(false), [placeBusy, setPlaceBusy] = useState(false);

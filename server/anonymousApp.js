@@ -111,7 +111,8 @@ export function createAnonymousApp({ clientDist, publicRouter = createPublicV2Ro
       });
     }
     app.use(express.static(clientDist, { extensions: ['html'], index: 'index.html', setHeaders: setStaticHeaders }));
-    app.get(['/app', '/app/*', '/select/*'], (req, res) => {
+    // /find is an old address the app redirects to the shelf (plan Phase 12).
+    app.get(['/app', '/app/*', '/select/*', '/find'], (req, res) => {
       res.setHeader('X-Robots-Tag', 'noindex, follow');
       res.setHeader('Content-Security-Policy', HTML_SECURITY_POLICY);
       res.setHeader('Cache-Control', 'no-cache');

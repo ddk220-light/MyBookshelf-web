@@ -3,7 +3,6 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { LibraryStateProvider, useLibrary } from './context';
 import { ANONYMOUS_WEB_STORAGE_KEY } from './localState';
 import { cacheAvailability, clearReaderState, readCachedAvailability } from './readerState';
-import { catalogStatus } from './ui/journal/DueSlip';
 import type { Availability } from './types';
 
 afterEach(() => { cleanup(); localStorage.clear(); clearReaderState(); vi.useRealTimers(); });
@@ -85,11 +84,6 @@ it('does not resume persistence after a failed shelf write', () => {
   fireEvent.click(screen.getByText('Open'));
   expect(screen.getByText('1 saved')).toBeInTheDocument();
   expect(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)).toBeNull();
-});
-it('retains the edition warning in cached shelf summaries', () => {
-  const ambiguous: Availability = { outcome: 'unknown', lookupKind: 'exact_isbn', matchKind: 'exact_isbn', catalogMatchCount: 2, freshness: 'fresh', attemptedAt: '2026-10-28T00:00:00Z' };
-  cacheAvailability('a', book.bookKey, undefined, ambiguous);
-  expect(catalogStatus(readCachedAvailability('a', book.bookKey)!)).toEqual(catalogStatus(ambiguous));
 });
 it('keeps a damaged shelf protected when Reload cannot read storage', () => {
   const original = JSON.stringify({ version: 1, savedBooks: [{ title: 'damaged' }], recentBooks: [] });

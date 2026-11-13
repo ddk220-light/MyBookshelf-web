@@ -31,7 +31,7 @@ function stubApi({ link = 'ok' as 'ok' | 'missing' | 'down' } = {}) {
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname + location.search}</output>; }
 function open(path: string) {
   localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 1, selectedLibraryId: OLD.id, recentBooks: [SAVED], savedBooks: [SAVED] }));
-  return render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp oneShelf /><Location /></MemoryRouter>);
+  return render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp /><Location /></MemoryRouter>);
 }
 const stored = () => JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!);
 

@@ -4,6 +4,8 @@ import { isbnSource, useLibrary } from '../../context';
 import { useHoldingsStore } from '../../holdings';
 import { readReaderPreferences, writeReaderPreferences } from '../../readerState';
 import { candidatesFor, queryForCandidates, shelfMatchesFor } from '../../searchMemory';
+import { clearLegacyText, peekLegacyText } from '../../legacyHandoff';
+import type { LegacyArrival } from '../legacyRedirects';
 import type { RecentBook } from '../../types';
 import { SidePanel } from '../panel/SidePanel';
 import { ResultsShelf } from '../search/ResultsShelf';
@@ -32,11 +34,11 @@ import './home.css';
  * Back closes them. `search.candidateId` is the opaque key of results held in
  * same-tab memory (searchMemory); the search text itself is never here.
  */
-type HomeState = { overlay?: 'panel' | 'scan' | 'library'; panelPushed?: boolean; scanPushed?: boolean; libraryPushed?: boolean;
+type HomeState = LegacyArrival & { overlay?: 'panel' | 'scan' | 'library'; panelPushed?: boolean; scanPushed?: boolean; libraryPushed?: boolean;
   search?: { candidateId?: string; pushed?: boolean }; libraryLink?: LibraryLinkNotice };
 
 /**
- * The one-shelf home (VITE_ONE_SHELF): top bar with the search bar, then the
+ * The one-shelf home: top bar with the search bar, then the
  * reader's shelf (or the empty state), the account invite and "Viewed before".
  * A search shows its results in place of the shelf. The side panel and the
  * scan pop-up are overlays with their own history entry, so Back closes them.
@@ -77,6 +79,10 @@ export function HomeScreen() {
     const { overlay: _overlay, panelPushed, ...rest } = latestState.current || {};
     navigate(location.pathname, { replace: true, state: { ...rest, overlay: 'library', libraryPushed: Boolean(panelPushed) } });
   };
+  // An old /app/libraries?q= address: its text goes into the pop-up's field
+  // (handed over in same-tab memory, legacyHandoff.ts), for this opening only.
+  const [libraryQuery, setLibraryQuery] = useState(() => routeState?.legacy === 'library' ? peekLegacyText('library') : undefined);
+  useEffect(() => { if (!libraryOpen) setLibraryQuery(undefined); }, [libraryOpen]);
   const closeLibrary = useCallback(() => {
     const { overlay: _overlay, libraryPushed, ...rest } = latestState.current || {};
     if (libraryPushed) navigate(-1);
@@ -229,6 +235,27 @@ export function HomeScreen() {
     return 'failed';
   };
 
+  // Arrival from an old address (plan Phase 12, legacyRedirects.tsx):
+  // /app/search focuses the search bar; /app/search?q= runs that search once.
+  // The marker leaves the history entry and the text leaves memory. The work
+  // waits for a timer so React's development double effects run it once.
+  const arrival = routeState?.legacy;
+  useEffect(() => {
+    if (!arrival) return;
+    const timer = setTimeout(() => {
+      const { legacy: _legacy, ...rest } = latestState.current || {};
+      const base = Object.keys(rest).length ? rest : null;
+      const text = arrival === 'search' ? peekLegacyText('search') : undefined;
+      clearLegacyText('search');
+      clearLegacyText('library');
+      latestState.current = base;
+      navigate(location.pathname, { replace: true, state: base });
+      if (text) { setQuery(text); void submit(text); }
+      else if (arrival === 'focus-search') requestAnimationFrame(() => document.getElementById(SHELF_SEARCH_ID)?.focus());
+    });
+    return () => clearTimeout(timer);
+  }, [arrival]);
+
   const clearViewed = async () => {
     const books = state.recentBooks;
     if (await clearRecentBooks()) setCleared(books);
@@ -279,7 +306,7 @@ export function HomeScreen() {
     {cleared && <div className="undo-notice home-undo" role="status"><span>Viewed before cleared</span>
       {restoreRecentBooks && <button type="button" onClick={async () => { if (await restoreRecentBooks(cleared)) setCleared(null); }}>Undo</button>}</div>}
     <SidePanel open={panelOpen} onClose={closePanel} returnFocus={returnFocus} onChangeLibrary={changeLibrary} />
-    <LibraryPickerDialog open={libraryOpen} onClose={closeLibrary} returnFocus={returnFocus} />
+    <LibraryPickerDialog open={libraryOpen} onClose={closeLibrary} returnFocus={returnFocus} initialQuery={libraryQuery} />
     <ScanDialog open={scanOpen} onClose={closeScan} onIsbn={lookUpIsbn} onSearchByTitle={searchByTitle} returnFocus={scanReturnFocus} />
   </div>;
 }

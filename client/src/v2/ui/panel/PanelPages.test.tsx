@@ -9,7 +9,7 @@ import { AccountSessionProvider } from '../../auth/AccountSessionProvider';
 import { LibraryStateProvider } from '../../context';
 
 // Phase 9: the side panel's pages and the one-shelf account screens, rendered
-// through the real app tree with the flag on and a stubbed network.
+// through the real app tree with a stubbed network.
 
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 const failure = (status: number, code: string, message = 'Synthetic failure.') => json({ error: { code, message } }, status);
@@ -37,7 +37,7 @@ function network({ signedIn = false, handle }: { signedIn?: boolean; handle?: Ha
 }
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname}</output>; }
 function app(path: string, state?: unknown) {
-  return render(<MemoryRouter initialEntries={[{ pathname: path, state }]}><AnonymousWebApp oneShelf /><Location /></MemoryRouter>);
+  return render(<MemoryRouter initialEntries={[{ pathname: path, state }]}><AnonymousWebApp /><Location /></MemoryRouter>);
 }
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); sessionStorage.clear(); document.title = ''; });
@@ -253,7 +253,7 @@ function Probe() {
   </>;
 }
 
-describe('account shelf in the one-shelf build', () => {
+describe('account shelf', () => {
   const saved = { referenceId: '00000000-0000-4000-8000-000000000001', bookKey: 'v1:isbn:9780262033848', isbn13: '9780262033848', title: 'Saved', authors: [], savedAt: '2026-11-01T00:00:00.000Z' };
   const signedIn = (handle?: Handler) => network({ signedIn: true, handle: (path, init) => {
     if (path.includes('/api/account/books?')) return json({ books: [saved], nextCursor: null, ...versions });
@@ -263,7 +263,7 @@ describe('account shelf in the one-shelf build', () => {
   it('an ISBN already saved counts as saved; a book open is recorded quietly with history off; Undo restores through the import', async () => {
     const calls = signedIn(path => path.endsWith('/history/views') ? json({ status: 'recorded', ...versions })
       : path.endsWith('/imports') ? json({ status: 'imported', savedAdded: 0, historyAccepted: 1, historyExpired: 0, ...versions }) : undefined);
-    render(<MemoryRouter><AccountSessionProvider><LibraryStateProvider oneShelf><Probe /></LibraryStateProvider></AccountSessionProvider></MemoryRouter>);
+    render(<MemoryRouter><AccountSessionProvider><LibraryStateProvider><Probe /></LibraryStateProvider></AccountSessionProvider></MemoryRouter>);
     await waitFor(() => expect(screen.getByTestId('loading')).toHaveTextContent('false'));
     expect(screen.getByTestId('restore')).toHaveTextContent('true');
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
@@ -281,13 +281,4 @@ describe('account shelf in the one-shelf build', () => {
     expect((restore.snapshot as { recentBooks: Array<{ viewedAt: string }> }).recentBooks[0].viewedAt).toBe('2026-11-01T00:00:00.000Z');
   });
 
-  it('with the flag off an open is not recorded while history is off', async () => {
-    const calls = signedIn();
-    render(<MemoryRouter><AccountSessionProvider><LibraryStateProvider><Probe /></LibraryStateProvider></AccountSessionProvider></MemoryRouter>);
-    await waitFor(() => expect(screen.getByTestId('loading')).toHaveTextContent('false'));
-    expect(screen.getByTestId('restore')).toHaveTextContent('false');
-    fireEvent.click(screen.getByRole('button', { name: 'Open' }));
-    await new Promise(resolve => setTimeout(resolve, 20));
-    expect(calls.some(call => call.path.endsWith('/history/views'))).toBe(false);
-  });
 });

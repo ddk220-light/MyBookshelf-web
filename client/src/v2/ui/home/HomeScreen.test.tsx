@@ -29,7 +29,7 @@ function seed({ saved = [] as unknown[], recent = [] as unknown[], libraryId = n
   localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: libraryId, recentBooks: recent, savedBooks: saved, savedContent: [] }));
 }
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname + location.search}</output>; }
-const renderHome = (path = '/app/shelf') => render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp oneShelf /><Location /></MemoryRouter>);
+const renderHome = (path = '/app/shelf') => render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp /><Location /></MemoryRouter>);
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); sessionStorage.clear(); });
 

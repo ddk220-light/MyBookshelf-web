@@ -75,3 +75,30 @@ test('a native-script query a catalog cannot run is a 400 explanation, not a 503
   assert.equal(response.body.error.code, 'CATALOG_QUERY_UNSUPPORTED');
   assert.match(response.body.error.message, /romanised spelling/);
 });
+
+// Plan 4.6.2: search text reaches storage only through the anonymous
+// operational log, scrubbed, and never with an address, agent or position.
+test('the anonymous log receives scrubbed search text and never the IP, user agent or coordinates', async () => {
+  const { createCatalogStore } = await import('../catalog-store/index.js');
+  const rows = [];
+  const catalogStore = createCatalogStore({ env: { USAGE_LOG_ENABLED: 'true' }, db: null, defer: task => task(), usageSink: row => rows.push(row) });
+  const telemetry = createRedactedTelemetrySink();
+  const directory = { search: () => [library], resolve: id => id === library.id ? library : null, browse: () => ({ libraries: [], total: 0, nextOffset: null }) };
+  const books = { search: async () => ({ kind: 'candidates', candidates: [book] }), resolve: async () => book };
+  const target = makeTestApp(expressApp => expressApp.use('/api/v2', createPublicV2Router({ directory, books, telemetry, catalogStore, rateLimit: { limit: 100 } })));
+  const response = await request(target).post('/api/v2/books/search')
+    .set('User-Agent', 'Synthetic-Agent/1.0').set('X-Forwarded-For', '203.0.113.7')
+    .send({ query: 'wings of fire reader@example.test 98765432101' });
+  assert.equal(response.status, 200);
+  await new Promise(resolve => setTimeout(resolve, 20));
+  const search = rows.find(row => row.kind === 'book_search');
+  assert.ok(search, 'one book_search row');
+  assert.equal(search.queryText, 'wings of fire [removed] [removed]');
+  const stored = JSON.stringify(rows);
+  for (const secret of ['203.0.113.7', 'Synthetic-Agent', 'reader@example.test', '98765432101']) assert.ok(!stored.includes(secret), secret);
+  // Telemetry never carries the text.
+  assert.ok(!JSON.stringify(telemetry.events()).includes('wings'));
+  await request(target).post('/api/v2/libraries/discover').send({ lat: 13.08, lon: 80.27 });
+  await new Promise(resolve => setTimeout(resolve, 20));
+  assert.ok(!JSON.stringify(rows).includes('13.08') && !JSON.stringify(rows).includes('80.27'));
+});

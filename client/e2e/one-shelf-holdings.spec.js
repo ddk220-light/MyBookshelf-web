@@ -1,7 +1,6 @@
 // One-shelf background check for search results (plan Phase 8, 5.7–5.9):
 // the Shelf board's sequence, "Looking in <library>…", then the library badge
-// on each result the library has. Runs only against a VITE_ONE_SHELF=true build:
-//   VITE_ONE_SHELF=true ONE_SHELF_E2E=true npm run test:e2e --workspace=client -- one-shelf-holdings.spec.js
+// on each result the library has.
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { LINKED_LIBRARY, installPublicV2Fixture } from './public-v2-fixture.js';
@@ -72,7 +71,6 @@ const statusLine = page => page.locator('.results-library');
 const everything = page => page.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }) + JSON.stringify(history.state) + location.href);
 
 test.describe('One-shelf result badges', () => {
-  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
 
   test('searching, then "Looking in…", then marks: badges top right, "In <library>", list view, accessible', async ({ page }) => {
     const found = [RESULTS[0].bookKey, RESULTS[4].bookKey, RESULTS[8].bookKey];

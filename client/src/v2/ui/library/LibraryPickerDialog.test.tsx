@@ -35,7 +35,7 @@ function Location() { const location = useLocation(); return <output data-testid
 const book = { bookKey: 'v1:openlibrary:OL1W', title: 'Book 1', authors: ['Author 1'], source: 'direct', viewedAt: '2026-01-01T00:00:00.000Z' };
 function renderShelf(libraryId: string | null = null) {
   localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: libraryId, recentBooks: [], savedBooks: [book], savedContent: [] }));
-  return render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp oneShelf /><Location /></MemoryRouter>);
+  return render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp /><Location /></MemoryRouter>);
 }
 async function openFromPanel() {
   fireEvent.click(await screen.findByRole('button', { name: 'Account and settings' }));

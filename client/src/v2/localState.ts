@@ -1,9 +1,11 @@
 import { browserStorage, type StorageLike } from './browserStorage';
 import { APPEARANCE_STORAGE_KEY, READING_LIGHT_STORAGE_KEY } from './readingLight';
-import { DOG_ANIMATION_STORAGE_KEY } from './dogAnimation';
 import { clearReaderState } from './readerState';
 import type { PublicBook, RecentBook, RecentSource } from './types';
 import type { ContentItem, SavedContent } from './contentTypes';
+
+/** The retired companion's on/off setting (plan 3.4): only ever removed now. */
+export const DOG_ANIMATION_STORAGE_KEY = 'mybookshelf.anonymous-web.dog-animation';
 
 export const ANONYMOUS_WEB_STORAGE_KEY = 'mybookshelf.anonymous-web.v1';
 const VERSION = 2;

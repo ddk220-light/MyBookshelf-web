@@ -12,4 +12,3 @@ export function useMediaQuery(query: string): boolean {
     return () => match?.removeEventListener?.('change', callback);
   }, () => media(query)?.matches || false, () => false);
 }
-export const useMobileLayout = () => useMediaQuery('(max-width: 1023px)');

@@ -35,7 +35,7 @@ function seed({ saved = [] as unknown[], libraryId = null as string | null } = {
 }
 let navigateRef: ((delta: number) => void) | null = null;
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname + '|' + JSON.stringify(location.state)}</output>; }
-const renderBook = (key = BOOK.bookKey) => render(<MemoryRouter initialEntries={['/app/books/' + encodeURIComponent(key)]}><AnonymousWebApp oneShelf /><Location /></MemoryRouter>);
+const renderBook = (key = BOOK.bookKey) => render(<MemoryRouter initialEntries={['/app/books/' + encodeURIComponent(key)]}><AnonymousWebApp /><Location /></MemoryRouter>);
 const card = () => document.querySelector<HTMLElement>('.library-answer');
 const stored = () => JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!);
 
@@ -156,7 +156,7 @@ describe('one-shelf book page', () => {
     stubApi({ others: [second], check: body => new Promise(resolve => { pending.set(body.bookKey, resolve); }) });
     seed({ libraryId: LIBRARY.id });
     const view = render(<MemoryRouter initialEntries={['/app/books/' + encodeURIComponent(BOOK.bookKey), '/app/books/' + encodeURIComponent(second.bookKey)]} initialIndex={0}>
-      <AnonymousWebApp oneShelf /><Navigator /></MemoryRouter>);
+      <AnonymousWebApp /><Navigator /></MemoryRouter>);
     await screen.findByRole('group', { name: 'Checking Anna Centenary Library' });
     await waitFor(() => expect(pending.has(BOOK.bookKey)).toBe(true));
     act(() => navigateRef!(1));

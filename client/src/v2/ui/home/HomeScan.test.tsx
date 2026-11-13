@@ -25,7 +25,7 @@ function stubApi({ session = { status: 200, body: { status: 'guest' } as unknown
   return searches;
 }
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname}</output>; }
-const renderHome = (oneShelf = true) => render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp oneShelf={oneShelf} /><Location /></MemoryRouter>);
+const renderHome = () => render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp /><Location /></MemoryRouter>);
 const typeIsbn = (value: string) => {
   const field = screen.getByRole('textbox', { name: 'ISBN' });
   fireEvent.change(field, { target: { value } });
@@ -94,7 +94,7 @@ describe('scan pop-up on the home screen', () => {
 describe('accounts switched off', () => {
   const DISABLED = { status: 503, body: { error: { code: 'ACCOUNT_DISABLED', message: 'Accounts aren’t enabled here yet. You can continue browsing.' } } };
 
-  it('flag on: no account notice on the home screen, a working guest shelf, and no account buttons in the panel', async () => {
+  it('accounts off: no account notice on the home screen, a working guest shelf, and no account buttons in the panel', async () => {
     stubApi({ session: DISABLED });
     localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: null, recentBooks: [], savedBooks: [{ ...BOOK, source: 'direct', viewedAt: '2026-01-01T00:00:00.000Z' }], savedContent: [] }));
     renderHome();
@@ -112,12 +112,4 @@ describe('accounts switched off', () => {
     expect(within(panel).getByRole('heading', { name: 'My library' })).toBeInTheDocument();
   });
 
-  it('flag off: unchanged, the notice still offers a check and the guest choice', async () => {
-    stubApi({ session: DISABLED });
-    renderHome(false);
-    expect(await screen.findByText('Accounts aren’t enabled here yet. You can keep using this browser’s shelf.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Check account availability' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Continue as guest' })).toBeInTheDocument();
-    await act(async () => {});
-  });
 });

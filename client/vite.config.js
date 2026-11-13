@@ -22,14 +22,14 @@ export default defineConfig({
     name: 'public-pages-preview',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (/^\/(app|select)(\/|\?|$)/.test(req.url || '')) req.url = '/index.html';
+        if (/^\/(app|select|find)(\/|\?|$)/.test(req.url || '')) req.url = '/index.html';
         next();
       });
     },
     configurePreviewServer(server) {
       server.middlewares.use((req, res, next) => {
         const path = new URL(req.url || '/', 'http://localhost').pathname;
-        if (/^\/(app|select)(\/|$)/.test(path)) {
+        if (/^\/(app|select|find)(\/|$)/.test(path)) {
           res.setHeader('X-Robots-Tag', 'noindex, follow');
           req.url = '/app/index.html';
           return next();

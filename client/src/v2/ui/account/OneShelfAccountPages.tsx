@@ -9,7 +9,7 @@ import { TickGlyph } from '../home/homeIcons';
 import { FormAlert } from '../panel/PanelPage';
 import { AccountForm, afterProviderSignIn } from './AccountPages';
 
-// The account forms of the one-shelf build (AccountStates board, plan Phase 9).
+// The account forms (AccountStates board, plan Phase 9).
 // Same endpoints and the same sign-in, import and deletion flows as the forms
 // in AccountPages.tsx; only the screens change: fewer fields, no explanatory
 // sentences, and each error as one short line with an icon.

@@ -4,7 +4,7 @@ Find a book, check a supported library catalog, and save your next read.
 
 [Use MyBookshelf](https://mybookshelf.cloud) · [Featured libraries](https://mybookshelf.cloud/libraries) · [Privacy](https://mybookshelf.cloud/privacy)
 
-The web app requires no account. Shelves and preferences stay in your browser.
+The web app requires no account. A guest shelf and preferences stay in your browser.
 The full library directory is available inside the app; twelve reviewed public
 library guides form the SEO launch. A failed catalog lookup means unknown,
 not that a library lacks a book. Membership and borrowing rules belong to libraries.
@@ -17,8 +17,8 @@ changes here directly; a private repository or export step is not required.
 Start with [the handoff and next work](docs/STATUS.md), then the
 [documentation index](docs/README.md). These include the account architecture,
 book identity research, planned epics/stories, UI/SEO decisions, Claude reference
-boards and release evidence. Accounts and social features are planned work;
-they are not implemented in the running app.
+boards and release evidence. Optional email accounts are live; social
+features are planned work.
 
 ## Run locally
 
@@ -43,10 +43,13 @@ Optional server environment variables: `GOOGLE_BOOKS_API_KEY`, `CALIL_APP_KEY`.
 Keep these in local `.env` or hosting configuration, never in `VITE_` variables.
 See [.env.example](.env.example) and [credential setup](docs/development/credentials.md).
 
-The one-shelf redesign is built behind a build-time flag, off by default.
-Turn it on with `VITE_ONE_SHELF=true npm run dev` (or `VITE_ONE_SHELF=true npm run build`,
-or `VITE_ONE_SHELF=true` in `client/.env.local`). See
-[the plan](docs/plans/2026-11-12-one-shelf-redesign-implementation-plan.md).
+The app is one screen: your shelf, with search, scan, the library pop-up and
+the side panel as overlays (see
+[the plan](docs/plans/2026-11-12-one-shelf-redesign-implementation-plan.md) and
+[the approved boards](docs/design/2026-11-one-shelf/)). Old `/app/search`,
+`/app/libraries` and `/app/settings` links redirect to it. Free-to-read search
+and library-catalog search are hidden; free reading returns with
+`VITE_CONTENT_DISCOVERY_ENABLED=true` plus its server settings.
 
 ## Verify
 
@@ -59,7 +62,13 @@ npm run test:seo
 node --test tools/deployment/*.test.mjs
 npx playwright install chromium webkit
 npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit
+# Hidden free reading and analytics have their own builds:
+VITE_CONTENT_DISCOVERY_ENABLED=true FREE_CONTENT_E2E=true npm run test:e2e --workspace=client -- --project=chromium
+VITE_ANALYTICS_ENABLED=true ANALYTICS_E2E=true npm run test:e2e --workspace=client -- analytics.spec.js --project=chromium
 ```
+
+Stop any server on port 4173 between these runs: Playwright reuses a running
+preview, which would test the previous build.
 
 Runtime directory snapshots in `server/data/` and the documented public review
 files in `data/` are versioned build inputs. The app and SEO generator use the

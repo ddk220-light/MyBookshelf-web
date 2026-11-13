@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ANONYMOUS_WEB_STORAGE_KEY, readAnonymousWebStateWithStatus } from './localState';
-import { DOG_ANIMATION_STORAGE_KEY } from './dogAnimation';
+import { DOG_ANIMATION_STORAGE_KEY } from './localState';
 import { READING_LIGHT_STORAGE_KEY, APPEARANCE_STORAGE_KEY } from './readingLight';
 import { AVAILABILITY_CACHE_KEY, LOOKUP_PREFERENCES_KEY, READER_PREFERENCES_KEY, removeRetiredReaderCaches } from './readerState';
 import { ONE_SHELF_STORAGE_KEY, dismissAccountInvite, findSavedBook, isOnShelf, readOneShelfState, runOneShelfMigration, writeOneShelfState } from './oneShelfState';

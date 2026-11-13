@@ -2,8 +2,6 @@
 // small Account settings, the AccountStates forms and Viewed before saved to
 // the account. The account service is mocked here, as in the unit tests; the
 // real-server journeys stay in accounts-real.spec.js (ACCOUNT_E2E harness).
-// Runs only against a build made with VITE_ONE_SHELF=true:
-//   VITE_ONE_SHELF=true ONE_SHELF_E2E=true npm run test:e2e --workspace=client -- one-shelf-account.spec.js
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { BOOK, LINKED_LIBRARY, installPublicV2Fixture } from './public-v2-fixture.js';
@@ -37,7 +35,6 @@ async function mockAccount(page, { signedIn = true, handle } = {}) {
 }
 
 test.describe('One-shelf accounts', () => {
-  test.skip(process.env.ONE_SHELF_E2E !== 'true', 'Requires a VITE_ONE_SHELF=true build');
 
   test('signed in: panel shows the email, Log out and Account settings; settings send a reset link and ask once before deleting', async ({ page }) => {
     const seen = await mockAccount(page);
