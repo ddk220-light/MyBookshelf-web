@@ -203,7 +203,17 @@ export const publicApi = Object.freeze({
   async libraryRequest(text: string): Promise<void> {
     await post('/library-requests', { text });
   },
+
+  // Report a problem: the reader's words plus the screen, library and book
+  // shown. No account, email or device identifier is attached.
+  async problemReport(report: { text: string; screen?: ProblemScreen; libraryId?: string; bookKey?: string; appVersion?: string }): Promise<void> {
+    await post('/problem-reports', report);
+  },
 });
+
+/** Screens a problem report may name (server catalog-store/requests.js SCREENS). */
+export const PROBLEM_SCREENS = ['shelf', 'search', 'book', 'library', 'panel', 'account', 'scan', 'other'] as const;
+export type ProblemScreen = typeof PROBLEM_SCREENS[number];
 
 export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; catalogUrl?: string };
 

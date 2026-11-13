@@ -69,3 +69,12 @@ export function SpinnerGlyph({ size = 18, strokeWidth = 2.6 }: IconProps) {
 export function WarningGlyph({ size = 20, strokeWidth = 2 }: IconProps) {
   return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M12 4l9 16H3zM12 10v4M12 17h.01" /></svg>;
 }
+export function AlertGlyph({ size = 18, strokeWidth = 2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><circle cx="12" cy="12" r="9" /><path d="M12 7.5v5M12 16h.01" /></svg>;
+}
+export function OfflineGlyph({ size = 18, strokeWidth = 2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M2 8.5a15 15 0 0120 0M5.5 12a10 10 0 0113 0M9 15.5a5 5 0 016 0M12 19h.01M3 3l18 18" /></svg>;
+}
+export function TrashGlyph({ size = 18, strokeWidth = 2 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" /></svg>;
+}
