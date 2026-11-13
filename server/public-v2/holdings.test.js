@@ -8,6 +8,7 @@ import { createCatalogStore } from '../catalog-store/index.js';
 import { readCatalogStoreConfig } from '../catalog-store/config.js';
 import { createCatalogPolicy } from '../catalog-store/policy.js';
 import { createCatalogLookup, createLookupRecorder, PLATFORMS } from '../services/catalog-lookup/index.js';
+import { catalogOperation } from '../services/providers/http.js';
 
 const UNPACED = Object.fromEntries(Object.entries(PLATFORMS).map(([id, value]) => [id, { ...value, minIntervalMs: 0 }]));
 const vega = { id: 'vega:test', platform: 'vega', catalogUrl: 'https://catalog.example/' };
@@ -187,6 +188,26 @@ test('result marking never resolves catalog record keys (no catalog read outside
     assert.equal(response.status, 200);
     assert.deepEqual(lines(response.text).at(-1), { type: 'done', unchecked: catalogKeys });
     assert.deepEqual(resolved, []);
+  } finally {
+    books.resolve = original;
+  }
+});
+
+test('the book page reads a record key only for its own library, under that library\'s request cap', async () => {
+  const { app } = harness();
+  const resolved = [];
+  const original = books.resolve;
+  books.resolve = async key => { resolved.push({ key, cap: catalogOperation()?.maxRequests ?? null }); return original(key); };
+  try {
+    // Another library's record: not read, and answered "couldn't check".
+    const other = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: createCatalogBookKey('koha:other', '1') });
+    assert.equal(other.status, 200);
+    assert.equal(other.body.answer, 'unknown');
+    assert.deepEqual(resolved, []);
+    // This library's own record: read inside a catalog operation with the platform's book cap.
+    const own = createCatalogBookKey(vega.id, '7');
+    await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: own });
+    assert.deepEqual(resolved, [{ key: own, cap: UNPACED.vega.book.maxRequests }]);
   } finally {
     books.resolve = original;
   }

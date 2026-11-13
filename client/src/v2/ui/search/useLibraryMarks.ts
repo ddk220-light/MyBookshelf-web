@@ -44,9 +44,12 @@ export function markBookKeys(entries: readonly ResultEntry[], limit = MARK_BOOK_
 
 // Which results have had their check started, by the search's opaque ID and
 // the library it was started for. Same-tab memory only, never search text.
-// Coming back to the same results (Back from a book) does not start it again;
-// the marks already received are in the holdings store.
-const started = new Map<string, string>();
+// Coming back to the same results (Back from a book) does not start a
+// finished check again; the marks already received are in the holdings store.
+// A check cut short (a book opened before it ended) is started once more on
+// return, for the books still without an answer, and never a third time.
+type Started = { libraryId: string; phase: 'running' | 'done' | 'interrupted' | 'retried' };
+const started = new Map<string, Started>();
 const MAX_STARTED = 40;
 export function forgetLibraryMarks() { started.clear(); }
 
@@ -73,25 +76,41 @@ export function useLibraryMarks({ active, libraryId, candidateId, entries, query
 
   useEffect(() => {
     if (!active || !libraryId || !candidateId || !keys.length || !text) return;
-    if (started.get(candidateId) === libraryId) return;
+    const previous = started.get(candidateId);
+    const again = previous?.libraryId === libraryId;
+    if (again && previous.phase !== 'interrupted') return;
+    // A second run asks only about books still without an answer.
+    const asked = again ? keys.filter(key => { const answer = store.get(key); return answer === undefined || answer === 'checking'; }) : keys;
+    if (!asked.length) {
+      if (again) previous.phase = 'retried';
+      return;
+    }
     const controller = new AbortController();
     let deadline: ReturnType<typeof setTimeout> | undefined;
+    let record: Started | null = null;
     // Started on the next task, so a mount that is undone at once (React's
     // development double effects) sends nothing.
     const begin = setTimeout(() => {
+      record = { libraryId, phase: again ? 'retried' : 'running' };
       started.delete(candidateId);
-      started.set(candidateId, libraryId);
+      started.set(candidateId, record);
       while (started.size > MAX_STARTED) started.delete(started.keys().next().value as string);
       setRun({ candidateId, libraryId, status: 'checking' });
       deadline = setTimeout(() => controller.abort(), MARKS_TIMEOUT_MS);
       const finish = (status: Run['status']) => {
         clearTimeout(deadline);
+        if (record && record.phase === 'running') record.phase = 'done';
         setRun(current => current?.candidateId === candidateId && current.libraryId === libraryId ? { ...current, status } : current);
       };
-      api.holdingsSearch(libraryId, text, keys, bookKey => store.set(libraryId, { [bookKey]: 'found' }), controller.signal)
+      api.holdingsSearch(libraryId, text, asked, bookKey => store.set(libraryId, { [bookKey]: 'found' }), controller.signal)
         .then(() => finish('done'), () => finish('failed'));
     }, 0);
-    return () => { clearTimeout(begin); clearTimeout(deadline); controller.abort(); };
+    return () => {
+      clearTimeout(begin); clearTimeout(deadline);
+      // Cut short by leaving the results (not by its own time limit).
+      if (record?.phase === 'running' && !controller.signal.aborted) record.phase = 'interrupted';
+      controller.abort();
+    };
     // `wanted` stands for `keys`.
   }, [active, libraryId, candidateId, wanted, text, store, api]);
 

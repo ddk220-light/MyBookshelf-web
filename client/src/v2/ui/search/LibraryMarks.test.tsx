@@ -117,7 +117,7 @@ describe('background check for search results', () => {
     expect(results.querySelectorAll('.cover-badge-library')).toHaveLength(1);
   });
 
-  it('opening a book stops the check; the book shows the mark at once; Back keeps the marks and does not ask again', async () => {
+  it('opening a book stops the check; the book shows the mark at once; Back keeps the marks and asks once more for the rest', async () => {
     const { marks, checks } = stubApi({ check: 'unknown' });
     seed();
     renderHome();
@@ -137,11 +137,41 @@ describe('background check for search results', () => {
     navigateRef!(-1);
     const again = await screen.findByRole('region', { name: 'Search results' });
     expect(within(again).getByRole('link', { name: 'The Dragonet Prophecy by Tui T. Sutherland, in Anna Centenary Library' })).toBeInTheDocument();
+    // The check was cut short, so it runs once more for the books still unanswered.
+    await waitFor(() => expect(marks).toHaveLength(2));
+    expect(marks[1].body.books).toEqual([{ bookKey: PUBLIC[0].bookKey }, { bookKey: PUBLIC[2].bookKey }]);
+    // Coming back, the badge is simply there (no pop).
+    expect(again.querySelector('.cover-badge-pop')).toBeNull();
+
+    // Cut short again: it is not started a third time.
+    fireEvent.click(within(again).getByRole('link', { name: 'The Dragonet Prophecy by Tui T. Sutherland, in Anna Centenary Library' }));
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/'));
+    expect(marks[1].signal?.aborted).toBe(true);
+    navigateRef!(-1);
+    await screen.findByRole('region', { name: 'Search results' });
+    await new Promise(resolve => setTimeout(resolve, 20));
+    expect(marks).toHaveLength(2);
+  });
+
+  it('a check that finished is not asked again on Back', async () => {
+    const { marks } = stubApi({ check: 'unknown' });
+    seed();
+    renderHome();
+    await screen.findByText('Anna Centenary Library');
+    await searchFor('wings of fire');
+    await waitFor(() => expect(marks).toHaveLength(1));
+    marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[1].bookKey, answer: 'found' });
+    marks[0].stream.line({ type: 'done', unchecked: [] });
+    marks[0].stream.end();
+    await waitFor(() => expect(line()).toHaveTextContent('In Anna Centenary Library'));
+    const results = screen.getByRole('region', { name: 'Search results' });
+    fireEvent.click(within(results).getByRole('link', { name: 'Wings of Fire by Dale Brown' }));
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/'));
+    navigateRef!(-1);
+    await screen.findByRole('region', { name: 'Search results' });
     await new Promise(resolve => setTimeout(resolve, 20));
     expect(marks).toHaveLength(1);
     expect(line()).toHaveTextContent('In Anna Centenary Library');
-    // Coming back, the badge is simply there (no pop).
-    expect(again.querySelector('.cover-badge-pop')).toBeNull();
   });
 
   it('a new search, clearing and changing library each stop the running check', async () => {

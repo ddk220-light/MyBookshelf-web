@@ -14,6 +14,7 @@ import { useHistoryOverlay } from '../home/useHistoryOverlay';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { spinePalette } from '../shelf/spineColors';
 import { answerLabel, LibraryAnswerCard } from './LibraryAnswerCard';
+import { LibraryAttribution } from '../LibraryAttribution';
 import { SaveButton } from './SaveButton';
 import { useLibraryAnswer } from './useLibraryAnswer';
 import '../home/home.css';
@@ -71,7 +72,7 @@ export function ShelfBookPage() {
     let active = true;
     setResolved(supplied); setError(null);
     if (!bookKey) { setError('Book details could not load.'); return; }
-    publicApi.resolveBook(bookKey).then(result => {
+    publicApi.resolveBook(bookKey, state.selectedLibraryId).then(result => {
       if (active) setResolved(result.metadataStatus && supplied ? { ...supplied, metadataStatus: result.metadataStatus } : result);
     }).catch(failure => { if (active && !supplied) setError(messageFor(failure, 'Book details could not load.')); });
     return () => { active = false; };
@@ -178,6 +179,7 @@ export function ShelfBookPage() {
     {saveError && <p className="shelf-book-line shelf-book-error">{saveError}</p>}
 
     <LibraryAnswerCard ref={cardRef} model={card} onFindLibrary={picker.show} />
+    {card.kind === 'library' && <LibraryAttribution attribution={libraryState.library?.attribution} />}
 
     {description && <section className="shelf-book-section" aria-labelledby="about-heading">
       <h2 id="about-heading">About this book</h2>

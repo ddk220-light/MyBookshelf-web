@@ -20,6 +20,7 @@ import {createMethodActions} from './method-actions.js';
 import {createExportActions} from './export-actions.js';
 import {createDeletionActions} from './deletion-actions.js';
 import {createDeletionLedger} from '../jobs/deletion-ledger.js';
+import {statementTimeoutOption} from '../db/pool-options.js';
 
 const ABSOLUTE_SESSION_MS = 30 * 86400 * 1000;
 
@@ -29,7 +30,7 @@ export async function createAccountService(config, { checkPassword,ledger=create
     max: 4,
     connectionTimeoutMillis: 3000,
     idleTimeoutMillis: 30000,
-    statement_timeout: 5000,
+    ...statementTimeoutOption(config.databaseURL, 5000),
   });
   // Keep background pool errors from becoming uncaught exceptions; never log values.
   pool.on("error", () => {});
@@ -44,7 +45,7 @@ export async function createAccountService(config, { checkPassword,ledger=create
         max: 4,
         connectionTimeoutMillis: 3000,
         idleTimeoutMillis: 30000,
-        statement_timeout: 5000,
+        ...statementTimeoutOption(config.readingDatabaseURL, 5000),
       });
       readingPool.on("error", () => {});
       await assertReadingRole(readingPool);

@@ -32,7 +32,7 @@ export async function runBookSearch(query: string, savedBooks: readonly RecentBo
     if (!definite) return { kind: 'failed' };
   }
   if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
-  const id = rememberCandidates(candidates, undefined, query, { nextOffset: null });
+  const id = rememberCandidates(candidates, query);
   rememberShelfMatches(id, ownMatches(savedBooks, query, candidates).map(book => book.bookKey));
   return { kind: 'results', id };
 }

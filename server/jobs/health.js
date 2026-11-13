@@ -1,3 +1,4 @@
+import { statementTimeoutOption } from "../db/pool-options.js";
 // Public aggregate readiness for the independent monitor. No identities,
 // queue contents, timestamps or credentials are returned to the caller.
 export function createAccountHealthMiddleware({ env = process.env } = {}) {
@@ -28,7 +29,7 @@ export function createAccountHealthMiddleware({ env = process.env } = {}) {
           connectionString: env.ACCOUNTS_WORKER_DATABASE_URL,
           max: 1,
           connectionTimeoutMillis: 3000,
-          statement_timeout: 3000,
+          ...statementTimeoutOption(env.ACCOUNTS_WORKER_DATABASE_URL, 3000),
         });
         pool.on("error", () => {});
       }

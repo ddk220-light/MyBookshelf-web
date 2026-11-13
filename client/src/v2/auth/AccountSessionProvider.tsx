@@ -12,7 +12,6 @@ import { setReaderIdentityScope } from "../readerState";
 import { clearSearchMemory } from "../searchMemory";
 import { clearCatalogMetadata } from "../catalogMetadata";
 import { flushSync } from "react-dom";
-import { resetLibrarySearchSession } from "../ui/library/useLibraryDiscovery";
 
 export type AccountUser = {
   id: string;
@@ -131,7 +130,6 @@ export function AccountSessionProvider({ children, disabledMeansGuest = false }:
       setReaderIdentityScope(reply.status === "guest" ? null : key(reply));
       clearSearchMemory();
       clearCatalogMetadata();
-      resetLibrarySearchSession();
     }
     if (
       current.current.status === "authenticated" &&

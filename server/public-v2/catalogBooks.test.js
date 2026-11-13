@@ -38,7 +38,7 @@ test('title/author catalog keys resolve after a fresh app start and preserve qua
   const bookKey = createCatalogBookKey(libraryId, createTitleAuthorId(title, author));
   assert.ok(bookKey.length > 160);
   const app = createAnonymousApp();
-  const resolved = await request(app).post('/api/v2/books/resolve').send({ bookKey });
+  const resolved = await request(app).post('/api/v2/books/resolve').send({ bookKey, libraryId });
   assert.equal(resolved.status, 200);
   assert.equal(resolved.body.book.title, title);
   const result = await request(app).post('/api/v2/availability').send({ libraryId, bookKey });
@@ -82,7 +82,7 @@ test('anonymous title search, record resolution and mixed availability work with
   assert.equal(candidate.bookKey, createCatalogBookKey(madurai, '56886'));
   assert.equal(candidate.isbn13, undefined);
   assert.equal(candidate.recordId, undefined);
-  const resolved = await request(app).post('/api/v2/books/resolve').send({ bookKey: candidate.bookKey });
+  const resolved = await request(app).post('/api/v2/books/resolve').send({ bookKey: candidate.bookKey, libraryId: madurai });
   assert.equal(resolved.status, 200);
   const observed = await request(app).post('/api/v2/availability').send({ libraryId: madurai, bookKey: candidate.bookKey });
   assert.equal(observed.body.lookupKind, 'catalog_record');
@@ -101,17 +101,26 @@ test('anonymous title search, record resolution and mixed availability work with
 });
 
 test('a catalog book deep link resolves independently of a previous search or memory cache', async () => {
-  let calls = 0;
-  global.fetch = async url => { calls++; return response(url, tamil); };
+  let calls = 0, robots = 0;
+  // The record read now goes through the catalog's gate, robots rules included.
+  global.fetch = async url => { if (String(url).endsWith('/robots.txt')) { robots++; return response(url, '', 404); } calls++; return response(url, tamil); };
   const app = createAnonymousApp();
   const key = createCatalogBookKey(chennai, '101413');
-  const result = await request(app).post('/api/v2/books/resolve').send({ bookKey: key });
+  // A record is read only for its own library, named in the request.
+  for (const libraryId of [undefined, madurai]) {
+    const refused = await request(app).post('/api/v2/books/resolve').send({ bookKey: key, ...(libraryId ? { libraryId } : {}) });
+    assert.equal(refused.status, 503);
+    assert.equal(refused.body.error.code, 'METADATA_UNAVAILABLE');
+  }
+  assert.equal(calls, 0);
+  const result = await request(app).post('/api/v2/books/resolve').send({ bookKey: key, libraryId: chennai });
   assert.equal(result.status, 200);
   assert.match(result.body.book.title, /அலுவலக மேலாண்மை/);
   assert.equal(result.body.book.bookKey, key);
   assert.equal(result.body.book.isbn13, undefined);
   assert.equal(calls, 1);
-  const unknown = await request(app).post('/api/v2/books/resolve').send({ bookKey: createCatalogBookKey('koha:unconfigured', '101413') });
+  assert.equal(robots, 1);
+  const unknown = await request(app).post('/api/v2/books/resolve').send({ bookKey: createCatalogBookKey('koha:unconfigured', '101413'), libraryId: 'koha:unconfigured' });
   assert.equal(unknown.status, 404);
   assert.equal(calls, 1);
 });

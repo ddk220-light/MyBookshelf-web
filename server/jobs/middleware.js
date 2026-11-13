@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { readAccountConfig } from "../accounts/config.js";
+import { statementTimeoutOption } from "../db/pool-options.js";
 export function createJobMiddleware({ env = process.env } = {}) {
   let pool, maintenance;
   const middleware = async (req, res, next) => {
@@ -48,7 +49,7 @@ export function createJobMiddleware({ env = process.env } = {}) {
           connectionString: env.ACCOUNTS_WORKER_DATABASE_URL,
           max: 2,
           connectionTimeoutMillis: 3000,
-          statement_timeout: 5000,
+          ...statementTimeoutOption(env.ACCOUNTS_WORKER_DATABASE_URL, 5000),
         });
         pool.on("error", () => {});
       }

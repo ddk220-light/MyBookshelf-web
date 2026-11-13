@@ -76,3 +76,11 @@ test('native forbidden errors distinguish verification, recent auth and other de
     if(native!=='EMAIL_NOT_VERIFIED')assert.doesNotMatch(response.body.error.message,/verify your email/i);
   }
 });
+
+test('account pools: no statement_timeout startup parameter on a pooled endpoint; a direct connection keeps it', async () => {
+  const { statementTimeoutOption } = await import('../db/pool-options.js');
+  assert.deepEqual(statementTimeoutOption('postgres://mybookshelf_auth:x@ep-quiet-sky-123456-pooler.us-east-1.aws.neon.tech/accounts?sslmode=require', 5000), {});
+  assert.deepEqual(statementTimeoutOption('postgres://mybookshelf_auth:x@ep-quiet-sky-123456.us-east-1.aws.neon.tech/accounts?sslmode=require', 5000), { statement_timeout: 5000 });
+  assert.deepEqual(statementTimeoutOption('postgres://postgres@127.0.0.1:55432/accounts_test', 3000), { statement_timeout: 3000 });
+  assert.deepEqual(statementTimeoutOption('not a url', 3000), { statement_timeout: 3000 });
+});

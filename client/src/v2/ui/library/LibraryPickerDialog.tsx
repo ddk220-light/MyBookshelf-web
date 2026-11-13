@@ -89,7 +89,7 @@ export function LibraryPickerDialog({ open, onClose, onChosen, returnFocus, init
 function PickerBody({ titleId, listId, onClose, onChosen, initialQuery }: { titleId: string; listId: string; onClose: () => void; onChosen?: (library: PublicLibrary) => void; initialQuery?: string }) {
   const { selectLibrary, library: selected, recoveryMode } = useLibrary();
   const [startQuery] = useState(initialQuery);
-  const model = useLibraryDiscovery({ query: startQuery }, { compact: true });
+  const model = useLibraryDiscovery({ query: startQuery });
   const { search, busy, locating, errorKind, nearMe, changeQuery } = model;
   const { query, page, nearby } = search;
   const [request, setRequest] = useState<RequestState>('idle');

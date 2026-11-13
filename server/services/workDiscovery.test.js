@@ -291,3 +291,39 @@ test('strict matches found only through another edition title also get the spell
   await createWorkDiscovery({ read, fallbackText: async () => [] }).searchPage({ title: 'goblet of fire' });
   assert.equal(paths.filter(spelling).length, 0);
 });
+
+test('edition profiles read up to three pages of a widely published work, and stop early when time runs out', async () => {
+  const isbn = n => {
+    const body = '978' + String(100000000 + n).padStart(9, '0');
+    const sum = [...body].reduce((total, digit, index) => total + Number(digit) * (index % 2 ? 3 : 1), 0);
+    return body + ((10 - (sum % 10)) % 10);
+  };
+  const page = offset => Array.from({ length: 100 }, (_, i) => ({ title: 'Wings of Fire', physical_format: 'Paperback', languages: [{ key: '/languages/eng' }], isbn_13: [isbn(offset + i)] }));
+  const paths = [];
+  const read = async path => { paths.push(path); const offset = Number(path.match(/offset=(\d+)/)?.[1] || 0); return { size: 450, entries: page(offset) }; };
+  const book = { workId: 'OL1037811W', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'], language: 'eng' };
+  const profile = await createWorkDiscovery({ read }).profile(book);
+  assert.deepEqual(paths, ['/works/OL1037811W/editions.json?limit=100', '/works/OL1037811W/editions.json?limit=100&offset=100', '/works/OL1037811W/editions.json?limit=100&offset=200']);
+  // An edition first listed past the first hundred is now part of the work.
+  assert.ok(profile.isbns.includes(isbn(250)));
+  assert.equal(profile.isbns.length, 300);
+  assert.equal(profile.complete, false);
+
+  // A short last page ends the reading; the work is complete.
+  paths.length = 0;
+  const short = await createWorkDiscovery({ read: async path => { paths.push(path); return path.includes('offset=100') ? { size: 130, entries: page(100).slice(0, 30) } : { size: 130, entries: page(0) }; } }).profile(book);
+  assert.equal(paths.length, 2);
+  assert.equal(short.isbns.length, 130);
+  assert.equal(short.complete, true);
+
+  // No later page once the profile is older than its window; a failed later page keeps what was read.
+  let time = 0;
+  paths.length = 0;
+  const slow = await createWorkDiscovery({ clock: () => time, read: async path => { paths.push(path); time += 6000; return { size: 450, entries: page(0) }; } }).profile(book);
+  assert.equal(paths.length, 1);
+  assert.equal(slow.isbns.length, 100);
+  const failing = await createWorkDiscovery({ read: async path => { if (path.includes('offset')) throw new Error('offline'); return { size: 450, entries: page(0) }; } }).profile(book);
+  assert.equal(failing.isbns.length, 100);
+  assert.equal(failing.expansionFailed, false);
+  assert.equal(failing.complete, false);
+});

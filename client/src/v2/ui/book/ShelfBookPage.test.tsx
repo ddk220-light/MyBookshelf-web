@@ -190,6 +190,35 @@ describe('one-shelf book page', () => {
     expect(await screen.findByRole('button', { name: 'On my shelf' })).toBeInTheDocument();
   });
 
+  it('a library served through Calil shows its attribution under the library card; others show none', async () => {
+    const calil = { ...LIBRARY, id: 'calil:setagaya', name: 'Setagaya City Library', country: 'JP', attribution: { label: 'Calil', url: 'https://calil.jp/' } };
+    stubApi({ libraries: [calil, OTHER] });
+    seed({ libraryId: calil.id });
+    const view = renderBook();
+    await screen.findByRole('group', { name: 'Found in Setagaya City Library' });
+    expect(screen.getByRole('link', { name: 'Calil' })).toHaveAttribute('href', 'https://calil.jp/');
+    view.unmount();
+    stubApi();
+    seed({ libraryId: OTHER.id });
+    renderBook();
+    await screen.findByRole('group', { name: 'Found in Kalaignar Centenary Library' });
+    expect(screen.queryByText(/Library data from/)).not.toBeInTheDocument();
+  });
+
+  it('one undo notice at a time: clearing Viewed before replaces "Removed … · Undo"', async () => {
+    stubApi();
+    seed({ saved: [{ ...BOOK, source: 'search', viewedAt: '2026-01-01T00:00:00.000Z' }] });
+    render(<MemoryRouter initialEntries={['/app/shelf', '/app/books/' + encodeURIComponent(BOOK.bookKey)]} initialIndex={1}><AnonymousWebApp /><Location /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole('button', { name: 'On my shelf' }));
+    expect(await screen.findByText('Removed Wings of Fire')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('link', { name: 'Back' }));
+    const viewed = await screen.findByRole('region', { name: 'Viewed before' });
+    fireEvent.click(within(viewed).getByRole('button', { name: 'Clear' }));
+    expect(await screen.findByText('Viewed before cleared')).toBeInTheDocument();
+    expect(screen.queryByText('Removed Wings of Fire')).not.toBeInTheDocument();
+    expect(document.querySelectorAll('.undo-notice')).toHaveLength(1);
+  });
+
   it('a saved book with the same ISBN-13 under another key counts as on my shelf, and removing takes that one off', async () => {
     stubApi();
     seed({ saved: [{ bookKey: 'v1:googlebooks:abc', isbn13: BOOK.isbn13, title: 'Wings of Fire', authors: [], source: 'search', viewedAt: '2026-01-01T00:00:00.000Z' }] });

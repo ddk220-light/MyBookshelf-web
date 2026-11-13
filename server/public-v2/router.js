@@ -211,9 +211,26 @@ export function createPublicV2Router({
   }));
 
   router.post('/books/resolve', route(telemetry, 'book_resolve', async (req, res) => {
-    const { bookKey } = parseBookResolve(req.body);
+    const { bookKey, parsed } = parseBookResolve(req.body);
     if (!bookKey) return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
-    const book = await bookService.resolve(bookKey);
+    let book;
+    if (parsed.kind === 'catalog') {
+      // A library's own record is read only for that library, named in the
+      // request, and under its host slot and request cap.
+      if (req.body?.libraryId !== parsed.libraryId || typeof catalogLookup.readRecord !== 'function')
+        throw Object.assign(new Error('Book details are unavailable'), { code: 'BOOK_METADATA_UNAVAILABLE' });
+      const entry = directory.entry?.(parsed.libraryId);
+      if (!entry) return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
+      const controller = new AbortController();
+      const abandon = () => { if (!res.writableEnded) controller.abort(); };
+      res.on('close', abandon);
+      try {
+        book = await catalogLookup.readRecord({ library: entry, read: () => bookService.resolve(bookKey), signal: controller.signal })
+          .catch(error => { if (error?.code === 'CATALOG_UNSUPPORTED') throw Object.assign(new Error('Book details are unavailable'), { code: 'BOOK_METADATA_UNAVAILABLE' }); throw error; });
+      } finally { res.off('close', abandon); }
+    } else {
+      book = await bookService.resolve(bookKey);
+    }
     if (!book) return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
     return res.json({ book });
   }));

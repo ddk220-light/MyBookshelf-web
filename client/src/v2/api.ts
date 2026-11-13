@@ -1,4 +1,4 @@
-import type { Availability, PublicBook, PublicLibrary, PublicLibraryPage, LibraryDiscovery, LibraryAreas, Place } from './types';
+import type { Availability, PublicBook, PublicLibrary, PublicLibraryPage, LibraryDiscovery } from './types';
 import type { ContentSourceStatus } from './contentTypes';
 
 type ApiErrorBody = { error?: { code?: string; message?: string } };
@@ -105,16 +105,7 @@ export async function post<T>(path: string, body: Record<string, unknown>, signa
 }
 
 export const publicApi = Object.freeze({
-  async searchPlaces(query: string, signal?: AbortSignal, country?: string): Promise<Place[]> {
-    const data = await post<{ places: Place[] }>('/places/search', { query, ...(country ? { country } : {}) }, signal);
-    return data.places;
-  },
-  async discoverLibraries(filters: LibraryDiscovery, signal?: AbortSignal): Promise<PublicLibraryPage> {
-    return post('/libraries/discover', { ...filters, limit: 25 }, signal);
-  },
-  async libraryAreas(country?: string, region?: string, signal?: AbortSignal): Promise<LibraryAreas> {
-    return post('/libraries/areas', { country, region }, signal);
-  },
+
   async searchLibraries(query: string): Promise<PublicLibrary[]> {
     const data = await post<{ libraries: PublicLibrary[] }>('/libraries/search', { query, limit: 25 });
     return data.libraries;
@@ -142,8 +133,14 @@ export const publicApi = Object.freeze({
     return result.book;
   },
 
-  async resolveBook(bookKey: string): Promise<PublicBook> {
-    const data = await post<{ book: PublicBook }>('/books/resolve', { bookKey });
+  async discoverLibraries(filters: LibraryDiscovery, signal?: AbortSignal): Promise<PublicLibraryPage> {
+    return post('/libraries/discover', { ...filters, limit: 25 }, signal);
+  },
+
+  /** A library catalog record is read only for its own library, which must be the chosen one. */
+  async resolveBook(bookKey: string, libraryId?: string | null): Promise<PublicBook> {
+    const catalog = bookKey.startsWith('v1:catalog:') && libraryId && bookKey.startsWith('v1:catalog:' + libraryId + ':');
+    const data = await post<{ book: PublicBook }>('/books/resolve', catalog ? { bookKey, libraryId } : { bookKey });
     return data.book;
   },
 

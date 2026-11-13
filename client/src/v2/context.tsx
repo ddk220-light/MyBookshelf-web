@@ -38,6 +38,8 @@ export type LibraryState = {
   removedLibraryNotice: string | null;
   removedBook: RecentBook | null;
   undoRemoval: () => Promise<boolean>;
+  /** Hides "Removed … · Undo" when another undo notice takes its place (one at a time). */
+  dismissRemoval?: () => void;
   reportStorageFailure: () => void;
   selectLibrary: (library: PublicLibrary) => Promise<boolean>;
   retryLibrary: () => void;
@@ -241,6 +243,7 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     const ok=await commit(saved=>{const index=saved.savedBooks.findIndex(book=>book.bookKey===bookKey),book=saved.savedBooks[index];if(book)removed={book,index};return withoutSavedBook(saved,bookKey);});
     if(ok&&removed&&alive.current){setRemoved(removed);return true;}return false;
   }, [commit]);
+  const dismissRemoval = useCallback(() => setRemoved(null), []);
   const undoRemoval = useCallback(async() => {
     if (!removed) return false;
     let full=false;
@@ -264,7 +267,7 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     loadingLibrary,
     libraryError,
     storageNotice,
-    recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removedBook: removed?.book || null, undoRemoval, reportStorageFailure,
+    recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removedBook: removed?.book || null, undoRemoval, dismissRemoval, reportStorageFailure,
     selectLibrary,
     retryLibrary,
     rememberBook,
@@ -277,7 +280,7 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     unsaveBook,
     saveContent,
     unsaveContent,
-  }), [state, library, loadingLibrary, libraryError, storageNotice, recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removed, undoRemoval, reportStorageFailure, selectLibrary, retryLibrary, rememberBook, updateRecentDisplay, removeRecentBook, clearRecentBooks, restoreRecentBooks, clearSavedBooks, saveBook, unsaveBook, saveContent, unsaveContent]);
+  }), [state, library, loadingLibrary, libraryError, storageNotice, recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removed, undoRemoval, dismissRemoval, reportStorageFailure, selectLibrary, retryLibrary, rememberBook, updateRecentDisplay, removeRecentBook, clearRecentBooks, restoreRecentBooks, clearSavedBooks, saveBook, unsaveBook, saveContent, unsaveContent]);
 
   return <LibraryStateContext.Provider value={value}>{children}</LibraryStateContext.Provider>;
 }

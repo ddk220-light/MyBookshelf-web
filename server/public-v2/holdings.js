@@ -122,8 +122,18 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     const found = libraryFor(libraryId);
     if (!found) return res.status(404).json(publicError('LIBRARY_NOT_FOUND', 'This library is not in the directory.'));
     const { library, entry } = found;
+    // Another library's catalog record is not read for this library: it
+    // cannot be identified here without a request to that other catalog.
+    if (parsed?.kind === 'catalog' && parsed.libraryId !== libraryId) {
+      res.json({ answer: 'unknown' });
+      usage({ kind: 'book_check', libraryId, bookKey, outcome: 'unknown', durationMs: now() - startedAt });
+      return undefined;
+    }
     let resolved = null, metadataFailed = false;
-    try { resolved = await books.resolve(bookKey); } catch { metadataFailed = true; }
+    // This library's own record is read under its host slot and request cap.
+    try { resolved = parsed?.kind === 'catalog' && typeof lookup.readRecord === 'function'
+      ? await lookup.readRecord({ library: entry, read: () => books.resolve(bookKey) })
+      : await books.resolve(bookKey); } catch { metadataFailed = true; }
     if (!resolved && !metadataFailed) return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
     const book = { ...trustedIdentity(libraryId, bookKey, resolved), title: resolved?.title || '', authors: resolved?.authors || [] };
     const handoff = catalogHandoffFor({ entry, library, book: resolved || (book.isbn13 ? { isbn13: book.isbn13 } : undefined) });

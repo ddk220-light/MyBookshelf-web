@@ -490,3 +490,24 @@ test('an expired cache deadline consumes a scheduled task rejection', async () =
     { deadlineAt: Date.now() - 1 }), { name: 'AbortError' });
   await new Promise(resolve => setImmediate(resolve));
 });
+
+// Captured 2026-11-13 from DC Public Library's Vega gateway (POST format-groups,
+// searchText 9780061741241 and 9780062315007 gave the same group), trimmed to
+// the fields the adapter reads.
+test('Vega: an ISBN listed only under a group’s eBook tab is in the catalog, never "couldn’t check"; the print tab keeps its copy status', async () => {
+  const { readFileSync } = await import('node:fs');
+  const payload = JSON.parse(readFileSync(new URL('../../test/fixtures/vega/dcpl-alchemist-format-group.json', import.meta.url), 'utf8'));
+  const ebook = parseVegaAvailability(payload, '9780061741241');
+  assert.equal(ebook.outcome, 'in_catalog');
+  assert.equal(ebook.matchKind, 'exact_isbn');
+  assert.equal(ebook.format, 'eBook');
+  // ISBN-10 of the same eBook.
+  assert.equal(parseVegaAvailability(payload, '0061741248').outcome, 'in_catalog');
+  const print = parseVegaAvailability(payload, '9780062315007');
+  assert.equal(print.outcome, 'none_available');
+  assert.equal(print.format, 'Book');
+  assert.equal(print.callNumber, undefined);
+  assert.deepEqual(print.locations.map(location => location.status), ['unavailable', 'unavailable', 'unavailable']);
+  // An ISBN the group does not list is not proven by it.
+  assert.equal(parseVegaAvailability(payload, '9780593135204'), null);
+});

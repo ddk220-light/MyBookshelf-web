@@ -138,7 +138,9 @@ export function AccountLibraryStateProvider({
       try {
         const result = await action(repo);
         if (!active.current || repository.current !== repo) return null;
-        setUndo(null);
+        // A shelf or settings change ends "Removed … · Undo"; a quiet Viewed
+        // before entry leaves the shelf as it was, so Undo still applies.
+        if (!quiet) setUndo(null);
         after?.(result);
         if (!quiet) setNotice("Saved");
         onRetrySuccess.current = undefined;
@@ -191,9 +193,14 @@ export function AccountLibraryStateProvider({
   );
   const saveBook = useCallback(
     async (book: PublicBook): Promise<SaveResult> => {
-      if (snapshotRef.current && isOnShelf(snapshotRef.current.books, book))
+      if (snapshotRef.current && isOnShelf(snapshotRef.current.books, book)) {
+        // The removed book is back: its Undo would do nothing.
+        setUndo((current) => (current && isOnShelf([current.book], book) ? null : current));
         return "already-saved";
+      }
       const result = await run("Saving book", (r) => r.saveBook(book));
+      if (result)
+        setUndo((current) => (current && isOnShelf([current.book], book) ? null : current));
       return result?.status ?? "failed";
     },
     [run],
@@ -340,6 +347,7 @@ export function AccountLibraryStateProvider({
       : null,
     removedBook: undo?.book ?? null,
     undoRemoval,
+    dismissRemoval: () => setUndo(null),
     reportStorageFailure: () => {},
     selectLibrary,
     retryLibrary: () => void refresh(),

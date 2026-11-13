@@ -44,7 +44,7 @@ type HomeState = LegacyArrival & { overlay?: 'panel' | 'scan' | 'library'; panel
  * scan pop-up are overlays with their own history entry, so Back closes them.
  */
 export function HomeScreen() {
-  const { state, library, loadingLibrary, clearRecentBooks, restoreRecentBooks, recoveryMode, reportStorageFailure } = useLibrary();
+  const { state, library, loadingLibrary, clearRecentBooks, restoreRecentBooks, recoveryMode, reportStorageFailure, removedBook, dismissRemoval } = useLibrary();
   const navigate = useNavigate();
   const location = useLocation();
   const personButton = useRef<HTMLButtonElement>(null);
@@ -258,8 +258,10 @@ export function HomeScreen() {
 
   const clearViewed = async () => {
     const books = state.recentBooks;
-    if (await clearRecentBooks()) setCleared(books);
+    // One undo notice at a time: the newest replaces "Removed … · Undo".
+    if (await clearRecentBooks()) { dismissRemoval?.(); setCleared(books); }
   };
+  useEffect(() => { if (removedBook) setCleared(null); }, [removedBook]);
   useEffect(() => {
     if (!cleared) return;
     const timer = setTimeout(() => setCleared(null), 10_000);

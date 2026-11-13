@@ -64,7 +64,14 @@ export function isPrintEdition(edition) {
 const searchOtherSource = query => cachedTask(`work-discovery:google:${JSON.stringify(query)}`,
   () => searchGoogleBooksByQuery(query), { deadlineAt: Date.now() + 9000, ttlMs: 6 * 60 * 60 * 1000 });
 
-export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookMetadata, fallbackText = searchOtherSource } = {}) {
+// A work's editions are read 100 at a time. Widely published books have
+// hundreds, so up to three pages are read; a further page starts only while
+// the profile is young, so the paced reads stay within a check's budget.
+export const EDITION_PAGE_SIZE = 100;
+export const EDITION_PAGES = 3;
+export const EDITION_PAGE_WINDOW_MS = 5000;
+
+export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookMetadata, fallbackText = searchOtherSource, clock = Date.now } = {}) {
   async function searchPage({ title, author = '', max = 160, offset = 0 }) {
     const query = { title, author, max };
     if (!scopedSearchQuery(query)) return { books: [], nextOffset: null };
@@ -227,19 +234,34 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
       authors: book.authors || [], language: language || book.language || (book.languages?.includes('eng') ? 'eng' : book.languages?.[0]) || '', complete: true, expansionFailed: false };
     if (editionScope === 'exact') return base;
     if (!WORK_ID.test(book.workId || '')) return { ...base, complete: false };
+    const started = clock();
+    const entries = [];
+    let size = null;
     try {
-      // One page bounds latency for works with hundreds of editions. Title
-      // searches still run, so missing or unenumerated ISBNs aren't a dead end.
-      const result = await read(`/works/${book.workId}/editions.json?limit=100`);
-      if (!Array.isArray(result?.entries)) throw unavailable();
+      // The first page is required; later pages add editions while time allows.
+      // Title searches still run, so missing or unenumerated ISBNs aren't a dead end.
+      for (let page = 0; page < EDITION_PAGES; page += 1) {
+        if (page > 0 && (clock() - started >= EDITION_PAGE_WINDOW_MS || (size !== null && entries.length >= size))) break;
+        let result;
+        try {
+          result = await read(`/works/${book.workId}/editions.json?limit=${EDITION_PAGE_SIZE}${page ? `&offset=${page * EDITION_PAGE_SIZE}` : ''}`);
+          if (!Array.isArray(result?.entries)) throw unavailable();
+        } catch (error) {
+          if (page === 0) throw error;
+          break; // Keep the editions already read; the profile is incomplete.
+        }
+        if (Number.isFinite(result.size)) size = result.size;
+        entries.push(...result.entries);
+        if (result.entries.length < EDITION_PAGE_SIZE) break;
+      }
       // Do not invent an English filter for records with no language metadata.
       // An explicit or known language still requires positive edition evidence.
-      const compatible = result.entries.filter(edition => isPrintEdition(edition)
+      const compatible = entries.filter(edition => isPrintEdition(edition)
         && (!base.language || languageOf(edition).includes(base.language)));
       return { ...base,
         isbns: unique([...base.isbns, ...compatible.flatMap(edition => [...(edition.isbn_13 || []), ...(edition.isbn_10 || [])].map(validateAndNormalize))]),
         titles: unique([book.title, ...compatible.map(edition => edition.title)]).slice(0, 5),
-        complete: Number.isFinite(result.size) && result.entries.length >= result.size };
+        complete: size !== null && entries.length >= size };
     } catch {
       return { ...base, complete: false, expansionFailed: true };
     }

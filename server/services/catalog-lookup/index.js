@@ -395,7 +395,26 @@ export function createCatalogLookup({
     }
   }
 
-  return Object.freeze({ lookupBook, storedFor, markResults, checkBook,
+  // Reading one of this library's own catalog records (a record key's title,
+  // authors and ISBN) takes the same host slot, spacing and request cap as a
+  // book check on its platform. `read` performs the provider request(s).
+  // Fails with CATALOG_UNSUPPORTED when the library has no catalog adapter.
+  async function readRecord({ library: entry, read, signal }) {
+    const { platform, host } = settings(entry);
+    if (!platform || !host) throw coded('Catalog lookups are not available for this library', 'CATALOG_UNSUPPORTED');
+    const deadline = now() + bookDeadlineMs(entry, platform);
+    const tryOnce = guard.circuitOpen(host);
+    const release = await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: deadline, signal });
+    try {
+      const work = withCatalogOperation({ maxRequests: platform.book.maxRequests, signal: signal || null, robots: robotsCheck,
+        minIntervalMs: platform.minIntervalMs || 0, gate: gateFor(platform), noRetries: tryOnce }, () => read());
+      return await settleBy(work, deadline, signal, now);
+    } finally {
+      release();
+    }
+  }
+
+  return Object.freeze({ lookupBook, storedFor, markResults, checkBook, readRecord,
     enabledFor: entry => lookupV2Enabled(entry, env) });
 }
 
