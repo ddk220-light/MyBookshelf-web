@@ -55,7 +55,7 @@ Providers without a public text-search adapter still benefit from known-edition 
 
 Run `npm test --workspace=server`, `npm run test:client`, `npm run typecheck:client`, and `npm run build` with Node 22. Tests cover grouped work keys, owner-approved cross-work cards and their guards (different authors, volumes, adaptations, languages, generic titles, author-typo limits), cold resolution, language and format filtering, ISBN variants, missing-ISBN recovery, reordered authors, conflicting titles, request budgets, deadlines, partial success, exact-mode isolation, UI controls, and grouped result limits.
 
-For a live check, start `PORT=4195 node server/index.js` after building, open `/app/search`, search **Wings of Fire**, choose Kalam's work, and select a supported library. Repeat with **Harry Potter** to verify individual novels remain separate. Live catalog observations are time-sensitive and are not test fixtures.
+For a live check, start `PORT=4195 node server/index.js` after building, open `/app/shelf`, search **Wings of Fire** in the shelf's search bar, open Kalam's work, and choose a supported library on the book page (Find my library). Repeat with **Harry Potter** to verify individual novels remain separate. Live catalog observations are time-sensitive and are not test fixtures.
 
 References: [Open Library Search API](https://openlibrary.org/dev/docs/api/search), [Work and edition APIs](https://openlibrary.org/dev/docs/restful_api), [API usage guidelines](https://openlibrary.org/developers/api).
 
@@ -67,6 +67,6 @@ Feature branch: `codex/work-aware-search`, based on the latest committed book-fi
 
 
 
-Use Node 22. Open `http://localhost:4195/app/search`. No private environment file is included. Providers that already require credentials or lack a supported public interface retain those limitations.
+Use Node 22. Open `http://localhost:4195/app/shelf` and search from the shelf (`/app/search` now redirects there). No private environment file is included. Providers that already require credentials or lack a supported public interface retain those limitations.
 
 Verification on this implementation: the complete server suite passed (446 tests), client tests passed (66), and client type-check/build passed. Browser and live API checks confirmed grouped **Wings of Fire** and **Harry Potter** searches. At the time of checking, Kalam's work matched San Mateo's record `S76C3452801`; **Philosopher's Stone** matched the alternate-title **Sorcerer's Stone** record `S76C1612613` through known edition ISBN `9780590353403`. Circulation status is transient. Missing-ISBN recovery, conflicts, deadlines, and partial failures are covered with deterministic tests; these live samples do not establish every provider's coverage. Camera hardware was not exercised in this change.

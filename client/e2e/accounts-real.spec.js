@@ -1,511 +1,229 @@
+// Real account journeys: browser → real account API → isolated Postgres, entered
+// through the one-shelf side panel (plan Phase 9 and 8.2). Runs only against
+// the loopback harness (tools/accounts/e2e-server.mjs, ACCOUNT_E2E=true); see
+// tools/accounts/README.md. The mocked-API versions are in one-shelf-account.spec.js.
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import AxeBuilder from "@axe-core/playwright";
+import { installPublicV2Fixture } from "./public-v2-fixture.js";
+
 const enabled = process.env.ACCOUNT_E2E === "true";
-test("unavailable signup preserves browser books and recovers when the service returns", async ({
-  page,
-}, testInfo) => {
-  test.skip(
-    !enabled,
-    "Run only against the explicit loopback account harness.",
-  );
-  const fixture = {
-    version: 1,
-    selectedLibraryId: null,
-    recentBooks: [],
-    savedBooks: [
-      {
-        bookKey: "v1:isbn:9780262033848",
-        isbn13: "9780262033848",
-        title: "Synthetic preserved guest book",
-        authors: ["Synthetic author"],
-        viewedAt: new Date().toISOString(),
-        source: "direct",
-      },
-    ],
-  };
-  await page.addInitScript(
-    (value) =>
-      localStorage.setItem(
-        "mybookshelf.anonymous-web.v1",
-        JSON.stringify(value),
-      ),
-    fixture,
-  );
-  const unavailable = (route) =>
-    route.fulfill({
-      status: 503,
-      json: {
-        error: {
-          code: "ACCOUNT_DISABLED",
-          message: "Accounts aren’t enabled here yet.",
-        },
-      },
-    });
-  await page.route("**/api/account/session", unavailable);
-  let posts = 0;
-  page.on("request", (req) => {
-    if (
-      req.method() === "POST" &&
-      new URL(req.url()).pathname.startsWith("/api/account/")
-    )
-      posts++;
-  });
-  await page.goto("/app/account/sign-up");
-  await expect(
-    page.getByRole("heading", { name: "Accounts aren’t available right now" }),
-  ).toBeVisible();
-  await expect(page.getByLabel("Email", { exact: true })).toHaveCount(0);
-  await page.screenshot({
-    path: testInfo.outputPath("account-unavailable.png"),
-    fullPage: true,
-  });
-  await page
-    .getByRole("button", { name: "Continue using this browser", exact: true })
-    .click();
-  await expect(
-    page
-      .getByRole("region", { name: "Saved books" })
-      .getByRole("link", { name: "Synthetic preserved guest book" }),
-  ).toBeVisible();
-  await page.getByRole("link", { name: "Settings", exact: true }).click();
-  await expect(
-    page.getByRole("link", { name: "Create account", exact: true }),
-  ).toHaveCount(0);
-  await page
-    .getByRole("region", { name: "Keep your shelf across devices" })
-    .getByRole("link", { name: "Sign in", exact: true })
-    .click();
-  await expect(
-    page.getByRole("heading", { name: "Accounts aren’t available right now" }),
-  ).toBeVisible();
-  await page.unroute("**/api/account/session", unavailable);
-  await page.getByRole("button", { name: "Try again", exact: true }).click();
-  await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Sign in", exact: true }),
-  ).toBeEnabled();
-  expect(
-    (
-      await page.evaluate(() =>
-        JSON.parse(localStorage.getItem("mybookshelf.anonymous-web.v1")),
-      )
-    ).savedBooks,
-  ).toEqual(fixture.savedBooks);
-  expect(posts).toBe(0);
-});
-test("native signup navigation, validation, duplicate submit and verification lead to a working session", async ({
-  page,
-  request,
-}) => {
-  test.skip(
-    !enabled,
-    "Run only against the explicit loopback account harness.",
-  );
-  const email = "pw-" + randomUUID() + "@example.test";
-  const password = "Synthetic signup workflow password " + randomUUID();
-  let submissions = 0;
-  page.on("request", (req) => {
-    if (
-      req.method() === "POST" &&
-      new URL(req.url()).pathname === "/api/account/sign-up"
-    )
-      submissions++;
-  });
-  try {
-    await page.goto("/app/settings");
-    await page
-      .getByRole("link", { name: "Create account", exact: true })
-      .click();
-    await page
-      .getByLabel("Your name", { exact: true })
-      .fill("Synthetic workflow reader");
-    await page.getByLabel("Email", { exact: true }).fill(email);
-    await page.getByLabel("Password", { exact: true }).fill("too short");
-    await page
-      .getByRole("button", { name: "Create account", exact: true })
-      .click();
-    await expect(page.locator("#account-password")).toHaveAttribute(
-      "aria-invalid",
-      "true",
-    );
-    expect(submissions).toBe(0);
-    await page.getByLabel("Password", { exact: true }).fill(password);
-    await page
-      .getByRole("button", { name: "Create account", exact: true })
-      .dblclick();
-    await expect(
-      page.getByRole("heading", { name: "Check your email" }),
-    ).toBeVisible();
-    expect(submissions).toBe(1);
-    await page.getByRole("link", { name: "Sign in after verifying" }).click();
-    await expect(
-      page.getByRole("heading", { name: "Sign in", exact: true }),
-    ).toBeVisible();
-    await expect(page.getByLabel("Password", { exact: true })).toHaveAttribute(
-      "autocomplete",
-      "current-password",
-    );
-    await expect(page.getByLabel("Email", { exact: true })).toHaveValue("");
-    await page.getByLabel("Email", { exact: true }).fill(email);
-    await page.getByLabel("Password", { exact: true }).fill(password);
-    await page.getByRole("button", { name: "Sign in", exact: true }).click();
-    await expect(
-      page.getByRole("button", { name: "Send verification link" }),
-    ).toBeVisible();
-    expect(
-      (await (await page.request.get("/api/account/session")).json()).status,
-    ).toBe("guest");
-    const mail = await request.post("/__accounts_test__/mail", {
-      data: { email },
-    });
-    expect(mail.ok()).toBeTruthy();
-    const { token } = await mail.json();
-    await page.goto("/app/account/verify?token=" + encodeURIComponent(token));
-    await page
-      .getByRole("button", { name: "Verify email", exact: true })
-      .click();
-    await expect(
-      page.getByRole("heading", { name: "Email verified" }),
-    ).toBeVisible();
-    await page
-      .getByRole("link", { name: "Sign in", exact: true })
-      .first()
-      .click();
-    await page.getByLabel("Email", { exact: true }).fill(email);
-    await page.getByLabel("Password", { exact: true }).fill(password);
-    await page.getByRole("button", { name: "Sign in", exact: true }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
-    expect(
-      (await (await page.request.get("/api/account/session")).json()).status,
-    ).toBe("authenticated");
-    expect(submissions).toBe(1);
-    const aged = await request.post("/__accounts_test__/aged-session", {
-      data: { email },
-    });
-    expect(aged.ok()).toBeTruthy();
-    await page.goto("/app/settings/account");
-    await expect(page.getByLabel("Your name", { exact: true })).toHaveValue(
-      "Synthetic workflow reader",
-    );
-    await expect(page.getByRole("button", { name: "Sign out here", exact: true })).toBeVisible();
-    expect((await page.request.get("/api/account/sessions")).status()).toBe(200);
-  } finally {
-    await request.post("/__accounts_test__/cleanup", { data: { email } });
-  }
-});
+const GUEST_KEY = "mybookshelf.anonymous-web.v1";
+const synthetic = () => ({ email: "pw-" + randomUUID() + "@example.test", password: "a synthetic browser password " + randomUUID() });
+const ISBNS = ["9780262033848", "9780131103627", "9780201633610", "9780596007126", "9780132350884"];
+const guestBook = (n) => ({ bookKey: "v1:isbn:" + ISBNS[n - 1], isbn13: ISBNS[n - 1], title: "Synthetic guest book " + n, authors: ["Synthetic author"], viewedAt: new Date(Date.UTC(2026, 9, n)).toISOString(), source: "direct" });
+const axe = (page) => new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+const sessionStatus = async (page) => (await (await page.request.get("/api/account/session")).json()).status;
+
+async function openPanel(page) {
+  await page.getByRole("button", { name: "Account and settings" }).click();
+  const panel = page.getByRole("dialog", { name: "Account and settings" });
+  await expect(panel).toBeVisible();
+  return panel;
+}
+
+/** Create account from the side panel, verify through the synthetic outbox, then log in. */
+async function signUpAndLogIn(page, request, { email, password }) {
+  await page.goto("/app/shelf");
+  await (await openPanel(page)).getByRole("link", { name: "Create account" }).click();
+  await expect(page.getByRole("heading", { name: "Create account" })).toBeVisible();
+  await page.getByLabel("Email", { exact: true }).fill(email);
+  await page.getByLabel("Password", { exact: true }).fill(password);
+  await page.getByRole("button", { name: "Create account", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible();
+  const mail = await request.post("/__accounts_test__/mail", { data: { email } });
+  expect(mail.ok()).toBeTruthy();
+  const { token } = await mail.json();
+  let exchanges = 0;
+  page.on("request", (req) => { if (req.method() === "POST" && new URL(req.url()).pathname === "/api/account/verify-email") exchanges++; });
+  await page.goto("/app/account/verify?token=" + encodeURIComponent(token));
+  // A link scanner opening the page spends nothing: one deliberate tap verifies.
+  await expect(page.getByRole("button", { name: "Verify email", exact: true })).toBeVisible();
+  await expect(page).not.toHaveURL(/token=/);
+  expect(exchanges).toBe(0);
+  await page.getByRole("button", { name: "Verify email", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Email verified" })).toBeVisible();
+  expect(exchanges).toBe(1);
+  await page.getByRole("link", { name: "Log in", exact: true }).click();
+  await logIn(page, { email, password });
+}
+
+async function logIn(page, { email, password }) {
+  await expect(page.getByRole("heading", { name: "Log in" })).toBeVisible();
+  await page.getByLabel("Email", { exact: true }).fill(email);
+  await page.getByLabel("Password", { exact: true }).fill(password);
+  await page.getByRole("button", { name: "Log in", exact: true }).click();
+}
+
 test.describe("account browser → real API → isolated Postgres", () => {
-  test.skip(
-    !enabled,
-    "Run only against the explicit loopback account harness.",
-  );
+  test.skip(!enabled, "Run only against the explicit loopback account harness.");
+
+  test("accounts not answering: no account buttons in the panel, and the browser shelf is kept", async ({ page }) => {
+    await page.addInitScript(([key, value]) => localStorage.setItem(key, JSON.stringify(value)),
+      [GUEST_KEY, { version: 2, selectedLibraryId: null, recentBooks: [], savedBooks: [guestBook(1)], savedContent: [] }]);
+    const unavailable = (route) => route.fulfill({ status: 503, json: { error: { code: "ACCOUNT_DISABLED", message: "Accounts aren’t enabled here yet." } } });
+    await page.route("**/api/account/session", unavailable);
+    let posts = 0;
+    page.on("request", (req) => { if (req.method() === "POST" && new URL(req.url()).pathname.startsWith("/api/account/")) posts++; });
+    await page.goto("/app/shelf");
+    await expect(page.getByRole("link", { name: "Synthetic guest book 1 by Synthetic author" })).toBeVisible();
+    const panel = await openPanel(page);
+    await expect(panel.getByRole("link", { name: "Create account" })).toHaveCount(0);
+    await expect(panel.getByRole("link", { name: "Log in" })).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    // An old sign-up link explains and lets the reader carry on.
+    await page.goto("/app/account/sign-up");
+    await expect(page.getByRole("heading", { name: "Accounts aren’t available right now" })).toBeVisible();
+    await page.unroute("**/api/account/session", unavailable);
+    await page.getByRole("button", { name: "Try again", exact: true }).click();
+    await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
+    expect((await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), GUEST_KEY)).savedBooks.map((b) => b.bookKey)).toEqual([guestBook(1).bookKey]);
+    expect(posts).toBe(0);
+  });
+
   for (const light of ["daylight", "lamplight", "ink"])
-    test(
-      "signup, scanner-safe verification, profile and sign-out in " + light,
-      async ({ page, request }, testInfo) => {
-        const email = "pw-" + randomUUID() + "@example.test",
-          password = "a synthetic browser password " + randomUUID();
-        await page.addInitScript(
-          (light) =>
-            localStorage.setItem(
-              "mybookshelf.appearance.v1",
-              JSON.stringify({ version: 1, preference: light }),
-            ),
-          light,
-        );
-        try {
-          await page.goto("/app/account/sign-up");
-          await expect(
-            page.getByRole("heading", { name: "Create account" }),
-          ).toBeVisible();
-          await expect(page.locator("html")).toHaveAttribute(
-            "data-light",
-            light,
-          );
-          await page.screenshot({
-            path: testInfo.outputPath("account-sign-up-" + light + ".png"),
-            fullPage: true,
-          });
-          await page
-            .getByLabel("Your name", { exact: true })
-            .fill("Synthetic private reader");
-          await page.getByLabel("Email", { exact: true }).fill(email);
-          await page.getByLabel("Password", { exact: true }).fill(password);
-          await page
-            .getByRole("button", { name: "Create account", exact: true })
-            .click();
-          await expect(
-            page.getByRole("heading", { name: "Check your email" }),
-          ).toBeVisible();
-          const mail = await request.post("/__accounts_test__/mail", {
-            data: { email },
-          });
-          expect(mail.ok()).toBeTruthy();
-          const { token } = await mail.json();
-          let exchanges = 0;
-          page.on("request", (req) => {
-            if (
-              req.method() === "POST" &&
-              new URL(req.url()).pathname === "/api/account/verify-email"
-            )
-              exchanges++;
-          });
-          await page.goto(
-            "/app/account/verify?token=" + encodeURIComponent(token),
-          );
-          await expect(
-            page.getByRole("button", { name: "Verify email", exact: true }),
-          ).toBeVisible();
-          await expect(page).not.toHaveURL(/token=/);
-          expect(exchanges).toBe(0);
-          await page
-            .getByRole("button", { name: "Verify email", exact: true })
-            .click();
-          await expect(
-            page.getByRole("heading", { name: "Email verified" }),
-          ).toBeVisible();
-          expect(exchanges).toBe(1);
-          await page
-            .getByRole("link", { name: "Sign in", exact: true })
-            .first()
-            .click();
-          await page.getByLabel("Email", { exact: true }).fill(email);
-          await page.getByLabel("Password", { exact: true }).fill(password);
-          await page
-            .getByRole("button", { name: "Sign in", exact: true })
-            .click();
-          await expect(page).toHaveURL(/\/app\/shelf$/);
-          await page.goto("/app/settings/account");
-          await expect(
-            page.getByLabel("Your name", { exact: true }),
-          ).toHaveValue("Synthetic private reader");
-          await page
-            .getByLabel("Your name", { exact: true })
-            .fill("Edited private reader");
-          await page
-            .getByRole("button", { name: "Save name", exact: true })
-            .click();
-          await expect(
-            page.getByText("Name saved", { exact: true }),
-          ).toBeVisible();
-          await expect(page.getByRole("switch")).toHaveAttribute(
-            "aria-checked",
-            "false",
-          );
-          const a11y = await new AxeBuilder({ page })
-            .include(".app-screen")
-            .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
-            .analyze();
-          expect(a11y.violations).toEqual([]);
-          expect(
-            await page.evaluate(
-              () => document.documentElement.scrollWidth <= window.innerWidth,
-            ),
-          ).toBe(true);
-          await page.screenshot({
-            path: testInfo.outputPath("account-settings-" + light + ".png"),
-            fullPage: true,
-          });
-          const storage = await page.evaluate(() =>
-            JSON.stringify({ ...localStorage }),
-          );
-          expect(storage).not.toContain(email);
-          expect(storage).not.toContain("Edited private reader");
-          await page
-            .getByRole("button", { name: "Sign out here", exact: true })
-            .click();
-          await expect(page).toHaveURL(/\/app\/shelf$/);
-          await expect(page.getByText(email, { exact: true })).toHaveCount(0);
-          // Private UI clears before the server acknowledges sign-out.
-          await expect
-            .poll(
-              async () =>
-                (await (await page.request.get("/api/account/session")).json())
-                  .status,
-            )
-            .toBe("guest");
-        } finally {
-          await request.post("/__accounts_test__/cleanup", { data: { email } });
-        }
-      },
-    );
+    test("create account from the side panel, verify, log in, Account settings and Log out in " + light, async ({ page, request }, testInfo) => {
+      const reader = synthetic();
+      await page.addInitScript((value) => localStorage.setItem("mybookshelf.appearance.v1", JSON.stringify({ version: 1, preference: value })), light);
+      let signUps = 0;
+      page.on("request", (req) => { if (req.method() === "POST" && new URL(req.url()).pathname === "/api/account/sign-up") signUps++; });
+      try {
+        await signUpAndLogIn(page, request, reader);
+        await expect(page).toHaveURL(/\/app\/shelf$/);
+        await expect(page.locator("html")).toHaveAttribute("data-light", light);
+        expect(await sessionStatus(page)).toBe("authenticated");
+        expect(signUps).toBe(1);
+        const panel = await openPanel(page);
+        await expect(panel.getByText(reader.email, { exact: true })).toBeVisible();
+        expect((await axe(page)).violations).toEqual([]);
+        await panel.getByRole("link", { name: "Account settings" }).click();
+        await expect(page).toHaveURL(/\/app\/settings\/account$/);
+        await expect(page.getByText(reader.email, { exact: true })).toBeVisible();
+        expect((await axe(page)).violations).toEqual([]);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+        await page.screenshot({ path: testInfo.outputPath("account-settings-" + light + ".png"), fullPage: true });
+        // Private values never reach browser storage.
+        expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toContain(reader.email);
+        await page.getByRole("link", { name: "Back" }).click();
+        const again = page.getByRole("dialog", { name: "Account and settings" });
+        await expect(again).toBeVisible();
+        await again.getByRole("button", { name: "Log out" }).click();
+        await expect.poll(() => sessionStatus(page)).toBe("guest");
+        await expect(page.getByText(reader.email, { exact: true })).toHaveCount(0);
+      } finally {
+        await request.post("/__accounts_test__/cleanup", { data: { email: reader.email } });
+      }
+    });
+
+  test("guest books come over on first log in; a second device sees them and Viewed before; logging out everywhere ends the other device", async ({ browser, request }) => {
+    const reader = synthetic();
+    const options = { baseURL: process.env.PLAYWRIGHT_BASE_URL, reducedMotion: "reduce" };
+    const first = await browser.newContext(options), second = await browser.newContext(options);
+    const page = await first.newPage(), other = await second.newPage();
+    // Book details and library answers come from the fixture: no live catalog or Open Library requests.
+    for (const target of [page, other]) { await installPublicV2Fixture(target); await target.unroute("**/api/account/session"); }
+    try {
+      // Create and verify the account on the second device, so the first one logs in fresh with guest data.
+      await signUpAndLogIn(other, request, reader);
+      await expect(other).toHaveURL(/\/app\/shelf$/);
+      await page.addInitScript(([key, value]) => { if (!sessionStorage.getItem("seeded")) { localStorage.setItem(key, JSON.stringify(value)); sessionStorage.setItem("seeded", "1"); } },
+        [GUEST_KEY, { version: 2, selectedLibraryId: null, recentBooks: [guestBook(3)], savedBooks: [guestBook(1), guestBook(2)], savedContent: [] }]);
+      await page.goto("/app/shelf");
+      await (await openPanel(page)).getByRole("link", { name: "Log in" }).click();
+      await logIn(page, reader);
+      await expect(page).toHaveURL(/\/app\/account\/import/);
+      await expect(page.getByText("2 saved books · 1 recent book")).toBeVisible();
+      expect((await axe(page)).violations).toEqual([]);
+      await page.getByRole("button", { name: "Bring books over" }).click();
+      await expect(page.getByRole("heading", { name: "Books imported" })).toBeVisible();
+      await expect(page.getByText(/2 saved books imported\. 1 recent book accepted/)).toBeVisible();
+      await page.getByRole("link", { name: "Go to your shelf" }).click();
+      await expect(page.getByRole("link", { name: "Synthetic guest book 1 by Synthetic author" })).toBeVisible();
+
+      // Opening a book while signed in adds it to the account's Viewed before automatically.
+      await page.getByRole("link", { name: "Synthetic guest book 2 by Synthetic author" }).click();
+      await expect(page.getByRole("heading", { name: "Synthetic guest book 2" })).toBeVisible();
+      await expect.poll(async () => (await (await page.request.get("/api/account/history")).json()).books.map((b) => b.bookKey)).toContain(guestBook(2).bookKey);
+
+      // The other device refreshes into the same shelf and Viewed before.
+      await other.reload();
+      await expect(other.getByRole("link", { name: "Synthetic guest book 1 by Synthetic author" })).toBeVisible();
+      const viewed = other.getByRole("region", { name: "Viewed before" });
+      await expect(viewed.getByRole("link", { name: "Synthetic guest book 2 by Synthetic author" })).toBeVisible();
+      await expect(viewed.getByRole("link", { name: "Synthetic guest book 3 by Synthetic author" })).toBeVisible();
+
+      // Signing the other device out from the first (Account settings → More) ends its private state.
+      await page.goto("/app/settings/account/more");
+      await page.getByRole("button", { name: "Sign out", exact: true }).first().click();
+      const dialog = page.getByRole("dialog");
+      await dialog.getByLabel("Password", { exact: true }).fill(reader.password);
+      await dialog.getByRole("button", { name: "Continue", exact: true }).click();
+      await dialog.getByRole("button", { name: "Sign out this device", exact: true }).click();
+      await expect(page.getByText("Signed out that device.", { exact: true })).toBeVisible();
+      await other.evaluate(() => window.dispatchEvent(new Event("focus")));
+      await expect.poll(() => sessionStatus(other)).toBe("guest");
+      await other.goto("/app/shelf");
+      await expect(other.getByRole("link", { name: "Synthetic guest book 1 by Synthetic author" })).toHaveCount(0);
+    } finally {
+      await request.post("/__accounts_test__/cleanup", { data: { email: reader.email } });
+      await first.close(); await second.close();
+    }
+  });
+
+  test("Account settings: export downloads JSON with the shelf and no secrets; deleting asks once, then the account is gone", async ({ page, request }, testInfo) => {
+    const reader = synthetic();
+    try {
+      await signUpAndLogIn(page, request, reader);
+      await expect(page).toHaveURL(/\/app\/shelf$/);
+      const save = await page.request.put("/api/account/books", {
+        headers: { "X-Account-CSRF": (await (await page.request.get("/api/account/session")).json()).csrfToken, Origin: new URL(page.url()).origin },
+        data: { book: { bookKey: guestBook(4).bookKey, isbn13: guestBook(4).isbn13, title: guestBook(4).title, authors: guestBook(4).authors },
+          shelfRevision: (await (await page.request.get("/api/account/state")).json()).shelfRevision, operationId: randomUUID() },
+      });
+      expect(save.ok()).toBeTruthy();
+      await page.goto("/app/settings/account/more");
+      await page.getByRole("button", { name: "Download account data", exact: true }).click();
+      const confirm = page.getByRole("dialog");
+      await confirm.getByLabel("Password", { exact: true }).fill(reader.password);
+      await confirm.getByRole("button", { name: "Continue", exact: true }).click();
+      const downloaded = page.waitForEvent("download");
+      await confirm.getByRole("button", { name: "Download account data", exact: true }).click();
+      const download = await downloaded;
+      expect(download.suggestedFilename()).toBe("mybookshelf-account.json");
+      const text = await readFile(await download.path(), "utf8");
+      const data = JSON.parse(text);
+      expect(data.schemaVersion).toBe(1);
+      expect(data.profile.email).toBe(reader.email);
+      expect(data.savedBooks.map((b) => b.bookKey)).toEqual([guestBook(4).bookKey]);
+      for (const forbidden of ["authUserId", "sessionId", "accessToken", "csrfToken", "passwordHash"]) expect(text).not.toContain(forbidden);
+      await testInfo.attach("export-keys", { body: Object.keys(data).join(","), contentType: "text/plain" });
+      await page.goto("/app/settings/account");
+      await page.getByRole("button", { name: "Delete account" }).click();
+      const dialog = page.getByRole("alertdialog", { name: "Delete account and shelf?" });
+      await expect(dialog.getByLabel("Password")).toBeFocused();
+      await page.keyboard.press("Escape");
+      await expect(dialog).toHaveCount(0);
+      expect(await sessionStatus(page)).toBe("authenticated");
+      await page.getByRole("button", { name: "Delete account" }).click();
+      await dialog.getByLabel("Password").fill(reader.password);
+      await dialog.getByRole("button", { name: "Delete" }).click();
+      await expect(page.getByRole("heading", { name: "Account deleted" })).toBeVisible();
+      await expect.poll(() => sessionStatus(page)).toBe("guest");
+      await page.getByRole("link", { name: "Back to my shelf" }).click();
+      await expect(page.getByRole("link", { name: guestBook(4).title + " by Synthetic author" })).toHaveCount(0);
+      // The deleted account can no longer log in.
+      await page.goto("/app/account/sign-in");
+      await logIn(page, reader);
+      await expect(page.getByRole("alert")).toBeVisible();
+      expect(await sessionStatus(page)).toBe("guest");
+    } finally {
+      await request.post("/__accounts_test__/cleanup", { data: { email: reader.email } });
+    }
+  });
 });
 
-test("explicit import, cross-device refresh and remote revocation clear private state", async ({
-  page,
-  browser,
-  request,
-}) => {
-  test.skip(
-    !enabled,
-    "Run only against the explicit loopback account harness.",
-  );
-  const base = process.env.PLAYWRIGHT_BASE_URL,
-    email = "pw-" + randomUUID() + "@example.test",
-    password = "a synthetic multi-device password " + randomUUID();
-  const book = {
-    bookKey: "v1:isbn:9780262033848",
-    isbn13: "9780262033848",
-    title: "Synthetic private shelf book",
-    authors: ["Synthetic author"],
-  };
-  const recent = {
-    bookKey: "v1:isbn:9781625275868",
-    title: "Synthetic imported recent book",
-    authors: [],
-    source: "direct",
-    viewedAt: new Date(Date.now() - 86400000).toISOString(),
-  };
-  const snapshot = {
-    version: 1,
-    selectedLibraryId: "bc:smcl",
-    savedBooks: [{ ...book, source: "direct", viewedAt: recent.viewedAt }],
-    recentBooks: [recent],
-  };
-  let second;
-  try {
-    expect(
-      (
-        await request.post("/api/account/sign-up", {
-          headers: { Origin: base },
-          data: { name: "Synthetic multi-device reader", email, password },
-        })
-      ).status(),
-    ).toBe(202);
-    const token = (
-      await (
-        await request.post("/__accounts_test__/mail", { data: { email } })
-      ).json()
-    ).token;
-    expect(
-      (
-        await request.post("/api/account/verify-email", {
-          headers: { Origin: base },
-          data: { token },
-        })
-      ).ok(),
-    ).toBeTruthy();
-    await page.addInitScript((snapshot) => {
-      if (!localStorage.getItem("mybookshelf.anonymous-web.v1"))
-        localStorage.setItem(
-          "mybookshelf.anonymous-web.v1",
-          JSON.stringify(snapshot),
-        );
-    }, snapshot);
-    await page.route("**/api/v2/books/resolve", (route) =>
-      route.fulfill({ json: { book } }),
-    );
-    await page.route("**/api/v2/availability", (route) =>
-      route.fulfill({
-        json: {
-          outcome: "unknown",
-          matchKind: null,
-          lookupKind: "exact_isbn",
-          freshness: "none",
-          attemptedAt: new Date().toISOString(),
-        },
-      }),
-    );
-    await page.goto("/app/account/sign-in");
-    await page.getByLabel("Email", { exact: true }).fill(email);
-    await page.getByLabel("Password", { exact: true }).fill(password);
-    await page.getByRole("button", { name: "Sign in", exact: true }).click();
-    await expect(
-      page.getByRole("heading", { name: "Bring books over" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("checkbox", { name: /Include recently viewed/ }),
-    ).not.toBeChecked();
-    await page
-      .getByRole("checkbox", { name: /Include recently viewed/ })
-      .check();
-    await page
-      .getByRole("checkbox", { name: /Use this browser’s library/ })
-      .check();
-    await page.getByRole("checkbox", { name: /Remove the copy here/ }).check();
-    await page
-      .getByRole("button", { name: "Bring books over", exact: true })
-      .click();
-    await expect(
-      page.getByRole("heading", { name: "Books imported" }),
-    ).toBeVisible();
-    const local = await page.evaluate(() =>
-      JSON.parse(localStorage.getItem("mybookshelf.anonymous-web.v1")),
-    );
-    expect(local.savedBooks).toEqual([]);
-    expect(local.recentBooks).toEqual([]);
-    expect(local.selectedLibraryId).toBeNull();
-    await page.getByRole("link", { name: "Go to your shelf" }).click();
-    await expect(
-      page
-        .getByRole("region", { name: "Saved books" })
-        .getByRole("link", { name: book.title }),
-    ).toBeVisible();
-    await page.goto("/app/books/" + encodeURIComponent(book.bookKey));
-    await expect(page.getByRole("heading", { name: book.title })).toBeVisible();
-    let history = await (await page.request.get("/api/account/history")).json();
-    expect(history.historyEnabled).toBe(false);
-    expect(history.books.map((b) => b.bookKey)).toEqual([recent.bookKey]);
-    second = await browser.newContext({ baseURL: base });
-    const other = await second.newPage();
-    await other.goto("/app/account/sign-in");
-    await other.getByLabel("Email", { exact: true }).fill(email);
-    await other.getByLabel("Password", { exact: true }).fill(password);
-    await other.getByRole("button", { name: "Sign in", exact: true }).click();
-    await expect(
-      other
-        .getByRole("region", { name: "Saved books" })
-        .getByRole("link", { name: book.title }),
-    ).toBeVisible();
-    await page.getByRole("button", { name: "On your shelf" }).click();
-    await expect(
-      page.getByRole("button", { name: "Save book", exact: true }),
-    ).toBeVisible();
-    await other.evaluate(() => window.dispatchEvent(new Event("focus")));
-    await expect(
-      other
-        .getByRole("region", { name: "Saved books" })
-        .getByRole("link", { name: book.title }),
-    ).toHaveCount(0);
-    await page.goto("/app/settings/account");
-    await page.getByRole("switch").click();
-    await expect(page.getByRole("switch")).toHaveAttribute(
-      "aria-checked",
-      "true",
-    );
-    await page.goto("/app/books/" + encodeURIComponent(book.bookKey));
-    await expect
-      .poll(async () => {
-        const h = await (await page.request.get("/api/account/history")).json();
-        return h.books.some((b) => b.bookKey === book.bookKey);
-      })
-      .toBe(true);
-    await page.goto("/app/settings/account");
-    await page.getByRole("button", { name: "Sign out", exact: true }).click();
-    const dialog = page.getByRole("dialog");
-    await dialog.getByLabel("Password", { exact: true }).fill(password);
-    await dialog.getByRole("button", { name: "Continue", exact: true }).click();
-    await dialog
-      .getByRole("button", { name: "Sign out this device", exact: true })
-      .click();
-    await expect(
-      page.getByText("Signed out that device.", { exact: true }),
-    ).toBeVisible();
-    await other.evaluate(() => window.dispatchEvent(new Event("focus")));
-    await expect(other.getByText(/You’ve been signed out/)).toBeVisible();
-    await expect(
-      other.getByText("Synthetic multi-device reader", { exact: true }),
-    ).toHaveCount(0);
-    expect(
-      (await (await other.request.get("/api/account/session")).json()).status,
-    ).toBe("guest");
-  } finally {
-    await second?.close();
-    await request.post("/__accounts_test__/cleanup", { data: { email } });
-  }
-});
-
+// Ported from the pre-one-shelf spec: the email change lives under Account settings → More.
 test("email change requires fresh confirmation, supports cancellation and updates only after the new address is verified", async ({
   page,
   request,
@@ -543,7 +261,7 @@ test("email change requires fresh confirmation, supports cancellation and update
     await page.goto("/app/account/sign-in");
     await page.getByLabel("Email", { exact: true }).fill(email);
     await page.getByLabel("Password", { exact: true }).fill(password);
-    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await page.getByRole("button", { name: "Log in", exact: true }).click();
     await expect(page).toHaveURL(/\/app\/shelf$/);
     const requestChange = async () => {
       await page
@@ -562,7 +280,7 @@ test("email change requires fresh confirmation, supports cancellation and update
         page.getByRole("button", { name: "Cancel email change", exact: true }),
       ).toBeVisible();
     };
-    await page.goto("/app/settings/account");
+    await page.goto("/app/settings/account/more");
     await requestChange();
     let oldSession = await (
       await page.request.get("/api/account/session")
@@ -677,7 +395,7 @@ test("switching accounts rejects an older view and never renders the previous pr
       await page.goto("/app/account/sign-in");
       await page.getByLabel("Email", { exact: true }).fill(email);
       await page.getByLabel("Password", { exact: true }).fill(password);
-      await page.getByRole("button", { name: "Sign in", exact: true }).click();
+      await page.getByRole("button", { name: "Log in", exact: true }).click();
       await expect(page).toHaveURL(/\/app\/shelf$/);
     };
     await login(emails[0]);
@@ -705,8 +423,7 @@ test("switching accounts rejects an older view and never renders the previous pr
     await page.reload();
     await expect(
       page
-        .getByRole("region", { name: "Saved books" })
-        .getByRole("link", { name: book.title }),
+        .getByRole("link", { name: new RegExp("^" + book.title) }),
     ).toBeVisible();
     await login(emails[1]);
     await expect(page.getByText(book.title, { exact: true })).toHaveCount(0);
@@ -730,194 +447,3 @@ test("switching accounts rejects an older view and never renders the previous pr
   }
 });
 
-test("private export downloads JSON; deletion can be cancelled, confirmed once and checked after a lost response", async ({
-  page,
-  request,
-}, testInfo) => {
-  test.skip(
-    !enabled,
-    "Run only against the explicit loopback account harness.",
-  );
-  const base = process.env.PLAYWRIGHT_BASE_URL,
-    email = "pw-" + randomUUID() + "@example.test",
-    password = "a synthetic data-controls password " + randomUUID();
-  try {
-    expect(
-      (
-        await request.post("/api/account/sign-up", {
-          headers: { Origin: base },
-          data: { name: "Synthetic export reader", email, password },
-        })
-      ).status(),
-    ).toBe(202);
-    const token = (
-      await (
-        await request.post("/__accounts_test__/mail", { data: { email } })
-      ).json()
-    ).token;
-    expect(
-      (
-        await request.post("/api/account/verify-email", {
-          headers: { Origin: base },
-          data: { token },
-        })
-      ).ok(),
-    ).toBeTruthy();
-    await page.goto("/app/account/sign-in");
-    await page.getByLabel("Email", { exact: true }).fill(email);
-    await page.getByLabel("Password", { exact: true }).fill(password);
-    await page.getByRole("button", { name: "Sign in", exact: true }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
-    await page.goto("/app/settings/account");
-    await page.evaluate(() =>
-      localStorage.setItem(
-        "mybookshelf.anonymous-web.v1",
-        JSON.stringify({
-          version: 1,
-          selectedLibraryId: null,
-          recentBooks: [],
-          savedBooks: [
-            {
-              bookKey: "v1:isbn:9780553418026",
-              title: "Separate guest copy",
-              authors: ["Andy Weir"],
-              source: "direct",
-              viewedAt: new Date().toISOString(),
-            },
-          ],
-        }),
-      ),
-    );
-    await page
-      .getByRole("button", { name: "Download account data", exact: true })
-      .click();
-    let dialog = page.getByRole("dialog");
-    await dialog.getByLabel("Password", { exact: true }).fill(password);
-    await dialog.getByRole("button", { name: "Continue", exact: true }).click();
-    const downloaded = page.waitForEvent("download");
-    await dialog
-      .getByRole("button", { name: "Download account data", exact: true })
-      .click();
-    const download = await downloaded;
-    expect(download.suggestedFilename()).toBe("mybookshelf-account.json");
-    const data = JSON.parse(await readFile(await download.path(), "utf8"));
-    expect(data.schemaVersion).toBe(1);
-    expect(data.profile.email).toBe(email);
-    expect(data.profile.signInMethods).toEqual(["password"]);
-    expect(data.savedBooks).toEqual([]);
-    for (const forbidden of [
-      "authUserId",
-      "sessionId",
-      "accessToken",
-      "csrfToken",
-      "passwordHash",
-    ])
-      expect(JSON.stringify(data)).not.toContain(forbidden);
-    await page
-      .getByRole("button", { name: "Delete account", exact: true })
-      .click();
-    dialog = page.getByRole("dialog");
-    await page.keyboard.press("Escape");
-    await expect(
-      page.getByRole("button", { name: "Delete account", exact: true }),
-    ).toBeFocused();
-    await expect(page.getByLabel("Your name", { exact: true })).toHaveValue(
-      "Synthetic export reader",
-    );
-    await page
-      .getByRole("button", { name: "Delete account", exact: true })
-      .click();
-    dialog = page.getByRole("dialog");
-    await dialog.getByLabel("Password", { exact: true }).fill(password);
-    await dialog.getByRole("button", { name: "Continue", exact: true }).click();
-    await expect(
-      dialog.getByText("This permanently deletes your account.", {
-        exact: false,
-      }),
-    ).toBeVisible();
-    for (let step = 0; step < 12; step++) {
-      await page.keyboard.press("Tab");
-      expect(
-        await page.evaluate(
-          () =>
-            document.activeElement === document.body ||
-            Boolean(document.activeElement?.closest("dialog")),
-        ),
-      ).toBe(true);
-    }
-    await page.screenshot({
-      path: testInfo.outputPath("account-delete-confirmation.png"),
-      fullPage: true,
-    });
-    const a11y = await new AxeBuilder({ page })
-      .include("dialog")
-      .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
-      .analyze();
-    expect(a11y.violations).toEqual([]);
-    await dialog
-      .getByLabel("I understand and want to delete my account.")
-      .check();
-    let deletionPosts = 0,
-      nonce = "";
-    await page.route("**/api/account/deletion", async (route) => {
-      deletionPosts++;
-      nonce = route.request().postDataJSON().receiptNonce;
-      await route.fetch();
-      await route.abort("failed");
-    });
-    await dialog
-      .getByRole("button", { name: "Delete account", exact: true })
-      .click();
-    await expect(page).toHaveURL(/\/app\/account\/deletion$/);
-    await expect(page.getByRole("alert")).toContainText(
-      "Couldn’t confirm the response",
-    );
-    await page
-      .getByRole("button", { name: "Check deletion status", exact: true })
-      .click();
-    await expect(
-      page.getByText("Your deletion request is durably recorded", {
-        exact: false,
-      }),
-    ).toBeVisible();
-    await expect(page.getByText(/Server sign-out is still unconfirmed/)).toHaveCount(0);
-    await expect(page.getByText(/Sign in to see your account shelf/)).toHaveCount(0);
-    await expect(page.getByRole("button", {name: "Retry sign out", exact: true})).toHaveCount(0);
-    expect(deletionPosts).toBe(1);
-    expect(nonce).toHaveLength(43);
-    const storage = await page.evaluate(() =>
-      JSON.stringify({
-        local: { ...localStorage },
-        session: { ...sessionStorage },
-      }),
-    );
-    expect(storage).not.toContain(nonce);
-    expect(page.url()).not.toContain(nonce);
-    expect(
-      (
-        await request.post("/__accounts_test__/deletion-jobs", {
-          data: { email },
-        })
-      ).ok(),
-    ).toBeTruthy();
-    await page
-      .getByRole("button", { name: "Check deletion status", exact: true })
-      .click();
-    await expect(
-      page.getByRole("heading", { name: "Account cleanup complete" }),
-    ).toBeVisible();
-    expect(
-      (await (await page.request.get("/api/account/session")).json()).status,
-    ).toBe("guest");
-    expect(deletionPosts).toBe(1);
-    expect(
-      await page.evaluate(
-        () =>
-          JSON.parse(localStorage.getItem("mybookshelf.anonymous-web.v1"))
-            .savedBooks[0].title,
-      ),
-    ).toBe("Separate guest copy");
-  } finally {
-    await request.post("/__accounts_test__/cleanup", { data: { email } });
-  }
-});

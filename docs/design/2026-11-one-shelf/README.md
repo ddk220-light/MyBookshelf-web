@@ -32,6 +32,7 @@ is superseded by the side panel and is not in this folder.
 
 ## Build flag
 
-The new screens are built behind `VITE_ONE_SHELF` (build time, off by
-default). Production stays on today's screens until release; Vercel Preview
-builds turn it on. See the repository README for local use.
+The new screens were built behind `VITE_ONE_SHELF`. Phase 12 removed the old
+screens and the flag: every build is the one-shelf app, and production shows
+it once this branch is released (`docs/RELEASE-one-shelf.md`).
+`VITE_ONE_SHELF` is now ignored.

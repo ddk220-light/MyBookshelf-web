@@ -29,7 +29,9 @@ test.describe('Policy pages and Report a problem', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'How long we keep things' })).toBeVisible();
     await expect(page.getByText('Draft for owner')).toHaveCount(0);
-    await expect(page.getByText(/^Effective \[EFFECTIVE DATE\]\./)).toBeVisible();
+    // Placeholders stay visible until the release sets the effective date (the publication switch).
+    const date = process.env.VITE_POLICY_EFFECTIVE_DATE?.trim();
+    await expect(page.getByText(date ? 'Effective ' + date + '.' : /^Effective \[EFFECTIVE DATE\]\./, { exact: false }).first()).toBeVisible();
     await expect(page.getByRole('link', { name: /My shelf/ })).toHaveCount(0);
     expect((await axe(page)).violations).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

@@ -37,6 +37,7 @@ jobs:
       - run: npm run build
       - run: npm run test:seo
       - run: node --test tools/deployment/*.test.mjs
+      - run: node --test tools/accounts/*.test.mjs
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
       - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2

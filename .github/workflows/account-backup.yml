@@ -1,0 +1,61 @@
+name: Accounts nightly backup
+# Owner decision (plan section 9): a nightly export of the accounts database
+# to a private, encrypted file, kept 30 days, on the free database plan.
+# Restore steps: docs/accounts/OPERATIONS.md ("Nightly backup").
+#
+# Off until the repository variable ACCOUNTS_BACKUP_ENABLED is 'true'. Its
+# settings live in the GitHub environment `accounts-backup`:
+#   secret   ACCOUNTS_BACKUP_DATABASE_URL           direct connection, BYPASSRLS reader
+#   secret   ACCOUNTS_BACKUP_BLOB_READ_WRITE_TOKEN  private Blob store used only for backups
+#   variable ACCOUNTS_BACKUP_AGE_RECIPIENT          public age key; the private key stays offline
+# Without them the job stops before reading or writing anything.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 20 * * *' # 02:11 in India, after the day's traffic
+permissions:
+  contents: read
+concurrency:
+  group: accounts-backup
+  cancel-in-progress: false
+jobs:
+  backup:
+    if: github.event_name == 'workflow_dispatch' || vars.ACCOUNTS_BACKUP_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: accounts-backup
+    env:
+      ACCOUNTS_BACKUP_DATABASE_URL: ${{ secrets.ACCOUNTS_BACKUP_DATABASE_URL }}
+      ACCOUNTS_BACKUP_BLOB_READ_WRITE_TOKEN: ${{ secrets.ACCOUNTS_BACKUP_BLOB_READ_WRITE_TOKEN }}
+      ACCOUNTS_BACKUP_AGE_RECIPIENT: ${{ vars.ACCOUNTS_BACKUP_AGE_RECIPIENT }}
+      # pg_dump must be at least as new as the database server.
+      ACCOUNTS_BACKUP_PG_DUMP_IMAGE: postgres:18
+    steps:
+      - name: Stop unless the backup is configured
+        run: |
+          if [ -z "$ACCOUNTS_BACKUP_DATABASE_URL" ] || [ -z "$ACCOUNTS_BACKUP_BLOB_READ_WRITE_TOKEN" ] || [ -z "$ACCOUNTS_BACKUP_AGE_RECIPIENT" ]; then
+            echo "::error::Accounts backup settings are missing. Nothing was read, written or deleted."
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install the backup tools
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq age
+          npm ci --workspace=server --include-workspace-root=false --ignore-scripts --no-audit --no-fund
+      - name: Delete backups older than 29 days
+        run: node tools/accounts/backup-store.mjs prune
+      - name: Dump, encrypt and store tonight's backup
+        run: |
+          dir="$(mktemp -d)"
+          file="$(ACCOUNTS_BACKUP_OUT_DIR="$dir" tools/accounts/backup.sh)"
+          node tools/accounts/backup-store.mjs upload "$file"
+          rm -rf "$dir"
+      - name: List stored backups
+        if: always() && env.ACCOUNTS_BACKUP_BLOB_READ_WRITE_TOKEN != ''
+        run: node tools/accounts/backup-store.mjs list

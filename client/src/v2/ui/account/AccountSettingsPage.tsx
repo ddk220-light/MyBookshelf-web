@@ -788,7 +788,7 @@ export function AccountSettingsPage() {
           </section>
           <p className="account-settings-footnote">
             Reading light and companion settings stay on this device.{" "}
-            <a href="/privacy#website">Privacy policy</a>
+            <a href="/app/privacy">Privacy policy</a>
           </p>
         </>
       )}

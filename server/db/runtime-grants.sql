@@ -60,3 +60,14 @@ DO $$ BEGIN
 EXCEPTION WHEN insufficient_privilege THEN
   RAISE NOTICE 'Set statement_timeout (5s) for mybookshelf_auth, mybookshelf_reading and mybookshelf_worker in the provider console.';
 END $$;
+-- Optional read-only role for the nightly backup (docs/accounts/OPERATIONS.md,
+-- "Nightly backup"): LOGIN, BYPASSRLS, NOSUPERUSER, no other grants. Re-applying
+-- this file after a migration keeps it able to read new tables; without it the
+-- backup fails loudly rather than leaving a table out.
+DO $$ BEGIN
+  IF EXISTS (SELECT FROM pg_roles WHERE rolname='mybookshelf_backup') THEN
+    GRANT USAGE ON SCHEMA public TO mybookshelf_backup;
+    GRANT SELECT ON ALL TABLES IN SCHEMA public TO mybookshelf_backup;
+    GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO mybookshelf_backup;
+  END IF;
+END $$;

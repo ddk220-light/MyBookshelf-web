@@ -1078,8 +1078,10 @@ s, e-Granthalaya member pages 6–16 s, Romain Rolland budget 45 s).
 
 ## 7. Work breakdown
 
-Every phase lands behind `VITE_ONE_SHELF` (client, build-time) and/or a
-server flag, so production stays unchanged until Phase 13. Sizes: S ≈ 1–2
+Phases 0–11 landed behind `VITE_ONE_SHELF` (client, build-time) and/or a
+server flag. Phase 12 retired `VITE_ONE_SHELF` before release: a default build
+is the one-shelf app, so production changes when this branch is deployed
+(Phase 13, `docs/RELEASE-one-shelf.md`); server flags still gate the rest. Sizes: S ≈ 1–2
 days, M ≈ 3–5 days, L ≈ 1–2 weeks, XL ≈ 2–4 weeks of focused work.
 
 The phases were renumbered after the owner decisions: the lookup layer is now
@@ -1456,10 +1458,10 @@ work. Old numbers are in brackets.
 | 6 Scan pop-up | M | behind flag |
 | 7 Book page + library pop-up | L | behind flag |
 | 8 Background check | L | behind `HOLDINGS_BACKGROUND_ENABLED` |
-| 9 Side panel, policy pages, accounts restyle | M | behind flag (history change is server-side; ship with the flag flip) |
+| 9 Side panel, policy pages, accounts restyle | M | behind flag (history change is server-side; ships with the release) |
 | 10 Admin view | M | yes |
 | 11 Analytics and Search Console | S | yes |
-| 12 Removal, redirects, public pages | M | with flag flip |
+| 12 Removal, redirects, public pages | M | retired the flag; ships with the release |
 | 13 Hardening and release | M | release |
 
 Critical path: 1 → 3 → 4 → 5 → 7 → 8 → 12 → 13, with 2 landing before 7
@@ -1561,31 +1563,36 @@ CI must run it).
 
 ### 8.6 Rollout
 
+As it stands after Phase 12 (the flag is gone; the step-by-step checklist with
+every setting is `docs/RELEASE-one-shelf.md`):
+
 1. **Batch pushes.** Every push to a branch connected to Vercel creates a
    paid preview build. Work locally, run the full suite locally, and push
    once per phase (or less). Documentation-only pushes are skipped by
    `tools/deployment/ignore-web-build.mjs`; do not rely on that for code.
-2. Preview: `VITE_ONE_SHELF=true` and the catalog store pointed at a Neon
-   branch of the catalog project. Owner reviews against the boards on a real
-   Android phone and an iPhone.
-3. Production, step 0: deploy Phase 1 with `CATALOG_LOOKUP_V2` switched on
-   one platform at a time while the old UI is live; compare answers and
-   speeds with the previous week.
-4. Production, step 1: deploy Phase 2 with `CATALOG_STORE_ENABLED=true`
-   while the old UI is still live; the book page starts storing answers and
-   the health record (neither holds reader data). Keep
-   `USAGE_LOG_ENABLED=false`: the current Privacy page says searches are not
-   stored. Watch for a week (store errors, Neon compute hours, health flags).
-5. Production, step 2: publish the approved Privacy and Terms texts, then in
-   the same deploy set `VITE_ONE_SHELF=true` and `USAGE_LOG_ENABLED=true`,
-   ship the Viewed before change and turn on analytics; keep
-   `HOLDINGS_BACKGROUND_ENABLED=false` for 48 hours, then turn it on.
+2. Preview: the catalog store pointed at a Neon branch of the catalog
+   project. Owner reviews against the boards on a real Android phone and an
+   iPhone. (`VITE_ONE_SHELF` is ignored and can be deleted.)
+3. Database first: catalog migration and grants on the catalog project's main
+   branch; account migration `012-viewed-before.sql` and the runtime grants on
+   the accounts database. Both are additive.
+4. Production settings: `CATALOG_STORE_ENABLED=true` with the catalog
+   project's main-branch roles, `HOLDINGS_BACKGROUND_ENABLED=false` (it must
+   be set; unset means on), `ADMIN_ACCOUNT_IDS`.
+5. One deploy releases the app and publishes the approved Privacy and Terms.
+   The in-app pages already carry the new texts, so they go live together.
+   **The publication switch is the build setting `VITE_POLICY_EFFECTIVE_DATE`**:
+   with it, `/privacy` is built from `docs/policy/privacy.md` (the native-app
+   section kept), `/terms` is published, and the app shows the same date.
+   `USAGE_LOG_ENABLED=true` and `VITE_ANALYTICS_ENABLED=true` go on in the same
+   deploy or later, never before the date. After 48 hours set
+   `HOLDINGS_BACKGROUND_ENABLED=true`.
 6. Rollback: Vercel Instant Rollback to the previous production deployment
    (recorded in STATUS before release). The storage migration is
-   backward-compatible (3.4) and the database is additive, so rollback needs
-   no data step. The background check has its own kill switch.
-7. After 30 days stable: remove the flag and old code (Phase 12 removals),
-   remove `/availability`.
+   backward-compatible (3.4) and the databases are additive, so rollback needs
+   no data step; rows written meanwhile (stored answers, log rows, accounts'
+   Viewed before) stay. The background check has its own kill switch.
+7. 30 days after release: remove `/availability` and its old client types.
 
 ---
 

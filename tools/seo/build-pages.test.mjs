@@ -25,7 +25,8 @@ test('HTML and JSON-LD cannot escape into executable markup', () => {
 test('built output contains only published library pages and indexable canonical sitemap URLs', () => {
   const report=JSON.parse(readFileSync('client/dist/seo-report.json'));
   assert.equal(report.libraryPages.length,12);
-  assert.equal(report.indexablePages.length,19);
+  // Nineteen URLs, plus /terms once the policy texts are published (VITE_POLICY_EFFECTIVE_DATE).
+  assert.equal(report.indexablePages.length,existsSync('client/dist/terms.html')?20:19);
   for(const path of report.indexablePages) {
     const html=readFileSync('client/dist/'+(path==='/'?'index':path.slice(1))+'.html','utf8');
     assert.ok(html.includes('content="index, follow"'),path);
@@ -67,8 +68,8 @@ test('analytics and Search Console are off by default and, when set, add only th
   const { mkdtemp, writeFile, readFile, rm, readdir } = await import('node:fs/promises');
   const { tmpdir } = await import('node:os');
   const { join } = await import('node:path');
-  assert.deepEqual(pageSettings({}), { analytics: false, siteVerification: null });
-  assert.deepEqual(pageSettings({ VITE_ANALYTICS_ENABLED: 'true', GOOGLE_SITE_VERIFICATION: '"><script>' }), { analytics: true, siteVerification: null });
+  assert.deepEqual(pageSettings({}), { analytics: false, siteVerification: null, policyEffectiveDate: null });
+  assert.deepEqual(pageSettings({ VITE_ANALYTICS_ENABLED: 'true', GOOGLE_SITE_VERIFICATION: '"><script>' }), { analytics: true, siteVerification: null, policyEffectiveDate: null });
   if (existsSync('client/dist/index.html') && !pageSettings().analytics) {
     assert.ok(!existsSync('client/dist/insights.js'));
     for (const file of ['index.html', 'about.html', 'libraries.html']) {
@@ -93,5 +94,36 @@ test('analytics and Search Console are off by default and, when set, add only th
       assert.ok(!html.includes('<script>window'), 'no inline script (CSP script-src self)');
     }
     assert.ok((await readFile(join(out, 'libraries', 'anna-centenary-library.html'), 'utf8')).includes('/insights.js'));
+  } finally { await rm(out, { recursive: true, force: true }); }
+});
+
+test('the policy texts are published only by the release switch, with the date filled and the native-app section kept', async () => {
+  const { buildPages, pageSettings } = await import('./build-pages.mjs');
+  const { mkdtemp, writeFile, readFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  assert.equal(pageSettings({ VITE_POLICY_EFFECTIVE_DATE: '<b>' }).policyEffectiveDate, null);
+  assert.equal(pageSettings({ VITE_POLICY_EFFECTIVE_DATE: ' 1 December 2026 ' }).policyEffectiveDate, '1 December 2026');
+  // Default build: today's page, no Terms page.
+  if (existsSync('client/dist/index.html') && !existsSync('client/dist/terms.html')) {
+    assert.match(readFileSync('client/dist/privacy.html', 'utf8'), /Website privacy/);
+    assert.ok(!existsSync('client/dist/terms.html'));
+  }
+  const out = await mkdtemp(join(tmpdir(), 'pages-'));
+  try {
+    await writeFile(join(out, 'index.html'), '<!doctype html><title>app</title>');
+    await buildPages(out, { analytics: false, siteVerification: null, policyEffectiveDate: '1 December 2026' });
+    const privacy = await readFile(join(out, 'privacy.html'), 'utf8');
+    assert.match(privacy, /Effective 1 December 2026\. MyBookshelf is run by Deepak Ravikumar, India\./);
+    assert.match(privacy, /Anonymous search and library-check log/);
+    assert.ok(!privacy.includes('[EFFECTIVE DATE]') && !privacy.includes('Draft for owner'));
+    assert.ok(!privacy.includes('Account recently viewed history is off until you turn it on'), 'the old website text is gone');
+    assert.match(privacy, /<h2>MyBookshelf native apps \(iPhone and Android\)<\/h2>[\s\S]*<h3>Library card and PIN<\/h3>/);
+    assert.match(privacy, /<a href="\/terms">Terms<\/a>/);
+    const terms = await readFile(join(out, 'terms.html'), 'utf8');
+    assert.match(terms, /You must be 18 or older, or have a parent&#39;s or guardian&#39;s permission\./);
+    const report = JSON.parse(await readFile(join(out, 'seo-report.json'), 'utf8'));
+    assert.equal(report.indexablePages.length, 20);
+    assert.ok(report.indexablePages.includes('/terms'));
   } finally { await rm(out, { recursive: true, force: true }); }
 });

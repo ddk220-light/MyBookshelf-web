@@ -130,7 +130,7 @@ test.describe('One-shelf result badges', () => {
     expect(calls.marks).toHaveLength(1);
   });
 
-  test('a slow catalog: tapping a book while it is still looking aborts the request', async ({ page }) => {
+  test('a slow catalog: tapping a book while it is still looking aborts the request; Back asks once more for the rest', async ({ page }) => {
     const calls = await setup(page, { marks: () => ({ delay: 20_000, found: [RESULTS[0].bookKey] }) });
     await page.goto('/app/shelf');
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
@@ -142,9 +142,19 @@ test.describe('One-shelf result badges', () => {
     expect(calls.checks.map(call => call.bookKey)).toEqual([RESULTS[3].bookKey]);
     await page.goBack();
     await expect(results(page).getByRole('link')).toHaveCount(9);
-    await expect(statusLine(page)).toHaveText('');
+    // The cut-short check runs once more for the books still without an answer.
+    await expect.poll(() => calls.marks.length).toBe(2);
+    await expect(statusLine(page)).toHaveText('Looking in Anna Centenary Library…');
+    expect(calls.marks[1].books.map(item => item.bookKey)).toContain(RESULTS[0].bookKey);
     await expect(results(page).locator('.cover-badge-library')).toHaveCount(0);
-    expect(calls.marks).toHaveLength(1);
+    // Cut short again: never a third time.
+    await results(page).getByRole('link', { name: label(RESULTS[4]) }).click();
+    await expect(page).toHaveURL(/\/app\/books\//);
+    await page.goBack();
+    await expect(results(page).getByRole('link')).toHaveCount(9);
+    await page.waitForTimeout(300);
+    expect(calls.marks).toHaveLength(2);
+    await expect(statusLine(page)).toHaveText('');
   });
 
   test('a check that finds nothing, fails or breaks off ends quietly; badges already shown stay', async ({ page }) => {

@@ -112,7 +112,21 @@ export function ShelfBookPage() {
   const picker = useHistoryOverlay('library');
   const card = useLibraryAnswer(book?.bookKey);
   const cardRef = useRef<HTMLDivElement>(null);
-  const pickerReturn = useCallback(() => cardRef.current || document.querySelector<HTMLElement>('.library-ask-button'), []);
+  // Focus goes back to the library card. When a library was just chosen, the
+  // "Find my library" button it returns to is replaced by the card a moment
+  // later; focus then moves to the card instead of falling to the page.
+  const cardFocusUntil = useRef(0);
+  const pickerReturn = useCallback(() => {
+    if (cardRef.current) return cardRef.current;
+    cardFocusUntil.current = Date.now() + 3000;
+    return document.querySelector<HTMLElement>('.library-ask-button');
+  }, []);
+  useEffect(() => {
+    if (card.kind !== 'library' || Date.now() > cardFocusUntil.current) return;
+    cardFocusUntil.current = 0;
+    const active = document.activeElement;
+    if (cardRef.current && (!active || active === document.body || !active.isConnected)) cardRef.current.focus();
+  }, [card.kind]);
 
   // Add and remove.
   const savedItem = book ? findSavedBook(state.savedBooks, book) : undefined;

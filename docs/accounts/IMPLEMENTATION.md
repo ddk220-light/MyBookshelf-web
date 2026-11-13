@@ -37,9 +37,9 @@ This supersedes the older requirement to publish every child before R02.
   exact origins, session CSRF, safe returns and shared database-backed abuse limits.
 - Versioned selected library, up to 1,000 exact saved references, stable signed
   pagination, acknowledged mutations, ten-second conditional undo and clear fencing.
-  History starts off; explicit confirmed views keep the newest fifty for thirty
-  days. Paused/deleted/cleared generations reject late writes.
-- Explicit frozen guest import, separate history consent, account-library default,
+  Viewed before is automatic (migration 012): confirmed views keep the newest
+  fifty, with no time limit. Deleted/cleared generations reject late writes.
+- Explicit frozen guest import (saved books and Viewed before together), account-library default,
   all-or-nothing quota/version checks and hash-bound retry receipts. Guest writes
   and compare-before-remove cleanup coordinate through Web Locks; unsupported
   coordination retains the device copy. Concurrent guest edits are preserved.
