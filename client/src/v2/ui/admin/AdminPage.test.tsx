@@ -33,6 +33,12 @@ describe('AdminPage', () => {
     expect(screen.queryByText(/Admin/)).toBeNull();
   });
 
+  it('shows the same "Page not found" for the server answer to any unknown /api path (410)', async () => {
+    mount({ '/summary': () => fail(410, 'LEGACY_API_RETIRED') });
+    expect(await screen.findByRole('heading', { name: 'Page not found' })).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
   it('says plainly when the catalog store is not configured or unreachable', async () => {
     mount({ '/summary': () => ok(summary({ state: 'not_configured', code: 'STORE_NOT_CONFIGURED', message: 'The catalog store is not configured for the admin view (CATALOG_ADMIN_DATABASE_URL is not set).' }, { counts: null })) });
     const alert = await screen.findByRole('alert');

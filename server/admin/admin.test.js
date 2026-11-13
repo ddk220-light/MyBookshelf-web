@@ -49,7 +49,12 @@ test('settings: only well-formed account IDs count; nothing configured means nob
   assert.deepEqual(readAdminConfig({ ADMIN_ACCOUNT_IDS: ` ${OWNER.toUpperCase()}, nope,${OTHER},${OWNER}` }).accountIds, [OWNER, OTHER]);
 });
 
-test('signed out, unverified, other accounts, accounts off and account errors all get the same 404', async () => {
+// What the app answers for any unknown /api path; the admin area must not differ.
+const comparable = response => ({ status: response.status, body: response.text,
+  headers: Object.fromEntries(Object.entries(response.headers).filter(([name]) => !['date', 'etag'].includes(name))) });
+const COOKIE = 'session=synthetic';
+
+test('signed out, unverified, other accounts, accounts off and account errors get exactly what an unknown path gets', async () => {
   const cases = [
     async () => ({ status: 'guest', identity: { status: 'guest' } }),
     async () => ({ status: 'disabled' }),
@@ -60,39 +65,87 @@ test('signed out, unverified, other accounts, accounts off and account errors al
   ];
   for (const identify of cases) {
     const { app, queries } = appWith({ identify });
-    for (const path of READS) {
-      const response = await request(app).get(path);
-      assert.equal(response.status, 404, path);
-      assert.equal(response.body.error.code, 'NOT_FOUND');
-      assert.equal(response.headers['cache-control'], 'private, no-store');
-      assert.equal(response.headers['x-robots-tag'], 'noindex');
+    for (const cookie of [null, COOKIE]) {
+      const send = (method, path) => { const r = request(app)[method](path); return cookie ? r.set('Cookie', cookie) : r; };
+      for (const method of ['get', 'head', 'options', 'patch', 'post', 'delete']) {
+        const unknown = comparable(await send(method, '/api/no-such-route'));
+        for (const path of [...READS, '/api/admin', '/api/admin/nothing', '/api/admin/library-requests/pune', '/api/admin/summary/x']) {
+          assert.deepEqual(comparable(await send(method, path)), unknown, `${method} ${path}`);
+        }
+      }
+      const patch = await send('patch', '/api/admin/library-requests/pune').set('Origin', BASE).set('X-Account-CSRF', CSRF).send({ status: 'added' });
+      assert.equal(patch.status, 410);
     }
-    const patch = await request(app).patch('/api/admin/library-requests/pune').set('Origin', BASE).set('X-Account-CSRF', CSRF).send({ status: 'added' });
-    assert.equal(patch.status, 404);
     assert.equal(queries.calls.length, 0, 'no store call for a non-owner');
   }
   // The owner's ID with no ADMIN_ACCOUNT_IDS configured is not an owner.
   const { app } = appWith({ identify: async () => identityFor(OWNER), env: { ADMIN_ACCOUNT_IDS: '' } });
-  assert.equal((await request(app).get('/api/admin/summary')).status, 404);
+  assert.equal((await request(app).get('/api/admin/summary').set('Cookie', COOKIE)).status, 410);
 });
 
-test('the owner reads every view; unknown admin paths are 404 and wrong methods 405', async () => {
+test('the session is not read without a cookie, and a refreshed session cookie reaches the owner only', async () => {
+  let calls = 0;
+  const refreshing = id => async (req, res) => { calls += 1; res.append('Set-Cookie', 'session=refreshed; HttpOnly'); return identityFor(id); };
+  const other = appWith({ identify: refreshing(OTHER) }).app;
+  assert.equal((await request(other).get('/api/admin/summary')).status, 410);
+  assert.equal(calls, 0, 'no cookie: the account service is not touched');
+  const refused = await request(other).get('/api/admin/summary').set('Cookie', COOKIE);
+  assert.deepEqual([refused.status, refused.headers['set-cookie']], [410, undefined]);
+  assert.equal(calls, 1);
+  const owner = await request(appWith({ identify: refreshing(OWNER) }).app).get('/api/admin/summary').set('Cookie', COOKIE);
+  assert.equal(owner.status, 200);
+  assert.deepEqual(owner.headers['set-cookie'], ['session=refreshed; HttpOnly']);
+});
+
+test('when the admin URL changes, concurrent requests share one new connection and never query it before its role check', async () => {
+  const events = [];
+  let connections = 0;
+  const gates = {};
+  const opened = id => { gates[id] = {}; gates[id].done = new Promise(resolve => { gates[id].release = resolve; }); };
+  const queries = fakeQueries({
+    assertAdminRole: async db => { if (db.id > 1) await gates[db.id].done; events.push(['checked', db.id]); },
+    listLibraryRequests: async db => { events.push(['query', db.id]); return { total: 0, groups: [] }; },
+  });
+  const env = { ADMIN_ACCOUNT_IDS: OWNER, CATALOG_ADMIN_DATABASE_URL: 'postgres://catalog_admin@db.invalid/one' };
+  const admin = createAdminMiddleware({ env, identify: async () => identityFor(OWNER), loadQueries: async () => queries.module,
+    connect: () => { const id = ++connections; opened(id); return { id, end: () => new Promise(resolve => setTimeout(resolve, 30)) }; } });
+  const passthrough = (req, res, next) => next();
+  const app = createApplication({ accounts: passthrough, jobs: passthrough, accountHealth: passthrough, catalogMaintenance: passthrough, admin });
+  const get = () => request(app).get('/api/admin/library-requests').set('Cookie', COOKIE).then(response => response);
+  assert.equal((await get()).status, 200);
+  env.CATALOG_ADMIN_DATABASE_URL = 'postgres://catalog_admin@db.invalid/two';
+  const pending = [get(), new Promise(resolve => setTimeout(resolve, 10)).then(get)];
+  await new Promise(resolve => setTimeout(resolve, 80));
+  gates[2]?.release();
+  await new Promise(resolve => setTimeout(resolve, 40));
+  for (const gate of Object.values(gates)) gate.release();
+  for (const response of await Promise.all(pending)) assert.equal(response.status, 200);
+  for (const [index, [kind, id]] of events.entries()) {
+    if (kind === 'query') assert.ok(events.slice(0, index).some(([k, i]) => k === 'checked' && i === id), `query on connection ${id} before its check: ${JSON.stringify(events)}`);
+  }
+  assert.equal(connections, 2, 'one new connection for the new URL');
+});
+
+test('the owner reads every view; unknown admin paths are like any unknown path and wrong methods 405', async () => {
   const { app, queries } = appWith({ identify: async () => identityFor(OWNER) });
+  const get = path => request(app).get(path).set('Cookie', COOKIE);
   for (const path of READS) {
-    const response = await request(app).get(path);
+    const response = await get(path);
     assert.equal(response.status, 200, path);
     assert.equal(response.headers['cache-control'], 'private, no-store');
     assert.equal(response.headers['x-robots-tag'], 'noindex');
   }
-  const csv = await request(app).get('/api/admin/library-health.csv');
+  const csv = await get('/api/admin/library-health.csv');
   assert.match(csv.headers['content-type'], /^text\/csv/);
   assert.match(csv.headers['content-disposition'], /attachment/);
-  const summary = await request(app).get('/api/admin/summary');
+  const summary = await get('/api/admin/summary');
   assert.equal(summary.body.store.state, 'ok');
   assert.equal(summary.body.usageLogEnabled, false);
-  assert.equal((await request(app).get('/api/admin/nothing')).status, 404);
-  assert.equal((await request(app).get('/api/admin')).status, 404);
-  assert.equal((await request(app).delete('/api/admin/library-requests/pune').set('Origin', BASE)).status, 405);
+  for (const path of ['/api/admin/nothing', '/api/admin', '/api/admin/summary/x', '/api/admin/usage/x', '/api/admin/library-health.csv/x', '/api/admin/summary/']) {
+    assert.equal((await get(path)).status, 410, path);
+  }
+  const wrong = await request(app).delete('/api/admin/library-requests/pune').set('Cookie', COOKIE).set('Origin', BASE);
+  assert.deepEqual([wrong.status, wrong.headers.allow], [405, 'PATCH']);
   assert.ok(queries.calls.some(([name]) => name === 'usage'));
 });
 
@@ -109,44 +162,44 @@ test('no admin data under /api/v2', async () => {
 test('changes need the app origin, JSON and the session CSRF token', async () => {
   const { app, queries } = appWith({ identify: async () => identityFor(OWNER) });
   const path = '/api/admin/library-requests/' + encodeURIComponent('pune central');
-  assert.equal((await request(app).patch(path).set('X-Account-CSRF', CSRF).send({ status: 'added' })).body.error.code, 'ORIGIN_REJECTED');
-  assert.equal((await request(app).patch(path).set('Origin', 'https://evil.example').set('X-Account-CSRF', CSRF).send({ status: 'added' })).status, 403);
-  const noToken = await request(app).patch(path).set('Origin', BASE).send({ status: 'added' });
+  assert.equal((await request(app).patch(path).set('Cookie', COOKIE).set('X-Account-CSRF', CSRF).send({ status: 'added' })).body.error.code, 'ORIGIN_REJECTED');
+  assert.equal((await request(app).patch(path).set('Cookie', COOKIE).set('Origin', 'https://evil.example').set('X-Account-CSRF', CSRF).send({ status: 'added' })).status, 403);
+  const noToken = await request(app).patch(path).set('Cookie', COOKIE).set('Origin', BASE).send({ status: 'added' });
   assert.deepEqual([noToken.status, noToken.body.error.code], [403, 'CSRF_REJECTED']);
-  const wrongToken = await request(app).patch(path).set('Origin', BASE).set('X-Account-CSRF', 'a'.repeat(64)).send({ status: 'added' });
+  const wrongToken = await request(app).patch(path).set('Cookie', COOKIE).set('Origin', BASE).set('X-Account-CSRF', 'a'.repeat(64)).send({ status: 'added' });
   assert.equal(wrongToken.status, 403);
-  const form = await request(app).patch(path).set('Origin', BASE).set('X-Account-CSRF', CSRF).type('form').send('status=added');
+  const form = await request(app).patch(path).set('Cookie', COOKIE).set('Origin', BASE).set('X-Account-CSRF', CSRF).type('form').send('status=added');
   assert.equal(form.status, 415);
   assert.equal(queries.calls.length, 0);
-  const ok = await request(app).patch(path).set('Origin', BASE).set('X-Account-CSRF', CSRF).send({ status: 'added', note: 'Koha found' });
+  const ok = await request(app).patch(path).set('Cookie', COOKIE).set('Origin', BASE).set('X-Account-CSRF', CSRF).send({ status: 'added', note: 'Koha found' });
   assert.equal(ok.status, 200);
   assert.deepEqual(queries.calls.at(-1), ['updateLibraryRequest', 'pune central', { status: 'added', note: 'Koha found' }]);
-  await request(app).patch('/api/admin/library-health/koha%3Aslow').set('Origin', BASE).set('X-Account-CSRF', CSRF).send({ acknowledged: true }).expect(200);
+  await request(app).patch('/api/admin/library-health/koha%3Aslow').set('Cookie', COOKIE).set('Origin', BASE).set('X-Account-CSRF', CSRF).send({ acknowledged: true }).expect(200);
   assert.deepEqual(queries.calls.at(-1), ['acknowledgeLibraryHealth', 'koha:slow', { acknowledged: true }]);
-  await request(app).patch('/api/admin/problem-reports/' + OTHER).set('Origin', BASE).set('X-Account-CSRF', CSRF).send({ status: 'read' }).expect(200);
+  await request(app).patch('/api/admin/problem-reports/' + OTHER).set('Cookie', COOKIE).set('Origin', BASE).set('X-Account-CSRF', CSRF).send({ status: 'read' }).expect(200);
   assert.deepEqual(queries.calls.at(-1), ['updateProblemReport', OTHER, { status: 'read' }]);
 });
 
 test('the store not configured, unreachable or on the wrong role reads clearly and leaks no details', async () => {
   const identify = async () => identityFor(OWNER);
   const unset = appWith({ identify, env: { CATALOG_ADMIN_DATABASE_URL: '' } }).app;
-  const summary = await request(unset).get('/api/admin/summary').expect(200);
+  const summary = await request(unset).get('/api/admin/summary').set('Cookie', COOKIE).expect(200);
   assert.equal(summary.body.store.state, 'not_configured');
   assert.match(summary.body.store.message, /CATALOG_ADMIN_DATABASE_URL/);
   assert.equal(summary.body.counts, null);
-  const health = await request(unset).get('/api/admin/library-health').expect(503);
+  const health = await request(unset).get('/api/admin/library-health').set('Cookie', COOKIE).expect(503);
   assert.equal(health.body.error.code, 'STORE_NOT_CONFIGURED');
 
   const down = appWith({ identify, queries: fakeQueries({ assertAdminRole: async () => { throw Object.assign(new Error('connect ECONNREFUSED db.invalid:5432'), { code: 'ECONNREFUSED' }); } }) }).app;
-  const unreachable = await request(down).get('/api/admin/summary').expect(200);
+  const unreachable = await request(down).get('/api/admin/summary').set('Cookie', COOKIE).expect(200);
   assert.deepEqual([unreachable.body.store.state, unreachable.body.store.detail], ['unreachable', 'ECONNREFUSED']);
-  const failed = await request(down).get('/api/admin/usage').expect(503);
+  const failed = await request(down).get('/api/admin/usage').set('Cookie', COOKIE).expect(503);
   assert.equal(failed.body.error.code, 'STORE_UNREACHABLE');
   assert.ok(!JSON.stringify(failed.body).includes('db.invalid'));
 
   const runtime = appWith({ identify, queries: fakeQueries({ assertAdminRole: async () => { throw Object.assign(new Error('x'), { code: 'STORE_ROLE_REJECTED' }); } }) }).app;
-  assert.equal((await request(runtime).get('/api/admin/summary')).body.store.state, 'wrong_role');
-  assert.equal((await request(runtime).get('/api/admin/library-requests')).body.error.code, 'STORE_ROLE_REJECTED');
+  assert.equal((await request(runtime).get('/api/admin/summary').set('Cookie', COOKIE)).body.store.state, 'wrong_role');
+  assert.equal((await request(runtime).get('/api/admin/library-requests').set('Cookie', COOKIE)).body.error.code, 'STORE_ROLE_REJECTED');
 });
 
 test('requests typed differently group together; different places stay apart', () => {
@@ -180,6 +233,14 @@ test('health CSV escapes quotes and neutralises spreadsheet formulas', () => {
   assert.match(header, /^library_id,name,platform,host,/);
   assert.ok(line.includes('"A, ""Main"""'));
   assert.ok(line.endsWith(`"'=HYPERLINK(""x"")"`));
+  // Opened where ; or tab separates cells, a note must stay one cell, so no
+  // formula can start mid-note.
+  const row = note => libraryHealthCsv({ libraries: [{ libraryId: 'koha:a', name: null, platform: 'koha', host: null, flaggedAt: null, flagReason: null, failures7d: 0,
+    failuresByClass: Object.fromEntries(FAILURE_CLASSES.map(n => [n, 0])), checks7d: null, lastSuccessAt: null, lastFailureAt: null, lastFailure: null,
+    medianMs: null, medianFailureMs: null, acknowledgedAt: null, ownerNote: note }] }).trim().split('\r\n')[1];
+  assert.ok(row('moved;=cmd|" /c calc"!A1').endsWith('"moved;=cmd|"" /c calc""!A1"'));
+  assert.ok(row('a\t=1+1').endsWith('"a\t=1+1"'));
+  for (const lead of ['=', '+', '-', '@', '\t', '\r']) assert.ok(row(lead + '1').endsWith(`'${lead}1"`) || row(lead + '1').endsWith(`'${lead}1`), JSON.stringify(lead));
 });
 
 test('usage view returns only allowlisted fields, whatever the database returns', async () => {

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { analyticsBeforeSend, analyticsEnabled, scrubAnalyticsUrl, startAnalytics } from './analytics';
-import { analyticsScriptSource, siteVerificationToken } from '../../../shared/analytics.mjs';
+import { analyticsScriptSource, analyticsSettingOn, siteVerificationToken } from '../../../shared/analytics.mjs';
 
 const O = 'https://mybookshelf.cloud';
 
@@ -20,6 +20,18 @@ describe('analytics URL scrubbing', () => {
     expect(scrubAnalyticsUrl(`${O}/Someone%20Typed%20This`)).toBe(`${O}/[other]`);
     expect(scrubAnalyticsUrl(`${O}/select/anna-centenary-library?next=/app/shelf`)).toBe(`${O}/select/anna-centenary-library`);
     expect(scrubAnalyticsUrl(`${O}/app/privacy`)).toBe(`${O}/app/privacy`);
+  });
+  it('reports public pages by name and guides by slug; a typed address on the 404 page is not reported as typed', () => {
+    for (const path of ['/', '/libraries', '/about', '/how-it-works', '/open-source', '/privacy', '/support', '/libraries/anna-centenary-library']) {
+      expect(scrubAnalyticsUrl(`${O}${path}`)).toBe(`${O}${path}`);
+    }
+    expect(scrubAnalyticsUrl(`${O}/wings-of-fire`)).toBe(`${O}/[other]`);
+    expect(scrubAnalyticsUrl(`${O}/harry-potter/9780439023528`)).toBe(`${O}/[other]`);
+    expect(scrubAnalyticsUrl(`${O}/libraries/anna-centenary-library/extra`)).toBe(`${O}/[other]`);
+  });
+  it('turns on only for exactly "true", as main.tsx checks', () => {
+    expect(analyticsSettingOn('true')).toBe(true);
+    for (const value of ['TRUE', ' true', 'true ', '1', 'yes', '', undefined, null, true]) expect(analyticsSettingOn(value)).toBe(false);
   });
   it('never reports the admin view or anything that is not a page view', () => {
     expect(scrubAnalyticsUrl(`${O}/app/admin`)).toBeNull();

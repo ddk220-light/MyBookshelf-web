@@ -348,7 +348,7 @@ test('admin HTTP routes with a real account session: 404 until listed, then read
     headers: { ...(origin ? { Origin: origin } : {}), ...(body ? { 'Content-Type': 'application/json' } : {}), ...(cookie ? { Cookie: cookie } : {}), ...(csrf ? { 'X-Account-CSRF': csrf } : {}) },
     ...(body ? { body: JSON.stringify(body) } : {}) });
 
-  assert.equal((await call('/api/admin/summary')).status, 404, 'signed out');
+  assert.equal((await call('/api/admin/summary')).status, 410, 'signed out');
   assert.equal((await call('/api/account/sign-up', { method: 'POST', body: { name: 'Synthetic owner', email, password: 'a long synthetic password ' + randomUUID() } })).status, 202);
   const job = (await accountsDb.query(`SELECT payload FROM account_mail_jobs j JOIN "user" u ON u.id=j."authUserId" WHERE u.email=$1 AND kind='verify'`, [email])).rows[0];
   const { token } = decryptMail(job.payload, env.ACCOUNTS_JOB_SECRET);
@@ -363,12 +363,12 @@ test('admin HTTP routes with a real account session: 404 until listed, then read
   const session = await (await call('/api/account/session', { cookie })).json();
   assert.equal(session.status, 'authenticated');
 
-  // Signed in and verified, but not listed: the same 404.
+  // Signed in and verified, but not listed: the same answer as any unknown path, with no admin headers.
   let response = await call('/api/admin/summary', { cookie });
-  assert.equal(response.status, 404);
-  assert.equal(response.headers.get('cache-control'), 'private, no-store');
+  assert.equal(response.status, 410);
+  assert.notEqual(response.headers.get('cache-control'), 'private, no-store');
   env.ADMIN_ACCOUNT_IDS = randomUUID();
-  assert.equal((await call('/api/admin/summary', { cookie })).status, 404, 'another account listed');
+  assert.equal((await call('/api/admin/summary', { cookie })).status, 410, 'another account listed');
   env.ADMIN_ACCOUNT_IDS = session.user.id;
   response = await call('/api/admin/summary', { cookie });
   assert.equal(response.status, 200);
@@ -381,6 +381,6 @@ test('admin HTTP routes with a real account session: 404 until listed, then read
   response = await call('/api/admin/library-requests/setagaya', { method: 'PATCH', body: { status: 'added', note: 'In the directory' }, cookie, csrf: session.csrfToken });
   assert.equal(response.status, 200);
   assert.equal((await admin.query(`SELECT status FROM library_requests WHERE request_key = 'setagaya'`)).rows[0].status, 'added');
-  // Signed out again: 404.
-  assert.equal((await call('/api/admin/summary')).status, 404);
+  // Signed out again: the unknown-path answer.
+  assert.equal((await call('/api/admin/summary')).status, 410);
 });

@@ -168,7 +168,8 @@ export async function acknowledgeLibraryHealth(db, libraryId, body) {
 const cell = value => {
   let text = value == null ? '' : String(value);
   if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
-  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  // Semicolons and tabs are quoted too, for spreadsheets that split on them.
+  return /[",;\t\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 };
 export function libraryHealthCsv({ libraries }) {
   const header = ['library_id', 'name', 'platform', 'host', 'flagged_at', 'flag_reason', 'failures_7d', ...FAILURE_CLASSES, 'checks_7d',
@@ -254,11 +255,15 @@ export async function summary(db, { policy } = {}) {
 // The admin view must run as the admin role: not the owner, not a superuser,
 // and not the runtime (writes the log) or worker (deletes answers) role.
 export async function assertAdminRole(db) {
-  const { rows } = await db.query(`SELECT r.rolsuper, r.rolbypassrls, pg_has_role(current_user, c.relowner, 'USAGE') AS owns,
+  // MEMBER (not USAGE) also catches a NOINHERIT member of the owner role, and
+  // every table in the schema counts, not just one.
+  const { rows } = await db.query(`SELECT r.rolsuper, r.rolbypassrls,
+      EXISTS (SELECT 1 FROM pg_class c WHERE c.relnamespace = 'public'::regnamespace AND c.relkind IN ('r', 'p')
+        AND pg_has_role(current_user, c.relowner, 'MEMBER')) AS owns,
       has_table_privilege(current_user, 'usage_events', 'INSERT') AS writes_log,
       has_table_privilege(current_user, 'holdings_answers', 'DELETE') AS deletes,
       has_table_privilege(current_user, 'usage_events', 'SELECT') AS reads_log
-    FROM pg_roles r CROSS JOIN pg_class c WHERE r.rolname = current_user AND c.oid = 'holdings_answers'::regclass`, [], Q);
+    FROM pg_roles r WHERE r.rolname = current_user`, [], Q);
   const role = rows[0];
   if (!role || role.rolsuper || role.rolbypassrls || role.owns || role.writes_log || role.deletes || !role.reads_log) {
     throw Object.assign(new Error('The admin database role is not the catalog admin role.'), { code: 'STORE_ROLE_REJECTED' });

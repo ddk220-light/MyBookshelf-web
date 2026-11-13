@@ -84,7 +84,9 @@ export function AdminPage() {
   const [tab, setTab] = useState<Tab>('health');
   const loadSummary = useCallback(async () => {
     try { setSummary(await adminRequest<AdminSummary>('/summary')); setState('ready'); } catch (failure) {
-      if (failure instanceof AdminApiError && failure.status === 404) setState('missing');
+      // Anyone but the owner gets the server's answer for any unknown /api
+      // path (410 today), so both read as "not found".
+      if (failure instanceof AdminApiError && (failure.status === 404 || failure.status === 410)) setState('missing');
       else { setError(failure); setState('error'); }
     }
   }, []);

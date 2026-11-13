@@ -18,13 +18,13 @@ import { requireMutation, AccountRequestError } from '../accounts/security.js';
 //
 // Protection: a valid account session (Better Auth) with a verified email
 // whose account ID is in ADMIN_ACCOUNT_IDS. Anyone else, signed out, or with
-// accounts off gets the same 404 as an unknown path, never 403. Changes also
+// accounts off is passed on untouched, so they get exactly what any unknown
+// /api path answers (no admin headers, no cookie refresh), never 403. Changes also
 // need the app's own Origin, a JSON body and the session's CSRF token.
 // Responses are private, no-store and noindex. The catalog store is reached
 // only with CATALOG_ADMIN_DATABASE_URL (the catalog_admin role); the role is
 // checked before the first query.
 
-const NOT_FOUND = Object.freeze({ error: Object.freeze({ code: 'NOT_FOUND', message: 'This page does not exist.' }) });
 const STORE_MESSAGES = Object.freeze({
   STORE_NOT_CONFIGURED: 'The catalog store is not configured for the admin view (CATALOG_ADMIN_DATABASE_URL is not set).',
   STORE_UNREACHABLE: 'The catalog store could not be reached.',
@@ -43,23 +43,35 @@ export const ADMIN_PATH = /^\/api\/admin(?:\/|\.|$)/;
 export function createAdminMiddleware({ env = process.env, identify = null, connect = null, policy = createCatalogPolicy(),
   loadQueries = () => import('./queries.js') } = {}) {
   const parser = express.json({ limit: '8kb', strict: true });
-  let db = null, dbUrl = null, roleChecked = null;
+  // One connection per admin URL. Its role check is shared by every request
+  // on it and finishes before that connection runs any data query; a request
+  // only ever uses the connection whose check it awaited.
+  let current = null;
 
   async function database(queries) {
     const { databaseUrl } = readAdminConfig(env);
     if (!databaseUrl) throw new StoreError('STORE_NOT_CONFIGURED');
-    if (!db || dbUrl !== databaseUrl) {
-      await db?.end?.().catch(() => {});
-      if (connect) db = connect(databaseUrl);
-      else {
+    if (!current || current.url !== databaseUrl) {
+      const previous = current;
+      const entry = { url: databaseUrl, check: null };
+      entry.db = (async () => {
+        if (previous) previous.db.then(old => old?.end?.()).catch(() => {});
+        if (connect) return connect(databaseUrl);
         const { createCatalogDatabase } = await import('../catalog-store/pool.js');
-        db = createCatalogDatabase(databaseUrl, { max: 2, statementTimeoutMs: 10_000 });
-      }
-      dbUrl = databaseUrl;
-      roleChecked = null;
+        return createCatalogDatabase(databaseUrl, { max: 2, statementTimeoutMs: 10_000 });
+      })();
+      entry.db.catch(() => { if (current === entry) current = null; });
+      current = entry;
     }
-    roleChecked ||= queries.assertAdminRole(db).catch(error => { roleChecked = null; throw error; });
-    try { await roleChecked; } catch (error) {
+    const entry = current;
+    let db;
+    try { db = await entry.db; } catch (error) { throw new StoreError('STORE_UNREACHABLE', safeCode(error)); }
+    if (!entry.check) {
+      const check = Promise.resolve().then(() => queries.assertAdminRole(db));
+      entry.check = check;
+      check.catch(() => { if (entry.check === check) entry.check = null; });
+    }
+    try { await entry.check; } catch (error) {
       if (error?.code === 'STORE_ROLE_REJECTED') throw new StoreError('STORE_ROLE_REJECTED');
       throw new StoreError('STORE_UNREACHABLE', safeCode(error));
     }
@@ -69,11 +81,19 @@ export function createAdminMiddleware({ env = process.env, identify = null, conn
   async function isAdmin(req, res) {
     const { accountIds } = readAdminConfig(env);
     if (!accountIds.length || typeof identify !== 'function') return null;
+    // No cookie, no session: answer at once, without starting the account
+    // service, as any unknown path does.
+    if (!req.headers.cookie) return null;
+    // Session cookies refreshed while reading the session reach the owner
+    // only; anyone else's response must carry nothing an unknown path would not.
+    const cookies = [];
+    const collect = { append: (name, value) => { if (String(name).toLowerCase() === 'set-cookie') cookies.push(value); } };
     let result;
-    try { result = await identify(req, res); } catch { return null; }
+    try { result = await identify(req, collect); } catch { return null; }
     const identity = result?.identity;
     if (result?.status !== 'authenticated' || identity?.status !== 'authenticated' || identity.user?.emailVerified !== true) return null;
     if (!accountIds.includes(String(identity.user.id || '').toLowerCase())) return null;
+    for (const cookie of cookies) res.append('Set-Cookie', cookie);
     return result;
   }
 
@@ -87,12 +107,12 @@ export function createAdminMiddleware({ env = process.env, identify = null, conn
       try { param = decodeURIComponent(rest); } catch { return null; }
     }
     const table = {
-      'summary': { GET: 'summary' },
+      'summary': param === null ? { GET: 'summary' } : null,
       'library-health': param === null ? { GET: 'health' } : { PATCH: 'acknowledge' },
-      'library-health.csv': param === null ? { GET: 'healthCsv' } : {},
+      'library-health.csv': param === null ? { GET: 'healthCsv' } : null,
       'library-requests': param === null ? { GET: 'requests' } : { PATCH: 'updateRequest' },
       'problem-reports': param === null ? { GET: 'reports' } : { PATCH: 'updateReport' },
-      'usage': param === null ? { GET: 'usage' } : {},
+      'usage': param === null ? { GET: 'usage' } : null,
     }[name];
     if (!table) return null;
     return { methods: table, action: table[req.method] || null, param };
@@ -100,11 +120,13 @@ export function createAdminMiddleware({ env = process.env, identify = null, conn
 
   const middleware = async function admin(req, res, next) {
     if (!ADMIN_PATH.test(req.path)) return next();
-    res.set({ 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex', 'Referrer-Policy': 'no-referrer', 'X-Content-Type-Options': 'nosniff',
-      'X-Request-ID': randomUUID() });
     const target = route(req);
     const owner = target ? await isAdmin(req, res) : null;
-    if (!owner) return res.status(404).json(NOT_FOUND);
+    // Not the owner, or not an admin route: whatever the app answers for an
+    // unknown path, byte for byte.
+    if (!owner) return next();
+    res.set({ 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex', 'Referrer-Policy': 'no-referrer', 'X-Content-Type-Options': 'nosniff',
+      'X-Request-ID': randomUUID() });
     if (!target.action) return res.status(405).set('Allow', Object.keys(target.methods).join(', ')).json({ error: { code: 'METHOD_NOT_ALLOWED', message: 'This method is not supported.' } });
     try {
       if (req.method !== 'GET') {
@@ -156,6 +178,6 @@ export function createAdminMiddleware({ env = process.env, identify = null, conn
       return res.status(503).json({ error: { code: 'ADMIN_UNAVAILABLE', message: 'The admin view is temporarily unavailable.' } });
     }
   };
-  middleware.close = async () => { await db?.end?.(); db = null; };
+  middleware.close = async () => { const entry = current; current = null; await entry?.db.then(db => db?.end?.()).catch(() => {}); };
   return middleware;
 }
