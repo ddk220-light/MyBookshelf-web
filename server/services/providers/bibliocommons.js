@@ -156,21 +156,28 @@ export async function checkPublicAvailability(slug, isbn, title, author) {
   };
 }
 
-// Work matching consumes all candidate metadata rather than trusting the first
-// keyword hit. The record URL is durable; identity is checked by the caller.
-export async function searchBookCandidates(slug, query) {
+// Print formats a row can prove an edition for. The gateway lists every
+// format a keyword matches (audiobooks, DVDs, e-books, graphic novels, ...),
+// often with the print books well down the page.
+const PRINT_FORMATS = Object.freeze({ BK: 'Book', LPRINT: 'Large print', GRAPHIC_NOVEL: 'Graphic novel' });
+
+// One keyword search (one request) and its print rows, in the gateway's order.
+// Print rows are picked from the whole page before any cap: the first results
+// for "the hobbit" are all recordings and films, and capping first left no
+// book rows at all.
+function printRows(slug, query) {
   const deadlineAt = Date.now() + DEFAULT_TIMEOUT_MS;
-  return cachedTask(`bc:candidates:${slug}:${query}`, async () => {
+  return cachedTask(`bc:rows:${slug}:${query}`, async () => {
     const result = await searchCatalog(slug, query, deadlineAt);
     if (!result.reachable || !Array.isArray(result.data?.catalogSearch?.results)) throw catalogError('CATALOG_UNAVAILABLE', 'Catalog search unavailable');
     const bibs = result.data.entities?.bibs || {};
-    return result.data.catalogSearch.results.slice(0, 10).flatMap(item => {
-      const id = item.representative, bib = bibs[id], info = bib?.briefInfo;
-      if (!info?.title || !['BK', 'LPRINT'].includes(info.format)) return [];
+    return result.data.catalogSearch.results.flatMap(item => {
+      const id = item?.representative, bib = bibs[id], info = bib?.briefInfo;
+      if (!id || !info?.title || !Object.hasOwn(PRINT_FORMATS, info.format)) return [];
       const catalogUrl = `https://${slug}.bibliocommons.com/v2/record/${encodeURIComponent(id)}`;
       const availability = bib.availability;
       return [{ recordId: id, title: [info.title, info.subtitle].filter(Boolean).join(': '), authors: info.authors || [],
-        isbns: info.isbns || [], language: info.primaryLanguage, format: info.format === 'LPRINT' ? 'Large print' : 'Book', catalogUrl,
+        isbns: info.isbns || [], language: info.primaryLanguage, format: PRINT_FORMATS[info.format], catalogUrl,
         observation: { outcome: availability?.status === 'AVAILABLE' ? 'available' : availability?.availableCopies === 0 && availability?.totalCopies > 0 ? 'none_available' : 'in_catalog',
           matchKind: 'possible_match', catalogUrl,
           ...(Number.isInteger(availability?.availableCopies) ? { availableCopies: availability.availableCopies } : {}),
@@ -178,6 +185,18 @@ export async function searchBookCandidates(slug, query) {
           callNumber: info.callNumber } }];
     });
   }, { deadlineAt });
+}
+
+// Work matching consumes all candidate metadata rather than trusting the first
+// keyword hit. The record URL is durable; identity is checked by the caller.
+export async function searchBookCandidates(slug, query) {
+  return (await printRows(slug, query)).slice(0, 10);
+}
+
+// Result marking: every print row of the same single search. Rows carry their
+// ISBNs, so no row needs a further request.
+export async function searchResultRows(slug, query) {
+  return printRows(slug, query);
 }
 
 export async function login(slug, cardNumber, pin) {

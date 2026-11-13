@@ -33,7 +33,8 @@ function primaryProvider(library) {
       // observation, including match confidence and provider failures. Legacy
       // routes are retired; their compatibility function remains exported by
       // the adapter for source-level consumers.
-      return { checkAvailability: (isbn, title, author) => bibliocommons.checkPublicAvailability(library.slug, isbn, title, author), searchBookCandidates: query => bibliocommons.searchBookCandidates(library.slug, query), login: (card, pin) => bibliocommons.login(library.slug, card, pin) };
+      return { checkAvailability: (isbn, title, author) => bibliocommons.checkPublicAvailability(library.slug, isbn, title, author), searchBookCandidates: query => bibliocommons.searchBookCandidates(library.slug, query),
+        searchResultRows: query => bibliocommons.searchResultRows(library.slug, query), login: (card, pin) => bibliocommons.login(library.slug, card, pin) };
     case 'koha': {
       // Result marking (catalog-lookup) reads one keyword search page whose
       // rows may show ISBNs, or the RSS form for libraries that opt in. Rows

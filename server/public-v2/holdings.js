@@ -159,6 +159,8 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
   // `unchecked` lists every book without an answer from this run or the store
   // (not attempted, no matching row, or only one ISBN not listed). No mark
   // never means "not in the library".
+  const identify = key => (typeof books.summary === 'function' ? books.summary(key) : books.resolve(key));
+
   async function holdingsSearch(req, res) {
     const startedAt = now();
     const deadlineAt = startedAt + searchCapMs;
@@ -187,18 +189,20 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     res.on('close', abandon);
     let iterator = null, capTimer;
     try {
-      // Identities come from the server's resolution of each key (the search
-      // that produced these results has usually cached them).
+      // Identities come from the server's own record of each key: the search
+      // that produced these results has cached each book's title, authors and
+      // work ID, which is all marking needs (`summary`); a full resolution
+      // would cost paced Open Library reads per book before the catalog
+      // search could start.
       // A library catalog record key is never resolved here: resolving it reads
       // that library's catalog outside every request budget, host gate and
       // circuit, and twelve keys per request would let anyone hammer a
       // catalog. Such a book is answered from the store by its own record, or
       // when it is opened.
       const resolutions = new Map(keys.map(key => [key, parsePublicBookKey(key)?.kind === 'catalog' ? Promise.resolve(null)
-        : settleWithin(books.resolve(key), Math.min(PROFILE_WAIT_MS, deadlineAt - now()))]));
+        : settleWithin(identify(key), Math.min(PROFILE_WAIT_MS, deadlineAt - now()))]));
       const list = await Promise.all(items.map(async item => {
         const resolved = await resolutions.get(item.bookKey);
-        console.log('[tmpdbg] resolved', item.bookKey, Boolean(resolved), 'at', now() - startedAt);
         const identity = trustedIdentity(libraryId, item.bookKey, resolved);
         // Edition profiles are Open Library reads outside the catalog's budget.
         // They start only when marking runs (lazily: not for stored answers, a

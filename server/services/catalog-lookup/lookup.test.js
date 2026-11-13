@@ -654,3 +654,50 @@ test('waiting for a busy host slot on this instance is couldn’t check, but not
   assert.equal(await health.libraryHealth(entry.id), null);
   assert.equal(guard.circuitOpen('busy.example'), false);
 });
+
+// Captured 2026-11-13 from The Seattle Public Library's gateway (keyword "the
+// hobbit", first page of 25, trimmed to the fields the adapter reads) and Open
+// Library's first edition page for each work, trimmed likewise.
+test('BiblioCommons marking reads every print row of its one search, and marks a work only by its own editions’ ISBNs', async () => {
+  const { getProvider } = await import('../providers/index.js');
+  const { createWorkDiscovery } = await import('../workDiscovery.js');
+  const calls = [];
+  const gateway = read('bibliocommons', 'seattle-search-the-hobbit.json');
+  global.fetch = async url => { calls.push(url); return response(url, gateway); };
+  const editions = { OL27482W: JSON.parse(read('openlibrary', 'OL27482W-editions.json')), OL219602W: JSON.parse(read('openlibrary', 'OL219602W-editions.json')) };
+  const discovery = createWorkDiscovery({ read: async path => editions[path.match(/\/works\/(OL\d+W)\//)?.[1]] || { size: 0, entries: [] } });
+  const work = (workId, title, authors) => ({ bookKey: `v1:openlibrary:${workId}`, workId, title, authors,
+    profile: discovery.profile({ bookKey: `v1:openlibrary:${workId}`, workId, title, authors, languages: ['eng'] }) });
+  const books = [
+    work('OL27482W', 'The Hobbit', ['J.R.R. Tolkien']),
+    work('OL219602W', 'The Hobbit', ['Charles Dixon', 'Sean Deming', 'J.R.R. Tolkien']),
+    // Same title, no ISBN known: never marked by title.
+    work('OL19659526W', 'The Hobbit', []),
+    // Same title and author, ISBNs the rows do not show: not marked.
+    { ...work('OL24180247W', 'The hobbit', ['Patty Kempshall']), profile: profileOf({ isbn13: '9780582005808', title: 'The hobbit', authors: ['Patty Kempshall'] }) },
+  ];
+  const library = { id: 'bc:seattle', platform: 'bc', slug: 'seattle', capabilities: ['availability'], catalogUrl: 'https://seattle.bibliocommons.com' };
+  const items = await collect(harness({ providerFor: getProvider }).lookup.markResults({ library, query: 'the hobbit', books, deadlineAt: Date.now() + 5_000 }));
+  assert.equal(calls.length, 1, 'one gateway search');
+  assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome, item.matchedIsbn13, item.recordId]), [
+    // The novel's first print row is the 16th result: the first ten are audiobooks, DVDs and graphic novels.
+    ['v1:openlibrary:OL27482W', 'found', '9780618968633', 'S246C395812'],
+    // 9780345445605 is the graphic novel's ISBN (its own Open Library work), not the novel's.
+    ['v1:openlibrary:OL219602W', 'found', '9780345445605', 'S246C1092054'],
+  ]);
+  assert.deepEqual(items.at(-1), { done: true, notAttempted: ['v1:openlibrary:OL19659526W'], unmatched: ['v1:openlibrary:OL24180247W'] });
+});
+
+test('edition profiles may arrive after the catalog’s part of the run, within the run’s deadline', async () => {
+  const platforms = { ...UNPACED, vufind: { ...UNPACED.vufind, results: { ...UNPACED.vufind.results, deadlineMs: 30 } } };
+  const provider = { checkAvailability: async () => ({}), searchResultRows: async () => [{ recordId: '1', title: 'Wings of fire', isbn: '9788173711466' }] };
+  const { lookup, guard } = harness({ providerFor: () => provider, platforms });
+  // Open Library reads are paced one at a time: the ninth profile of a page arrives seconds later.
+  const late = new Promise(resolve => setTimeout(() => resolve(kalamProfile()), 150));
+  const items = await collect(lookup.markResults({ library: { id: 'vufind:late', platform: 'vufind', catalogUrl: 'https://late.example' }, query: 'wings',
+    books: [{ bookKey: 'a', profile: late }, { bookKey: 'b', profile: new Promise(() => {}) }], deadlineAt: Date.now() + 600 }));
+  assert.deepEqual(items.map(item => item.done ? item : [item.bookKey, item.outcome]), [['a', 'found'], { done: true, notAttempted: ['b'], unmatched: [] }]);
+  const slot = guard.tryStartMarking('late.example');
+  assert.ok(slot, 'the host slot was freed before waiting on profiles');
+  slot();
+});

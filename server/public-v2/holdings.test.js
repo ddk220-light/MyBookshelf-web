@@ -243,3 +243,31 @@ test('the anonymous log is off by default, and when on it gets scrubbed text and
   const text = JSON.stringify(logged);
   for (const value of ['203.0.113.5', 'Private Agent', '13.08', '80.27', 'me@example.com', '9876543210']) assert.ok(!text.includes(value), value);
 });
+
+test('result marking identifies results from the search that produced them, without resolving each work again', async () => {
+  // A full resolution costs paced Open Library reads per book (about two
+  // seconds each): nine of them used to outlast the wait, and a book without
+  // an identity is never matched.
+  const config = { ...readCatalogStoreConfig({}), backgroundChecksEnabled: true };
+  const store = createCatalogStore({ config, db: null, defer: () => {}, policy: createCatalogPolicy({ policies: { schemaVersion: 1, libraries: {} } }) });
+  const rowsLibrary = { id: 'vufind:rows', platform: 'vufind', catalogUrl: 'https://rows.example/' };
+  const rowsDirectory = { ...directory, resolve: id => (id === rowsLibrary.id ? publicOf(rowsLibrary) : null), entry: id => (id === rowsLibrary.id ? rowsLibrary : null) };
+  const provider = { checkAvailability: async () => ({}), searchResultRows: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B }] };
+  const lookup = createCatalogLookup({ providerFor: () => provider, robots: null, platforms: UNPACED, env: {},
+    recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer: () => {} }), hostGate: store.hostGate });
+  const summaries = { 'v1:openlibrary:OL1W': known['v1:openlibrary:OL1W'], 'v1:openlibrary:OL2W': known['v1:openlibrary:OL2W'] };
+  const fromSearch = { ...books, resolve: () => new Promise(() => {}), summary: async key => summaries[key] || null,
+    searchProfile: async key => books.searchProfile(key) };
+  const app = makeTestApp(express => {
+    express.use('/api/v2', createPublicV2Router({ directory: rowsDirectory, books: fromSearch, catalogStore: store, lookup, rateLimit: { limit: 1000 },
+      holdingsOptions: { searchCapMs: 2_000 } }));
+  });
+  const startedAt = Date.now();
+  const response = await request(app).post('/api/v2/holdings/search')
+    .send({ libraryId: rowsLibrary.id, query: 'matilda', books: [{ bookKey: 'v1:openlibrary:OL1W' }, { bookKey: 'v1:openlibrary:OL2W' }] });
+  assert.ok(Date.now() - startedAt < 1_500, 'no wait on a full resolution');
+  assert.deepEqual(lines(response.text), [
+    { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found' },
+    { type: 'done', unchecked: ['v1:openlibrary:OL2W'] },
+  ]);
+});

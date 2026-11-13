@@ -256,8 +256,17 @@ export function createPublicBookService({
         return remember(toPublicBook(merged, { keyOverride: bookKey }), cacheTtlMs, cache.get(bookKey)?.detailsResolved ?? true);
       } catch { return book; } // Optional metadata cannot hide a catalog result.
     },
+    // Identity for matching: a book this service already returned (a search
+    // result, whose title, authors and work ID come with its key) is used as
+    // it is; anything else is resolved. Result marking needs nothing more, and
+    // resolving nine works in full first costs about two paced Open Library
+    // reads each before any edition list can be read.
+    async summary(bookKey) {
+      if (parsePublicBookKey(bookKey)?.kind === 'catalog') return service.resolve(bookKey);
+      return cached(bookKey) || service.resolve(bookKey);
+    },
     async searchProfile(bookKey, options) {
-      const book = await service.resolve(bookKey);
+      const book = await service.summary(bookKey);
       return book ? expandWork(book, options) : null;
     },
   };

@@ -230,8 +230,13 @@ export function createCatalogLookup({
     const view = publicView(entry, publicLibrary);
     const attemptedAt = new Date(startedAt).toISOString();
     // A profile that fails, or is not ready by the deadline, means that book
-    // cannot be matched (no badge), never "not found".
-    const profileOf = async book => { try { return await settleBy(book.profile, deadline, signal, now); } catch { return null; } };
+    // cannot be matched (no badge), never "not found". Profiles are Open
+    // Library reads, paced one at a time across the process, so nine of them
+    // take about nine seconds: they wait until the run's own deadline (the
+    // response cap), not the catalog's. The catalog part of the run, and its
+    // host slot, has ended by then.
+    const profileDeadline = Number.isFinite(deadlineAt) ? deadlineAt : deadline;
+    const profileOf = async book => { try { return await settleBy(book.profile, profileDeadline, signal, now); } catch { return null; } };
     // Profiles are Open Library reads: start them outside the catalog
     // operation so they never use the catalog's request budget.
     const profiles = new Map([...pending.values()].map(book => [book.bookKey, profileOf(book)]));
@@ -266,8 +271,6 @@ export function createCatalogLookup({
             rows = Array.isArray(response) ? response : response?.records;
             if (!Array.isArray(rows)) throw coded('Unrecognized catalog search', 'CATALOG_UNRECOGNIZED');
             rememberRows(key, rows);
-            try { (await import('node:fs')).writeFileSync(process.env.TMPDBG + '/rows.json', JSON.stringify(rows, null, 1)); } catch {}
-            console.log('[tmpdbg] rows', rows.length, 'at', now() - startedAt);
             runAnswer = { outcome: 'checked' };
           } catch (error) {
             runAnswer = couldntCheck(signal?.aborted ? 'cancelled' : reasonForError(error));
@@ -279,9 +282,7 @@ export function createCatalogLookup({
         endRun();
         for (const book of [...pending.values()]) {
           const profile = await profiles.get(book.bookKey);
-          console.log('[tmpdbg] profile', book.bookKey, 'title', book.title, 'isbns', profile?.isbns?.length ?? null, 'has445605', profile?.isbns?.includes('9780345445605'), 'at', now() - startedAt);
           if (!profile?.isbns?.length) continue;
-          for (const row of rows) { const ri = (row.isbns||[]).map(validateAndNormalize).filter(Boolean); if (ri.some(i => profile.isbns.includes(i))) console.log('[tmpdbg]  isbn hit row', row.title, JSON.stringify(matchCatalogRecord(row, profile)), 'titles', JSON.stringify(profile.titles)); }
           let match = null;
           for (const row of rows) {
             const result = matchCatalogRecord(row, profile);
@@ -300,7 +301,9 @@ export function createCatalogLookup({
       } else if (strategy === 'batch_isbn' && provider.checkMany) {
         const plan = [];
         for (const book of pending.values()) {
-          const profile = await profiles.get(book.bookKey);
+          // The batch request needs its ISBNs first: wait only within the
+          // catalog's deadline here.
+          const profile = await settleBy(profiles.get(book.bookKey), deadline, signal, now).catch(() => null);
           const own = validateAndNormalize(book.isbn13 || '');
           const isbns = [...new Set([own, ...(profile?.isbns || [])].filter(Boolean))].slice(0, platform.results.isbnsPerBook || 3);
           if (isbns.length) plan.push({ book, profile, isbns });

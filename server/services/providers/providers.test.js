@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getProvider } from './index.js';
-import { checkAvailability as checkBc, checkPublicAvailability as checkBcPublic, searchBookCandidates, login } from './bibliocommons.js';
+import { checkAvailability as checkBc, checkPublicAvailability as checkBcPublic, searchBookCandidates, searchResultRows, login } from './bibliocommons.js';
 import { checkAvailability as checkKoha, parseBiblioNumber } from './koha.js';
 import { checkAvailability as checkChamo, parseChamoRecord, parseChamoSearch } from './chamo.js';
 import { checkAvailability as checkLibsys, clearLibsysCache, cookiesFrom, parseLibsysAvailability } from './libsys.js';
@@ -36,6 +36,23 @@ test('BiblioCommons candidate metadata preserves ISBNs without inferring circula
   assert.deepEqual(record.isbns, ['8173711461']);
   assert.equal(record.observation.outcome, 'in_catalog');
   assert.equal(record.catalogUrl, 'https://smcl.bibliocommons.com/v2/record/S1');
+});
+
+test('BiblioCommons picks print rows from the whole search page before any row cap', async () => {
+  // Seattle, "the hobbit": the first ten of 25 results are recordings, films,
+  // e-books and graphic novels; the novel's print records come 15th to 17th.
+  const calls = [];
+  global.fetch = async url => { calls.push(url); return response(JSON.parse(fixture('bibliocommons', 'seattle-search-the-hobbit.json')), { url }); };
+  const rows = await searchResultRows('seattle', 'the hobbit');
+  assert.deepEqual(rows.map(row => [row.recordId, row.format]), [
+    ['S246C1349814', 'Graphic novel'], ['S246C1092054', 'Graphic novel'], ['S246C306534', 'Graphic novel'],
+    ['S246C395812', 'Book'], ['S246C1348703', 'Book'], ['S246C103196', 'Book'],
+    ['S246C530683', 'Book'], ['S246C212899', 'Book'], ['S246C129902', 'Book']]);
+  assert.ok(rows.find(row => row.recordId === 'S246C395812').isbns.includes('9780618968633'));
+  // The book page's candidate list comes from the same single request.
+  const candidates = await searchBookCandidates('seattle', 'the hobbit');
+  assert.ok(candidates.some(row => row.recordId === 'S246C103196'));
+  assert.equal(calls.length, 1);
 });
 
 afterEach(() => {
