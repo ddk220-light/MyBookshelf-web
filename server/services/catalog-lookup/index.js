@@ -266,6 +266,8 @@ export function createCatalogLookup({
             rows = Array.isArray(response) ? response : response?.records;
             if (!Array.isArray(rows)) throw coded('Unrecognized catalog search', 'CATALOG_UNRECOGNIZED');
             rememberRows(key, rows);
+            try { (await import('node:fs')).writeFileSync(process.env.TMPDBG + '/rows.json', JSON.stringify(rows, null, 1)); } catch {}
+            console.log('[tmpdbg] rows', rows.length, 'at', now() - startedAt);
             runAnswer = { outcome: 'checked' };
           } catch (error) {
             runAnswer = couldntCheck(signal?.aborted ? 'cancelled' : reasonForError(error));
@@ -277,7 +279,9 @@ export function createCatalogLookup({
         endRun();
         for (const book of [...pending.values()]) {
           const profile = await profiles.get(book.bookKey);
+          console.log('[tmpdbg] profile', book.bookKey, 'title', book.title, 'isbns', profile?.isbns?.length ?? null, 'has445605', profile?.isbns?.includes('9780345445605'), 'at', now() - startedAt);
           if (!profile?.isbns?.length) continue;
+          for (const row of rows) { const ri = (row.isbns||[]).map(validateAndNormalize).filter(Boolean); if (ri.some(i => profile.isbns.includes(i))) console.log('[tmpdbg]  isbn hit row', row.title, JSON.stringify(matchCatalogRecord(row, profile)), 'titles', JSON.stringify(profile.titles)); }
           let match = null;
           for (const row of rows) {
             const result = matchCatalogRecord(row, profile);

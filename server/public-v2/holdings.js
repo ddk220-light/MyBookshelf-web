@@ -198,6 +198,7 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
         : settleWithin(books.resolve(key), Math.min(PROFILE_WAIT_MS, deadlineAt - now()))]));
       const list = await Promise.all(items.map(async item => {
         const resolved = await resolutions.get(item.bookKey);
+        console.log('[tmpdbg] resolved', item.bookKey, Boolean(resolved), 'at', now() - startedAt);
         const identity = trustedIdentity(libraryId, item.bookKey, resolved);
         // Edition profiles are Open Library reads outside the catalog's budget.
         // They start only when marking runs (lazily: not for stored answers, a
