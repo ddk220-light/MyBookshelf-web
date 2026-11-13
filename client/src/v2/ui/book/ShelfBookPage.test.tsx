@@ -126,6 +126,9 @@ describe('one-shelf book page', () => {
     seed({ libraryId: LIBRARY.id });
     renderBook();
     await screen.findByRole('group', { name: 'Checking Anna Centenary Library' });
+    // "Checking" also shows while the library itself is still loading; the
+    // check (and its time limit) starts only once the library is ready.
+    await waitFor(() => expect(attempts).toBe(1));
     await act(async () => { vi.advanceTimersByTime(CHECK_TIMEOUT_MS + 10); });
     const group = await screen.findByRole('group', { name: 'Couldn’t check Anna Centenary Library' });
     fireEvent.click(within(group).getByRole('button', { name: 'Try again' }));

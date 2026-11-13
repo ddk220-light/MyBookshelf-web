@@ -125,10 +125,15 @@ test('health record: failure events, the flag rule (3 attempts, 2 UTC days, 7 da
 
 test('anonymous log, submissions and the host gate as the runtime role', { skip, timeout: 60_000 }, async t => {
   const { admin, runtime } = await prepare(t);
-  const log = createUsageLog({ enabled: true, db: runtime, defer: async task => { await task(); } });
+  // Writes run after the response; the test waits for each one to settle
+  // instead of guessing how long a new pool connection takes.
+  const writes = [];
+  const defer = task => { writes.push(task()); };
+  const settled = () => Promise.all(writes.splice(0));
+  const log = createUsageLog({ enabled: true, db: runtime, defer });
   log.record({ kind: 'book_search', queryText: 'wings of fire reader@example.com', outcome: 'results', resultCount: 9, source: 'public_data', durationMs: 900 });
   log.record({ kind: 'near_me', outcome: 'results', resultCount: 4 });
-  await new Promise(resolve => setTimeout(resolve, 50));
+  await settled();
   const { rows } = await admin.query('SELECT kind, query_text, occurred_hour = date_trunc(\'hour\', occurred_hour, \'UTC\') AS hour FROM usage_events ORDER BY kind');
   assert.deepEqual(rows, [{ kind: 'book_search', query_text: 'wings of fire [removed]', hour: true }, { kind: 'near_me', query_text: null, hour: true }]);
   await assert.rejects(runtime.query('SELECT * FROM usage_events'), { code: '42501' });
@@ -137,18 +142,18 @@ test('anonymous log, submissions and the host gate as the runtime role', { skip,
   for (const { column_name: name } of columns) assert.ok(!/ip|agent|device|account|session|cookie|lat|lon|coord|referr|user/.test(name), name);
   assert.deepEqual((await dailyUsage(admin, { kind: 'book_search' })).map(r => r.events), [1]);
 
-  const submissions = createSubmissions({ db: runtime, secret: 'x'.repeat(40), defer: async task => { await task(); } });
+  const submissions = createSubmissions({ db: runtime, secret: 'x'.repeat(40), defer });
   const text = { displayText: 'Anna Centenary Library', requestKey: 'anna centenary library' };
   assert.equal(await submissions.libraryRequest(text, { address: '203.0.113.1' }), 'accepted');
   assert.equal(await submissions.libraryRequest(text, { address: '203.0.113.1' }), 'duplicate');
   assert.equal(await submissions.libraryRequest(text, { address: '203.0.113.2' }), 'accepted');
-  await new Promise(resolve => setTimeout(resolve, 50));
+  await settled();
   assert.deepEqual((await admin.query('SELECT request_key, display_text, request_count FROM library_requests')).rows,
     [{ request_key: 'anna centenary library', display_text: 'Anna Centenary Library', request_count: 2 }]);
   const outcomes = [];
   for (let i = 0; i < 6; i += 1) outcomes.push(await submissions.problemReport({ body: `report ${i}`, screen: 'book' }, { address: '203.0.113.9' }));
   assert.deepEqual(outcomes.filter(o => o === 'limited').length, 1);
-  await new Promise(resolve => setTimeout(resolve, 50));
+  await settled();
   assert.equal((await admin.query('SELECT count(*)::int AS n FROM problem_reports')).rows[0].n, 5);
   // Buckets are digests, never the address.
   const { rows: buckets } = await admin.query('SELECT bucket FROM submission_buckets');
