@@ -1,5 +1,5 @@
 import { useEffect, useRef, type KeyboardEvent, type MouseEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAccountSession } from '../../auth/AccountSessionProvider';
 import { useLibrary } from '../../context';
 import { useReadingLight } from '../AppFrame';
@@ -19,6 +19,8 @@ export function SidePanel({ open, onClose, returnFocus, onChangeLibrary }: { ope
   const { session, signOut } = useAccountSession();
   const { library, loadingLibrary } = useLibrary();
   const { light, setLight } = useReadingLight();
+  // A problem report names the screen under the panel: results or the shelf.
+  const reportScreen = (useLocation().state as { search?: unknown } | null)?.search ? 'search' : 'shelf';
   const signedIn = session.status === 'authenticated' && Boolean(session.user);
   // Accounts switched off or not answering: nothing here could work, so the
   // reader simply carries on as a guest without account buttons.
@@ -79,9 +81,9 @@ export function SidePanel({ open, onClose, returnFocus, onChangeLibrary }: { ope
       </section>
 
       <nav className="panel-links" aria-label="Help and information">
-        <a className="panel-row" href="/support">Report a problem<ChevronGlyph /></a>
-        <a className="panel-row" href="/privacy#website">Privacy<ChevronGlyph /></a>
-        <a className="panel-row" href="/about">About<ChevronGlyph /></a>
+        <Link className="panel-row" to="/app/report" state={{ reportScreen }}>Report a problem<ChevronGlyph /></Link>
+        <Link className="panel-row" to="/app/privacy">Privacy<ChevronGlyph /></Link>
+        <Link className="panel-row" to="/app/about">About<ChevronGlyph /></Link>
       </nav>
     </>}
   </dialog>;
