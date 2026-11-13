@@ -79,7 +79,8 @@ describe('one-shelf book page', () => {
     expect(group.textContent).toBe('Anna Centenary LibraryCatalog');
     expect(Boolean(within(group).queryByRole('button', { name: 'Try again' }))).toBe(answer === 'unknown');
     expect(calls.filter(call => call.path.endsWith('/holdings/check')).map(call => call.body)).toEqual([{ libraryId: LIBRARY.id, bookKey: BOOK.bookKey }]);
-    expect(screen.getByText(label, { selector: '[role="status"]' })).toBeInTheDocument();
+    // The settled answer is announced from an effect, which can run after the row appears.
+    expect(await screen.findByText(label, { selector: '[role="status"]' })).toBeInTheDocument();
   });
 
   it('shows Checking while the library looks, then the answer', async () => {

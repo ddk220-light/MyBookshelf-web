@@ -15,6 +15,7 @@ import { createCatalogPolicy } from './policy.js';
 import { runCatalogMaintenance } from './maintenance.js';
 import { createCatalogMaintenanceMiddleware } from './cron.js';
 import { createCatalogLookup, createLookupRecorder } from '../services/catalog-lookup/index.js';
+import { withTestSetupLock } from '../accounts/test-database.js';
 
 // Runs only against a disposable local database whose name ends in _test,
 // e.g. CATALOG_TEST_DATABASE_URL=postgres://postgres:...@127.0.0.1:5432/catalog_test
@@ -22,6 +23,8 @@ const connectionString = process.env.CATALOG_TEST_DATABASE_URL;
 const ROLES = ['runtime', 'worker', 'admin'];
 const roleURL = role => { const url = new URL(connectionString); url.username = `catalog_${role}`; url.password = `local-isolated-catalog-${role}-tests`; return url.href; };
 const DAY = 24 * 60 * 60 * 1000;
+// Shared with admin/role.integration.test.js.
+const CATALOG_SETUP_LOCK = 'mybookshelf-catalog-test-setup';
 const TABLES = 'holdings_answers, library_profiles, library_check_events, library_health, usage_events, usage_daily_totals, library_requests, problem_reports, submission_buckets, host_request_windows, host_request_slots';
 
 async function prepare(t) {
@@ -30,11 +33,15 @@ async function prepare(t) {
   const admin = new Pool({ connectionString, max: 2 });
   await migrateCatalog(admin);
   assert.equal(await migrateCatalog(admin), 1, 'migrations are idempotent');
-  await admin.query(`DO $$ BEGIN
-    ${ROLES.map(role => `IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='catalog_${role}') THEN CREATE ROLE catalog_${role} LOGIN PASSWORD 'local-isolated-catalog-${role}-tests' NOSUPERUSER NOBYPASSRLS NOCREATEROLE; END IF;`).join('\n')}
-  END $$`);
-  await admin.query(await readFile(new URL('./runtime-grants.sql', import.meta.url), 'utf8'));
-  await admin.query(`TRUNCATE ${TABLES} RESTART IDENTITY`);
+  const grants = await readFile(new URL('./runtime-grants.sql', import.meta.url), 'utf8');
+  // admin/role.integration.test.js changes grants on the same tables at the same time.
+  await withTestSetupLock(admin, CATALOG_SETUP_LOCK, async c => {
+    await c.query(`DO $$ BEGIN
+      ${ROLES.map(role => `IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='catalog_${role}') THEN CREATE ROLE catalog_${role} LOGIN PASSWORD 'local-isolated-catalog-${role}-tests' NOSUPERUSER NOBYPASSRLS NOCREATEROLE; END IF;`).join('\n')}
+    END $$`);
+    await c.query(grants);
+    await c.query(`TRUNCATE ${TABLES} RESTART IDENTITY`);
+  });
   const dbs = Object.fromEntries(ROLES.map(role => [role, createCatalogDatabase(roleURL(role), { statementTimeoutMs: 10_000 })]));
   t.after(async () => { await Promise.all(Object.values(dbs).map(db => db.end())); await admin.end(); });
   // `admin` is the owner pool used to arrange and inspect rows; the

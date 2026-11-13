@@ -70,7 +70,6 @@ test('catalog timeouts survive search and availability response boundaries', asy
 test('a native-script query a catalog cannot run is a 400 explanation, not a 503 outage', async () => {
   const unsupported = async () => { throw Object.assign(new Error('Latin letters only'), { code: 'CATALOG_QUERY_UNSUPPORTED' }); };
   const target = makeTestApp(app => app.use('/api/v2', createPublicV2Router({ books: { search: unsupported }, availability: { check: unsupported } })));
-  let written = nextRow();
   const response = await request(target).post('/api/v2/books/search').send({ query: 'వేయి పడగలు' });
   assert.equal(response.status, 400);
   assert.equal(response.body.error.code, 'CATALOG_QUERY_UNSUPPORTED');
