@@ -224,6 +224,8 @@ function GuestLibraryStateProvider({ children, oneShelf = false }: { children: R
     if (recovery.current) return 'recovery';
     let result:SaveResult='saved';
     const ok=await commit(saved=>{if(oneShelf?isOnShelf(saved.savedBooks,book):isSaved(saved,book.bookKey)){result='already-saved';return saved;}if(saved.savedBooks.length+saved.savedContent.length>=SAVED_BOOKS_CAP){result='full';return saved;}return withSavedBook(saved,book);});
+    // A removed book added back: its "Removed … Undo" notice no longer applies.
+    if(ok&&result==='saved'&&alive.current)setRemoved(current=>current&&isOnShelf([current.book],book)?null:current);
     return ok?result:'recovery';
   }, [commit, oneShelf]);
   const saveContent = useCallback(async(item: ContentItem): Promise<SaveResult> => {

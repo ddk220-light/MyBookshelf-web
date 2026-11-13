@@ -36,3 +36,14 @@ it('with the flag off, behaves as before', async () => {
   await act(async () => { result = await library().saveBook(sameIsbn); });
   expect(result).toBe('saved');
 });
+
+it('adding a removed book back drops its "Removed … Undo" notice', async () => {
+  const library = renderShelf(true);
+  await act(async () => { await library().unsaveBook(onShelf.bookKey); });
+  expect(library().removedBook?.bookKey).toBe(onShelf.bookKey);
+  let result: string | undefined;
+  await act(async () => { result = await library().saveBook(onShelf as unknown as PublicBook); });
+  expect(result).toBe('saved');
+  // The book is back: an Undo for its removal would do nothing and hides under "Added to your shelf".
+  expect(library().removedBook).toBeNull();
+});
