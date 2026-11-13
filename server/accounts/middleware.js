@@ -65,7 +65,34 @@ export function createAccountMiddleware({
     '/api/account/deletion',
     '/api/account/deletion/status',
   ]);
-  return async function accounts(req, res, next) {
+  // One lazily initialized account service per app, shared by these routes and
+  // by identify() below (the owner-only admin view uses it to read the session).
+  async function getService(config) {
+    if (service) return service;
+    if (Date.now() < retryAt) throw new Error("Account initialization is waiting to retry.");
+    pending ??= initialize(config)
+      .then((value) => {
+        service = value;
+        return value;
+      })
+      .catch(() => {
+        retryAt = Date.now() + retryAfterMs;
+        throw new Error("Account initialization failed.");
+      })
+      .finally(() => {
+        pending = undefined;
+      });
+    return pending;
+  }
+  const requestHeaders = (req) => {
+    const headers = new Headers();
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (value !== undefined)
+        headers.set(key, Array.isArray(value) ? value.join(", ") : value);
+    }
+    return headers;
+  };
+  async function accounts(req, res, next) {
     const path = req.path;
     if (
       !(
@@ -155,27 +182,10 @@ export function createAccountMiddleware({
             },
           });
       if (!service) {
-        if (Date.now() < retryAt) return unavailable(res);
-        pending ??= initialize(config)
-          .then((value) => {
-            service = value;
-            return value;
-          })
-          .catch(() => {
-            retryAt = Date.now() + retryAfterMs;
-            throw new Error("Account initialization failed.");
-          })
-          .finally(() => {
-            pending = undefined;
-          });
-        await pending;
+        try { await getService(config); } catch { return unavailable(res); }
       }
       if (path === "/api/auth/ok") return await service.handleAuth(req, res);
-      const headers = new Headers();
-      for (const [key, value] of Object.entries(req.headers)) {
-        if (value !== undefined)
-          headers.set(key, Array.isArray(value) ? value.join(", ") : value);
-      }
+      const headers = requestHeaders(req);
       const setCookie = (cookie) => res.append("Set-Cookie", cookie);
       if(callback){
         const result=await service.actions.oauthCallback(callback,{query:req.query,body:req.body,method:req.method,headers,ip:requestIP(req,env)},setCookie);
@@ -424,5 +434,16 @@ export function createAccountMiddleware({
           });
       return unavailable(res);
     }
+  }
+  // The verified server session for a request, for routes outside /api/account
+  // (the admin view). Never reads anything from the request body. Returns
+  // { status: 'disabled' } when accounts are off; throws when unavailable.
+  accounts.identify = async (req, res) => {
+    const config = readAccountConfig(env);
+    if (!config.enabled) return { status: "disabled" };
+    const current = await getService(config);
+    const identity = await current.identity(requestHeaders(req), (cookie) => res.append("Set-Cookie", cookie));
+    return { status: identity.status, identity, config };
   };
+  return accounts;
 }

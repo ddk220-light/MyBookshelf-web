@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process';
 import manifest from '../../shared/seo-libraries.json' with { type: 'json' };
 import { getAllLibraries } from '../../server/services/directory.js';
 import { toPublicLibrary } from '../../server/public-v2/directory.js';
+import { analyticsScriptSource, analyticsSettingOn, siteVerificationToken } from '../../shared/analytics.mjs';
 
 export const origin = 'https://mybookshelf.cloud';
 export const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -26,8 +27,17 @@ export function publishedLibraries(entries = getAllLibraries(), publication = ma
     return {...item, library: toPublicLibrary(row), path: '/libraries/'+item.slug};
   });
 }
-export async function buildPages(output = resolve(root, 'client/dist')) {
+// Build settings, both off by default (plan 4.6.1, Phase 11):
+//   VITE_ANALYTICS_ENABLED=true   cookieless page visits on every public page (/insights.js)
+//   GOOGLE_SITE_VERIFICATION=<token>  Search Console's meta tag on the home page only
+export function pageSettings(env = process.env) {
+  return { analytics: analyticsSettingOn(env.VITE_ANALYTICS_ENABLED), siteVerification: siteVerificationToken(env.GOOGLE_SITE_VERIFICATION) };
+}
+export async function buildPages(output = resolve(root, 'client/dist'), settings = pageSettings()) {
   const rows = publishedLibraries();
+  if (settings.analytics) await writeFile(resolve(output,'insights.js'), analyticsScriptSource());
+  const extraHead = home => (settings.analytics ? '<script src="/insights.js" defer></script>' : '')
+    + (home && settings.siteVerification ? `<meta name="google-site-verification" content="${escape(settings.siteVerification)}">` : '');
   await mkdir(resolve(output,'app'), {recursive:true});
   await copyFile(resolve(output,'index.html'), resolve(output,'app/index.html'));
   let revision = process.env.VERCEL_GIT_COMMIT_SHA;
@@ -44,7 +54,7 @@ export async function buildPages(output = resolve(root, 'client/dist')) {
     description = description.length > 160 ? description.slice(0,157).replace(/\s+\S*$/, '') + '…' : description;
     const structured=[{'@context':'https://schema.org','@type':'WebPage',name:title,url:origin+path},...schema];
     const json = jsonLd(structured);
-    const html=`<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(title)} | MyBookshelf</title><meta name="description" content="${escape(description)}"><meta name="robots" content="${index?'index, follow':'noindex, follow'}"><link rel="canonical" href="${origin+path}"><meta property="og:type" content="website"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}"><meta property="og:url" content="${origin+path}"><meta property="og:image" content="${origin}/og/site.png"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#faf7f1"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><link rel="stylesheet" href="/site.css"><script type="application/ld+json">${json}</script>${home?'<script src="/site.js" defer></script>':''}</head><body class="${home?'landing-page':path.startsWith('/libraries/')?'library-page':path==='/libraries'?'directory-page':path==='/404'?'not-found-page':'article-page'}">${nav}<main id="content">${body}</main>${foot}</body></html>`;
+    const html=`<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(title)} | MyBookshelf</title><meta name="description" content="${escape(description)}"><meta name="robots" content="${index?'index, follow':'noindex, follow'}"><link rel="canonical" href="${origin+path}"><meta property="og:type" content="website"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}"><meta property="og:url" content="${origin+path}"><meta property="og:image" content="${origin}/og/site.png"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#faf7f1"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><link rel="stylesheet" href="/site.css"><script type="application/ld+json">${json}</script>${home?'<script src="/site.js" defer></script>':''}${extraHead(home)}</head><body class="${home?'landing-page':path.startsWith('/libraries/')?'library-page':path==='/libraries'?'directory-page':path==='/404'?'not-found-page':'article-page'}">${nav}<main id="content">${body}</main>${foot}</body></html>`;
     const dest=resolve(output,file || (path==='/'?'index.html':path.slice(1)+'.html'));
     await mkdir(dirname(dest),{recursive:true}); await writeFile(dest,html);
     if(index) paths.push(path);

@@ -38,7 +38,7 @@ DO $$ BEGIN
   END IF;
 
   IF EXISTS (SELECT FROM pg_roles WHERE rolname = 'catalog_admin') THEN
-    -- Owner-only admin view (plan section 6, a later phase).
+    -- Owner-only admin view (plan section 6): server/admin, CATALOG_ADMIN_DATABASE_URL.
     GRANT USAGE ON SCHEMA public TO catalog_admin;
     GRANT SELECT ON ALL TABLES IN SCHEMA public TO catalog_admin;
     GRANT UPDATE (status, status_note, updated_at) ON library_requests TO catalog_admin;

@@ -216,3 +216,171 @@ test('the maintenance route runs with the worker role and refuses the owner role
     if (status === 200) assert.equal(typeof response.body.expiredAnswers, 'number');
   }
 });
+
+test('admin view queries as the catalog_admin role: grouped requests, reports, health, usage and the role guard', { skip, timeout: 60_000 }, async t => {
+  const { admin, runtime, worker, adminRole } = await prepare(t);
+  const queries = await import('../admin/queries.js');
+  await admin.query(`INSERT INTO library_requests (request_key, display_text, request_count, last_requested_on) VALUES
+    ('pune central library', 'Pune Central Library', 4, current_date), ('pune library', 'pune library', 2, current_date - 1),
+    ('kozhikode public library', 'Kozhikode Public Library', 2, current_date), ('kozhicode', 'Kozhicode', 1, current_date)`);
+  await admin.query(`INSERT INTO problem_reports (id, body, screen, library_id, book_key) VALUES
+    ('11111111-2222-4333-8444-555555555555', '<script>alert(1)</script> wrong answer', 'book', 'koha:a', 'v1:isbn:9780140328721')`);
+  await admin.query(`INSERT INTO library_health (library_id, platform, last_failure_at, last_failure, failures_since_success, flagged_at, flag_reason)
+    VALUES ('koha:slow', 'koha', now(), 'timeout', 3, now(), '3 failed attempts on 2 days within 7 days'), ('koha:ok', 'koha', NULL, NULL, 0, NULL, NULL)`);
+  await admin.query(`UPDATE library_health SET last_success_at = now() WHERE library_id = 'koha:ok'`);
+  await admin.query(`INSERT INTO library_check_events (library_id, host, platform, operation, failure, error_code, duration_ms, requests, occurred_at) VALUES
+    ('koha:slow', 'slow.example', 'koha', 'book_check', 'timeout', 'CATALOG_TIMEOUT', 20000, 3, now() - interval '1 day'),
+    ('koha:slow', 'slow.example', 'koha', 'marks', 'unavailable', NULL, 900, 1, now() - interval '2 hours'),
+    ('koha:slow', 'slow.example', 'koha', 'book_check', 'timeout', 'CATALOG_TIMEOUT', 20000, 3, now())`);
+  await admin.query(`INSERT INTO holdings_answers (library_id, identity_kind, identity_value, answer, evidence, expires_at) VALUES
+    ('koha:a', 'isbn13', '9780140328721', 'found', 'exact_isbn', now() + interval '1 day'), ('koha:a', 'isbn13', '9788173711466', 'not_found', 'isbn_not_listed', now() + interval '1 day')`);
+
+  // The role guard: admin passes; runtime, worker and owner are refused.
+  await queries.assertAdminRole(adminRole);
+  for (const db of [runtime, worker]) await assert.rejects(queries.assertAdminRole(db), { code: 'STORE_ROLE_REJECTED' });
+  const owner = createCatalogDatabase(connectionString);
+  t.after(() => owner.end());
+  await assert.rejects(queries.assertAdminRole(owner), { code: 'STORE_ROLE_REJECTED' });
+
+  const requests = await queries.listLibraryRequests(adminRole);
+  assert.equal(requests.total, 4);
+  assert.deepEqual(requests.groups.map(g => [g.label, g.totalCount, g.requests.length]), [['Pune Central Library', 6, 2], ['Kozhikode Public Library', 3, 2]]);
+  assert.match(requests.groups[0].requests[1].lastRequestedOn, /^\d{4}-\d{2}-\d{2}$/);
+  const changed = await queries.updateLibraryRequest(adminRole, 'pune library', { status: 'added', note: 'Same as Pune Central' });
+  assert.deepEqual([changed.status, changed.statusNote], ['added', 'Same as Pune Central']);
+  assert.equal((await queries.updateLibraryRequest(adminRole, 'pune library', { note: '' })).statusNote, null);
+  assert.equal(await queries.updateLibraryRequest(adminRole, 'missing', { status: 'spam' }), null);
+
+  const { reports } = await queries.listProblemReports(adminRole);
+  assert.equal(reports[0].body, '<script>alert(1)</script> wrong answer', 'stored and returned as plain text');
+  const resolved = await queries.updateProblemReport(adminRole, reports[0].id, { status: 'resolved' });
+  assert.ok(resolved.resolvedAt);
+  assert.equal((await queries.updateProblemReport(adminRole, reports[0].id, { status: 'read' })).resolvedAt, null);
+
+  const health = await queries.libraryHealth(adminRole);
+  assert.deepEqual(health.libraries.map(l => [l.libraryId, l.flagged]), [['koha:slow', true], ['koha:ok', false]]);
+  const slow = health.libraries[0];
+  assert.deepEqual([slow.failures7d, slow.failuresByClass.timeout, slow.failuresByClass.unavailable, slow.host, slow.checks7d], [3, 2, 1, 'slow.example', null]);
+  assert.deepEqual(slow.recentFailures.map(f => f.failure), ['timeout', 'unavailable', 'timeout']);
+  assert.equal(health.checkTotalsFromLog, false, 'no totals without the log');
+  const ack = await queries.acknowledgeLibraryHealth(adminRole, 'koha:slow', { acknowledged: true, note: 'Catalog moved' });
+  assert.ok(ack.acknowledgedAt);
+  assert.equal(ack.ownerNote, 'Catalog moved');
+  assert.match(queries.libraryHealthCsv(await queries.libraryHealth(adminRole)), /koha:slow,.*Catalog moved/);
+
+  // Usage: empty, then with log rows.
+  let usage = await queries.usage(adminRole);
+  assert.deepEqual([usage.hasData, usage.daily.length], [false, 0]);
+  await admin.query(`INSERT INTO usage_events (occurred_hour, kind, query_text, library_id, book_key, outcome, result_count, found_count, duration_ms) VALUES
+    (date_trunc('hour', now(), 'UTC'), 'book_search', 'rare title', NULL, NULL, 'none', 0, NULL, 300),
+    (date_trunc('hour', now(), 'UTC'), 'book_search', 'wings of fire', NULL, NULL, 'results', 9, NULL, 300),
+    (date_trunc('hour', now(), 'UTC'), 'book_check', NULL, 'koha:slow', 'v1:isbn:9780140328721', 'found', NULL, NULL, 1200),
+    (date_trunc('hour', now(), 'UTC'), 'result_marks', 'wings of fire', 'koha:slow', NULL, 'done', 9, 2, 4000),
+    (date_trunc('hour', now(), 'UTC'), 'library_finder', 'nowhere town', NULL, NULL, 'results', 0, NULL, 20)`);
+  usage = await queries.usage(adminRole);
+  assert.equal(usage.hasData, true);
+  assert.deepEqual([usage.daily[0].book_search, usage.daily[0].searchesWithoutResults, usage.daily[0].book_check], [2, 1, 1]);
+  assert.deepEqual(usage.noResultSearches, [{ text: 'rare title', count: 1 }]);
+  assert.deepEqual(usage.marking, { runs: 1, booksShown: 9, booksMarked: 2 });
+  assert.deepEqual(usage.libraryFinderWithoutResults, [{ text: 'nowhere town', count: 1 }]);
+  assert.ok(!JSON.stringify(usage).includes('v1:isbn'), 'no book keys in the usage view');
+  for (const [section, fields] of Object.entries(queries.USAGE_VIEW_FIELDS)) {
+    for (const row of [usage[section]].flat()) for (const key of Object.keys(row)) assert.ok(fields.includes(key), `${section}.${key}`);
+  }
+  assert.equal((await queries.libraryHealth(adminRole)).libraries[0].checks7d, 3, 'totals from the log, never below failures');
+
+  const summary = await queries.summary(adminRole, { policy: createCatalogPolicy({ policies: { schemaVersion: 1, libraries: { 'bc:out': { storeAnswers: false, reason: 'Asked', reviewedOn: '2026-11-12' } } } }) });
+  assert.deepEqual(summary.answersByLibrary, [{ libraryId: 'koha:a', name: null, found: 1, notFound: 1 }]);
+  assert.deepEqual(summary.optedOut.map(o => o.libraryId), ['bc:out']);
+  assert.equal(summary.counts.flaggedLibraries, 1);
+
+  // The admin role changes only status, notes and acknowledgements.
+  await assert.rejects(adminRole.query(`UPDATE library_requests SET display_text = 'x'`), { code: '42501' });
+  await assert.rejects(adminRole.query(`UPDATE problem_reports SET body = 'x'`), { code: '42501' });
+  await assert.rejects(adminRole.query(`UPDATE library_health SET flagged_at = NULL`), { code: '42501' });
+  await assert.rejects(adminRole.query(`DELETE FROM library_requests`), { code: '42501' });
+  await assert.rejects(adminRole.query(`INSERT INTO usage_events (occurred_hour, kind, outcome) VALUES (now(), 'near_me', 'x')`), { code: '42501' });
+  await assert.rejects(adminRole.query(`DELETE FROM holdings_answers`), { code: '42501' });
+});
+
+// The whole path with real accounts: Better Auth session, verified email,
+// ADMIN_ACCOUNT_IDS, CSRF, and the catalog_admin role.
+const accountURL = process.env.ACCOUNT_TEST_DATABASE_URL;
+test('admin HTTP routes with a real account session: 404 until listed, then reads and CSRF-checked changes', { skip: skip || (!accountURL && 'Set disposable local ACCOUNT_TEST_DATABASE_URL.'), timeout: 60_000 }, async t => {
+  const { admin } = await prepare(t);
+  const { randomUUID } = await import('node:crypto');
+  const { createApplication } = await import('../application.js');
+  const { createAccountMiddleware } = await import('../accounts/middleware.js');
+  const { createAccountService } = await import('../accounts/service.js');
+  const { createAdminMiddleware } = await import('../admin/middleware.js');
+  const { migrate } = await import('../db/migrate.js');
+  const { prepareTestRoles, testRoleURL } = await import('../accounts/test-database.js');
+  const { decryptMail } = await import('../jobs/mail.js');
+  const url = new URL(accountURL);
+  assert.ok(['localhost', '127.0.0.1'].includes(url.hostname) && url.pathname.endsWith('_test'));
+  const accountsDb = new Pool({ connectionString: accountURL });
+  const email = randomUUID() + '@example.test';
+  let service, server;
+  t.after(async () => {
+    if (server) await new Promise(resolve => server.close(resolve));
+    if (service) await service.close();
+    const ids = (await accountsDb.query('SELECT id FROM "user" WHERE email=$1', [email])).rows.map(r => r.id);
+    await accountsDb.query('DELETE FROM account_mail_jobs WHERE "authUserId"=ANY($1::text[])', [ids]);
+    await accountsDb.query('DELETE FROM account_email_challenges WHERE "authUserId"=ANY($1::text[])', [ids]);
+    await accountsDb.query('DELETE FROM "user" WHERE email=$1', [email]);
+    await accountsDb.end();
+  });
+  await migrate(accountsDb);
+  await prepareTestRoles(accountsDb);
+  await admin.query(`INSERT INTO library_requests (request_key, display_text) VALUES ('setagaya', 'Setagaya')`);
+  const env = { NODE_ENV: 'test', ACCOUNTS_ENABLED: 'true', ACCOUNTS_ENVIRONMENT: 'development', BETTER_AUTH_URL: 'http://localhost:3000',
+    BETTER_AUTH_SECRET: 'test-only-secret-longer-than-32-characters' + randomUUID(), ACCOUNTS_AUTH_DATABASE_URL: testRoleURL(accountURL, 'auth'),
+    ACCOUNTS_READING_DATABASE_URL: testRoleURL(accountURL, 'reading'), ACCOUNTS_JOB_SECRET: 'test-only-jobs-secret-longer-than-32-characters',
+    RESEND_API_KEY: 'test-transport-not-called', ACCOUNTS_MAIL_FROM: 'accounts@example.test',
+    ADMIN_ACCOUNT_IDS: '', CATALOG_ADMIN_DATABASE_URL: roleURL('admin') };
+  const accounts = createAccountMiddleware({ env, initialize: async config => { service = await createAccountService(config, { checkPassword: async () => {} }); return service; } });
+  const adminRoutes = createAdminMiddleware({ env, identify: accounts.identify });
+  t.after(() => adminRoutes.close());
+  const app = createApplication({ accounts, admin: adminRoutes });
+  server = await new Promise(resolve => { const s = app.listen(0, '127.0.0.1', () => resolve(s)); });
+  const base = 'http://127.0.0.1:' + server.address().port;
+  const call = (path, { method = 'GET', body, cookie = '', csrf = '', origin = env.BETTER_AUTH_URL } = {}) => fetch(base + path, { method,
+    headers: { ...(origin ? { Origin: origin } : {}), ...(body ? { 'Content-Type': 'application/json' } : {}), ...(cookie ? { Cookie: cookie } : {}), ...(csrf ? { 'X-Account-CSRF': csrf } : {}) },
+    ...(body ? { body: JSON.stringify(body) } : {}) });
+
+  assert.equal((await call('/api/admin/summary')).status, 404, 'signed out');
+  assert.equal((await call('/api/account/sign-up', { method: 'POST', body: { name: 'Synthetic owner', email, password: 'a long synthetic password ' + randomUUID() } })).status, 202);
+  const job = (await accountsDb.query(`SELECT payload FROM account_mail_jobs j JOIN "user" u ON u.id=j."authUserId" WHERE u.email=$1 AND kind='verify'`, [email])).rows[0];
+  const { token } = decryptMail(job.payload, env.ACCOUNTS_JOB_SECRET);
+  assert.equal((await call('/api/account/verify-email', { method: 'POST', body: { token } })).status, 200);
+  const context = await service.auth.$context;
+  const authUser = (await accountsDb.query('SELECT id FROM "user" WHERE email=$1', [email])).rows[0];
+  const password = 'another long synthetic password ' + randomUUID();
+  await context.internalAdapter.updatePassword(authUser.id, await context.password.hash(password));
+  const signIn = await call('/api/account/sign-in', { method: 'POST', body: { email, password } });
+  assert.equal(signIn.status, 200);
+  const cookie = signIn.headers.getSetCookie().map(c => c.split(';')[0]).join('; ');
+  const session = await (await call('/api/account/session', { cookie })).json();
+  assert.equal(session.status, 'authenticated');
+
+  // Signed in and verified, but not listed: the same 404.
+  let response = await call('/api/admin/summary', { cookie });
+  assert.equal(response.status, 404);
+  assert.equal(response.headers.get('cache-control'), 'private, no-store');
+  env.ADMIN_ACCOUNT_IDS = randomUUID();
+  assert.equal((await call('/api/admin/summary', { cookie })).status, 404, 'another account listed');
+  env.ADMIN_ACCOUNT_IDS = session.user.id;
+  response = await call('/api/admin/summary', { cookie });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('x-robots-tag'), 'noindex');
+  assert.equal((await response.json()).store.state, 'ok');
+  const groups = (await (await call('/api/admin/library-requests', { cookie })).json()).groups;
+  assert.equal(groups[0].label, 'Setagaya');
+  assert.equal((await call('/api/admin/library-requests/setagaya', { method: 'PATCH', body: { status: 'added' }, cookie })).status, 403, 'no CSRF token');
+  assert.equal((await call('/api/admin/library-requests/setagaya', { method: 'PATCH', body: { status: 'added' }, cookie, csrf: session.csrfToken, origin: 'https://evil.example' })).status, 403);
+  response = await call('/api/admin/library-requests/setagaya', { method: 'PATCH', body: { status: 'added', note: 'In the directory' }, cookie, csrf: session.csrfToken });
+  assert.equal(response.status, 200);
+  assert.equal((await admin.query(`SELECT status FROM library_requests WHERE request_key = 'setagaya'`)).rows[0].status, 'added');
+  // Signed out again: 404.
+  assert.equal((await call('/api/admin/summary')).status, 404);
+});

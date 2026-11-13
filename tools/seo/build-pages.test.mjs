@@ -62,3 +62,36 @@ test('new South Indian guides are published with HTTPS official sites and honest
     assert.ok(hub.includes(countWord(pages.length,true)+' featured guides'));
   }
 });
+test('analytics and Search Console are off by default and, when set, add only the same-origin script and the home-page tag', async () => {
+  const { buildPages, pageSettings } = await import('./build-pages.mjs');
+  const { mkdtemp, writeFile, readFile, rm, readdir } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  assert.deepEqual(pageSettings({}), { analytics: false, siteVerification: null });
+  assert.deepEqual(pageSettings({ VITE_ANALYTICS_ENABLED: 'true', GOOGLE_SITE_VERIFICATION: '"><script>' }), { analytics: true, siteVerification: null });
+  if (existsSync('client/dist/index.html') && !pageSettings().analytics) {
+    assert.ok(!existsSync('client/dist/insights.js'));
+    for (const file of ['index.html', 'about.html', 'libraries.html']) {
+      const html = readFileSync('client/dist/' + file, 'utf8');
+      assert.ok(!html.includes('insights') && !html.includes('google-site-verification'), file);
+    }
+  }
+  const out = await mkdtemp(join(tmpdir(), 'pages-'));
+  try {
+    await writeFile(join(out, 'index.html'), '<!doctype html><title>app</title>');
+    const token = 'abcDEF0123456789_-xyzABC';
+    await buildPages(out, { analytics: true, siteVerification: token });
+    const script = await readFile(join(out, 'insights.js'), 'utf8');
+    assert.match(script, /\/_vercel\/insights\/script\.js/);
+    assert.ok(!/document\.cookie|localStorage|https?:\/\/(?!mybookshelf\.cloud)/.test(script), 'no cookie, storage or other host');
+    const pages = (await readdir(out)).filter(name => name.endsWith('.html'));
+    for (const name of pages) {
+      const html = await readFile(join(out, name), 'utf8');
+      if (name === 'index.html') assert.ok(html.includes(`<meta name="google-site-verification" content="${token}">`));
+      else assert.ok(!html.includes('google-site-verification'), name);
+      assert.ok(html.includes('<script src="/insights.js" defer></script>'), name);
+      assert.ok(!html.includes('<script>window'), 'no inline script (CSP script-src self)');
+    }
+    assert.ok((await readFile(join(out, 'libraries', 'anna-centenary-library.html'), 'utf8')).includes('/insights.js'));
+  } finally { await rm(out, { recursive: true, force: true }); }
+});

@@ -1,4 +1,4 @@
-import {useLayoutEffect,useRef} from 'react';
+import {lazy,Suspense,useLayoutEffect,useRef} from 'react';
 import { Link, Navigate, Route, Routes,useLocation,useNavigate } from 'react-router-dom';
 import {AccountSessionProvider,useAccountSession} from './auth/AccountSessionProvider';
 import {LinkTokenProvider} from './auth/LinkTokenProvider';
@@ -31,6 +31,10 @@ import { ReportProblemPage } from './ui/panel/ReportProblemPage';
 import { AboutPage, PrivacyPage, TermsPage } from './ui/panel/PolicyPages';
 
 export { LibrariesPage } from './ui/library/LibrariesPage';
+
+// The owner-only admin view (plan section 6): its own chunk, linked from no
+// screen, noindex. The server answers 404 to anyone but the owner.
+const AdminPage = lazy(() => import('./ui/admin/AdminPage'));
 
 function NativeAppNotice() {
   return <section className="page-section prose"><h1>{m.findBooks}</h1><p>No sign-in needed.</p><Link className="button-link" to="/app/search">{m.searchButton}</Link></section>;
@@ -116,6 +120,7 @@ function currentRoutes(screens: Screens = {}) {
     <Route path="/app/account/import" element={<ImportPage/>}/>
     <Route path="/app/books/:bookKey" element={screens.book ?? <BookPage />} />
     <Route path="/app/read/:contentKey" element={<ContentDetailPage />} />
+    <Route path="/app/admin" element={<Suspense fallback={<p role="status">Loading…</p>}><AdminPage /></Suspense>} />
     <Route path="/find" element={<Navigate to="/app/search" replace />} />
     <Route path="/privacy" element={<Navigate to="/settings#privacy" replace />} />
     {screens.extra}
