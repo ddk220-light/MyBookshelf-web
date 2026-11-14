@@ -16,7 +16,8 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 - Search results replace the saved shelf in place, as on mobile (board D3).
 - No scan button at desktop widths; a typed ISBN in the search bar goes straight to the book.
 - Below 1100 px and above phone width: the left column collapses to icons, and an open book
-  covers the shelf instead of pushing it.
+  covers the shelf instead of pushing it. Nothing else is special at these widths: the scan
+  button stays, as on phones (owner, 14 November).
 - Below that: the phone layout as released.
 - Board D1 (empty shelves on first open) is replaced by Part 2's cold open.
 
