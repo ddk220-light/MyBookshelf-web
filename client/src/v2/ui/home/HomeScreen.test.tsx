@@ -15,11 +15,13 @@ const LIBRARY = { id: 'koha:anna', name: 'Anna Centenary Library', city: 'Chenna
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status });
 const book = (index: number) => ({ bookKey: 'v1:openlibrary:OL' + index + 'W', title: 'Book ' + index, authors: ['Author ' + index], source: 'direct', viewedAt: new Date(Date.UTC(2026, 0, 1 + index)).toISOString() });
 
-function stubApi({ email = true, found = [] as string[] } = {}) {
+function stubApi({ email = true, found = [] as string[], suggestions = null as null | ((body: any) => unknown[]) } = {}) {
   const calls: Array<{ path: string; body: any }> = [];
   vi.stubGlobal('fetch', vi.fn((path: string, init?: RequestInit) => {
     const body = init?.body ? JSON.parse(String(init.body)) : null;
     calls.push({ path, body });
+    if (suggestions && path.endsWith('/suggestions')) return Promise.resolve(json({ books: suggestions(body) }));
+    if (suggestions && path.endsWith('/suggestions/events')) return Promise.resolve(json({}, 202));
     if (path.endsWith('/capabilities')) return Promise.resolve(json({ email, google: false, apple: false, canonicalOrigin: window.location.origin }));
     if (path.endsWith('/session')) return Promise.resolve(json({ status: 'guest' }));
     if (path.endsWith('/libraries/resolve')) return Promise.resolve(json({ library: LIBRARY }));
@@ -255,6 +257,49 @@ describe('one-shelf home', () => {
     expect(badged).toHaveClass('is-suggested');
     expect(badged.querySelector('.cover-badge-library')).not.toBeNull();
     expect(calls.filter(call => call.path.endsWith('/holdings/lookup')).flatMap(call => call.body.books.map((item: { bookKey: string }) => item.bookKey))).not.toContain(pick.bookKey);
+    view.unmount();
+  });
+
+  it('server suggestions come first; one the library is known to have shows its badge with no check; opened and saved are counted', async () => {
+    const inLibrary = { bookKey: 'v1:openlibrary:OL900W', title: 'Found Here', authors: ['Library Author'], workId: 'OL900W', inLibrary: true };
+    const related = { bookKey: 'v1:openlibrary:OL901W', title: 'Related Book', authors: ['Related Author'], workId: 'OL901W' };
+    const calls = stubApi({ suggestions: body => body.excludeKeys.includes(inLibrary.bookKey) ? [related] : [inLibrary, related] });
+    seed({ saved: [book(1)], recent: [{ ...book(2), viewedAt: '2026-02-01T00:00:00.000Z' }], libraryId: LIBRARY.id });
+    const view = renderHome();
+    const badged = await screen.findByRole('link', { name: 'Found Here by Library Author, in Anna Centenary Library, suggested' });
+    expect(badged.querySelector('.cover-badge-library')).not.toBeNull();
+    expect(screen.getByRole('link', { name: 'Related Book by Related Author, suggested' }).querySelector('.cover-badge-library')).toBeNull();
+    // After the server's books, the seed list: five in all.
+    expect(suggestedLinks().map(link => link.getAttribute('aria-label')).slice(2)).toEqual(SUGGESTED.slice(0, 3));
+    const asked = calls.filter(call => call.path === '/api/v2/suggestions');
+    expect(asked.map(call => call.body)).toEqual([{ libraryId: LIBRARY.id, recentBookKeys: [book(2).bookKey, book(1).bookKey], excludeKeys: [book(1).bookKey] }]);
+    // No library check for any suggestion: only the saved book's stored answer was asked for.
+    expect(calls.filter(call => call.path.endsWith('/holdings/lookup')).flatMap(call => call.body.books.map((item: { bookKey: string }) => item.bookKey))).toEqual([book(1).bookKey]);
+    expect(calls.some(call => /\/holdings\/(check|search)$/.test(call.path))).toBe(false);
+    expect(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)).not.toContain('OL900W');
+    expect(sessionStorage.length).toBe(0);
+
+    fireEvent.click(badged);
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(inLibrary.bookKey)));
+    fireEvent.click(await screen.findByRole('button', { name: 'Add to my shelf' }));
+    expect(await screen.findByRole('button', { name: 'On my shelf' })).toBeInTheDocument();
+    await waitFor(() => expect(calls.filter(call => call.path.endsWith('/suggestions/events')).map(call => call.body))
+      .toEqual([{ event: 'opened', bookKey: inLibrary.bookKey }, { event: 'saved', bookKey: inLibrary.bookKey }]));
+    // Remembered as a direct open, as before.
+    expect(JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!).recentBooks[0]).toMatchObject({ bookKey: inLibrary.bookKey, source: 'direct' });
+    fireEvent.click(screen.getByRole('link', { name: 'Back' }));
+    // Saving refreshed the suggestions once, with the saved book left out.
+    await screen.findByRole('heading', { name: 'My shelf' });
+    const shelfCovers = () => [...document.querySelectorAll('.bay-books a')].map(link => link.getAttribute('aria-label'));
+    await waitFor(() => expect(shelfCovers()[0]).toBe('Found Here by Library Author'));
+    await waitFor(() => expect(calls.filter(call => call.path === '/api/v2/suggestions')).toHaveLength(2));
+    expect(calls.filter(call => call.path === '/api/v2/suggestions')[1].body.excludeKeys).toEqual([inLibrary.bookKey, book(1).bookKey]);
+    expect(screen.getByRole('link', { name: 'Related Book by Related Author, suggested' })).toBeInTheDocument();
+    // An ordinary book opened from the shelf is not counted.
+    fireEvent.click(document.querySelector<HTMLElement>('.bay-books a[aria-label^="Book 1 by Author 1"]')!);
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(book(1).bookKey)));
+    await screen.findByRole('link', { name: 'Back' });
+    expect(calls.filter(call => call.path.endsWith('/suggestions/events'))).toHaveLength(2);
     view.unmount();
   });
 

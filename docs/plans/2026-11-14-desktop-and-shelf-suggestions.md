@@ -100,7 +100,25 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 - `shared/suggestions-seed.json`: the seed list (book key, title, author, cover).
 - Server: `POST /api/v2/suggestions { libraryId?, recentBookKeys[≤3], excludeKeys[≤200] }`
   returns five books with an optional `inLibrary` flag from the store; cached sources; counts
-  only in the anonymous log.
+  only in the anonymous log. As built in step B (14 November 2026, `server/public-v2/suggestions.js`):
+  - It returns up to 15 candidates, so that five remain after the app's own pick, which stays the
+    authority. It applies the same exclusions (book key, ISBN-13, Open Library work) and the
+    one-per-author rule. It always answers 200 within about 3 s; `partial: true` marks an answer
+    cut short by a failing or slow store or Open Library, and the app then keeps its last books.
+  - Source 1 reads the chosen library's 60 most recently checked stored "found" answers (works and
+    ISBN-13s; never a "not found", never a catalog record, nothing for an opted-out library). The
+    store keeps no title or cover, so the found edition's details come from one batched Open
+    Library Books API request.
+  - Source 2 takes the subjects of the newest recent book not yet known (`/works/<id>.json`, or
+    search by ISBN), skips generic subjects, and asks Open Library search for the subject's works
+    by reader count (`sort=readinglog`), covers only.
+  - At most 3 Open Library requests per suggestion request; found lists, display details,
+    subjects and subject lists are cached in each instance's memory for 24 hours. No catalog
+    request is ever made.
+  - Counts: `POST /api/v2/suggestions/events { event: opened|saved, bookKey }` (the book page,
+    marked by router state only) and "shown" rows written by the server for the five the app
+    shows. Catalog migration `002-suggestion-counts.sql` adds the `suggestion` kind to the
+    anonymous log.
 - Client: a suggestions hook on the home screen, shelf layout that appends the five faded
   covers after saved books, the "Suggested" plank label, list-view rows, refresh triggers.
 - Tests: the fill and wrap rule at 3 and 6 per row, one-per-author, never suggesting a saved

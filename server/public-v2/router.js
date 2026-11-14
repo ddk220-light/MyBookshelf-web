@@ -12,6 +12,7 @@ import { createCatalogLookup } from '../services/catalog-lookup/index.js';
 import { createLookupRecorder } from '../services/catalog-lookup/record.js';
 import { createCatalogStore } from '../catalog-store/index.js';
 import { createHoldingsRoutes } from './holdings.js';
+import { createSuggestionRoutes } from './suggestions.js';
 import {
   PublicV2ValidationError,
   parseAvailability,
@@ -111,6 +112,7 @@ export function createPublicV2Router({
   catalogStore = null,
   lookup = null,
   holdingsOptions = {},
+  suggestionOptions = {},
 } = {}) {
   const router = Router();
   const bookService = books || createPublicBookService({ catalogs: createPublicCatalogBookService({ directory }) });
@@ -123,6 +125,8 @@ export function createPublicV2Router({
   });
   const availabilityService = availability || createPublicAvailabilityService({ directory, books: bookService, lookup: catalogLookup });
   const holdings = createHoldingsRoutes({ directory, books: bookService, lookup: catalogLookup, store, ...holdingsOptions });
+  // Shelf suggestions: stored answers and Open Library only, never a catalog request.
+  const suggestions = createSuggestionRoutes({ directory, store, ...suggestionOptions });
 
   router.use((req, res, next) => {
     // This boundary neither reads nor creates identity state. These headers also
@@ -257,6 +261,8 @@ export function createPublicV2Router({
   router.post('/holdings/lookup', route(telemetry, 'holdings_lookup', holdings.holdingsLookup));
   router.post('/holdings/check', route(telemetry, 'holdings_check', holdings.holdingsCheck));
   router.post('/holdings/search', route(telemetry, 'holdings_search', holdings.holdingsSearch));
+  router.post('/suggestions', route(telemetry, 'suggestions', suggestions.suggest));
+  router.post('/suggestions/events', route(telemetry, 'suggestion_event', suggestions.suggestionEvent));
   router.post('/library-requests', route(telemetry, 'library_request', holdings.libraryRequest));
   router.post('/problem-reports', route(telemetry, 'problem_report', holdings.problemReport));
 

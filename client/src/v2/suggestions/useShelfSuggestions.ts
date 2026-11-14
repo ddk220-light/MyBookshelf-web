@@ -2,9 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { RecentBook } from '../types';
 import { pickSuggestions, type SuggestedBook } from './pickSuggestions';
 import { SEED_SUGGESTIONS } from './seed';
+import { serverSuggestions } from './serverSource';
 
-/** What a source may use to choose its books. */
-export type SuggestionContext = { savedBooks: readonly RecentBook[]; libraryId: string | null };
+/**
+ * What a source may use to choose its books: the saved books, Viewed before
+ * (`recentBooks`, read when a refresh starts) and the chosen library.
+ */
+export type SuggestionContext = { savedBooks: readonly RecentBook[]; recentBooks?: readonly RecentBook[]; libraryId: string | null };
 
 /**
  * A source of suggestions, asked again on each refresh. Sources come before
@@ -17,11 +21,10 @@ export type SuggestionSource = {
 };
 
 /**
- * Sources ahead of the seed list. Step B adds the server's (books known to be
- * in the chosen library, then books related to what the reader viewed or
- * saved) here; until then the seed list is the only source.
+ * Sources ahead of the seed list: the server's (step B: books known to be in
+ * the chosen library, then books related to what the reader viewed or saved).
  */
-export const SUGGESTION_SOURCES: readonly SuggestionSource[] = [];
+export const SUGGESTION_SOURCES: readonly SuggestionSource[] = [serverSuggestions];
 
 // The last answers of each source, for this page load (one visit) only: in
 // memory, never in browser storage, and not saved to the account.
@@ -45,13 +48,16 @@ export function suggestionRefreshKey(savedBooks: readonly Pick<RecentBook, 'book
  * The five suggestions for the shelf: the sources' latest books, then the
  * seed list, picked by `pickSuggestions`. A saved book leaves the suggestions
  * at once and the next one takes its place at the end; sources are asked
- * again in the background and fill in when they answer.
+ * again in the background and fill in when they answer. A newer refresh
+ * aborts the one still running; a refresh that fails keeps the last answer.
+ * Viewing a book changes `recentBooks` but is not a refresh.
  */
-export function useShelfSuggestions(savedBooks: readonly RecentBook[], libraryId: string | null, sources: readonly SuggestionSource[] = SUGGESTION_SOURCES): SuggestedBook[] {
+export function useShelfSuggestions(savedBooks: readonly RecentBook[], libraryId: string | null, sources: readonly SuggestionSource[] = SUGGESTION_SOURCES,
+  recentBooks: readonly RecentBook[] = []): SuggestedBook[] {
   const refresh = suggestionRefreshKey(savedBooks, libraryId);
   const [loaded, setLoaded] = useState(() => visit.loaded);
-  const context = useRef<SuggestionContext>({ savedBooks, libraryId });
-  context.current = { savedBooks, libraryId };
+  const context = useRef<SuggestionContext>({ savedBooks, recentBooks, libraryId });
+  context.current = { savedBooks, recentBooks, libraryId };
   useEffect(() => {
     if (!sources.length || visit.refresh === refresh) return;
     const controller = new AbortController();

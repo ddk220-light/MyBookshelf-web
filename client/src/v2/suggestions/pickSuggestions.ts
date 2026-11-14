@@ -11,6 +11,12 @@ export type SuggestedBook = {
   isbn13?: string;
   /** Open Library work, when the source knows it (a work key carries its own). */
   workId?: string;
+  /**
+   * The library whose stored answers say "found" for this book (the server
+   * source's `inLibrary`, for the library it was asked about). Its badge shows
+   * only while that library is the chosen one; never a live check.
+   */
+  foundIn?: string;
 };
 
 /** Always five suggestions (plan Part 2, decision 2). */

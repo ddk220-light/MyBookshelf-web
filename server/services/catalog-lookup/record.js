@@ -7,6 +7,7 @@ import { isHealthFailure } from './outcome.js';
 //
 //   answers: readAnswers(libraryId, identities) -> rows
 //            writeAnswers(rows)
+//            listFound(libraryId, { limit }) -> newest "found" rows (suggestions)
 //   health:  recordOutcome({ libraryId, platform, host, ok, reason, at, operation, durationMs, requests })
 //   telemetry: emit(event)   allowlisted counters only (public-v2/telemetry.js)
 //
@@ -80,7 +81,7 @@ export function answerRows({ libraryId, book = {}, answer, profile, now = Date.n
 }
 
 // In-memory answer store, used without a database and in tests. Per instance and bounded; the
-// catalog store (catalog-store/holdings.js) implements the same two calls against Postgres.
+// catalog store (catalog-store/holdings.js) implements the same calls against Postgres.
 export function createMemoryAnswerStore({ now = () => Date.now(), maxEntries = 20_000 } = {}) {
   const rows = new Map();
   const key = (libraryId, kind, value) => `${libraryId}\u0000${kind}\u0000${value}`;
@@ -105,6 +106,18 @@ export function createMemoryAnswerStore({ now = () => Date.now(), maxEntries = 2
         rows.set(id, Object.freeze({ ...value }));
         while (rows.size > maxEntries) rows.delete(rows.keys().next().value);
       }
+    },
+    // Shelf suggestions: the newest unexpired "found" answers for an Open
+    // Library work or an ISBN-13 (the Postgres store orders by check time).
+    async listFound(libraryId, { limit = 60 } = {}) {
+      const at = now();
+      const found = [];
+      for (const entry of [...rows.values()].reverse()) {
+        if (found.length >= limit) break;
+        if (entry.libraryId !== libraryId || entry.answer !== 'found' || entry.expiresAt <= at || !['ol_work', 'isbn13'].includes(entry.kind)) continue;
+        found.push({ kind: entry.kind, value: entry.value, ...(entry.matchedIsbn13 ? { matchedIsbn13: entry.matchedIsbn13 } : {}) });
+      }
+      return found;
     },
     size: () => rows.size,
   });

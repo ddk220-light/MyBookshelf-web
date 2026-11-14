@@ -1,4 +1,4 @@
-import { cachedTask, enqueueTask, getJson } from './providers/http.js';
+import { cachedTask, enqueueTask, getJson, peekCachedTask } from './providers/http.js';
 import { validateAndNormalize } from './isbn.js';
 import { lookupBookMetadata } from './bookMetadata.js';
 import { searchGoogleBooksByQuery } from './googleBooks.js';
@@ -38,6 +38,12 @@ async function request(path) {
     if (!response.ok || response.unreadable) throw unavailable();
     return response.json;
   }, { deadlineAt }), { deadlineAt, ttlMs: 6 * 60 * 60 * 1000 }).catch(() => { throw unavailable(); });
+}
+
+// An Open Library read this instance already holds (for example the work
+// record the book page resolved), or undefined. Never starts a request.
+export function peekOpenLibraryRead(path) {
+  return peekCachedTask(`work-discovery:${path}`);
 }
 
 function fromSearch(doc) {

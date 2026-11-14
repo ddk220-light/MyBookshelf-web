@@ -196,6 +196,20 @@ export const publicApi = Object.freeze({
     return { unchecked };
   },
 
+  // Shelf suggestions (plan 2026-11-14, Part 2): candidate books, those the
+  // chosen library is known to have first. Book keys only, never search
+  // text; nothing about the reader is stored. suggestions/serverSource.ts
+  // reads the answer defensively.
+  async suggestions(request: SuggestionRequest, signal?: AbortSignal): Promise<{ books: unknown[]; partial: boolean }> {
+    const data = await post<{ books?: unknown; partial?: unknown }>('/suggestions', request, signal);
+    return { books: Array.isArray(data.books) ? data.books : [], partial: data.partial === true };
+  },
+
+  // A suggested book opened or saved: counted in the anonymous log, nothing else.
+  async suggestionEvent(event: 'opened' | 'saved', bookKey: string): Promise<void> {
+    await post('/suggestions/events', { event, bookKey });
+  },
+
   // One-tap "Request to add" from the library pop-up: the typed text only.
   async libraryRequest(text: string): Promise<void> {
     await post('/library-requests', { text });
@@ -213,6 +227,9 @@ export const PROBLEM_SCREENS = ['shelf', 'search', 'book', 'library', 'panel', '
 export type ProblemScreen = typeof PROBLEM_SCREENS[number];
 
 export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; catalogUrl?: string };
+
+/** POST /suggestions: at most 3 recent and 200 saved book keys (server validation.js parseSuggestions). */
+export type SuggestionRequest = { libraryId?: string; recentBookKeys: string[]; excludeKeys: string[] };
 
 export function webLink(value: unknown): string | undefined {
   if (typeof value !== 'string' || value.length > 2000) return undefined;

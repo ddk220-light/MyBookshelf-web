@@ -7,6 +7,7 @@ import { useCatalogMetadata } from '../../catalogMetadata';
 import { goodreadsUrl, messageFor, sourceFromLocation, useLibrary } from '../../context';
 import { SAVED_BOOKS_CAP } from '../../localState';
 import { findSavedBook } from '../../oneShelfState';
+import { reportSuggestion } from '../../suggestions/serverSource';
 import type { PublicBook } from '../../types';
 import { useCoverImage } from '../BookCard';
 import { useDeskSlot } from '../desk/layoutMode';
@@ -99,6 +100,15 @@ export function ShelfBookPage() {
     return () => document.removeEventListener('visibilitychange', record);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book?.bookKey, rememberBook, libraryState.loadingAccount]);
+  // Opened from a shelf suggestion (router state only): counted once per open
+  // in the anonymous log, with the book key and nothing else.
+  const fromSuggestion = Boolean(navigation?.suggested && navigation.book?.bookKey === bookKey);
+  const counted = useRef<string | null>(null);
+  useEffect(() => {
+    if (!fromSuggestion || !bookKey || counted.current === bookKey) return;
+    counted.current = bookKey;
+    reportSuggestion('opened', bookKey);
+  }, [fromSuggestion, bookKey]);
   useEffect(() => {
     if (book && opened.current === book.bookKey && libraryState.updateRecentDisplay) void libraryState.updateRecentDisplay(book);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -163,6 +173,7 @@ export function ShelfBookPage() {
         return;
       }
       const result = await saveBook(book);
+      if (result === 'saved' && fromSuggestion) reportSuggestion('saved', book.bookKey);
       if (result === 'saved' || result === 'already-saved') { setPopTick(true); setAdded(true); setAnnouncement('Added to your shelf'); return; }
       const message = result === 'full' ? 'Shelf full' : result === 'recovery' ? 'Reload your saved shelf before making changes.' : 'Couldn’t save this book. Try again.';
       setSaveError(message); setAnnouncement(message);

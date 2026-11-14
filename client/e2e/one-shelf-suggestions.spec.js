@@ -6,7 +6,7 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { installPublicV2Fixture } from './public-v2-fixture.js';
+import { LINKED_LIBRARY, installPublicV2Fixture } from './public-v2-fixture.js';
 
 const SEED = JSON.parse(readFileSync(new URL('../../shared/suggestions-seed.json', import.meta.url), 'utf8')).books;
 const name = book => book.title + ' by ' + book.authors[0];
@@ -27,6 +27,21 @@ async function setup(page) {
   return calls;
 }
 const axe = page => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
+// The server's suggestions (step B): one book the chosen library is known to
+// have (a stored "found"), then one related book. Authors not in the seed list.
+const FOUND_HERE = { bookKey: 'v1:openlibrary:OL5735363W', title: 'Em and the Big Hoom', authors: ['Jerry Pinto'], workId: 'OL5735363W', inLibrary: true };
+const RELATED = { bookKey: 'v1:openlibrary:OL1925458W', title: 'A Fine Balance', authors: ['Rohinton Mistry'], workId: 'OL1925458W' };
+async function withServerSuggestions(page) {
+  const asked = { suggestions: [], events: [] };
+  await page.route('**/api/v2/suggestions', route => { asked.suggestions.push(route.request().postDataJSON()); return route.fulfill({ json: { books: [FOUND_HERE, RELATED] } }); });
+  await page.route('**/api/v2/suggestions/events', route => { asked.events.push(route.request().postDataJSON()); return route.fulfill({ status: 202, json: {} }); });
+  await page.addInitScript(({ libraryId }) => {
+    if (sessionStorage.getItem('seeded')) return;
+    sessionStorage.setItem('seeded', '1');
+    localStorage.setItem('mybookshelf.anonymous-web.v1', JSON.stringify({ version: 2, selectedLibraryId: libraryId, recentBooks: [], savedBooks: [], savedContent: [] }));
+  }, { libraryId: LINKED_LIBRARY.id });
+  return asked;
+}
 const shelfNames = page => page.locator('.home-bookcase .cover3d').evaluateAll(links => links.map(link => link.getAttribute('aria-label')));
 const faceOpacity = locator => locator.locator('.cover3d-face').evaluate(face => getComputedStyle(face).opacity);
 
@@ -67,6 +82,34 @@ test.describe('Shelf suggestions on a phone', () => {
     expect(calls.filter(call => call.endpoint.startsWith('/holdings/'))).toEqual([]);
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('mybookshelf.anonymous-web.v1')).savedBooks.map(book => book.bookKey))).toEqual([WINGS.bookKey]);
     expect((await axe(page)).violations).toEqual([]);
+  });
+
+  test('a suggestion the chosen library is known to have carries its badge, with no library check', async ({ page }) => {
+    const calls = await setup(page);
+    const asked = await withServerSuggestions(page);
+    await page.goto('/app/shelf');
+    await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
+    const badged = page.getByRole('link', { name: name(FOUND_HERE) + ', in ' + LINKED_LIBRARY.name + ', suggested' });
+    await expect(badged).toBeVisible();
+    await expect(badged.locator('.cover-badge-library')).toBeVisible();
+    // The server's books first, then the seed list: still five, one per author.
+    await expect(page.getByRole('link', { name: /, suggested$/ })).toHaveCount(5);
+    expect(await shelfNames(page)).toEqual([name(FOUND_HERE) + ', in ' + LINKED_LIBRARY.name + ', suggested', ...suggestedNames([RELATED, ...SEED.slice(0, 3)])]);
+    await expect(page.getByRole('link', { name: name(RELATED) + ', suggested' }).locator('.cover-badge-library')).toHaveCount(0);
+    // Faded cover, solid badge.
+    expect(await faceOpacity(badged)).toBe('0.75');
+    expect(await badged.locator('.cover-badge-library').evaluate(badge => getComputedStyle(badge).opacity)).toBe('1');
+    // One request, with the chosen library and no search text; no library was asked.
+    expect(asked.suggestions).toEqual([{ libraryId: LINKED_LIBRARY.id, recentBookKeys: [], excludeKeys: [] }]);
+    expect(calls.filter(call => call.endpoint.startsWith('/holdings/') || call.endpoint === '/availability')).toEqual([]);
+    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect((await axe(page)).violations).toEqual([]);
+    // Opening it is counted (book key only); the book page asks the library as for any book.
+    await badged.click();
+    await expect(page).toHaveURL(new RegExp('/app/books/' + encodeURIComponent(FOUND_HERE.bookKey) + '$'));
+    await expect(page.getByRole('heading', { level: 1, name: FOUND_HERE.title })).toBeVisible();
+    await expect.poll(() => asked.events).toEqual([{ event: 'opened', bookKey: FOUND_HERE.bookKey }]);
+    expect(asked.suggestions).toHaveLength(1);
   });
 
   test.describe('with motion', () => {

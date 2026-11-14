@@ -145,10 +145,13 @@ for (const route of [
     expect(
       await screen.findByRole("link", { name: "Synthetic browser shelf by Synthetic author" }),
     ).toBeInTheDocument();
+    // Nothing was submitted: the only POST is the shelf's own suggestions
+    // request to the anonymous API (book keys only, no account data).
     expect(
       fetch.mock.calls.every(
         (args) =>
-          (args as unknown as [string, RequestInit])[1]?.method !== "POST",
+          (args as unknown as [string, RequestInit])[1]?.method !== "POST"
+          || (args as unknown as [string, RequestInit])[0] === "/api/v2/suggestions",
       ),
     ).toBe(true);
   });

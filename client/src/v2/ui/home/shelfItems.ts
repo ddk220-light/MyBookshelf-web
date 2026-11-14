@@ -1,6 +1,8 @@
 // What the one-shelf home shows: saved books and saved free items together,
 // most recently added first (plan 3.4: shelf order is most recent first).
+import type { BookNavigation } from '../../bookNavigation';
 import type { SavedContent } from '../../contentTypes';
+import type { HoldingsStore } from '../../holdings';
 import type { SuggestedBook } from '../../suggestions/pickSuggestions';
 import type { PublicBook, RecentBook } from '../../types';
 
@@ -23,6 +25,8 @@ export type ShelfEntry = {
   year?: string;
   /** A shelf suggestion (plan 2026-11-14, Part 2): drawn faded after the saved books. */
   suggested?: true;
+  /** A suggestion the stored answers of this library list as found (server source). */
+  foundIn?: string;
 };
 
 const time = (value: string) => { const parsed = Date.parse(value); return Number.isFinite(parsed) ? parsed : 0; };
@@ -35,13 +39,32 @@ export function bookEntry(book: RecentBook): ShelfEntry {
 /**
  * A suggested book on the shelf. It opens like any book: its page, with the
  * suggestion as the record to show until the page has looked the book up.
+ * `suggested` in the router state tells the page it was opened from a
+ * suggestion (counted in the anonymous log); the source the book is
+ * remembered with stays "direct".
  */
 export function suggestionEntry(suggestion: SuggestedBook): ShelfEntry {
   const book: PublicBook = { bookKey: suggestion.bookKey, title: suggestion.title, authors: suggestion.authors,
     ...(suggestion.coverUrl ? { coverUrl: suggestion.coverUrl } : {}), ...(suggestion.isbn13 ? { isbn13: suggestion.isbn13 } : {}),
     ...(suggestion.workId ? { workId: suggestion.workId } : {}) };
+  const state: BookNavigation = { from: 'shelf', source: 'direct', book, suggested: true };
   return { key: book.bookKey, kind: 'book', title: book.title, authors: book.authors, coverUrl: book.coverUrl, isbn13: book.isbn13,
-    href: '/app/books/' + encodeURIComponent(book.bookKey), state: { from: 'shelf', source: 'direct', book }, addedAt: 0, suggested: true };
+    href: '/app/books/' + encodeURIComponent(book.bookKey), state, addedAt: 0, suggested: true,
+    ...(suggestion.foundIn ? { foundIn: suggestion.foundIn } : {}) };
+}
+
+/**
+ * Whether the chosen library's badge goes on a shelf cover: the holdings
+ * store holds "found" for it, or (a suggestion) the server's stored answers
+ * for this same library say found and nothing newer here says otherwise. A
+ * "couldn't check" never takes the badge away and is never shown as absence.
+ */
+export function shelfBadge(entry: Pick<ShelfEntry, 'key' | 'kind' | 'foundIn'>, holdings: Pick<HoldingsStore, 'get' | 'libraryId'>): boolean {
+  if (entry.kind !== 'book') return false;
+  const answer = holdings.get(entry.key);
+  if (answer === 'found') return true;
+  const library = holdings.libraryId();
+  return Boolean(entry.foundIn && library && entry.foundIn === library) && answer !== 'not_found' && answer !== 'unconfirmed';
 }
 
 export function shelfEntries(savedBooks: readonly RecentBook[], savedContent: readonly SavedContent[]): ShelfEntry[] {

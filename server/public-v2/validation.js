@@ -161,3 +161,42 @@ export function parseHoldingsCheck(body) {
   if (!bookKey) throw new PublicV2ValidationError();
   return { libraryId, bookKey, parsed };
 }
+
+// Shelf suggestions (plan 2026-11-14, Part 2). Exactly these fields; anything
+// else is refused. Book keys are used only to choose and leave out
+// suggestions for this answer: they are not stored or logged.
+export const SUGGESTION_LIMITS = Object.freeze({ recentBookKeys: 3, excludeKeys: 200, keyLength: 512 });
+const SUGGESTION_FIELDS = new Set(['libraryId', 'recentBookKeys', 'excludeKeys']);
+const SUGGESTION_EVENT_FIELDS = new Set(['event', 'bookKey']);
+export const SUGGESTION_EVENTS = Object.freeze(['opened', 'saved']);
+
+function onlyFields(value, allowed) {
+  for (const key of Object.keys(value)) if (!allowed.has(key)) throw new PublicV2ValidationError();
+}
+
+function suggestionBookKey(value) {
+  if (typeof value !== 'string' || value.length > SUGGESTION_LIMITS.keyLength || !parsePublicBookKey(value)) throw new PublicV2ValidationError();
+  return value;
+}
+
+function bookKeyList(value, maximum) {
+  if (!Array.isArray(value) || value.length > maximum) throw new PublicV2ValidationError();
+  return [...new Set(value.map(suggestionBookKey))];
+}
+
+export function parseSuggestions(body) {
+  const value = bodyObject(body);
+  onlyFields(value, SUGGESTION_FIELDS);
+  return {
+    ...(value.libraryId !== undefined ? parseLibraryResolve({ libraryId: value.libraryId }) : {}),
+    recentBookKeys: bookKeyList(value.recentBookKeys, SUGGESTION_LIMITS.recentBookKeys),
+    excludeKeys: bookKeyList(value.excludeKeys, SUGGESTION_LIMITS.excludeKeys),
+  };
+}
+
+export function parseSuggestionEvent(body) {
+  const value = bodyObject(body);
+  onlyFields(value, SUGGESTION_EVENT_FIELDS);
+  if (!SUGGESTION_EVENTS.includes(value.event)) throw new PublicV2ValidationError();
+  return { event: value.event, bookKey: suggestionBookKey(value.bookKey) };
+}

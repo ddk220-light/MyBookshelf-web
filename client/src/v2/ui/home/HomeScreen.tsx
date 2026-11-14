@@ -15,7 +15,7 @@ import { isMarked, useLibraryMarks } from '../search/useLibraryMarks';
 import { ScanDialog, type ScanAnswer, type ScanSource } from '../scan/ScanDialog';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { libraryLinkMessage, type LibraryLinkNotice } from '../library/SelectLibraryLink';
-import { useShelfSuggestions } from '../../suggestions/useShelfSuggestions';
+import { SUGGESTION_SOURCES, useShelfSuggestions } from '../../suggestions/useShelfSuggestions';
 import { AccountInvite } from '../shelf/AccountInvite';
 import { Bookcase } from '../shelf/Bookcase';
 import { EmptyShelf } from '../shelf/EmptyShelf';
@@ -75,9 +75,10 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
 
   const entries = useMemo(() => shelfEntries(state.savedBooks, state.savedContent), [state.savedBooks, state.savedContent]);
   // Library answers are asked for saved books only: a suggestion's badge
-  // comes from an answer the store already holds, never from a new check.
+  // comes from an answer already held (the holdings store, or the server's
+  // stored "found" for this library), never from a new check.
   useShelfHoldings(state.selectedLibraryId, state.savedBooks);
-  const suggestions = useShelfSuggestions(state.savedBooks, state.selectedLibraryId);
+  const suggestions = useShelfSuggestions(state.savedBooks, state.selectedLibraryId, SUGGESTION_SOURCES, state.recentBooks);
   const suggested = useMemo(() => suggestions.map(suggestionEntry), [suggestions]);
   const withSuggestions = useMemo(() => [...entries, ...suggested], [entries, suggested]);
   const motion = useSuggestionMotion(suggested.map(entry => entry.key), state.savedBooks.map(book => book.bookKey));

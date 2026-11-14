@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { useHoldingsStore } from '../../holdings';
-import type { ShelfEntry } from '../home/shelfItems';
+import { shelfBadge, type ShelfEntry } from '../home/shelfItems';
 import { BookCover3D } from './BookCover3D';
 import { BOOKS_PER_BAY, bayRows, initialBayCount, suggestedRun } from './shelfLayout';
 import type { SuggestionMotion } from './useSuggestionMotion';
@@ -41,9 +41,10 @@ function SuggestedTag({ from, span }: { from: number; span: number }) {
  *
  * Shelf suggestions (`entry.suggested`) follow the saved books and wrap into
  * bays like them; each bay they stand in carries one "Suggested" tag under
- * them. Their library badge, as for saved books, comes only from answers the
- * holdings store already has; nothing here asks a library. `motion` fades in
- * a new suggestion and turns a just-saved one solid.
+ * them. Their library badge, as for saved books, comes only from answers
+ * already held: the holdings store's, or the server's stored "found" for the
+ * chosen library (`shelfBadge`); nothing here asks a library. `motion` fades
+ * in a new suggestion and turns a just-saved one solid.
  */
 export function Bookcase({ entries, libraryName, perBay = BOOKS_PER_BAY, openKey = null, motion }: { entries: ShelfEntry[]; libraryName: string | null; perBay?: number; openKey?: string | null;
   motion?: ReadonlyMap<string, SuggestionMotion> }) {
@@ -68,7 +69,7 @@ export function Bookcase({ entries, libraryName, perBay = BOOKS_PER_BAY, openKey
       return <Bay key={index} plank={run && <SuggestedTag from={run.from} span={run.span} />}>
         <ul className="bay-books">{row.map(entry => <li key={entry.key}>
           <BookCover3D entry={entry} open={entry.key === openKey} motion={motion?.get(entry.key)}
-            libraryName={libraryName && entry.kind === 'book' && holdings.get(entry.key) === 'found' ? libraryName : null} />
+            libraryName={libraryName && shelfBadge(entry, holdings) ? libraryName : null} />
         </li>)}</ul>
       </Bay>;
     })}

@@ -11,8 +11,13 @@ import { validateAndNormalize } from '../services/isbn.js';
 // published). Writes run after the response and are dropped, never retried,
 // when the store is down. Without a database the log is dropped.
 
-export const USAGE_KINDS = Object.freeze(['book_search', 'book_check', 'result_marks', 'library_finder', 'near_me']);
+export const USAGE_KINDS = Object.freeze(['book_search', 'book_check', 'result_marks', 'library_finder', 'near_me', 'suggestion']);
 const KINDS = new Set(USAGE_KINDS);
+// Shelf suggestions (plan 2026-11-14, Part 2): one row per suggested book
+// shown, opened or saved. Counts only: the row holds the book key and one of
+// these words, never a library, text, timing or anything from the request.
+export const SUGGESTION_OUTCOMES = Object.freeze(['shown', 'opened', 'saved']);
+const SUGGESTION_OUTCOME = new Set(SUGGESTION_OUTCOMES);
 const SOURCES = new Set(['stored', 'live', 'mixed', 'public_data']);
 const ALLOWED_KEYS = new Set(['kind', 'queryText', 'libraryId', 'bookKey', 'outcome', 'resultCount', 'foundCount', 'source', 'durationMs', 'appVersion']);
 const HOUR = 60 * 60 * 1000;
@@ -74,9 +79,16 @@ export function usageRow(event, at = Date.now()) {
   if (!KINDS.has(event.kind)) throw new TypeError('Usage kind is not permitted');
   const outcome = boundedText(event.outcome, 40);
   if (!outcome) throw new TypeError('Usage outcome is required');
+  const occurredHour = Math.floor(at / HOUR) * HOUR;
+  if (event.kind === 'suggestion') {
+    const bookKey = boundedText(event.bookKey, 512);
+    if (!bookKey || !SUGGESTION_OUTCOME.has(outcome)) throw new TypeError('A suggestion row needs a book key and shown, opened or saved');
+    return Object.freeze({ occurredHour, kind: 'suggestion', queryText: null, libraryId: null, bookKey, outcome,
+      resultCount: null, foundCount: null, source: null, durationMs: null, appVersion: null });
+  }
   const withText = !['near_me', 'book_check'].includes(event.kind);
   return Object.freeze({
-    occurredHour: Math.floor(at / HOUR) * HOUR,
+    occurredHour,
     kind: event.kind,
     queryText: withText ? scrubQueryText(event.queryText) : null,
     libraryId: event.kind === 'near_me' ? null : boundedText(event.libraryId, 200),

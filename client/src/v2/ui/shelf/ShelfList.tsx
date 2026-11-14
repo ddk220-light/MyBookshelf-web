@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useHoldingsStore } from '../../holdings';
 import { useCoverImage } from '../BookCard';
 import { BookmarkGlyph, LibraryGlyph } from '../home/homeIcons';
-import { entryLabel, type ShelfEntry } from '../home/shelfItems';
+import { entryLabel, shelfBadge, type ShelfEntry } from '../home/shelfItems';
 import { spinePalette, suggestionPalette } from './spineColors';
 import type { SuggestionMotion } from './useSuggestionMotion';
 
@@ -22,7 +22,7 @@ export function ShelfList({ entries, libraryName, mine, inLibrary, pop = false, 
   return <ul className="shelf-list">
     {entries.map(entry => <li key={entry.key}>
       <ShelfListItem entry={entry} mine={mine?.(entry) || false} pop={pop} motion={motion?.get(entry.key)}
-        libraryName={libraryName && entry.kind === 'book' && (inLibrary ? inLibrary(entry) : holdings.get(entry.key) === 'found') ? libraryName : null} />
+        libraryName={libraryName && entry.kind === 'book' && (inLibrary ? inLibrary(entry) : shelfBadge(entry, holdings)) ? libraryName : null} />
     </li>)}
   </ul>;
 }

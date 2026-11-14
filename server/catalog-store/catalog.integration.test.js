@@ -32,7 +32,7 @@ async function prepare(t) {
   assert.ok(['localhost', '127.0.0.1'].includes(url.hostname) && url.pathname.endsWith('_test'), 'a disposable local *_test database only');
   const admin = new Pool({ connectionString, max: 2 });
   await migrateCatalog(admin);
-  assert.equal(await migrateCatalog(admin), 1, 'migrations are idempotent');
+  assert.equal(await migrateCatalog(admin), 2, 'migrations are idempotent');
   const grants = await readFile(new URL('./runtime-grants.sql', import.meta.url), 'utf8');
   // admin/role.integration.test.js changes grants on the same tables at the same time.
   await withTestSetupLock(admin, CATALOG_SETUP_LOCK, async c => {
@@ -92,6 +92,21 @@ test('stored answers: TTL filter, upsert strength, opt-out and no repeat catalog
   assert.ok((await admin.query(`SELECT last_success_at FROM library_health WHERE library_id = 'vega:out'`)).rows[0].last_success_at, 'health is still written');
   // The runtime role cannot delete answers or read the log.
   await assert.rejects(runtime.query('DELETE FROM holdings_answers'), { code: '42501' });
+
+  // Shelf suggestions: the runtime role lists a library's newest unexpired
+  // found works and ISBNs; never a "not found" or a library's own record.
+  await admin.query(`TRUNCATE holdings_answers`);
+  await answers.writeAnswers([row('9780140328721', 'not_found', 'isbn_not_listed'),
+    { libraryId: 'koha:a', kind: 'catalog_record', value: 'koha:a:7', answer: 'found', evidence: 'catalog_record' }]);
+  await answers.writeAnswers([row('9788173711466', 'found', 'work_isbn'), { libraryId: 'koha:a', kind: 'ol_work', value: 'OL1W', answer: 'found', evidence: 'work_isbn', matchedIsbn13: '9788173711466' }]);
+  await admin.query(`UPDATE holdings_answers SET checked_at = now() - interval '1 day' WHERE identity_value IN ('9788173711466', 'OL1W')`);
+  await answers.writeAnswers([row('9780439023528', 'found', 'exact_isbn'), { libraryId: 'koha:b', kind: 'ol_work', value: 'OL9W', answer: 'found', evidence: 'work_isbn', matchedIsbn13: '9780439023528' }]);
+  await answers.writeAnswers([row('9780545010221', 'found', 'exact_isbn')]);
+  await admin.query(`UPDATE holdings_answers SET expires_at = now() - interval '1 second' WHERE identity_value = '9780545010221'`);
+  assert.deepEqual(await answers.listFound('koha:a'), [{ kind: 'isbn13', value: '9780439023528' },
+    { kind: 'ol_work', value: 'OL1W', matchedIsbn13: '9788173711466' }, { kind: 'isbn13', value: '9788173711466' }]);
+  assert.deepEqual(await answers.listFound('koha:a', { limit: 1 }), [{ kind: 'isbn13', value: '9780439023528' }]);
+  assert.deepEqual(await answers.listFound('koha:none'), []);
 });
 
 test('health record: failure events, the flag rule (3 attempts, 2 UTC days, 7 days) and a success clears it', { skip, timeout: 60_000 }, async t => {
@@ -141,8 +156,20 @@ test('anonymous log, submissions and the host gate as the runtime role', { skip,
   log.record({ kind: 'book_search', queryText: 'wings of fire reader@example.com', outcome: 'results', resultCount: 9, source: 'public_data', durationMs: 900 });
   log.record({ kind: 'near_me', outcome: 'results', resultCount: 4 });
   await settled();
-  const { rows } = await admin.query('SELECT kind, query_text, occurred_hour = date_trunc(\'hour\', occurred_hour, \'UTC\') AS hour FROM usage_events ORDER BY kind');
-  assert.deepEqual(rows, [{ kind: 'book_search', query_text: 'wings of fire [removed]', hour: true }, { kind: 'near_me', query_text: null, hour: true }]);
+  // Shelf suggestions (migration 002): a book key and shown/opened/saved only.
+  log.record({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'shown', queryText: 'never kept', libraryId: 'koha:a' });
+  log.record({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'saved' });
+  await settled();
+  const { rows } = await admin.query('SELECT kind, query_text, occurred_hour = date_trunc(\'hour\', occurred_hour, \'UTC\') AS hour FROM usage_events ORDER BY kind, id');
+  assert.deepEqual(rows, [{ kind: 'book_search', query_text: 'wings of fire [removed]', hour: true }, { kind: 'near_me', query_text: null, hour: true },
+    { kind: 'suggestion', query_text: null, hour: true }, { kind: 'suggestion', query_text: null, hour: true }]);
+  assert.deepEqual((await admin.query(`SELECT book_key, outcome, library_id FROM usage_events WHERE kind = 'suggestion' ORDER BY id`)).rows,
+    [{ book_key: 'v1:openlibrary:OL1W', outcome: 'shown', library_id: null }, { book_key: 'v1:openlibrary:OL1W', outcome: 'saved', library_id: null }]);
+  // The table refuses anything else for a suggestion row, and book keys on other kinds stay refused.
+  for (const values of [`'suggestion', 'x', NULL, 'v1:openlibrary:OL1W', 'shown'`, `'suggestion', NULL, 'koha:a', 'v1:openlibrary:OL1W', 'shown'`,
+    `'suggestion', NULL, NULL, 'v1:openlibrary:OL1W', 'clicked'`, `'suggestion', NULL, NULL, NULL, 'shown'`, `'book_search', 'x', NULL, 'v1:openlibrary:OL1W', 'none'`]) {
+    await assert.rejects(runtime.query(`INSERT INTO usage_events (occurred_hour, kind, query_text, library_id, book_key, outcome) VALUES (now(), ${values})`), { code: '23514' }, values);
+  }
   await assert.rejects(runtime.query('SELECT * FROM usage_events'), { code: '42501' });
   // No column can hold a reader's address, agent, device, account or location.
   const { rows: columns } = await admin.query(`SELECT column_name FROM information_schema.columns WHERE table_name = 'usage_events'`);
