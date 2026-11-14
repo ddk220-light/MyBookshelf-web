@@ -27,22 +27,41 @@ export function authorKey(name: string | undefined): string {
   return (name || '').normalize('NFKC').toLocaleLowerCase('en').replace(/[\s.]+/g, '');
 }
 
+/** A title compared without case, punctuation or extra spaces ("Wings of Fire." = "wings of fire"). */
+export function titleKey(title: string | undefined): string {
+  return (title || '').normalize('NFKC').toLocaleLowerCase('en').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+}
+
+/** A saved book as the pick sees it: its identity and, when known, its title and authors. */
+export type SavedForPick = BookIdentity & { title?: string; authors?: readonly string[] };
+
+// Title and first author together, when both are known.
+const titleAuthor = (book: { title?: string; authors?: readonly string[] }) => {
+  const title = titleKey(book.title), author = authorKey(book.authors?.[0]);
+  return title && author ? title + '\n' + author : null;
+};
+
 /**
  * Up to `count` suggestions from ordered candidate lists (sources); earlier
  * sources win, and within a source its own order is kept. Never a book on the
  * shelf: same book key, same ISBN-13 or, for display only, the same Open
- * Library work. Never two books whose first author is the same, nor the same
- * book twice. Callers put the bundled seed list last, so five books stand
- * even when every other source is empty or offline.
+ * Library work or the same title by the same first author (Open Library can
+ * hold one book as several works). Never two books whose first author is the
+ * same, nor the same book twice. Callers put the bundled seed list last, so
+ * five books stand even when every other source is empty or offline. None of
+ * this changes what counts as "on my shelf" anywhere else (findSavedBook).
  */
-export function pickSuggestions(sources: ReadonlyArray<readonly SuggestedBook[]>, savedBooks: readonly BookIdentity[], count = SUGGESTION_COUNT): SuggestedBook[] {
+export function pickSuggestions(sources: ReadonlyArray<readonly SuggestedBook[]>, savedBooks: readonly SavedForPick[], count = SUGGESTION_COUNT): SuggestedBook[] {
   const picked: SuggestedBook[] = [];
   const authors = new Set<string>();
+  const savedTitles = new Set(savedBooks.map(titleAuthor).filter((key): key is string => Boolean(key)));
   for (const source of sources) {
     for (const book of source) {
       if (picked.length >= count) return picked;
       if (!book?.bookKey || !book.title?.trim() || !Array.isArray(book.authors)) continue;
       if (findSavedBook(savedBooks, book, { sameWork: true }) || findSavedBook(picked, book, { sameWork: true })) continue;
+      const sameTitle = titleAuthor(book);
+      if (sameTitle && savedTitles.has(sameTitle)) continue;
       const author = authorKey(book.authors[0]);
       if (author && authors.has(author)) continue;
       picked.push(book);

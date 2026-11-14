@@ -5,11 +5,12 @@ import seed from '../../shared/suggestions-seed.json' with { type: 'json' };
 import { makeTestApp } from '../test/helpers.js';
 import { createPublicV2Router } from './router.js';
 import { createRedactedTelemetrySink } from './telemetry.js';
-import { chooseSubjects, foundIdentities, isGenericSubject, OUTBOUND_CAP, SUGGESTION_CACHE_TTL_MS, SUGGESTIONS_RETURNED } from './suggestions.js';
+import { foundIdentities, OUTBOUND_CAP, SUGGESTION_CACHE_TTL_MS, SUGGESTIONS_RETURNED } from './suggestions.js';
 import { createCatalogStore } from '../catalog-store/index.js';
 import { readCatalogStoreConfig } from '../catalog-store/config.js';
 import { createCatalogPolicy } from '../catalog-store/policy.js';
-import { createOpenLibrarySuggestionReads, parseEditions, parseSubjectWorks, readOpenLibrary } from '../services/openLibrarySuggestions.js';
+import { blockedBook, createOpenLibrarySuggestionReads, isBroadSubject, isJunkSubject, parseEditions, parseSubjectWorks, parseWorkRecord, readOpenLibrary,
+  relatedQuery } from '../services/openLibrarySuggestions.js';
 import { clearHttpCache } from '../services/providers/http.js';
 
 const LIBRARY = 'koha:test-library';
@@ -23,8 +24,15 @@ const isbn = n => { const body = '978' + String(n).padStart(9, '0'); const sum =
 const work = n => `OL${n}W`;
 const cover = n => `https://covers.openlibrary.org/b/id/${n}-M.jpg`;
 
+// A work's record as workRecord gives it.
+const record = (n, { subjects = [], places = [], authorKeys = [`OL${n}A`], title = 'Recent ' + n } = {}) => ({ workId: work(n), title, subjects, places, authorKeys });
+const NO_RECORD = { title: '', subjects: [], places: [], authorKeys: [] };
+// The recent book most tests use: one subject in one place, so its related query is this.
+const RECENT = { [work(100)]: record(100, { subjects: ['Rocketry'], places: ['India'] }) };
+const ROCKETRY_IN_INDIA = 'subject:"Rocketry" place:"India"';
+
 // Fake Open Library: every call is counted by kind.
-function fakeOpenLibrary({ editions = {}, works = {}, isbnWorks = {}, subjects = {}, fail = false, hang = false } = {}) {
+function fakeOpenLibrary({ editions = {}, works = {}, isbnWorks = {}, authors = {}, related = {}, fail = false, hang = false } = {}) {
   const calls = [];
   const answer = async (kind, value, result) => {
     calls.push([kind, value]);
@@ -37,9 +45,10 @@ function fakeOpenLibrary({ editions = {}, works = {}, isbnWorks = {}, subjects =
     count: kind => calls.filter(([name]) => !kind || name === kind).length,
     reads: {
       editionsByIsbn: isbns => answer('editions', isbns, () => new Map(isbns.map(value => [value, editions[value] || null]))),
-      workSubjects: id => answer('work', id, () => ({ workId: id, subjects: works[id] || [] })),
-      isbnSubjects: value => answer('isbn', value, () => isbnWorks[value] || { subjects: [] }),
-      subjectWorks: subject => answer('subject', subject, () => subjects[subject] || []),
+      workRecord: id => answer('work', id, () => works[id] || { workId: id, ...NO_RECORD }),
+      isbnRecord: value => answer('isbn', value, () => isbnWorks[value] || NO_RECORD),
+      authorWorks: key => answer('author', key, () => authors[key] || []),
+      relatedWorks: query => answer('related', query, () => related[query] || []),
     },
   };
 }
@@ -107,8 +116,10 @@ test('validation: only libraryId, recentBookKeys (≤3) and excludeKeys (≤200)
 test('order: books the library is known to have first (inLibrary), then related works; exclusions and one book per author', async () => {
   const openLibrary = fakeOpenLibrary({
     editions: { [isbn(1)]: edition(1), [isbn(2)]: edition(2, 'Shared Author'), [isbn(3)]: edition(3), [isbn(4)]: edition(4) },
-    works: { [work(100)]: ['Fiction', 'Accessible book', 'Rocketry', 'Presidents'] },
-    subjects: { Rocketry: [relatedWork(100), relatedWork(201), relatedWork(202, 'shared author'), relatedWork(3), relatedWork(203)] },
+    works: { [work(100)]: record(100, { subjects: ['Fiction', 'Accessible book', 'Rocketry', 'Presidents'], authorKeys: ['OL9A'] }) },
+    // The author's list: the recent book itself and another work with its title are skipped.
+    authors: { OL9A: [relatedWork(100), { ...relatedWork(205), title: 'Recent 100' }, relatedWork(201)] },
+    related: { 'subject:"Rocketry" subject:"Presidents"': [relatedWork(202, 'shared author'), relatedWork(3), relatedWork(203)] },
   });
   const { app, ready } = harness({ openLibrary, answers: [...foundWork(4), ...foundWork(3), ...foundWork(2), ...foundWork(1)] });
   await ready;
@@ -124,14 +135,49 @@ test('order: books the library is known to have first (inLibrary), then related 
   // and work 3 (saved as an edition) is left out from both sources.
   assert.deepEqual(keys(response).slice(2), ['v1:openlibrary:OL201W', 'v1:openlibrary:OL203W']);
   assert.ok(response.body.books.slice(2).every(book => !('inLibrary' in book)));
-  // The generic subjects were skipped: the first good one was asked for.
-  assert.deepEqual(openLibrary.calls.filter(([kind]) => kind === 'subject'), [['subject', 'Rocketry']]);
+  // No place: the first two specific subjects together; the tag and "Fiction" were skipped.
+  assert.deepEqual(openLibrary.calls.filter(([kind]) => ['author', 'related'].includes(kind)),
+    [['author', 'OL9A'], ['related', 'subject:"Rocketry" subject:"Presidents"']]);
+});
+
+test('related: the same author’s most-read other works first, then the same subject in the same place; one work per title', async () => {
+  const kalam = 'A. P. J. Abdul Kalam';
+  const book = (id, title, author = kalam) => ({ bookKey: `v1:openlibrary:${id}`, workId: id, title, authors: [author], coverUrl: cover(1) });
+  const openLibrary = fakeOpenLibrary({
+    works: { OL1037811W: { workId: 'OL1037811W', title: 'Wings of Fire', subjects: ['Biography', 'Presidents', 'Scientists'], places: ['India'], authorKeys: ['OL101656A'] } },
+    authors: { OL101656A: [book('OL1037811W', 'Wings of Fire'), book('OL11W', 'Wings of fire.'), book('OL12W', 'Ignited Minds'), book('OL13W', 'Ignited minds'),
+      book('OL14W', 'Ignited Minds'), book('OL15W', 'My Journey')] },
+    related: { 'subject:"Biography" place:"India"': [book('OL1037811W', 'Wings of Fire'), book('OL21W', 'Autobiography of a Yogi', 'Paramahansa Yogananda'),
+      book('OL22W', 'The Jungle Book', 'Rudyard Kipling'), book('OL23W', 'Ignited Minds')] },
+  });
+  const { app } = harness({ openLibrary });
+  const response = await post(app, { recentBookKeys: ['v1:openlibrary:OL1037811W'], excludeKeys: ['v1:openlibrary:OL1037811W'] });
+  // One Kalam book (one per author), never Wings of Fire again, never a second Ignited Minds.
+  assert.deepEqual(response.body.books.map(item => item.title), ['Ignited Minds', 'Autobiography of a Yogi', 'The Jungle Book']);
+  assert.deepEqual(openLibrary.calls, [['work', 'OL1037811W'], ['author', 'OL101656A'], ['related', 'subject:"Biography" place:"India"']]);
+  // A recent book known only by its ISBN: the search-by-ISBN record, then the same two lists.
+  const byIsbn = fakeOpenLibrary({ isbnWorks: { [isbn(9)]: { workId: 'OL9W', title: 'Nine', subjects: ['Fiction'], places: ['Kerala'], authorKeys: ['OL9A'] } } });
+  await post(harness({ openLibrary: byIsbn }).app, { recentBookKeys: [`v1:isbn:${isbn(9)}`], excludeKeys: [] });
+  assert.deepEqual(byIsbn.calls, [['isbn', isbn(9)], ['author', 'OL9A'], ['related', 'subject:"Fiction" place:"Kerala"']]);
+});
+
+test('related: a work with one specific subject and no place gets only its author’s list; never a single-subject list', async () => {
+  const openLibrary = fakeOpenLibrary({ works: { [work(100)]: record(100, { subjects: ['Presidents', 'Biography', 'Accessible book'] }) },
+    authors: { OL100A: [relatedWork(201)] } });
+  const response = await post(harness({ openLibrary }).app, { recentBookKeys: ['v1:openlibrary:OL100W'], excludeKeys: [] });
+  assert.deepEqual(keys(response), ['v1:openlibrary:OL201W']);
+  assert.deepEqual(openLibrary.calls.map(([kind]) => kind), ['work', 'author']);
+  // A recent book that names extremism or is for adults leads to nothing related at all.
+  for (const subjects of [['National socialism', 'Germany'], ['Erotic literature', 'France']]) {
+    const blocked = fakeOpenLibrary({ works: { [work(100)]: record(100, { subjects, places: ['Germany'] }) }, authors: { OL100A: [relatedWork(201)] } });
+    assert.deepEqual((await post(harness({ openLibrary: blocked }).app, { recentBookKeys: ['v1:openlibrary:OL100W'], excludeKeys: [] })).body, { books: [] });
+    assert.deepEqual(blocked.calls.map(([kind]) => kind), ['work']);
+  }
 });
 
 test('an ISBN-only find is suggested as that edition; a related work the library has keeps its badge; at most 15', async () => {
   const many = Array.from({ length: 30 }, (_, index) => relatedWork(300 + index));
-  const openLibrary = fakeOpenLibrary({ editions: { [isbn(7)]: edition(7) }, works: { [work(100)]: ['Indian fiction (English)'] },
-    subjects: { 'Indian fiction (English)': [relatedWork(8), ...many] } });
+  const openLibrary = fakeOpenLibrary({ editions: { [isbn(7)]: edition(7) }, works: RECENT, related: { [ROCKETRY_IN_INDIA]: [relatedWork(8), ...many] } });
   const { app, ready } = harness({ openLibrary, answers: [
     { libraryId: LIBRARY, kind: 'isbn13', value: isbn(7), answer: 'found', evidence: 'exact_isbn', expiresAt: Date.now() + 1e10 },
     // Found, but its display data is not cached and the batch only covered…
@@ -163,7 +209,7 @@ test('never a "not found", never another library’s answer, nothing for a libra
 });
 
 test('no library catalog is ever asked: only the store and Open Library', async () => {
-  const openLibrary = fakeOpenLibrary({ editions: { [isbn(1)]: edition(1) }, works: { [work(100)]: ['Rocketry'] }, subjects: { Rocketry: [relatedWork(201)] } });
+  const openLibrary = fakeOpenLibrary({ editions: { [isbn(1)]: edition(1) }, works: RECENT, related: { [ROCKETRY_IN_INDIA]: [relatedWork(201)] } });
   const { app, ready, lookupCalls } = harness({ openLibrary, answers: foundWork(1) });
   await ready;
   const response = await post(app, { libraryId: LIBRARY, recentBookKeys: ['v1:openlibrary:OL100W', `v1:isbn:${isbn(50)}`,
@@ -176,78 +222,90 @@ test('no library catalog is ever asked: only the store and Open Library', async 
   const seen = [];
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (url, options) => {
-    seen.push({ host: new URL(url).host, agent: options.headers['User-Agent'] });
+    seen.push({ url: new URL(url), agent: options.headers['User-Agent'] });
     return new Response(JSON.stringify({ docs: [], [`ISBN:${isbn(1)}`]: { title: 'X' } }), { status: 200, headers: { 'content-type': 'application/json' } });
   };
   try {
     const reads = createOpenLibrarySuggestionReads();
     await reads.editionsByIsbn([isbn(1)]);
-    await reads.workSubjects(work(1));
-    await reads.isbnSubjects(isbn(1));
-    await reads.subjectWorks('Rocketry');
+    await reads.workRecord(work(1));
+    await reads.isbnRecord(isbn(1));
+    await reads.authorWorks('OL101656A');
+    await reads.relatedWorks('subject:"Biography" place:"India"');
+    // Nothing is asked for a bad author key or anything but a subject query.
+    assert.deepEqual(await reads.authorWorks('Kalam'), []);
+    assert.deepEqual(await reads.relatedWorks('Presidents'), []);
   } finally { globalThis.fetch = realFetch; }
-  assert.equal(seen.length, 4);
-  assert.ok(seen.every(({ host, agent }) => host === 'openlibrary.org' && /^MyBookshelf\/1\.0 \(book suggestions; https:\/\/mybookshelf\.cloud\/privacy\)$/.test(agent)), JSON.stringify(seen));
+  assert.equal(seen.length, 5);
+  assert.ok(seen.every(({ url, agent }) => url.host === 'openlibrary.org' && /^MyBookshelf\/1\.0 \(book suggestions; https:\/\/mybookshelf\.cloud\/privacy\)$/.test(agent)), JSON.stringify(seen));
+  // The queries: the work record; the ISBN's work with its subjects, places and authors;
+  // the author's works and the subject-and-place works by readers, with subjects for the filters.
+  const [, workRead, isbnRead, authorRead, relatedRead] = seen.map(({ url }) => url);
+  assert.equal(workRead.pathname, '/works/OL1W.json');
+  assert.deepEqual([isbnRead.pathname, isbnRead.searchParams.get('isbn'), isbnRead.searchParams.get('fields')], ['/search.json', isbn(1), 'key,title,subject,place,subject_place,author_key']);
+  assert.deepEqual(Object.fromEntries(authorRead.searchParams), { author_key: 'OL101656A', sort: 'readinglog', fields: 'key,title,author_name,cover_i,subject', limit: '10' });
+  assert.deepEqual(Object.fromEntries(relatedRead.searchParams), { q: 'subject:"Biography" place:"India"', sort: 'readinglog', fields: 'key,title,author_name,cover_i,subject', limit: '20' });
 });
 
 test(`at most ${OUTBOUND_CAP} Open Library requests per suggestion request, however much is uncached`, async () => {
   const answers = Array.from({ length: 30 }, (_, index) => foundWork(index + 1)).flat();
   const editions = Object.fromEntries(Array.from({ length: 30 }, (_, index) => [isbn(index + 1), edition(index + 1)]));
-  const openLibrary = fakeOpenLibrary({ editions, works: { [work(101)]: ['Rocketry', 'Space'], [work(102)]: ['Rocketry'], [work(103)]: ['Space'] },
-    subjects: { Rocketry: [relatedWork(201)], Space: [relatedWork(202)] } });
+  const works = { [work(101)]: record(101, { subjects: ['Rocketry'], places: ['India'] }), [work(102)]: record(102), [work(103)]: record(103) };
+  const openLibrary = fakeOpenLibrary({ editions, works, authors: { OL101A: [relatedWork(201)] }, related: { [ROCKETRY_IN_INDIA]: [relatedWork(202)] } });
   const { app, ready } = harness({ openLibrary, answers });
   await ready;
   const body = { libraryId: LIBRARY, recentBookKeys: ['v1:openlibrary:OL101W', 'v1:openlibrary:OL102W', 'v1:openlibrary:OL103W'], excludeKeys: [] };
   const first = await post(app, body);
   assert.equal(first.status, 200);
   assert.equal(openLibrary.count(), OUTBOUND_CAP);
-  // One batch for the library's editions, one subject read (the newest recent book), one subject list.
-  assert.deepEqual(openLibrary.calls.map(([kind]) => kind).sort(), ['editions', 'subject', 'work']);
+  // One batch for the library's editions, the newest recent book's record, its author's list and its subject-and-place list.
+  assert.deepEqual(openLibrary.calls.map(([kind]) => kind).sort(), ['author', 'editions', 'related', 'work']);
   assert.equal(openLibrary.calls.find(([kind]) => kind === 'editions')[1].length, 20);
   assert.deepEqual(openLibrary.calls.find(([kind]) => kind === 'work'), ['work', work(101)]);
   // The library's books come first and fill the fifteen.
   assert.equal(first.body.books.length, SUGGESTIONS_RETURNED);
   assert.ok(first.body.books.every(book => book.inLibrary));
-  // Without a library, the spare slot can go to a second subject list.
-  const second = harness({ openLibrary: fakeOpenLibrary({ works: { [work(101)]: ['Rocketry', 'Space'] }, subjects: { Rocketry: [relatedWork(201)], Space: [relatedWork(202)] } }) });
+  // Without a library: three requests, the author's book first.
+  const second = harness({ openLibrary: fakeOpenLibrary({ works, authors: { OL101A: [relatedWork(201)] }, related: { [ROCKETRY_IN_INDIA]: [relatedWork(202)] } }) });
   const response = await post(second.app, { recentBookKeys: body.recentBookKeys, excludeKeys: [] });
-  assert.equal(second.openLibrary.count(), OUTBOUND_CAP);
+  assert.equal(second.openLibrary.count(), OUTBOUND_CAP - 1);
   assert.deepEqual(keys(response), ['v1:openlibrary:OL201W', 'v1:openlibrary:OL202W']);
 });
 
 test('answers are cached for 24 hours: a second request asks nothing, a day later it asks again', async () => {
   let clock = Date.parse('2026-11-14T10:00:00Z');
-  const openLibrary = fakeOpenLibrary({ editions: { [isbn(1)]: edition(1) }, works: { [work(100)]: ['Rocketry'] }, subjects: { Rocketry: [relatedWork(201)] } });
+  const openLibrary = fakeOpenLibrary({ editions: { [isbn(1)]: edition(1) }, works: RECENT, authors: { OL100A: [relatedWork(200)] }, related: { [ROCKETRY_IN_INDIA]: [relatedWork(201)] } });
   let listed = 0;
   const { app, ready } = harness({ openLibrary, answers: foundWork(1), now: () => clock, listFound: original => (...args) => { listed += 1; return original(...args); } });
   await ready;
   const body = { libraryId: LIBRARY, recentBookKeys: ['v1:openlibrary:OL100W'], excludeKeys: [] };
   const first = await post(app, body);
-  assert.equal(openLibrary.count(), 3);
+  assert.equal(openLibrary.count(), 4);
   assert.equal(listed, 1);
   clock += SUGGESTION_CACHE_TTL_MS - 1000;
   const again = await post(app, body);
   assert.deepEqual(again.body, first.body);
-  assert.equal(openLibrary.count(), 3, 'display data, subjects and the subject list came from the cache');
+  assert.equal(openLibrary.count(), 4, 'display data, the work record and both lists came from the cache');
   assert.equal(listed, 1, 'the library’s found list came from the cache');
   clock += 2000;
   await post(app, body);
-  assert.equal(openLibrary.count(), 6);
+  assert.equal(openLibrary.count(), 8);
   assert.equal(listed, 2);
 });
 
 test('a work record this instance already read costs no request', async () => {
-  const openLibrary = fakeOpenLibrary({ subjects: { Rocketry: [relatedWork(201)] } });
+  const openLibrary = fakeOpenLibrary({ authors: { OL7A: [relatedWork(200)] }, related: { [ROCKETRY_IN_INDIA]: [relatedWork(201)] } });
   const peeked = [];
-  const { app } = harness({ openLibrary, peek: path => { peeked.push(path); return path === '/works/OL100W.json' ? { title: 'W', subjects: ['Rocketry'] } : undefined; } });
+  const work100 = { title: 'W', subjects: ['Rocketry'], subject_places: ['India'], authors: [{ author: { key: '/authors/OL7A' } }] };
+  const { app } = harness({ openLibrary, peek: path => { peeked.push(path); return path === '/works/OL100W.json' ? work100 : undefined; } });
   const response = await post(app, { recentBookKeys: ['v1:openlibrary:OL100W'], excludeKeys: [] });
-  assert.deepEqual(keys(response), ['v1:openlibrary:OL201W']);
+  assert.deepEqual(keys(response), ['v1:openlibrary:OL200W', 'v1:openlibrary:OL201W']);
   assert.deepEqual(peeked, ['/works/OL100W.json']);
-  assert.deepEqual(openLibrary.calls, [['subject', 'Rocketry']]);
+  assert.deepEqual(openLibrary.calls, [['author', 'OL7A'], ['related', ROCKETRY_IN_INDIA]]);
 });
 
 test('fails open: store down, Open Library down or slow, all give 200 quickly with what is known', async () => {
-  const subjects = { works: { [work(100)]: ['Rocketry'] }, subjects: { Rocketry: [relatedWork(201)] } };
+  const subjects = { works: RECENT, related: { [ROCKETRY_IN_INDIA]: [relatedWork(201)] } };
   const body = { libraryId: LIBRARY, recentBookKeys: ['v1:openlibrary:OL100W'], excludeKeys: [] };
   // Store down: the related works still come.
   const storeDown = harness({ openLibrary: fakeOpenLibrary({ editions: { [isbn(1)]: edition(1) }, ...subjects }), storeDown: true });
@@ -284,7 +342,7 @@ test('fails open: store down, Open Library down or slow, all give 200 quickly wi
 });
 
 test('the anonymous log gets counts only: the five shown (seed list included), opened and saved; nothing when it is off', async () => {
-  const openLibrary = fakeOpenLibrary({ editions: { [isbn(1)]: edition(1) }, works: { [work(100)]: ['Rocketry'] }, subjects: { Rocketry: [relatedWork(201)] } });
+  const openLibrary = fakeOpenLibrary({ editions: { [isbn(1)]: edition(1) }, works: RECENT, related: { [ROCKETRY_IN_INDIA]: [relatedWork(201)] } });
   const { app, ready, logged } = harness({ openLibrary, answers: foundWork(1), usageLogEnabled: true });
   await ready;
   const saved = seed.books[0].bookKey;
@@ -342,15 +400,57 @@ test('the router never writes the request body to platform logs or telemetry', a
   assert.deepEqual(telemetry.events().map(event => [event.operation, event.outcome]), [['suggestions', '200'], ['suggestions', '400'], ['suggestion_event', '202']]);
 });
 
-test('subjects: generic ones and tags are skipped; shared subjects and the newest book come first', () => {
-  for (const subject of ['Fiction', 'Accessible book', 'Protected DAISY', 'In library', 'Large type books', 'Fiction, general', 'nyt:combined-print=2008',
-    'Reading Level-Grade 11', 'Open Library Staff Picks', 'Juvenile fiction', 'Long Now Manual for Civilization', '1947', 'History']) {
-    assert.equal(isGenericSubject(subject), true, subject);
+test('subjects: tags are never used; broad subjects only with a place', () => {
+  for (const subject of ['Accessible book', 'Protected DAISY', 'In library', 'Large type books', 'nyt:combined-print=2008', 'Reading Level-Grade 11',
+    'Open Library Staff Picks', 'Long Now Manual for Civilization', '1947', 'Internet Archive Wishlist']) assert.equal(isJunkSubject(subject), true, subject);
+  for (const subject of ['Fiction', 'Biography', 'History', 'Juvenile fiction', 'Fiction, general']) {
+    assert.deepEqual([isJunkSubject(subject), isBroadSubject(subject)], [false, true], subject);
   }
-  for (const subject of ['Rocketry', 'Indian fiction (English)', 'Partition of India', 'Space flight']) assert.equal(isGenericSubject(subject), false, subject);
-  assert.deepEqual(chooseSubjects([['Fiction', 'Rocketry', 'India'], ['India', 'Cricket']]), ['India', 'Rocketry']);
-  assert.deepEqual(chooseSubjects([['Fiction', 'Accessible book'], []]), []);
-  assert.deepEqual(chooseSubjects([['Rocketry', 'rocketry', 'Space']], 1), ['Rocketry']);
+  for (const subject of ['Rocketry', 'Indian fiction (English)', 'Presidents', 'Space flight']) {
+    assert.deepEqual([isJunkSubject(subject), isBroadSubject(subject)], [false, false], subject);
+  }
+});
+
+test('the related query: subject and place, else two specific subjects, never one subject alone', () => {
+  // With a place: the first subject that is not a tag, broad or not, in the first place.
+  assert.equal(relatedQuery({ subjects: ['Accessible book', 'Biography', 'Presidents', 'Scientists'], places: ['India', 'Tamil Nadu'] }), 'subject:"Biography" place:"India"');
+  assert.equal(relatedQuery({ subjects: ['Fiction'], places: ['India'] }), 'subject:"Fiction" place:"India"');
+  // Without one: the first two specific subjects together.
+  assert.equal(relatedQuery({ subjects: ['Biography', 'Presidents', 'Fiction', 'Scientists'], places: [] }), 'subject:"Presidents" subject:"Scientists"');
+  // Fewer than two specific subjects and no place, or no usable subject: no query.
+  for (const value of [{ subjects: ['Presidents', 'Biography', 'Fiction'] }, { subjects: ['Rocketry', 'rocketry'] }, { subjects: [] }, { subjects: ['Accessible book'], places: ['India'] },
+    { subjects: [], places: ['India'] }, {}]) assert.equal(relatedQuery(value), null, JSON.stringify(value));
+  // Quotes in a subject cannot break out of the phrase.
+  assert.equal(relatedQuery({ subjects: ['Say "hi" \\ now', 'B side'] }), 'subject:"Say hi now" subject:"B side"');
+  // Never a single-subject query, whatever the work holds.
+  const pool = ['Fiction', 'Biography', 'Accessible book', 'Presidents', 'Scientists', 'Rocketry', 'nyt:x', 'History'];
+  for (let mask = 0; mask < 2 ** pool.length; mask += 1) {
+    const subjects = pool.filter((_, index) => mask & (1 << index));
+    for (const places of [[], ['India']]) {
+      const query = relatedQuery({ subjects, places });
+      assert.ok(query === null || /^subject:"[^"]+" (place|subject):"[^"]+"$/.test(query), `${subjects} ${places}: ${query}`);
+    }
+  }
+});
+
+test('records: a work record and a search doc give the same title, subjects, places and author keys', () => {
+  assert.deepEqual(parseWorkRecord({ title: 'Wings of Fire', subjects: ['Biography'], subject_places: ['India'], authors: [{ author: { key: '/authors/OL101656A' } }, { author: {} }] }, 'OL1037811W'),
+    { workId: 'OL1037811W', title: 'Wings of Fire', subjects: ['Biography'], places: ['India'], authorKeys: ['OL101656A'] });
+  assert.deepEqual(parseWorkRecord({ key: '/works/OL1W', title: 'One', subject: ['Fiction'], place: ['Kerala'], author_key: ['OL2A', 'bad'] }),
+    { workId: 'OL1W', title: 'One', subjects: ['Fiction'], places: ['Kerala'], authorKeys: ['OL2A'] });
+  assert.deepEqual(parseWorkRecord({}), { title: '', subjects: [], places: [], authorKeys: [] });
+});
+
+test('deny-lists: nothing for adults or naming extremism, in a title or a subject; one work per title', () => {
+  const doc = (n, title, subject = []) => ({ key: `/works/OL${n}W`, title, author_name: ['Author ' + n], cover_i: n, subject });
+  const kept = parseSubjectWorks({ docs: [doc(1, 'Mein Kampf', ['National socialism', 'Germany']), doc(2, 'The Rise of the Nazi Party'), doc(3, 'A History', ['Antisemitism']),
+    doc(4, 'White Supremacy Explained'), doc(5, 'Neo-Nazis in Europe'), doc(6, 'Ignited Minds'), doc(7, 'Ignited minds'), doc(8, 'Ignited  Minds!'), doc(9, 'India 2020', ['India'])] });
+  assert.deepEqual(kept.map(book => book.title), ['Ignited Minds', 'India 2020']);
+  assert.equal(blockedBook('Wings of Fire', ['Biography']), false);
+  assert.equal(blockedBook('Diary', ['World War, 1939-1945', 'Anti-Semitism']), true);
+  // Library-found books too.
+  const editions = parseEditions({ [`ISBN:${isbn(1)}`]: { title: 'Mein Kampf', subjects: [{ name: 'National socialism' }] } }, [isbn(1)]);
+  assert.equal(editions.get(isbn(1)), null);
 });
 
 test('found rows become works shown with the found edition, or that ISBN edition alone', () => {

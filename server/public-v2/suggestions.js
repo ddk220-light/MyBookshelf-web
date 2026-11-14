@@ -3,7 +3,7 @@ import { parsePublicBookKey } from './contracts.js';
 import { sanitizePublicCoverUrl } from './metadata.js';
 import { parseSuggestionEvent, parseSuggestions } from './validation.js';
 import { validateAndNormalize } from '../services/isbn.js';
-import { createOpenLibrarySuggestionReads, parseSubjects } from '../services/openLibrarySuggestions.js';
+import { blockedBook, createOpenLibrarySuggestionReads, parseWorkRecord, relatedQuery, titleKey } from '../services/openLibrarySuggestions.js';
 import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 
 // Shelf suggestions, step B (docs/plans/2026-11-14-desktop-and-shelf-
@@ -14,17 +14,20 @@ import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 //   POST /suggestions/events  { event: 'opened' | 'saved', bookKey } -> 202
 //
 // Candidates, in order: (1) books the chosen library is known to have, from
-// the catalog store's stored "found" answers (`inLibrary: true`); (2) popular
-// Open Library works on a subject of the recent books. The bundled seed list
+// the catalog store's stored "found" answers (`inLibrary: true`); (2) books
+// related to the newest recent book: its author's most-read other works, then
+// the most-read works on its subject in its place (or on two of its specific
+// subjects; never one subject alone). The bundled seed list
 // stays in the app, last. The client makes the final pick and stays the
 // authority; this applies the same exclusions and one-book-per-author rule so
 // that, after the client's own, five usually remain.
 //
 // Never a catalog request: only answers already stored count, and a stored
 // "not found" (or a check that failed) is never read here. At most
-// OUTBOUND_CAP Open Library requests per suggestion request; the found lists,
-// display data, subjects and subject lists are cached in this instance's
-// memory for 24 hours (Vercel runs many instances, each with its own cache).
+// OUTBOUND_CAP Open Library requests per suggestion request (the found
+// editions' details, the recent work's record, the author's list, the
+// subject-and-place list); each is cached in this instance's memory for 24
+// hours (Vercel runs many instances, each with its own cache).
 // Everything fails open: a slow or failing store or Open Library gives fewer
 // books (possibly none) with 200 and `partial: true`, by SUGGESTIONS_DEADLINE_MS.
 //
@@ -34,12 +37,11 @@ import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 
 export const SUGGESTIONS_RETURNED = 15;
 export const SUGGESTIONS_SHOWN = 5;
-export const OUTBOUND_CAP = 3;
+export const OUTBOUND_CAP = 4;
 export const SUGGESTIONS_DEADLINE_MS = 3_000;
 export const SUGGESTION_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const FOUND_ROWS = 60;
 const FOUND_CONSIDERED = 20;
-const SUBJECTS_PER_WORK = 25;
 const WORK_ID = /^OL\d+W$/;
 
 const text = (value, maximum) => (typeof value === 'string' && value.trim() ? value.trim().slice(0, maximum) : null);
@@ -124,47 +126,6 @@ export function foundIdentities(rows = []) {
   return identities;
 }
 
-// Subjects too broad to suggest from, and tags that are not subjects.
-const GENERIC_SUBJECTS = new Set(['fiction', 'nonfiction', 'non fiction', 'general', 'literature', 'novel', 'novels', 'stories', 'short stories',
-  'fiction general', 'general fiction', 'literary fiction', 'english fiction', 'fiction in english', 'english literature', 'american fiction',
-  'juvenile fiction', 'juvenile literature', 'young adult fiction', 'children s fiction', 'history', 'biography', 'autobiography',
-  'accessible book', 'protected daisy', 'in library', 'large type books', 'large print books', 'lending library', 'overdrive',
-  'open library staff picks', 'textbooks', 'reading', 'books and reading', 'translations into english', 'popular print disabled books',
-  'long now manual for civilization', 'internet archive wishlist', 'new york times bestseller', 'new york times reviewed', 'bestsellers',
-  'literature and fiction', 'fiction fiction', 'thesis', 'manuscripts', 'specimens']);
-const GENERIC_PART = /\b(accessible|daisy|large type|large print|in library|lending library|staff picks|overdrive|internet archive|wishlist|bestsellers?|print disabled|reading level|open library|award)\b/;
-const BROAD_WORDS = new Set(['fiction', 'general', 'literature', 'novel', 'novels', 'stories', 'book', 'books', 'english', 'juvenile', 'literary', 'popular', 'and']);
-const subjectWords = value => String(value || '').normalize('NFKC').toLocaleLowerCase('en').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
-
-export function isGenericSubject(subject) {
-  if (typeof subject !== 'string' || /[:=]/.test(subject)) return true; // "nyt:…", "series:…" and similar tags
-  const words = subjectWords(subject);
-  if (words.length < 3 || words.length > 60 || /\d{3,}/.test(words)) return true;
-  if (GENERIC_SUBJECTS.has(words) || GENERIC_PART.test(words)) return true;
-  return words.split(' ').every(word => BROAD_WORDS.has(word));
-}
-
-/**
- * One or two good subjects from the recent works' subject lists (newest work
- * first): subjects shared by more of the works first, then the newest work's
- * own order. Generic subjects are skipped.
- */
-export function chooseSubjects(lists, limit = 2) {
-  const scores = new Map();
-  lists.forEach((subjects, index) => {
-    const seen = new Set();
-    (Array.isArray(subjects) ? subjects : []).slice(0, SUBJECTS_PER_WORK).forEach((subject, position) => {
-      const key = subjectWords(subject);
-      if (seen.has(key) || isGenericSubject(subject)) return;
-      seen.add(key);
-      const entry = scores.get(key) || { subject: subject.trim(), works: 0, index, position };
-      entry.works += 1;
-      scores.set(key, entry);
-    });
-  });
-  return [...scores.values()].sort((a, b) => b.works - a.works || a.index - b.index || a.position - b.position).slice(0, limit).map(entry => entry.subject);
-}
-
 /** A small in-memory cache with an expiry, plus the read in flight for each key. */
 export function createTtlCache({ ttlMs = SUGGESTION_CACHE_TTL_MS, maxEntries = 2_000, now = () => Date.now() } = {}) {
   const entries = new Map();
@@ -226,8 +187,9 @@ export function createSuggestionService({ store = null, directory = null, reads 
   const cache = options => createTtlCache({ now, ...options });
   const found = cache({ maxEntries: 500 }); // libraryId -> identities
   const display = cache({ maxEntries: 5_000 }); // ISBN-13 -> { title, authors, coverUrl? } | null
-  const subjects = cache({ maxEntries: 5_000 }); // recent book key -> { workId?, subjects }
-  const related = cache({ maxEntries: 1_000 }); // subject -> books
+  const records = cache({ maxEntries: 5_000 }); // recent book key -> { workId?, title, subjects, places, authorKeys }
+  const byAuthor = cache({ maxEntries: 2_000 }); // author key -> books
+  const bySubject = cache({ maxEntries: 2_000 }); // related query -> books
 
   // Starts one Open Library read against the budget (or a reserved slot). It
   // keeps running after the reader's answer is sent, so its answer still
@@ -312,36 +274,47 @@ export function createSuggestionService({ store = null, directory = null, reads 
     let work;
     try { work = peek(`/works/${recent.workId}.json`); } catch { return undefined; }
     if (!work || typeof work !== 'object') return undefined;
-    const value = { workId: recent.workId, subjects: parseSubjects(work.subjects) };
-    subjects.set(recent.key, value);
+    const value = parseWorkRecord(work, recent.workId);
+    records.set(recent.key, value);
     return value;
   }
 
-  // Source 2: popular works on a subject of the recent books, with a cover.
+  const usable = book => book?.coverUrl && book.authors.length;
+
+  /**
+   * Source 2, for the newest recent book: its first author's most-read other
+   * works, then the most-read works on its subject in its place, or on two of
+   * its specific subjects (`relatedQuery`; never one subject alone). Covers
+   * only; never the book itself or another work with its title.
+   */
   async function relatedTo(recentBookKeys, run) {
     const { budget } = run;
     const recents = recentBookKeys.map(recentIdentity).filter(Boolean);
-    let asked = false;
-    // One subject read per request (the newest recent book not yet known);
-    // the others are used once a later refresh has read them.
-    const lists = await Promise.all(recents.map(recent => {
-      const known = subjects.get(recent.key) ?? alreadyRead(recent);
-      if (known !== undefined) return known;
-      return cached(subjects, recent.key, () => {
-        if (asked) return null;
-        asked = true;
-        return outbound(budget, () => (recent.workId ? reads.workSubjects(recent.workId) : reads.isbnSubjects(recent.isbn)));
-      }, run);
-    }));
-    const own = new Set([...recents.map(recent => recent.workId), ...lists.map(list => list?.workId)].filter(Boolean));
+    const recent = recents[0];
+    if (!recent) return [];
+    const record = records.get(recent.key) ?? alreadyRead(recent)
+      ?? await cached(records, recent.key, () => outbound(budget, () => (recent.workId ? reads.workRecord(recent.workId) : reads.isbnRecord(recent.isbn))), run);
+    // Nothing is suggested from a book that may not be suggested itself.
+    if (!record || blockedBook(record.title, record.subjects)) return [];
+    const authorKey = record.authorKeys?.[0];
+    const query = relatedQuery(record);
+    const [sameAuthor, sameSubject] = await Promise.all([
+      authorKey ? cached(byAuthor, authorKey, () => outbound(budget, () => reads.authorWorks(authorKey)), run) : undefined,
+      query ? cached(bySubject, query, () => outbound(budget, () => reads.relatedWorks(query)), run) : undefined,
+    ]);
+    const own = new Set([...recents.map(item => item.workId), record.workId].filter(Boolean));
+    const titles = new Set([titleKey(record.title)].filter(Boolean));
     const books = [];
-    for (const subject of chooseSubjects(lists.map(list => list?.subjects || []))) {
-      const list = await cached(related, subjectWords(subject), () => outbound(budget, () => reads.subjectWorks(subject)), run);
-      if (Array.isArray(list)) books.push(...list.map(suggestionBook).filter(book => book?.coverUrl && book.authors.length));
-      if (books.length >= SUGGESTIONS_RETURNED * 2) break;
+    for (const raw of [...(Array.isArray(sameAuthor) ? sameAuthor : []), ...(Array.isArray(sameSubject) ? sameSubject : [])]) {
+      const book = suggestionBook(raw);
+      if (!usable(book) || own.has(book.workId)) continue;
+      // The first work with a title only ("Ignited Minds" is three works).
+      const key = titleKey(book.title);
+      if (titles.has(key)) continue;
+      titles.add(key);
+      books.push(book);
     }
-    // The recent books themselves are not "related" to themselves.
-    return books.filter(book => !own.has(book.workId));
+    return books;
   }
 
   /**

@@ -109,12 +109,27 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
     ISBN-13s; never a "not found", never a catalog record, nothing for an opted-out library). The
     store keeps no title or cover, so the found edition's details come from one batched Open
     Library Books API request.
-  - Source 2 takes the subjects of the newest recent book not yet known (`/works/<id>.json`, or
-    search by ISBN), skips generic subjects, and asks Open Library search for the subject's works
-    by reader count (`sort=readinglog`), covers only.
-  - At most 3 Open Library requests per suggestion request; found lists, display details,
-    subjects and subject lists are cached in each instance's memory for 24 hours. No catalog
-    request is ever made.
+  - Source 2, "same author, then same subject and place", for the newest recent book. It reads
+    that book's work record (`/works/<id>.json`, or a search by ISBN for an ISBN-only book): title,
+    subjects, places and author keys. It then asks for two lists, both sorted by reader count
+    (`sort=readinglog`):
+    - The first author's most-read other works (`author_key=…`). The book itself, any work with
+      its title, and all but the first work of each title are skipped; the one-per-author rule
+      keeps one.
+    - The most-read works on its first subject that is not a tag, in its first place
+      (`q=subject:"Biography" place:"India"`; broad subjects are fine with a place). A work with no
+      place uses its first two specific subjects together instead, and gets no second list with
+      fewer than two. A single-subject popularity list is never used: on staging, "Presidents"
+      alone gave American politics for *Wings of Fire*.
+    - Covers only, titles in Latin letters, and nothing for adults or naming extremism (titles and
+      subjects; the extremism deny-list also applies to library-found books). Nothing is
+      suggested from a recent book that is itself blocked.
+  - At most 4 Open Library requests per suggestion request: the library's edition details, the
+    recent work's record, the author's list and the subject-and-place list. Each is cached in each
+    instance's memory for 24 hours, as are found lists. No catalog request is ever made.
+  - The app also never suggests a book whose title and first author match a saved book (display
+    only, as for another edition of the same work), so a duplicate Open Library work of a saved
+    book does not appear.
   - Counts: `POST /api/v2/suggestions/events { event: opened|saved, bookKey }` (the book page,
     marked by router state only) and "shown" rows written by the server for the five the app
     shows. Catalog migration `002-suggestion-counts.sql` adds the `suggestion` kind to the

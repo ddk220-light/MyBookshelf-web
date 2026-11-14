@@ -54,6 +54,18 @@ describe('shelf suggestions: which five', () => {
     expect(keys(pickSuggestions([books], shelf))).toEqual(keys(books.slice(4, 9)));
   });
 
+  it('never another Open Library work of a saved book: the same title and first author, compared loosely (display only)', () => {
+    const shelf = [saved('v1:openlibrary:OL1037811W', { title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] })];
+    const books = [
+      suggestion(1, 'A.P.J. Abdul Kalam', { title: 'Wings of fire.' }), // a second "Wings of Fire" work
+      suggestion(2, 'Someone Else', { title: 'Wings of Fire' }), // same title, another author
+      suggestion(3, 'A. P. J. Abdul Kalam', { title: 'Ignited Minds' }), // same author, another title
+    ];
+    expect(keys(pickSuggestions([books], shelf))).toEqual(keys(books.slice(1, 3)));
+    // A saved record without a title or author rules nothing out this way.
+    expect(keys(pickSuggestions([books], [{ bookKey: 'v1:isbn:9780000000002' }]))).toEqual(keys([books[0], books[1]]));
+  });
+
   it('never the same book twice, even from two sources', () => {
     const first = suggestion(1, 'A');
     const again = { ...suggestion(1, 'Other'), title: 'Another record' };
