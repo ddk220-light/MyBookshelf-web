@@ -106,4 +106,3 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 - Tests: the fill and wrap rule at 3 and 6 per row, one-per-author, never suggesting a saved
   book or another edition of one, offline cold open from the bundled list, badges only from
   stored answers, contrast in the three reading lights, reduced motion.
-- Design: update the mobile first-open and shelf boards and desktop D1/D2 before building.
