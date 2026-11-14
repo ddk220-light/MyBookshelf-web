@@ -1,7 +1,7 @@
 # Desktop layout and shelf suggestions
 
 Date: 14 November 2026. Applies to mobile and desktop. Screens: `docs/design/2026-11-one-shelf/`
-(boards D1–D5 for desktop; the mobile boards for everything else).
+(boards D1–D5 for desktop, S1–S4 for suggestions; the mobile boards for everything else).
 
 Order of work: build the desktop layout first, then suggestions on both mobile and desktop.
 
@@ -24,12 +24,17 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 
 1. **Cold open** (nothing saved and nothing viewed): the search bar dominates. No empty
    shelves. Five suggested books stand on the shelf: popular Indian books for now.
+   Boards S1 (phone) and S3 (desktop): "Ready to search" and its one line, then a larger search
+   bar (scan inside it on phones), then the five books. The separate "Search for a book" and
+   "Scan the barcode" buttons go; the search bar does both.
 2. **Always five suggestions**, placed after the reader's saved books in shelf order. They
    wrap like books do: with one saved book they share its row; with more, they continue on
    the next row (3 per row on phones, 6 on desktop).
 3. **Look:** each suggestion at 75% opacity, with a "Suggested" label below them.
 4. **Opening and saving:** a suggestion opens like any book. "Add to my shelf" makes it a
    saved book (full opacity) and a new suggestion takes its place, so there are still five.
+   The saved book goes to the front of the shelf (newest first, as today); the new suggestion
+   arrives at the end. Boards S2 (phone) and S4 (desktop) play this.
 5. **Refresh:** suggestions are refreshed. They cannot be dismissed.
 6. **Sources,** in this order, never more than one book by the same author:
    - books known to be in the chosen library (found answers in our catalog store);
@@ -60,8 +65,11 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 2. **A suggestion has no cover image.** It gets the plain coloured cover with title and
    author, at 75% opacity. The seed list only includes books with covers.
 3. **Readability at 75%.** Fading the whole cover lowers the contrast of its printed title.
-   The cover image or plain cover fades; the "Suggested" label and the accessible name do not.
-   Checked in all three reading lights.
+   The cover image or plain cover fades; the library badge, the "Suggested" label and the
+   accessible name do not. A plain cover (no cover photo) on a suggestion uses a darker shade of
+   its colour, chosen so its printed title still reads at 4.5:1 when faded; at 75% the usual
+   shades drop to about 3–4:1. A unit test checks every plain-cover colour in all three reading
+   lights.
 4. **The same book saved twice through a suggestion.** Saving uses the existing "already on
    my shelf" match, so a suggestion of a book already saved under another edition is never
    shown, and saving cannot create a duplicate.

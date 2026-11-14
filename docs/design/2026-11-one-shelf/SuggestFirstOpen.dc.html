@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone first open with suggestions</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2f5340}a:hover{color:#1f3a2c}
+button.sugg{border:0;padding:0;margin:0;background:none;font:inherit;color:inherit;cursor:pointer;text-align:inherit}
+button.sugg:focus-visible,a.book:focus-visible{outline:3px solid #2f5340;outline-offset:6px}
+@keyframes sugg-in-a{from{opacity:0;transform:translateY(10px)}to{opacity:.75;transform:none}}
+@keyframes sugg-in-b{from{opacity:0;transform:translateY(10px)}to{opacity:.75;transform:none}}
+@keyframes saved-in-a{from{opacity:.75}to{opacity:1}}
+@keyframes saved-in-b{from{opacity:.75}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #faf7f1; color: #1f1a17; font-family: 'Work Sans', sans-serif; font-size: 16px; line-height: 1.5; padding: 16px; display: flex; flex-direction: column; overflow: hidden">
+<div style="flex-shrink: 0; display: flex; align-items: center; gap: 2px; height: 44px">
+<a href="AccountPanel.dc.html" aria-label="Account and settings" style="width: 44px; height: 44px; margin-left: -10px; color: #4a423b; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c1.500-4 5-5 8-5s6.500 1 8 5"></path></svg>
+</a>
+<div style="font-family: Newsreader, serif; font-size: 24px; font-weight: 500; letter-spacing: -0.02em">MyBookshelf</div>
+</div>
+
+<div style="margin-top: 36px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px">
+<h1 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 32px; line-height: 1.15; letter-spacing: -0.025em">Ready to search</h1>
+<p style="margin: 0; max-width: 300px; color: #4a423b">Add books to your shelf and search in your library</p>
+</div>
+
+<div style="margin-top: 22px; flex-shrink: 0; height: 60px; box-sizing: border-box; display: flex; align-items: center; background: #ffffff; border: 1.5px solid #2f5340; border-radius: 16px; padding-left: 16px; gap: 10px; box-shadow: 0 2px 8px rgba(31,26,23,.08)">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f5340" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.500-3.500"></path></svg>
+<a href="Results.dc.html" style="flex-grow: 1; min-width: 0; height: 56px; display: flex; align-items: center; font-size: 17px; color: #6b6259; text-decoration: none">Title, author or ISBN</a>
+<a href="Scan.dc.html" aria-label="Scan a barcode" style="width: 56px; height: 56px; border-left: 1px solid #e7e0d5; display: flex; align-items: center; justify-content: center; color: #2f5340">
+<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h3M17 5h3v2M4 17v2h3M17 19h3v-2M8 9v6M10.500 9v6M13.500 9v6M16 9v6"></path></svg>
+</a>
+</div>
+
+<div style="margin-top: 36px">
+<sc-for list="{{rows}}" as="row" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; margin-bottom: 10px">
+<div style="margin-inline: -16px; padding: 12px 16px 0; background: linear-gradient(180deg, rgba(31,26,23,.13), rgba(31,26,23,0) 16px), repeating-linear-gradient(90deg, rgba(120,84,48,.04) 0 2px, rgba(120,84,48,0) 2px 9px), #efe5d3">
+<div style="position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: end; height: 132px">
+<sc-for list="{{row.books}}" as="book" hint-placeholder-count="3">
+<div style="display: flex; justify-content: center">
+<sc-if value="{{book.saved}}" hint-placeholder-val="{{true}}">
+<a class="book" href="Book.dc.html" aria-label="{{book.label}}" style="position: relative; display: block; width: 84px; height: 126px; text-decoration: none">
+<span aria-hidden="true" style="position: absolute; inset: 0; opacity: {{book.opacity}}; animation: {{book.anim}}; filter: drop-shadow(5px 2px 4px rgba(31,26,23,.3))">
+<span style="position: absolute; left: 0; bottom: 100%; width: 100%; height: 6px; transform: skewX(-45deg); transform-origin: 0 100%; background: repeating-linear-gradient(0deg, #f6efe0 0 1px, #ddd2bc 1px 2px)"></span>
+<span style="position: absolute; left: 100%; top: 0; width: 6px; height: 100%; transform: skewY(-45deg); transform-origin: 0 0; background: repeating-linear-gradient(90deg, #e9dfca 0 1px, #cdbfa5 1px 2px)"></span>
+<span style="position: absolute; inset: 0; box-sizing: border-box; padding: 8px 7px 8px 12px; border-radius: 1px 2px 2px 1px; background: linear-gradient(90deg, rgba(0,0,0,.3) 0, rgba(255,255,255,.16) 3px, rgba(0,0,0,.14) 6px, rgba(0,0,0,0) 11px), linear-gradient(115deg, rgba(255,255,255,.16), rgba(255,255,255,0) 45%), {{book.bg}}; color: #fbf3e4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; text-align: center; font-family: Newsreader, serif; font-size: 13px; line-height: 1.2; overflow-wrap: anywhere">
+<span>{{book.title}}</span>
+<span style="width: 18px; height: 1px; background: rgba(251,243,228,.65)"></span>
+<span style="font-family: 'Work Sans', sans-serif; font-size: 11px; line-height: 1.25">{{book.author}}</span>
+</span>
+</span>
+<sc-if value="{{book.inLibrary}}" hint-placeholder-val="{{false}}">
+<span aria-hidden="true" style="position: absolute; top: -12px; right: -13px; z-index: 2; width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; background: #2f5340; color: #ffffff; border: 2px solid #efe5d3; display: flex; align-items: center; justify-content: center">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 20V9l6-4 6 4v11M10 20v-5h4v5"></path></svg>
+</span>
+</sc-if>
+</a>
+</sc-if>
+<sc-if value="{{book.sugg}}" hint-placeholder-val="{{false}}">
+<a class="book" href="Book.dc.html" aria-label="{{book.label}}" style="position: relative; display: block; width: 84px; height: 126px; text-decoration: none">
+<span aria-hidden="true" style="position: absolute; inset: 0; opacity: {{book.opacity}}; animation: {{book.anim}}; filter: drop-shadow(5px 2px 4px rgba(31,26,23,.3))">
+<span style="position: absolute; left: 0; bottom: 100%; width: 100%; height: 6px; transform: skewX(-45deg); transform-origin: 0 100%; background: repeating-linear-gradient(0deg, #f6efe0 0 1px, #ddd2bc 1px 2px)"></span>
+<span style="position: absolute; left: 100%; top: 0; width: 6px; height: 100%; transform: skewY(-45deg); transform-origin: 0 0; background: repeating-linear-gradient(90deg, #e9dfca 0 1px, #cdbfa5 1px 2px)"></span>
+<span style="position: absolute; inset: 0; box-sizing: border-box; padding: 8px 7px 8px 12px; border-radius: 1px 2px 2px 1px; background: linear-gradient(90deg, rgba(0,0,0,.3) 0, rgba(255,255,255,.16) 3px, rgba(0,0,0,.14) 6px, rgba(0,0,0,0) 11px), linear-gradient(115deg, rgba(255,255,255,.16), rgba(255,255,255,0) 45%), {{book.bg}}; color: #fbf3e4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; text-align: center; font-family: Newsreader, serif; font-size: 13px; line-height: 1.2; overflow-wrap: anywhere">
+<span>{{book.title}}</span>
+<span style="width: 18px; height: 1px; background: rgba(251,243,228,.65)"></span>
+<span style="font-family: 'Work Sans', sans-serif; font-size: 11px; line-height: 1.25">{{book.author}}</span>
+</span>
+</span>
+<sc-if value="{{book.inLibrary}}" hint-placeholder-val="{{false}}">
+<span aria-hidden="true" style="position: absolute; top: -12px; right: -13px; z-index: 2; width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; background: #2f5340; color: #ffffff; border: 2px solid #efe5d3; display: flex; align-items: center; justify-content: center">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 20V9l6-4 6 4v11M10 20v-5h4v5"></path></svg>
+</span>
+</sc-if>
+</a>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<div aria-hidden="true" style="height: 12px; margin: -12px -16px 0; background: linear-gradient(180deg, #b88959, #d6ab7c)"></div>
+</div>
+<div aria-hidden="true" style="position: relative; height: 14px; margin-inline: -16px; box-sizing: border-box; border-top: 1px solid #e9c59b; background: linear-gradient(180deg, #cb9a66 0, #b9854f 55%, #a47340 100%)">
+<sc-if value="{{row.hasSug}}" hint-placeholder-val="{{true}}">
+<div style="position: absolute; left: 16px; right: 16px; top: 0; bottom: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 18px; align-items: center">
+<span style="grid-column: {{row.sugCol}}; justify-self: center; height: 18px; padding: 0 8px; box-sizing: border-box; border: 1px solid #cdbfa5; border-radius: 3px; background: #faf7f1; color: #4a423b; font-size: 11px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; box-shadow: 0 1px 2px rgba(31,26,23,.2)">Suggested</span>
+</div>
+</sc-if>
+</div>
+<div aria-hidden="true" style="height: 8px; margin-inline: -16px; background: linear-gradient(180deg, rgba(31,26,23,.22), rgba(31,26,23,0))"></div>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { saved: [], sugg: ["wings","ponni","gost","malgudi","tiger"], pool: [], fresh: null, newSaved: null, n: 0, view: 'shelf' };
+}
+renderVals() {
+const B = {
+wings: ['Wings of Fire', 'A. P. J. Abdul Kalam', '1999', '#7a2e2e', true],
+ponni: ['Ponniyin Selvan', 'Kalki', '1955', '#1f5a57', true],
+gost: ['The God of Small Things', 'Arundhati Roy', '1997', '#3f5a2a', false],
+malgudi: ['Malgudi Days', 'R. K. Narayan', '1943', '#8a4a1f', true],
+tiger: ['The White Tiger', 'Aravind Adiga', '2008', '#3b3b3b', false],
+ignited: ['Ignited Minds', 'A. P. J. Abdul Kalam', '2002', '#704030', false],
+palace: ['The Palace of Illusions', 'Chitra Banerjee Divakaruni', '2008', '#6d2742', false],
+sea: ['Sea of Poppies', 'Amitav Ghosh', '2008', '#274b6d', true],
+train: ['Train to Pakistan', 'Khushwant Singh', '1956', '#5a4a2a', false],
+suitable: ['A Suitable Boy', 'Vikram Seth', '1993', '#6b6b5e', false],
+midnight: ['Midnight’s Children', 'Salman Rushdie', '1981', '#5e3a6b', true],
+godaan: ['Godaan', 'Premchand', '1936', '#7a4a30', false],
+chemmeen: ['Chemmeen', 'Thakazhi Sivasankara Pillai', '1956', '#2f4f6d', false],
+gitanjali: ['Gitanjali', 'Rabindranath Tagore', '1910', '#4a2f5e', true],
+discovery: ['The Discovery of India', 'Jawaharlal Nehru', '1946', '#3f4f3a', false]
+};
+// A suggested book without a cover photo uses a darker shade, so its printed title still reads at 75%.
+const SHADE = {"#7a2e2e": "#7a2e2e", "#1f5a57": "#1b4d4b", "#3f5a2a": "#344a22", "#8a4a1f": "#693818", "#3b3b3b": "#3b3b3b", "#704030": "#64392b", "#6d2742": "#6d2742", "#274b6d": "#254768", "#5a4a2a": "#504225", "#6b6b5e": "#44443c", "#5e3a6b": "#593766", "#7a4a30": "#623b26", "#2f4f6d": "#2a4762", "#4a2f5e": "#4a2f5e", "#3f4f3a": "#394835"};
+const s = this.state;
+const library = null;
+const k = s.n % 2 ? 'a' : 'b';
+const save = id => () => {
+const st = this.state;
+const pool = st.pool.slice();
+const next = pool.shift() || null;
+const left = st.sugg.filter(x => x !== id);
+this.setState({ saved: [id].concat(st.saved), sugg: next ? left.concat(next) : left, pool, fresh: next, newSaved: id, n: st.n + 1 });
+};
+const item = (id, suggested) => {
+const b = B[id];
+const inLibrary = !!(library && b[4]);
+return {
+title: b[0], author: b[1], bg: suggested ? (SHADE[b[3]] || b[3]) : b[3], inLibrary,
+saved: !suggested, sugg: suggested,
+opacity: suggested ? '.75' : '1',
+anim: 'none',
+label: b[0] + ' by ' + b[1] + (inLibrary ? ', in ' + library : '') + (suggested ? ', suggested' : ''),
+byline: b[1] + ' · ' + (suggested ? 'Suggested' : b[2]),
+add: save(id)
+};
+};
+const all = s.saved.map(id => item(id, false)).concat(s.sugg.map(id => item(id, true)));
+const rows = [];
+for (let i = 0; i < all.length; i += 3) {
+const books = all.slice(i, i + 3);
+const first = books.findIndex(b => b.sugg);
+rows.push({ books, hasSug: first >= 0, sugCol: (first + 1) + ' / span ' + (books.length - first) });
+}
+const count = s.saved.length;
+const list = s.view === 'list' && count > 1;
+return {
+rows,
+all,
+count: count === 1 ? '1 book' : count + ' books',
+canSwitch: count > 1,
+isShelf: !list,
+isList: list,
+shelfPressed: list ? 'false' : 'true',
+listPressed: list ? 'true' : 'false',
+shelfBg: list ? '#ffffff' : '#e3ecdf',
+listBg: list ? '#e3ecdf' : '#ffffff',
+showShelf: () => this.setState({ view: 'shelf' }),
+showList: () => this.setState({ view: 'list' })
+};
+}
+}
+</script>
+</body>
+</html>
