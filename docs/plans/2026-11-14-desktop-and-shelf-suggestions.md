@@ -53,7 +53,7 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 | Point | Decision |
 |---|---|
 | When suggestions refresh | When a book is saved or removed, when the library changes, and on each new visit. Not while browsing within one visit, so the shelf does not jump while someone is choosing. |
-| Where "Suggested" goes | One small label on the shelf edge under the run of suggestions (one per row the run occupies), never a caption under each book, keeping "nothing written under books". |
+| Where "Suggested" goes | Changed by the owner after the staging review (14 November): a small "Suggested" label below each suggested book. Built today as one label per row under the run; see "Owner review fixes" below. |
 | Screen readers | Each suggestion's name ends with ", suggested". The fade is not the only signal. |
 | Library badge on a suggestion | Only when the catalog store already holds a "found" answer for that library. Never a live catalog check for suggestions. |
 | Already saved or viewed | A book already on the shelf is never suggested, matched by book key, ISBN-13 or the same Open Library work (display only; editions are never merged for identity or library answers). Viewed books may be suggested. |
@@ -164,3 +164,12 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 - Tests: the fill and wrap rule at 3 and 6 per row, one-per-author, never suggesting a saved
   book or another edition of one, offline cold open from the bundled list, badges only from
   stored answers, contrast in the three reading lights, reduced motion.
+
+## Owner review fixes (staging, 14 November)
+
+To do, in the order given. More items to come from the owner's review.
+
+1. **"Suggested" under each book.** Replace the one plank label per row with a small
+   "Suggested" label below each suggested book, on phone and desktop. It stays hidden from
+   screen readers (each name already ends ", suggested") and is not faded.
+
