@@ -9,11 +9,12 @@ import { railColumns } from './useBayColumns';
 // This file renders at a desktop width: every (min-width) query up to 1440 px
 // matches. The cached media lists (useMediaQuery) belong to this file only.
 const WIDTH = 1440;
+const HEIGHT = 900;
 // (Set on window directly: vi.unstubAllGlobals after each test must not remove it.)
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', { configurable: true, writable: true, value: (query: string) => {
-    const min = /min-width:\s*(\d+)px/.exec(query);
-    return { matches: min ? WIDTH >= Number(min[1]) : false, media: query, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, onchange: null, dispatchEvent: () => false };
+    const min = /min-(width|height):\s*(\d+)px/.exec(query);
+    return { matches: min ? (min[1] === 'width' ? WIDTH : HEIGHT) >= Number(min[2]) : false, media: query, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, onchange: null, dispatchEvent: () => false };
   } });
 });
 

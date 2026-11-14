@@ -146,7 +146,7 @@ export function DeskRail({ menu, onMenu, onLibrary, slotOpen, report }: {
   const buttons = useRef<Partial<Record<RailMenuName, HTMLButtonElement | null>>>({});
   const open = (name: RailMenuName) => onMenu(menu === name ? null : name);
   const item = (name: RailMenuName, label: string, icon: ReactNode) => <button type="button" ref={node => { buttons.current[name] = node; }}
-    className="rail-button" aria-label={label} title={label} aria-haspopup="dialog" aria-expanded={menu === name} onClick={() => open(name)}>{icon}</button>;
+    className="rail-button" data-rail={name} aria-label={label} title={label} aria-haspopup="dialog" aria-expanded={menu === name} onClick={() => open(name)}>{icon}</button>;
   return <>
     <nav className="desk-rail" aria-label="Library and account">
       <button type="button" className="rail-button rail-library" aria-label="My library" title="My library" aria-haspopup="dialog" onClick={onLibrary}><LibraryGlyph size={24} strokeWidth={1.8} /></button>
@@ -188,7 +188,13 @@ function RailMenu({ name, anchor, onClose, children }: { name: RailMenuName | nu
     const box = ref.current.getBoundingClientRect();
     if (event.clientX > box.right || event.clientX < box.left || event.clientY < box.top || event.clientY > box.bottom) onClose();
   };
-  return <dialog ref={ref} className="rail-menu" aria-labelledby="rail-menu-title" onClick={backdrop} onKeyDown={event => trapTab(event, ref.current)}
+  // A link here opens its page in the middle slot. The pop-over closes at
+  // once, before that page is drawn: while it is open (modal) everything
+  // else is inert, and closing it later would take focus back from the page.
+  const follow = (event: MouseEvent<HTMLDialogElement>) => {
+    if (event.target instanceof Element && event.target.closest('a[href]') && ref.current?.open) ref.current.close();
+  };
+  return <dialog ref={ref} className="rail-menu" aria-labelledby="rail-menu-title" onClick={backdrop} onClickCapture={follow} onKeyDown={event => trapTab(event, ref.current)}
     onCancel={event => { event.preventDefault(); onClose(); }} onClose={() => { if (name) onClose(); }}>
     {name && <>
       <div className="rail-menu-head">

@@ -3,8 +3,9 @@ import { useMediaQuery } from '../../useMediaQuery';
 
 /**
  * Three layouts (docs/plans/2026-11-14-desktop-and-shelf-suggestions.md, Part 1):
- * - phone, below 640 px: the one-shelf phone layout as released (640 px is
- *   where reader.css already stops drawing pop-ups as bottom sheets);
+ * - phone, below 640 px (or below 480 px tall: a phone on its side): the
+ *   one-shelf phone layout as released (640 px is where reader.css already
+ *   stops drawing pop-ups as bottom sheets);
  * - rail, 640–1099 px: an icon rail on the left, and a book or side page
  *   covers the shelf;
  * - wide, 1100 px and wider: the permanent left column (DeskShelf board), and
@@ -13,11 +14,20 @@ import { useMediaQuery } from '../../useMediaQuery';
 export type LayoutMode = 'phone' | 'rail' | 'wide';
 export const RAIL_MIN_WIDTH = 640;
 export const WIDE_MIN_WIDTH = 1100;
+/**
+ * A window less than this tall is a phone on its side (phones in landscape
+ * are about 320–430 px tall, tablets 600 or more). It keeps the phone layout
+ * as released, so turning a phone does not swap layouts, which would redraw
+ * the shelf at the top and lose an open scan pop-up's typed ISBN or a search
+ * still running.
+ */
+export const DESK_MIN_HEIGHT = 480;
 
 export function useLayoutMode(): LayoutMode {
+  const tall = useMediaQuery(`(min-height: ${DESK_MIN_HEIGHT}px)`);
   const rail = useMediaQuery(`(min-width: ${RAIL_MIN_WIDTH}px)`);
   const wide = useMediaQuery(`(min-width: ${WIDE_MIN_WIDTH}px)`);
-  return wide ? 'wide' : rail ? 'rail' : 'phone';
+  return !tall ? 'phone' : wide ? 'wide' : rail ? 'rail' : 'phone';
 }
 
 /** The account forms run without the shelf (App.tsx "entry mode"). */

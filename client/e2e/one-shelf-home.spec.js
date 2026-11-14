@@ -149,6 +149,32 @@ test.describe('One-shelf home', () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 
+  test('a phone turned on its side keeps the phone layout, the reader’s place and an open scan pop-up', async ({ page }) => {
+    await installBarcodeCamera(page, 'missing', false, { camera: 'none' });
+    await setup(page, { saved: Array.from({ length: 60 }, (_, index) => book(index + 1)) });
+    await page.goto('/app/shelf');
+    await expect(page.locator('.cover3d')).toHaveCount(60);
+    const { width, height } = page.viewportSize();
+    const turn = (portrait) => page.setViewportSize(portrait ? { width, height } : { width: height, height: width });
+    const place = page.locator('.home-bookcase .cover3d').nth(33);
+    await page.locator('#main-content').evaluate((screen, top) => { screen.scrollTop = top; }, 2000);
+    await expect(place).toBeInViewport();
+    await turn(false);
+    await expect(page.getByRole('button', { name: 'Account and settings' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Library and account' })).toHaveCount(0);
+    await expect(place).toBeInViewport();
+    await turn(true);
+    await expect(place).toBeInViewport();
+
+    await page.getByRole('button', { name: 'Scan a barcode' }).click();
+    const field = page.getByRole('dialog', { name: 'Type the ISBN' }).getByRole('textbox', { name: 'ISBN' });
+    await field.fill('978162527');
+    await turn(false);
+    await expect(field).toHaveValue('978162527');
+    await turn(true);
+    await expect(field).toHaveValue('978162527');
+  });
+
   test('a very long title and author stay inside the typeset cover', async ({ page }) => {
     const long = book(1, { title: 'The Chronicle of Supercalifragilisticexpialidocious Adventures Across Seventeen Kingdoms',
       authors: ['Bartholomew Maximilian Featherstonehaugh-Worthington III'] });

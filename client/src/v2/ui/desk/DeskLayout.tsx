@@ -35,6 +35,16 @@ function slotLabel(pathname: string): string {
   return ({ report: 'Report a problem', privacy: 'Privacy', terms: 'Terms', about: 'About', 'settings/account': 'Account settings' } as Record<string, string>)[page] || 'Page';
 }
 
+/**
+ * At rail widths the links to the side pages sit in the rail's pop-overs,
+ * which are gone by the time a page closes: the rail button stands in for
+ * them (Account for the account pages, Help for the others).
+ */
+function railButtonFor(root: HTMLElement | null, pathname: string): HTMLElement | null {
+  const menu = /^\/app\/(account\/|settings\/account$)/.test(pathname) ? 'account' : /^\/app\/(report|privacy|terms|about)$/.test(pathname) ? 'help' : null;
+  return menu ? root?.querySelector<HTMLElement>(`.desk-rail [data-rail="${menu}"]`) || null : null;
+}
+
 function motionAllowed(): boolean {
   return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
 }
@@ -117,7 +127,8 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
   const opener = useRef<HTMLElement | null>(null);
   const noteControl = (event: MouseEvent<HTMLDivElement>) => {
     const control = event.target instanceof Element ? event.target.closest<HTMLElement>('a[href], button') : null;
-    if (control) pressed.current = control;
+    // A link in a rail pop-over goes with the pop-over: its rail button stands in for it.
+    if (control) pressed.current = control.closest('.rail-menu') && root.current?.querySelector<HTMLElement>('.rail-button[aria-expanded="true"]') || control;
   };
   useLayoutEffect(() => {
     const previous = lastPath.current;
@@ -132,7 +143,7 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
     if (!isSlotPath(previous) || previous === pathname) return;
     const href = previous.replace(/["\\]/g, '\\$&');
     const target = opener.current?.isConnected ? opener.current
-      : root.current?.querySelector<HTMLElement>(`.desk-shelf a[href="${href}"], .desk-column a[href="${href}"]`);
+      : root.current?.querySelector<HTMLElement>(`.desk-shelf a[href="${href}"], .desk-column a[href="${href}"]`) || railButtonFor(root.current, previous);
     opener.current = null;
     requestAnimationFrame(() => { if (target?.isConnected) target.focus({ preventScroll: true }); });
   }, [pathname, slotOpen]);
@@ -182,8 +193,10 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
       || root.current?.querySelector<HTMLElement>('.desk-change, .desk-find-library, .rail-library') || null;
   }, []);
 
+  // A rail pop-over closes with any new page, and when the rail gives way to
+  // the column (it does not come back by itself when the window narrows again).
   const [menu, setMenu] = useState<'account' | 'light' | 'help' | null>(null);
-  useEffect(() => { setMenu(null); }, [pathname]);
+  useEffect(() => { setMenu(null); }, [pathname, mode]);
 
   const report: ReportFrom = bookKey ? { reportScreen: 'book', reportBookKey: bookKey } : { reportScreen: behind?.candidateId || (!slotOpen && routeState?.search) ? 'search' : 'shelf' };
   const wide = mode === 'wide';

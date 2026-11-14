@@ -488,6 +488,36 @@ test.describe('Desktop layout', () => {
       await expect(page).toHaveURL(/\/app\/account\/sign-in$/);
       await expect(slot(page).getByRole('heading', { level: 1, name: 'Log in' })).toBeVisible();
     });
+
+    test('a page opened from a rail pop-over takes focus, and gives it back to the rail button', async ({ page }) => {
+      await setup(page);
+      await page.goto('/app/shelf');
+      await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+      const rail = page.getByRole('navigation', { name: 'Library and account' });
+      await rail.getByRole('button', { name: 'Help' }).click();
+      await page.getByRole('dialog', { name: 'Help' }).getByRole('link', { name: 'Privacy' }).press('Enter');
+      await expect(page).toHaveURL(/\/app\/privacy$/);
+      await expect(slot(page).getByRole('button', { name: 'Close' })).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(rail.getByRole('button', { name: 'Help' })).toBeFocused();
+      // An account form is drawn without the shelf (App.tsx entry mode): focus still comes back to Account.
+      await rail.getByRole('button', { name: 'Account' }).click();
+      await page.getByRole('dialog', { name: 'Account' }).getByRole('link', { name: 'Log in' }).press('Enter');
+      await expect(slot(page).getByRole('heading', { level: 1, name: 'Log in' })).toBeVisible();
+      await expect(slot(page).getByRole('button', { name: 'Close' })).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(rail.getByRole('button', { name: 'Account' })).toBeFocused();
+      // A pop-over open while the window widens does not come back by itself when it narrows again.
+      await rail.getByRole('button', { name: 'Help' }).click();
+      await expect(page.getByRole('dialog', { name: 'Help' })).toBeVisible();
+      await page.setViewportSize(WIDE);
+      await expect(column(page)).toBeVisible();
+      await page.setViewportSize({ width: 1024, height: 768 });
+      await expect(rail).toBeVisible();
+      await expect(page.getByRole('dialog', { name: 'Help' })).toBeHidden();
+    });
   });
 
   test('touch targets are 44 px or more at desktop width, the column included', async ({ page }) => {

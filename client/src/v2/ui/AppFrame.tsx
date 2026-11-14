@@ -19,7 +19,7 @@ const PANEL_PAGE = /^\/app\/(report|privacy|terms|about|settings\/account(\/more
 export { useReadingLight };
 
 // The home screen's side panel is the navigation (no tab bar). Other screens
-// get a link back to the shelf. From 640 px wide the shelf, the book and the
+// get a link back to the shelf. From 640 px wide (and 480 px tall) the shelf, the book and the
 // panel's pages are drawn by the desk layout instead (ui/desk): a rail or a
 // left column, the shelf, and a middle slot for the book or page.
 export function AppFrame({ children }: { children: ReactNode }) {
