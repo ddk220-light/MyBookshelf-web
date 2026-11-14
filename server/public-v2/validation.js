@@ -164,18 +164,26 @@ export function parseHoldingsCheck(body) {
 
 // Shelf suggestions (plan 2026-11-14, Part 2). Exactly these fields; anything
 // else is refused. Book keys are used only to choose and leave out
-// suggestions for this answer: they are not stored or logged.
-export const SUGGESTION_LIMITS = Object.freeze({ recentBookKeys: 3, excludeKeys: 200, keyLength: 512 });
+// suggestions for this answer: they are not stored or logged. Only the two
+// kinds of key a suggestion can have are accepted: an ISBN edition
+// (`v1:isbn:…`) and an Open Library work (`v1:openlibrary:OL…W`), never a
+// library's own record (whose key names the library) or another source's.
+export const SUGGESTION_LIMITS = Object.freeze({ recentBookKeys: 3, excludeKeys: 200, shown: 5, keyLength: 512 });
 const SUGGESTION_FIELDS = new Set(['libraryId', 'recentBookKeys', 'excludeKeys']);
-const SUGGESTION_EVENT_FIELDS = new Set(['event', 'bookKey']);
-export const SUGGESTION_EVENTS = Object.freeze(['opened', 'saved']);
+const SUGGESTION_EVENT_FIELDS = new Set(['event', 'bookKey', 'bookKeys']);
+export const SUGGESTION_EVENTS = Object.freeze(['shown', 'opened', 'saved']);
+const OPEN_LIBRARY_WORK = /^OL\d+W$/;
 
 function onlyFields(value, allowed) {
   for (const key of Object.keys(value)) if (!allowed.has(key)) throw new PublicV2ValidationError();
 }
 
-function suggestionBookKey(value) {
-  if (typeof value !== 'string' || value.length > SUGGESTION_LIMITS.keyLength || !parsePublicBookKey(value)) throw new PublicV2ValidationError();
+/** An ISBN key or an Open Library work key; anything else is refused. */
+export function suggestionBookKey(value) {
+  if (typeof value !== 'string' || value.length > SUGGESTION_LIMITS.keyLength) throw new PublicV2ValidationError();
+  const parsed = parsePublicBookKey(value);
+  const usable = parsed?.kind === 'isbn' || (parsed?.kind === 'source' && parsed.source === 'openlibrary' && OPEN_LIBRARY_WORK.test(parsed.sourceRecordId));
+  if (!usable) throw new PublicV2ValidationError();
   return value;
 }
 
@@ -194,9 +202,21 @@ export function parseSuggestions(body) {
   };
 }
 
+/**
+ * `{ event: 'shown', bookKeys }` (the one to five suggestions the app drew
+ * for one refresh, each once) or `{ event: 'opened' | 'saved', bookKey }`;
+ * either way `{ event, bookKeys }`.
+ */
 export function parseSuggestionEvent(body) {
   const value = bodyObject(body);
   onlyFields(value, SUGGESTION_EVENT_FIELDS);
   if (!SUGGESTION_EVENTS.includes(value.event)) throw new PublicV2ValidationError();
-  return { event: value.event, bookKey: suggestionBookKey(value.bookKey) };
+  if (value.event === 'shown') {
+    if (value.bookKey !== undefined || !Array.isArray(value.bookKeys) || !value.bookKeys.length) throw new PublicV2ValidationError();
+    const bookKeys = bookKeyList(value.bookKeys, SUGGESTION_LIMITS.shown);
+    if (bookKeys.length !== value.bookKeys.length) throw new PublicV2ValidationError();
+    return { event: 'shown', bookKeys };
+  }
+  if (value.bookKeys !== undefined) throw new PublicV2ValidationError();
+  return { event: value.event, bookKeys: [suggestionBookKey(value.bookKey)] };
 }

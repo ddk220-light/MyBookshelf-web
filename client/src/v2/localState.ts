@@ -63,13 +63,20 @@ function isRecentBook(value: unknown): value is RecentBook {
   );
 }
 
+// An Open Library work ID (display only, RecentBook.workId). Anything else is
+// dropped without marking the record damaged, so an older or newer bundle's
+// record always reads.
+const workIdOf = (value: unknown) => (typeof value === 'string' && /^OL\d{1,12}W$/.test(value) ? value : undefined);
+
 function normalizeRecentBook(value: RecentBook): RecentBook {
+  const workId = workIdOf(value.workId);
   return {
     bookKey: value.bookKey.trim(),
     title: value.title.trim(),
     authors: value.authors.map((author) => author.trim()).slice(0, 20),
     ...(text(value.isbn13, 13) ? { isbn13: value.isbn13!.trim() } : {}),
     ...(text(value.coverUrl, 2_000) ? { coverUrl: value.coverUrl!.trim() } : {}),
+    ...(workId ? { workId } : {}),
     source: value.source,
     viewedAt: value.viewedAt,
   };
@@ -137,12 +144,14 @@ export function withSelectedLibrary(state: AnonymousWebState, selectedLibraryId:
 }
 
 export function toRecentBook(book: PublicBook, source: RecentSource, viewedAt = new Date().toISOString()): RecentBook {
+  const workId = workIdOf(book.workId);
   return {
     bookKey: book.bookKey,
     title: book.title,
     authors: book.authors,
     ...(book.isbn13 ? { isbn13: book.isbn13 } : {}),
     ...(book.coverUrl ? { coverUrl: book.coverUrl } : {}),
+    ...(workId ? { workId } : {}),
     source,
     viewedAt,
   };

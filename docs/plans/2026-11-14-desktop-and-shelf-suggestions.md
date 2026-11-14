@@ -38,10 +38,13 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
    arrives at the end. Boards S2 (phone) and S4 (desktop) play this.
 5. **Refresh:** suggestions are refreshed. They cannot be dismissed.
 6. **Sources,** in this order, never more than one book by the same author:
-   - books known to be in the chosen library (found answers in our catalog store);
    - popular books related to the books the reader has viewed or saved (Open Library
      subjects, sorted by popularity);
    - the popular Indian seed list.
+
+   Books from these lists that our catalog store already knows the chosen library has
+   (stored "found" answers) come first, with the library badge. The store never adds titles
+   of its own, so one reader's lookups never appear as another reader's suggestions.
 7. **Later:** once the anonymous log has enough data, rank by what readers actually search
    for and open.
 
@@ -68,9 +71,10 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 3. **Readability at 75%.** Fading the whole cover lowers the contrast of its printed title.
    The cover image or plain cover fades; the library badge, the "Suggested" label and the
    accessible name do not. A plain cover (no cover photo) on a suggestion uses a darker shade of
-   its colour, chosen so its printed title still reads at 4.5:1 when faded; at 75% the usual
-   shades drop to about 3–4:1. A unit test checks every plain-cover colour in all three reading
-   lights.
+   its colour, chosen so its printed title still reads at 4.5:1 when faded, even under the full
+   white sheen of the cover's top-left corner; at 75% the usual shades drop to about 3–4:1. A
+   unit test checks every plain-cover colour in all three reading lights, sheen included. The
+   shades this needs are very dark (#1d1c18 to #311310).
 4. **The same book saved twice through a suggestion.** Saving uses the existing "already on
    my shelf" match, so a suggestion of a book already saved under another edition is never
    shown, and saving cannot create a duplicate.
@@ -90,8 +94,10 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
     account. The anonymous log records only how many suggestions were shown, opened and saved,
     per book, which the published privacy text's "anonymous log" already covers. Search text
     rules are unchanged.
-13. **Cost.** One server request per refresh. Related-book lists and the store's "found"
-    lists are cached on the server for 24 hours. No catalog requests are made for suggestions.
+13. **Cost.** One server request per refresh, none when the server has nothing to add (no
+    chosen library and no recent books). Related-book lists are cached on the server for 24
+    hours; the store is read once per request, about the candidates only. No catalog requests
+    are made for suggestions.
 14. **Reduced motion.** Suggestions appear and turn solid without animation.
 15. **Clearing browser data or signing out** returns a guest to the cold open.
 
@@ -100,19 +106,29 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 - `shared/suggestions-seed.json`: the seed list (book key, title, author, cover).
 - Server: `POST /api/v2/suggestions { libraryId?, recentBookKeys[≤3], excludeKeys[≤200] }`
   returns five books with an optional `inLibrary` flag from the store; cached sources; counts
-  only in the anonymous log. As built in step B (14 November 2026, `server/public-v2/suggestions.js`):
+  only in the anonymous log. As built in step B (14 November 2026, `server/public-v2/suggestions.js`,
+  reworked after the independent review the same day):
+  - Book keys in `recentBookKeys`, `excludeKeys` and the counts are ISBN keys (`v1:isbn:…`) and
+    Open Library work keys (`v1:openlibrary:OL…W`) only; anything else, such as a library's own
+    record key (which names the library), is refused.
   - It returns up to 15 candidates, so that five remain after the app's own pick, which stays the
     authority. It applies the same exclusions (book key, ISBN-13, Open Library work) and the
     one-per-author rule. It always answers 200 within about 3 s; `partial: true` marks an answer
-    cut short by a failing or slow store or Open Library, and the app then keeps its last books.
-  - Source 1 reads the chosen library's 60 most recently checked stored "found" answers (works and
-    ISBN-13s; never a "not found", never a catalog record, nothing for an opted-out library). The
-    store keeps no title or cover, so the found edition's details come from one batched Open
-    Library Books API request.
-  - Source 2, "same author, then same subject and place", for the newest recent book. It reads
-    that book's work record (`/works/<id>.json`, or a search by ISBN for an ISBN-only book): title,
-    subjects, places and author keys. It then asks for two lists, both sorted by reader count
-    (`sort=readinglog`):
+    cut short by a failing or slow store or Open Library, and the app then puts that answer's
+    books before its last ones (without repeats) and picks five from them.
+  - Candidates come from public lists only: the related lists below, then the seed list
+    (`shared/suggestions-seed.json`, read by the server too). With a library chosen, the store is
+    asked once which of these candidates (their works and ISBN-13s) it holds an unexpired "found"
+    answer for at that library. Those come first with `inLibrary: true`; the rest keep their
+    order. The store only lifts and badges books already on these lists and never adds a title
+    of its own, so one reader's lookups never appear as another reader's suggestions. Never a
+    "not found" (that is simply no badge), nothing for an opted-out library or one not in the
+    directory. Open Library reads stop 750 ms before the deadline when a library is chosen, so
+    that the store's read still has time.
+  - Related books, "same author, then same subject and place", for the newest recent book. It reads
+    that book's work record (`/works/<id>.json`, or a search by ISBN for an ISBN-only book, whose
+    places come as `place`): title, subjects, places and author keys. It then asks for two lists,
+    both sorted by reader count (`sort=readinglog`):
     - The first author's most-read other works (`author_key=…`). The book itself, any work with
       its title, and all but the first work of each title are skipped; the one-per-author rule
       keeps one.
@@ -122,20 +138,29 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
       fewer than two. A single-subject popularity list is never used: on staging, "Presidents"
       alone gave American politics for *Wings of Fire*.
     - Covers only, titles in Latin letters, and nothing for adults or naming extremism (titles and
-      subjects; the extremism deny-list also applies to library-found books). Nothing is
-      suggested from a recent book that is itself blocked.
-  - At most 4 Open Library requests per suggestion request: the library's edition details, the
-    recent work's record, the author's list and the subject-and-place list. Each is cached in each
-    instance's memory for 24 hours, as are found lists. No catalog request is ever made.
-  - The app also never suggests a book whose title and first author match a saved book (display
-    only, as for another edition of the same work), so a duplicate Open Library work of a saved
-    book does not appear.
-  - Counts: `POST /api/v2/suggestions/events { event: opened|saved, bookKey }` (the book page,
-    marked by router state only) and "shown" rows written by the server for the five the app
-    shows. Catalog migration `002-suggestion-counts.sql` adds the `suggestion` kind to the
-    anonymous log.
+      subjects). Nothing is suggested from a recent book that is itself blocked.
+  - At most 3 Open Library requests per suggestion request: the recent work's record, the author's
+    list and the subject-and-place list; the library's part costs none. Each is cached in each
+    instance's memory for 24 hours. No catalog request is ever made.
+  - The app also never suggests a book whose title, up to any subtitle (":" or a spaced dash),
+    and first author (its name words in any order, so "Kalam, A. P. J. Abdul" is "A. P. J. Abdul
+    Kalam") match a saved book, nor the work of a saved edition whose work the book page knew
+    (`workId`, kept on saved and viewed records in the browser; accounts do not keep it). Both
+    are for display only, as for another edition of the same work.
+  - Counts: `POST /api/v2/suggestions/events` with `{ event: shown, bookKeys[1–5] }` from the
+    app, for the books it draws for each refresh result (once each, only while the shelf is
+    shown, never for an aborted refresh), and `{ event: opened|saved, bookKey }` from the book
+    page, marked by router state only, an open counted once per history entry. Catalog migration
+    `002-suggestion-counts.sql` adds the `suggestion` kind to the anonymous log.
 - Client: a suggestions hook on the home screen, shelf layout that appends the five faded
   covers after saved books, the "Suggested" plank label, list-view rows, refresh triggers.
+  When the server has nothing to add (no chosen library and no recent books) the seed list
+  shows at once and nothing is asked. Otherwise, on the first refresh of a visit, the five
+  slots keep their places empty (saved books show at once; no placeholder text) until the
+  first answer or 1.5 s; after that the seed list stands in, and a later answer replaces it,
+  without motion, only if the reader has not yet focused or pressed a suggestion. Later
+  refreshes replace the books as they answer. Each motion plays once; a focused suggestion that
+  leaves hands focus to the saved book that took its place, else the "My shelf" heading.
 - Tests: the fill and wrap rule at 3 and 6 per row, one-per-author, never suggesting a saved
   book or another edition of one, offline cold open from the bundled list, badges only from
   stored answers, contrast in the three reading lights, reduced motion.

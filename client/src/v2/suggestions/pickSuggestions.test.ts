@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { RecentBook } from '../types';
 import { bayRows, suggestedRun } from '../ui/shelf/shelfLayout';
-import { authorKey, pickSuggestions, SUGGESTION_COUNT, type SuggestedBook } from './pickSuggestions';
+import { findSavedBook } from '../oneShelfState';
+import { toRecentBook } from '../localState';
+import { authorKey, mainTitleKey, nameTokensKey, pickSuggestions, SUGGESTION_COUNT, type SuggestedBook } from './pickSuggestions';
 import { SEED_SUGGESTIONS } from './seed';
 
 const suggestion = (id: number | string, author: string, extra: Partial<SuggestedBook> = {}): SuggestedBook =>
@@ -64,6 +66,47 @@ describe('shelf suggestions: which five', () => {
     expect(keys(pickSuggestions([books], shelf))).toEqual(keys(books.slice(1, 3)));
     // A saved record without a title or author rules nothing out this way.
     expect(keys(pickSuggestions([books], [{ bookKey: 'v1:isbn:9780000000002' }]))).toEqual(keys([books[0], books[1]]));
+  });
+
+  describe('another edition of a saved book (Wings of Fire saved as an ISBN edition)', () => {
+    const seedWings = SEED_SUGGESTIONS.find(book => book.bookKey === 'v1:openlibrary:OL1037811W')!;
+    const edition = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', title: 'Wings of Fire: An Autobiography', authors: ['A. P. J. Abdul Kalam', 'Arun Tiwari'] };
+
+    it('is not suggested when the saved record knows its work (the book page’s workId is kept)', () => {
+      // Saved from a book page that knew the work, but titled without the work's main title, so only the work rules it out.
+      const shelf = [toRecentBook({ ...edition, title: 'Agni Siragugal', workId: 'OL1037811W' }, 'direct')];
+      expect(shelf[0].workId).toBe('OL1037811W');
+      expect(keys(pickSuggestions(withSeed(), shelf))).not.toContain(seedWings.bookKey);
+      // An ISBN-keyed saved book against a work-key suggestion, from any source.
+      expect(keys(pickSuggestions([[suggestion('1037811', 'Somebody', { title: 'Another title' })]], shelf))).toEqual([]);
+      // Display only: saving still matches by book key or ISBN-13 alone.
+      expect(findSavedBook(shelf, seedWings)).toBeUndefined();
+    });
+
+    it('is not suggested from an older record without its work: the title up to its subtitle and the first author’s name words', () => {
+      for (const authors of [edition.authors, ['Kalam, A. P. J. Abdul', 'Arun Tiwari'], ['A.P.J. Abdul Kalam']]) {
+        const shelf = [saved(edition.bookKey, { isbn13: edition.isbn13, title: edition.title, authors })];
+        expect(keys(pickSuggestions(withSeed(), shelf)), authors[0]).not.toContain(seedWings.bookKey);
+        // The next seed book stands in: still five.
+        expect(pickSuggestions(withSeed(), shelf)).toHaveLength(5);
+        // Never for identity: the book page and saving still see two different books.
+        expect(findSavedBook(shelf, seedWings)).toBeUndefined();
+        expect(findSavedBook(shelf, seedWings, { sameWork: true })).toBeUndefined();
+      }
+      expect(mainTitleKey('Wings of Fire: An Autobiography')).toBe('wings of fire');
+      expect(mainTitleKey('Wings of Fire - An Autobiography')).toBe('wings of fire');
+      expect(mainTitleKey('WINGS OF FIRE.')).toBe('wings of fire');
+      expect(mainTitleKey(': only a subtitle')).toBe('only a subtitle');
+      expect(nameTokensKey('Kalam, A. P. J. Abdul')).toBe(nameTokensKey('A. P. J. Abdul Kalam'));
+      expect(nameTokensKey('A. P. J. Abdul Kalam')).not.toBe(nameTokensKey('Arun Tiwari'));
+    });
+
+    it('another first author or another main title is still suggested', () => {
+      const byTiwari = [saved(edition.bookKey, { title: edition.title, authors: ['Arun Tiwari', 'A. P. J. Abdul Kalam'] })];
+      expect(keys(pickSuggestions(withSeed(), byTiwari))).toContain(seedWings.bookKey);
+      const ignited = [saved('v1:isbn:9780670049288', { title: 'Ignited Minds: Unleashing the Power Within India', authors: ['A. P. J. Abdul Kalam'] })];
+      expect(keys(pickSuggestions(withSeed(), ignited))).toContain(seedWings.bookKey);
+    });
   });
 
   it('never the same book twice, even from two sources', () => {

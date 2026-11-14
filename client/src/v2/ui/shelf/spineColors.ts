@@ -26,10 +26,17 @@ export function spinePalette(bookKey: string): SpinePalette {
 // cover is drawn at 75% opacity over the shelf's back panel, which lowers the
 // contrast of the title printed on a plain cover to about 3–4:1. Its plain
 // cover therefore uses a darker shade of its colour, the lightest one that
-// keeps the faded title at 4.5:1 or more on the shelf in every reading light.
+// keeps the faded title at 4.5:1 or more on the shelf in every reading light,
+// even where the cover's sheen is brightest (its top-left corner, where a
+// long title starts).
 
 /** Opacity of a suggested book's cover (home.css, `.cover3d.is-suggested`). */
 export const SUGGESTION_OPACITY = 0.75;
+/**
+ * The white sheen over a plain cover at its brightest (home.css,
+ * `.cover3d-face`: `linear-gradient(115deg, rgb(255 255 255 / .16), transparent 45%)`).
+ */
+export const COVER_SHEEN = 0.16;
 /** `--shelf-back` in each reading light (home.css; a unit test keeps the two in step). */
 export const SHELF_BACKS = { daylight: '#efe5d3', lamplight: '#2b2621', ink: '#e9edf2' } as const;
 export const MIN_TEXT_CONTRAST = 4.5;
@@ -52,15 +59,20 @@ export function composite(color: string, backdrop: string, opacity: number): str
   return toHex(front.map((value, index) => opacity * value + (1 - opacity) * back[index]) as Rgb);
 }
 
-/** Contrast of `ink` printed on `cover` once the whole cover is faded to `opacity` over `shelf`. */
-export function fadedContrast(cover: string, ink: string, shelf: string, opacity = SUGGESTION_OPACITY): number {
-  return contrastRatio(composite(ink, shelf, opacity), composite(cover, shelf, opacity));
+/**
+ * Contrast of `ink` printed on `cover` once the whole cover is faded to
+ * `opacity` over `shelf`, where the cover's white sheen (`sheen`, at its
+ * strongest) lightens it most.
+ */
+export function fadedContrast(cover: string, ink: string, shelf: string, opacity = SUGGESTION_OPACITY, sheen = COVER_SHEEN): number {
+  return contrastRatio(composite(ink, shelf, opacity), composite(composite('#ffffff', cover, sheen), shelf, opacity));
 }
 
 /**
  * The plain-cover colour for a suggested book: `cover` darkened towards black
  * in 2% steps (keeping its hue) until its faded title reads at 4.5:1 or more
- * over every reading light's shelf. A colour that already does is kept.
+ * under the full sheen over every reading light's shelf. A colour that
+ * already does is kept.
  */
 export function suggestionShade(cover: string, ink: string): string {
   const base = rgb(cover);

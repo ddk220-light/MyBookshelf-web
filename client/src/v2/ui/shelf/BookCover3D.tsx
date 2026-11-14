@@ -36,6 +36,7 @@ export function BookCover3D({ entry, libraryName, mine = false, pop = false, ope
   const classes = 'cover3d' + (entry.suggested ? ' is-suggested' : '') + (open ? ' is-open' : '')
     + (motion === 'arriving' && entry.suggested ? ' is-arriving' : motion === 'solid' && !entry.suggested ? ' is-turning-solid' : '');
   return <Link className={classes} to={entry.href} state={entry.state} aria-label={entryLabel(entry, libraryName, mine)}
+    data-shelf-key={entry.key} data-suggested={entry.suggested ? '' : undefined}
     style={{ '--cover-bg': palette.top, '--cover-ink': palette.ink } as CSSProperties}>
     <span className="cover3d-top" aria-hidden="true" />
     <span className="cover3d-side" aria-hidden="true" />

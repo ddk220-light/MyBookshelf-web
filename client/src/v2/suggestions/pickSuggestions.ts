@@ -35,9 +35,25 @@ export function titleKey(title: string | undefined): string {
 /** A saved book as the pick sees it: its identity and, when known, its title and authors. */
 export type SavedForPick = BookIdentity & { title?: string; authors?: readonly string[] };
 
-// Title and first author together, when both are known.
+/** A title without its subtitle (what follows ":" or a spaced dash), compared as `titleKey` does. */
+export function mainTitleKey(title: string | undefined): string {
+  const main = titleKey((title || '').split(/:|\s[-\u2013\u2014]\s/)[0]);
+  return main || titleKey(title);
+}
+
+/**
+ * A name as an order-free set of its words, without case or punctuation:
+ * "Kalam, A. P. J. Abdul" = "A. P. J. Abdul Kalam" = "A.P.J. Abdul Kalam".
+ */
+export function nameTokensKey(name: string | undefined): string {
+  const words = (name || '').normalize('NFKC').toLocaleLowerCase('en').replace(/[^\p{L}\p{N}]+/gu, ' ').trim().split(' ').filter(Boolean);
+  return [...new Set(words)].sort().join(' ');
+}
+
+// The same book for display, when both are known: the title up to any
+// subtitle and the first author's name words.
 const titleAuthor = (book: { title?: string; authors?: readonly string[] }) => {
-  const title = titleKey(book.title), author = authorKey(book.authors?.[0]);
+  const title = mainTitleKey(book.title), author = nameTokensKey(book.authors?.[0]);
   return title && author ? title + '\n' + author : null;
 };
 
@@ -45,11 +61,16 @@ const titleAuthor = (book: { title?: string; authors?: readonly string[] }) => {
  * Up to `count` suggestions from ordered candidate lists (sources); earlier
  * sources win, and within a source its own order is kept. Never a book on the
  * shelf: same book key, same ISBN-13 or, for display only, the same Open
- * Library work or the same title by the same first author (Open Library can
- * hold one book as several works). Never two books whose first author is the
- * same, nor the same book twice. Callers put the bundled seed list last, so
- * five books stand even when every other source is empty or offline. None of
- * this changes what counts as "on my shelf" anywhere else (findSavedBook).
+ * Library work (a saved record's `workId` or work key) or the same title up
+ * to its subtitle by the same first author, whose name words may come in any
+ * order (Open Library can hold one book as several works, and a saved
+ * edition may carry a subtitle: "Wings of Fire: An Autobiography" by
+ * "Kalam, A. P. J. Abdul" rules out "Wings of Fire" by "A. P. J. Abdul
+ * Kalam"). Never two books whose first author is the same, nor the same book
+ * twice. Callers put the bundled seed list last, so five books stand even
+ * when every other source is empty or offline. None of this changes what
+ * counts as "on my shelf" anywhere else (findSavedBook), and editions are
+ * never merged for identity or library answers.
  */
 export function pickSuggestions(sources: ReadonlyArray<readonly SuggestedBook[]>, savedBooks: readonly SavedForPick[], count = SUGGESTION_COUNT): SuggestedBook[] {
   const picked: SuggestedBook[] = [];

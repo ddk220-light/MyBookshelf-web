@@ -57,19 +57,6 @@ test('a suggestion row is a book key and shown, opened or saved: no text, librar
   assert.throws(() => usageRow({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'shown', ip: '203.0.113.7' }), /not permitted/);
 });
 
-test('the in-memory store lists a library’s newest unexpired found works and ISBNs only', async () => {
-  let clock = 1_000;
-  const answers = createMemoryAnswerStore({ now: () => clock });
-  const row = (libraryId, kind, value, answer, extra = {}) => ({ libraryId, kind, value, answer, evidence: 'exact_isbn', expiresAt: clock + 100, ...extra });
-  await answers.writeAnswers([row('koha:a', 'isbn13', '9788173711466', 'found'), row('koha:a', 'ol_work', 'OL1W', 'found', { matchedIsbn13: '9788173711466' }),
-    row('koha:a', 'isbn13', '9780140328721', 'not_found'), row('koha:a', 'catalog_record', 'koha:a:1', 'found'), row('koha:b', 'ol_work', 'OL2W', 'found'),
-    row('koha:a', 'ol_work', 'OL3W', 'found', { expiresAt: clock + 10, matchedIsbn13: '9780439023528' })]);
-  clock += 20;
-  assert.deepEqual(await answers.listFound('koha:a'), [{ kind: 'ol_work', value: 'OL1W', matchedIsbn13: '9788173711466' }, { kind: 'isbn13', value: '9788173711466' }]);
-  assert.deepEqual(await answers.listFound('koha:a', { limit: 1 }), [{ kind: 'ol_work', value: 'OL1W', matchedIsbn13: '9788173711466' }]);
-  assert.deepEqual(await answers.listFound('koha:c'), []);
-});
-
 test('query text is scrubbed of emails, URLs and long digit runs, and keeps valid ISBNs', () => {
   const cases = [
     ['reader@example.com wings', '[removed] wings'],

@@ -13,14 +13,15 @@ import type { SuggestionMotion } from './useSuggestionMotion';
  * `inLibrary` to decide which rows the library has (a card can stand for
  * several records of one work) and `pop` for badges that pop in on arrival.
  * Shelf suggestions come last, their covers faded (badge excepted) and
- * "Suggested" where a year would be.
+ * "Suggested" where a year would be; a held slot (`entry.held`) is an empty
+ * row.
  */
 export function ShelfList({ entries, libraryName, mine, inLibrary, pop = false, motion }: { entries: ShelfEntry[]; libraryName: string | null; mine?: (entry: ShelfEntry) => boolean;
   inLibrary?: (entry: ShelfEntry) => boolean; pop?: boolean; motion?: ReadonlyMap<string, SuggestionMotion> }) {
   const holdings = useHoldingsStore();
   useSyncExternalStore(holdings.subscribe, holdings.version, holdings.version);
   return <ul className="shelf-list">
-    {entries.map(entry => <li key={entry.key}>
+    {entries.map(entry => entry.held ? <li key={entry.key} className="shelf-list-held" aria-hidden="true" /> : <li key={entry.key}>
       <ShelfListItem entry={entry} mine={mine?.(entry) || false} pop={pop} motion={motion?.get(entry.key)}
         libraryName={libraryName && entry.kind === 'book' && (inLibrary ? inLibrary(entry) : shelfBadge(entry, holdings)) ? libraryName : null} />
     </li>)}
@@ -33,7 +34,8 @@ function ShelfListItem({ entry, libraryName, mine, pop, motion }: { entry: Shelf
   const author = [entry.authors.filter(Boolean).join(', '), entry.suggested ? 'Suggested' : entry.year].filter(Boolean).join(' · ');
   const cover = 'shelf-list-cover' + (entry.suggested ? ' is-suggested' : '')
     + (motion === 'arriving' && entry.suggested ? ' is-arriving' : motion === 'solid' && !entry.suggested ? ' is-turning-solid' : '');
-  return <Link className="shelf-list-item" to={entry.href} state={entry.state} aria-label={entryLabel(entry, libraryName, mine)}>
+  return <Link className="shelf-list-item" to={entry.href} state={entry.state} aria-label={entryLabel(entry, libraryName, mine)}
+    data-shelf-key={entry.key} data-suggested={entry.suggested ? '' : undefined}>
     <span className={cover} aria-hidden="true" style={{ '--cover-bg': (entry.suggested ? suggestionPalette : spinePalette)(entry.key).top } as CSSProperties}>
       {url && <img src={url} alt="" width={36} height={54} loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={fail} onLoad={onLoad} data-ready={ready || undefined} />}
       {mine && <span className="cover-badge cover-badge-mine cover-badge-small"><BookmarkGlyph size={11} /></span>}

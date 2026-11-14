@@ -131,7 +131,8 @@ describe('search on the shelf', () => {
     // One history entry for the whole search: Back returns to the shelf.
     navigateRef!(-1);
     expect(await screen.findByRole('heading', { name: 'Ready to search' })).toBeInTheDocument();
-    expect(screen.getByRole('searchbox', { name: 'Search for a book' })).toHaveValue('');
+    // The bar is emptied by an effect just after the shelf is drawn again (slow runners can look in between).
+    await waitFor(() => expect(screen.getByRole('searchbox', { name: 'Search for a book' })).toHaveValue(''));
   });
 
   it('offline: Couldn’t search without a request', async () => {

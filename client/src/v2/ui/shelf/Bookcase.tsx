@@ -44,7 +44,8 @@ function SuggestedTag({ from, span }: { from: number; span: number }) {
  * them. Their library badge, as for saved books, comes only from answers
  * already held: the holdings store's, or the server's stored "found" for the
  * chosen library (`shelfBadge`); nothing here asks a library. `motion` fades
- * in a new suggestion and turns a just-saved one solid.
+ * in a new suggestion and turns a just-saved one solid. A held slot
+ * (`entry.held`) stands empty.
  */
 export function Bookcase({ entries, libraryName, perBay = BOOKS_PER_BAY, openKey = null, motion }: { entries: ShelfEntry[]; libraryName: string | null; perBay?: number; openKey?: string | null;
   motion?: ReadonlyMap<string, SuggestionMotion> }) {
@@ -65,9 +66,10 @@ export function Bookcase({ entries, libraryName, perBay = BOOKS_PER_BAY, openKey
   }, [more, rows.length]);
   return <div className="home-bookcase">
     {rows.slice(0, shown).map((row, index) => {
-      const run = suggestedRun(row, entry => Boolean(entry.suggested));
+      // A held slot (`entry.held`) keeps its place, empty and without a tag.
+      const run = suggestedRun(row, entry => Boolean(entry.suggested && !entry.held));
       return <Bay key={index} plank={run && <SuggestedTag from={run.from} span={run.span} />}>
-        <ul className="bay-books">{row.map(entry => <li key={entry.key}>
+        <ul className="bay-books">{row.map(entry => entry.held ? <li key={entry.key} aria-hidden="true" /> : <li key={entry.key}>
           <BookCover3D entry={entry} open={entry.key === openKey} motion={motion?.get(entry.key)}
             libraryName={libraryName && shelfBadge(entry, holdings) ? libraryName : null} />
         </li>)}</ul>

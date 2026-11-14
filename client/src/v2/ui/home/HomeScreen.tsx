@@ -15,12 +15,14 @@ import { isMarked, useLibraryMarks } from '../search/useLibraryMarks';
 import { ScanDialog, type ScanAnswer, type ScanSource } from '../scan/ScanDialog';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { libraryLinkMessage, type LibraryLinkNotice } from '../library/SelectLibraryLink';
-import { SUGGESTION_SOURCES, useShelfSuggestions } from '../../suggestions/useShelfSuggestions';
+import { SUGGESTION_COUNT } from '../../suggestions/pickSuggestions';
+import { noteSuggestionInteraction, SUGGESTION_SOURCES, useReportShown, useShelfSuggestions } from '../../suggestions/useShelfSuggestions';
 import { AccountInvite } from '../shelf/AccountInvite';
 import { Bookcase } from '../shelf/Bookcase';
 import { EmptyShelf } from '../shelf/EmptyShelf';
 import { ShelfList } from '../shelf/ShelfList';
 import { SpineRow } from '../shelf/SpineRow';
+import { useShelfFocusKeeper } from '../shelf/useShelfFocusKeeper';
 import { useSuggestionMotion } from '../shelf/useSuggestionMotion';
 import { ViewSwitch, type ShelfView } from '../shelf/ViewSwitch';
 import type { LayoutMode } from '../desk/layoutMode';
@@ -28,7 +30,7 @@ import { useBayColumns } from '../desk/useBayColumns';
 import { BackGlyph } from './homeIcons';
 import { SHELF_SEARCH_ID } from './SearchBar';
 import { ShelfStage } from './ShelfStage';
-import { shelfEntries, suggestionEntry } from './shelfItems';
+import { heldSuggestionSlots, shelfEntries, suggestionEntry } from './shelfItems';
 import { TopBar } from './TopBar';
 import { useShelfHoldings } from './useShelfHoldings';
 import './home.css';
@@ -78,10 +80,15 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
   // comes from an answer already held (the holdings store, or the server's
   // stored "found" for this library), never from a new check.
   useShelfHoldings(state.selectedLibraryId, state.savedBooks);
+  // While the first suggestions of a visit are on their way their slots stay
+  // empty (`held`), so the books never change under a tap.
   const suggestions = useShelfSuggestions(state.savedBooks, state.selectedLibraryId, SUGGESTION_SOURCES, state.recentBooks);
-  const suggested = useMemo(() => suggestions.map(suggestionEntry), [suggestions]);
+  const suggested = useMemo(() => (suggestions.held ? heldSuggestionSlots(SUGGESTION_COUNT) : suggestions.books.map(suggestionEntry)), [suggestions.held, suggestions.books]);
   const withSuggestions = useMemo(() => [...entries, ...suggested], [entries, suggested]);
-  const motion = useSuggestionMotion(suggested.map(entry => entry.key), state.savedBooks.map(book => book.bookKey));
+  const motion = useSuggestionMotion(suggestions.held ? null : suggested.map(entry => entry.key), state.savedBooks.map(book => book.bookKey),
+    { result: suggestions.result, quiet: suggestions.quiet });
+  // Focusing or pressing a suggestion means the reader is choosing from it.
+  const noteInteraction = (event: { target: EventTarget }) => { if (event.target instanceof Element && event.target.closest('[data-suggested]')) noteSuggestionInteraction(); };
   const cachedLibrary = readReaderPreferences().selectedLibrary;
   const libraryName = library?.name || (loadingLibrary && cachedLibrary?.id === state.selectedLibraryId ? cachedLibrary.name : null);
   const badgeLibrary = library?.id === state.selectedLibraryId ? library.name : null;
@@ -294,6 +301,9 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
 
   const empty = entries.length === 0;
   const count = entries.length;
+  // Counted once per refresh result, while the shelf (not search results) is shown.
+  useReportShown(suggestions, !showResults);
+  useShelfFocusKeeper(home, [showResults, view, perBay, ...withSuggestions.map(entry => entry.key)].join('\n'));
   const resultsStatus = search.status === 'searching' ? 'searching' : search.status === 'failed' ? 'failed' : 'results';
   // The chosen library's background check for these results (plan Phase 8).
   // Only for a library whose catalog the app can read; none chosen, nothing.
@@ -326,7 +336,8 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
     onRetry={() => { void submit(search.query || query); }} onScan={scan} libraryName={badgeLibrary} checking={marks.checking} reserveLine={checkable}
     back={wide ? backToShelf : undefined} perBay={perBay} openKey={openKey} />;
 
-  return <div ref={home} className={'home' + (desk ? ' home-desk home-' + layout : '')} style={desk ? { '--bay-cols': perBay } as CSSProperties : undefined}>
+  return <div ref={home} className={'home' + (desk ? ' home-desk home-' + layout : '')} style={desk ? { '--bay-cols': perBay } as CSSProperties : undefined}
+    onPointerDownCapture={noteInteraction} onFocusCapture={noteInteraction}>
     {linkNotice && <p className="home-notice" role="status">{libraryLinkMessage(linkNotice)}</p>}
     <TopBar ref={personButton} layout={layout} panelOpen={panelOpen} onOpenPanel={openPanel} libraryName={libraryName} intro={empty && !showResults ? <EmptyShelf /> : undefined}
       search={{ value: query, onChange: changeQuery, onSubmit: text => { void submit(text); }, onClear: clearQuery, onScan: scan, active: showResults }}

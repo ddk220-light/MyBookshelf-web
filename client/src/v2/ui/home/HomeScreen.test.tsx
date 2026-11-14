@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { AnonymousWebApp } from '../../App';
 import { ANONYMOUS_WEB_STORAGE_KEY } from '../../localState';
 import { ONE_SHELF_STORAGE_KEY } from '../../oneShelfState';
 import { READER_PREFERENCES_KEY } from '../../readerState';
 import { SEED_SUGGESTIONS } from '../../suggestions/seed';
-import { forgetSuggestionVisit } from '../../suggestions/useShelfSuggestions';
+import { forgetSuggestionVisit, SUGGESTION_HOLD_MS } from '../../suggestions/useShelfSuggestions';
 import { shouldInviteAccount } from '../shelf/AccountInvite';
 import { forgetSuggestionMotion } from '../shelf/useSuggestionMotion';
 
@@ -278,12 +278,16 @@ describe('one-shelf home', () => {
     expect(calls.some(call => /\/holdings\/(check|search)$/.test(call.path))).toBe(false);
     expect(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)).not.toContain('OL900W');
     expect(sessionStorage.length).toBe(0);
+    // The five drawn are counted as shown, once, by the app.
+    const events = (kind?: string) => calls.filter(call => call.path.endsWith('/suggestions/events')).map(call => call.body).filter(body => !kind || body.event === kind);
+    const drawn = [inLibrary.bookKey, related.bookKey, ...SEED_SUGGESTIONS.slice(0, 3).map(item => item.bookKey)];
+    await waitFor(() => expect(events('shown')).toEqual([{ event: 'shown', bookKeys: drawn }]));
 
     fireEvent.click(badged);
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(inLibrary.bookKey)));
     fireEvent.click(await screen.findByRole('button', { name: 'Add to my shelf' }));
     expect(await screen.findByRole('button', { name: 'On my shelf' })).toBeInTheDocument();
-    await waitFor(() => expect(calls.filter(call => call.path.endsWith('/suggestions/events')).map(call => call.body))
+    await waitFor(() => expect(events().filter(body => body.event !== 'shown'))
       .toEqual([{ event: 'opened', bookKey: inLibrary.bookKey }, { event: 'saved', bookKey: inLibrary.bookKey }]));
     // Remembered as a direct open, as before.
     expect(JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!).recentBooks[0]).toMatchObject({ bookKey: inLibrary.bookKey, source: 'direct' });
@@ -295,12 +299,69 @@ describe('one-shelf home', () => {
     await waitFor(() => expect(calls.filter(call => call.path === '/api/v2/suggestions')).toHaveLength(2));
     expect(calls.filter(call => call.path === '/api/v2/suggestions')[1].body.excludeKeys).toEqual([inLibrary.bookKey, book(1).bookKey]);
     expect(screen.getByRole('link', { name: 'Related Book by Related Author, suggested' })).toBeInTheDocument();
+    // The refresh after saving: its five counted once more.
+    await waitFor(() => expect(events('shown')).toHaveLength(2));
+    expect(events('shown')[1]).toEqual({ event: 'shown', bookKeys: [related.bookKey, ...SEED_SUGGESTIONS.slice(0, 4).map(item => item.bookKey)] });
     // An ordinary book opened from the shelf is not counted.
     fireEvent.click(document.querySelector<HTMLElement>('.bay-books a[aria-label^="Book 1 by Author 1"]')!);
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(book(1).bookKey)));
     await screen.findByRole('link', { name: 'Back' });
-    expect(calls.filter(call => call.path.endsWith('/suggestions/events'))).toHaveLength(2);
+    expect(events().filter(body => body.event !== 'shown')).toHaveLength(2);
+    // Back again: the same results drawn again are not counted again.
+    fireEvent.click(screen.getByRole('link', { name: 'Back' }));
+    await screen.findByRole('heading', { name: 'My shelf' });
+    expect(events('shown')).toHaveLength(2);
     view.unmount();
+  });
+
+  it('with a library chosen, the suggestion slots stay empty until the first answer, and nothing below moves', async () => {
+    let answer!: (books: unknown[]) => void;
+    const calls = stubApi();
+    const fetchStub = globalThis.fetch as unknown as ReturnType<typeof vi.fn>;
+    const fallback = fetchStub.getMockImplementation() as unknown as (path: string, init?: RequestInit) => Promise<Response>;
+    fetchStub.mockImplementation((path: string, init?: RequestInit) => path === '/api/v2/suggestions'
+      ? new Promise<Response>(resolve => { calls.push({ path, body: JSON.parse(String(init!.body)) }); answer = books => resolve(json({ books })); })
+      : fallback(path, init));
+    seed({ saved: [book(1)], libraryId: LIBRARY.id });
+    renderHome();
+    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    await waitFor(() => expect(calls.some(call => call.path === '/api/v2/suggestions')).toBe(true));
+    // The saved book at once; the five slots keep their places, empty: no cover, no tag, no text.
+    expect(screen.getByRole('link', { name: /^Book 1 by Author 1/ })).toBeInTheDocument();
+    expect(screen.queryAllByRole('link', { name: /, suggested$/ })).toHaveLength(0);
+    expect(document.querySelectorAll('.bay-books')).toHaveLength(2);
+    const held = [...document.querySelectorAll('.bay-books > li')].slice(1);
+    expect(held).toHaveLength(5);
+    for (const slot of held) { expect(slot).toBeEmptyDOMElement(); expect(slot).toHaveAttribute('aria-hidden', 'true'); }
+    expect(document.querySelectorAll('.bay-tag')).toHaveLength(0);
+    expect(calls.filter(call => call.path.endsWith('/suggestions/events'))).toHaveLength(0);
+    act(() => answer([{ bookKey: 'v1:openlibrary:OL901W', title: 'Related Book', authors: ['Related Author'] }]));
+    await waitFor(() => expect(suggestedLinks()).toHaveLength(5));
+    expect(suggestedLinks()[0]).toHaveAccessibleName('Related Book by Related Author, suggested');
+    // The first suggestions of a visit appear without motion.
+    expect(document.querySelectorAll('.is-arriving, .is-turning-solid')).toHaveLength(0);
+  });
+
+  it(`an answer later than ${SUGGESTION_HOLD_MS} ms: the seed list stands in, and stays once the reader has pressed one of its books`, async () => {
+    let answer!: (books: unknown[]) => void;
+    stubApi();
+    const fetchStub = globalThis.fetch as unknown as ReturnType<typeof vi.fn>;
+    const fallback = fetchStub.getMockImplementation() as unknown as (path: string, init?: RequestInit) => Promise<Response>;
+    fetchStub.mockImplementation((path: string, init?: RequestInit) => path === '/api/v2/suggestions'
+      ? new Promise<Response>(resolve => { answer = books => resolve(json({ books })); }) : fallback(path, init));
+    seed({ libraryId: LIBRARY.id });
+    renderHome();
+    expect(await screen.findByRole('heading', { name: 'Ready to search' })).toBeInTheDocument();
+    expect(screen.queryAllByRole('link', { name: /, suggested$/ })).toHaveLength(0);
+    await waitFor(() => expect(suggestedLinks()).toHaveLength(5), { timeout: SUGGESTION_HOLD_MS + 1000 });
+    expect(suggestedLinks().map(link => link.getAttribute('aria-label'))).toEqual(SUGGESTED);
+    // The reader presses a suggestion (and focus lands on it); the late answer then arrives.
+    const pressed = suggestedLinks()[2];
+    fireEvent.pointerDown(pressed);
+    pressed.focus();
+    await act(async () => { answer([{ bookKey: 'v1:openlibrary:OL901W', title: 'Related Book', authors: ['Related Author'] }]); await new Promise(resolve => setTimeout(resolve, 20)); });
+    expect(suggestedLinks().map(link => link.getAttribute('aria-label'))).toEqual(SUGGESTED);
+    expect(pressed).toHaveFocus();
   });
 
   it('/app/settings opens the shelf with the side panel', async () => {

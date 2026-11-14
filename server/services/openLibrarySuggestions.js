@@ -1,5 +1,4 @@
 import { enqueueTask, getJson } from './providers/http.js';
-import { validateAndNormalize } from './isbn.js';
 
 // Open Library reads for shelf suggestions (docs/plans/2026-11-14-desktop-and-
 // shelf-suggestions.md, Part 2). Each call is one paced GET, never retried,
@@ -7,9 +6,8 @@ import { validateAndNormalize } from './isbn.js';
 // request's outbound cap and cache the answers for 24 hours; nothing here
 // caches, and nothing here ever reaches a library catalog.
 //
-//   editionsByIsbn(isbns)   /api/books?bibkeys=ISBN:…   one request for many editions
 //   workRecord(workId)      /works/<id>.json              title, subjects, places, authors
-//   isbnRecord(isbn)        /search.json?isbn=…           the same for the edition's work
+//   isbnRecord(isbn)        /search.json?isbn=…           the same for the edition's work (places as `place`)
 //   authorWorks(authorKey)  /search.json?author_key=…&sort=readinglog   the author's most-read works
 //   relatedWorks(query)     /search.json?q=subject:"…" place:"…"&sort=readinglog
 //                           (or two specific subjects; never a single subject)
@@ -61,32 +59,6 @@ export function readOpenLibrary(path, { timeoutMs = OPEN_LIBRARY_TIMEOUT_MS } = 
     if (!response.ok || response.unreadable) throw unavailable();
     return response.json;
   }, { deadlineAt });
-}
-
-// A cover from the Books API (an edition's own cover), on the covers host only.
-function bookCover(cover) {
-  for (const value of [cover?.medium, cover?.large, cover?.small]) {
-    if (typeof value !== 'string') continue;
-    try {
-      const url = new URL(value.replace(/^http:\/\//, 'https://'));
-      if (url.protocol === 'https:' && url.hostname === 'covers.openlibrary.org') return url.toString();
-    } catch { /* Not a cover link. */ }
-  }
-  return null;
-}
-
-/** Books API answer: ISBN-13 -> { title, authors, coverUrl? } or null (no record), for every ISBN asked. */
-export function parseEditions(data, isbns) {
-  const result = new Map();
-  for (const isbn of isbns) {
-    const record = data?.[`ISBN:${isbn}`];
-    const title = text(record?.title);
-    const authors = names(record?.authors);
-    const coverUrl = bookCover(record?.cover);
-    const blocked = title && blockedBook(title, names(record?.subjects));
-    result.set(isbn, title && !blocked ? { title, authors, ...(coverUrl ? { coverUrl } : {}) } : null);
-  }
-  return result;
 }
 
 /** A title compared without case, punctuation or extra spaces. */
@@ -177,21 +149,16 @@ export function parseSubjectWorks(data) {
 
 export function createOpenLibrarySuggestionReads({ read = readOpenLibrary } = {}) {
   return Object.freeze({
-    async editionsByIsbn(isbns) {
-      const asked = [...new Set(isbns.map(value => validateAndNormalize(value)).filter(Boolean))].slice(0, 50);
-      if (!asked.length) return new Map();
-      const params = new URLSearchParams({ bibkeys: asked.map(isbn => `ISBN:${isbn}`).join(','), jscmd: 'data', format: 'json' });
-      return parseEditions(await read(`/api/books?${params}`), asked);
-    },
     async workRecord(workId) {
       if (!WORK_ID.test(workId || '')) return null;
       const work = await read(`/works/${workId}.json`);
       return parseWorkRecord(work || {}, workId);
     },
     async isbnRecord(isbn) {
-      // `place` is the search index's name for a work's subject places; `subject_place` is asked for too.
+      // The search index names a work's subject places `place`; `subject_place` is read only when `place` is missing.
       const params = new URLSearchParams({ isbn, fields: 'key,title,subject,place,subject_place,author_key', limit: '1' });
-      return parseWorkRecord((await read(`/search.json?${params}`))?.docs?.[0] || {});
+      const doc = (await read(`/search.json?${params}`))?.docs?.[0] || {};
+      return parseWorkRecord({ key: doc.key, title: doc.title, subject: doc.subject, place: doc.place ?? doc.subject_place, author_key: doc.author_key });
     },
     async authorWorks(authorKey) {
       if (!AUTHOR_KEY.test(authorKey || '')) return [];

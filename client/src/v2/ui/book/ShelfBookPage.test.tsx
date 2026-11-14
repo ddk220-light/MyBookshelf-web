@@ -278,6 +278,32 @@ function Navigator() {
 }
 
 describe('book page helpers', () => {
+  it('a suggestion opened is counted once per history entry (the page drawn again, Back and Forward), in memory only', async () => {
+    const calls = stubApi();
+    const suggested = { pathname: '/app/books/' + encodeURIComponent(BOOK.bookKey), state: { from: 'shelf', source: 'direct', book: BOOK, suggested: true } };
+    const opened = () => calls.filter(call => call.path.endsWith('/suggestions/events')).map(call => call.body);
+    const view = render(<MemoryRouter initialEntries={[{ ...suggested, key: 'entry-a' }]}><AnonymousWebApp /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { level: 1, name: 'Wings of Fire' })).toBeInTheDocument();
+    await waitFor(() => expect(opened()).toEqual([{ event: 'opened', bookKey: BOOK.bookKey }]));
+    view.unmount();
+    // The same entry drawn again: not counted again.
+    render(<MemoryRouter initialEntries={[{ ...suggested, key: 'entry-a' }]}><AnonymousWebApp /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { level: 1, name: 'Wings of Fire' })).toBeInTheDocument();
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 20)); });
+    expect(opened()).toHaveLength(1);
+    cleanup();
+    // Another open of it (a new entry) counts; an ordinary open does not.
+    render(<MemoryRouter initialEntries={[{ ...suggested, key: 'entry-b' }]}><AnonymousWebApp /></MemoryRouter>);
+    await waitFor(() => expect(opened()).toHaveLength(2));
+    cleanup();
+    render(<MemoryRouter initialEntries={[{ ...suggested, state: { ...suggested.state, suggested: undefined }, key: 'entry-c' }]}><AnonymousWebApp /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { level: 1, name: 'Wings of Fire' })).toBeInTheDocument();
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 20)); });
+    expect(opened()).toHaveLength(2);
+    expect(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)).not.toContain('entry-');
+    expect(sessionStorage.length).toBe(0);
+  });
+
   it('first published is the year only', () => {
     expect(firstPublishedYear('1999')).toBe('1999');
     expect(firstPublishedYear('2016-10-04')).toBe('2016');

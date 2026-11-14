@@ -101,7 +101,13 @@ export type Availability = {
 
 export type RecentSource = 'camera' | 'isbn' | 'search' | 'direct';
 
-export type RecentBook = Pick<PublicBook, 'bookKey' | 'title' | 'authors' | 'isbn13' | 'coverUrl'> & {
+/**
+ * A saved or recently viewed book. `workId` (the Open Library work, when the
+ * book page knew it) is for display only: shelf suggestions use it to leave
+ * out other editions of a saved book. It never decides identity, saving or a
+ * library answer, older records lack it, and accounts do not keep it.
+ */
+export type RecentBook = Pick<PublicBook, 'bookKey' | 'title' | 'authors' | 'isbn13' | 'coverUrl' | 'workId'> & {
   source: RecentSource;
   viewedAt: string;
 };

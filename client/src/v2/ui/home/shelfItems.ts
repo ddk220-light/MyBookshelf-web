@@ -27,6 +27,8 @@ export type ShelfEntry = {
   suggested?: true;
   /** A suggestion the stored answers of this library list as found (server source). */
   foundIn?: string;
+  /** A suggestion slot held empty while the first suggestions of a visit are on their way: nothing is drawn in it. */
+  held?: true;
 };
 
 const time = (value: string) => { const parsed = Date.parse(value); return Number.isFinite(parsed) ? parsed : 0; };
@@ -51,6 +53,16 @@ export function suggestionEntry(suggestion: SuggestedBook): ShelfEntry {
   return { key: book.bookKey, kind: 'book', title: book.title, authors: book.authors, coverUrl: book.coverUrl, isbn13: book.isbn13,
     href: '/app/books/' + encodeURIComponent(book.bookKey), state, addedAt: 0, suggested: true,
     ...(suggestion.foundIn ? { foundIn: suggestion.foundIn } : {}) };
+}
+
+/**
+ * The five suggestion slots while the first suggestions of a visit are on
+ * their way (useShelfSuggestions `held`): they keep their places on the
+ * shelf, so nothing below moves, but nothing is drawn in them.
+ */
+export function heldSuggestionSlots(count: number): ShelfEntry[] {
+  return Array.from({ length: count }, (_, index) => ({ key: 'held:' + index, kind: 'book' as const, title: '', authors: [], href: '', state: null, addedAt: 0,
+    suggested: true as const, held: true as const }));
 }
 
 /**

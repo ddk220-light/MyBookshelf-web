@@ -93,20 +93,14 @@ test('stored answers: TTL filter, upsert strength, opt-out and no repeat catalog
   // The runtime role cannot delete answers or read the log.
   await assert.rejects(runtime.query('DELETE FROM holdings_answers'), { code: '42501' });
 
-  // Shelf suggestions: the runtime role lists a library's newest unexpired
-  // found works and ISBNs; never a "not found" or a library's own record.
+  // Shelf suggestions ask about their own candidates only: a library's other
+  // "found" answers, and other libraries' answers, are never read back.
   await admin.query(`TRUNCATE holdings_answers`);
-  await answers.writeAnswers([row('9780140328721', 'not_found', 'isbn_not_listed'),
-    { libraryId: 'koha:a', kind: 'catalog_record', value: 'koha:a:7', answer: 'found', evidence: 'catalog_record' }]);
-  await answers.writeAnswers([row('9788173711466', 'found', 'work_isbn'), { libraryId: 'koha:a', kind: 'ol_work', value: 'OL1W', answer: 'found', evidence: 'work_isbn', matchedIsbn13: '9788173711466' }]);
-  await admin.query(`UPDATE holdings_answers SET checked_at = now() - interval '1 day' WHERE identity_value IN ('9788173711466', 'OL1W')`);
-  await answers.writeAnswers([row('9780439023528', 'found', 'exact_isbn'), { libraryId: 'koha:b', kind: 'ol_work', value: 'OL9W', answer: 'found', evidence: 'work_isbn', matchedIsbn13: '9780439023528' }]);
-  await answers.writeAnswers([row('9780545010221', 'found', 'exact_isbn')]);
-  await admin.query(`UPDATE holdings_answers SET expires_at = now() - interval '1 second' WHERE identity_value = '9780545010221'`);
-  assert.deepEqual(await answers.listFound('koha:a'), [{ kind: 'isbn13', value: '9780439023528' },
-    { kind: 'ol_work', value: 'OL1W', matchedIsbn13: '9788173711466' }, { kind: 'isbn13', value: '9788173711466' }]);
-  assert.deepEqual(await answers.listFound('koha:a', { limit: 1 }), [{ kind: 'isbn13', value: '9780439023528' }]);
-  assert.deepEqual(await answers.listFound('koha:none'), []);
+  await answers.writeAnswers([{ libraryId: 'koha:a', kind: 'ol_work', value: 'OL1W', answer: 'found', evidence: 'work_isbn', matchedIsbn13: '9788173711466' },
+    { libraryId: 'koha:a', kind: 'ol_work', value: 'OL9W', answer: 'found', evidence: 'work_isbn', matchedIsbn13: '9780439023528' }, row('9780439023528', 'found', 'exact_isbn'),
+    { libraryId: 'koha:b', kind: 'ol_work', value: 'OL2W', answer: 'found', evidence: 'work_isbn', matchedIsbn13: '9780545010221' }]);
+  assert.deepEqual((await answers.readAnswers('koha:a', [id('ol_work', 'OL1W'), id('ol_work', 'OL2W'), id('isbn13', '9788173711466')])).map(r => [r.libraryId, r.kind, r.value, r.answer]),
+    [['koha:a', 'ol_work', 'OL1W', 'found']]);
 });
 
 test('health record: failure events, the flag rule (3 attempts, 2 UTC days, 7 days) and a success clears it', { skip, timeout: 60_000 }, async t => {

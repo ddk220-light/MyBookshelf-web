@@ -205,9 +205,10 @@ export const publicApi = Object.freeze({
     return { books: Array.isArray(data.books) ? data.books : [], partial: data.partial === true };
   },
 
-  // A suggested book opened or saved: counted in the anonymous log, nothing else.
-  async suggestionEvent(event: 'opened' | 'saved', bookKey: string): Promise<void> {
-    await post('/suggestions/events', { event, bookKey });
+  // Suggestions shown for one refresh (up to five), or one opened or saved:
+  // counted in the anonymous log, nothing else.
+  async suggestionEvent(body: SuggestionEvent): Promise<void> {
+    await post('/suggestions/events', body);
   },
 
   // One-tap "Request to add" from the library pop-up: the typed text only.
@@ -230,6 +231,8 @@ export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'u
 
 /** POST /suggestions: at most 3 recent and 200 saved book keys (server validation.js parseSuggestions). */
 export type SuggestionRequest = { libraryId?: string; recentBookKeys: string[]; excludeKeys: string[] };
+/** POST /suggestions/events (server validation.js parseSuggestionEvent): work and ISBN keys only. */
+export type SuggestionEvent = { event: 'shown'; bookKeys: string[] } | { event: 'opened' | 'saved'; bookKey: string };
 
 export function webLink(value: unknown): string | undefined {
   if (typeof value !== 'string' || value.length > 2000) return undefined;

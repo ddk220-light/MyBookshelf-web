@@ -1,6 +1,6 @@
 import { ANSWER_TTL_MS } from '../services/catalog-lookup/record.js';
 
-// Database-backed answer store (plan 4.3): the same calls as the lookup
+// Database-backed answer store (plan 4.3): the same two calls as the lookup
 // layer's in-memory store. Rows come from `answerRows` and `identitiesFor`
 // (catalog-lookup/record.js), which never use a title or author.
 
@@ -33,14 +33,6 @@ const WRITE = `WITH input AS (
   ON CONFLICT (library_id) DO UPDATE SET answers_stored = library_profiles.answers_stored + EXCLUDED.answers_stored,
     last_answer_at = EXCLUDED.last_answer_at`;
 
-// Shelf suggestions (plan 2026-11-14, Part 2): this library's most recently
-// checked "found" answers for an Open Library work or an ISBN-13. Never a
-// "not found", and never a library's own record (showing one would need a
-// catalog request).
-const FOUND = `SELECT identity_kind, identity_value, matched_isbn13 FROM holdings_answers
-  WHERE library_id = $1 AND answer = 'found' AND identity_kind IN ('ol_work', 'isbn13') AND expires_at > now()
-  ORDER BY checked_at DESC, identity_kind DESC, identity_value LIMIT $2`;
-
 const CATALOG_URL = value => {
   if (typeof value !== 'string' || value.length > 2000) return null;
   try { return ['http:', 'https:'].includes(new URL(value).protocol) ? value : null; } catch { return null; }
@@ -54,11 +46,6 @@ export function createPgAnswerStore(db) {
       return rows.map(row => ({ libraryId: row.library_id, kind: row.identity_kind, value: row.identity_value, answer: row.answer,
         evidence: row.evidence, ...(row.matched_isbn13 ? { matchedIsbn13: row.matched_isbn13 } : {}),
         ...(row.catalog_url ? { catalogUrl: row.catalog_url } : {}), expiresAt: Number(row.expires_ms) }));
-    },
-    async listFound(libraryId, { limit = 60 } = {}) {
-      if (!libraryId) return [];
-      const { rows } = await db.query(FOUND, [libraryId, Math.max(1, Math.min(200, Math.floor(limit) || 60))]);
-      return rows.map(row => ({ kind: row.identity_kind, value: row.identity_value, ...(row.matched_isbn13 ? { matchedIsbn13: row.matched_isbn13 } : {}) }));
     },
     async writeAnswers(values = []) {
       // One row per identity in a batch (a statement may not update a row

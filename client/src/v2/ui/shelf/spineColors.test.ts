@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { MIN_TEXT_CONTRAST, PALETTES, SHELF_BACKS, SUGGESTION_OPACITY, composite, contrastRatio, fadedContrast, spinePalette, suggestionPalette, suggestionShade } from './spineColors';
+import { COVER_SHEEN, MIN_TEXT_CONTRAST, PALETTES, SHELF_BACKS, SUGGESTION_OPACITY, composite, contrastRatio, fadedContrast, spinePalette, suggestionPalette, suggestionShade } from './spineColors';
 
 it('is deterministic per key and varies across keys', () => {
   const a = spinePalette('v1:isbn:9780553418026');
@@ -32,24 +32,43 @@ describe('suggested plain covers (plan 2026-11-14, Part 2, edge case 3)', () => 
     homeCss = read(cwd + '/src/v2/ui/home/home.css') || read(cwd + '/client/src/v2/ui/home/home.css');
   });
 
-  it('the shelf backgrounds and the fade match home.css', () => {
+  it('the shelf backgrounds, the fade and the cover sheen match home.css', () => {
     const shelfBack = (selector: string) => new RegExp(selector.replace(/[[\]()'.]/g, '\\$&') + '\\s*\\{[^}]*--shelf-back:\\s*(#[0-9a-f]{6})').exec(homeCss)?.[1];
     expect(shelfBack(':root')).toBe(SHELF_BACKS.daylight);
     expect(shelfBack(":root[data-reading-light='lamplight']")).toBe(SHELF_BACKS.lamplight);
     expect(shelfBack(":root[data-reading-light='ink']")).toBe(SHELF_BACKS.ink);
     expect(homeCss).toMatch(/\.cover3d\.is-suggested \.cover3d-face \{ opacity: \.75; \}/);
     expect(SUGGESTION_OPACITY).toBe(0.75);
+    // The plain cover's face: a white sheen from the top-left corner over the cover colour.
+    const face = /\.cover3d-face \{[^}]*\}/.exec(homeCss)?.[0] || '';
+    expect(face).toContain('linear-gradient(115deg, rgb(255 255 255 / .16), transparent 45%), var(--cover-bg');
+    expect(COVER_SHEEN).toBe(0.16);
   });
 
-  it('every plain-cover colour keeps its printed title at 4.5:1 or more at 75% opacity, in Daylight, Lamplight and Ink', () => {
+  it('every plain-cover colour keeps its printed title at 4.5:1 or more at 75% opacity under the full sheen, in Daylight, Lamplight and Ink', () => {
     for (const palette of PALETTES) {
       const shade = suggestionShade(palette.top, palette.ink);
       for (const [light, shelf] of Object.entries(SHELF_BACKS)) {
-        const ratio = wcag(over(palette.ink, shelf, 0.75), over(shade, shelf, 0.75));
+        // Worst case: the top-left of the cover, where 16% white lies over its colour.
+        const ratio = wcag(over(palette.ink, shelf, 0.75), over(over('#ffffff', shade, 0.16), shelf, 0.75));
         expect(ratio, `${palette.top} → ${shade} in ${light}: ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(4.5);
         expect(fadedContrast(shade, palette.ink, shelf)).toBeCloseTo(ratio, 6);
+        // Where the sheen has faded out (lower right), the title reads better still.
+        expect(wcag(over(palette.ink, shelf, 0.75), over(shade, shelf, 0.75))).toBeGreaterThan(ratio);
       }
     }
+  });
+
+  it('the sheen matters: the flat-cover shade of the thinnest palette fails once the sheen is on it', () => {
+    const thinnest = PALETTES[5];
+    // The shade a flat cover would need (no sheen) is lighter than the one used.
+    let flat = thinnest.top;
+    for (let step = 0; step <= 50; step += 1) {
+      flat = '#' + channels(thinnest.top).map(value => Math.round(value * (1 - step * 0.02)).toString(16).padStart(2, '0')).join('');
+      if (Object.values(SHELF_BACKS).every(shelf => fadedContrast(flat, thinnest.ink, shelf, 0.75, 0) >= 4.5)) break;
+    }
+    expect(flat).not.toBe(suggestionShade(thinnest.top, thinnest.ink));
+    expect(fadedContrast(flat, thinnest.ink, SHELF_BACKS.ink)).toBeLessThan(MIN_TEXT_CONTRAST);
   });
 
   it('the shade is the same colour, darker, and only as dark as needed', () => {

@@ -1,8 +1,9 @@
 // The server's shelf suggestions (docs/plans/2026-11-14-desktop-and-shelf-
-// suggestions.md, Part 2, step B): books the chosen library is known to have,
-// then popular books related to what the reader viewed or saved. The request
-// carries book keys and the chosen library only: never search text, never in
-// a URL or browser storage, and nothing in it is stored by the server.
+// suggestions.md, Part 2, step B): popular books related to what the reader
+// viewed or saved, then the seed list, with those the chosen library is
+// known to have first. The request carries book keys and the chosen library
+// only: never search text, never in a URL or browser storage, and nothing in
+// it is stored by the server.
 import { publicApi, type SuggestionRequest } from '../api';
 import type { RecentBook } from '../types';
 import type { SuggestedBook } from './pickSuggestions';
@@ -12,6 +13,10 @@ export const RECENT_KEYS = 3;
 export const EXCLUDE_KEYS = 200;
 /** The server sends up to 15; anything past this is ignored. */
 const MAX_BOOKS = 20;
+/** A partial answer's books, then the last ones, up to this many. */
+const MAX_MERGED = 30;
+/** "Shown" is reported for the books drawn for one refresh: at most five. */
+export const SHOWN_KEYS = 5;
 const WORK_KEY = /^v1:openlibrary:OL\d+W$/;
 const ISBN_KEY = /^v1:isbn:(97[89]\d{10})$/;
 // Hosts the app's security policy lets a cover load from.
@@ -25,18 +30,27 @@ export function validIsbn13(value: string | null | undefined): string | null {
   return (10 - (sum % 10)) % 10 === Number(digits[12]) ? digits : null;
 }
 
+/** A key a suggestion can have, and the only kinds the server accepts: an Open Library work or a valid ISBN-13. */
+export function isSuggestionKey(key: unknown): key is string {
+  if (typeof key !== 'string') return false;
+  const isbn = ISBN_KEY.exec(key);
+  return WORK_KEY.test(key) || Boolean(isbn && validIsbn13(isbn[1]));
+}
+
 /**
  * The keys a server suggestion could have for this book: its own key when it
- * is an Open Library work or an ISBN, and the ISBN key of its ISBN-13. Server
- * suggestions are only ever such keys, so other records are left to the
- * app's own check (pickSuggestions), which stays the authority.
+ * is an Open Library work or an ISBN, the ISBN key of its ISBN-13 and the
+ * key of its Open Library work (`workId`, display only). Server suggestions
+ * are only ever such keys, so other records are left to the app's own check
+ * (pickSuggestions), which stays the authority.
  */
-export function serverKeys(book: Pick<RecentBook, 'bookKey' | 'isbn13'>): string[] {
+export function serverKeys(book: Pick<RecentBook, 'bookKey' | 'isbn13' | 'workId'>): string[] {
   const keys: string[] = [];
-  const own = ISBN_KEY.exec(book.bookKey);
-  if (WORK_KEY.test(book.bookKey) || (own && validIsbn13(own[1]))) keys.push(book.bookKey);
+  if (isSuggestionKey(book.bookKey)) keys.push(book.bookKey);
   const isbn = validIsbn13(book.isbn13);
   if (isbn && !keys.includes('v1:isbn:' + isbn)) keys.push('v1:isbn:' + isbn);
+  const work = typeof book.workId === 'string' && /^OL\d+W$/.test(book.workId) ? 'v1:openlibrary:' + book.workId : null;
+  if (work && !keys.includes(work)) keys.push(work);
   return keys;
 }
 
@@ -68,8 +82,8 @@ function coverLink(value: unknown): string | null {
 }
 
 /**
- * The server's books, read defensively: anything without a book key and a
- * title is dropped. `inLibrary` becomes `foundIn` for the library that was
+ * The server's books, read defensively: anything without a work or ISBN key
+ * and a title is dropped. `inLibrary` becomes `foundIn` for the library that was
  * asked about, so the badge never shows for another library.
  */
 export function parseServerSuggestions(values: readonly unknown[], libraryId: string | null): SuggestedBook[] {
@@ -77,7 +91,7 @@ export function parseServerSuggestions(values: readonly unknown[], libraryId: st
   for (const value of values.slice(0, MAX_BOOKS)) {
     if (!value || typeof value !== 'object') continue;
     const raw = value as Record<string, unknown>;
-    const bookKey = typeof raw.bookKey === 'string' && raw.bookKey.length <= 512 && /^v1:[a-z]+:\S+$/.test(raw.bookKey) ? raw.bookKey : null;
+    const bookKey = isSuggestionKey(raw.bookKey) ? raw.bookKey : null;
     const title = text(raw.title, 500);
     if (!bookKey || !title) continue;
     const authors = (Array.isArray(raw.authors) ? raw.authors : []).map(name => text(name, 240)).filter((name): name is string => Boolean(name)).slice(0, 20);
@@ -91,22 +105,40 @@ export function parseServerSuggestions(values: readonly unknown[], libraryId: st
 }
 
 /**
+ * Whether the server could add anything: it suggests from the chosen library
+ * and the recent books only, so with neither it is not asked.
+ */
+export function serverHasSomethingToAdd(context: SuggestionContext): boolean {
+  return Boolean(context.libraryId) || suggestionRequest(context).recentBookKeys.length > 0;
+}
+
+/**
  * The server source, ahead of the bundled seed list (useShelfSuggestions).
- * The server always answers 200; an answer it marks `partial` (its store or
- * Open Library failed) with no books counts as a failed refresh, so the last
- * books stay.
+ * The server always answers 200. An answer it marks `partial` (its store or
+ * Open Library failed) does not replace the last books: its books come
+ * first, then the last ones, and the pick chooses five.
  */
 export const serverSuggestions: SuggestionSource = {
   id: 'server',
-  async load(context, signal) {
+  wanted: serverHasSomethingToAdd,
+  async load(context, signal, previous = []) {
     const answer = await publicApi.suggestions(suggestionRequest(context), signal);
     const books = parseServerSuggestions(answer.books, context.libraryId);
-    if (answer.partial && !books.length) throw new Error('Suggestions are unavailable right now.');
-    return books;
+    if (!answer.partial) return books;
+    const fresh = new Set(books.map(book => book.bookKey));
+    return [...books, ...previous.filter(book => !fresh.has(book.bookKey))].slice(0, MAX_MERGED);
   },
 };
 
 /** Counts a suggested book opened or saved (the anonymous log); a failure changes nothing. */
 export function reportSuggestion(event: 'opened' | 'saved', bookKey: string): void {
-  void publicApi.suggestionEvent(event, bookKey).catch(() => { /* Counts only: never retried. */ });
+  if (!isSuggestionKey(bookKey)) return;
+  void publicApi.suggestionEvent({ event, bookKey }).catch(() => { /* Counts only: never retried. */ });
+}
+
+/** Counts the suggestions drawn for one refresh, at most five, each once; a failure changes nothing. */
+export function reportShown(bookKeys: readonly string[]): void {
+  const shown = [...new Set(bookKeys.filter(isSuggestionKey))].slice(0, SHOWN_KEYS);
+  if (!shown.length) return;
+  void publicApi.suggestionEvent({ event: 'shown', bookKeys: shown }).catch(() => { /* Counts only: never retried. */ });
 }

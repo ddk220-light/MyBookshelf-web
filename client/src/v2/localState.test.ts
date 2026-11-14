@@ -52,6 +52,28 @@ describe('anonymous browser state', () => {
     });
   });
 
+  it('keeps a saved or viewed book’s Open Library work (display only), and still reads records without one', () => {
+    const storage = new MemoryStorage();
+    const edition = { ...book, workId: 'OL1037811W' };
+    const state = withSavedBook(withRecentBook(readAnonymousWebState(storage), edition, 'direct', '2026-11-14T10:00:00.000Z'), edition);
+    expect(state.savedBooks[0].workId).toBe('OL1037811W');
+    expect(writeAnonymousWebState(state, storage)).toBe(true);
+    const reopened = readAnonymousWebStateWithStatus(storage);
+    expect(reopened.status).toBe('ok');
+    expect(reopened.state.savedBooks[0]).toMatchObject({ bookKey: book.bookKey, workId: 'OL1037811W' });
+    expect(reopened.state.recentBooks[0]).toMatchObject({ bookKey: book.bookKey, workId: 'OL1037811W' });
+    // The record keeps its version and shape: an older record without it reads as before, and
+    // anything that is not a work ID is dropped without marking the record damaged.
+    const older = new MemoryStorage();
+    older.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: null, savedContent: [],
+      recentBooks: [{ ...book, source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z' }],
+      savedBooks: [{ ...book, source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z', workId: 'not a work' }, { ...book, bookKey: 'v1:openlibrary:OL2W', source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z', workId: 7 }] }));
+    const read = readAnonymousWebStateWithStatus(older);
+    expect(read.status).toBe('ok');
+    expect(read.state.savedBooks.map(item => 'workId' in item)).toEqual([false, false]);
+    expect(read.state.recentBooks[0]).toEqual({ ...book, source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z' });
+  });
+
   it('deduplicates a revisited book and retains the newest result', () => {
     const storage = new MemoryStorage();
     const first = withRecentBook(readAnonymousWebState(storage), book, 'search', '2026-08-03T10:00:00.000Z');

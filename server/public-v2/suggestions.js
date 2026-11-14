@@ -11,37 +11,41 @@ import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 //
 //   POST /suggestions         { libraryId?, recentBookKeys[≤3], excludeKeys[≤200] }
 //                             -> { books: [{ bookKey, title, authors, coverUrl?, isbn13?, workId?, inLibrary? }], partial? }
-//   POST /suggestions/events  { event: 'opened' | 'saved', bookKey } -> 202
+//   POST /suggestions/events  { event: 'shown', bookKeys[1–5] } | { event: 'opened' | 'saved', bookKey } -> 202
 //
-// Candidates, in order: (1) books the chosen library is known to have, from
-// the catalog store's stored "found" answers (`inLibrary: true`); (2) books
-// related to the newest recent book: its author's most-read other works, then
-// the most-read works on its subject in its place (or on two of its specific
-// subjects; never one subject alone). The bundled seed list
-// stays in the app, last. The client makes the final pick and stays the
-// authority; this applies the same exclusions and one-book-per-author rule so
-// that, after the client's own, five usually remain.
+// Candidates come from public lists only, in order: books related to the
+// newest recent book (its author's most-read other works, then the most-read
+// works on its subject in its place, or on two of its specific subjects;
+// never one subject alone), then the bundled seed list. With a library
+// chosen, the catalog store is asked once which of those candidates (by Open
+// Library work and ISBN-13) it holds an unexpired "found" answer for there;
+// those come first with `inLibrary: true` and the rest keep their order. The
+// store only lifts and badges books already on these lists and never adds a
+// title of its own, so one reader's lookups never become another reader's
+// suggestions. The client makes the final pick and stays the authority; this
+// applies the same exclusions and one-book-per-author rule so that, after
+// the client's own, five usually remain.
 //
 // Never a catalog request: only answers already stored count, and a stored
-// "not found" (or a check that failed) is never read here. At most
-// OUTBOUND_CAP Open Library requests per suggestion request (the found
-// editions' details, the recent work's record, the author's list, the
-// subject-and-place list); each is cached in this instance's memory for 24
-// hours (Vercel runs many instances, each with its own cache).
-// Everything fails open: a slow or failing store or Open Library gives fewer
-// books (possibly none) with 200 and `partial: true`, by SUGGESTIONS_DEADLINE_MS.
+// "not found" (or a check that failed) is never read as absence. At most
+// OUTBOUND_CAP Open Library requests per suggestion request (the recent
+// work's record, the author's list, the subject-and-place list); each is
+// cached in this instance's memory for 24 hours (Vercel runs many instances,
+// each with its own cache). Everything fails open: a slow or failing store or
+// Open Library gives fewer books (possibly none) with 200 and `partial: true`,
+// by SUGGESTIONS_DEADLINE_MS.
 //
-// The anonymous log (USAGE_LOG_ENABLED) gets one row per book for each of
-// the five shown, opened or saved: the book key and that word, nothing from
-// the request. The request body is never logged anywhere.
+// The anonymous log (USAGE_LOG_ENABLED) gets one row per book the app reports
+// shown, opened or saved: the book key and that word, nothing else. The
+// request bodies are never logged anywhere.
 
 export const SUGGESTIONS_RETURNED = 15;
-export const SUGGESTIONS_SHOWN = 5;
-export const OUTBOUND_CAP = 4;
+export const OUTBOUND_CAP = 3;
 export const SUGGESTIONS_DEADLINE_MS = 3_000;
+// With a library chosen, Open Library reads stop this long before the
+// deadline so that the store's one read still has time.
+export const STORE_SHARE_MS = 750;
 export const SUGGESTION_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
-const FOUND_ROWS = 60;
-const FOUND_CONSIDERED = 20;
 const WORK_ID = /^OL\d+W$/;
 
 const text = (value, maximum) => (typeof value === 'string' && value.trim() ? value.trim().slice(0, maximum) : null);
@@ -62,7 +66,8 @@ export function suggestionBook(raw) {
     ...(WORK_ID.test(raw.workId || '') ? { workId: raw.workId } : {}), ...(raw.inLibrary === true ? { inLibrary: true } : {}) };
 }
 
-const SEED = Object.freeze(seedList.books.map(book => suggestionBook({ ...book, workId: book.bookKey.split(':').pop() })).filter(Boolean));
+/** The bundled seed list (shared/suggestions-seed.json), as suggestion books with their work IDs. */
+export const SEED = Object.freeze(seedList.books.map(book => suggestionBook({ ...book, workId: book.bookKey.split(':').pop() })).filter(Boolean));
 
 // The keys a reader has saved, and the works and ISBN-13s those keys name
 // (display only: another edition of a saved book is not suggested).
@@ -75,25 +80,23 @@ export function exclusionsOf(keys = []) {
     if (parsed?.kind === 'source' && parsed.source === 'openlibrary' && WORK_ID.test(parsed.sourceRecordId)) works.add(parsed.sourceRecordId);
   }
   return Object.freeze({
-    has: book => bookKeys.has(book.bookKey) || Boolean(book.workId && works.has(book.workId))
-      || [book.isbn13, book.matchedIsbn13].some(isbn => isbn && isbns.has(isbn)),
-    /** A work the store knows by a saved edition's ISBN: its other editions are left out too. */
-    addWork: workId => { if (WORK_ID.test(workId || '')) works.add(workId); },
+    has: book => bookKeys.has(book.bookKey) || Boolean(book.workId && works.has(book.workId)) || Boolean(book.isbn13 && isbns.has(book.isbn13)),
   });
 }
 
 /**
  * Up to `limit` books from ordered candidates: never an excluded book, never
- * the same key, work or ISBN-13 twice, never two by the same first author.
+ * the same key, work or ISBN-13 twice and, unless `oneAuthor` is false, never
+ * two by the same first author.
  */
-export function pickBooks(candidates, excluded, limit) {
+export function pickBooks(candidates, excluded, limit, { oneAuthor = true } = {}) {
   const picked = [];
   const keys = new Set(), works = new Set(), isbns = new Set(), authors = new Set();
   for (const book of candidates) {
     if (picked.length >= limit) break;
     if (!book?.bookKey || !book.title || !Array.isArray(book.authors) || excluded.has(book)) continue;
     if (keys.has(book.bookKey) || (book.workId && works.has(book.workId)) || (book.isbn13 && isbns.has(book.isbn13))) continue;
-    const author = authorKey(book.authors[0]);
+    const author = oneAuthor ? authorKey(book.authors[0]) : '';
     if (author && authors.has(author)) continue;
     picked.push(book);
     keys.add(book.bookKey);
@@ -104,24 +107,15 @@ export function pickBooks(candidates, excluded, limit) {
   return picked;
 }
 
-// Stored "found" rows (newest first) to book identities. A work found by one
-// of its ISBNs is suggested as the work, shown with that edition's details; an
-// ISBN row for that same edition is the same find and is skipped.
-export function foundIdentities(rows = []) {
-  const valid = Array.isArray(rows) ? rows : [];
-  const matched = new Set(valid.filter(row => row?.kind === 'ol_work').map(row => validateAndNormalize(row.matchedIsbn13 || '')).filter(Boolean));
-  const identities = [];
+/** The store identities a candidate can be found by: its Open Library work and its ISBN-13. */
+export function candidateIdentities(books) {
   const seen = new Set();
-  for (const row of valid) {
-    let identity = null;
-    if (row?.kind === 'ol_work' && WORK_ID.test(row.value || '')) {
-      const isbn = validateAndNormalize(row.matchedIsbn13 || '');
-      if (isbn) identity = { bookKey: `v1:openlibrary:${row.value}`, workId: row.value, matchedIsbn13: isbn, isbn };
-    } else if (row?.kind === 'isbn13') {
-      const isbn = validateAndNormalize(row.value || '');
-      if (isbn && isbn === row.value && !matched.has(isbn)) identity = { bookKey: `v1:isbn:${isbn}`, isbn13: isbn, isbn };
-    }
-    if (identity && !seen.has(identity.bookKey)) { seen.add(identity.bookKey); identities.push(Object.freeze(identity)); }
+  const identities = [];
+  const add = (kind, value) => { const key = kind + ':' + value; if (!seen.has(key)) { seen.add(key); identities.push({ kind, value }); } };
+  for (const book of books) {
+    if (WORK_ID.test(book.workId || '')) add('ol_work', book.workId);
+    const isbn = validateAndNormalize(book.isbn13 || '');
+    if (isbn) add('isbn13', isbn);
   }
   return identities;
 }
@@ -152,50 +146,34 @@ export function createTtlCache({ ttlMs = SUGGESTION_CACHE_TTL_MS, maxEntries = 2
   });
 }
 
-// At most `cap` outbound requests for one suggestion request. A source may
-// reserve a slot it will decide about later, so the order in which sources
-// run cannot starve it.
+// At most `cap` outbound requests for one suggestion request.
 function createBudget(cap) {
-  let used = 0, reserved = 0;
-  return {
-    take() { if (used + reserved >= cap) return false; used += 1; return true; },
-    reserve() {
-      if (used + reserved >= cap) return null;
-      reserved += 1;
-      let open = true;
-      return {
-        use() { if (!open) return false; open = false; reserved -= 1; used += 1; return true; },
-        release() { if (open) { open = false; reserved -= 1; } },
-      };
-    },
-    used: () => used,
-  };
+  let used = 0;
+  return { take() { if (used >= cap) return false; used += 1; return true; }, used: () => used };
 }
 
-// The value, or undefined once this request's deadline passes or the promise
-// fails; either marks the answer as partial (something could not be read).
-function until(promise, run) {
+// The value, or undefined once `deadlineAt` passes or the promise fails;
+// either marks the answer as partial (something could not be read).
+function until(promise, run, deadlineAt = run.deadlineAt) {
   return new Promise(resolve => {
-    const timer = setTimeout(() => { run.partial = true; resolve(undefined); }, Math.max(0, run.deadlineAt - Date.now()));
+    const timer = setTimeout(() => { run.partial = true; resolve(undefined); }, Math.max(0, deadlineAt - Date.now()));
     Promise.resolve(promise).then(value => { clearTimeout(timer); resolve(value); }, () => { clearTimeout(timer); run.partial = true; resolve(undefined); });
   });
 }
 
 export function createSuggestionService({ store = null, directory = null, reads = createOpenLibrarySuggestionReads(), peek = peekOpenLibraryRead,
-  now = () => Date.now(), deadlineMs = SUGGESTIONS_DEADLINE_MS, outboundCap = OUTBOUND_CAP, seed = SEED,
+  now = () => Date.now(), deadlineMs = SUGGESTIONS_DEADLINE_MS, outboundCap = OUTBOUND_CAP, seed = SEED, storeShareMs = STORE_SHARE_MS,
   defer = store?.defer || (task => { Promise.resolve().then(task).catch(() => {}); }) } = {}) {
   const cache = options => createTtlCache({ now, ...options });
-  const found = cache({ maxEntries: 500 }); // libraryId -> identities
-  const display = cache({ maxEntries: 5_000 }); // ISBN-13 -> { title, authors, coverUrl? } | null
   const records = cache({ maxEntries: 5_000 }); // recent book key -> { workId?, title, subjects, places, authorKeys }
   const byAuthor = cache({ maxEntries: 2_000 }); // author key -> books
   const bySubject = cache({ maxEntries: 2_000 }); // related query -> books
 
-  // Starts one Open Library read against the budget (or a reserved slot). It
-  // keeps running after the reader's answer is sent, so its answer still
-  // reaches the cache (the platform is asked to wait for it).
-  function outbound(budget, task, slot = null) {
-    if (!(slot ? slot.use() : budget.take())) return null;
+  // Starts one Open Library read against the budget. It keeps running after
+  // the reader's answer is sent, so its answer still reaches the cache (the
+  // platform is asked to wait for it).
+  function outbound(budget, task) {
+    if (!budget.take()) return null;
     const promise = Promise.resolve().then(task);
     promise.catch(() => {});
     try { defer(() => promise.catch(() => {})); } catch { /* Background only. */ }
@@ -208,64 +186,47 @@ export function createSuggestionService({ store = null, directory = null, reads 
     const hit = target.get(key);
     if (hit !== undefined) return Promise.resolve(hit);
     const running = target.running(key);
-    if (running) return until(running, run);
+    if (running) return until(running, run, run.readBy);
     const read = start();
     if (!read) return Promise.resolve(undefined);
     const filled = read.then(value => { target.set(key, value); return value; });
     filled.catch(() => {});
     target.track(key, filled);
-    return until(filled, run);
+    return until(filled, run, run.readBy);
   }
 
-  async function foundIn(libraryId, run) {
-    const listFound = store?.answers?.listFound;
-    if (typeof listFound !== 'function') return [];
-    // The store's own reads are bounded (pool.js); a store that is down or
-    // slow means nothing is known to be found, never "not found".
-    return (await cached(found, libraryId, () => Promise.resolve()
-      .then(() => listFound.call(store.answers, libraryId, { limit: FOUND_ROWS })).then(foundIdentities), run)) || [];
+  // The chosen library, when its stored answers may be read: a library in
+  // the directory whose answers may be stored (catalog-policies.json).
+  function storedLibrary(libraryId) {
+    if (!libraryId || !directory?.resolve?.(libraryId)) return null;
+    if (store?.policyFor?.(libraryId)?.storeAnswers === false) return null;
+    return typeof store?.answers?.readAnswers === 'function' ? libraryId : null;
   }
 
-  // Source 1: books the chosen library is known to have (stored answers only).
-  async function inLibrary(libraryId, excluded, run) {
-    const { budget } = run;
-    const none = { books: [], works: new Set() };
-    if (!libraryId || !directory?.resolve?.(libraryId)) return none;
-    // A library whose answers may not be stored (catalog-policies.json) has none to suggest from.
-    if (store?.policyFor?.(libraryId)?.storeAnswers === false) return none;
-    const slot = budget.reserve();
-    try {
-      const identities = await foundIn(libraryId, run);
-      for (const identity of identities) if (identity.workId && excluded.has(identity)) excluded.addWork(identity.workId);
-      const wanted = identities.filter(identity => !excluded.has(identity)).slice(0, FOUND_CONSIDERED);
-      const missing = [...new Set(wanted.map(identity => identity.isbn))].filter(isbn => display.get(isbn) === undefined && !display.running(isbn));
-      const waits = wanted.map(identity => display.running(identity.isbn)).filter(Boolean);
-      // Display data for the missing editions: one Books API request for all of them.
-      const batch = missing.length ? outbound(budget, () => reads.editionsByIsbn(missing), slot) : null;
-      slot?.release();
-      if (batch) {
-        const filled = batch.then(editions => { for (const isbn of missing) display.set(isbn, editions.get(isbn) ?? null); });
-        filled.catch(() => {});
-        for (const isbn of missing) display.track(isbn, filled);
-        waits.push(filled);
-      }
-      await Promise.all(waits.map(wait => until(wait, run)));
-      const books = wanted.map(identity => {
-        const shown = display.get(identity.isbn);
-        if (!shown) return null;
-        const book = suggestionBook({ ...shown, bookKey: identity.bookKey, ...(identity.workId ? { workId: identity.workId } : { isbn13: identity.isbn13 }), inLibrary: true });
-        // The found edition's ISBN still rules out a saved copy of it (exclusions only).
-        return book && identity.matchedIsbn13 ? { ...book, matchedIsbn13: identity.matchedIsbn13 } : book;
-      }).filter(Boolean);
-      return { books, works: new Set(identities.map(identity => identity.workId).filter(Boolean)) };
-    } finally { slot?.release(); }
+  /**
+   * The candidates' book keys that the store holds an unexpired "found"
+   * answer for at this library, in one read. Only these candidates are
+   * asked about; a "not found", or a store that is slow or down, is simply
+   * no badge, never absence.
+   */
+  async function foundAmong(libraryId, books, run) {
+    const identities = candidateIdentities(books);
+    if (!identities.length) return new Set();
+    const rows = await until(Promise.resolve().then(() => store.answers.readAnswers(libraryId, identities)), run);
+    const works = new Set(), isbns = new Set();
+    for (const row of Array.isArray(rows) ? rows : []) {
+      if (row?.answer !== 'found' || (row.libraryId !== undefined && row.libraryId !== libraryId)) continue;
+      if (row.kind === 'ol_work') works.add(row.value);
+      if (row.kind === 'isbn13') isbns.add(row.value);
+    }
+    return new Set(books.filter(book => (book.workId && works.has(book.workId)) || (book.isbn13 && isbns.has(book.isbn13))).map(book => book.bookKey));
   }
 
   function recentIdentity(key) {
     const parsed = parsePublicBookKey(key);
     if (parsed?.kind === 'isbn') return { key, isbn: parsed.isbn13 };
     if (parsed?.kind === 'source' && parsed.source === 'openlibrary' && WORK_ID.test(parsed.sourceRecordId)) return { key, workId: parsed.sourceRecordId };
-    return null; // Other records (a catalog's own, Google Books) name no Open Library subjects without a request.
+    return null;
   }
 
   // A work record this instance already read for another reason costs nothing.
@@ -282,10 +243,10 @@ export function createSuggestionService({ store = null, directory = null, reads 
   const usable = book => book?.coverUrl && book.authors.length;
 
   /**
-   * Source 2, for the newest recent book: its first author's most-read other
-   * works, then the most-read works on its subject in its place, or on two of
-   * its specific subjects (`relatedQuery`; never one subject alone). Covers
-   * only; never the book itself or another work with its title.
+   * Related books, for the newest recent book: its first author's most-read
+   * other works, then the most-read works on its subject in its place, or on
+   * two of its specific subjects (`relatedQuery`; never one subject alone).
+   * Covers only; never the book itself or another work with its title.
    */
   async function relatedTo(recentBookKeys, run) {
     const { budget } = run;
@@ -296,10 +257,10 @@ export function createSuggestionService({ store = null, directory = null, reads 
       ?? await cached(records, recent.key, () => outbound(budget, () => (recent.workId ? reads.workRecord(recent.workId) : reads.isbnRecord(recent.isbn))), run);
     // Nothing is suggested from a book that may not be suggested itself.
     if (!record || blockedBook(record.title, record.subjects)) return [];
-    const authorKey = record.authorKeys?.[0];
+    const author = record.authorKeys?.[0];
     const query = relatedQuery(record);
     const [sameAuthor, sameSubject] = await Promise.all([
-      authorKey ? cached(byAuthor, authorKey, () => outbound(budget, () => reads.authorWorks(authorKey)), run) : undefined,
+      author ? cached(byAuthor, author, () => outbound(budget, () => reads.authorWorks(author)), run) : undefined,
       query ? cached(bySubject, query, () => outbound(budget, () => reads.relatedWorks(query)), run) : undefined,
     ]);
     const own = new Set([...recents.map(item => item.workId), record.workId].filter(Boolean));
@@ -319,56 +280,47 @@ export function createSuggestionService({ store = null, directory = null, reads 
 
   /**
    * `{ books, partial }`: `partial` when a store or Open Library read failed
-   * or missed the deadline, so the app keeps its last answer rather than
-   * taking an empty one as the truth. A spent request budget is not partial.
+   * or missed the deadline, so the app keeps its last books as well rather
+   * than taking this answer as the whole truth. A spent request budget is
+   * not partial.
    */
   async function suggest({ libraryId, recentBookKeys = [], excludeKeys = [] } = {}) {
-    const run = { deadlineAt: Date.now() + deadlineMs, budget: createBudget(outboundCap), partial: false };
+    const library = storedLibrary(libraryId);
+    const deadlineAt = Date.now() + deadlineMs;
+    const run = { deadlineAt, readBy: library ? deadlineAt - Math.min(storeShareMs, deadlineMs / 2) : deadlineAt, budget: createBudget(outboundCap), partial: false };
     const excluded = exclusionsOf(excludeKeys);
-    const failed = fallback => () => { run.partial = true; return fallback; };
-    const [library, related] = await Promise.all([
-      inLibrary(libraryId, excluded, run).catch(failed({ books: [], works: new Set() })),
-      relatedTo(recentBookKeys, run).catch(failed([])),
-    ]);
-    // A related work the store also lists as found keeps its badge.
-    const marked = related.map(book => (library.works.has(book.workId) ? { ...book, inLibrary: true } : book));
-    return { books: pickBooks([...library.books, ...marked], excluded, SUGGESTIONS_RETURNED), partial: run.partial };
+    const related = await relatedTo(recentBookKeys, run).catch(() => { run.partial = true; return []; });
+    // Every candidate once, in list order (the one-per-author rule comes last,
+    // so that a book the library has can win over another by its author).
+    const pool = pickBooks([...related, ...seed], excluded, Infinity, { oneAuthor: false });
+    const found = library ? await foundAmong(library, pool, run).catch(() => { run.partial = true; return new Set(); }) : new Set();
+    const ordered = [...pool.filter(book => found.has(book.bookKey)).map(book => ({ ...book, inLibrary: true })), ...pool.filter(book => !found.has(book.bookKey))];
+    return { books: pickBooks(ordered, excluded, SUGGESTIONS_RETURNED), partial: run.partial };
   }
 
-  return Object.freeze({
-    suggest,
-    /** The five the reader is shown with this answer: these books, then the bundled seed list. */
-    shown: (books, excludeKeys = []) => pickBooks([...books, ...seed], exclusionsOf(excludeKeys), SUGGESTIONS_SHOWN),
-  });
+  return Object.freeze({ suggest });
 }
 
 export function createSuggestionRoutes({ store = null, directory = null, ...options } = {}) {
   const service = createSuggestionService({ store, directory, ...options });
-  // Written after the response is sent, only when the anonymous log is on.
-  const record = (res, rows) => {
-    if (!store?.usage?.enabled) return;
-    res.once('finish', () => {
-      try { for (const row of rows()) store.usage.record(row); } catch { /* The log never alters a response. */ }
-    });
-  };
 
   async function suggest(req, res) {
     const parsed = parseSuggestions(req.body);
     let result;
     // Fails open: whatever is known, possibly nothing, and the app adds its seed list.
     try { result = await service.suggest(parsed); } catch { result = { books: [], partial: true }; }
-    const answer = result.books.map(({ matchedIsbn13: _matched, ...book }) => book);
-    // An empty partial answer leaves the app showing its last books, which
-    // this request does not know: nothing is counted as shown for it.
-    if (answer.length || !result.partial) {
-      record(res, () => service.shown(answer, parsed.excludeKeys).map(book => ({ kind: 'suggestion', bookKey: book.bookKey, outcome: 'shown' })));
-    }
-    res.json({ books: answer, ...(result.partial ? { partial: true } : {}) });
+    res.json({ books: result.books, ...(result.partial ? { partial: true } : {}) });
   }
 
+  // Counts from the app: the five it showed for one refresh, or one book
+  // opened or saved. Written after the response, only when the log is on.
   async function suggestionEvent(req, res) {
-    const { event, bookKey } = parseSuggestionEvent(req.body);
-    record(res, () => [{ kind: 'suggestion', bookKey, outcome: event }]);
+    const { event, bookKeys } = parseSuggestionEvent(req.body);
+    if (store?.usage?.enabled) {
+      res.once('finish', () => {
+        try { for (const bookKey of bookKeys) store.usage.record({ kind: 'suggestion', bookKey, outcome: event }); } catch { /* The log never alters a response. */ }
+      });
+    }
     res.status(202).json({});
   }
 

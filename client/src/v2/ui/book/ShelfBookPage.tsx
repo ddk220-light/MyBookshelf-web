@@ -48,6 +48,16 @@ export function openLibraryUrl(book: Pick<PublicBook, 'bookKey' | 'workId' | 'is
   return book.isbn13 ? 'https://openlibrary.org/isbn/' + book.isbn13 : null;
 }
 
+// The history entries whose suggestion open was counted, for this page load
+// only (memory, never browser storage).
+const countedOpens = new Set<string>();
+function firstOpen(entry: string): boolean {
+  if (countedOpens.has(entry)) return false;
+  countedOpens.add(entry);
+  if (countedOpens.size > 500) countedOpens.delete(countedOpens.values().next().value as string);
+  return true;
+}
+
 /**
  * The one-shelf book page (Book, BookChecked and BookStates boards): the
  * cover standing up, title, author, first published and ISBN; one button to
@@ -100,15 +110,14 @@ export function ShelfBookPage() {
     return () => document.removeEventListener('visibilitychange', record);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book?.bookKey, rememberBook, libraryState.loadingAccount]);
-  // Opened from a shelf suggestion (router state only): counted once per open
-  // in the anonymous log, with the book key and nothing else.
+  // Opened from a shelf suggestion (router state only): counted in the
+  // anonymous log, with the book key and nothing else, once per history entry
+  // (the page drawn again, or Back and Forward to it, is the same open).
   const fromSuggestion = Boolean(navigation?.suggested && navigation.book?.bookKey === bookKey);
-  const counted = useRef<string | null>(null);
   useEffect(() => {
-    if (!fromSuggestion || !bookKey || counted.current === bookKey) return;
-    counted.current = bookKey;
+    if (!fromSuggestion || !bookKey || !firstOpen(location.key)) return;
     reportSuggestion('opened', bookKey);
-  }, [fromSuggestion, bookKey]);
+  }, [fromSuggestion, bookKey, location.key]);
   useEffect(() => {
     if (book && opened.current === book.bookKey && libraryState.updateRecentDisplay) void libraryState.updateRecentDisplay(book);
     // eslint-disable-next-line react-hooks/exhaustive-deps
