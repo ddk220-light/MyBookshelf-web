@@ -6,6 +6,7 @@ import { ANONYMOUS_WEB_STORAGE_KEY } from '../../localState';
 import { SEED_SUGGESTIONS } from '../../suggestions/seed';
 import { forgetSuggestionVisit } from '../../suggestions/useShelfSuggestions';
 import { forgetSuggestionMotion } from '../shelf/useSuggestionMotion';
+import { forgetDeskMemory } from './DeskLayout';
 import { isDeskPath, isSlotPath } from './layoutMode';
 import { railColumns } from './useBayColumns';
 
@@ -43,6 +44,27 @@ function Location() { const location = useLocation(); return <output data-testid
 const renderAt = (path: string) => render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp /><Location /></MemoryRouter>);
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); sessionStorage.clear(); forgetSuggestionVisit(); forgetSuggestionMotion(); });
+
+describe('account forms on desktop', () => {
+  it('opened in a fresh tab, a form stands alone; Escape in a field keeps it, Escape elsewhere closes it to the shelf', async () => {
+    forgetDeskMemory();
+    stubApi();
+    seed([book(1), book(2)]);
+    const { container } = renderAt('/app/account/sign-in');
+    const email = await screen.findByLabelText('Email');
+    expect(container.querySelector('.desk-bare')).not.toBeNull();
+    expect(container.querySelector('.desk-shelf')).toBeNull();
+    expect(container.querySelector('.desk-scrim')).toBeNull();
+    fireEvent.change(email, { target: { value: 'reader@example.com' } });
+    fireEvent.keyDown(email, { key: 'Escape' });
+    expect(screen.getByTestId('location')).toHaveTextContent('/app/account/sign-in');
+    expect(screen.getByLabelText('Email')).toHaveValue('reader@example.com');
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Close' }), { key: 'Escape' });
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/shelf'));
+    expect(await screen.findByRole('heading', { level: 1, name: 'My shelf' })).toBeInTheDocument();
+    expect(container.querySelector('.desk-bare')).toBeNull();
+  });
+});
 
 describe('desk layout routes', () => {
   it('draws the shelf and every middle-slot page, and leaves other pages alone', () => {

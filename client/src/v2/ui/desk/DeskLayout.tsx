@@ -25,7 +25,13 @@ type ShelfRouteState = { search?: { candidateId?: string }; overlay?: string; le
 let lastShelf: { account: string | null; state: LibraryState['state']; library: LibraryState['library'] } | null = null;
 let lastLayout: { open: boolean; path: string; at: number } | null = null;
 const RECENT_MS = 1500;
+// Fields a reader types in: Escape there belongs to the field, not the page.
+const TYPING_FIELD = 'textarea, select, [contenteditable="true"], [contenteditable=""], '
+  + 'input:not([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="image"])';
 const MOTION_MS = 520;
+
+/** Tests: forget the shelf and layout remembered in this tab (as a fresh tab has none). */
+export function forgetDeskMemory() { lastShelf = null; lastLayout = null; }
 
 /** The middle slot's name for assistive technology. */
 function slotLabel(pathname: string): string {
@@ -85,7 +91,11 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
 
   // The account forms run without the shelf, so beside them the last shelf
   // seen in this tab is drawn instead, read-only (and only for the same reader).
+  // A form opened with no shelf drawn yet in this tab (an email link, the
+  // return from a sign-in provider, a reload) stands alone: no shelf beside it
+  // until the reader finishes or closes it (owner decision, 14 November).
   const account = session.status === 'authenticated' ? session.user?.id || null : null;
+  const bare = entry && !(lastShelf && lastShelf.account === account);
   useEffect(() => { if (!entry) lastShelf = { account, state: live.state, library: live.library }; });
   const backdrop = useMemo<LibraryState | null>(() => {
     if (!entry) return null;
@@ -166,7 +176,9 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
     const key = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
       if (document.querySelector('dialog[open]')) return;
-      if (event.target instanceof Element && event.target.closest('textarea, [contenteditable="true"], input[type="search"]')) return;
+      // Escape while typing in a field (an account form's email or password,
+      // a report) does not close the page; from anywhere else it does.
+      if (event.target instanceof Element && event.target.closest(TYPING_FIELD)) return;
       event.preventDefault();
       close();
     };
@@ -208,7 +220,7 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
       <HomeScreen layout={mode} behind={behind} openKey={bookKey} />
     </div>
   </div>;
-  const classes = ['desk', 'desk-mode-' + mode, slotOpen && 'desk-open', picker.open && wide && 'desk-picking', phase && 'desk-' + phase].filter(Boolean).join(' ');
+  const classes = ['desk', 'desk-mode-' + mode, slotOpen && 'desk-open', bare && 'desk-bare', picker.open && wide && 'desk-picking', phase && 'desk-' + phase].filter(Boolean).join(' ');
   return <div ref={root} className={classes} onClickCapture={noteControl}>
     {backdrop ? <LibraryStateContext.Provider value={backdrop}>{side}</LibraryStateContext.Provider> : side}
     <main id="main-content" className="desk-main" tabIndex={-1}>
@@ -219,8 +231,8 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
             <div className="desk-slot-page">{children}</div>
           </section>
         </DeskSlotContext.Provider>}
-        {backdrop ? <LibraryStateContext.Provider value={backdrop}>{shelfArea}</LibraryStateContext.Provider> : shelfArea}
-        {slotOpen && <div className="desk-scrim" aria-hidden="true" onClick={close} />}
+        {bare ? null : backdrop ? <LibraryStateContext.Provider value={backdrop}>{shelfArea}</LibraryStateContext.Provider> : shelfArea}
+        {slotOpen && !bare && <div className="desk-scrim" aria-hidden="true" onClick={close} />}
       </div>
     </main>
     {!wide && <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} initialQuery={pickerQuery} />}

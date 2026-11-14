@@ -323,6 +323,24 @@ test.describe('Desktop layout', () => {
     await expect(page).toHaveURL(/\/app\/shelf$/);
   });
 
+  test('an account form opened directly (an email link, a reload) stands alone; Escape while typing keeps it open', async ({ page }) => {
+    await setup(page);
+    await page.goto('/app/account/sign-in');
+    const email = slot(page).getByLabel('Email');
+    await expect(email).toBeVisible();
+    await expect(page.locator('.desk-shelf')).toHaveCount(0);
+    await expect(column(page)).toBeVisible();
+    await noViolations(page, 'log in opened directly');
+    await email.fill('reader@example.com');
+    await page.keyboard.press('Escape');
+    await expect(page).toHaveURL(/\/app\/account\/sign-in$/);
+    await expect(email).toHaveValue('reader@example.com');
+    await slot(page).getByRole('button', { name: 'Close' }).focus();
+    await page.keyboard.press('Escape');
+    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page.locator('.desk-shelf .cover3d:not(.is-suggested)')).toHaveCount(12);
+  });
+
   test('search results replace the shelf in place, six a bay, with the library line; a typed ISBN opens the book', async ({ page }) => {
     await setup(page, { saved: [book(2)], recent: [] });
     await page.route('**/api/v2/books/search', route => {
