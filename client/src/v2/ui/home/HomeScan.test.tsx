@@ -50,16 +50,20 @@ describe('scan pop-up on the home screen', () => {
       expect(store.getItem(store.key(index)!)).not.toContain('978-1-62527');
   });
 
-  it('the empty shelf’s scan button opens the same pop-up; Escape closes it and focus returns', async () => {
+  it('the cold open’s scan button (inside the larger search bar) opens the same pop-up; Escape closes it and focus returns', async () => {
     stubApi();
     renderHome();
-    const button = await screen.findByRole('button', { name: 'Scan the barcode on a book' });
+    await screen.findByRole('heading', { name: 'Ready to search' });
+    // The search bar does both; there is no separate scan button on the cold open.
+    expect(screen.getAllByRole('button', { name: /Scan/ })).toHaveLength(1);
+    const button = screen.getByRole('button', { name: 'Scan a barcode' });
+    expect(button.closest('.home-top-cold form')).not.toBeNull();
     button.focus();
     fireEvent.click(button);
     const dialog = await screen.findByRole('dialog', { name: 'Type the ISBN' });
     fireEvent.keyDown(dialog, { key: 'Escape' });
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Type the ISBN' })).not.toBeInTheDocument());
-    expect(screen.getByRole('button', { name: 'Scan the barcode on a book' })).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'Scan a barcode' })).toHaveFocus();
     expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/);
   });
 

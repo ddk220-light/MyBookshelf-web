@@ -67,11 +67,22 @@
 .one-shelf-frame .home-button-outline { background: transparent; color: var(--reader-accent); }
 .one-shelf-frame .home-text-button { min-height: 44px; min-width: 44px; padding: 0 4px; border: 0; background: transparent; color: var(--reader-accent); font-weight: 600; font-size: .9375rem; line-height: 1.3; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 
-/* Cold open: no empty shelves (owner decision, plan 2026-11-14). */
-.one-shelf-frame .empty-shelf { margin-top: 28px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+/* Cold open (SuggestFirstOpen board): "Ready to search" and its line above a
+   larger search bar, then the five suggested books. No empty shelves and no
+   separate search or scan buttons (owner decisions, plan 2026-11-14). The
+   top bar does not stick while the cold open scrolls. */
+.one-shelf-frame .home-top-cold { position: static; }
+.one-shelf-frame .empty-shelf { margin-top: 36px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
 .one-shelf-frame .empty-shelf h1 { margin: 0; font: 500 2rem/1.15 var(--serif); letter-spacing: -.025em; }
 .one-shelf-frame .empty-shelf p { margin: 0; max-width: 300px; color: var(--reader-secondary); }
-.one-shelf-frame .empty-shelf-actions { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+.one-shelf-frame .home-top-cold .search-bar { margin-top: 22px; height: 60px; padding-left: 16px; border: 1.5px solid var(--reader-accent); border-radius: 16px; box-shadow: 0 2px 8px rgb(31 26 23 / .08); }
+.one-shelf-frame .home-top-cold .search-bar-icon { color: var(--reader-accent); }
+.one-shelf-frame .home-top-cold .search-bar-icon svg { width: 22px; height: 22px; }
+.one-shelf-frame .home-top-cold .search-bar input[type='search'] { height: 56px; min-height: 56px; font-size: 1.0625rem; }
+.one-shelf-frame .home-top-cold .search-bar-scan { flex-basis: 56px; width: 56px; height: 56px; min-height: 56px; border-radius: 0 14px 14px 0; }
+.one-shelf-frame .cold-open-suggestions { margin-top: 36px; }
+/* With a library chosen, its name stands under the bar and takes part of the gap. */
+.one-shelf-frame .home-top-cold:has(.home-meta) + .shelf-stage .cold-open-suggestions { margin-top: 12px; }
 
 /* Bays: back panel with grain and a shade under the shelf above, books, the
    plank's top surface (lip), its front and the shadow it casts. */
@@ -79,8 +90,13 @@
 .one-shelf-frame .bay-back { position: relative; padding: 12px 16px 0;
   background: linear-gradient(180deg, var(--shelf-shade), transparent 16px), repeating-linear-gradient(90deg, var(--shelf-grain) 0 2px, transparent 2px 9px), var(--shelf-back); }
 .one-shelf-frame .bay-lip { height: 12px; margin: -12px -16px 0; background: linear-gradient(180deg, var(--shelf-lip-a), var(--shelf-lip-b)); }
-.one-shelf-frame .bay-plank { height: 14px; flex: 0 0 auto; box-sizing: border-box; border-top: 1px solid var(--plank-edge); background: linear-gradient(180deg, var(--plank-a) 0, var(--plank-b) 55%, var(--plank-c) 100%); }
+.one-shelf-frame .bay-plank { position: relative; height: 14px; flex: 0 0 auto; box-sizing: border-box; border-top: 1px solid var(--plank-edge); background: linear-gradient(180deg, var(--plank-a) 0, var(--plank-b) 55%, var(--plank-c) 100%); }
 .one-shelf-frame .bay-shadow { height: 8px; flex: 0 0 auto; background: linear-gradient(180deg, var(--plank-shadow), transparent); }
+/* "Suggested": one small tag on the plank front under a bay's run of
+   suggestions, on the same columns as the books (SuggestShelf board). */
+.one-shelf-frame .bay-tags { position: absolute; inset: 0 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 18px; align-items: center; }
+.one-shelf-frame .bay-tag { justify-self: center; height: 18px; box-sizing: border-box; padding: 0 8px; border: 1px solid var(--page-side-b); border-radius: 3px; background: var(--reader-bg); color: var(--reader-secondary);
+  font-size: .6875rem; font-weight: 600; line-height: 16px; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; box-shadow: 0 1px 2px var(--plank-shadow); }
 
 /* My shelf */
 .one-shelf-frame .my-shelf { margin-top: 10px; }
@@ -114,6 +130,21 @@
 .one-shelf-frame .cover3d-title, .one-shelf-frame .cover3d-author { max-width: 100%; overflow-wrap: anywhere; }
 .one-shelf-frame .cover3d:focus-visible { outline: 3px solid var(--reader-accent); outline-offset: 5px; }
 
+/* A shelf suggestion: the cover and its page edges at 75% opacity; its library
+   badge is not faded. A plain cover uses the darker shade (spineColors.ts) so
+   its title still reads at 4.5:1. A new suggestion fades in; a suggestion
+   just saved turns solid (SuggestShelf board; none under reduced motion). */
+.one-shelf-frame .cover3d.is-suggested .cover3d-top, .one-shelf-frame .cover3d.is-suggested .cover3d-side, .one-shelf-frame .cover3d.is-suggested .cover3d-face { opacity: .75; }
+.one-shelf-frame .cover3d.is-arriving { animation: suggestion-rise 600ms ease-out both; }
+.one-shelf-frame .cover3d.is-arriving .cover3d-top, .one-shelf-frame .cover3d.is-arriving .cover3d-side, .one-shelf-frame .cover3d.is-arriving .cover3d-face { animation: suggestion-in 600ms ease-out both; }
+.one-shelf-frame .cover3d.is-arriving .cover-badge, .one-shelf-frame .shelf-list-cover.is-arriving .cover-badge { animation: suggestion-badge-in 600ms ease-out both; }
+.one-shelf-frame .cover3d.is-turning-solid .cover3d-top, .one-shelf-frame .cover3d.is-turning-solid .cover3d-side, .one-shelf-frame .cover3d.is-turning-solid .cover3d-face,
+.one-shelf-frame .shelf-list-cover.is-turning-solid { animation: suggestion-solid 600ms ease-out both; }
+@keyframes suggestion-rise { from { transform: translateY(10px); } to { transform: none; } }
+@keyframes suggestion-in { from { opacity: 0; } to { opacity: .75; } }
+@keyframes suggestion-badge-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes suggestion-solid { from { opacity: .75; } to { opacity: 1; } }
+
 .one-shelf-frame .cover-badge { position: absolute; z-index: 2; width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; border: 2px solid var(--shelf-back); background: var(--reader-accent); color: var(--reader-on); display: flex; align-items: center; justify-content: center; }
 .one-shelf-frame .cover-badge-library { top: -12px; right: -13px; }
 .one-shelf-frame .cover-badge-small { width: 20px; height: 20px; border-width: 1.5px; border-color: var(--reader-bg); top: -6px; right: -8px; }
@@ -125,6 +156,12 @@
   background: linear-gradient(90deg, rgb(0 0 0 / .3) 0, rgb(255 255 255 / .16) 2px, transparent 6px), var(--cover-bg); }
 .one-shelf-frame .shelf-list-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; opacity: 0; }
 .one-shelf-frame .shelf-list-cover img[data-ready] { opacity: 1; }
+/* A suggestion in the list: the small cover faded under a full-strength badge. */
+.one-shelf-frame .shelf-list-cover.is-suggested { background: none; box-shadow: none; }
+.one-shelf-frame .shelf-list-cover.is-suggested::before { content: ''; position: absolute; inset: 0; border-radius: inherit; opacity: .75; box-shadow: 2px 2px 4px var(--book-shadow);
+  background: linear-gradient(90deg, rgb(0 0 0 / .3) 0, rgb(255 255 255 / .16) 2px, transparent 6px), var(--cover-bg); }
+.one-shelf-frame .shelf-list-cover.is-suggested img[data-ready] { opacity: .75; }
+.one-shelf-frame .shelf-list-cover.is-suggested.is-arriving::before, .one-shelf-frame .shelf-list-cover.is-suggested.is-arriving img[data-ready] { animation: suggestion-in 600ms ease-out both; }
 .one-shelf-frame .shelf-list-text { display: flex; flex-direction: column; min-width: 0; }
 .one-shelf-frame .shelf-list-title { font: 400 1.0625rem/1.25 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .one-shelf-frame .shelf-list-author { font-size: .8125rem; line-height: 1.4; color: var(--reader-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -190,6 +227,8 @@
 @media (prefers-reduced-motion: reduce) {
   .one-shelf-frame .side-panel[open] { animation: none; }
   .one-shelf-frame .spine-row { scroll-behavior: auto; }
+  .one-shelf-frame .is-arriving, .one-shelf-frame .is-arriving *, .one-shelf-frame .is-arriving::before,
+  .one-shelf-frame .is-turning-solid, .one-shelf-frame .is-turning-solid * { animation: none !important; }
 }
 @media (forced-colors: active) {
   .one-shelf-frame .cover3d-face, .one-shelf-frame .viewed-spine, .one-shelf-frame .cover-badge { border: 1px solid CanvasText; }

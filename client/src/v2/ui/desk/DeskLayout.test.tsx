@@ -3,6 +3,9 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { AnonymousWebApp } from '../../App';
 import { ANONYMOUS_WEB_STORAGE_KEY } from '../../localState';
+import { SEED_SUGGESTIONS } from '../../suggestions/seed';
+import { forgetSuggestionVisit } from '../../suggestions/useShelfSuggestions';
+import { forgetSuggestionMotion } from '../shelf/useSuggestionMotion';
 import { isDeskPath, isSlotPath } from './layoutMode';
 import { railColumns } from './useBayColumns';
 
@@ -24,11 +27,11 @@ const json = (data: unknown, status = 200) => new Response(JSON.stringify(data),
 const book = (index: number) => ({ bookKey: 'v1:openlibrary:OL' + index + 'W', title: 'Book ' + index, authors: ['Author ' + index], source: 'direct', viewedAt: new Date(Date.UTC(2026, 0, 1 + index)).toISOString() });
 
 function stubApi() {
-  vi.stubGlobal('fetch', vi.fn((path: string) => {
+  vi.stubGlobal('fetch', vi.fn((path: string, init?: RequestInit) => {
     if (path.endsWith('/capabilities')) return Promise.resolve(json({ email: true, google: false, apple: false, canonicalOrigin: window.location.origin }));
     if (path.endsWith('/session')) return Promise.resolve(json({ status: 'guest' }));
     if (path.endsWith('/libraries/resolve')) return Promise.resolve(json({ library: LIBRARY }));
-    if (path.endsWith('/books/resolve')) return Promise.resolve(json({ book: { ...book(1), description: 'About it.' } }));
+    if (path.endsWith('/books/resolve')) return Promise.resolve(json({ book: { ...book(1), bookKey: JSON.parse(String(init?.body)).bookKey, description: 'About it.' } }));
     if (path.endsWith('/holdings/lookup')) return Promise.resolve(json({ answers: {} }));
     return Promise.resolve(json({ error: { code: 'NOT_FOUND', message: 'Not found.' } }, 404));
   }));
@@ -39,7 +42,7 @@ function seed(saved: unknown[] = [], libraryId: string | null = null) {
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname}</output>; }
 const renderAt = (path: string) => render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp /><Location /></MemoryRouter>);
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); sessionStorage.clear(); });
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); sessionStorage.clear(); forgetSuggestionVisit(); forgetSuggestionMotion(); });
 
 describe('desk layout routes', () => {
   it('draws the shelf and every middle-slot page, and leaves other pages alone', () => {
@@ -70,8 +73,14 @@ describe('desk layout at 1440 px', () => {
     expect(screen.queryByRole('button', { name: 'Scan a barcode' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Scan the barcode/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Account and settings' })).not.toBeInTheDocument();
-    expect(document.querySelector('.bay')).toBeNull();
-    expect(document.querySelector('.cold-open-suggestions')).not.toBeNull();
+    // No empty shelves: one bay with the five suggested books (DeskSuggestFirst board), under the larger search bar.
+    const search = screen.getByRole('searchbox', { name: 'Search for a book' });
+    expect(search.closest('.desk-top')).toHaveClass('home-top-cold');
+    expect(screen.queryByRole('button', { name: 'Search for a book' })).not.toBeInTheDocument();
+    const bays = document.querySelectorAll('.cold-open-suggestions .bay');
+    expect(bays).toHaveLength(1);
+    expect(within(bays[0] as HTMLElement).getAllByRole('link', { name: /, suggested$/ })).toHaveLength(5);
+    expect([...bays[0].querySelectorAll('.bay-tag')].map(tag => (tag as HTMLElement).style.gridColumn)).toEqual(['1 / span 5']);
   });
 
   it('shelf: six books a bay and no account invite', async () => {
@@ -79,9 +88,13 @@ describe('desk layout at 1440 px', () => {
     seed(Array.from({ length: 8 }, (_, index) => book(index + 1)), LIBRARY.id);
     renderAt('/app/shelf');
     expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    // 8 saved and 5 suggested books, six a bay: 6, 6 and 1.
     const bays = document.querySelectorAll('.home-bookcase .bay-books');
-    expect(bays).toHaveLength(2);
+    expect(bays).toHaveLength(3);
     expect(bays[0].querySelectorAll('.cover3d')).toHaveLength(6);
+    expect(bays[1].querySelectorAll('.cover3d.is-suggested')).toHaveLength(4);
+    expect([...document.querySelectorAll('.bay-tag')].map(tag => (tag as HTMLElement).style.gridColumn)).toEqual(['3 / span 4', '1 / span 1']);
+    expect(screen.getByText('8 books')).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Take your shelf with you' })).not.toBeInTheDocument();
     expect(await screen.findByText(LIBRARY.name)).toBeInTheDocument();
   });
@@ -103,6 +116,20 @@ describe('desk layout at 1440 px', () => {
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/));
     expect(document.querySelector('.desk-slot')).toBeNull();
     expect(document.querySelector('.desk-shelf-area')!.hasAttribute('inert')).toBe(false);
+  });
+
+  it('a suggestion opens in the middle slot like any book, outlined on the shelf beside it', async () => {
+    stubApi();
+    seed([book(1)]);
+    renderAt('/app/shelf');
+    const pick = SEED_SUGGESTIONS[2];
+    fireEvent.click(await screen.findByRole('link', { name: pick.title + ' by ' + pick.authors[0] + ', suggested' }));
+    expect(await screen.findByRole('button', { name: 'Close the book' })).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(pick.bookKey));
+    const open = document.querySelectorAll('.desk-shelf-area .cover3d.is-open');
+    expect(open).toHaveLength(1);
+    expect(open[0]).toHaveClass('is-suggested');
+    expect(open[0]).toHaveAttribute('href', '/app/books/' + encodeURIComponent(pick.bookKey));
   });
 
   it('Privacy opens in the middle slot with a close button instead of Back', async () => {

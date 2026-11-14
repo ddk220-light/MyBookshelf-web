@@ -1,6 +1,7 @@
 // What the one-shelf home shows: saved books and saved free items together,
 // most recently added first (plan 3.4: shelf order is most recent first).
 import type { SavedContent } from '../../contentTypes';
+import type { SuggestedBook } from '../../suggestions/pickSuggestions';
 import type { PublicBook, RecentBook } from '../../types';
 
 export type ShelfEntry = {
@@ -20,6 +21,8 @@ export type ShelfEntry = {
   alternatives?: PublicBook[];
   /** Search results: year of publication, shown in list view only. */
   year?: string;
+  /** A shelf suggestion (plan 2026-11-14, Part 2): drawn faded after the saved books. */
+  suggested?: true;
 };
 
 const time = (value: string) => { const parsed = Date.parse(value); return Number.isFinite(parsed) ? parsed : 0; };
@@ -27,6 +30,18 @@ const time = (value: string) => { const parsed = Date.parse(value); return Numbe
 export function bookEntry(book: RecentBook): ShelfEntry {
   return { key: book.bookKey, kind: 'book', title: book.title, authors: book.authors, coverUrl: book.coverUrl, isbn13: book.isbn13,
     href: '/app/books/' + encodeURIComponent(book.bookKey), state: { from: 'shelf', source: 'direct', book }, addedAt: time(book.viewedAt), book };
+}
+
+/**
+ * A suggested book on the shelf. It opens like any book: its page, with the
+ * suggestion as the record to show until the page has looked the book up.
+ */
+export function suggestionEntry(suggestion: SuggestedBook): ShelfEntry {
+  const book: PublicBook = { bookKey: suggestion.bookKey, title: suggestion.title, authors: suggestion.authors,
+    ...(suggestion.coverUrl ? { coverUrl: suggestion.coverUrl } : {}), ...(suggestion.isbn13 ? { isbn13: suggestion.isbn13 } : {}),
+    ...(suggestion.workId ? { workId: suggestion.workId } : {}) };
+  return { key: book.bookKey, kind: 'book', title: book.title, authors: book.authors, coverUrl: book.coverUrl, isbn13: book.isbn13,
+    href: '/app/books/' + encodeURIComponent(book.bookKey), state: { from: 'shelf', source: 'direct', book }, addedAt: 0, suggested: true };
 }
 
 export function shelfEntries(savedBooks: readonly RecentBook[], savedContent: readonly SavedContent[]): ShelfEntry[] {
@@ -37,9 +52,11 @@ export function shelfEntries(savedBooks: readonly RecentBook[], savedContent: re
 
 /**
  * "Title by Author", plus ", on my shelf" for a search result the reader has
- * saved and ", in <library>" when the chosen library has the book.
+ * saved, ", in <library>" when the chosen library has the book and, last,
+ * ", suggested" for a shelf suggestion (its fade is not the only signal).
  */
-export function entryLabel(entry: Pick<ShelfEntry, 'title' | 'authors'>, libraryName?: string | null, mine = false): string {
+export function entryLabel(entry: Pick<ShelfEntry, 'title' | 'authors' | 'suggested'>, libraryName?: string | null, mine = false): string {
   const author = entry.authors.filter(Boolean).join(', ');
-  return entry.title + (author ? ' by ' + author : '') + (mine ? ', on my shelf' : '') + (libraryName ? ', in ' + libraryName : '');
+  return entry.title + (author ? ' by ' + author : '') + (mine ? ', on my shelf' : '') + (libraryName ? ', in ' + libraryName : '')
+    + (entry.suggested ? ', suggested' : '');
 }

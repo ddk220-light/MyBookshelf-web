@@ -2,20 +2,34 @@ import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } fro
 import { useHoldingsStore } from '../../holdings';
 import type { ShelfEntry } from '../home/shelfItems';
 import { BookCover3D } from './BookCover3D';
-import { BOOKS_PER_BAY, bayRows, initialBayCount } from './shelfLayout';
+import { BOOKS_PER_BAY, bayRows, initialBayCount, suggestedRun } from './shelfLayout';
+import type { SuggestionMotion } from './useSuggestionMotion';
 
 const MORE_BAYS = 20;
 
-/** The wooden bay: back panel, a row of books standing on the plank, plank front and its shadow. */
-export function Bay({ children, className = '', shadow = true }: { children?: ReactNode; className?: string; shadow?: boolean }) {
+/**
+ * The wooden bay: back panel, a row of books standing on the plank, plank
+ * front and its shadow. `plank` is drawn on the plank front (the
+ * "Suggested" tag); like the plank, it is hidden from assistive technology.
+ */
+export function Bay({ children, className = '', shadow = true, plank }: { children?: ReactNode; className?: string; shadow?: boolean; plank?: ReactNode }) {
   return <div className={'bay ' + className}>
     <div className="bay-back">
       {children}
       <div className="bay-lip" aria-hidden="true" />
     </div>
-    <div className="bay-plank" aria-hidden="true" />
+    <div className="bay-plank" aria-hidden="true">{plank}</div>
     {shadow && <div className="bay-shadow" aria-hidden="true" />}
   </div>;
+}
+
+/**
+ * One small "Suggested" tag on the plank front, centred under the bay's run
+ * of suggestions (plan 2026-11-14, Part 2: never a caption under each book).
+ * Its grid matches the books' columns.
+ */
+function SuggestedTag({ from, span }: { from: number; span: number }) {
+  return <span className="bay-tags"><span className="bay-tag" style={{ gridColumn: (from + 1) + ' / span ' + span }}>Suggested</span></span>;
 }
 
 /**
@@ -24,8 +38,15 @@ export function Bay({ children, className = '', shadow = true }: { children?: Re
  * skip layout and paint (content-visibility in home.css); above 200 books the
  * further bays are added as the reader scrolls towards them. `openKey` is the
  * book open in the desktop middle slot: its cover is outlined.
+ *
+ * Shelf suggestions (`entry.suggested`) follow the saved books and wrap into
+ * bays like them; each bay they stand in carries one "Suggested" tag under
+ * them. Their library badge, as for saved books, comes only from answers the
+ * holdings store already has; nothing here asks a library. `motion` fades in
+ * a new suggestion and turns a just-saved one solid.
  */
-export function Bookcase({ entries, libraryName, perBay = BOOKS_PER_BAY, openKey = null }: { entries: ShelfEntry[]; libraryName: string | null; perBay?: number; openKey?: string | null }) {
+export function Bookcase({ entries, libraryName, perBay = BOOKS_PER_BAY, openKey = null, motion }: { entries: ShelfEntry[]; libraryName: string | null; perBay?: number; openKey?: string | null;
+  motion?: ReadonlyMap<string, SuggestionMotion> }) {
   const holdings = useHoldingsStore();
   useSyncExternalStore(holdings.subscribe, holdings.version, holdings.version);
   const rows = bayRows(entries, perBay);
@@ -42,11 +63,15 @@ export function Bookcase({ entries, libraryName, perBay = BOOKS_PER_BAY, openKey
     return () => observer.disconnect();
   }, [more, rows.length]);
   return <div className="home-bookcase">
-    {rows.slice(0, shown).map((row, index) => <Bay key={index}>
-      <ul className="bay-books">{row.map(entry => <li key={entry.key}>
-        <BookCover3D entry={entry} open={entry.key === openKey} libraryName={libraryName && entry.kind === 'book' && holdings.get(entry.key) === 'found' ? libraryName : null} />
-      </li>)}</ul>
-    </Bay>)}
+    {rows.slice(0, shown).map((row, index) => {
+      const run = suggestedRun(row, entry => Boolean(entry.suggested));
+      return <Bay key={index} plank={run && <SuggestedTag from={run.from} span={run.span} />}>
+        <ul className="bay-books">{row.map(entry => <li key={entry.key}>
+          <BookCover3D entry={entry} open={entry.key === openKey} motion={motion?.get(entry.key)}
+            libraryName={libraryName && entry.kind === 'book' && holdings.get(entry.key) === 'found' ? libraryName : null} />
+        </li>)}</ul>
+      </Bay>;
+    })}
     {more && <div ref={sentinel} className="home-bookcase-more" aria-hidden="true" />}
   </div>;
 }

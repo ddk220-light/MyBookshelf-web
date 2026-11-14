@@ -1,8 +1,8 @@
 // Desktop layout (docs/plans/2026-11-14-desktop-and-shelf-suggestions.md,
 // Part 1; boards DeskShelf, DeskResults, DeskBook and DeskLibrary): the left
 // column from 1100 px, the middle slot for a book or side page, the library
-// picker in the column, no scan button, the cold open without shelves, and
-// the icon rail between phone and wide widths. Runs in the desktop browser
+// picker in the column, no scan button, the cold open with five suggested
+// books (DeskSuggestFirst), and the icon rail between phone and wide widths. Runs in the desktop browser
 // projects at its own viewport sizes.
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -73,9 +73,12 @@ test.describe('Desktop layout', () => {
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeVisible();
     await expect(page.getByRole('group', { name: 'View' })).toBeVisible();
     await expect(page.locator('.my-shelf-heading span')).toHaveText('12 books');
+    // 12 saved books, then five suggestions (DeskSuggestShelf board): 6, 6 and 5.
     const bays = page.locator('.home-bookcase .bay-books');
-    await expect(bays).toHaveCount(2);
+    await expect(bays).toHaveCount(3);
     await expect(bays.first().locator('.cover3d')).toHaveCount(6);
+    await expect(bays.nth(2).locator('.cover3d.is-suggested')).toHaveCount(5);
+    await expect(page.locator('.bay-tag')).toHaveCount(1);
     const cover = await page.locator('.home-bookcase .cover3d').first().boundingBox();
     expect(Math.round(cover.width)).toBe(120);
     expect(Math.round(cover.height)).toBe(180);
@@ -84,7 +87,8 @@ test.describe('Desktop layout', () => {
     await expect(page.getByRole('region', { name: 'Viewed before' }).getByRole('link')).toHaveCount(3);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.getByRole('button', { name: 'List view' }).click();
-    await expect(page.locator('.shelf-list-item')).toHaveCount(12);
+    await expect(page.locator('.shelf-list-item')).toHaveCount(17);
+    await expect(page.locator('.shelf-list-cover.is-suggested')).toHaveCount(5);
   });
 
   test('signed in: the email, Account settings in the middle slot, Log out; signed out accounts stay out when switched off', async ({ page }) => {
@@ -115,17 +119,26 @@ test.describe('Desktop layout', () => {
     await expect(column(page).getByRole('link', { name: 'Log in' })).toHaveCount(0);
   });
 
-  test('cold open: the search leads, no shelves and no scan button; a marked place for suggestions', async ({ page }) => {
+  test('cold open: the search leads, no empty shelves and no scan button; five suggested books on one bay', async ({ page }) => {
     await setup(page, { saved: [], recent: [], libraryId: null });
     await page.goto('/app/shelf');
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     await expect(page.getByText('Add books to your shelf and search in your library')).toBeVisible();
-    await expect(page.locator('.bay')).toHaveCount(0);
-    await expect(page.getByRole('button', { name: /Scan/ })).toHaveCount(0);
-    await expect(page.locator('.cold-open-suggestions')).toHaveCount(1);
+    await expect(page.getByRole('button', { name: /Scan|Search for a book/ })).toHaveCount(0);
+    await expect(page.locator('.cold-open-suggestions .bay')).toHaveCount(1);
+    await expect(page.locator('.cold-open-suggestions .cover3d.is-suggested')).toHaveCount(5);
+    await expect(page.locator('.bay-tag')).toHaveText(['Suggested']);
     await expect(column(page).getByRole('button', { name: 'Find my library' })).toBeVisible();
-    await page.getByRole('button', { name: 'Search for a book' }).click();
-    await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
+    // The larger search bar stands under the heading, above the books (DeskSuggestFirst board).
+    const input = page.getByRole('searchbox', { name: 'Search for a book' });
+    const [heading, bar, shelf] = await Promise.all([page.getByRole('heading', { name: 'Ready to search' }).boundingBox(), page.locator('.search-bar').boundingBox(),
+      page.locator('.cold-open-suggestions').boundingBox()]);
+    expect(heading.y + heading.height).toBeLessThan(bar.y);
+    expect(bar.y + bar.height).toBeLessThan(shelf.y);
+    expect(Math.round(bar.height)).toBe(60);
+    expect(bar.width).toBeLessThanOrEqual(640);
+    await input.click();
+    await expect(input).toBeFocused();
     await noViolations(page, 'cold open');
   });
 
@@ -184,7 +197,7 @@ test.describe('Desktop layout', () => {
     await page.goto(bookPath);
     await expect(slot(page).getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
     await expect(column(page)).toBeVisible();
-    await expect(page.locator('.desk-shelf .cover3d')).toHaveCount(12);
+    await expect(page.locator('.desk-shelf .cover3d:not(.is-suggested)')).toHaveCount(12);
     await expect(page.locator('.cover3d.is-open')).toHaveCount(1);
     await expect(slot(page).getByRole('button', { name: 'Close the book' })).toBeFocused();
     // No shelf entry behind it: closing puts the shelf in its place.
@@ -294,7 +307,7 @@ test.describe('Desktop layout', () => {
     await expect(slot(page).getByRole('heading', { level: 1, name: 'Log in' })).toBeVisible();
     await expect(slot(page).getByLabel('Email')).toBeVisible();
     // The shelf stays drawn beside the form (read-only).
-    await expect(page.locator('.desk-shelf .cover3d')).toHaveCount(12);
+    await expect(page.locator('.desk-shelf .cover3d:not(.is-suggested)')).toHaveCount(12);
     await noViolations(page, 'log in in the slot');
     await slot(page).getByRole('button', { name: 'Close' }).click();
     await expect(page).toHaveURL(/\/app\/shelf$/);
@@ -305,7 +318,7 @@ test.describe('Desktop layout', () => {
     await setup(page);
     await page.goto('/app/privacy');
     await expect(slot(page).getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
-    await expect(page.locator('.desk-shelf .cover3d')).toHaveCount(12);
+    await expect(page.locator('.desk-shelf .cover3d:not(.is-suggested)')).toHaveCount(12);
     await slot(page).getByRole('button', { name: 'Close' }).click();
     await expect(page).toHaveURL(/\/app\/shelf$/);
   });

@@ -175,6 +175,8 @@
 .one-shelf-frame .home-desk .bay-back { padding: 18px var(--home-pad) 0; }
 .one-shelf-frame .home-desk .bay-lip { margin: -12px calc(-1 * var(--home-pad)) 0; }
 .one-shelf-frame .home-desk .bay-plank { height: 16px; }
+.one-shelf-frame .home-desk .bay-tags { inset: 0 var(--home-pad); grid-template-columns: repeat(var(--bay-cols, 6), minmax(0, 1fr)); column-gap: var(--bay-gap); }
+.one-shelf-frame .home-desk .bay-tag { height: 20px; padding: 0 10px; font-size: .75rem; line-height: 18px; }
 .one-shelf-frame .home-desk .bay-shadow { height: 10px; }
 .one-shelf-frame .home-desk .home-bookcase .bay { margin-bottom: 8px; contain-intrinsic-size: auto calc(var(--bay-h) + 52px); }
 .one-shelf-frame .home-desk .bay-books { height: var(--bay-h); gap: var(--bay-gap); grid-template-columns: repeat(var(--bay-cols, 6), minmax(0, 1fr)); }
@@ -223,13 +225,18 @@
 .one-shelf-frame .home-wide .search-message { margin-top: 40px; }
 .one-shelf-frame .home-wide .search-message-action { width: auto; align-self: center; padding: 0 24px; }
 
-/* Cold open (no empty shelves): the search leads. */
-.one-shelf-frame .home-desk .empty-shelf { margin: 64px auto 0; max-width: 560px; gap: 12px; }
+/* Cold open (DeskSuggestFirst board): "Ready to search", its line and a
+   larger search bar centred in a 640 px column, then the five suggested
+   books on one bay. No scan button at wide widths; the rail keeps its own. */
+.one-shelf-frame .home-desk .empty-shelf { margin: 48px auto 0; max-width: 640px; gap: 10px; }
+.one-shelf-frame .home-wide .empty-shelf { margin-top: 68px; }
 .one-shelf-frame .home-desk .empty-shelf h1 { font-size: 2.75rem; line-height: 1.1; }
 .one-shelf-frame .home-desk .empty-shelf p { max-width: none; font-size: 1.0625rem; }
-.one-shelf-frame .home-desk .empty-shelf-actions { margin: 28px auto 0; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 12px; }
-.one-shelf-frame .home-desk .empty-shelf-actions .home-button { width: auto; padding: 0 24px; }
-.one-shelf-frame .home-desk .empty-shelf-actions + .cold-open-suggestions { margin-top: 40px; }
+.one-shelf-frame .home-desk .home-top-cold .search-bar { width: 100%; max-width: 640px; margin-inline: auto; }
+.one-shelf-frame .desk-top.home-top-cold .desk-search-row { max-width: 640px; margin: 18px auto 0; }
+.one-shelf-frame .desk-top.home-top-cold .search-bar { margin-top: 0; padding-left: 18px; gap: 12px; }
+.one-shelf-frame .home-desk .cold-open-suggestions { margin-top: 56px; }
+.one-shelf-frame .home-wide .cold-open-suggestions { margin-top: 72px; }
 
 /* Motion (DeskBook board): opening, the column narrows, the page grows in and
    the shelf is pushed right; closing, the shelf slides back. None under

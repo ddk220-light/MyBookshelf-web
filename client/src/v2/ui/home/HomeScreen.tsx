@@ -15,18 +15,20 @@ import { isMarked, useLibraryMarks } from '../search/useLibraryMarks';
 import { ScanDialog, type ScanAnswer, type ScanSource } from '../scan/ScanDialog';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { libraryLinkMessage, type LibraryLinkNotice } from '../library/SelectLibraryLink';
+import { useShelfSuggestions } from '../../suggestions/useShelfSuggestions';
 import { AccountInvite } from '../shelf/AccountInvite';
 import { Bookcase } from '../shelf/Bookcase';
-import { ColdOpenSuggestions, EmptyShelf } from '../shelf/EmptyShelf';
+import { EmptyShelf } from '../shelf/EmptyShelf';
 import { ShelfList } from '../shelf/ShelfList';
 import { SpineRow } from '../shelf/SpineRow';
+import { useSuggestionMotion } from '../shelf/useSuggestionMotion';
 import { ViewSwitch, type ShelfView } from '../shelf/ViewSwitch';
 import type { LayoutMode } from '../desk/layoutMode';
 import { useBayColumns } from '../desk/useBayColumns';
 import { BackGlyph } from './homeIcons';
 import { SHELF_SEARCH_ID } from './SearchBar';
 import { ShelfStage } from './ShelfStage';
-import { shelfEntries } from './shelfItems';
+import { shelfEntries, suggestionEntry } from './shelfItems';
 import { TopBar } from './TopBar';
 import { useShelfHoldings } from './useShelfHoldings';
 import './home.css';
@@ -44,6 +46,12 @@ type HomeState = LegacyArrival & { overlay?: 'panel' | 'scan' | 'library'; panel
  * reader's shelf (or the empty state), the account invite and "Viewed before".
  * A search shows its results in place of the shelf. The side panel and the
  * scan pop-up are overlays with their own history entry, so Back closes them.
+ *
+ * Five suggested books (docs/plans/2026-11-14-desktop-and-shelf-suggestions.md,
+ * Part 2) stand faded after the saved books; on the cold open they are the
+ * whole shelf, under "Ready to search" and a larger search bar. Counts and
+ * the view switch count saved items only. While results are shown there are
+ * no suggestions.
  *
  * At rail and wide widths the desk layout (ui/desk) draws this beside its
  * rail or left column, and owns the library picker; there is no side panel,
@@ -66,7 +74,13 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
   const { ref: home, perBay } = useBayColumns(layout);
 
   const entries = useMemo(() => shelfEntries(state.savedBooks, state.savedContent), [state.savedBooks, state.savedContent]);
+  // Library answers are asked for saved books only: a suggestion's badge
+  // comes from an answer the store already holds, never from a new check.
   useShelfHoldings(state.selectedLibraryId, state.savedBooks);
+  const suggestions = useShelfSuggestions(state.savedBooks, state.selectedLibraryId);
+  const suggested = useMemo(() => suggestions.map(suggestionEntry), [suggestions]);
+  const withSuggestions = useMemo(() => [...entries, ...suggested], [entries, suggested]);
+  const motion = useSuggestionMotion(suggested.map(entry => entry.key), state.savedBooks.map(book => book.bookKey));
   const cachedLibrary = readReaderPreferences().selectedLibrary;
   const libraryName = library?.name || (loadingLibrary && cachedLibrary?.id === state.selectedLibraryId ? cachedLibrary.name : null);
   const badgeLibrary = library?.id === state.selectedLibraryId ? library.name : null;
@@ -187,11 +201,6 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
     setView(next);
     if (!writeReaderPreferences({ shelfView: next })) reportStorageFailure();
   };
-  const focusSearch = () => {
-    const input = document.getElementById(SHELF_SEARCH_ID);
-    input?.focus();
-    input?.scrollIntoView?.({ block: 'nearest' });
-  };
   // Scan pop-up (plan Phase 6). It opens over whatever is showing (shelf or
   // results) as its own history entry. Focus goes back to the button that
   // opened it, or to the search bar after "Search by title".
@@ -298,17 +307,16 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
   const scan = wide ? undefined : goScan;
   const backToShelf = <button type="button" className="home-text-button results-back" onClick={() => closeSearch('shelf')}><BackGlyph />Back to my shelf</button>;
   const shelf = <>
-    {empty ? <>
-      <EmptyShelf onSearch={focusSearch} onScan={scan} />
-      {/* Part 2 (docs/plans/2026-11-14-desktop-and-shelf-suggestions.md): the
-          five suggested books stand here on the cold open. No empty shelves. */}
-      <ColdOpenSuggestions />
-    </> : <section className="my-shelf" aria-labelledby="my-shelf-heading">
+    {empty ? <div className="cold-open-suggestions">
+      {/* "Ready to search" and the search bar are in the top bar (intro). */}
+      <Bookcase entries={suggested} libraryName={badgeLibrary} perBay={perBay} openKey={openKey} motion={motion} />
+    </div> : <section className="my-shelf" aria-labelledby="my-shelf-heading">
       <div className="my-shelf-heading">
         <h1 id="my-shelf-heading" tabIndex={-1}>My shelf</h1>
-        {count > 1 && <span>{count} books</span>}
+        <span>{books(count)}</span>
       </div>
-      {view === 'list' && count > 1 ? <ShelfList entries={entries} libraryName={badgeLibrary} /> : <Bookcase entries={entries} libraryName={badgeLibrary} perBay={perBay} openKey={openKey} />}
+      {view === 'list' && count > 1 ? <ShelfList entries={withSuggestions} libraryName={badgeLibrary} motion={motion} />
+        : <Bookcase entries={withSuggestions} libraryName={badgeLibrary} perBay={perBay} openKey={openKey} motion={motion} />}
     </section>}
     {!empty && !wide && <AccountInvite savedCount={state.savedBooks.length + state.savedContent.length} />}
     <SpineRow books={state.recentBooks} onClear={() => { void clearViewed(); }} disabled={recoveryMode} />
@@ -319,7 +327,7 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
 
   return <div ref={home} className={'home' + (desk ? ' home-desk home-' + layout : '')} style={desk ? { '--bay-cols': perBay } as CSSProperties : undefined}>
     {linkNotice && <p className="home-notice" role="status">{libraryLinkMessage(linkNotice)}</p>}
-    <TopBar ref={personButton} layout={layout} panelOpen={panelOpen} onOpenPanel={openPanel} libraryName={libraryName}
+    <TopBar ref={personButton} layout={layout} panelOpen={panelOpen} onOpenPanel={openPanel} libraryName={libraryName} intro={empty && !showResults ? <EmptyShelf /> : undefined}
       search={{ value: query, onChange: changeQuery, onSubmit: text => { void submit(text); }, onClear: clearQuery, onScan: scan, active: showResults }}
       leading={showResults && !wide ? backToShelf : undefined}
       trailing={showResults ? results.length > 0 && resultsStatus === 'results' ? <ViewSwitch view={view} onChange={changeView} /> : undefined

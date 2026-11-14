@@ -5,7 +5,10 @@ import { AnonymousWebApp } from '../../App';
 import { ANONYMOUS_WEB_STORAGE_KEY } from '../../localState';
 import { ONE_SHELF_STORAGE_KEY } from '../../oneShelfState';
 import { READER_PREFERENCES_KEY } from '../../readerState';
+import { SEED_SUGGESTIONS } from '../../suggestions/seed';
+import { forgetSuggestionVisit } from '../../suggestions/useShelfSuggestions';
 import { shouldInviteAccount } from '../shelf/AccountInvite';
+import { forgetSuggestionMotion } from '../shelf/useSuggestionMotion';
 
 const LIBRARY = { id: 'koha:anna', name: 'Anna Centenary Library', city: 'Chennai', region: null, country: 'IN', health: 'operational',
   capabilities: { catalogLookup: true, publicAvailability: true, copyCounts: true, locationAvailability: true, callNumber: true, catalogLink: true } };
@@ -13,7 +16,7 @@ const json = (data: unknown, status = 200) => new Response(JSON.stringify(data),
 const book = (index: number) => ({ bookKey: 'v1:openlibrary:OL' + index + 'W', title: 'Book ' + index, authors: ['Author ' + index], source: 'direct', viewedAt: new Date(Date.UTC(2026, 0, 1 + index)).toISOString() });
 
 function stubApi({ email = true, found = [] as string[] } = {}) {
-  const calls: Array<{ path: string; body: unknown }> = [];
+  const calls: Array<{ path: string; body: any }> = [];
   vi.stubGlobal('fetch', vi.fn((path: string, init?: RequestInit) => {
     const body = init?.body ? JSON.parse(String(init.body)) : null;
     calls.push({ path, body });
@@ -21,6 +24,7 @@ function stubApi({ email = true, found = [] as string[] } = {}) {
     if (path.endsWith('/session')) return Promise.resolve(json({ status: 'guest' }));
     if (path.endsWith('/libraries/resolve')) return Promise.resolve(json({ library: LIBRARY }));
     if (path.endsWith('/holdings/lookup')) return Promise.resolve(json({ answers: Object.fromEntries(body.books.map((item: { bookKey: string }) => [item.bookKey, found.includes(item.bookKey) ? 'found' : 'not_found'])) }));
+    if (path.endsWith('/holdings/check')) return Promise.resolve(json({ answer: found.includes(body.bookKey) ? 'found' : 'not_found' }));
     return Promise.resolve(json({ error: { code: 'NOT_FOUND', message: 'Not found.' } }, 404));
   }));
   return calls;
@@ -31,19 +35,36 @@ function seed({ saved = [] as unknown[], recent = [] as unknown[], libraryId = n
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname + location.search}</output>; }
 const renderHome = (path = '/app/shelf') => render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp /><Location /></MemoryRouter>);
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); sessionStorage.clear(); });
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); sessionStorage.clear(); forgetSuggestionVisit(); forgetSuggestionMotion(); });
+const SUGGESTED = SEED_SUGGESTIONS.slice(0, 5).map(item => item.title + ' by ' + item.authors[0] + ', suggested');
+const suggestedLinks = () => screen.getAllByRole('link', { name: /, suggested$/ });
 
 describe('one-shelf home', () => {
-  it('first open shows the empty shelf, the search bar and no tab bar', async () => {
+  it('first open: "Ready to search", one larger search bar with scan inside it, five suggested books and no tab bar', async () => {
     stubApi();
     renderHome();
-    expect(await screen.findByRole('heading', { name: 'Ready to search' })).toBeInTheDocument();
+    const heading = await screen.findByRole('heading', { name: 'Ready to search' });
     expect(screen.getByText('Add books to your shelf and search in your library')).toBeInTheDocument();
-    expect(screen.getByRole('searchbox', { name: 'Search for a book' })).toHaveAttribute('placeholder', 'Title, author or ISBN');
-    expect(screen.getByRole('button', { name: 'Scan a barcode' })).toBeInTheDocument();
+    const input = screen.getByRole('searchbox', { name: 'Search for a book' });
+    expect(input).toHaveAttribute('placeholder', 'Title, author or ISBN');
+    // The heading stands above the larger search bar (SuggestFirstOpen board), which holds the scan button.
+    expect(heading.compareDocumentPosition(input) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(input.closest('.home-top')).toHaveClass('home-top-cold');
+    expect(within(input.closest('form')!).getByRole('button', { name: 'Scan a barcode' })).toBeInTheDocument();
+    // The search bar does both: no separate search or scan buttons.
+    expect(screen.queryByRole('button', { name: 'Search for a book' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Scan the barcode/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('navigation', { name: 'Primary navigation' })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Search for a book' }));
-    expect(screen.getByRole('searchbox', { name: 'Search for a book' })).toHaveFocus();
+    // Five suggested books from the bundled list, three to a bay, one "Suggested" tag per bay.
+    expect(suggestedLinks().map(link => link.getAttribute('aria-label'))).toEqual(SUGGESTED);
+    expect(suggestedLinks()[0]).toHaveAttribute('href', '/app/books/' + encodeURIComponent(SEED_SUGGESTIONS[0].bookKey));
+    expect(document.querySelectorAll('.bay-books')).toHaveLength(2);
+    const tags = [...document.querySelectorAll('.bay-tag')];
+    expect(tags.map(tag => [tag.textContent, (tag as HTMLElement).style.gridColumn])).toEqual([['Suggested', '1 / span 3'], ['Suggested', '1 / span 2']]);
+    for (const tag of tags) expect(tag.closest('[aria-hidden="true"]')).not.toBeNull();
+    // No "My shelf" heading or count for suggestions.
+    expect(screen.queryByRole('heading', { name: 'My shelf' })).not.toBeInTheDocument();
+    expect(screen.queryByText(/\d books?$/)).not.toBeInTheDocument();
     // No library chosen: no library line.
     expect(screen.queryByText('Anna Centenary Library')).not.toBeInTheDocument();
   });
@@ -63,6 +84,7 @@ describe('one-shelf home', () => {
     seed({ saved: [book(1), book(2), book(3), book(4)] });
     renderHome();
     expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    // The count is of saved books only.
     expect(screen.getByText('4 books')).toBeInTheDocument();
     const covers = screen.getAllByRole('link', { name: /^Book \d by Author \d$/ });
     // Most recently added first.
@@ -73,7 +95,12 @@ describe('one-shelf home', () => {
       expect(item.children).toHaveLength(1);
       expect(item.firstElementChild?.tagName).toBe('A');
     }
-    expect(document.querySelectorAll('.bay-books')).toHaveLength(2);
+    // The five suggestions continue after them, faded, and wrap like books: 4 + 5 = 3 bays of 3.
+    const all = [...document.querySelectorAll('.bay-books a')];
+    expect(all.map(link => link.getAttribute('aria-label'))).toEqual([...covers.map(link => link.getAttribute('aria-label')), ...SUGGESTED]);
+    expect(all.map(link => link.classList.contains('is-suggested'))).toEqual([false, false, false, false, true, true, true, true, true]);
+    expect(document.querySelectorAll('.bay-books')).toHaveLength(3);
+    expect([...document.querySelectorAll('.bay-tag')].map(tag => (tag as HTMLElement).style.gridColumn)).toEqual(['2 / span 2', '1 / span 3']);
   });
 
   it('shows the library name and badges only books the library has', async () => {
@@ -102,8 +129,12 @@ describe('one-shelf home', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'List view' }));
     expect(screen.getByRole('button', { name: 'List view' })).toHaveAttribute('aria-pressed', 'true');
     const list = document.querySelector('.shelf-list')!;
-    expect(within(list as HTMLElement).getAllByRole('link').map(link => link.getAttribute('aria-label'))).toEqual(['Book 2 by Author 2', 'Book 1 by Author 1']);
+    // Suggestions come last, faded, with "Suggested" where a year would be.
+    expect(within(list as HTMLElement).getAllByRole('link').map(link => link.getAttribute('aria-label'))).toEqual(['Book 2 by Author 2', 'Book 1 by Author 1', ...SUGGESTED]);
     expect(within(list as HTMLElement).getByText('Author 2')).toBeInTheDocument();
+    expect(within(list as HTMLElement).getByText(SEED_SUGGESTIONS[0].authors[0] + ' · Suggested')).toBeInTheDocument();
+    expect(list.querySelectorAll('.shelf-list-cover.is-suggested')).toHaveLength(5);
+    expect(screen.getByText('2 books')).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem(READER_PREFERENCES_KEY)!).shelfView).toBe('list');
   });
 
@@ -113,8 +144,9 @@ describe('one-shelf home', () => {
     const view = renderHome();
     expect(await screen.findByRole('heading', { name: 'Take your shelf with you' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Create a free account' })).toHaveAttribute('href', '/app/account/sign-up');
-    // One book: no view switch and no count.
+    // One book: no view switch; the count says it is the reader's only book (SuggestShelf board).
     expect(screen.queryByRole('button', { name: 'List view' })).not.toBeInTheDocument();
+    expect(screen.getByText('1 book')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Not now' }));
     expect(screen.queryByRole('heading', { name: 'Take your shelf with you' })).not.toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem(ONE_SHELF_STORAGE_KEY)!).accountInviteDismissed).toBe(true);
@@ -174,6 +206,56 @@ describe('one-shelf home', () => {
     fireEvent(panel, new Event('cancel', { cancelable: true }));
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Account and settings' })).not.toBeInTheDocument());
     expect(person).toHaveFocus();
+  });
+
+  it('a suggestion opens like any book; added, it is an ordinary saved book in front, and the next suggestion takes its place at the end', async () => {
+    const calls = stubApi();
+    const view = renderHome();
+    const first = SEED_SUGGESTIONS[0];
+    fireEvent.click((await screen.findAllByRole('link', { name: /, suggested$/ }))[0]);
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(first.bookKey)));
+    // The book page shows the suggestion's record while it looks the book up (here it cannot).
+    expect(await screen.findByRole('heading', { level: 1, name: first.title })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Add to my shelf' }));
+    expect(await screen.findByRole('button', { name: 'On my shelf' })).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!).savedBooks.map((item: { bookKey: string }) => item.bookKey)).toEqual([first.bookKey]);
+    view.unmount();
+    renderHome();
+    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    const all = [...document.querySelectorAll('.bay-books a')];
+    expect(all[0]).toHaveAccessibleName(first.title + ' by ' + first.authors[0]);
+    expect(all[0]).not.toHaveClass('is-suggested');
+    expect(all.slice(1).map(link => link.getAttribute('aria-label'))).toEqual(SEED_SUGGESTIONS.slice(1, 6).map(item => item.title + ' by ' + item.authors[0] + ', suggested'));
+    expect(screen.getByText('1 book')).toBeInTheDocument();
+    // Just saved: it turns solid; the new suggestion fades in (none under reduced motion, home.css).
+    expect(all[0]).toHaveClass('is-turning-solid');
+    expect(all[5]).toHaveClass('is-arriving');
+    expect(document.querySelectorAll('.is-arriving, .is-turning-solid')).toHaveLength(2);
+    // Opening a suggestion is the book page's own check only; nothing was asked for the shelf.
+    expect(calls.filter(call => call.path.endsWith('/holdings/lookup'))).toHaveLength(0);
+  });
+
+  it('suggestions are never sent for a library answer; a badge only from an answer already held', async () => {
+    const pick = SEED_SUGGESTIONS[1];
+    const calls = stubApi({ found: [book(1).bookKey, pick.bookKey] });
+    seed({ saved: [book(1)], libraryId: LIBRARY.id });
+    const view = renderHome();
+    expect(await screen.findByRole('link', { name: 'Book 1 by Author 1, in Anna Centenary Library' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: pick.title + ' by ' + pick.authors[0] + ', suggested' })).toBeInTheDocument();
+    expect(document.querySelectorAll('.cover-badge-library')).toHaveLength(1);
+    const lookups = calls.filter(call => call.path.endsWith('/holdings/lookup'));
+    expect(lookups.flatMap(call => call.body.books.map((item: { bookKey: string }) => item.bookKey))).toEqual([book(1).bookKey]);
+    expect(calls.some(call => /\/holdings\/(check|search)$/.test(call.path))).toBe(false);
+    // Opening the suggestion checks it on its page, as for any book; that answer then shows on the shelf.
+    fireEvent.click(screen.getByRole('link', { name: pick.title + ' by ' + pick.authors[0] + ', suggested' }));
+    await waitFor(() => expect(calls.filter(call => call.path.endsWith('/holdings/check')).map(call => call.body.bookKey)).toEqual([pick.bookKey]));
+    fireEvent.click(await screen.findByRole('link', { name: 'Back' }));
+    const badged = await screen.findByRole('link', { name: pick.title + ' by ' + pick.authors[0] + ', in Anna Centenary Library, suggested' });
+    // The badge is not faded with the cover.
+    expect(badged).toHaveClass('is-suggested');
+    expect(badged.querySelector('.cover-badge-library')).not.toBeNull();
+    expect(calls.filter(call => call.path.endsWith('/holdings/lookup')).flatMap(call => call.body.books.map((item: { bookKey: string }) => item.bookKey))).not.toContain(pick.bookKey);
+    view.unmount();
   });
 
   it('/app/settings opens the shelf with the side panel', async () => {

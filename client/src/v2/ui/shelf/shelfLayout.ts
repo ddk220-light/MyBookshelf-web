@@ -29,6 +29,16 @@ export function bayRows<T>(items: readonly T[], perBay = BOOKS_PER_BAY): T[][] {
   return rows;
 }
 
+/**
+ * Where a bay's run of shelf suggestions stands: from its first suggestion
+ * (0-based column) to the end of the books in that bay. Suggestions always
+ * follow the saved books, so a bay holds at most one run. Null without any.
+ */
+export function suggestedRun<T>(row: readonly T[], suggested: (item: T) => boolean): { from: number; span: number } | null {
+  const from = row.findIndex(suggested);
+  return from < 0 ? null : { from, span: row.length - from };
+}
+
 // Above this many saved items, bays are added as the reader scrolls instead of
 // all at once (rows that are rendered also skip layout off screen).
 export const EAGER_SHELF_ITEMS = 200;
