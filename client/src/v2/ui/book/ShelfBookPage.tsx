@@ -9,7 +9,9 @@ import { SAVED_BOOKS_CAP } from '../../localState';
 import { findSavedBook } from '../../oneShelfState';
 import type { PublicBook } from '../../types';
 import { useCoverImage } from '../BookCard';
+import { useDeskSlot } from '../desk/layoutMode';
 import { BackGlyph, ExternalGlyph } from '../home/homeIcons';
+import { SlotClose } from '../panel/PanelPage';
 import { useHistoryOverlay } from '../home/useHistoryOverlay';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { spinePalette } from '../shelf/spineColors';
@@ -53,8 +55,14 @@ export function openLibraryUrl(book: Pick<PublicBook, 'bookKey' | 'workId' | 'is
  * Goodreads and Open Library. A placeholder record (no public data for an
  * ISBN) shows only what is known. Choosing a library here opens the library
  * pop-up over the page and checks this book without leaving it.
+ *
+ * In the desktop middle slot (DeskBook board) the page has a close button (×)
+ * instead of Back, the library picker is the layout's (the left column at
+ * wide widths), and no "Added to your shelf" notice is needed at wide widths:
+ * the shelf beside the book shows it.
  */
 export function ShelfBookPage() {
+  const slot = useDeskSlot();
   const { bookKey } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -106,7 +114,8 @@ export function ShelfBookPage() {
       navigate(-1);
     }
   };
-  const back = <Link className="back-link shelf-book-back" to="/app/shelf" state={backState} onClick={goBack}><BackGlyph size={20} />Back</Link>;
+  const back = slot ? <SlotClose label="Close the book" onClose={slot.close} />
+    : <Link className="back-link shelf-book-back" to="/app/shelf" state={backState} onClick={goBack}><BackGlyph size={20} />Back</Link>;
 
   // Library pop-up over the book (its own history entry).
   const picker = useHistoryOverlay('library');
@@ -208,8 +217,9 @@ export function ShelfBookPage() {
     </section>
 
     <p className="visually-hidden" role="status">{announcement}</p>
-    {added && saved && <div className="undo-notice shelf-book-toast"><span>Added to your shelf</span><Link to="/app/shelf">See my shelf</Link></div>}
-    <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} />
+    {added && saved && slot?.mode !== 'wide' && <div className="undo-notice shelf-book-toast"><span>Added to your shelf</span>
+      {slot ? <button type="button" onClick={slot.close}>See my shelf</button> : <Link to="/app/shelf">See my shelf</Link>}</div>}
+    {!slot && <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} />}
   </section>;
 }
 

@@ -20,6 +20,7 @@ import { CreateAccountPage, DeletionDonePage, LogInPage, NewPasswordPage, ResetR
 import { ReportProblemPage } from './ui/panel/ReportProblemPage';
 import { AboutPage, PrivacyPage, TermsPage } from './ui/panel/PolicyPages';
 import { LibrariesRedirect, SearchRedirect, SettingsRedirect } from './ui/legacyRedirects';
+import { ACCOUNT_ENTRY_PATH } from './ui/desk/layoutMode';
 
 // The owner-only admin view (plan section 6): its own chunk, linked from no
 // screen, noindex. The server answers 404 to anyone but the owner.
@@ -40,7 +41,7 @@ export function AnonymousWebApp() {
 function IdentityApp(){
   const {session,continueGuest}=useAccountSession(),navigate=useNavigate(),location=useLocation();
   const prior=useRef<string|null>(null),current=session.status==='authenticated'?session.user?.id||null:null;
-  const entryMode=/^\/app\/account\/(sign-in|sign-up|verify|forgot-password|reset-password|email-change|return|complete-profile|deletion)$/.test(location.pathname);
+  const entryMode=ACCOUNT_ENTRY_PATH.test(location.pathname);
   const {receipt}=useDeletionReceipt();
   const redirect=prior.current!==null&&prior.current!==current&&!entryMode;
   // Navigation renders in a transition, so a fast deletion reply can end the

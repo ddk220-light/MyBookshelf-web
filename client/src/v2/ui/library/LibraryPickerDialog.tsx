@@ -82,11 +82,17 @@ export function LibraryPickerDialog({ open, onClose, onChosen, returnFocus, init
 
   return <dialog ref={ref} className="scan-dialog library-dialog" aria-labelledby={titleId} onKeyDown={keyDown} onClick={backdrop}
     onCancel={event => { event.preventDefault(); onClose(); }} onClose={() => { if (open) onClose(); }}>
-    {open && <PickerBody key={session} titleId={titleId} listId={listId} onClose={onClose} onChosen={onChosen} initialQuery={initialQuery} />}
+    {open && <LibraryPicker key={session} titleId={titleId} listId={listId} onClose={onClose} onChosen={onChosen} initialQuery={initialQuery} />}
   </dialog>;
 }
 
-function PickerBody({ titleId, listId, onClose, onChosen, initialQuery }: { titleId: string; listId: string; onClose: () => void; onChosen?: (library: PublicLibrary) => void; initialQuery?: string }) {
+/**
+ * The picker itself: "Libraries near me", the field, the list and the
+ * one-tap request. The pop-up holds it as a bottom sheet (`sheet`); at wide
+ * widths the left column holds it in place of the library section
+ * (`column`, DeskLibrary board: no handle and no "or" line).
+ */
+export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery, variant = 'sheet' }: { titleId: string; listId: string; onClose: () => void; onChosen?: (library: PublicLibrary) => void; initialQuery?: string; variant?: 'sheet' | 'column' }) {
   const { selectLibrary, library: selected, recoveryMode } = useLibrary();
   const [startQuery] = useState(initialQuery);
   const model = useLibraryDiscovery({ query: startQuery });
@@ -128,7 +134,7 @@ function PickerBody({ titleId, listId, onClose, onChosen, initialQuery }: { titl
       : page && showList ? (libraries.length === 1 ? '1 library' : libraries.length + ' libraries') : '';
 
   return <>
-    <span className="scan-handle" aria-hidden="true" />
+    {variant === 'sheet' && <span className="scan-handle" aria-hidden="true" />}
     <div className="scan-header">
       <h2 id={titleId}>Find your library</h2>
       <button type="button" className="scan-close" aria-label="Close" onClick={onClose}><CloseGlyph /></button>
@@ -138,7 +144,7 @@ function PickerBody({ titleId, listId, onClose, onChosen, initialQuery }: { titl
       disabled={locating} onClick={() => { setRequest('idle'); setAsking(false); nearMe(); }}>
       <LocateGlyph />Libraries near me
     </button>
-    <p className="scan-or library-or" aria-hidden="true"><span>or</span></p>
+    {variant === 'sheet' && <p className="scan-or library-or" aria-hidden="true"><span>or</span></p>}
     <div className="library-field">
       <label htmlFor="library-place">City, town or library name</label>
       <input id="library-place" type="search" enterKeyHint="search" autoComplete="off" spellCheck={false} maxLength={120}

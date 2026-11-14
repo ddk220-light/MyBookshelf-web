@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } fro
 import { useHoldingsStore } from '../../holdings';
 import type { ShelfEntry } from '../home/shelfItems';
 import { BookCover3D } from './BookCover3D';
-import { bayRows, initialBayCount } from './shelfLayout';
+import { BOOKS_PER_BAY, bayRows, initialBayCount } from './shelfLayout';
 
 const MORE_BAYS = 20;
 
@@ -19,16 +19,18 @@ export function Bay({ children, className = '', shadow = true }: { children?: Re
 }
 
 /**
- * Saved books as face-out covers, three to a bay. Bays outside the viewport
+ * Saved books as face-out covers, three to a bay on phones (`perBay`: six at
+ * wide widths, as many as fit on the rail). Bays outside the viewport
  * skip layout and paint (content-visibility in home.css); above 200 books the
- * further bays are added as the reader scrolls towards them.
+ * further bays are added as the reader scrolls towards them. `openKey` is the
+ * book open in the desktop middle slot: its cover is outlined.
  */
-export function Bookcase({ entries, libraryName }: { entries: ShelfEntry[]; libraryName: string | null }) {
+export function Bookcase({ entries, libraryName, perBay = BOOKS_PER_BAY, openKey = null }: { entries: ShelfEntry[]; libraryName: string | null; perBay?: number; openKey?: string | null }) {
   const holdings = useHoldingsStore();
   useSyncExternalStore(holdings.subscribe, holdings.version, holdings.version);
-  const rows = bayRows(entries);
+  const rows = bayRows(entries, perBay);
   const [extra, setExtra] = useState(0);
-  const shown = initialBayCount(entries.length) + extra;
+  const shown = initialBayCount(entries.length, perBay) + extra;
   const sentinel = useRef<HTMLDivElement>(null);
   const more = shown < rows.length;
   useEffect(() => {
@@ -42,7 +44,7 @@ export function Bookcase({ entries, libraryName }: { entries: ShelfEntry[]; libr
   return <div className="home-bookcase">
     {rows.slice(0, shown).map((row, index) => <Bay key={index}>
       <ul className="bay-books">{row.map(entry => <li key={entry.key}>
-        <BookCover3D entry={entry} libraryName={libraryName && entry.kind === 'book' && holdings.get(entry.key) === 'found' ? libraryName : null} />
+        <BookCover3D entry={entry} open={entry.key === openKey} libraryName={libraryName && entry.kind === 'book' && holdings.get(entry.key) === 'found' ? libraryName : null} />
       </li>)}</ul>
     </Bay>)}
     {more && <div ref={sentinel} className="home-bookcase-more" aria-hidden="true" />}

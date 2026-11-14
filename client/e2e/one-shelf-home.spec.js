@@ -27,13 +27,15 @@ const axe = page => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wca
 
 test.describe('One-shelf home', () => {
 
-  test('first open: empty shelf, search bar, no tab bar, accessible', async ({ page }) => {
+  test('first open: no empty shelves, search bar, no tab bar, accessible', async ({ page }) => {
     await setup(page);
     await page.goto('/app');
     await expect(page).toHaveURL(/\/app\/shelf$/);
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toHaveCount(0);
-    await expect(page.locator('.book-placeholder')).toHaveCount(1);
+    // Owner decision (plan 2026-11-14): the cold open draws no empty shelves.
+    await expect(page.locator('.bay')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Scan the barcode on a book' })).toBeVisible();
     await page.getByRole('button', { name: 'Search for a book' }).click();
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
     await page.getByRole('searchbox', { name: 'Search for a book' }).fill('wings of fire');
@@ -133,15 +135,17 @@ test.describe('One-shelf home', () => {
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
   });
 
-  test('a long shelf keeps the page light and a wide screen gets a centred column', async ({ page }) => {
+  test('a long shelf keeps the page light, and a wide screen gets the left column with six books a bay', async ({ page }) => {
     await setup(page, { saved: Array.from({ length: 200 }, (_, index) => book(index + 1)) });
-    await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/app/shelf');
     await expect(page.locator('.cover3d')).toHaveCount(200);
     expect(await page.locator('.bay').first().evaluate(element => getComputedStyle(element).contentVisibility)).toBe('auto');
-    const column = await page.locator('.home').boundingBox();
-    expect(column.width).toBeLessThanOrEqual(480);
-    expect(Math.abs(column.x + column.width / 2 - 640)).toBeLessThan(10);
+    await expect(page.locator('.bay-books').first().locator('.cover3d')).toHaveCount(3);
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(page.getByRole('complementary', { name: 'Library and account' })).toBeVisible();
+    await expect(page.locator('.cover3d')).toHaveCount(200);
+    await expect(page.locator('.bay-books').first().locator('.cover3d')).toHaveCount(6);
+    expect(await page.locator('.home-bookcase .bay').first().evaluate(element => getComputedStyle(element).contentVisibility)).toBe('auto');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 
