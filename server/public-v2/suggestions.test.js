@@ -373,6 +373,24 @@ test('Open Library answers are read defensively: covers on the covers host, work
   [{ bookKey: 'v1:openlibrary:OL1W', workId: 'OL1W', title: 'A', authors: ['X'], coverUrl: cover(5) }]);
 });
 
+test('Suggestions skip books for adults, and related books need a title in Latin letters', () => {
+  const doc = (n, extra) => ({ key: `/works/OL${n}W`, author_name: ['Author ' + n], cover_i: n, ...extra });
+  const kept = parseSubjectWorks({ docs: [
+    doc(1, { title: 'कामसूत्र' }),
+    doc(2, { title: 'The Kama Sutra' }),
+    doc(3, { title: 'A Quiet Book', subject: ['Fiction', 'Erotic literature'] }),
+    doc(4, { title: 'Sex and the City' }),
+    doc(5, { title: 'Pride and Prejudice', subject: ['Courtship', 'Essex (England)'] }),
+    doc(6, { title: 'Les Misérables', subject: ['France'] }),
+    doc(7, { title: 'Train to Pakistan: 1947', subject: ['Partition'] }),
+  ] }).map(book => book.title);
+  assert.deepEqual(kept, ['Pride and Prejudice', 'Les Misérables', 'Train to Pakistan: 1947']);
+  const editions = parseEditions({ [`ISBN:${isbn(1)}`]: { title: 'A Manual', subjects: [{ name: 'Sex instruction' }] },
+    [`ISBN:${isbn(2)}`]: { title: 'பொன்னியின் செல்வன்', subjects: [{ name: 'Fiction' }] } }, [isbn(1), isbn(2)]);
+  assert.equal(editions.get(isbn(1)), null);
+  assert.deepEqual(editions.get(isbn(2)), { title: 'பொன்னியின் செல்வன்', authors: [] });
+});
+
 test('Open Library reads are sent once, never retried, and a 404 is no record', async () => {
   clearHttpCache();
   const realFetch = globalThis.fetch;

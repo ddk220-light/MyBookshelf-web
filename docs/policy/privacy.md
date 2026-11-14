@@ -23,7 +23,9 @@ list. We use these to show your shelf on any device you sign in on. Signing in
 is never needed to search or to check a library.
 
 **Without an account.** Your shelf, Viewed before list and chosen library are
-kept in your own browser. We do not receive them.
+kept in your own browser. To show which books your library has and to suggest
+books, the app sends us your chosen library and the identifiers of some of your
+books. We use them for that answer only and do not keep them.
 
 **Viewed before.** When you are signed in, each book you open is added to your
 Viewed before list in your account, newest first, up to 50 books. You can
@@ -39,7 +41,8 @@ words you searched for (a book, or a library or place name), the library
 involved, what happened (found, not found, couldn't check), how many results
 came back and how long it took. We keep no account ID, no IP address and no
 device identifier with it, so we cannot tell who searched. Search words are
-never put in web addresses.
+never put in web addresses. We also count how often each suggested book is
+shown, opened and saved, with nothing else attached.
 
 **Which libraries have which books.** When we check a library, we keep the
 answer ("found" or "not found") for that library and book for six months, so

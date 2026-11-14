@@ -26,6 +26,13 @@ const text = (value, maximum = 500) => (typeof value === 'string' && value.trim(
 const names = values => (Array.isArray(values) ? values : []).map(value => text(typeof value === 'string' ? value : value?.name, 240)).filter(Boolean).slice(0, 20);
 const coverOf = id => (Number.isInteger(id) && id > 0 ? `https://covers.openlibrary.org/b/id/${id}-M.jpg` : null);
 const workIdOf = key => { const id = String(key || '').replace(/^\/works\//, ''); return WORK_ID.test(id) ? id : null; };
+// Suggestions stand on everyone's shelf, so books for adults only are never
+// suggested: a title or subject naming one of these is skipped.
+const ADULT = /\b(sex|sexual\w*|sex instruction|erotic\w*|pornograph\w*|kama ?sutra|bdsm)\b/i;
+const forAdults = (title, subjects) => ADULT.test(title) || subjects.some(subject => ADULT.test(subject));
+// Related books come from Open Library's worldwide popularity list, so only
+// titles written in Latin letters (accents allowed) are suggested from it.
+const LATIN_TITLE = /^[\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]+$/u;
 
 let nextRequestAt = 0;
 
@@ -64,7 +71,8 @@ export function parseEditions(data, isbns) {
     const title = text(record?.title);
     const authors = names(record?.authors);
     const coverUrl = bookCover(record?.cover);
-    result.set(isbn, title ? { title, authors, ...(coverUrl ? { coverUrl } : {}) } : null);
+    const adult = title && forAdults(title, names(record?.subjects));
+    result.set(isbn, title && !adult ? { title, authors, ...(coverUrl ? { coverUrl } : {}) } : null);
   }
   return result;
 }
@@ -74,7 +82,10 @@ export function parseSubjects(values) {
   return (Array.isArray(values) ? values : []).map(value => text(value, 200)).filter(Boolean).slice(0, 100);
 }
 
-/** Search docs to suggestion books: Open Library works with a title, an author and a cover. */
+/**
+ * Search docs to suggestion books: Open Library works with a title in Latin
+ * letters, an author and a cover, and nothing for adults only.
+ */
 export function parseSubjectWorks(data) {
   const books = [];
   for (const doc of Array.isArray(data?.docs) ? data.docs : []) {
@@ -83,6 +94,7 @@ export function parseSubjectWorks(data) {
     const authors = names(doc?.author_name);
     const coverUrl = coverOf(doc?.cover_i);
     if (!workId || !title || !authors.length || !coverUrl) continue;
+    if (!LATIN_TITLE.test(title) || forAdults(title, parseSubjects(doc?.subject))) continue;
     books.push({ bookKey: `v1:openlibrary:${workId}`, workId, title, authors, coverUrl });
   }
   return books;
@@ -108,7 +120,7 @@ export function createOpenLibrarySuggestionReads({ read = readOpenLibrary } = {}
       return { ...(workId ? { workId } : {}), subjects: parseSubjects(doc?.subject) };
     },
     async subjectWorks(subject) {
-      const params = new URLSearchParams({ subject, sort: 'readinglog', fields: 'key,title,author_name,cover_i', limit: String(SUBJECT_WORKS_LIMIT) });
+      const params = new URLSearchParams({ subject, sort: 'readinglog', fields: 'key,title,author_name,cover_i,subject', limit: String(SUBJECT_WORKS_LIMIT) });
       return parseSubjectWorks(await read(`/search.json?${params}`));
     },
   });
