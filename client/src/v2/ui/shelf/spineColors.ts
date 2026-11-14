@@ -69,16 +69,23 @@ export function fadedContrast(cover: string, ink: string, shelf: string, opacity
 }
 
 /**
+ * A suggested book's plain cover carries no white sheen (home.css), so its
+ * colour only has to be darkened a little to keep the faded title readable.
+ */
+export const SUGGESTED_SHEEN = 0;
+
+/**
  * The plain-cover colour for a suggested book: `cover` darkened towards black
  * in 2% steps (keeping its hue) until its faded title reads at 4.5:1 or more
- * under the full sheen over every reading light's shelf. A colour that
- * already does is kept.
+ * over every reading light's shelf. Suggested plain covers have no sheen
+ * (SUGGESTED_SHEEN); with the full sheen the shades would be near black. A
+ * colour that already reads is kept.
  */
 export function suggestionShade(cover: string, ink: string): string {
   const base = rgb(cover);
   for (let step = 0; step <= 50; step += 1) {
     const shade = toHex(base.map(value => value * (1 - step * 0.02)) as Rgb);
-    if (Object.values(SHELF_BACKS).every(shelf => fadedContrast(shade, ink, shelf) >= MIN_TEXT_CONTRAST)) return shade;
+    if (Object.values(SHELF_BACKS).every(shelf => fadedContrast(shade, ink, shelf, SUGGESTION_OPACITY, SUGGESTED_SHEEN) >= MIN_TEXT_CONTRAST)) return shade;
   }
   return '#000000';
 }
